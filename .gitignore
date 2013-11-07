@@ -1,0 +1,9 @@
+.pmd
+.project
+.classpath
+.settings
+target
+bin
+*.bak
+classes
+.DS_Store
