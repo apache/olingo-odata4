@@ -24,24 +24,28 @@
 		<artifactId>apache</artifactId>
 		<version>13</version>
 	</parent>
-	
-	    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-	
-	 <url>http://olingo.incubator.apache.org</url>
-	 
-	     <mailingLists>
-        <mailingList>
-            <name>Apache Olingo Developers Mailinglist</name>
-            <archive>http://mail-archives.apache.org/mod_mbox/incubator-olingo-dev/</archive>
-            <post>mailto:dev@olingo.incubator.apache.org</post>
-            <subscribe>mailto:dev-subscribe@olingo.incubator.apache.org</subscribe>
-        </mailingList>
-    </mailingLists>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<url>http://olingo.incubator.apache.org</url>
+
+	<mailingLists>
+		<mailingList>
+			<name>Apache Olingo Developers Mailinglist</name>
+			<archive>http://mail-archives.apache.org/mod_mbox/incubator-olingo-dev/</archive>
+			<post>mailto:dev@olingo.incubator.apache.org</post>
+			<subscribe>mailto:dev-subscribe@olingo.incubator.apache.org</subscribe>
+		</mailingList>
+	</mailingLists>
+
+	<modules>
+		<module>odata4-lib</module>
+	</modules>
 
 </project>
