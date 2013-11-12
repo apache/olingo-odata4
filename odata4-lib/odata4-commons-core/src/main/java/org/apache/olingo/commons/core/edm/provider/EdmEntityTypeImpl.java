@@ -31,7 +31,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
   }
 
   @Override
-  public List<EdmKeyPropertyRef> getKeyPropertYRefs() {
+  public List<EdmKeyPropertyRef> getKeyPropertyRefs() {
     return null;
   }
 

@@ -16,48 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+
+
+package org.apache.olingo.producer.api.uri;
+
+import org.apache.olingo.commons.api.edm.EdmProperty;
+
 
 /**
- * A CSDL EntityContainer element
+ * Key predicate, consisting of a simple-type property and its value as String literal
+ * @org.apache.olingo.odata2.DoNotImplement
  * 
- * <p>EdmEntityContainer hold the information of EntitySets, Singletons, ActionImports and FunctionImports contained
  */
-public interface EdmEntityContainer extends EdmNamed {
+public interface KeyPredicate {
 
   /**
-   * @return namespace of this entity container
+   * <p>Gets the literal String in default representation.</p>
+   * <p>The description for {@link org.apache.olingo.odata2.api.edm.EdmLiteral} has some motivation for using
+   * this representation.</p>
+   * @return String literal in default (<em>not</em> URI) representation
+   * @see org.apache.olingo.odata2.api.edm.EdmLiteralKind
    */
-  String getNamespace();
+  public String getLiteral();
 
   /**
-   * Get contained Singleton by name
-   * @param name
-   * @return {@link EdmSingleton}
+   * Gets the key property.
+   * @return {@link EdmProperty} simple-type property
    */
-  EdmSingleton getSingleton(String name);
+  public EdmProperty getProperty();
 
-  /**
-   * Get contained EntitySet by name
-   * @param name
-   * @return {@link EdmEntitySet}
-   */
-  EdmEntitySet getEntitySet(String name);
-
-  /**
-   * Get contained ActionImport by name
-   * @param name
-   * @return {@link EdmActionImport}
-   */
-  EdmActionImport getActionImport(String name);
-
-  /**
-   * Get contained FunctionImport by name
-   * @param name
-   * @return {@link EdmFunctionImport}
-   */
-  EdmFunctionImport getFunctionImport(String name);
-
-  //TODO:evaluate
-  EdmNamed getElement(String odataIdentifier);
 }

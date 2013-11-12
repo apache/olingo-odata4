@@ -16,28 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.producer.core.uri;
 
-public interface EdmKeyPropertyRef {
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.producer.api.uri.KeyPredicate;
 
-  /**
-   * @return name of the key predicate
-   */
-  String getKeyPropertyName();
-  
-  /**
-   * @return alias of this reference or null if not set
-   */
-  String getAlias();
+/**
+ *  
+ */
+public class KeyPredicateImpl implements KeyPredicate {
 
-  /**
-   * @return path to the property
-   */
-  String getPath();
+  public KeyPredicateImpl(final String literal, final EdmProperty property) {
+    super();
+    this.literal = literal;
+    this.property = property;
+  }
 
-  /**
-   * @return the property this property ref points to
-   */
-  EdmProperty getProperty();
+  private String literal;
+  private EdmProperty property;
+
+  @Override
+  public String getLiteral() {
+    return literal;
+  }
+
+  public void setValue(final String value) {
+    literal = value;
+  }
+
+  @Override
+  public EdmProperty getProperty() {
+    return property;
+  }
+
+  public void setProperty(final EdmProperty property) {
+    this.property = property;
+  }
+
+  @Override
+  public String toString() {
+    return "KeyPredicate: literal=" + literal + ", propertyName=" + property;
+  }
 
 }

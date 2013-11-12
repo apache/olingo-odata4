@@ -35,7 +35,7 @@ public interface EdmEntityType extends EdmStructuralType {
    * Get all key properties references as list of {@link EdmKeyPropertyRef}.
    * @return collection of key properties of type List<EdmKeyPropertyRef>
    */
-  List<EdmKeyPropertyRef> getKeyPropertYRefs();
+  List<EdmKeyPropertyRef> getKeyPropertyRefs();
 
   /**
    * Get a key property ref by its name.

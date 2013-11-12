@@ -4,6 +4,7 @@ import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmNamed;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 
@@ -39,6 +40,11 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
 
   @Override
   public EdmFunctionImport getFunctionImport(final String name) {
+    return null;
+  }
+
+  @Override
+  public EdmNamed getElement(String odataIdentifier) {
     return null;
   }
 

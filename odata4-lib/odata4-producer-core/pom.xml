@@ -43,6 +43,44 @@
 			<artifactId>olingo-odata4-commons-core-incubating</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>${antlr.version}</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>${antlr.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!--<arguments><argument>-atn</argument></arguments>-->
+					<listener>true</listener>
+					<visitor>true</visitor>
+					<!--maven antlr plugin has trouble with grammer import if the grammerfiles are 
+					    not directly inside  src/main/antlr4, hence we have to set the libDirectory-->
+					<libDirectory>src/main/antlr4/org/apache/olingo/producer/core/uri/antlr</libDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	
 </project>
