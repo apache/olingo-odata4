@@ -139,7 +139,34 @@
 					<violationSeverity>warning</violationSeverity>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>rat-check</id>
+						<phase>test</phase>
+						<goals>
+							<goal>rat</goal>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/MANIFEST.MF</exclude>
+								<exclude>.gitignore</exclude>
+								<exclude>.git/**</exclude>
+								<exclude>bin/**</exclude>
+								<exclude>**/*.project</exclude>
+								<exclude>**/*.classpath</exclude>
+								<exclude>**/*.json</exclude>
+								<exclude>**/*.batch</exclude>
+								<exclude>**/NOTICE</exclude>
+								<exclude>**/DEPENDENCIES</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

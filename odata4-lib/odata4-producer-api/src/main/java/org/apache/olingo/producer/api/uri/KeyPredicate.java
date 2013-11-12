@@ -16,8 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-
-
 package org.apache.olingo.producer.api.uri;
 
 import org.apache.olingo.commons.api.edm.EdmProperty;
