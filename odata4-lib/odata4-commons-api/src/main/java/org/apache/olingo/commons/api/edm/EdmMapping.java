@@ -31,13 +31,6 @@ public interface EdmMapping {
   String getInternalName();
 
   /**
-   * Get the mapping name for mime type lookup
-   * 
-   * @return mapping name as String
-   */
-  String getMimeType();
-
-  /**
    * Get the set object for this mapping
    * 
    * @return {@link Object} object

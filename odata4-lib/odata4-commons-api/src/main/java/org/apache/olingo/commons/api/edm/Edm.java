@@ -83,11 +83,11 @@ public interface Edm {
    * @param functionName
    * @param bindingParameterTypeName may be null if it is an unbound function
    * @param isBindingParameterCollection may be null if it is an unbound function
-   * @param bindingParameterNames may be null if it is an unbound function
+   * @param parameterNames may be null if it is an unbound function
    * @return {@link EdmFunction}
    */
   EdmFunction getFunction(FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
-      Boolean isBindingParameterCollection, List<String> bindingParameterNames);
+      Boolean isBindingParameterCollection, List<String> parameterNames);
 
   /**
    * Get service metadata <p>See {@link EdmServiceMetadata} for more information.

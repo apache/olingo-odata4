@@ -1,0 +1,127 @@
+package org.apache.olingo.commons.core.edm.primitivetype;
+
+import java.math.BigDecimal;
+import java.util.regex.Pattern;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
+/**
+ * Implementation of the EDM primitive type Single.
+ */
+final class EdmSingle extends SingletonPrimitiveType {
+
+  private static final Pattern PATTERN = Pattern.compile(
+      "(?:\\+|-)?\\p{Digit}{1,9}(?:\\.\\p{Digit}{1,9})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,2})?");
+  private static final EdmSingle instance = new EdmSingle();
+
+  public static EdmSingle getInstance() {
+    return instance;
+  }
+
+  @Override
+  public boolean isCompatible(final EdmPrimitiveType primitiveType) {
+    return primitiveType instanceof Uint7
+        || primitiveType instanceof EdmByte
+        || primitiveType instanceof EdmSByte
+        || primitiveType instanceof EdmInt16
+        || primitiveType instanceof EdmInt32
+        || primitiveType instanceof EdmInt64
+        || primitiveType instanceof EdmSingle;
+  }
+
+  @Override
+  public Class<?> getDefaultType() {
+    return Float.class;
+  }
+
+  @Override
+  protected <T> T internalValueOfString(final String value,
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+    Float result = null;
+    BigDecimal bigDecimalValue = null;
+    // Handle special values first.
+    if (value.equals(EdmDouble.NEGATIVE_INFINITY)) {
+      result = Float.NEGATIVE_INFINITY;
+    } else if (value.equals(EdmDouble.POSITIVE_INFINITY)) {
+      result = Float.POSITIVE_INFINITY;
+    } else if (value.equals(EdmDouble.NaN)) {
+      result = Float.NaN;
+    } else {
+      // Now only "normal" numbers remain.
+      if (!PATTERN.matcher(value).matches()) {
+        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      }
+
+      // The number format is checked above, so we don't have to catch NumberFormatException.
+      bigDecimalValue = new BigDecimal(value);
+      result = bigDecimalValue.floatValue();
+      // "Real" infinite values have been treated already above, so we can throw an exception
+      // if the conversion to a float results in an infinite value.
+      if (result.isInfinite() || bigDecimalValue.compareTo(new BigDecimal(result.toString())) != 0) {
+        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+      }
+    }
+
+    if (returnType.isAssignableFrom(Float.class)) {
+      return returnType.cast(result);
+    } else if (result.isInfinite() || result.isNaN()) {
+      if (returnType.isAssignableFrom(Double.class)) {
+        return returnType.cast(result.doubleValue());
+      } else {
+        throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType)");
+      }
+    } else {
+      try {
+        return EdmDecimal.convertDecimal(bigDecimalValue, returnType);
+      } catch (final IllegalArgumentException e) {
+        throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+      } catch (final ClassCastException e) {
+        throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+      }
+    }
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value,
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+    if (value instanceof Long || value instanceof Integer) {
+      if (Math.abs(((Number) value).longValue()) < 1L << 22) {
+        return value.toString();
+      } else {
+        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      }
+    } else if (value instanceof Short || value instanceof Byte) {
+      return value.toString();
+    } else if (value instanceof Double) {
+      if (((Double) value).isInfinite()) {
+        return (Double) value == Double.NEGATIVE_INFINITY ? EdmDouble.NEGATIVE_INFINITY : EdmDouble.POSITIVE_INFINITY;
+      } else {
+        final String floatString = Float.toString(((Double) value).floatValue());
+        if (floatString.equals(((Double) value).toString())) {
+          return floatString;
+        } else {
+          throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+        }
+      }
+    } else if (value instanceof Float) {
+      return (Float) value == Float.NEGATIVE_INFINITY ? EdmDouble.NEGATIVE_INFINITY :
+          (Float) value == Float.POSITIVE_INFINITY ? EdmDouble.POSITIVE_INFINITY : value.toString();
+    } else if (value instanceof BigDecimal) {
+      final float floatValue = ((BigDecimal) value).floatValue();
+      if (!Float.isInfinite(floatValue) && BigDecimal.valueOf(floatValue).compareTo((BigDecimal) value) == 0) {
+        return ((BigDecimal) value).toString();
+      } else {
+        throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+      }
+    } else {
+      throw new EdmPrimitiveTypeException(
+          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    }
+  }
+}

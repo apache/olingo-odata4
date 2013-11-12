@@ -47,7 +47,28 @@
 	<modules>
 		<module>odata4-lib</module>
 	</modules>
-	
+
+	<properties>
+		<mockito.version>1.9.0</mockito.version>
+		<junit.version>4.10</junit.version>
+		<commonscodec.version>1.6</commonscodec.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
