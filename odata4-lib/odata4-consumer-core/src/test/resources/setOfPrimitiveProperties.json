@@ -1,0 +1,8 @@
+{
+  "odata.context": "http://host/service/$metadata#Customers/$entity",
+
+  "EmailAddresses": [
+    "Julie@Swansworth.com",
+    "Julie.Swansworth@work.com"
+  ]
+}

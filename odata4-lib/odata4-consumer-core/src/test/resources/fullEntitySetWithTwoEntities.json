@@ -1,0 +1,49 @@
+{
+"odata.context": "http://host/service/$metadata#Customers/$entity",     
+"odata.count": 1,
+"value": [
+    {
+        "odata.context": "http://host/service/$metadata#Customers/$entity", 
+        "odata.id": "Customers('ALFKI')",
+        "odata.etag": "W/\"MjAxMy0wNS0yN1QxMTo1OFo=\"",
+        "odata.editLink": "Customers('ALFKI')", 
+        "Orders@odata.navigationLink": "Customers('ALFKI')/Orders", 
+        "Orders@odata.associationLink": "Customers('ALFKI')/Orders/$ref", 
+        "ID": "ALFKI",
+        "CompanyName": "Alfreds Futterkiste",
+        "ContactName": "Maria Anders",
+        "ContactTitle": "Sales Representative",
+        "Phone": "030-0074321",
+        "Fax": "030-0076545",
+        "Address": {
+        	"Street": "Obere Str. 57",
+        	"City": "Berlin",
+        	"Region": null,
+        	"PostalCode": "D-12209",
+        	"Country@odata.navigationLink": "Customers('ALFKI')/Address/Country", 
+        	"Country@odata.associationLink":"Customers('ALFKI')/Address/Country/$ref"
+        	} 
+    },
+    {
+        "odata.context": "http://host/service/$metadata#Customers/$entity", 
+        "odata.id": "Customers('MUSKI')",
+        "odata.etag": "W/\"MjAxMy0wNS0yN1QxMTo1OFo=\"",
+        "odata.editLink": "Customers('MUSKI')", 
+        "Orders@odata.navigationLink": "Customers('MUSKI')/Orders", 
+        "Orders@odata.associationLink": "Customers('MUSKI')/Orders/$ref", 
+        "ID": "MUSKI",
+        "CompanyName": "Mustermanns Futterkiste",
+        "ContactName": "Mustermann Max",
+        "ContactTitle": "Some Guy",
+        "Phone": "030-002222",
+        "Fax": "030-004444",
+        "Address": {
+            "Street": "Musterstrasse 42",
+            "City": "Musterstadt",
+            "Region": "SomeRegion",
+            "PostalCode": "D-42042"
+            } 
+    }
+],
+"odata.nextLink": "http://host/service/EntitySet?$skiptoken=342r89"
+}

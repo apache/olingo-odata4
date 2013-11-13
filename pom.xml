@@ -53,6 +53,7 @@
 		<junit.version>4.10</junit.version>
 		<commonscodec.version>1.6</commonscodec.version>
 		<antlr.version>4.1</antlr.version>
+		<jackson.version>2.2.2</jackson.version>
 	</properties>
 
 	<dependencies>
