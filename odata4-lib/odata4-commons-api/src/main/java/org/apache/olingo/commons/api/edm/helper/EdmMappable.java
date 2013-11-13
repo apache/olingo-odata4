@@ -16,24 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.api.edm.helper;
 
 /**
- * EdmMapping holds custom mapping information which can be applied to a CSDL element.
+ * EdmMappable can be applied to CSDL elements to associate additional information.
  */
-public interface EdmMapping {
+public interface EdmMappable {
 
   /**
-   * Get the mapping value
+   * Get mapping information applied to an EDM element
    * 
-   * @return mapping name as String
+   * @return {@link EdmMapping}
    */
-  String getInternalName();
-
-  /**
-   * Get the set object for this mapping
-   * 
-   * @return {@link Object} object
-   */
-  Object getObject();
+  EdmMapping getMapping();
 }

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.helper.EdmMappable;
+
 /**
  * A CSDL Property element
  * <p>EdmProperty defines a simple type or a complex type.

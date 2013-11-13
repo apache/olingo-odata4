@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.helper.EdmMapping;
 import org.apache.olingo.commons.api.edm.provider.Property;
 
 public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {

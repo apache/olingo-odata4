@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.helper.EdmMappable;
+
 /**
  * A CSDL parameter element
  */
