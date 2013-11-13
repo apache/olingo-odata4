@@ -178,6 +178,26 @@ public class FunctionMapKeyTest {
     key = new FunctionMapKey(fqn, null, null, keyList);
     someKey = new FunctionMapKey(fqn, null, null, someKeyList);
     assertEquals(key.hashCode(), someKey.hashCode());
+    
+    keyList = new ArrayList<String>();
+    keyList.add("Employee");
+    keyList.add("employee");
+    someKeyList = new ArrayList<String>();
+    someKeyList.add("Employee");
+    someKeyList.add("employee");
+    key = new FunctionMapKey(fqn, null, null, keyList);
+    someKey = new FunctionMapKey(fqn, null, null, someKeyList);
+    assertEquals(key.hashCode(), someKey.hashCode());
+    
+    keyList = new ArrayList<String>();
+    keyList.add("Employee");
+    keyList.add("Employee2");
+    someKeyList = new ArrayList<String>();
+    someKeyList.add("Employee2");
+    someKeyList.add("Employee");
+    key = new FunctionMapKey(fqn, null, null, keyList);
+    someKey = new FunctionMapKey(fqn, null, null, someKeyList);
+    assertEquals(key.hashCode(), someKey.hashCode());
   }
 
   @Test

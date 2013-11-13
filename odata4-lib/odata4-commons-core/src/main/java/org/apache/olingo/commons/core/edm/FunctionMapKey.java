@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
@@ -35,6 +36,9 @@ public class FunctionMapKey {
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
     parameterNames = bindingParameterNames;
+    if(parameterNames != null){
+      Collections.sort(parameterNames);
+    }
   }
 
   @Override
@@ -53,7 +57,6 @@ public class FunctionMapKey {
       hash = hash + "collectionNull";
     }
 
-    // TODO: Sort!!
     if (parameterNames != null) {
       for (String name : parameterNames) {
         hash = hash + name;
