@@ -72,14 +72,14 @@ public class UriTreeVisitor extends UriBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitBatch(@NotNull final UriParser.BatchContext ctx) {
+  public Object visitBatchAlt(@NotNull final UriParser.BatchAltContext ctx) {
     // Set UriType to Batch
 
     return null;
   }
 
   @Override
-  public Object visitEntityA(@NotNull final UriParser.EntityAContext ctx) {
+  public Object visitEntityAlt(@NotNull final UriParser.EntityAltContext ctx) {
     // Set UriType to Entity
     // uriInfo.AddResSelector(new OriResourceSelector());
 
@@ -87,7 +87,7 @@ public class UriTreeVisitor extends UriBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitMetadata(@NotNull final UriParser.MetadataContext ctx) {
+  public Object visitMetadataAlt(@NotNull final UriParser.MetadataAltContext ctx) {
     // Set UriType to Entity
     // uriInfo.AddResSelector(new OriResourceSelector());
 

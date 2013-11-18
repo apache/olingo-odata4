@@ -16,12 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.producer.core.uri;
+package org.apache.olingo.producer.api.uri;
+
 
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+
 
 public class UriInfo {
   private UriType uriType;

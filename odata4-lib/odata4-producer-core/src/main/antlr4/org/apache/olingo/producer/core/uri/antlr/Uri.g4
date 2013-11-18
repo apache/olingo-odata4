@@ -18,26 +18,18 @@
  ******************************************************************************/
  grammar Uri;
 //Naming convention 
-//- Helper Rules ending with "Path" like "colNavigationPath" are expected to be used behind a 
-//  slash ('/') e.g. "rule : entitySetName( '/' colNavigationPath)?;"
-//- Helper Rules ending with "OnQual" like "colNavigationPathOnQual" are expected to be used behind a 
-//  qualified identifiere.g. "colNavigationPath           : ...| qualified colNavigationPathOnQual;"
-//- Helper Rules ending with "OnCast" like "singleNavigationPathOnCast" are expected to be used behind a 
-//  cast to a typename e.g. "singleNavigationPathOnQual  : ... | entityTypeName '/' singleNavigationPathOnCast;"
+//  ...
 //Decoding encoding
 //- within rule "resourcePath": special chars used in EDM.Strings must still be encoded when 
 //  used as tokenizer input
-//  e.g. .../Employees(id='Hugo%2FMueller')/EmployeeName <-- '/' must be encodet to '%2F' in "Hugo/Mueller"
+//  e.g. .../Employees(id='Hugo%2FMueller')/EmployeeName <-- '/' must be encoded to '%2F' in "Hugo/Mueller"
 //    but it must not be encoded before the EmployeeName
-//- within rules "entityOptions"/"format"/"queryOptions": 
 
 options {
     language = Java;
 }
 
 import UriLexerPart; //contain Lexer rules
-
-
 
 //;------------------------------------------------------------------------------
 //; 0. URI
@@ -51,76 +43,62 @@ import UriLexerPart; //contain Lexer rules
 //              "/" *( segment-nz "/" )
 
 
-
-odataRelativeUri    : ( '$batch'                                //; Note: case-sensitive!
-                        | '$entity' '?' entityOptions           //; Note: case-sensitive!
-                        | '$metadata' ( '?' format )? ( FRAGMENT contextFragment )?
-                        | resourcePath ( '?' queryOptions )?
-                      ) EOF;
-
-odataRelativeUriA   : odataRelativeUriB? EOF;
-odataRelativeUriB   : '$batch'  # batch                         //; Note: case-sensitive!
-                    | '$entity' '?' entityOptions # entityA     //; Note: case-sensitive!
-                    | '$metadata' ( '?' format )? ( FRAGMENT contextFragment )? # metadata
-                    | resourcePath ( '?' queryOptions )?  # resourcePathA
+odataRelativeUriEOF : odataRelativeUri? EOF;
+odataRelativeUri    : '$batch'                                                  # batchAlt
+                    | '$entity' '?' entityOptions                               # entityAlt
+                    | '$metadata' ( '?' format )? ( FRAGMENT contextFragment )? # metadataAlt
+                    | resourcePath ( '?' queryOptions )?                        # resourcePathAlt
                     ;
 
 //;------------------------------------------------------------------------------
 //; 1. Resource Path
 //;------------------------------------------------------------------------------
                    
-resourcePath        : '$all'  # all
-                    | crossjoin #crossjoinA
-                    | pathSegments #pathSegmentsA
+resourcePath        : '$all'        # allAlt
+                    | crossjoin     # crossjoinAlt
+                    | pathSegments  # pathSegmentsAlt
                     ;
-crossjoin           : '$crossjoin' OPEN odataIdentifier ( COMMA odataIdentifier )* CLOSE;
+crossjoin           : '$crossjoin' OPEN odi+=odataIdentifier ( COMMA odi+=odataIdentifier )* CLOSE;
 
-pathSegments        : pathSegment ('/' pathSegment)* constSegment?;
+pathSegments        : ps+=pathSegment ('/' ps+=pathSegment)* constSegment?;
 
 pathSegment         : ns=namespace* odi=odataIdentifier fp=functionParameters? kp=keypredicates?;
-
-pathOdataIdentifier : ODATAIDENTIFIER;
 
 functionParameters  : OPEN ( fps+=functionParameter ( COMMA fps+=functionParameter )* )? CLOSE;
 functionParameter   : odi=parameterName EQ ( ali=parameterAlias | val=primitiveLiteral );
 parameterName       : odataIdentifier;
 parameterAlias      : AT_ODATAIDENTIFIER;      
 
-keypredicates       : simpleKey | compoundKey;
+keypredicates       : sk=simpleKey | ck=compoundKey;
 simpleKey           : OPEN keyPropertyValue CLOSE;
 compoundKey         : OPEN kvp+=keyValuePair ( COMMA kvp+=keyValuePair )* CLOSE;
 keyValuePair        : odi=odataIdentifier EQ val=keyPropertyValue;
 keyPropertyValue    : primitiveLiteral;
 
                
-constSegment        : '/' (value | count | ref );
-count               : COUNT;
-ref                 : REF;
-value               : VALUE;
+constSegment        : '/' (v=VALUE | c=COUNT | r=REF );
 
 //;------------------------------------------------------------------------------
 //; 2. Query Options
 //;------------------------------------------------------------------------------
 
-queryOptions : queryOption ( '&' queryOption )*;
-queryOption  : systemQueryOption 
-             | aliasAndValue 
-             | customQueryOption  
-             ;
+queryOptions    : qo+=queryOption ( '&' qo+=queryOption )*;
+queryOption     : systemQueryOption 
+                | aliasAndValue 
+                | customQueryOption  
+                ;
              
-entityOptions : (entityOption '&' )* id ( '&' entityOption )*;
-entityOption  : expand 
-              | format
-              | select
-              | customQueryOption
-              ;
-
-id            : ID;
+entityOptions   : (eob+=entityOption '&' )* id=ID ( '&' eoa+=entityOption )*;
+entityOption    : expand 
+                | format
+                | select
+                | customQueryOption
+                ;
 
 systemQueryOption   : expand
                     | filter 
                     | format 
-                    | id
+                    | ID
                     | inlinecount 
                     | orderby 
                     | search
@@ -133,12 +111,12 @@ expand              : '$expand' EQ expandItemList;
 
 expandItemList      : expandItem ( COMMA expandItem )*;
 
-expandItem          : STAR ( '/' ref | OPEN LEVELS CLOSE )?
+expandItem          : STAR ( '/' REF | OPEN LEVELS CLOSE )?
                     | expandPath expandPathExtension?;
 
 expandPath          : ( namespace* odataIdentifier ) ( '/' namespace* odataIdentifier )*;
-expandPathExtension : '/' ref   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
-                    | '/' count ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
+expandPathExtension : '/' REF   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
+                    | '/' COUNT ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
                     |             OPEN expandOption      ( SEMI expandOption      )* CLOSE 
                     ;  
 expandCountOption   : filter
@@ -165,14 +143,13 @@ skip                : SKIP;
 top                 : TOP;
 format              : FORMAT;
 
-inlinecount         : '$count' EQ BOOLEAN;
+inlinecount         : '$count' EQ booleanNonCase;
 
-//search is not like the ABNF to support operator precedence
 search              : '$search' searchSpecialToken;
 
-searchSpecialToken  : { ((UriLexer) this.getInputStream().getTokenSource()).SetSWallowed(true); }
+searchSpecialToken  : { ((UriLexer) this.getInputStream().getTokenSource()).setInSearch(true); }
                       EQ WS* searchExpr
-                      { ((UriLexer) this.getInputStream().getTokenSource()).SetSWallowed(false); }
+                      { ((UriLexer) this.getInputStream().getTokenSource()).setInSearch(false); }
                     ;
 
 searchExpr          : 'NOT' WS+ searchExpr
@@ -191,11 +168,12 @@ selectItem          : namespace* '*'
                     ;
 
 aliasAndValue       : parameterAlias EQ parameterValue;
-parameterValue      : /*arrayOrObject*/
-                      commonExpr;
-customQueryOption   : { ((UriLexer) this.getInputStream().getTokenSource()).SetCUSTallowed(true); }
+parameterValue      : arrayOrObject
+                      commonExpr
+                    ;
+customQueryOption   : { ((UriLexer) this.getInputStream().getTokenSource()).setINCustomOption(true); }
                       customName ( EQ customValue)?
-                      { ((UriLexer) this.getInputStream().getTokenSource()).SetCUSTallowed(false); }
+                      { ((UriLexer) this.getInputStream().getTokenSource()).setINCustomOption(false); }
                     ;
 customName          : 'CUSTOMNAME';
 customValue         : 'CUSTOMVALUE';
@@ -209,26 +187,24 @@ contextFragment     : 'Collection($ref)'
                     | 'Collection(Edm.EntityType)'
                     | 'Collection(Edm.ComplexType)'
                     | PRIMITIVETYPENAME
-                    | 'collection' OPEN 
-                      ( PRIMITIVETYPENAME 
-                      | namespace odataIdentifier
-                      ) CLOSE
-                    | namespace* odataIdentifier ( '/$deletedEntity'
-                                      | '/$link'
-                                      | '/$deletedLink'
-                                      | keypredicates? ( '/' namespace* odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
-                                      )?
+                    | 'collection' OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
+                    | namespace* odataIdentifier 
+                      ( '/$deletedEntity'
+                      | '/$link'
+                      | '/$deletedLink'
+                      | keypredicates? ( '/' namespace* odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
+                      )?
                     ;              
 
 propertyList         : OPEN propertyListItem ( COMMA propertyListItem )* CLOSE;
-propertyListItem     : STAR //; all structural properties
+propertyListItem     : STAR           //; all structural properties
                      | propertyListProperty
                      ;
 propertyListProperty : odataIdentifier ( '+' )? ( propertyList )?
                      | odataIdentifier ( '/' propertyListProperty )?
                      ;
                  
-entity                  : '/$entity';
+entity               : '/$entity';
 //;------------------------------------------------------------------------------
 //; 4. Expressions
 //;------------------------------------------------------------------------------
@@ -237,7 +213,7 @@ entity                  : '/$entity';
 // we had to introduced operator precesence witch is not reflected in the ABNF
 
 
-commonExpr          : OPEN commonExpr  CLOSE
+commonExpr          : OPEN commonExpr CLOSE
                     | methodCallExpr
                     | unary WS+ commonExpr
                     | memberExpr
@@ -258,122 +234,198 @@ rootExpr            : '$root/' pathSegments;
 
 memberExpr          : '$it' | '$it/'? pathSegments;
 
-anyExpr                 : 'any' OPEN WS* /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
-allExpr                 : 'all' OPEN WS* /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;
+anyExpr             : 'any' OPEN WS* /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
+allExpr             : 'all' OPEN WS* /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;
 
-methodCallExpr          : indexOfMethodCallExpr 
-                        | toLowerMethodCallExpr 
-                        | toUpperMethodCallExpr  
-                        | trimMethodCallExpr 
-                        | substringMethodCallExpr 
-                        | concatMethodCallExpr 
-                        | lengthMethodCallExpr 
-                        | yearMethodCallExpr 
-                        | monthMethodCallExpr 
-                        | dayMethodCallExpr 
-                        | hourMethodCallExpr 
-                        | minuteMethodCallExpr 
-                        | secondMethodCallExpr 
-                        | fractionalsecondsMethodCallExpr
-                        | totalsecondsMethodCallExpr
-                        | dateMethodCallExpr 
-                        | timeMethodCallExpr 
-                        | roundMethodCallExpr 
-                        | floorMethodCallExpr 
-                        | ceilingMethodCallExpr 
-                        | distanceMethodCallExpr 
-                        | geoLengthMethodCallExpr 
-                        | totalOffsetMinutesMethodCallExpr
-                        | minDateTimeMethodCallExpr
-                        | maxDateTimeMethodCallExpr
-                        | nowMethodCallExpr
-                        //from boolean
-                        | isofExpr
-                        | castExpr 
-                        | endsWithMethodCallExpr  
-                        | startsWithMethodCallExpr
-                        | containsMethodCallExpr
-                        | intersectsMethodCallExpr
+methodCallExpr      : indexOfMethodCallExpr
+                    | toLowerMethodCallExpr
+                    | toUpperMethodCallExpr
+                    | trimMethodCallExpr
+                    | substringMethodCallExpr
+                    | concatMethodCallExpr
+                    | lengthMethodCallExpr
+                    | yearMethodCallExpr
+                    | monthMethodCallExpr
+                    | dayMethodCallExpr
+                    | hourMethodCallExpr
+                    | minuteMethodCallExpr
+                    | secondMethodCallExpr
+                    | fractionalsecondsMethodCallExpr
+                    | totalsecondsMethodCallExpr
+                    | dateMethodCallExpr
+                    | timeMethodCallExpr
+                    | roundMethodCallExpr
+                    | floorMethodCallExpr
+                    | ceilingMethodCallExpr
+                    | distanceMethodCallExpr
+                    | geoLengthMethodCallExpr
+                    | totalOffsetMinutesMethodCallExpr
+                    | minDateTimeMethodCallExpr
+                    | maxDateTimeMethodCallExpr
+                    | nowMethodCallExpr
+                    //from boolean
+                    | isofExpr
+                    | castExpr
+                    | endsWithMethodCallExpr
+                    | startsWithMethodCallExpr
+                    | containsMethodCallExpr
+                    | intersectsMethodCallExpr
+                    ;
+
+
+containsMethodCallExpr    : CONTAINS   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+startsWithMethodCallExpr  : STARTSWITH OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+endsWithMethodCallExpr    : ENDSWITH   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+lengthMethodCallExpr      : LENGTH     OPEN WS* commonExpr WS* CLOSE;
+indexOfMethodCallExpr     : INDEXOF    OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+substringMethodCallExpr   : SUBSTRING  OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* ) CLOSE;
+toLowerMethodCallExpr     : TOLOWER    OPEN WS* commonExpr WS* CLOSE;
+toUpperMethodCallExpr     : TOUPPER    OPEN WS* commonExpr WS* CLOSE;
+trimMethodCallExpr        : TRIM       OPEN WS* commonExpr WS* CLOSE;
+concatMethodCallExpr      : CONCAT     OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+
+yearMethodCallExpr                : 'year'               OPEN WS* commonExpr WS* CLOSE;
+monthMethodCallExpr               : 'month'              OPEN WS* commonExpr WS* CLOSE;
+dayMethodCallExpr                 : 'day'                OPEN WS* commonExpr WS* CLOSE;
+hourMethodCallExpr                : 'hour'               OPEN WS* commonExpr WS* CLOSE;
+minuteMethodCallExpr              : 'minute'             OPEN WS* commonExpr WS* CLOSE;
+secondMethodCallExpr              : 'second'             OPEN WS* commonExpr WS* CLOSE;
+fractionalsecondsMethodCallExpr   : 'fractionalseconds'  OPEN WS* commonExpr WS* CLOSE;
+totalsecondsMethodCallExpr        : 'totalseconds'       OPEN WS* commonExpr WS* CLOSE;
+dateMethodCallExpr                : 'date'               OPEN WS* commonExpr WS* CLOSE;
+timeMethodCallExpr                : 'time'               OPEN WS* commonExpr WS* CLOSE;
+totalOffsetMinutesMethodCallExpr  : 'totaloffsetminutes' OPEN WS* commonExpr WS* CLOSE;
+
+minDateTimeMethodCallExpr         : 'mindatetime' OPEN WS* CLOSE;
+maxDateTimeMethodCallExpr         : 'maxdatetime' OPEN WS* CLOSE;
+nowMethodCallExpr                 : 'now' OPEN WS* CLOSE;
+
+roundMethodCallExpr               : 'round'   OPEN WS* commonExpr WS* CLOSE;
+floorMethodCallExpr               : 'floor'   OPEN WS* commonExpr WS* CLOSE;
+ceilingMethodCallExpr             : 'ceiling' OPEN WS* commonExpr WS* CLOSE;
+
+distanceMethodCallExpr            : 'geo.distance'   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+geoLengthMethodCallExpr           : 'geo.length'     OPEN WS* commonExpr WS* CLOSE;
+intersectsMethodCallExpr          : 'geo.intersects' OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+
+isofExpr                          : 'isof' OPEN  WS*  commonExpr WS* COMMA WS*  qualifiedtypename WS* CLOSE;
+castExpr                          : 'cast' OPEN WS*  ( commonExpr WS* COMMA WS* ) qualifiedtypename WS* CLOSE;
+
+//;------------------------------------------------------------------------------
+//; 5. JSON format for function parameters
+//;------------------------------------------------------------------------------
+//; Note: the query part of a URI needs to be partially percent-decoded before
+//; applying these rules, see comment at the top of this file
+//;------------------------------------------------------------------------------
+
+arrayOrObject       : complexColInUri  
+                    | complexInUri
+                    | rootExprCol
+                    | primitiveColInUri;
+               
+complexColInUri     : BEGIN_ARRAY 
+                      ( complexInUri ( VALUE_SEPARATOR complexInUri )* )?
+                      END_ARRAY;
+                  
+complexInUri        : BEGIN_OBJECT ( jv+=json_value ( VALUE_SEPARATOR jv+=json_value)* )? END_OBJECT;
+
+json_value          : annotationInUri 
+                    | primitivePropertyInUri 
+                    | complexPropertyInUri 
+                    | collectionPropertyInUri  
+                    | navigationPropertyInUri
+                    ;
+
+collectionPropertyInUri : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK
+                          NAME_SEPARATOR 
+                          ( primitiveColInUri | complexColInUri )
                         ;
 
+primitiveColInUri       : BEGIN_ARRAY ( plj+=primitiveLiteralInJSON *( VALUE_SEPARATOR plj+=primitiveLiteralInJSON )  )? END_ARRAY
+                        ;
+                    
+complexPropertyInUri    : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK 
+                          NAME_SEPARATOR 
+                           complexInUri
+                        ;
 
-containsMethodCallExpr   : 'contains'   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-startsWithMethodCallExpr : 'startswith' OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-endsWithMethodCallExpr   : 'endswith'   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-lengthMethodCallExpr     : 'length'     OPEN WS* commonExpr WS* CLOSE;
-indexOfMethodCallExpr    : 'indexof'    OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-substringMethodCallExpr  : 'substring'  OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* ) CLOSE;
-toLowerMethodCallExpr    : 'tolower'    OPEN WS* commonExpr WS* CLOSE;
-toUpperMethodCallExpr    : 'toupper'    OPEN WS* commonExpr WS* CLOSE;
-trimMethodCallExpr       : 'trim'       OPEN WS* commonExpr WS* CLOSE;
-concatMethodCallExpr     : 'concat'     OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+annotationInUri         : QUOTATION_MARK ns=namespace* odi=odataIdentifier QUOTATION_MARK
+                          NAME_SEPARATOR
+                          ( complexInUri | complexColInUri | primitiveLiteralInJSON | primitiveColInUri );
 
-yearMethodCallExpr               : 'year'               OPEN WS* commonExpr WS* CLOSE;
-monthMethodCallExpr              : 'month'              OPEN WS* commonExpr WS* CLOSE;
-dayMethodCallExpr                : 'day'                OPEN WS* commonExpr WS* CLOSE;
-hourMethodCallExpr               : 'hour'               OPEN WS* commonExpr WS* CLOSE;
-minuteMethodCallExpr             : 'minute'             OPEN WS* commonExpr WS* CLOSE;
-secondMethodCallExpr             : 'second'             OPEN WS* commonExpr WS* CLOSE;
-fractionalsecondsMethodCallExpr  : 'fractionalseconds'  OPEN WS* commonExpr WS* CLOSE;
-totalsecondsMethodCallExpr       : 'totalseconds'       OPEN WS* commonExpr WS* CLOSE;
-dateMethodCallExpr               : 'date'               OPEN WS* commonExpr WS* CLOSE;
-timeMethodCallExpr               : 'time'               OPEN WS* commonExpr WS* CLOSE;
-totalOffsetMinutesMethodCallExpr : 'totaloffsetminutes' OPEN WS* commonExpr WS* CLOSE;
+primitivePropertyInUri  : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK 
+                          NAME_SEPARATOR 
+                          primitiveLiteralInJSON;
 
-minDateTimeMethodCallExpr : 'mindatetime' OPEN WS* CLOSE;
-maxDateTimeMethodCallExpr : 'maxdatetime' OPEN WS* CLOSE;
-nowMethodCallExpr         : 'now' OPEN WS* CLOSE;
 
-roundMethodCallExpr   : 'round'   OPEN WS* commonExpr WS* CLOSE;
-floorMethodCallExpr   : 'floor'   OPEN WS* commonExpr WS* CLOSE;
-ceilingMethodCallExpr : 'ceiling' OPEN WS* commonExpr WS* CLOSE;
+navigationPropertyInUri : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK
+                          NAME_SEPARATOR ( rootExpr | rootExprCol )
+                        ;
 
-distanceMethodCallExpr   : 'geo.distance'   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-geoLengthMethodCallExpr  : 'geo.length'     OPEN WS* commonExpr WS* CLOSE;
-intersectsMethodCallExpr : 'geo.intersects' OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+rootExprCol   : BEGIN_ARRAY 
+                ( rootExpr *( VALUE_SEPARATOR rootExpr ) )?
+                END_ARRAY
+              ;
+                                        
+//; JSON syntax: adapted to URI restrictions from [RFC4627]                 
+BEGIN_OBJECT    : WS* ( '{' / '%7B' ) WS*;
+END_OBJECT      : WS* ( '}' / '%7D' ) WS*;
 
-isofExpr            : 'isof' OPEN  WS*  commonExpr WS* COMMA WS*  qualifiedtypename WS* CLOSE;
-castExpr            : 'cast' OPEN WS*  ( commonExpr WS* COMMA WS* ) qualifiedtypename WS* CLOSE;
+BEGIN_ARRAY     : WS* ( '[' / '%5B' ) WS*;
+END_ARRAY       : WS* ( ']' / '%5D' ) WS*;
+
+NAME_SEPARATOR  : WS* COLON WS*;
+VALUE_SEPARATOR : WS* COMMA WS*;
+
+primitiveLiteralInJSON  : STRING_IN_JSON
+                        | number_in_json
+                        | TRUE
+                        | FALSE
+                        | 'null'
+                        ;
+
+number_in_json          : INT | DECIMAL;
+
 //;------------------------------------------------------------------------------
 //; 6. Names and identifiers
 //;------------------------------------------------------------------------------
-POINT : '.';
+POINT                   : '.';
 
 qualifiedtypename       : PRIMITIVETYPENAME
                         | namespace odataIdentifier
-                        | 'collection' OPEN 
-                          ( PRIMITIVETYPENAME 
-                            | namespace odataIdentifier
-                          ) CLOSE
+                        | 'collection' OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
                         ;
 
 namespace               : (odataIdentifier POINT)+;
 
-odataIdentifier     : ODATAIDENTIFIER;
+odataIdentifier         : ODATAIDENTIFIER;
+
 //;------------------------------------------------------------------------------
 //; 7. Literal Data Values
 //;------------------------------------------------------------------------------
 
+
 /*TODO add missing values*/
 primitiveLiteral    : nullrule
-                    | BOOLEAN 
-                    | DECIMAL  
-                    | INT  
+                    | booleanNonCase
+                    | DECIMAL   //includes double and single literals
+                    | INT       //includes int16/int32 and int64 literals
                     | BINARY  
                     | DATE
                     | DATETIMEOFFSET
-                    //|duration
+                    | DURATION
                     | string
                     | TIMEOFDAY
-                    // enum
+                    | enumX
                     | parameterAlias
                     ;
 
 
 nullrule            : NULLVALUE;// (SQUOTE qualifiedtypename SQUOTE)?;
+booleanNonCase      : BOOLEAN | TRUE | FALSE;
 string              : STRING;
-/*TODO
-enum                : qualifiedEnumTypeName SQUOTE enumValue SQUOTE
-enumValue           : singleEnumValue *( COMMA singleEnumValue )
-singleEnumValue     : enumerationMember / int64Value
-*/
+
+
+enumX               : namespace* ODATAIDENTIFIER SQUOTE enumValue SQUOTE;
+enumValue           : singleEnumValue *( COMMA singleEnumValue );
+singleEnumValue     : ODATAIDENTIFIER / INT;

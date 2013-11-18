@@ -25,22 +25,13 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.producer.core.uri.antlr.UriLexer;
 import org.apache.olingo.producer.core.uri.antlr.UriParser;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.OdataRelativeUriAContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParser.OdataRelativeUriContext;
 
-public class UriTreeReader {
-
-//  //@Test
-//  public void Test() {
-//    String uri = "EntityColFunctionImport(ParameterName1=1)(1)/Namespace1.EntityTypeName/EntityFunctionImport()/"
-//        + "Namespace1.EntityTypeName?$expand=ComplexColProperty/Namespace1.ComplexTypeName/EntityNavigationProperty"
-//        + "&$filter=Namespace1.EntityTypeName/Namespace1.EntityFunction() eq 1 and true";
-//    //String uri = "$entity?$id=1";
-//    readUri(uri);
-//  }
+public class UriParserImpl {
 
   public UriInfoImpl readUri(final String uri, final Edm edm) {
     UriInfoImpl ret = new UriInfoImpl();
-    OdataRelativeUriAContext root = parseUri(uri);
+    OdataRelativeUriContext root = parseUri(uri);
 
     root.accept(new UriTreeVisitor(ret, edm));
 
@@ -79,7 +70,7 @@ public class UriTreeReader {
     return ret;
   }
 
-  private OdataRelativeUriAContext parseUri(final String uri) {
+  private OdataRelativeUriContext parseUri(final String uri) {
 
     ANTLRInputStream input = new ANTLRInputStream(uri);
 
@@ -88,8 +79,7 @@ public class UriTreeReader {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     UriParser parser = new UriParser(tokens);
 
-    parser.addErrorListener(new ErrorHandler());
-
+    //parser.addErrorListener(new ErrorHandler());
     // if (stage == 1) {
     // //see https://github.com/antlr/antlr4/issues/192
     // parser.setErrorHandler(new BailErrorStrategy());
@@ -100,6 +90,6 @@ public class UriTreeReader {
     // }
 
     // parser.d
-    return parser.odataRelativeUriA();
+    return parser.odataRelativeUri();
   }
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.producer.api.uri.UriInfo;
 
 public class UriInfoImpl extends UriInfo {
   private Edm edm = null;
