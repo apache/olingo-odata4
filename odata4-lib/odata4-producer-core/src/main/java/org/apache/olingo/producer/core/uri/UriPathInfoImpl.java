@@ -18,80 +18,56 @@
  ******************************************************************************/
 package org.apache.olingo.producer.core.uri;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.EdmTyped;
-import org.apache.olingo.producer.api.uri.KeyPredicate;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.producer.api.uri.UriPathInfo;
 //import org.apache.olingo.api.commons.InlineCount;
 //import org.apache.olingo.api.uri.NavigationPropertySegment;
 //import org.apache.olingo.api.uri.NavigationSegment;
 //import org.apache.olingo.api.uri.SelectItem;
 //import org.apache.olingo.api.uri.expression.FilterExpression;
 //import org.apache.olingo.api.uri.expression.OrderByExpression;
+import org.apache.olingo.producer.api.uri.UriPathInfoKind;
 
 /**
  *  
  */
-public class UriPathInfoImpl {
+public class UriPathInfoImpl implements UriPathInfo {
+  private UriPathInfoKind kind;
+  private EdmEntityContainer entityContainer;
+  private boolean isCollection;
+  private EdmEntityType targetType;
 
-  public enum PathInfoType {
-    /* only first */
-    entitySet,
-    singleton,
-    actionImport,
-    functioncall,
-    /* not first */
-    boundFunctioncall,
-    boundActionImport,
-    navicationProperty
-    /* complexTypeFilter */// may be future
+  public EdmEntityContainer getEntityContainer() {
+    return entityContainer;
   }
 
-  public static class PropertyItem {
-    EdmTyped property;
-    EdmType typeFilter;
-
-    public PropertyItem(final EdmTyped property) {
-      this.property = property;
-    }
+  public void setEntityContainer(EdmEntityContainer entityContainer) {
+    this.entityContainer = entityContainer;
   }
 
-  public static class ActualFunctionParameter {
-    String name;
-    String value;
-
-    public ActualFunctionParameter(final String name, final String value) {
-      this.name = name;
-      this.value = value;
-    }
+  public UriPathInfoKind getKind() {
+    return kind;
   }
 
-  public boolean isCollection;
-  public PathInfoType type;
-
-  public EdmEntityContainer entityContainer;
-
-  public EdmType targetType;
-  public EdmEntitySet targetEntityset;
-
-  public EdmType typeBeforeKeyPredicates;
-  public List<KeyPredicate> keyPredicates = null;
-  public EdmType typeAfterKeyPredicates;
-
-  public List<ActualFunctionParameter> functionParameter = new ArrayList<ActualFunctionParameter>();
-
-  public List<PropertyItem> properties = new ArrayList<PropertyItem>();
-
-  public PathInfoType getType() {
-    return type;
+  public void setKind(UriPathInfoKind kind) {
+    this.kind = kind;
   }
 
-  public void setType(final PathInfoType type) {
-    this.type = type;
+  public boolean isCollection() {
+    return isCollection;
   }
 
+  public void setCollection(boolean isCollection) {
+    this.isCollection = isCollection;
+  }
+
+
+  public EdmEntityType getTargetType() {
+    return targetType;
+  }
+  
+  public void setTargetType(EdmEntityType targetType) {
+    this.targetType = targetType;
+  }
 }

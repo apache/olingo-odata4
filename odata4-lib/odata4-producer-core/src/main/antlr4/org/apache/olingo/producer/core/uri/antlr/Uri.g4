@@ -31,6 +31,12 @@ options {
 
 import UriLexerPart; //contain Lexer rules
 
+
+test        : test_expr;
+test_expr   : test_expr '*' test_expr
+            | test_expr '+' test_expr
+            | INT;
+
 //;------------------------------------------------------------------------------
 //; 0. URI
 //;------------------------------------------------------------------------------
@@ -44,8 +50,8 @@ import UriLexerPart; //contain Lexer rules
 
 
 odataRelativeUriEOF : odataRelativeUri? EOF;
-odataRelativeUri    : '$batch'                                                  # batchAlt
-                    | '$entity' '?' entityOptions                               # entityAlt
+odataRelativeUri    : '$batch'                                                    # batchAlt
+                    | '$entity' '?' eo=entityOptions                            # entityAlt
                     | '$metadata' ( '?' format )? ( FRAGMENT contextFragment )? # metadataAlt
                     | resourcePath ( '?' queryOptions )?                        # resourcePathAlt
                     ;
@@ -62,20 +68,13 @@ crossjoin           : '$crossjoin' OPEN odi+=odataIdentifier ( COMMA odi+=odataI
 
 pathSegments        : ps+=pathSegment ('/' ps+=pathSegment)* constSegment?;
 
-pathSegment         : ns=namespace* odi=odataIdentifier fp=functionParameters? kp=keypredicates?;
+pathSegment         : ns=namespace? odi=odataIdentifier nvl=nameValueOptList*;
 
-functionParameters  : OPEN ( fps+=functionParameter ( COMMA fps+=functionParameter )* )? CLOSE;
-functionParameter   : odi=parameterName EQ ( ali=parameterAlias | val=primitiveLiteral );
-parameterName       : odataIdentifier;
-parameterAlias      : AT_ODATAIDENTIFIER;      
+nameValueOptList    : vo=valueOnly | nvl=nameValueList;
+valueOnly           : OPEN (primitiveLiteral /*| enumX*/) CLOSE;
+nameValueList       : OPEN kvp+=nameValuePair ( COMMA kvp+=nameValuePair )* CLOSE;
+nameValuePair       : odi=odataIdentifier EQ (AT ali=odataIdentifier |  val1=primitiveLiteral /*| val2=enumX*/);
 
-keypredicates       : sk=simpleKey | ck=compoundKey;
-simpleKey           : OPEN keyPropertyValue CLOSE;
-compoundKey         : OPEN kvp+=keyValuePair ( COMMA kvp+=keyValuePair )* CLOSE;
-keyValuePair        : odi=odataIdentifier EQ val=keyPropertyValue;
-keyPropertyValue    : primitiveLiteral;
-
-               
 constSegment        : '/' (v=VALUE | c=COUNT | r=REF );
 
 //;------------------------------------------------------------------------------
@@ -114,7 +113,7 @@ expandItemList      : expandItem ( COMMA expandItem )*;
 expandItem          : STAR ( '/' REF | OPEN LEVELS CLOSE )?
                     | expandPath expandPathExtension?;
 
-expandPath          : ( namespace* odataIdentifier ) ( '/' namespace* odataIdentifier )*;
+expandPath          : ( namespace? odataIdentifier ) ( '/' namespace? odataIdentifier )*;
 expandPathExtension : '/' REF   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
                     | '/' COUNT ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
                     |             OPEN expandOption      ( SEMI expandOption      )* CLOSE 
@@ -163,11 +162,11 @@ searchPhrase        : SEARCHPHRASE;
 searchWord          : SEARCHWORD;  
 
 select              : '$select' EQ selectItem ( COMMA selectItem )*;
-selectItem          : namespace* '*'
-                    | (namespace* odataIdentifier functionParameters? ) ( '/' namespace* odataIdentifier functionParameters? )*
+selectItem          : namespace? '*'
+                    | (namespace? odataIdentifier nameValueOptList? ) ( '/' namespace? odataIdentifier nameValueOptList? )*
                     ;
 
-aliasAndValue       : parameterAlias EQ parameterValue;
+aliasAndValue       : AT odataIdentifier EQ parameterValue;
 parameterValue      : arrayOrObject
                       commonExpr
                     ;
@@ -188,11 +187,11 @@ contextFragment     : 'Collection($ref)'
                     | 'Collection(Edm.ComplexType)'
                     | PRIMITIVETYPENAME
                     | 'collection' OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
-                    | namespace* odataIdentifier 
+                    | namespace? odataIdentifier 
                       ( '/$deletedEntity'
                       | '/$link'
                       | '/$deletedLink'
-                      | keypredicates? ( '/' namespace* odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
+                      | nameValueOptList? ( '/' namespace? odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
                       )?
                     ;              
 
@@ -224,11 +223,11 @@ commonExpr          : OPEN commonExpr CLOSE
                     | commonExpr WS+ ('and') WS+ commonExpr 
                     | commonExpr WS+ ('or') WS+ commonExpr 
                     | rootExpr                          //; $...
-                    | parameterAlias                    //; @...
+                    //| AT odataIdentifier                //; @...
                     | primitiveLiteral                  //; ...
                     ;
 
-unary : ('-'|'not') ;
+unary               : ('-'|'not') ;
 
 rootExpr            : '$root/' pathSegments;
 
@@ -278,7 +277,7 @@ startsWithMethodCallExpr  : STARTSWITH OPEN WS* commonExpr WS* COMMA WS* commonE
 endsWithMethodCallExpr    : ENDSWITH   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
 lengthMethodCallExpr      : LENGTH     OPEN WS* commonExpr WS* CLOSE;
 indexOfMethodCallExpr     : INDEXOF    OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-substringMethodCallExpr   : SUBSTRING  OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* ) CLOSE;
+substringMethodCallExpr   : SUBSTRING  OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* )? CLOSE;
 toLowerMethodCallExpr     : TOLOWER    OPEN WS* commonExpr WS* CLOSE;
 toUpperMethodCallExpr     : TOUPPER    OPEN WS* commonExpr WS* CLOSE;
 trimMethodCallExpr        : TRIM       OPEN WS* commonExpr WS* CLOSE;
@@ -308,8 +307,8 @@ distanceMethodCallExpr            : 'geo.distance'   OPEN WS* commonExpr WS* COM
 geoLengthMethodCallExpr           : 'geo.length'     OPEN WS* commonExpr WS* CLOSE;
 intersectsMethodCallExpr          : 'geo.intersects' OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
 
-isofExpr                          : 'isof' OPEN  WS*  commonExpr WS* COMMA WS*  qualifiedtypename WS* CLOSE;
-castExpr                          : 'cast' OPEN WS*  ( commonExpr WS* COMMA WS* ) qualifiedtypename WS* CLOSE;
+isofExpr                          : 'isof' OPEN WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
+castExpr                          : 'cast' OPEN WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
 
 //;------------------------------------------------------------------------------
 //; 5. JSON format for function parameters
@@ -324,10 +323,10 @@ arrayOrObject       : complexColInUri
                     | primitiveColInUri;
                
 complexColInUri     : BEGIN_ARRAY 
-                      ( complexInUri ( VALUE_SEPARATOR complexInUri )* )?
+                      ( complexInUri ( WS* COMMA WS* complexInUri )* )?
                       END_ARRAY;
                   
-complexInUri        : BEGIN_OBJECT ( jv+=json_value ( VALUE_SEPARATOR jv+=json_value)* )? END_OBJECT;
+complexInUri        : BEGIN_OBJECT ( jv+=json_value ( WS* COMMA WS* jv+=json_value)* )? END_OBJECT;
 
 json_value          : annotationInUri 
                     | primitivePropertyInUri 
@@ -336,48 +335,39 @@ json_value          : annotationInUri
                     | navigationPropertyInUri
                     ;
 
-collectionPropertyInUri : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK
+collectionPropertyInUri : QUOTATION_MARK odataIdentifier QUOTATION_MARK
                           NAME_SEPARATOR 
                           ( primitiveColInUri | complexColInUri )
                         ;
 
-primitiveColInUri       : BEGIN_ARRAY ( plj+=primitiveLiteralInJSON *( VALUE_SEPARATOR plj+=primitiveLiteralInJSON )  )? END_ARRAY
+primitiveColInUri       : BEGIN_ARRAY ( plj+=primitive1LiteralInJSON *( WS* COMMA WS* plj+=primitive1LiteralInJSON )  )? END_ARRAY
                         ;
                     
-complexPropertyInUri    : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK 
+complexPropertyInUri    : QUOTATION_MARK odataIdentifier QUOTATION_MARK 
                           NAME_SEPARATOR 
                            complexInUri
                         ;
 
-annotationInUri         : QUOTATION_MARK ns=namespace* odi=odataIdentifier QUOTATION_MARK
+annotationInUri         : QUOTATION_MARK ns=namespace? odi=odataIdentifier QUOTATION_MARK
                           NAME_SEPARATOR
-                          ( complexInUri | complexColInUri | primitiveLiteralInJSON | primitiveColInUri );
+                          ( complexInUri | complexColInUri | primitive1LiteralInJSON | primitiveColInUri );
 
-primitivePropertyInUri  : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK 
+primitivePropertyInUri  : QUOTATION_MARK odataIdentifier QUOTATION_MARK 
                           NAME_SEPARATOR 
-                          primitiveLiteralInJSON;
+                          primitive1LiteralInJSON;
 
 
-navigationPropertyInUri : QUOTATION_MARK ODATAIDENTIFIER QUOTATION_MARK
+navigationPropertyInUri : QUOTATION_MARK odataIdentifier QUOTATION_MARK
                           NAME_SEPARATOR ( rootExpr | rootExprCol )
                         ;
 
 rootExprCol   : BEGIN_ARRAY 
-                ( rootExpr *( VALUE_SEPARATOR rootExpr ) )?
+                ( rootExpr *( WS* COMMA WS* rootExpr ) )?
                 END_ARRAY
               ;
                                         
 //; JSON syntax: adapted to URI restrictions from [RFC4627]                 
-BEGIN_OBJECT    : WS* ( '{' / '%7B' ) WS*;
-END_OBJECT      : WS* ( '}' / '%7D' ) WS*;
-
-BEGIN_ARRAY     : WS* ( '[' / '%5B' ) WS*;
-END_ARRAY       : WS* ( ']' / '%5D' ) WS*;
-
-NAME_SEPARATOR  : WS* COLON WS*;
-VALUE_SEPARATOR : WS* COMMA WS*;
-
-primitiveLiteralInJSON  : STRING_IN_JSON
+primitive1LiteralInJSON  : STRING_IN_JSON
                         | number_in_json
                         | TRUE
                         | FALSE
@@ -414,10 +404,24 @@ primitiveLiteral    : nullrule
                     | DATE
                     | DATETIMEOFFSET
                     | DURATION
+                    | GUID
                     | string
                     | TIMEOFDAY
+                    | geographyCollection
+                    | geographyLineString
+                    | geographyMultilineString
+                    | geographyMultipoint
+                    | geographyMultipolygon
+                    | geographyPoint
+                    | geographyPolygon
+                    | geometryCollection
+                    | geometryLineString
+                    | geometryMultilineString
+                    | geometryMultipoint
+                    | geometryMultipolygon
+                    | geometryPoint
+                    | geometryPolygon
                     | enumX
-                    | parameterAlias
                     ;
 
 
@@ -426,6 +430,61 @@ booleanNonCase      : BOOLEAN | TRUE | FALSE;
 string              : STRING;
 
 
-enumX               : namespace* ODATAIDENTIFIER SQUOTE enumValue SQUOTE;
+enumX               : namespace odataIdentifier STRING /*SQUOTE enumValue SQUOTE*/;
 enumValue           : singleEnumValue *( COMMA singleEnumValue );
-singleEnumValue     : ODATAIDENTIFIER / INT;
+singleEnumValue     : odataIdentifier / INT;
+
+
+geographyCollection        : GEOGRAPHYPREFIX  fullCollectionLiteral SQUOTE;
+fullCollectionLiteral      : sridLiteral collectionLiteral;
+collectionLiteral          : COLLECTION_CS OPEN geoLiteral ( COMMA geoLiteral )* CLOSE;
+geoLiteral                 : collectionLiteral
+                           | lineStringLiteral
+                           | multipointLiteral
+                           | multilineStringLiteral
+                           | multipolygonLiteral
+                           | pointLiteral
+                           | polygonLiteral;
+
+geographyLineString        : GEOGRAPHYPREFIX  fullLineStringLiteral SQUOTE;
+fullLineStringLiteral      : sridLiteral lineStringLiteral;
+lineStringLiteral          : LINESTRING_CS lineStringData;
+lineStringData             : OPEN positionLiteral ( COMMA positionLiteral )* CLOSE;
+
+geographyMultilineString   : GEOGRAPHYPREFIX  fullMultilineStringLiteral SQUOTE;
+fullMultilineStringLiteral : sridLiteral multilineStringLiteral;
+multilineStringLiteral     : MULTILINESTRING_CS OPEN ( lineStringData ( COMMA lineStringData )* )? CLOSE;
+
+geographyMultipoint        : GEOGRAPHYPREFIX  fullMultipointLiteral SQUOTE;
+fullMultipointLiteral      : sridLiteral multipointLiteral;
+multipointLiteral          : MULTIPOINT_CS OPEN ( pointData ( COMMA pointData )* )? CLOSE ;
+
+geographyMultipolygon      : GEOGRAPHYPREFIX  fullmultipolygonLiteral SQUOTE;
+fullmultipolygonLiteral    : sridLiteral multipolygonLiteral;
+multipolygonLiteral        : MULTIPOLYGON_CS OPEN ( polygonData ( COMMA polygonData )* )? CLOSE;
+
+geographyPoint             : GEOGRAPHYPREFIX  fullpointLiteral SQUOTE;
+fullpointLiteral           : sridLiteral pointLiteral;
+
+pointLiteral               : POINT_CS pointData;
+pointData                  : OPEN positionLiteral CLOSE;
+positionLiteral            : (DECIMAL | INT ) WS (DECIMAL | INT );  //; longitude, then latitude
+
+geographyPolygon           : GEOGRAPHYPREFIX fullPolygonLiteral SQUOTE;
+fullPolygonLiteral         : sridLiteral polygonLiteral;
+polygonLiteral             : POLYGON_CS polygonData;
+polygonData                : OPEN ringLiteral ( COMMA ringLiteral )* CLOSE;
+ringLiteral                : OPEN positionLiteral ( COMMA positionLiteral )* CLOSE;
+                 
+
+geometryCollection        : GEOMETRYPREFIX  fullCollectionLiteral      SQUOTE;
+geometryLineString        : GEOMETRYPREFIX  fullLineStringLiteral      SQUOTE;
+geometryMultilineString   : GEOMETRYPREFIX  fullMultilineStringLiteral SQUOTE;
+geometryMultipoint        : GEOMETRYPREFIX  fullMultipointLiteral      SQUOTE;
+geometryMultipolygon      : GEOMETRYPREFIX  fullmultipolygonLiteral    SQUOTE;
+geometryPoint             : GEOMETRYPREFIX  fullpointLiteral           SQUOTE;
+geometryPolygon           : GEOMETRYPREFIX  fullPolygonLiteral         SQUOTE;
+
+sridLiteral               : SRID_CS EQ INT SEMI;
+
+

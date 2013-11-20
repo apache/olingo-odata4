@@ -19,6 +19,12 @@
 
 package org.apache.olingo.producer.api.uri;
 
-public interface UriInfo {
-  public UriInfoKind getKind();
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+
+public interface UriPathInfo {
+  public UriPathInfoKind getKind();
+
+  public EdmEntityContainer getEntityContainer();
+
+  public boolean isCollection();
 }

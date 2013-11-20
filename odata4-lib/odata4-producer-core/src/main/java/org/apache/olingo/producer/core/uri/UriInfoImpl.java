@@ -21,10 +21,29 @@ package org.apache.olingo.producer.core.uri;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.producer.api.uri.UriInfo;
+import org.apache.olingo.producer.api.uri.UriInfoBatch;
+import org.apache.olingo.producer.api.uri.UriInfoKind;
+import org.apache.olingo.producer.api.uri.UriPathInfo;
 
-public class UriInfoImpl extends UriInfo {
+public class UriInfoImpl implements UriInfo, UriInfoBatch {
+  private UriInfoKind kind;
+  private List<UriPathInfo> uriPathInfos = new ArrayList<UriPathInfo>();
+
+  public UriInfoKind getKind() {
+    return kind;
+  }
+
+  public UriInfoImpl setKind(UriInfoKind kind) {
+    this.kind = kind;
+    return this;
+  }
+
+  public void addUriPathInfo(UriPathInfo uriPathInfo) {
+    uriPathInfos.add(uriPathInfo);
+  }
+  
+  /*
   private Edm edm = null;
   private List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
 
@@ -42,6 +61,6 @@ public class UriInfoImpl extends UriInfo {
     } else {
       return null;
     }
-  }
+  }*/
 
 }

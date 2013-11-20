@@ -157,7 +157,6 @@
 								<exclude>.git/**</exclude>
 								<exclude>bin/**</exclude>
 								<exclude>**/*.local</exclude>
-								<exclude>**/.gitignore</exclude>
 								<exclude>**/*.project</exclude>
 								<exclude>**/*.classpath</exclude>
 								<exclude>**/*.json</exclude>

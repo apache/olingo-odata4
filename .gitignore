@@ -7,3 +7,4 @@ bin
 *.bak
 classes
 .DS_Store
+*.local

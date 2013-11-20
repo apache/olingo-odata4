@@ -17,8 +17,33 @@
  * under the License.
  ******************************************************************************/
 
-package org.apache.olingo.producer.api.uri;
+package org.apache.olingo.producer.core.uri;
 
-public interface UriInfo {
-  public UriInfoKind getKind();
+import java.util.List;
+
+import org.apache.olingo.producer.api.uri.KeyPredicate;
+
+public class UriPathInfoImplFunctionImport extends UriPathInfoImpl {
+
+  //TODO change to proper Type
+  private Object functionParameter;
+  private List<KeyPredicate> keyPredicates;
+
+  public Object getFunctionParameter() {
+    return functionParameter;
+  }
+
+  public void setFunctionParameter(Object functionParameter) {
+    this.functionParameter = functionParameter;
+  }
+  
+  public List<KeyPredicate> getKeyPredicates() {
+    return keyPredicates;
+  }
+
+  public void setKeyPredicates(List<KeyPredicate> keyPredicates) {
+    this.keyPredicates = keyPredicates;
+  }
+
+
 }

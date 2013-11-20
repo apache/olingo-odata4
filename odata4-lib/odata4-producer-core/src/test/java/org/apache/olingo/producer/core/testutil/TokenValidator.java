@@ -36,35 +36,69 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.apache.olingo.producer.core.uri.antlr.UriLexer;
 
 public class TokenValidator {
-  List<? extends Token> tokens = null;
-  List<Exception> exceptions = new ArrayList<Exception>();
-  Token curToken = null;
-  Exception curException = null;
-  String input = null;
+  private List<? extends Token> tokens = null;
+  private List<Exception> exceptions = new ArrayList<Exception>();
+  private Token curToken = null;
+  private Exception curException = null;
+  private String input = null;
+  int logLevel = 0;
 
-  public TokenValidator run(String uri ) {
-    return run( uri,false);
+  public TokenValidator run(String uri) {
+    return run(uri, false);
   }
+
   public TokenValidator run(String uri, boolean searchMode) {
     input = uri;
     exceptions.clear();
-    tokens = parseInput(uri,searchMode);
+    tokens = parseInput(uri, searchMode);
+    if (logLevel > 0) {
+      showTokens();
+    }
+
     first();
     exFirst();
     return this;
   }
 
-  
+  public TokenValidator showTokens() {
+    boolean first = true;
+    System.out.println("input: " + input);
+    String nL = "\n";
+    String out = "[" + nL;
+    for (Token token : tokens) {
+      if (!first) {
+        out += ",";
+        first = false;
+      }
+      int index = token.getType();
+      if (index != -1) {
+        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
+      } else {
+        out += "\"" + token.getText() + "\"" + "     " + index + nL;
+      }
+    }
+    out += ']';
+    System.out.println("tokens: " + out);
+    return this;
+  }
+
+  public TokenValidator log(int logLevel) {
+    this.logLevel = logLevel;
+    return this;
+  }
+
   public TokenValidator isText(String expected) {
     assertEquals(expected, curToken.getText());
     return this;
   }
-  public TokenValidator isInput( ) {
+
+  public TokenValidator isInput() {
     assertEquals(input, curToken.getText());
     return this;
   }
 
   public TokenValidator isType(int expected) {
+    // assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
     assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
     return this;
   }
@@ -79,7 +113,7 @@ public class TokenValidator {
 
     UriLexer lexer = new UriLexer(inputStream);
     lexer.setInSearch(searchMode);
-    //lexer.removeErrorListeners();
+    // lexer.removeErrorListeners();
     lexer.addErrorListener(new ErrorCollector(this));
     return lexer.getAllTokens();
   }

@@ -37,8 +37,8 @@ public class TestLexer {
   // private static final String cQCHAR_NO_AMP_EQ = cUNRESERVED + cPCT_ENCODED + cOTHER_DELIMS + ":@/?$'";
   // private static final String cQCHAR_NO_AMP_EQ_AT_DOLLAR = cUNRESERVED + cPCT_ENCODED + cOTHER_DELIMS + ":/?'";
 
-  private static final String cPCTENCODEDnoSQUOTE = "%65%66%67";
-  //private static final String cPCHARnoSQUOTE = cUNRESERVED + cPCTENCODEDnoSQUOTE + cOTHER_DELIMS + "$&=:@";
+  // private static final String cPCTENCODEDnoSQUOTE = "%65%66%67";
+  // private static final String cPCHARnoSQUOTE = cUNRESERVED + cPCTENCODEDnoSQUOTE + cOTHER_DELIMS + "$&=:@";
 
   private static final String cPCHAR = cUNRESERVED + cPCT_ENCODED + cSUB_DELIMS + ":@";
 
@@ -56,9 +56,15 @@ public class TestLexer {
     test = new TokenValidator();
   }
 
+  
+   @Test
+  public void test() {
+     test.run("$batch");
+   }
   // ;------------------------------------------------------------------------------
   // ; 0. URI
   // ;------------------------------------------------------------------------------
+  
   @Test
   public void testUriTokens() {
     test.run("#").isText("#").isType(UriLexer.FRAGMENT);
@@ -191,6 +197,7 @@ public class TestLexer {
     test.run("Geometry").isInput().isType(UriLexer.PRIMITIVETYPENAME);
 
     String g = "Geography";
+    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
@@ -201,6 +208,7 @@ public class TestLexer {
     test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
 
     g = "Geometry";
+    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
@@ -209,6 +217,19 @@ public class TestLexer {
     test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
     test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+
+  }
+
+  @Test
+  public void testNameClaches() {
+   /* test.run("Collection").isInput().isType(UriLexer.COLLECTION_CS_FIX);
+    test.run("LineString").isInput().isType(UriLexer.LINESTRING_CS_FIX);
+    test.run("MultiLineString").isInput().isType(UriLexer.MULTILINESTRING_CS_FIX);
+    test.run("MultiPoint").isInput().isType(UriLexer.MULTIPOINT_CS_FIX);
+    test.run("MultiPolygon").isInput().isType(UriLexer.MULTIPOLYGON_CS_FIX);
+    test.run("Point").isInput().isType(UriLexer.POINT_CS_FIX);
+    test.run("Polygon").isInput().isType(UriLexer.POLYGON_CS_FIX);
+    test.run("Srid").isInput().isType(UriLexer.SRID_CS);*/
   }
 
   // ;------------------------------------------------------------------------------
@@ -261,6 +282,11 @@ public class TestLexer {
     test.run("-INF").isInput().isType(UriLexer.NANINFINITY);
     test.run("INF").isInput().isType(UriLexer.NANINFINITY);
 
+    // Lexer rule GUID
+
+    test.run("guid'1234ABCD-12AB-23CD-45EF-123456780ABC'").isInput().isType(UriLexer.GUID);
+    test.run("GuId'1234ABCD-12AB-23CD-45EF-123456780ABC'").isInput().isType(UriLexer.GUID);
+
     // Lexer rule DATE
     test.run("date'2013-11-15'").isInput().isType(UriLexer.DATE);
     test.run("DaTe'2013-11-15'").isInput().isType(UriLexer.DATE);
@@ -309,6 +335,14 @@ public class TestLexer {
     test.run("timeofday'20:00'").isInput().isType(UriLexer.TIMEOFDAY);
     test.run("timeofday'20:15:01'").isInput().isType(UriLexer.TIMEOFDAY);
     test.run("timeofday'20:15:01.02'").isInput().isType(UriLexer.TIMEOFDAY);
+
+    test.run("timeofday'20:15:01.02'").isInput().isType(UriLexer.TIMEOFDAY);
+    
+    //String
+    test.run("'ABC'").isInput().isType(UriLexer.STRING);
+    test.run("'A%20C'").isInput().isType(UriLexer.STRING);
+    test.run("'%20%20%20ABC'").isInput().isType(UriLexer.STRING);
+    
   }
 
   // ;------------------------------------------------------------------------------
@@ -328,12 +362,11 @@ public class TestLexer {
 
     // Test lexer rule ODATAIDENTIFIER
     test.run("abc").isInput().isType(UriLexer.ODATAIDENTIFIER);
-    test.run("@abc").isInput().isType(UriLexer.AT_ODATAIDENTIFIER);
 
     test.run("\"abc\"").isInput().isType(UriLexer.STRING_IN_JSON);
   }
 
-  @Test
+  //@Test
   public void testDelims() {
     String reserved = "/";
 

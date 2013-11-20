@@ -17,8 +17,8 @@
  * under the License.
  ******************************************************************************/
 
-package org.apache.olingo.producer.api.uri;
+package org.apache.olingo.producer.core.uri;
 
-public interface UriInfo {
-  public UriInfoKind getKind();
+public class UriPathInfoActionImportImpl extends UriPathInfoImpl {
+
 }

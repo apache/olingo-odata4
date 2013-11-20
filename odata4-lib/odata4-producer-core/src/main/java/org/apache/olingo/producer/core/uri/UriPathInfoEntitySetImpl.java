@@ -17,8 +17,35 @@
  * under the License.
  ******************************************************************************/
 
-package org.apache.olingo.producer.api.uri;
+package org.apache.olingo.producer.core.uri;
 
-public interface UriInfo {
-  public UriInfoKind getKind();
+import java.util.List;
+
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.producer.api.uri.KeyPredicate;
+
+public class UriPathInfoEntitySetImpl extends UriPathInfoImpl {
+
+  private EdmEntitySet targetEntityset;
+  
+  private List<KeyPredicate> keyPredicates;
+
+
+  public EdmEntitySet getTargetEntityset() {
+    return targetEntityset;
+  }
+
+  //TODO add to Interface UriPathInfoEntitySet
+  public void setTargetEntityset(EdmEntitySet targetEntityset) {
+    this.targetEntityset = targetEntityset;
+  }
+
+  public List<KeyPredicate> getKeyPredicates() {
+    return keyPredicates;
+  }
+
+  public void setKeyPredicates(List<KeyPredicate> keyPredicates) {
+    this.keyPredicates = keyPredicates;
+  }
+
 }

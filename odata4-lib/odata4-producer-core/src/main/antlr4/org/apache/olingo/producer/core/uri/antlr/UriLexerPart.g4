@@ -23,10 +23,13 @@
     boolean debug = false;
     private void out(String out) { if(debug) { System.out.println(out); } };
     
-    
     boolean        bInSearch = false;
     public boolean inSearch() { /*out("?SW?="+bInSearch);*/ return bInSearch; };
     public void    setInSearch(boolean value) { bInSearch=value; /*out("SW=set to "+ bInSearch);*/ };
+
+    boolean        bInGeo = false;
+    public boolean inGeo() { /*out("?Geo?="+bInGeo);*/ return bInGeo; };
+    public void    setInGeo(boolean value) { bInGeo=value; /*out("Geo=set to "+ bInGeo);*/ };
 
     //testing
     boolean        bInCustomOption = false;
@@ -113,6 +116,15 @@ fragment  QCHAR_JSON_SPECIAL  : SP | ':' | '{' | '}' | '[' | ']'; //; some agent
 
 fragment  ESCAPE              : '\\' | '%5C'; //; reverse solidus U+005C
 
+BEGIN_OBJECT    : WS* ( '{' / '%7B' ) WS*;
+END_OBJECT      : WS* ( '}' / '%7D' ) WS*;
+
+BEGIN_ARRAY     : WS* ( '[' / '%5B' ) WS*;
+END_ARRAY       : WS* ( ']' / '%5D' ) WS*;
+
+NAME_SEPARATOR  : WS* COLON WS*;
+//VALUE_SEPARATOR : WS* COMMA WS*;
+
 //;------------------------------------------------------------------------------
 //; 6. Names and identifiers
 //;------------------------------------------------------------------------------
@@ -139,21 +151,31 @@ PRIMITIVETYPENAME             : ('Edm.')?
                                   | 'Stream'
                                   | 'String'
                                   | 'TimeOfDay'
-                                  | ABSTRACTSPATIALTYPENAME ( CONCRETESPATIALTYPENAME )?
+                                  | (ABSTRACTSPATIALTYPENAME ) ( CONCRETESPATIALTYPENAME )?
                                 );
 
-fragment ABSTRACTSPATIALTYPENAME  : 'Geography'
-                                  | 'Geometry'
+fragment ABSTRACTSPATIALTYPENAME  : GEOGRAPHY_CS_FIX
+                                  | GEOMETRY_CS_FIX
                                   ;
 
-fragment CONCRETESPATIALTYPENAME  : 'Collection'
-                                  | 'LineString'
-                                  | 'MultiLineString'
-                                  | 'MultiPoint'
-                                  | 'MultiPolygon'
-                                  | 'Point'
-                                  | 'Polygon'
+fragment CONCRETESPATIALTYPENAME  : COLLECTION_CS_FIX
+                                  | LINESTRING_CS_FIX
+                                  | MULTILINESTRING_CS_FIX
+                                  | MULTIPOINT_CS_FIX
+                                  | MULTIPOLYGON_CS_FIX
+                                  | POINT_CS_FIX
+                                  | POLYGON_CS_FIX
                                   ;
+/*
+fragment COLLECTION_CS_FIX1       : 'Collection';
+fragment LINESTRING_CS_FIX1       : 'LineString';
+fragment MULTILINESTRING_CS_FIX1  : 'MultiLineString';
+fragment MULTIPOINT_CS_FIX1       : 'MultiPoint';
+fragment MULTIPOLYGON_CS_FIX1     : 'MultiPolygon';
+fragment POINT_CS_FIX1            : 'Point';
+fragment POLYGON_CS_FIX1          : 'Polygon';
+*/
+
 
 //;------------------------------------------------------------------------------
 //; 7. Literal Data Values
@@ -176,6 +198,15 @@ INT                       : SIGN? DIGITS;
 DECIMAL                   : INT '.' DIGITS ('e' SIGN?  DIGITS)?;
 
 NANINFINITY               : 'NaN' | '-INF' | 'INF';
+
+
+// --------------------- GUID ---------------------
+GUID                     : G U I D SQUOTE GUIDVALUE SQUOTE;
+fragment GUIDVALUE       : HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG'-' 
+                           HEXDIG HEXDIG HEXDIG HEXDIG  '-' 
+                           HEXDIG HEXDIG HEXDIG HEXDIG  '-' 
+                           HEXDIG HEXDIG HEXDIG HEXDIG  '-' 
+                           HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG HEXDIG;
 
 // --------------------- DATE ---------------------
 DATE                     : DATETOKEN SQUOTE DATETOKEN_VALUE SQUOTE;
@@ -234,13 +265,46 @@ fragment FRACTIONALSECONDS  : DIGIT+;
 fragment ZEROtoFIFTYNINE    : ('0'..'5') DIGIT;
 
 
+
+
+
+
+fragment COLLECTION_CS_FIX       : 'Collection';
+fragment LINESTRING_CS_FIX       : 'LineString';
+fragment MULTILINESTRING_CS_FIX  : 'MultiLineString';
+fragment MULTIPOINT_CS_FIX       : 'MultiPoint';
+fragment MULTIPOLYGON_CS_FIX     : 'MultiPolygon';
+fragment POINT_CS_FIX            : 'Point';
+fragment POLYGON_CS_FIX          : 'Polygon';
+
+COLLECTION_CS       : ( COLLECTION_CS_FIX | C O L L E C T I O N );
+LINESTRING_CS       : ( LINESTRING_CS_FIX | L I N E S T R I N G ) ;
+MULTILINESTRING_CS  : ( MULTILINESTRING_CS_FIX | M U L T I L I N E S T R I N G);
+MULTIPOINT_CS       : ( MULTIPOINT_CS_FIX | M U L T I P O I N T );
+MULTIPOLYGON_CS     : ( MULTIPOLYGON_CS_FIX | M U L T I P O L Y G O N);
+POINT_CS            : ( POINT_CS_FIX | P O I N T );
+POLYGON_CS          : ( POLYGON_CS_FIX | P O L Y G O N );
+
+
+SRID_CS             : S R I D;
+
+//fragment SQUOTE1    : ('\'' | '%27')-> mode(DEFAULT_MODE);
+
+
+
+GEOGRAPHYPREFIX  : (GEOGRAPHY_CS_FIX | G E O G R A P H Y) SQUOTE { setInGeo(true); } ;
+GEOMETRYPREFIX   : (GEOMETRY_CS_FIX | G E O M E T R Y) SQUOTE { setInGeo(true); } ;
+
+fragment GEOGRAPHY_CS_FIX : 'Geography';
+fragment GEOMETRY_CS_FIX  : 'Geometry';
 //;------------------------------------------------------------------------------
 //; 9. Punctuation
 //;------------------------------------------------------------------------------
 
 WS        : ( SP | HTAB | '%20' | '%09' );
 
-AT        : '@' | '%40';
+fragment AT_PURE   : '@';
+AT        : AT_PURE | '%40';
 COLON     : ':' | '%3A';
 COMMA     : ',' | '%2C';
 EQ        :  '=';
@@ -256,27 +320,27 @@ CLOSE     : ')' | '%29';
 //; A. URI syntax [RFC3986]
 //;------------------------------------------------------------------------------
 
-QM                          :  '?' -> channel(HIDDEN);
+QM                          :  '?';
 
-fragment PCHAR              : UNRESERVED | PCT_ENCODED | SUB_DELIMS | ':' | '@'; 
+fragment PCHAR              : UNRESERVED | PCT_ENCODED | SUB_DELIMS | ':' | AT_PURE; 
 
-fragment PCHARnoSQUOTE      : UNRESERVED| PCTENCODEDnoSQUOTE |  OTHER_DELIMS | '$' | '&' | EQ | ':' | '@';
+fragment PCHARnoSQUOTE      : UNRESERVED| PCTENCODEDnoSQUOTE |  OTHER_DELIMS | '$' | '&' | EQ | ':' | AT_PURE;
 
 fragment PCT_ENCODED        : '%' HEXDIG HEXDIG;
 fragment UNRESERVED         : ALPHA | DIGIT | '-' |'.' | '_' | '~'; 
-fragment SUB_DELIMS         : '$' | '&' | '\'' | '=' | OTHER_DELIMS;
-fragment OTHER_DELIMS       : '!' | '(' | ')' | '*' | '+' | ',' | ';';
+fragment SUB_DELIMS         : '$' | '&' | '\'' | EQ | OTHER_DELIMS;
+fragment OTHER_DELIMS       : '!' | '(' | ')' | '*' | '+' | COMMA | ';';
 
 
 fragment PCTENCODEDnoSQUOTE :  '%' ( '0'|'1'|'3'..'9' | AtoF ) HEXDIG
                             | '%' '2' ( '0'..'6'|'8'|'9' | AtoF )
                             ;
 
-fragment QCHAR_NO_AMP               : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | '@' | '/' | '?' | '$' | '\'' | EQ;
-fragment QCHAR_NO_AMP_EQ            : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | '@' | '/' | '?' | '$' | '\'';
+fragment QCHAR_NO_AMP               : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'' | EQ;
+fragment QCHAR_NO_AMP_EQ            : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'';
 fragment QCHAR_NO_AMP_EQ_AT_DOLLAR  : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' |       '/' | '?' |       '\'';
 
-fragment QCHAR_UNESCAPED            : UNRESERVED | PCT_ENCODED_UNESCAPED | OTHER_DELIMS | ':' | '@' | '/' | '?' | '$' | '\'' | EQ;
+fragment QCHAR_UNESCAPED            : UNRESERVED | PCT_ENCODED_UNESCAPED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'' | EQ;
 fragment PCT_ENCODED_UNESCAPED      : '%' ( '0' | '1' |   '3' | '4' |   '6' | '8' | '9' | 'A'..'F' ) HEXDIG 
                                     | '%' '2' ( '0' | '1' |   '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A'..'F' ) 
                                     | '%' '5' ( DIGIT | 'A' | 'B' |   'D' | 'E' | 'F' );
@@ -318,14 +382,18 @@ HTAB                  : '%09';
 
 fragment A  : 'a'|'A';
 fragment B  : 'b'|'B';
+fragment C  : 'c'|'C';
 fragment D  : 'd'|'D';
 fragment E  : 'e'|'E';
 fragment F  : 'f'|'F';
+fragment G  : 'g'|'G';
+fragment H  : 'h'|'H';
 fragment I  : 'i'|'I';
 fragment L  : 'l'|'L';
 fragment M  : 'm'|'M';
 fragment N  : 'n'|'N';
 fragment O  : 'o'|'O';
+fragment P  : 'p'|'P';
 fragment R  : 'r'|'R';
 fragment S  : 's'|'S';
 fragment T  : 't'|'T';
@@ -337,7 +405,7 @@ fragment Z  : 'z'|'Z';
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
-STRING              : SQUOTE (SQUOTEinSTRING | PCHARnoSQUOTE )* SQUOTE; 
+STRING              : SQUOTE (SQUOTEinSTRING | PCHARnoSQUOTE )* SQUOTE { !inGeo() }?;
 
 //conflict with ODATAIDENTIFIER, fixed with predicate
 SEARCHWORD          : ALPHA+ { inSearch() }?;       //; Actually: any character from the Unicode categories L or Nl, 
@@ -352,9 +420,11 @@ SEARCHPHRASE: QUOTATION_MARK QCHAR_NO_AMP_DQUOTE+ QUOTATION_MARK { inSearch() }?
 
 ODATAIDENTIFIER     : ODI_LEADINGCHARACTER (ODI_CHARACTER)*;
 
-AT_ODATAIDENTIFIER  : AT ODATAIDENTIFIER;
+//AT_ODATAIDENTIFIER  : AT ODATAIDENTIFIER;
 
 STRING_IN_JSON      : QUOTATION_MARK CHAR_IN_JSON* QUOTATION_MARK;
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
 /* D O N T   C H A N G E   T H E   O R D E R   O F   T H I S*/
+
+

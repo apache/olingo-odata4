@@ -22,31 +22,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.producer.api.uri.UriInfoKind;
+import org.apache.olingo.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.producer.core.uri.UriPathInfoImpl;
-import org.apache.olingo.producer.core.uri.UriPathInfoImpl.PathInfoType;
 import org.apache.olingo.producer.core.uri.UriParserImpl;
 
 public class UriResourcePathValidator {
   UriInfoImpl uriInfo = null;
-  UriPathInfoImpl uriPathInfo = null; //last
+  UriPathInfoImpl uriPathInfo = null; // last
   private Edm edm;
-  
+
   public UriResourcePathValidator setEdm(Edm edm) {
     this.edm = edm;
     return this;
   }
-  
+
   public UriResourcePathValidator run(String uri) {
     uriInfo = parseUri(uri);
     last();
     return this;
   }
 
-  public UriResourcePathValidator isPathInfoType(PathInfoType infoType) {
-    
+  public UriResourcePathValidator isUriPathInfoKind(UriPathInfoKind infoType) {
+
     assertNotNull(uriPathInfo);
-    assertEquals(infoType, uriPathInfo.getType());
+    assertEquals(infoType, uriPathInfo.getKind());
     return this;
   }
 
@@ -57,27 +58,32 @@ public class UriResourcePathValidator {
   }
 
   public UriResourcePathValidator last() {
-    uriPathInfo = uriInfo.getLastUriPathInfo();
+    // TODO
+    // uriPathInfo = uriInfo.getLastUriPathInfo();
     return this;
   }
-  
+
   public UriResourcePathValidator at(int index) {
-    try { 
-      //uriPathInfo = uriInfo.getUriPathInfo(index);
+    try {
+      // uriPathInfo = uriInfo.getUriPathInfo(index);
     } catch (IndexOutOfBoundsException ex) {
       uriPathInfo = null;
     }
     return this;
   }
-  
+
   public UriResourcePathValidator first() {
-    try { 
-      //uriPathInfo = uriInfo.getUriPathInfo(0);
+    try {
+      // uriPathInfo = uriInfo.getUriPathInfo(0);
     } catch (IndexOutOfBoundsException ex) {
       uriPathInfo = null;
     }
     return this;
   }
- 
+
+  public void isKind(UriInfoKind batch) {
+
+    assertEquals(batch, uriInfo.getKind());
+  }
 
 }

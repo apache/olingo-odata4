@@ -19,6 +19,6 @@
 
 package org.apache.olingo.producer.api.uri;
 
-public interface UriInfo {
-  public UriInfoKind getKind();
+public enum UriInfoKind {
+  batch,all, crossjoin;
 }

@@ -18,15 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.producer.core.uri.antlr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.producer.core.testutil.EdmMock;
+import org.apache.olingo.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.producer.core.testutil.UriResourcePathValidator;
-import org.apache.olingo.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.producer.core.uri.UriPathInfoImpl;
-import org.apache.olingo.producer.core.uri.UriParserImpl;
-import org.junit.Test;
+
 
 public class UriTreeReaderTest {
   UriResourcePathValidator test = null;
@@ -35,66 +30,74 @@ public class UriTreeReaderTest {
     test = new UriResourcePathValidator();
     //test.setEdm(new EdmIm)
   }
+  /*
+  @Test
+  public void testShortUris() {
+    test.run("$batch").isKind(UriInfoKind.batch);
+    test.run("$all").isKind(UriInfoKind.all);
+    test.run("$crossjoin(abc)").isKind(UriInfoKind.crossjoin);
+  }
+  */
 
   //@Test
   public void testEntitySet() {
-    test.run("Employees").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
+    test.run("Employees").isUriPathInfoKind(UriPathInfoKind.entitySet);
 
-    test.run("Employees").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
-    test.run("Employees('1')").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
-    test.run("Employees(EmployeeId='1')").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
+    test.run("Employees").isUriPathInfoKind(UriPathInfoKind.entitySet);
+    test.run("Employees('1')").isUriPathInfoKind(UriPathInfoKind.entitySet);
+    test.run("Employees(EmployeeId='1')").isUriPathInfoKind(UriPathInfoKind.entitySet);
 
-    test.run("Employees('1')/EmployeeName").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
+    test.run("Employees('1')/EmployeeName").isUriPathInfoKind(UriPathInfoKind.entitySet);
 
-    test.run("Employees/RefScenario.ManagerType").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
-    test.run("Employees/RefScenario.ManagerType('1')").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
+    test.run("Employees/RefScenario.ManagerType").isUriPathInfoKind(UriPathInfoKind.entitySet);
+    test.run("Employees/RefScenario.ManagerType('1')").isUriPathInfoKind(UriPathInfoKind.entitySet);
 
-    test.run("Employees/Location").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
-    test.run("Employees/Location/Country").isPathInfoType(UriPathInfoImpl.PathInfoType.entitySet);
+    test.run("Employees/Location").isUriPathInfoKind(UriPathInfoKind.entitySet);
+    test.run("Employees/Location/Country").isUriPathInfoKind(UriPathInfoKind.entitySet);
   }
-
+/*
   //@Test
   public void testSingleton() {
-    test.run("Company").isPathInfoType(UriPathInfoImpl.PathInfoType.singleton);
-  }
-
+    test.run("Company").isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.singleton);
+  }*/
+/*
   //@Test
   public void testActionImport() {
-    test.run("actionImport1").isPathInfoType(UriPathInfoImpl.PathInfoType.actionImport);
-  }
-
+    test.run("actionImport1").isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.actionImport);
+  }*/
+/*
   //@Test
   public void testFunctionImport() {
-    test.run("MaximalAge").isPathInfoType(UriPathInfoImpl.PathInfoType.functioncall);
-  }
-
+    test.run("MaximalAge").isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.functioncall);
+  }*/
+/*
   //@Test
   public void testBoundFunctions() {
 
-    test.run("Employees/RefScenario.bf_entity_set_rt_entity(NonBindingParameter='1')").isPathInfoType(
-        UriPathInfoImpl.PathInfoType.boundFunctioncall);
-    test.run("Employees('1')/EmployeeName/RefScenario.bf_pprop_rt_entity_set()").isPathInfoType(
-        UriPathInfoImpl.PathInfoType.boundFunctioncall);
-    test.run("Company/RefScenario.bf_singleton_rt_entity_set()('1')").isPathInfoType(
-        UriPathInfoImpl.PathInfoType.boundFunctioncall);
+    test.run("Employees/RefScenario.bf_entity_set_rt_entity(NonBindingParameter='1')").isUriPathInfoKind(
+        UriPathInfoImpl.UriPathInfoKind.boundFunctioncall);
+    test.run("Employees('1')/EmployeeName/RefScenario.bf_pprop_rt_entity_set()").isUriPathInfoKind(
+        UriPathInfoImpl.UriPathInfoKind.boundFunctioncall);
+    test.run("Company/RefScenario.bf_singleton_rt_entity_set()('1')").isUriPathInfoKind(
+        UriPathInfoImpl.UriPathInfoKind.boundFunctioncall);
     // testUri("Company/RefScenario.bf_singleton_rt_entity_set()('1')/EmployeeName/"
     // +"RefScenario.bf_pprop_rt_entity_set()",
-    // UriPathInfoImpl.PathInfoType.boundFunctioncall);
-  }
-
+    // UriPathInfoImpl.UriPathInfoKind.boundFunctioncall);
+  }*/
+/*
   //@Test
   public void testBoundActions() {
     test.run("Employees('1')/RefScenario.ba_entity_rt_pprop")
-        .isPathInfoType(UriPathInfoImpl.PathInfoType.boundActionImport);
-    test.run("Employees('1')/EmployeeName/RefScenario.ba_pprop_rt_entity_set").isPathInfoType(
-        UriPathInfoImpl.PathInfoType.boundActionImport);
-  }
-
+        .isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.boundActionImport);
+    test.run("Employees('1')/EmployeeName/RefScenario.ba_pprop_rt_entity_set").isUriPathInfoKind(
+        UriPathInfoImpl.UriPathInfoKind.boundActionImport);
+  }*/
+/*
   //@Test
   public void testNavigationFunction() {
-    test.run("Employees('1')/ne_Manager").isPathInfoType(UriPathInfoImpl.PathInfoType.navicationProperty);
-    test.run("Teams('1')/nt_Employees('1')").isPathInfoType(UriPathInfoImpl.PathInfoType.navicationProperty);
-    // testUri("Teams('1')/nt_Employees('1')/EmployeeName", UriPathInfoImpl.PathInfoType.navicationProperty);
-  }
+    test.run("Employees('1')/ne_Manager").isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.navicationProperty);
+    test.run("Teams('1')/nt_Employees('1')").isUriPathInfoKind(UriPathInfoImpl.UriPathInfoKind.navicationProperty);
+    // testUri("Teams('1')/nt_Employees('1')/EmployeeName", UriPathInfoImpl.UriPathInfoKind.navicationProperty);
+  }*/
 
 }
