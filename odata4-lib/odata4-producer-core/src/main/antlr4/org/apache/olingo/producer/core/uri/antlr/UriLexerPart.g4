@@ -65,9 +65,8 @@ FORMAT      : '$format' EQ
                ( 'atom'
                | 'json'
                | 'xml'
-               | PCHAR+ '/' PCHAR+ //; <a data service specific value indicating a
-            );                     //; format specific to the specific data service> or
-                                   //; <An IANA-defined [IANA-MMT] content type>
+               | PCHAR+ '/' PCHAR+ 
+            );
 
 ID          : '$id' EQ QCHAR_NO_AMP+;
 
@@ -269,7 +268,8 @@ fragment ZEROtoFIFTYNINE    : ('0'..'5') DIGIT;
 
 
 
-fragment COLLECTION_CS_FIX       : 'Collection';
+
+COLLECTION_CS_FIX       : 'Collection';
 fragment LINESTRING_CS_FIX       : 'LineString';
 fragment MULTILINESTRING_CS_FIX  : 'MultiLineString';
 fragment MULTIPOINT_CS_FIX       : 'MultiPoint';
@@ -301,19 +301,31 @@ fragment GEOMETRY_CS_FIX  : 'Geometry';
 //; 9. Punctuation
 //;------------------------------------------------------------------------------
 
-WS        : ( SP | HTAB | '%20' | '%09' );
+fragment WS     : ( SP | HTAB | '%20' | '%09' );
+WSP             : WS+ { !inGeo() }?;
 
-fragment AT_PURE   : '@';
-AT        : AT_PURE | '%40';
-COLON     : ':' | '%3A';
-COMMA     : ',' | '%2C';
-EQ        :  '=';
-SIGN      : '+' | '%2B' |'-';
-SEMI      : ';' | '%3B';
-STAR      : '*';
-SQUOTE    : '\'' | '%27';
-OPEN      : '(' | '%28';
-CLOSE     : ')' | '%29';
+// we can't not emit a single WS inside filter expression where left-recursion applies 
+// commonExpr : INT
+//            | commonExpr WS+ ('mul'|'div'|'mod') WS+ commonExpr 
+// does not work...        ^^^                     ^^^ but:
+// commonExpr : INT
+//            | commonExpr WSP ('mul'|'div'|'mod') WSP commonExpr 
+// a single WS in only allowed/required in geometry
+
+
+WSG               : WS  { inGeo() }?;
+
+fragment AT_PURE  : '@';
+AT                : AT_PURE | '%40';
+COLON             : ':' | '%3A';
+COMMA             : ',' | '%2C';
+EQ                :  '=';
+SIGN              : '+' | '%2B' |'-';
+SEMI              : ';' | '%3B';
+STAR              : '*';
+SQUOTE            : '\'' | '%27';
+OPEN              : '(' | '%28';
+CLOSE             : ')' | '%29';
 
 
 //;------------------------------------------------------------------------------
@@ -332,13 +344,13 @@ fragment SUB_DELIMS         : '$' | '&' | '\'' | EQ | OTHER_DELIMS;
 fragment OTHER_DELIMS       : '!' | '(' | ')' | '*' | '+' | COMMA | ';';
 
 
-fragment PCTENCODEDnoSQUOTE :  '%' ( '0'|'1'|'3'..'9' | AtoF ) HEXDIG
+fragment PCTENCODEDnoSQUOTE : '%' ( '0'|'1'|'3'..'9' | AtoF ) HEXDIG
                             | '%' '2' ( '0'..'6'|'8'|'9' | AtoF )
                             ;
 
 fragment QCHAR_NO_AMP               : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'' | EQ;
 fragment QCHAR_NO_AMP_EQ            : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'';
-fragment QCHAR_NO_AMP_EQ_AT_DOLLAR  : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' |       '/' | '?' |       '\'';
+fragment QCHAR_NO_AMP_EQ_AT_DOLLAR  : UNRESERVED | PCT_ENCODED | OTHER_DELIMS | ':' |           '/' | '?' |       '\'';
 
 fragment QCHAR_UNESCAPED            : UNRESERVED | PCT_ENCODED_UNESCAPED | OTHER_DELIMS | ':' | AT_PURE | '/' | '?' | '$' | '\'' | EQ;
 fragment PCT_ENCODED_UNESCAPED      : '%' ( '0' | '1' |   '3' | '4' |   '6' | '8' | '9' | 'A'..'F' ) HEXDIG 
@@ -412,11 +424,7 @@ SEARCHWORD          : ALPHA+ { inSearch() }?;       //; Actually: any character 
                                                     //; but not the words AND, OR, and NOT which are match far above
 
 //conflict with STRING_IN_JSON, fixed with predicate
-SEARCHPHRASE: QUOTATION_MARK QCHAR_NO_AMP_DQUOTE+ QUOTATION_MARK { inSearch() }?;
-
-//TODO fix conflict
-//CUSTOMNAME        : QCHAR_NO_AMP_EQ_AT_DOLLAR QCHAR_NO_AMP_EQ* { IsCUSTallowed() }?;
-//CUSTOMVALUE       : QCHAR_NO_AMP+ { IsCUSTallowed() }?;
+SEARCHPHRASE        : QUOTATION_MARK QCHAR_NO_AMP_DQUOTE+ QUOTATION_MARK { inSearch() }?;
 
 ODATAIDENTIFIER     : ODI_LEADINGCHARACTER (ODI_CHARACTER)*;
 

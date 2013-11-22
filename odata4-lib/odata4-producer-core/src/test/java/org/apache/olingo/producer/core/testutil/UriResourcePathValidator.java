@@ -58,7 +58,7 @@ public class UriResourcePathValidator {
   }
 
   public UriResourcePathValidator last() {
-    // TODO
+    // TODO implement
     // uriPathInfo = uriInfo.getLastUriPathInfo();
     return this;
   }

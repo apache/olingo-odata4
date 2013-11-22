@@ -16,26 +16,60 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
- grammar Uri;
+
+ grammar UriParser;
+
+
+//Antlr4 (as most parsers) has a lexer for token detection and a parser which defines
+//rules based on the tokens. However its hard to define a clear lexer on the
+//ODATA URI syntax due to some reasons:
+// - the syntax is based on the URI specification and there fore contains the definition
+//   of delimiters and percent encoding
+// - the syntax includes JSON
+// - the syntax includes a expression syntax which comes from ODATA itself (e.g. $filter)
+// - the syntax includes searchstring and searchword 
+// - the ABNF describing syntax is not defined in a context free manner
+// so there are several kinds of "String" tokens:
+// -  strings with single quotes, 
+// -  strings with single quotes and a special syntax within the quotes (like geometry data)
+// -  strings with double quotes
+// -  strings without quotes ( usually identifiers, searchstrings, searchwords, custom parameters)
+//    but each with different allowed charactersets
+// Drawing a simple line between lexer and parser is not possible.
+//
+// This grammer is a compromiss we have choosen to satisfy the requirements we have
+// - the grammer is context free
+//   - this makes the parser much simpler and we have a clear saparation between parsing and
+//     EDM validation, but also creates a parse tree which is not semantically correct from the
+//     EDM perspective ( e.g.it will not pass the EDM validation)
+// - the grammer can not be applied on a full URI string
+//   - the URI should be split according the URI specification before used as input for the 
+//     ODATA parser
+// - while creating the grammer the antlr lexer modes where only allowed in pure lexer grammers
+//   not in combined grammers, and is was not possible to include lexer grammer with a mode into
+//   a combined grammar without creating JAVA errors.
+
+//   see https://github.com/antlr/antlr4/issues/160 "Support importing multi-mode lexer grammars"
+
+
 //Naming convention 
 //  ...
 //Decoding encoding
 //- within rule "resourcePath": special chars used in EDM.Strings must still be encoded when 
 //  used as tokenizer input
-//  e.g. .../Employees(id='Hugo%2FMueller')/EmployeeName <-- '/' must be encoded to '%2F' in "Hugo/Mueller"
+//  e.g. .../Employees(id='Hugo%2FMueller')/EmployeeName <-- SLASH must be encoded to '%2F' in "Hugo/Mueller"
 //    but it must not be encoded before the EmployeeName
+
+
 
 options {
     language = Java;
+    tokenVocab=UriLexer;
 }
 
-import UriLexerPart; //contain Lexer rules
 
 
-test        : test_expr;
-test_expr   : test_expr '*' test_expr
-            | test_expr '+' test_expr
-            | INT;
+
 
 //;------------------------------------------------------------------------------
 //; 0. URI
@@ -50,72 +84,83 @@ test_expr   : test_expr '*' test_expr
 
 
 odataRelativeUriEOF : odataRelativeUri? EOF;
-odataRelativeUri    : '$batch'                                                    # batchAlt
-                    | '$entity' '?' eo=entityOptions                            # entityAlt
-                    | '$metadata' ( '?' format )? ( FRAGMENT contextFragment )? # metadataAlt
-                    | resourcePath ( '?' queryOptions )?                        # resourcePathAlt
+
+//QM and FRAGMENT enable next lexer mode
+odataRelativeUri    : BATCH                                                      # batchAlt //TODO alt at beginnig
+                    | ENTITY         QM eo=entityOptions                         # entityAlt
+                    | METADATA     ( QM format )? ( FRAGMENT contextFragment )?  # metadataAlt
+                    | resourcePath ( QM queryOptions )?                          # resourcePathAlt
+
                     ;
 
 //;------------------------------------------------------------------------------
 //; 1. Resource Path
 //;------------------------------------------------------------------------------
                    
-resourcePath        : '$all'        # allAlt
+resourcePath        : ALL           # allAlt
                     | crossjoin     # crossjoinAlt
                     | pathSegments  # pathSegmentsAlt
                     ;
-crossjoin           : '$crossjoin' OPEN odi+=odataIdentifier ( COMMA odi+=odataIdentifier )* CLOSE;
+crossjoin           : CROSSJOIN OPEN odi+=odataIdentifier ( COMMA odi+=odataIdentifier )* CLOSE;
 
-pathSegments        : ps+=pathSegment ('/' ps+=pathSegment)* constSegment?;
+pathSegments        : ps+=pathSegment (SLASH ps+=pathSegment)* constSegment?;
 
 pathSegment         : ns=namespace? odi=odataIdentifier nvl=nameValueOptList*;
 
 nameValueOptList    : vo=valueOnly | nvl=nameValueList;
-valueOnly           : OPEN (primitiveLiteral /*| enumX*/) CLOSE;
+valueOnly           : OPEN (primitiveLiteral ) CLOSE;
 nameValueList       : OPEN kvp+=nameValuePair ( COMMA kvp+=nameValuePair )* CLOSE;
 nameValuePair       : odi=odataIdentifier EQ (AT ali=odataIdentifier |  val1=primitiveLiteral /*| val2=enumX*/);
 
-constSegment        : '/' (v=VALUE | c=COUNT | r=REF );
+constSegment        : SLASH (v=value | c=count | r=ref );
 
+count               : COUNT;
+ref                 : REF;
+value               : VALUE;
 //;------------------------------------------------------------------------------
 //; 2. Query Options
 //;------------------------------------------------------------------------------
 
-queryOptions    : qo+=queryOption ( '&' qo+=queryOption )*;
+queryOptions    : qo+=queryOption ( AMP qo+=queryOption )*;
+
 queryOption     : systemQueryOption 
-                | aliasAndValue 
-                | customQueryOption  
+                | AT aliasAndValue 
+                | customQueryOption 
                 ;
-             
-entityOptions   : (eob+=entityOption '&' )* id=ID ( '&' eoa+=entityOption )*;
-entityOption    : expand 
-                | format
-                | select
-                | customQueryOption
+
+entityOptions   : (eob+=entityOption AMP )* ID EQ REST ( AMP eoa+=entityOption )*;
+entityOption    : ( expand | format | select )
+                | customQueryOption 
+
                 ;
+
+
 
 systemQueryOption   : expand
                     | filter 
                     | format 
-                    | ID
+                    | id
                     | inlinecount 
                     | orderby 
                     | search
                     | select 
                     | skip 
-                    | SKIPTOKEN
-                    | top ;
+                    | skiptoken
+                    | top
+                    ;
 
-expand              : '$expand' EQ expandItemList;
+id                  : ID EQ REST;
+skiptoken           : SKIPTOKEN EQ REST;
+expand              : EXPAND EQ expandItemList;
 
 expandItemList      : expandItem ( COMMA expandItem )*;
 
-expandItem          : STAR ( '/' REF | OPEN LEVELS CLOSE )?
+expandItem          : STAR ( SLASH ref | OPEN (LEVELS EQ INT | LEVELSMAX)  CLOSE )?
                     | expandPath expandPathExtension?;
 
-expandPath          : ( namespace? odataIdentifier ) ( '/' namespace? odataIdentifier )*;
-expandPathExtension : '/' REF   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
-                    | '/' COUNT ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
+expandPath          : ( namespace? odataIdentifier ) ( SLASH namespace? odataIdentifier )*;
+expandPathExtension : SLASH ref   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
+                    | SLASH count ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
                     |             OPEN expandOption      ( SEMI expandOption      )* CLOSE 
                     ;  
 expandCountOption   : filter
@@ -132,28 +177,27 @@ expandOption        : expandRefOption
                     | expand
                     | LEVELS;
 
-filter              : '$filter' EQ commonExpr;
+filter              : FILTER EQ commonExpr;
 
-orderby             : '$orderby' EQ orderbyItem ( COMMA orderbyItem )*;
-orderbyItem         : commonExpr ( WS+ ( 'asc' | 'desc' ) )?;
+orderby             : ORDERBY EQ orderbyItem ( COMMA orderbyItem )*;
+orderbyItem         : commonExpr ( WSP ( ASC | DESC ) )?;
 
 //this is completly done in lexer grammer to avoid ambiguities with odataIdentifier and STRING
-skip                : SKIP;
-top                 : TOP;
-format              : FORMAT;
+skip                : SKIP EQ INT;
+top                 : TOP EQ INT;
+format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
 
-inlinecount         : '$count' EQ booleanNonCase;
+inlinecount         : COUNT EQ booleanNonCase;
 
-search              : '$search' searchSpecialToken;
+search              : SEARCH searchSpecialToken;
 
-searchSpecialToken  : { ((UriLexer) this.getInputStream().getTokenSource()).setInSearch(true); }
-                      EQ WS* searchExpr
-                      { ((UriLexer) this.getInputStream().getTokenSource()).setInSearch(false); }
-                    ;
+searchSpecialToken  : EQ WSP? searchExpr;
 
-searchExpr          : 'NOT' WS+ searchExpr
-                    | searchExpr WS+ ('AND' WS+)? searchExpr
-                    | searchExpr WS+ 'OR' WS+ searchExpr
+searchExpr          : (NOT WSP) searchExpr
+                    | searchExpr searchExpr
+                    | searchExpr  WSP searchExpr
+                    | searchExpr ( WSP AND WSP) searchExpr
+                    | searchExpr ( WSP OR WSP) searchExpr
                     | searchPhrase
                     | searchWord
                     ;
@@ -161,46 +205,51 @@ searchExpr          : 'NOT' WS+ searchExpr
 searchPhrase        : SEARCHPHRASE;
 searchWord          : SEARCHWORD;  
 
-select              : '$select' EQ selectItem ( COMMA selectItem )*;
-selectItem          : namespace? '*'
-                    | (namespace? odataIdentifier nameValueOptList? ) ( '/' namespace? odataIdentifier nameValueOptList? )*
+select              : SELECT EQ selectItem ( COMMA selectItem )*;
+selectItem          : namespace? STAR
+                    | (namespace? odataIdentifier nameValueOptList? ) ( SLASH namespace? odataIdentifier nameValueOptList? )*
                     ;
 
-aliasAndValue       : AT odataIdentifier EQ parameterValue;
-parameterValue      : arrayOrObject
+aliasAndValue       : odataIdentifier EQ parameterValue;
+parameterValue      : //arrayOrObject
                       commonExpr
                     ;
-customQueryOption   : { ((UriLexer) this.getInputStream().getTokenSource()).setINCustomOption(true); }
-                      customName ( EQ customValue)?
-                      { ((UriLexer) this.getInputStream().getTokenSource()).setINCustomOption(false); }
+
+
+                    
+customQueryOption   : customName ( EQ customValue)?
                     ;
-customName          : 'CUSTOMNAME';
-customValue         : 'CUSTOMVALUE';
+customName          : CUSTOMNAME;
+customValue         : CUSTOMVALUE;
+
+
 
 //;------------------------------------------------------------------------------
 //; 3. Context URL Fragments
 //;------------------------------------------------------------------------------
-
-contextFragment     : 'Collection($ref)'
-                    | '$ref'
+//ps+=pathSegment (SLASH ps+=pathSegment)*
+//PRIMITIVETYPENAME
+contextFragment     : REF
+                    | PRIMITIVETYPENAME
+                    | 'Collection($ref)'
                     | 'Collection(Edm.EntityType)'
                     | 'Collection(Edm.ComplexType)'
-                    | PRIMITIVETYPENAME
-                    | 'collection' OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
+
+                    | COLLECTION_FIX OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
+
                     | namespace? odataIdentifier 
                       ( '/$deletedEntity'
                       | '/$link'
                       | '/$deletedLink'
-                      | nameValueOptList? ( '/' namespace? odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
-                      )?
+                      | nameValueOptList? ( SLASH namespace? odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
+                      )
                     ;              
 
 propertyList         : OPEN propertyListItem ( COMMA propertyListItem )* CLOSE;
 propertyListItem     : STAR           //; all structural properties
                      | propertyListProperty
                      ;
-propertyListProperty : odataIdentifier ( '+' )? ( propertyList )?
-                     | odataIdentifier ( '/' propertyListProperty )?
+propertyListProperty : namespace? odataIdentifier ( SLASH namespace? odataIdentifier)* ( '+' )? ( propertyList)?
                      ;
                  
 entity               : '/$entity';
@@ -211,25 +260,30 @@ entity               : '/$entity';
 // this expression part of the grammer is not similar to the ABNF because
 // we had to introduced operator precesence witch is not reflected in the ABNF
 
+test        : test_expr EOF;
+test_expr   : INT
+            //| test_expr /*WSP*/ (  '!' | '*' ) /*WSP*/ test_expr;
+            //| test_expr WSP (  '!' | '*' ) WSP test_expr;
+            | test_expr ( WSP '!' WSP | WSP '*' WSP ) test_expr;
 
-commonExpr          : OPEN commonExpr CLOSE
-                    | methodCallExpr
-                    | unary WS+ commonExpr
-                    | memberExpr
-                    | commonExpr WS+ ('mul'|'div'|'mod') WS+ commonExpr 
-                    | commonExpr WS+ ('add'|'sub') WS+ commonExpr 
-                    | commonExpr WS+ ('gt'|'ge'|'lt'|'le'|'isof') WS+ commonExpr 
-                    | commonExpr WS+ ('eq'|'ne') WS+ commonExpr 
-                    | commonExpr WS+ ('and') WS+ commonExpr 
-                    | commonExpr WS+ ('or') WS+ commonExpr 
-                    | rootExpr                          //; $...
-                    //| AT odataIdentifier                //; @...
-                    | primitiveLiteral                  //; ...
+commonExpr          : OPEN commonExpr CLOSE                                                     #altPharenthesis
+                    | methodCallExpr                                                            #altMethod
+                    | ( unary WSP ) commonExpr                                                  #altUnary
+                    | memberExpr                                                                #altMember
+                    | commonExpr (WSP MUL WSP | WSP DIV WSP | WSP MOD WSP ) commonExpr    #altMult
+                    | commonExpr (WSP ADD WSP | WSP SUB WSP) commonExpr                     #altAdd
+                    | commonExpr (WSP GT WSP | WSP GE WSP | WSP LT WSP | WSP LE WSP | WSP ISOF WSP) commonExpr    #altComparisn
+                    | commonExpr (WSP EQ_ALPHA WSP | WSP NE WSP) commonExpr                       #altEquality
+                    | commonExpr (WSP AND WSP) commonExpr                                     #altAnd
+                    | commonExpr (WSP OR WSP) commonExpr                                      #altOr
+                    | rootExpr                                                                  #altRoot  //; $...
+                    | AT odataIdentifier                                                        #altAlias  // @...
+                    | primitiveLiteral                                                          #altLiteral  // ...
                     ;
 
-unary               : ('-'|'not') ;
+unary               : (MINUS| NOT) ;
 
-rootExpr            : '$root/' pathSegments;
+rootExpr            : ROOT pathSegments;
 
 memberExpr          : '$it' | '$it/'? pathSegments;
 
@@ -272,43 +326,43 @@ methodCallExpr      : indexOfMethodCallExpr
                     ;
 
 
-containsMethodCallExpr    : CONTAINS   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-startsWithMethodCallExpr  : STARTSWITH OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-endsWithMethodCallExpr    : ENDSWITH   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-lengthMethodCallExpr      : LENGTH     OPEN WS* commonExpr WS* CLOSE;
-indexOfMethodCallExpr     : INDEXOF    OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-substringMethodCallExpr   : SUBSTRING  OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* )? CLOSE;
-toLowerMethodCallExpr     : TOLOWER    OPEN WS* commonExpr WS* CLOSE;
-toUpperMethodCallExpr     : TOUPPER    OPEN WS* commonExpr WS* CLOSE;
-trimMethodCallExpr        : TRIM       OPEN WS* commonExpr WS* CLOSE;
-concatMethodCallExpr      : CONCAT     OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+containsMethodCallExpr    : CONTAINS_WORD    WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+startsWithMethodCallExpr  : STARTSWITH_WORD  WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+endsWithMethodCallExpr    : ENDSWITH_WORD    WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+lengthMethodCallExpr      : LENGTH_WORD      WS* commonExpr WS* CLOSE;
+indexOfMethodCallExpr     : INDEXOF_WORD     WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+substringMethodCallExpr   : SUBSTRING_WORD   WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* )? CLOSE;
+toLowerMethodCallExpr     : TOLOWER_WORD     WS* commonExpr WS* CLOSE;
+toUpperMethodCallExpr     : TOUPPER_WORD     WS* commonExpr WS* CLOSE;
+trimMethodCallExpr        : TRIM_WORD        WS* commonExpr WS* CLOSE;
+concatMethodCallExpr      : CONCAT_WORD      WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
 
-yearMethodCallExpr                : 'year'               OPEN WS* commonExpr WS* CLOSE;
-monthMethodCallExpr               : 'month'              OPEN WS* commonExpr WS* CLOSE;
-dayMethodCallExpr                 : 'day'                OPEN WS* commonExpr WS* CLOSE;
-hourMethodCallExpr                : 'hour'               OPEN WS* commonExpr WS* CLOSE;
-minuteMethodCallExpr              : 'minute'             OPEN WS* commonExpr WS* CLOSE;
-secondMethodCallExpr              : 'second'             OPEN WS* commonExpr WS* CLOSE;
-fractionalsecondsMethodCallExpr   : 'fractionalseconds'  OPEN WS* commonExpr WS* CLOSE;
-totalsecondsMethodCallExpr        : 'totalseconds'       OPEN WS* commonExpr WS* CLOSE;
-dateMethodCallExpr                : 'date'               OPEN WS* commonExpr WS* CLOSE;
-timeMethodCallExpr                : 'time'               OPEN WS* commonExpr WS* CLOSE;
-totalOffsetMinutesMethodCallExpr  : 'totaloffsetminutes' OPEN WS* commonExpr WS* CLOSE;
+yearMethodCallExpr                : YEAR_WORD                WS* commonExpr WS* CLOSE;
+monthMethodCallExpr               : MONTH_WORD               WS* commonExpr WS* CLOSE;
+dayMethodCallExpr                 : DAY_WORD                 WS* commonExpr WS* CLOSE;
+hourMethodCallExpr                : HOUR_WORD                WS* commonExpr WS* CLOSE;
+minuteMethodCallExpr              : MINUTE_WORD              WS* commonExpr WS* CLOSE;
+secondMethodCallExpr              : SECOND_WORD              WS* commonExpr WS* CLOSE;
+fractionalsecondsMethodCallExpr   : FRACTIONALSECONDS_WORD   WS* commonExpr WS* CLOSE;
+totalsecondsMethodCallExpr        : TOTALSECONDS_WORD        WS* commonExpr WS* CLOSE;
+dateMethodCallExpr                : DATE_WORD                WS* commonExpr WS* CLOSE;
+timeMethodCallExpr                : TIME_WORD                WS* commonExpr WS* CLOSE;
+totalOffsetMinutesMethodCallExpr  : TOTALOFFSETMINUTES_WORD  WS* commonExpr WS* CLOSE;
 
-minDateTimeMethodCallExpr         : 'mindatetime' OPEN WS* CLOSE;
-maxDateTimeMethodCallExpr         : 'maxdatetime' OPEN WS* CLOSE;
-nowMethodCallExpr                 : 'now' OPEN WS* CLOSE;
+minDateTimeMethodCallExpr         : MINDATETIME_WORD WS* CLOSE;
+maxDateTimeMethodCallExpr         : MAXDATETIME_WORD WS* CLOSE;
+nowMethodCallExpr                 : NOW_WORD         WS* CLOSE;
 
-roundMethodCallExpr               : 'round'   OPEN WS* commonExpr WS* CLOSE;
-floorMethodCallExpr               : 'floor'   OPEN WS* commonExpr WS* CLOSE;
-ceilingMethodCallExpr             : 'ceiling' OPEN WS* commonExpr WS* CLOSE;
+roundMethodCallExpr               : ROUND_WORD   WS* commonExpr WS* CLOSE;
+floorMethodCallExpr               : FLOOR_WORD   WS* commonExpr WS* CLOSE;
+ceilingMethodCallExpr             : CEILING_WORD WS* commonExpr WS* CLOSE;
 
-distanceMethodCallExpr            : 'geo.distance'   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-geoLengthMethodCallExpr           : 'geo.length'     OPEN WS* commonExpr WS* CLOSE;
-intersectsMethodCallExpr          : 'geo.intersects' OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+distanceMethodCallExpr            : GEO_DISTANCE_WORD   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+geoLengthMethodCallExpr           : GEO_LENGTH_WORD     OPEN WS* commonExpr WS* CLOSE;
+intersectsMethodCallExpr          : GEO_INTERSECTS_WORD OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
 
-isofExpr                          : 'isof' OPEN WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
-castExpr                          : 'cast' OPEN WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
+isofExpr                          : ISOF_WORD  WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
+castExpr                          : CAST_WORD  WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
 
 //;------------------------------------------------------------------------------
 //; 5. JSON format for function parameters
@@ -316,7 +370,7 @@ castExpr                          : 'cast' OPEN WS* ( commonExpr WS* COMMA WS* )
 //; Note: the query part of a URI needs to be partially percent-decoded before
 //; applying these rules, see comment at the top of this file
 //;------------------------------------------------------------------------------
-
+/*
 arrayOrObject       : complexColInUri  
                     | complexInUri
                     | rootExprCol
@@ -375,11 +429,10 @@ primitive1LiteralInJSON  : STRING_IN_JSON
                         ;
 
 number_in_json          : INT | DECIMAL;
-
+*/
 //;------------------------------------------------------------------------------
 //; 6. Names and identifiers
 //;------------------------------------------------------------------------------
-POINT                   : '.';
 
 qualifiedtypename       : PRIMITIVETYPENAME
                         | namespace odataIdentifier
@@ -435,9 +488,11 @@ enumValue           : singleEnumValue *( COMMA singleEnumValue );
 singleEnumValue     : odataIdentifier / INT;
 
 
-geographyCollection        : GEOGRAPHYPREFIX  fullCollectionLiteral SQUOTE;
+geographyCollection        : GEOGRAPHY  fullCollectionLiteral SQUOTE;
 fullCollectionLiteral      : sridLiteral collectionLiteral;
-collectionLiteral          : COLLECTION_CS OPEN geoLiteral ( COMMA geoLiteral )* CLOSE;
+
+collectionLiteral          : (COLLECTION | COLLECTION_FIX) OPEN geoLiteral ( COMMA geoLiteral )* CLOSE;
+
 geoLiteral                 : collectionLiteral
                            | lineStringLiteral
                            | multipointLiteral
@@ -446,45 +501,54 @@ geoLiteral                 : collectionLiteral
                            | pointLiteral
                            | polygonLiteral;
 
-geographyLineString        : GEOGRAPHYPREFIX  fullLineStringLiteral SQUOTE;
+geographyLineString        : GEOGRAPHY  fullLineStringLiteral SQUOTE;
 fullLineStringLiteral      : sridLiteral lineStringLiteral;
-lineStringLiteral          : LINESTRING_CS lineStringData;
+lineStringLiteral          : LINESTRING lineStringData;
 lineStringData             : OPEN positionLiteral ( COMMA positionLiteral )* CLOSE;
 
-geographyMultilineString   : GEOGRAPHYPREFIX  fullMultilineStringLiteral SQUOTE;
+geographyMultilineString   : GEOGRAPHY  fullMultilineStringLiteral SQUOTE;
 fullMultilineStringLiteral : sridLiteral multilineStringLiteral;
-multilineStringLiteral     : MULTILINESTRING_CS OPEN ( lineStringData ( COMMA lineStringData )* )? CLOSE;
+multilineStringLiteral     : MULTILINESTRING OPEN ( lineStringData ( COMMA lineStringData )* )? CLOSE;
 
-geographyMultipoint        : GEOGRAPHYPREFIX  fullMultipointLiteral SQUOTE;
+geographyMultipoint        : GEOGRAPHY  fullMultipointLiteral SQUOTE;
 fullMultipointLiteral      : sridLiteral multipointLiteral;
-multipointLiteral          : MULTIPOINT_CS OPEN ( pointData ( COMMA pointData )* )? CLOSE ;
+multipointLiteral          : MULTIPOINT OPEN ( pointData ( COMMA pointData )* )? CLOSE ;
 
-geographyMultipolygon      : GEOGRAPHYPREFIX  fullmultipolygonLiteral SQUOTE;
+geographyMultipolygon      : GEOGRAPHY  fullmultipolygonLiteral SQUOTE;
 fullmultipolygonLiteral    : sridLiteral multipolygonLiteral;
-multipolygonLiteral        : MULTIPOLYGON_CS OPEN ( polygonData ( COMMA polygonData )* )? CLOSE;
+multipolygonLiteral        : MULTIPOLYGON OPEN ( polygonData ( COMMA polygonData )* )? CLOSE;
 
-geographyPoint             : GEOGRAPHYPREFIX  fullpointLiteral SQUOTE;
+geographyPoint             : GEOGRAPHY  fullpointLiteral SQUOTE;
 fullpointLiteral           : sridLiteral pointLiteral;
 
-pointLiteral               : POINT_CS pointData;
+pointLiteral               : GEO_POINT pointData;
 pointData                  : OPEN positionLiteral CLOSE;
-positionLiteral            : (DECIMAL | INT ) WS (DECIMAL | INT );  //; longitude, then latitude
 
-geographyPolygon           : GEOGRAPHYPREFIX fullPolygonLiteral SQUOTE;
+positionLiteral            : (DECIMAL | INT ) WSP (DECIMAL | INT );  //; longitude, then latitude
+
+
+geographyPolygon           : GEOGRAPHY fullPolygonLiteral SQUOTE;
 fullPolygonLiteral         : sridLiteral polygonLiteral;
-polygonLiteral             : POLYGON_CS polygonData;
+polygonLiteral             : POLYGON polygonData;
 polygonData                : OPEN ringLiteral ( COMMA ringLiteral )* CLOSE;
 ringLiteral                : OPEN positionLiteral ( COMMA positionLiteral )* CLOSE;
                  
 
-geometryCollection        : GEOMETRYPREFIX  fullCollectionLiteral      SQUOTE;
-geometryLineString        : GEOMETRYPREFIX  fullLineStringLiteral      SQUOTE;
-geometryMultilineString   : GEOMETRYPREFIX  fullMultilineStringLiteral SQUOTE;
-geometryMultipoint        : GEOMETRYPREFIX  fullMultipointLiteral      SQUOTE;
-geometryMultipolygon      : GEOMETRYPREFIX  fullmultipolygonLiteral    SQUOTE;
-geometryPoint             : GEOMETRYPREFIX  fullpointLiteral           SQUOTE;
-geometryPolygon           : GEOMETRYPREFIX  fullPolygonLiteral         SQUOTE;
+geometryCollection        : GEOMETRY  fullCollectionLiteral      SQUOTE;
+geometryLineString        : GEOMETRY  fullLineStringLiteral      SQUOTE;
+geometryMultilineString   : GEOMETRY  fullMultilineStringLiteral SQUOTE;
+geometryMultipoint        : GEOMETRY  fullMultipointLiteral      SQUOTE;
+geometryMultipolygon      : GEOMETRY  fullmultipolygonLiteral    SQUOTE;
+geometryPoint             : GEOMETRY  fullpointLiteral           SQUOTE;
+geometryPolygon           : GEOMETRY  fullPolygonLiteral         SQUOTE;
 
-sridLiteral               : SRID_CS EQ INT SEMI;
+sridLiteral               : SRID EQ INT SEMI;
 
 
+
+
+
+/*
+mode MODEd333gh;
+
+MO12E1 : 'ASD' -> mode(DEFAULT_MODE);*/

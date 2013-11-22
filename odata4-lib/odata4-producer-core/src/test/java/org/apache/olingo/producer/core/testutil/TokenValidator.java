@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -41,16 +42,14 @@ public class TokenValidator {
   private Token curToken = null;
   private Exception curException = null;
   private String input = null;
-  int logLevel = 0;
+  private int logLevel = 0;
+
+  private int mode;
 
   public TokenValidator run(String uri) {
-    return run(uri, false);
-  }
-
-  public TokenValidator run(String uri, boolean searchMode) {
     input = uri;
     exceptions.clear();
-    tokens = parseInput(uri, searchMode);
+    tokens = parseInput(uri);
     if (logLevel > 0) {
       showTokens();
     }
@@ -92,6 +91,26 @@ public class TokenValidator {
     return this;
   }
 
+  public TokenValidator isAllText(String expected) {
+    String tmp = "";
+
+    for (Token curToken : tokens) {
+      tmp += curToken.getText();
+    }
+    assertEquals(expected, tmp);
+    return this;
+  }
+
+  public TokenValidator isAllInput() {
+    String tmp = "";
+
+    for (Token curToken : tokens) {
+      tmp += curToken.getText();
+    }
+    assertEquals(input, tmp);
+    return this;
+  }
+
   public TokenValidator isInput() {
     assertEquals(input, curToken.getText());
     return this;
@@ -108,11 +127,11 @@ public class TokenValidator {
     return this;
   }
 
-  private List<? extends Token> parseInput(final String input, boolean searchMode) {
+  private List<? extends Token> parseInput(final String input) {
     ANTLRInputStream inputStream = new ANTLRInputStream(input);
 
-    UriLexer lexer = new UriLexer(inputStream);
-    lexer.setInSearch(searchMode);
+    UriLexer lexer = new TestUriLexer(this,inputStream, mode);
+    // lexer.setInSearch(searchMode);
     // lexer.removeErrorListeners();
     lexer.addErrorListener(new ErrorCollector(this));
     return lexer.getAllTokens();
@@ -165,6 +184,37 @@ public class TokenValidator {
     return this;
   }
 
+  
+  private static class TestUriLexer extends UriLexer {
+    private TokenValidator validator;
+
+    public TestUriLexer(TokenValidator validator, CharStream input, int mode) {
+      super(input);
+      super.mode(mode);
+      this.validator = validator;
+    }
+
+    @Override
+    public void pushMode(int m) {
+      if (validator.logLevel > 0) {
+        System.out.println("OnMode" + ": " + UriLexer.modeNames[m]);
+      }
+      super.pushMode(m);
+      
+    }
+
+    @Override
+    public int popMode() {
+      int m =  super.popMode();
+      if (validator.logLevel > 0) {
+        System.out.println("OnMode" + ": " + UriLexer.modeNames[m]);
+      }
+      
+      return m;
+    }
+
+  }
+
   private static class ErrorCollector implements ANTLRErrorListener {
     TokenValidator tokenValidator;
 
@@ -196,6 +246,10 @@ public class TokenValidator {
       fail("reportContextSensitivity");
     }
 
+  }
+
+  public void globalMode(int mode) {
+    this.mode = mode;
   }
 
 }

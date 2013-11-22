@@ -20,9 +20,6 @@ package org.apache.olingo.producer.core.testutil;
 
 import java.util.Arrays;
 
-
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.EdmProviderAdapter;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
@@ -32,7 +29,6 @@ import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.exception.ODataException;
 import org.apache.olingo.commons.api.exception.ODataNotImplementedException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
 
 public class EdmTechProvider extends EdmProviderAdapter {
 
@@ -215,4 +211,6 @@ public class EdmTechProvider extends EdmProviderAdapter {
 
     throw new ODataNotImplementedException();
   }
+
+  
 }

@@ -38,17 +38,17 @@ import org.apache.olingo.producer.api.uri.KeyPredicate;
 import org.apache.olingo.producer.api.uri.UriInfoKind;
 import org.apache.olingo.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.producer.core.uri.antlr.UriLexer;
-import org.apache.olingo.producer.core.uri.antlr.UriParser;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.AllAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.BatchAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.CrossjoinAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.EntityAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.MetadataAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.OdataRelativeUriContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.PathSegmentContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.PathSegmentsAltContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.PathSegmentsContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParser.ResourcePathAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.AllAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.BatchAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.CrossjoinAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.EntityAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.MetadataAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.OdataRelativeUriContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.PathSegmentContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.PathSegmentsAltContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.PathSegmentsContext;
+import org.apache.olingo.producer.core.uri.antlr.UriParserParser.ResourcePathAltContext;
 
 public class UriParserImpl {
 
@@ -72,9 +72,9 @@ public class UriParserImpl {
       return new UriInfoImpl().setKind(UriInfoKind.batch);
 
     } else if (root instanceof EntityAltContext) {
-      // TODO
+      // TODO implement
     } else if (root instanceof MetadataAltContext) {
-      // TODO
+      // TODO implement
     } else if (root instanceof ResourcePathAltContext) {
 
       return readResourcePath(root);
@@ -113,11 +113,11 @@ public class UriParserImpl {
   }
 
   private void readFirstPathSegment(UriInfoImpl uriInfo, PathSegmentContext ctx) {
-    /*if (ctx.ns != null) {//TODO
+    /*if (ctx.ns != null) {//TODO implement
       // Error: First pathsegment can not be qualified. Allowed is entityset|function...
     }*/
 
-    /*if (ctx.odi == null) {//TODO
+    /*if (ctx.odi == null) {//TODO implement
       // Error: First pathsegment must contain an odata identifier
     }*/
 
@@ -262,7 +262,7 @@ public class UriParserImpl {
     UriLexer lexer = new UriLexer(input);
 
     CommonTokenStream tokens = new CommonTokenStream(lexer);
-    UriParser parser = new UriParser(tokens);
+    UriParserParser parser = new UriParserParser(tokens);
 
     // parser.addErrorListener(new ErrorHandler());
     // if (stage == 1) {
