@@ -27,8 +27,8 @@ public abstract class EdmTypeImpl extends EdmNamedImpl implements EdmType {
   private final EdmTypeKind kind;
   private final String namespace;
 
-  public EdmTypeImpl(final FullQualifiedName name, final EdmTypeKind kind) {
-    super(name.getName());
+  public EdmTypeImpl(final EdmProviderImpl edm, final FullQualifiedName name, final EdmTypeKind kind) {
+    super(edm, name.getName());
     namespace = name.getNamespace();
     this.kind = kind;
   }

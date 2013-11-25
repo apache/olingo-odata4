@@ -23,12 +23,9 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 
 //TODO: Finish
-public class EntitySet {
+public class EntitySet extends BindingTarget {
 
-  private String name;
-  private FullQualifiedName entityType;
   private boolean includeInServiceDocument;
-  private List<NavigationPropertyBinding> navigationPropertyBindings;
 
   public String getName() {
     return name;
@@ -48,12 +45,12 @@ public class EntitySet {
     return this;
   }
 
-  public FullQualifiedName getEntityType() {
-    return entityType;
+  public FullQualifiedName getType() {
+    return type;
   }
 
-  public EntitySet setEntityType(final FullQualifiedName entityType) {
-    this.entityType = entityType;
+  public EntitySet setType(final FullQualifiedName entityType) {
+    this.type = entityType;
     return this;
   }
 

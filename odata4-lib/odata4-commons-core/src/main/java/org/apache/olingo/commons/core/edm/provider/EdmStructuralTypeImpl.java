@@ -23,11 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
@@ -38,53 +34,24 @@ import org.apache.olingo.commons.api.edm.provider.StructuralType;
 public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmStructuralType {
 
   private final Map<String, EdmElement> properties = new HashMap<String, EdmElement>();
-  private final ArrayList<String> navigationPropertyNames = new ArrayList<String>();
-  private final ArrayList<String> propertyNames = new ArrayList<String>();
+  private ArrayList<String> navigationPropertyNames;
+  private ArrayList<String> propertyNames;
   protected final EdmStructuralType baseType;
+  private final StructuralType structuralType;
 
   public EdmStructuralTypeImpl(final EdmProviderImpl edm, final FullQualifiedName name,
-      final StructuralType structuralType,
-      final EdmTypeKind kind) {
-    super(name, kind);
-    baseType = buildBaseType(edm, structuralType.getBaseType(), kind);
+      final StructuralType structuralType, final EdmTypeKind kind) {
+    super(edm, name, kind);
+    this.structuralType = structuralType;
+    baseType = buildBaseType(structuralType.getBaseType());
     buildProperties(structuralType.getProperties());
     buildNavigationProperties(structuralType.getNavigationProperties());
-  }
-
-  private EdmStructuralType buildBaseType(final Edm edm, final FullQualifiedName baseType, final EdmTypeKind kind) {
-    if (baseType != null) {
-      if (EdmTypeKind.COMPLEX.equals(kind)) {
-        EdmComplexType complexType = edm.getComplexType(baseType);
-        if (complexType != null) {
-          propertyNames.addAll(complexType.getPropertyNames());
-          navigationPropertyNames.addAll(complexType.getNavigationPropertyNames());
-        } else {
-          throw new EdmException("Missing ComplexType for FQN: " + baseType);
-        }
-        return complexType;
-      } else if (EdmTypeKind.ENTITY.equals(kind)) {
-        EdmEntityType entityType = edm.getEntityType(baseType);
-        if (entityType != null) {
-          propertyNames.addAll(entityType.getPropertyNames());
-          navigationPropertyNames.addAll(entityType.getNavigationPropertyNames());
-        } else {
-          throw new EdmException("Missing EntityType for FQN: " + baseType);
-        }
-        return entityType;
-      } else {
-        throw new EdmException("Unkonwn Type Kind");
-      }
-    } else {
-      return null;
-    }
-
   }
 
   private void buildNavigationProperties(final List<NavigationProperty> providerNavigationProperties) {
     if (providerNavigationProperties != null) {
       for (NavigationProperty navigationProperty : providerNavigationProperties) {
-        navigationPropertyNames.add(navigationProperty.getName());
-        properties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(navigationProperty));
+        properties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(edm, navigationProperty));
       }
     }
 
@@ -93,8 +60,7 @@ public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmSt
   private void buildProperties(final List<Property> providerProperties) {
     if (providerProperties != null) {
       for (Property property : providerProperties) {
-        propertyNames.add(property.getName());
-        properties.put(property.getName(), new EdmPropertyImpl(property));
+        properties.put(property.getName(), new EdmPropertyImpl(edm, property));
       }
     }
 
@@ -114,16 +80,31 @@ public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmSt
 
   @Override
   public List<String> getPropertyNames() {
+    if (propertyNames == null) {
+      propertyNames = new ArrayList<String>();
+      if (baseType != null) {
+        propertyNames.addAll(baseType.getPropertyNames());
+      }
+      for (Property property : structuralType.getProperties()) {
+        propertyNames.add(property.getName());
+      }
+    }
     return propertyNames;
   }
 
   @Override
   public List<String> getNavigationPropertyNames() {
+    if (navigationPropertyNames == null) {
+      navigationPropertyNames = new ArrayList<String>();
+      if (baseType != null) {
+        navigationPropertyNames.addAll(baseType.getNavigationPropertyNames());
+      }
+      for (NavigationProperty navProperty : structuralType.getNavigationProperties()) {
+        navigationPropertyNames.add(navProperty.getName());
+      }
+    }
     return navigationPropertyNames;
   }
 
-  @Override
-  public EdmStructuralType getBaseType() {
-    return baseType;
-  }
+  protected abstract EdmStructuralType buildBaseType(FullQualifiedName baseTypeName);
 }

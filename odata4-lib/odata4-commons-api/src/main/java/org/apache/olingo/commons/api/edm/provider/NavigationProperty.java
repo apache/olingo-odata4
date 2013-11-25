@@ -28,7 +28,6 @@ public class NavigationProperty {
 
   private String name;
   private FullQualifiedName type;
-  // Is multiplicity even needed?
   private boolean isCollection;
 
   // Should we make the partner a path class?

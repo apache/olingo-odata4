@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -40,6 +42,7 @@ import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +66,7 @@ public class EdmProviderImplTest {
     TypeDefinition typeDefinition = new TypeDefinition().setName(FQN.getName());
     when(provider.getTypeDefinition(FQN)).thenReturn(typeDefinition);
 
-    EntityType entityType = new EntityType().setName(FQN.getName());
+    EntityType entityType = new EntityType().setName(FQN.getName()).setKey(new ArrayList<PropertyRef>());
     when(provider.getEntityType(FQN)).thenReturn(entityType);
 
     ComplexType complexType = new ComplexType().setName(FQN.getName());

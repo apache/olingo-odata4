@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.helper.NamespaceInfo;
+import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.exception.ODataException;
 
 public interface EdmProvider {
@@ -84,6 +84,7 @@ public interface EdmProvider {
   public Function getFunction(final FullQualifiedName functionName, final FullQualifiedName bindingPatameterTypeName,
       final Boolean isBindingParameterCollection, final List<String> parameterNames) throws ODataException;
 
+  //TODO: document
   public Term getTerm(final FullQualifiedName termName) throws ODataException;
 
   /**
@@ -135,11 +136,11 @@ public interface EdmProvider {
   public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException;
 
   /**
-   * This method should return a list of all namespaces
-   * @return List of namespace info
+   * This method should return a list of all namespaces which have an alias
+   * @return List of alias info
    * @throws ODataException
    */
-  public List<NamespaceInfo> getNamespaceInfos() throws ODataException;
+  public List<AliasInfo> getAliasInfos() throws ODataException;
 
   /**
    * This method should return a collection of all {@link Schema}

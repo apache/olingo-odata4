@@ -18,51 +18,116 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmNamed;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
+import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.exception.ODataException;
 
-//TODO: Test
 public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityContainer {
 
-  private EntityContainerInfo entityContainerInfo;
+  private final FullQualifiedName entityContainerName;
+  private final EdmProvider provider;
+  private final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  private final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  private final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+  private final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
 
-  public EdmEntityContainerImpl(final EntityContainerInfo entityContainerInfo) {
-    super(entityContainerInfo.getContainerName().getName());
-    this.entityContainerInfo = entityContainerInfo;
+  public EdmEntityContainerImpl(final EdmProviderImpl edm, final EdmProvider provider,
+      final EntityContainerInfo entityContainerInfo) {
+    super(edm, entityContainerInfo.getContainerName().getName());
+    this.provider = provider;
+    entityContainerName = entityContainerInfo.getContainerName();
   }
 
   @Override
   public String getNamespace() {
-    return entityContainerInfo.getContainerName().getNamespace();
+    return entityContainerName.getNamespace();
   }
 
   @Override
-  public EdmSingleton getSingleton(final String name) {
-    return null;
+  public EdmSingleton getSingleton(final String singletonName) {
+    EdmSingleton singleton = singletons.get(singletonName);
+    if (singleton == null) {
+      try {
+        Singleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
+        if (providerSingleton != null) {
+          singleton = new EdmSingletonImpl(edm, singletonName, providerSingleton);
+          singletons.put(singletonName, singleton);
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return singleton;
   }
 
   @Override
-  public EdmEntitySet getEntitySet(final String name) {
-    return null;
+  public EdmEntitySet getEntitySet(final String entitySetName) {
+    EdmEntitySet entitySet = entitySets.get(entitySetName);
+    if (entitySet == null) {
+      try {
+        EntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
+        if (providerEntitySet != null) {
+          entitySet = new EdmEntitySetImpl(edm, entitySetName, providerEntitySet);
+          entitySets.put(entitySetName, entitySet);
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return entitySet;
   }
 
   @Override
-  public EdmActionImport getActionImport(final String name) {
-    return null;
+  public EdmActionImport getActionImport(final String actionImportName) {
+    EdmActionImport actionImport = actionImports.get(actionImportName);
+    if (actionImport == null) {
+      try {
+        ActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
+        if (providerImport != null) {
+          actionImport = new EdmActionImportImpl();
+          actionImports.put(actionImportName, actionImport);
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return actionImport;
   }
 
   @Override
-  public EdmFunctionImport getFunctionImport(final String name) {
-    return null;
+  public EdmFunctionImport getFunctionImport(final String functionImportName) {
+    EdmFunctionImport functionImport = functionImports.get(functionImportName);
+    if (functionImport == null) {
+      try {
+        FunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
+        if (providerImport != null) {
+          functionImport = new EdmFunctionImportImpl();
+          functionImports.put(functionImportName, functionImport);
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return functionImport;
   }
 
   @Override
-  public EdmNamed getElement(String odataIdentifier) {
+  public EdmNamed getElement(final String odataIdentifier) {
     return null;
   }
 

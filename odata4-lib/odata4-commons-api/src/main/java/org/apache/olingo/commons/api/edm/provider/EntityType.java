@@ -28,7 +28,7 @@ public class EntityType extends StructuralType {
   private List<PropertyRef> key;
   private boolean hasStream;
 
-  public boolean isHasStream() {
+  public boolean hasStream() {
     return hasStream;
   }
 

@@ -23,13 +23,12 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Function;
 
-//TODO: Test
 public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
 
   private Function function;
 
-  public EdmFunctionImpl(final FullQualifiedName name, final Function function) {
-    super(name, function, EdmTypeKind.FUNCTION);
+  public EdmFunctionImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Function function) {
+    super(edm, name, function, EdmTypeKind.FUNCTION);
     this.function = function;
   }
 

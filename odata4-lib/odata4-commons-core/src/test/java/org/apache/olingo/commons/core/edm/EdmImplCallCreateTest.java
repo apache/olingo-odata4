@@ -24,7 +24,9 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -213,6 +215,11 @@ public class EdmImplCallCreateTest {
     @Override
     public EdmServiceMetadata createServiceMetadata() {
       return mock(EdmServiceMetadata.class);
+    }
+
+    @Override
+    protected Map<String, String> createAliasToNamespaceInfo() {
+      return new HashMap<String, String>();
     }
   }
 }

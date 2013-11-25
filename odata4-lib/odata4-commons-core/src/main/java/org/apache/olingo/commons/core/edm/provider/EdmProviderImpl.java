@@ -18,7 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -29,6 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Action;
@@ -55,7 +58,7 @@ public class EdmProviderImpl extends EdmImpl {
     try {
       EntityContainerInfo entityContainerInfo = provider.getEntityContainerInfo(containerName);
       if (entityContainerInfo != null) {
-        return new EdmEntityContainerImpl(entityContainerInfo);
+        return new EdmEntityContainerImpl(this, provider, entityContainerInfo);
       }
       return null;
     } catch (ODataException e) {
@@ -68,7 +71,7 @@ public class EdmProviderImpl extends EdmImpl {
     try {
       EnumType enumType = provider.getEnumType(enumName);
       if (enumType != null) {
-        return new EdmEnumImpl(enumName, enumType);
+        return new EdmEnumImpl(this, enumName, enumType);
       }
       return null;
     } catch (ODataException e) {
@@ -81,7 +84,7 @@ public class EdmProviderImpl extends EdmImpl {
     try {
       TypeDefinition typeDefinition = provider.getTypeDefinition(typeDefinitionName);
       if (typeDefinition != null) {
-        return new EdmTypeDefinitionImpl(typeDefinitionName, typeDefinition);
+        return new EdmTypeDefinitionImpl(this, typeDefinitionName, typeDefinition);
       }
       return null;
     } catch (ODataException e) {
@@ -121,7 +124,7 @@ public class EdmProviderImpl extends EdmImpl {
     try {
       Action action = provider.getAction(actionName, bindingPatameterTypeName, isBindingParameterCollection);
       if (action != null) {
-        return new EdmActionImpl(actionName, action);
+        return new EdmActionImpl(this, actionName, action);
       }
       return null;
     } catch (ODataException e) {
@@ -137,7 +140,7 @@ public class EdmProviderImpl extends EdmImpl {
       Function function = provider.getFunction(functionName, bindingPatameterTypeName, isBindingParameterCollection,
           parameterNames);
       if (function != null) {
-        return new EdmFunctionImpl(functionName, function);
+        return new EdmFunctionImpl(this, functionName, function);
       }
       return null;
     } catch (ODataException e) {
@@ -148,6 +151,22 @@ public class EdmProviderImpl extends EdmImpl {
   @Override
   public EdmServiceMetadata createServiceMetadata() {
     return new EdmServiceMetadataImpl();
+  }
+
+  @Override
+  protected Map<String, String> createAliasToNamespaceInfo() {
+    Map<String, String> aliasToNamespaceInfos = new HashMap<String, String>();
+    try {
+      List<AliasInfo> aliasInfos = provider.getAliasInfos();
+      if (aliasInfos != null) {
+        for (AliasInfo info : aliasInfos) {
+          aliasToNamespaceInfos.put(info.getAlias(), info.getNamespace());
+        }
+      }
+    } catch (ODataException e) {
+      throw new EdmException(e);
+    }
+    return aliasToNamespaceInfos;
   }
 
 }

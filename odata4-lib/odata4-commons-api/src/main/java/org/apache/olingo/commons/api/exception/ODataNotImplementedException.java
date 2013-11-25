@@ -21,5 +21,13 @@ package org.apache.olingo.commons.api.exception;
 public class ODataNotImplementedException extends ODataException {
 
   private static final long serialVersionUID = 1L;
+  
+  public ODataNotImplementedException(String msg){
+    super(msg);
+  }
+  
+  public ODataNotImplementedException(){
+    super("Not implemented");
+  }
 
 }

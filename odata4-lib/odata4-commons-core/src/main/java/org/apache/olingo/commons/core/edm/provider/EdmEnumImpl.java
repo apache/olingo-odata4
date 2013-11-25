@@ -28,13 +28,12 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 
-//TODO: Test
 public class EdmEnumImpl extends EdmNamedImpl implements EdmEnumType {
 
   private final FullQualifiedName enumName;
 
-  public EdmEnumImpl(final FullQualifiedName enumName, final EnumType enumType) {
-    super(enumName.getName());
+  public EdmEnumImpl(final EdmProviderImpl edm, final FullQualifiedName enumName, final EnumType enumType) {
+    super(edm, enumName.getName());
     this.enumName = enumName;
   }
 

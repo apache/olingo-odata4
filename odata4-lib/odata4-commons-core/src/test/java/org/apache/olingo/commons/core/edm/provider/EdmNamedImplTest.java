@@ -34,7 +34,7 @@ public class EdmNamedImplTest {
   private class EdmNamedImplTester extends EdmNamedImpl {
 
     public EdmNamedImplTester(final String name) {
-      super(name);
+      super(null, name);
     }
   }
 

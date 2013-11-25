@@ -16,13 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.api.edm.helper;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+public class AliasInfo {
+  private String namespace;
+  private String alias;
 
-  @Override
-  public EdmAction getOperation();
+  public String getNamespace() {
+    return namespace;
+  }
+
+  public AliasInfo setNamespace(final String namespace) {
+    this.namespace = namespace;
+    return this;
+  }
+
+  public String getAlias() {
+    return alias;
+  }
+
+  public AliasInfo setAlias(final String alias) {
+    this.alias = alias;
+    return this;
+  }
+
 }

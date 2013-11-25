@@ -25,13 +25,13 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 
-//TODO: Test
 public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefinition {
 
   private final FullQualifiedName typeDefinitionName;
 
-  public EdmTypeDefinitionImpl(final FullQualifiedName typeDefinitionName, final TypeDefinition typeDefinition) {
-    super(typeDefinitionName.getName());
+  public EdmTypeDefinitionImpl(final EdmProviderImpl edm, final FullQualifiedName typeDefinitionName,
+      final TypeDefinition typeDefinition) {
+    super(edm, typeDefinitionName.getName());
     this.typeDefinitionName = typeDefinitionName;
   }
 

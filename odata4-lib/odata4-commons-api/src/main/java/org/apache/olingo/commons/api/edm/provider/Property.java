@@ -26,14 +26,19 @@ public class Property {
   private String name;
   // Can be simple or complex
   private FullQualifiedName type;
-  private boolean isCollection;
+  private boolean collection;
+  
+  //Mimetype and mapping what here
+  private String mimeType;
+  private Mapping mapping;
+  
   // Facets
   private String defaultValue;
   private Boolean nullable;
   private Integer maxLength;
   private Integer precision;
   private Integer scale;
-  private Boolean isUnicode;
+  private Boolean unicode;
 
   public String getName() {
     return name;
@@ -54,11 +59,11 @@ public class Property {
   }
 
   public boolean isCollection() {
-    return isCollection;
+    return collection;
   }
 
   public Property setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
+    this.collection = isCollection;
     return this;
   }
 
@@ -107,13 +112,30 @@ public class Property {
     return this;
   }
 
-  public Boolean getIsUnicode() {
-    return isUnicode;
+  public Boolean isUnicode() {
+    return unicode;
   }
 
-  public Property setIsUnicode(final Boolean isUnicode) {
-    this.isUnicode = isUnicode;
+  public Property setUnicode(final Boolean isUnicode) {
+    this.unicode = isUnicode;
     return this;
   }
 
+  public String getMimeType() {
+    return mimeType;
+  }
+
+  public Property setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+    return this;
+  }
+
+  public Mapping getMapping() {
+    return mapping;
+  }
+
+  public Property setMapping(Mapping mapping) {
+    this.mapping = mapping;
+    return this;
+  }
 }

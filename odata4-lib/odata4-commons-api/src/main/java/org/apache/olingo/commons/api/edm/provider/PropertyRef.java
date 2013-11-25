@@ -20,15 +20,25 @@ package org.apache.olingo.commons.api.edm.provider;
 
 public class PropertyRef {
 
-  private String name;
+  private String propertyName;
   private String alias;
+  private String path;
 
-  public String getName() {
-    return name;
+  public String getPath() {
+    return path;
   }
 
-  public PropertyRef setName(final String name) {
-    this.name = name;
+  public PropertyRef setPath(String path) {
+    this.path = path;
+    return this;
+  }
+
+  public String getPropertyName() {
+    return propertyName;
+  }
+
+  public PropertyRef setPropertyName(final String name) {
+    this.propertyName = name;
     return this;
   }
 

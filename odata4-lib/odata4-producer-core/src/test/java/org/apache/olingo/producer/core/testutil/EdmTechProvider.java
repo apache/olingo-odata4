@@ -156,10 +156,10 @@ public class EdmTechProvider extends EdmProviderAdapter {
       .setType(EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName())
       .setCollection(true);
 
-  EdmEntityContainer entityContainerTest1 = new EdmEntityContainerImpl(
-      new EntityContainerInfo()
-          .setContainerName(new FullQualifiedName("com.sap.odata.test1", "Container"))
-      );
+//  EdmEntityContainer entityContainerTest1 = new EdmEntityContainerImpl(
+//      new EntityContainerInfo()
+//          .setContainerName(new FullQualifiedName("com.sap.odata.test1", "Container"))
+//      );
 
   @Override
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
@@ -168,13 +168,13 @@ public class EdmTechProvider extends EdmProviderAdapter {
 
         return new EntitySet()
             .setName("ETAllPrim")
-            .setEntityType(new FullQualifiedName("com.sap.odata.test1", "ESAllPrim"));
+            .setType(new FullQualifiedName("com.sap.odata.test1", "ESAllPrim"));
 
       } else if (name.equals("ESCollAllPrim")) {
 
         return new EntitySet()
             .setName("ESCollAllPrim")
-            .setEntityType(new FullQualifiedName("com.sap.odata.test1", "ETCollAllPrim"));
+            .setType(new FullQualifiedName("com.sap.odata.test1", "ETCollAllPrim"));
 
       }
     }
@@ -196,7 +196,7 @@ public class EdmTechProvider extends EdmProviderAdapter {
               propertySByte, propertySingle, propertyString,
               propertyTimeOfDay))
           .setKey(Arrays.asList(
-              new PropertyRef().setName("PropertyInt16")));
+              new PropertyRef().setPropertyName("PropertyInt16")));
 
     } else if (entityTypeName.equals(new FullQualifiedName("com.sap.odata.test1", "ETCollAllPrim"))) {
       return new EntityType()
@@ -210,7 +210,7 @@ public class EdmTechProvider extends EdmProviderAdapter {
               collectionPropertySByte, collectionPropertySingle, collectionPropertyString,
               collectionPropertyTimeOfDay))
           .setKey(Arrays.asList(
-              new PropertyRef().setName("PropertyInt16")));
+              new PropertyRef().setPropertyName("PropertyInt16")));
     }
 
     throw new ODataNotImplementedException();

@@ -16,13 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+import org.junit.Test;
 
-  @Override
-  public EdmAction getOperation();
+public class EdmPropertyImplTest {
+
+  @Test
+  public void getTypeReturnsSimpleType() {
+
+  }
+
+  @Test
+  public void getTypeReturnsComplexType() {
+
+  }
+
 }

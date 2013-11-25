@@ -25,8 +25,8 @@ public class Parameter {
 
   private String name;
   private FullQualifiedName type;
-  // Why multiplicity here
   private boolean isCollection;
+  private Mapping mapping;
 
   // Facets?
   private Boolean nullable;
@@ -94,6 +94,15 @@ public class Parameter {
 
   public Parameter setScale(final Integer scale) {
     this.scale = scale;
+    return this;
+  }
+
+  public Mapping getMapping() {
+    return mapping;
+  }
+
+  public Parameter setMapping(Mapping mapping) {
+    this.mapping = mapping;
     return this;
   }
 }

@@ -16,29 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm.helper;
+package org.apache.olingo.commons.core;
 
-//TODO:where to put this class?
-public class NamespaceInfo {
-  private String namespace;
-  private String alias;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 
-  public String getNamespace() {
-    return namespace;
-  }
+public class ODataCommonsCoreImpl {
 
-  public NamespaceInfo setNamespace(final String namespace) {
-    this.namespace = namespace;
-    return this;
-  }
-
-  public String getAlias() {
-    return alias;
-  }
-
-  public NamespaceInfo setAlias(final String alias) {
-    this.alias = alias;
-    return this;
+  public Edm createEdm(final EdmProvider provider) {
+    return new EdmProviderImpl(provider);
   }
 
 }

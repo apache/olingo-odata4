@@ -37,7 +37,7 @@ public class EdmTypeImplTest {
 
   private class EdmTypeImplTester extends EdmTypeImpl {
     public EdmTypeImplTester(final FullQualifiedName name, final EdmTypeKind kind) {
-      super(name, kind);
+      super(null, name, kind);
     }
   }
 

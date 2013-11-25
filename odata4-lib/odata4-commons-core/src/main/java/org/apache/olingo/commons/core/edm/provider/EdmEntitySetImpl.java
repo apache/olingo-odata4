@@ -16,13 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
-  @Override
-  public EdmAction getOperation();
+public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
+
+  public EdmEntitySetImpl(final EdmProviderImpl edm, final String name, final EntitySet entitySet) {
+    super(edm, name, entitySet);
+  }
+
 }

@@ -28,11 +28,11 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Operation;
 
-//TODO: Test
 public class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
 
-  public EdmOperationImpl(final FullQualifiedName name, final Operation operation, final EdmTypeKind kind) {
-    super(name, kind);
+  public EdmOperationImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Operation operation,
+      final EdmTypeKind kind) {
+    super(edm, name, kind);
   }
 
   @Override

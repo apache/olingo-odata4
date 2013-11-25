@@ -23,10 +23,9 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Action;
 
-//TODO: Test
 public class EdmActionImpl extends EdmOperationImpl implements EdmAction {
 
-  public EdmActionImpl(final FullQualifiedName name, final Action action) {
-    super(name, action, EdmTypeKind.ACTION);
+  public EdmActionImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Action action) {
+    super(edm, name, action, EdmTypeKind.ACTION);
   }
 }

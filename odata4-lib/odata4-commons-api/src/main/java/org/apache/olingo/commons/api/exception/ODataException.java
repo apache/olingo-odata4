@@ -21,4 +21,16 @@ package org.apache.olingo.commons.api.exception;
 public class ODataException extends Exception {
   private static final long serialVersionUID = 1L;
 
+  public ODataException(final String msg) {
+    super(msg);
+  }
+
+  public ODataException(final String msg, final Throwable e) {
+    super(msg, e);
+  }
+
+  public ODataException(final Throwable e) {
+    super(e);
+  }
+  
 }

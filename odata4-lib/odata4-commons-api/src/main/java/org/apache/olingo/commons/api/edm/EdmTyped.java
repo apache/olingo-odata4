@@ -29,5 +29,8 @@ public interface EdmTyped {
    */
   EdmType getType();
 
+  /**
+   * @return true if this typed element is a collection
+   */
   boolean isCollection();
 }

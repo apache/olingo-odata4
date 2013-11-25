@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.edm.EdmElement;
 
 public abstract class EdmElementImpl extends EdmNamedImpl implements EdmElement {
 
-  public EdmElementImpl(final String name) {
-    super(name);
+  public EdmElementImpl(final EdmProviderImpl edm, final String name) {
+    super(edm, name);
   }
 }

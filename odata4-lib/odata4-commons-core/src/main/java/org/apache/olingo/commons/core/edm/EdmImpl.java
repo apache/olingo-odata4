@@ -45,9 +45,11 @@ public abstract class EdmImpl implements Edm {
   private final Map<ActionMapKey, EdmAction> actions = new HashMap<ActionMapKey, EdmAction>();
   private final Map<FunctionMapKey, EdmFunction> functions = new HashMap<FunctionMapKey, EdmFunction>();
   private EdmServiceMetadata serviceMetadata;
+  private Map<String, String> aliasToNamespaceInfo;
 
   @Override
-  public EdmEntityContainer getEntityContainer(final FullQualifiedName fqn) {
+  public EdmEntityContainer getEntityContainer(final FullQualifiedName namespaceOrAliasFQN) {
+    FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmEntityContainer container = entityContainers.get(fqn);
     if (container == null) {
       container = createEntityContainer(fqn);
@@ -62,7 +64,8 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmEnumType getEnumType(final FullQualifiedName fqn) {
+  public EdmEnumType getEnumType(final FullQualifiedName namespaceOrAliasFQN) {
+    FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmEnumType enumType = enumTypes.get(fqn);
     if (enumType == null) {
       enumType = createEnumType(fqn);
@@ -74,7 +77,8 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmTypeDefinition getTypeDefinition(final FullQualifiedName fqn) {
+  public EdmTypeDefinition getTypeDefinition(final FullQualifiedName namespaceOrAliasFQN) {
+    FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmTypeDefinition typeDefinition = typeDefinitions.get(fqn);
     if (typeDefinition == null) {
       typeDefinition = createTypeDefinition(fqn);
@@ -86,7 +90,8 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmEntityType getEntityType(final FullQualifiedName fqn) {
+  public EdmEntityType getEntityType(final FullQualifiedName namespaceOrAliasFQN) {
+    FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmEntityType entityType = entityTypes.get(fqn);
     if (entityType == null) {
       entityType = createEntityType(fqn);
@@ -98,7 +103,8 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmComplexType getComplexType(final FullQualifiedName fqn) {
+  public EdmComplexType getComplexType(final FullQualifiedName namespaceOrAliasFQN) {
+    FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmComplexType complexType = complexTypes.get(fqn);
     if (complexType == null) {
       complexType = createComplexType(fqn);
@@ -112,10 +118,12 @@ public abstract class EdmImpl implements Edm {
   @Override
   public EdmAction getAction(final FullQualifiedName actionName, final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection) {
-    ActionMapKey key = new ActionMapKey(actionName, bindingParameterTypeName, isBindingParameterCollection);
+    FullQualifiedName actionFqn = resolvePossibleAlias(actionName);
+    FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
+    ActionMapKey key = new ActionMapKey(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
     EdmAction action = actions.get(key);
     if (action == null) {
-      action = createAction(actionName, bindingParameterTypeName, isBindingParameterCollection);
+      action = createAction(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
       if (action != null) {
         actions.put(key, action);
       }
@@ -127,11 +135,13 @@ public abstract class EdmImpl implements Edm {
   public EdmFunction getFunction(final FullQualifiedName functionName,
       final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection, final List<String> parameterNames) {
+    FullQualifiedName functionFqn = resolvePossibleAlias(functionName);
+    FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
     FunctionMapKey key =
-        new FunctionMapKey(functionName, bindingParameterTypeName, isBindingParameterCollection, parameterNames);
+        new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
     EdmFunction function = functions.get(key);
     if (function == null) {
-      function = createFunction(functionName, bindingParameterTypeName, isBindingParameterCollection,
+      function = createFunction(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection,
           parameterNames);
       if (function != null) {
         functions.put(key, function);
@@ -148,23 +158,42 @@ public abstract class EdmImpl implements Edm {
     return serviceMetadata;
   }
 
-  public abstract EdmEntityContainer createEntityContainer(FullQualifiedName containerName);
+  private FullQualifiedName resolvePossibleAlias(final FullQualifiedName namespaceOrAliasFQN) {
+    if (aliasToNamespaceInfo == null) {
+      aliasToNamespaceInfo = createAliasToNamespaceInfo();
+    }
+    FullQualifiedName finalFQN = null;
+    if (namespaceOrAliasFQN != null) {
+      String namespace = aliasToNamespaceInfo.get(namespaceOrAliasFQN.getNamespace());
+      // If not contained in info it must be a namespace
+      if (namespace == null) {
+        finalFQN = namespaceOrAliasFQN;
+      } else {
+        finalFQN = new FullQualifiedName(namespace, namespaceOrAliasFQN.getName());
+      }
+    }
+    return finalFQN;
+  }
 
-  public abstract EdmEnumType createEnumType(FullQualifiedName enumName);
+  protected abstract Map<String, String> createAliasToNamespaceInfo();
 
-  public abstract EdmTypeDefinition createTypeDefinition(FullQualifiedName typeDefinitionName);
+  protected abstract EdmEntityContainer createEntityContainer(FullQualifiedName containerName);
 
-  public abstract EdmEntityType createEntityType(FullQualifiedName entityTypeName);
+  protected abstract EdmEnumType createEnumType(FullQualifiedName enumName);
 
-  public abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
+  protected abstract EdmTypeDefinition createTypeDefinition(FullQualifiedName typeDefinitionName);
 
-  public abstract EdmAction createAction(FullQualifiedName actionName, FullQualifiedName bindingPatameterTypeName,
+  protected abstract EdmEntityType createEntityType(FullQualifiedName entityTypeName);
+
+  protected abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
+
+  protected abstract EdmAction createAction(FullQualifiedName actionName, FullQualifiedName bindingPatameterTypeName,
       Boolean isBindingParameterCollection);
 
-  public abstract EdmFunction createFunction(FullQualifiedName functionName,
+  protected abstract EdmFunction createFunction(FullQualifiedName functionName,
       FullQualifiedName bindingPatameterTypeName, Boolean isBindingParameterCollection,
       List<String> parameterNames);
 
-  public abstract EdmServiceMetadata createServiceMetadata();
+  protected abstract EdmServiceMetadata createServiceMetadata();
 
 }

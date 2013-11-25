@@ -36,7 +36,7 @@ public class FunctionMapKey {
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
     parameterNames = bindingParameterNames;
-    if(parameterNames != null){
+    if (parameterNames != null) {
       Collections.sort(parameterNames);
     }
   }

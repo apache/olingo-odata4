@@ -26,7 +26,6 @@ import org.apache.olingo.commons.api.edm.helper.EdmEntitySetInfo;
 import org.apache.olingo.commons.api.edm.helper.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.helper.EdmSingletonInfo;
 
-//TODO: Test
 public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   @Override

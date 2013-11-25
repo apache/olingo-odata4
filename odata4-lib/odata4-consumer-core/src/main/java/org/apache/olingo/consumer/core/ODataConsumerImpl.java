@@ -16,13 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.consumer.core;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.core.ODataCommonsCoreImpl;
+import org.apache.olingo.consumer.api.ODataConsumer;
+
+public class ODataConsumerImpl extends ODataConsumer {
 
   @Override
-  public EdmAction getOperation();
+  public Edm createEdm(final EdmProvider provider) {
+    return new ODataCommonsCoreImpl().createEdm(provider);
+  }
+
 }

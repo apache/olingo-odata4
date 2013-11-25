@@ -20,105 +20,77 @@ package org.apache.olingo.commons.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.helper.EdmMapping;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.core.edm.EdmImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 
-public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
+public class EdmReturnTypeImpl implements EdmReturnType {
 
-  private final Property property;
-  private final boolean isPrimitive;
-  private EdmType propertyType;
+  private final EdmImpl edm;
+  private final ReturnType returnType;
+  private EdmType typeImpl;
 
-  public EdmPropertyImpl(final EdmProviderImpl edm, final Property property) {
-    super(edm, property.getName());
-    this.property = property;
-    if (EdmPrimitiveType.EDM_NAMESPACE.equals(property.getType().getNamespace())) {
-      isPrimitive = true;
-    } else {
-      isPrimitive = false;
-    }
+  public EdmReturnTypeImpl(final EdmImpl edm, final ReturnType returnType) {
+    this.edm = edm;
+    this.returnType = returnType;
   }
 
   @Override
   public EdmType getType() {
-    if (propertyType == null) {
-      FullQualifiedName typeName = property.getType();
-      if (isPrimitive) {
+    if (typeImpl == null) {
+      FullQualifiedName typeName = returnType.getType();
+      if (EdmPrimitiveType.EDM_NAMESPACE.equals(typeName.getNamespace())) {
         EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOf(typeName.getName());
         if (kind != null) {
-          propertyType = kind.getEdmPrimitiveTypeInstance();
+          typeImpl = kind.getEdmPrimitiveTypeInstance();
         } else {
           throw new EdmException("Can�t find type with name: " + typeName);
         }
       } else {
-        propertyType = edm.getComplexType(typeName);
-        if (propertyType == null) {
-          propertyType = edm.getEnumType(typeName);
-          if (propertyType == null) {
-            propertyType = edm.getTypeDefinition(typeName);
-            if (propertyType == null) {
-              throw new EdmException("Can�t find type with name: " + typeName);
+        typeImpl = edm.getComplexType(typeName);
+        if (typeImpl == null) {
+          typeImpl = edm.getEntityType(typeName);
+          if (typeImpl == null) {
+            typeImpl = edm.getEnumType(typeName);
+            if (typeImpl == null) {
+              typeImpl = edm.getTypeDefinition(typeName);
+              if (typeImpl == null) {
+                throw new EdmException("Can�t find type with name: " + typeName);
+              }
             }
           }
         }
       }
     }
-
-    return propertyType;
+    return typeImpl;
   }
 
   @Override
   public boolean isCollection() {
-    return property.isCollection();
-  }
-
-  @Override
-  public EdmMapping getMapping() {
-    return property.getMapping();
-  }
-
-  @Override
-  public String getMimeType() {
-    return property.getMimeType();
-  }
-
-  @Override
-  public boolean isPrimitive() {
-    return isPrimitive;
+    return returnType.isCollection();
   }
 
   @Override
   public Boolean isNullable() {
-    return property.getNullable();
+    return returnType.getNullable();
   }
 
   @Override
   public Integer getMaxLength() {
-    return property.getMaxLength();
+    return returnType.getMaxLength();
   }
 
   @Override
   public Integer getPrecision() {
-    return property.getPrecision();
+    return returnType.getPrecision();
   }
 
   @Override
   public Integer getScale() {
-    return property.getScale();
-  }
-
-  @Override
-  public Boolean isUnicode() {
-    return property.isUnicode();
-  }
-
-  @Override
-  public String getDefaultValue() {
-    return property.getDefaultValue();
+    return returnType.getScale();
   }
 
 }

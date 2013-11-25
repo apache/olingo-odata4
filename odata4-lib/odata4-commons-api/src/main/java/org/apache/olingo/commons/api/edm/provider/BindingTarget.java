@@ -16,24 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.core.edm.provider;
+package org.apache.olingo.commons.api.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmNamed;
+import java.util.List;
 
-public abstract class EdmNamedImpl implements EdmNamed {
+import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 
-  private String name;
-  protected EdmProviderImpl edm;
+public abstract class BindingTarget {
 
-  // TODO: ValidateName?
-  public EdmNamedImpl(final EdmProviderImpl edm, final String name) {
-    this.edm = edm;
-    this.name = name;
-  }
-
-  @Override
+  protected String name;
+  protected FullQualifiedName type;
+  protected List<NavigationPropertyBinding> navigationPropertyBindings;
+  
   public String getName() {
     return name;
   }
 
+  public BindingTarget setName(final String name) {
+    this.name = name;
+    return this;
+  }
+
+  public FullQualifiedName getType() {
+    return type;
+  }
+
+  public BindingTarget setType(final FullQualifiedName type) {
+    this.type = type;
+    return this;
+  }
+
+  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
+    return navigationPropertyBindings;
+  }
+
+  public BindingTarget setNavigationPropertyBindings(final List<NavigationPropertyBinding> navigationPropertyBindings) {
+    this.navigationPropertyBindings = navigationPropertyBindings;
+    return this;
+  }
+  
 }

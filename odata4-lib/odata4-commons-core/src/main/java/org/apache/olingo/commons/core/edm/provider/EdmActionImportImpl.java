@@ -16,13 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm.provider;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+
+public class EdmActionImportImpl implements EdmActionImport {
 
   @Override
-  public EdmAction getOperation();
+  public EdmEntitySet getReturnedEntitySet() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public EdmEntityContainer getEntityContainer() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getName() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public EdmAction getOperation() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

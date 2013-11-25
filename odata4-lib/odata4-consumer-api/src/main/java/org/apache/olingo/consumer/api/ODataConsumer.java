@@ -16,13 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.consumer.api;
 
-/**
- * An EdmActionImport.
- */
-public interface EdmActionImport extends EdmOperationImport {
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 
-  @Override
-  public EdmAction getOperation();
+//TODO: Exceptionhandling
+public abstract class ODataConsumer {
+
+  private static final String IMPLEMENTATION = "org.apache.olingo.consumer.core.ODataConsumerImpl";
+
+  public static ODataConsumer create() {
+    ODataConsumer instance;
+
+    try {
+      final Class<?> clazz = Class.forName(ODataConsumer.IMPLEMENTATION);
+
+      /*
+       * We explicitly do not use the singleton pattern to keep the server state free
+       * and avoid class loading issues also during hot deployment.
+       */
+      final Object object = clazz.newInstance();
+      instance = (ODataConsumer) object;
+
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+    return instance;
+  }
+
+  public abstract Edm createEdm(EdmProvider provider);
+
 }

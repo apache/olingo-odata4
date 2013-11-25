@@ -27,7 +27,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -47,6 +49,8 @@ public class EdmImplCachingTest {
   private final FullQualifiedName NAME1 = new FullQualifiedName("testNamespace1", "testName1");
   private final FullQualifiedName NAME2 = new FullQualifiedName("testNamespace2", "testName2");
   private Edm edm;
+
+  // TODO: Test with alias
 
   @Test
   public void cacheEntityContainer() {
@@ -347,6 +351,11 @@ public class EdmImplCachingTest {
     @Override
     public EdmServiceMetadata createServiceMetadata() {
       return mock(EdmServiceMetadata.class);
+    }
+
+    @Override
+    protected Map<String, String> createAliasToNamespaceInfo() {
+      return new HashMap<String, String>();
     }
   }
 }

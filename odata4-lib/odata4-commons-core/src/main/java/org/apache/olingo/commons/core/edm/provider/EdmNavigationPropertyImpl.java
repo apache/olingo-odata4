@@ -18,30 +18,41 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 
-//TODO: Test
 public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavigationProperty {
 
-  public EdmNavigationPropertyImpl(final NavigationProperty navigationProperty) {
-    super(navigationProperty.getName());
+  private final NavigationProperty navigationProperty;
+  private EdmEntityType typeImpl;
+
+  public EdmNavigationPropertyImpl(final EdmProviderImpl edm, final NavigationProperty navigationProperty) {
+    super(edm, navigationProperty.getName());
+    this.navigationProperty = navigationProperty;
   }
 
   @Override
   public EdmType getType() {
-    return null;
+    if (typeImpl == null) {
+      typeImpl = edm.getEntityType(navigationProperty.getType());
+      if (typeImpl == null) {
+        throw new EdmException("Can�t find type with name: " + navigationProperty.getType());
+      }
+    }
+    return typeImpl;
   }
 
   @Override
   public boolean isCollection() {
-    return false;
+    return navigationProperty.isCollection();
   }
 
   @Override
   public Boolean isNullable() {
-    return null;
+    return navigationProperty.getNullable();
   }
 
 }
