@@ -22,8 +22,7 @@ package org.apache.olingo.commons.api.edm.provider;
 public class NavigationPropertyBinding {
 
   private String path;
-  // Should this really be an own class?
-  private TargetPath target;
+  private Target target;
 
   public String getPath() {
     return path;
@@ -34,11 +33,11 @@ public class NavigationPropertyBinding {
     return this;
   }
 
-  public TargetPath getTarget() {
+  public Target getTarget() {
     return target;
   }
 
-  public NavigationPropertyBinding setTarget(final TargetPath target) {
+  public NavigationPropertyBinding setTarget(final Target target) {
     this.target = target;
     return this;
   }

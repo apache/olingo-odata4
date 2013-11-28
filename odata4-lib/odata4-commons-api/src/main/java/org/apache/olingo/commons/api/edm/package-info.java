@@ -15,7 +15,8 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- ******************************************************************************//**
+ ******************************************************************************/
+/**
  * <h1>Entity Data Model API</h1>
  * <p>The Entity Data Model is described in the OData protocol specification
  * as well as in the Conceptual Schema Definition for the OData Protocol.

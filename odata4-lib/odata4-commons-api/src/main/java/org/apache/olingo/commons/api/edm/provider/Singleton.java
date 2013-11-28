@@ -23,30 +23,21 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 
 //TODO: Finish
-public class Singleton extends BindingTarget{
+public class Singleton extends BindingTarget {
 
-  public String getName() {
-    return name;
-  }
-
+  @Override
   public Singleton setName(final String name) {
     this.name = name;
     return this;
   }
 
-  public FullQualifiedName getType() {
-    return type;
-  }
-
+  @Override
   public Singleton setType(final FullQualifiedName type) {
     this.type = type;
     return this;
   }
 
-  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
-    return navigationPropertyBindings;
-  }
-
+  @Override
   public Singleton setNavigationPropertyBindings(final List<NavigationPropertyBinding> navigationPropertyBindings) {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;

@@ -18,12 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.commons.api.edm;
 
+import java.util.List;
+
 /**
  * A CSDL FunctionImport element
  */
 public interface EdmFunctionImport extends EdmOperationImport {
 
-  @Override
-  public EdmFunction getOperation();
+  public EdmFunction getFunction(List<String> parameterNames);
 
 }

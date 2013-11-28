@@ -19,12 +19,11 @@
 package org.apache.olingo.commons.api.edm.provider;
 
 //TODO: finish
-public class OperationImport {
+public abstract class OperationImport {
 
-  private String name;
-  private TargetPath entitySet;
+  protected String name;
+  protected Target entitySet;
 
-  // What about the operation which is behind the operation import?
   // Annotations?
 
   public String getName() {
@@ -36,11 +35,11 @@ public class OperationImport {
     return this;
   }
 
-  public TargetPath getEntitySet() {
+  public Target getEntitySet() {
     return entitySet;
   }
 
-  public OperationImport setEntitySet(final TargetPath entitySet) {
+  public OperationImport setEntitySet(final Target entitySet) {
     this.entitySet = entitySet;
     return this;
   }

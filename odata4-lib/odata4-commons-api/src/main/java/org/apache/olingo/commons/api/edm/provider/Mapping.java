@@ -36,7 +36,7 @@ public class Mapping implements EdmMapping {
   public Object getObject() {
     return object;
   }
-  
+
   @Override
   public String getMediaResourceSourceKey() {
     return mediaResourceSourceKey;
@@ -66,13 +66,13 @@ public class Mapping implements EdmMapping {
     this.object = object;
     return this;
   }
-  
+
   /**
    * Sets the key for the resource source key which is used for the lookup in the data map
    * @param mediaResourceSourceKey under which the source can be found in the data map
    * @return {@link Mapping} for method chaining
    */
-  public Mapping setMediaResourceSourceKey(String mediaResourceSourceKey) {
+  public Mapping setMediaResourceSourceKey(final String mediaResourceSourceKey) {
     this.mediaResourceSourceKey = mediaResourceSourceKey;
     return this;
   }
@@ -82,7 +82,7 @@ public class Mapping implements EdmMapping {
    * @param mediaResourceMimeTypeKey under which the mime type can be found in the data map
    * @return {@link Mapping} for method chaining
    */
-  public Mapping setMediaResourceMimeTypeKey(String mediaResourceMimeTypeKey) {
+  public Mapping setMediaResourceMimeTypeKey(final String mediaResourceMimeTypeKey) {
     this.mediaResourceMimeTypeKey = mediaResourceMimeTypeKey;
     return this;
   }

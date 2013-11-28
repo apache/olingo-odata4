@@ -18,9 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.commons.api.edm.helper;
 
-//TODO:Where to put this class?
 public class EntityContainerInfo {
-  // Why full qualified name?
   private FullQualifiedName containerName;
   private FullQualifiedName extendsContainer;
 

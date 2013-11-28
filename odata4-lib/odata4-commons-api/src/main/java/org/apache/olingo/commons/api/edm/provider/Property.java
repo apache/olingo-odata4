@@ -27,11 +27,11 @@ public class Property {
   // Can be simple or complex
   private FullQualifiedName type;
   private boolean collection;
-  
-  //Mimetype and mapping what here
+
+  // Mimetype and mapping what here
   private String mimeType;
   private Mapping mapping;
-  
+
   // Facets
   private String defaultValue;
   private Boolean nullable;
@@ -63,7 +63,7 @@ public class Property {
   }
 
   public Property setCollection(final boolean isCollection) {
-    this.collection = isCollection;
+    collection = isCollection;
     return this;
   }
 
@@ -117,7 +117,7 @@ public class Property {
   }
 
   public Property setUnicode(final Boolean isUnicode) {
-    this.unicode = isUnicode;
+    unicode = isUnicode;
     return this;
   }
 
@@ -125,7 +125,7 @@ public class Property {
     return mimeType;
   }
 
-  public Property setMimeType(String mimeType) {
+  public Property setMimeType(final String mimeType) {
     this.mimeType = mimeType;
     return this;
   }
@@ -134,7 +134,7 @@ public class Property {
     return mapping;
   }
 
-  public Property setMapping(Mapping mapping) {
+  public Property setMapping(final Mapping mapping) {
     this.mapping = mapping;
     return this;
   }

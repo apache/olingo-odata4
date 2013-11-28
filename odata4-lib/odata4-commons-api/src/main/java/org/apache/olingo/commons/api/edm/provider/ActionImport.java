@@ -24,6 +24,18 @@ import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 public class ActionImport extends OperationImport {
   private FullQualifiedName action;
 
+  @Override
+  public ActionImport setName(final String name) {
+    this.name = name;
+    return this;
+  }
+
+  @Override
+  public ActionImport setEntitySet(final Target entitySet) {
+    this.entitySet = entitySet;
+    return this;
+  }
+
   public FullQualifiedName getAction() {
     return action;
   }

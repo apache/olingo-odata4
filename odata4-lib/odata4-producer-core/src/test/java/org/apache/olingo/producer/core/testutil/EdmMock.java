@@ -358,21 +358,21 @@ public class EdmMock implements Edm {
     when(actionImport1.getName()).thenReturn(ACTION_IMPORT1_NAME.getName());
     when(actionImport1.getEntityContainer()).thenReturn(container1);
     when(actionImport1.getReturnedEntitySet()).thenReturn(employeesSet);
-    when(actionImport1.getOperation()).thenReturn(action1);
+    when(actionImport1.getAction()).thenReturn(action1);
   }
 
   private void enhanceFunctionImport1() {
     when(functionImport1.getName()).thenReturn(FUNCTION_IMPORT1_NAME.getName());
     when(functionImport1.getEntityContainer()).thenReturn(container1);
     when(functionImport1.getReturnedEntitySet()).thenReturn(teamsSet);
-    when(functionImport1.getOperation()).thenReturn(function1);
+    when(functionImport1.getFunction(null)).thenReturn(function1);
   }
 
   private void enhanceFunctionImportEmployeeSearch() {
     when(employeeSearchFunctionImport.getName()).thenReturn(FUNCTION_IMPORT_EMPLOYEE_SEARCH_NAME.getName());
     when(employeeSearchFunctionImport.getEntityContainer()).thenReturn(container1);
     when(employeeSearchFunctionImport.getReturnedEntitySet()).thenReturn(teamsSet);
-    when(employeeSearchFunctionImport.getOperation()).thenReturn(employeeSearchFunction);
+    when(employeeSearchFunctionImport.getFunction(null)).thenReturn(employeeSearchFunction);
   }
 
   private void enhanceFunctionEmployeeSearch() {
@@ -385,8 +385,7 @@ public class EdmMock implements Edm {
   private void enhanceMaximalAgeFunctionImport() {
     when(maximalAgeFunctionImport.getName()).thenReturn(FUNCTION_IMPORT_MAXIMAL_AGE_NAME.getName());
     when(maximalAgeFunctionImport.getEntityContainer()).thenReturn(container1);
-    // TODO: getReturnedEntitySet()
-    when(maximalAgeFunctionImport.getOperation()).thenReturn(maximalAgeFunction);
+    when(maximalAgeFunctionImport.getFunction(null)).thenReturn(maximalAgeFunction);
   }
 
   private void enhanceMaximalAgeFunction() {
@@ -400,8 +399,7 @@ public class EdmMock implements Edm {
   private void enhanceAllUsedRoomIdsFunctionImport() {
     when(allUsedRoomIdsFunctionImport.getName()).thenReturn(FUNCTION_IMPORT_ALL_USED_ROOMS_NAME.getName());
     when(allUsedRoomIdsFunctionImport.getEntityContainer()).thenReturn(container1);
-    // TODO: getReturnedEntitySet()
-    when(allUsedRoomIdsFunctionImport.getOperation()).thenReturn(allUsedRoomIdsFunction);
+    when(allUsedRoomIdsFunctionImport.getFunction(null)).thenReturn(allUsedRoomIdsFunction);
   }
 
   private void enhanceAllUsedRoomIdsFunction() {
@@ -415,8 +413,7 @@ public class EdmMock implements Edm {
   private void enhanceMostCommonLocationFunctionImport() {
     when(mostCommonLocationFunctionImport.getName()).thenReturn(FUNCTION_IMPORT_MOST_COMMON_LOCATION_NAME.getName());
     when(mostCommonLocationFunctionImport.getEntityContainer()).thenReturn(container1);
-    // TODO: getReturnedEntitySet()
-    when(mostCommonLocationFunctionImport.getOperation()).thenReturn(mostCommonLocationFunction);
+    when(mostCommonLocationFunctionImport.getFunction(null)).thenReturn(mostCommonLocationFunction);
   }
 
   private void enhanceMostCommonLocationFunction() {
@@ -430,8 +427,7 @@ public class EdmMock implements Edm {
   private void enhanceAllLocationsFunctionImport() {
     when(allLocationsFunctionImport.getName()).thenReturn(FUNCTION_IMPORT_ALL_LOCATIONS_NAME.getName());
     when(allLocationsFunctionImport.getEntityContainer()).thenReturn(container1);
-    // TODO: getReturnedEntitySet()
-    when(allLocationsFunctionImport.getOperation()).thenReturn(allLocationsFunction);
+    when(allLocationsFunctionImport.getFunction(null)).thenReturn(allLocationsFunction);
   }
 
   private void enhanceAllLocationsFunction() {

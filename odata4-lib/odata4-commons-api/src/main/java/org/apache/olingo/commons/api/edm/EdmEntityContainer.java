@@ -58,6 +58,5 @@ public interface EdmEntityContainer extends EdmNamed {
    */
   EdmFunctionImport getFunctionImport(String name);
 
-  //TODO:evaluate
   EdmNamed getElement(String odataIdentifier);
 }

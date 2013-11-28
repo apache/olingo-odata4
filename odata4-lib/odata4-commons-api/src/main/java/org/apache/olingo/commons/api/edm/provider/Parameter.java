@@ -101,7 +101,7 @@ public class Parameter {
     return mapping;
   }
 
-  public Parameter setMapping(Mapping mapping) {
+  public Parameter setMapping(final Mapping mapping) {
     this.mapping = mapping;
     return this;
   }

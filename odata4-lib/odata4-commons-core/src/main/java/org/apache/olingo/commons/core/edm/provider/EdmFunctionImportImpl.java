@@ -18,35 +18,26 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.FunctionImport;
 
-public class EdmFunctionImportImpl implements EdmFunctionImport {
+public class EdmFunctionImportImpl extends EdmOperationImportImpl implements EdmFunctionImport {
 
-  @Override
-  public EdmEntitySet getReturnedEntitySet() {
-    // TODO Auto-generated method stub
-    return null;
+  private final FunctionImport functionImport;
+
+  public EdmFunctionImportImpl(final EdmProviderImpl edm, final String name, final EdmEntityContainer container,
+      final FunctionImport functionImport) {
+    super(edm, name, container, functionImport);
+    this.functionImport = functionImport;
   }
 
   @Override
-  public EdmEntityContainer getEntityContainer() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public EdmFunction getOperation() {
-    // TODO Auto-generated method stub
-    return null;
+  public EdmFunction getFunction(final List<String> parameterNames) {
+    return edm.getFunction(functionImport.getFunction(), null, null, parameterNames);
   }
 
 }

@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,13 +32,16 @@ public class FunctionMapKey {
   private final List<String> parameterNames;
 
   public FunctionMapKey(final FullQualifiedName functionName, final FullQualifiedName bindingParameterTypeName,
-      final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
+      final Boolean isBindingParameterCollection, final List<String> parameterNames) {
     this.functionName = functionName;
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
-    parameterNames = bindingParameterNames;
     if (parameterNames != null) {
-      Collections.sort(parameterNames);
+      this.parameterNames = new ArrayList<String>();
+      this.parameterNames.addAll(parameterNames);
+      Collections.sort(this.parameterNames);
+    } else {
+      this.parameterNames = null;
     }
   }
 

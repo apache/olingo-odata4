@@ -26,6 +26,23 @@ public class FunctionImport extends OperationImport {
   private FullQualifiedName function;
   private boolean includeInServiceDocument;
 
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public FunctionImport setName(final String name) {
+    this.name = name;
+    return this;
+  }
+
+  @Override
+  public FunctionImport setEntitySet(final Target entitySet) {
+    this.entitySet = entitySet;
+    return this;
+  }
+
   public FullQualifiedName getFunction() {
     return function;
   }

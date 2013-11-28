@@ -22,9 +22,8 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 
-//TODO:finish
 public class ComplexType extends StructuralType {
-//Anything needed here?
+
   @Override
   public ComplexType setName(final String name) {
     this.name = name;

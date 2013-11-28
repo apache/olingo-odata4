@@ -25,8 +25,11 @@ import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.helper.EdmEntitySetInfo;
 import org.apache.olingo.commons.api.edm.helper.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.helper.EdmSingletonInfo;
+import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 
 public class EdmServiceMetadataImpl implements EdmServiceMetadata {
+
+  public EdmServiceMetadataImpl(final EdmProvider provider) {}
 
   @Override
   public InputStream getMetadata() {
@@ -35,7 +38,8 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   @Override
   public String getDataServiceVersion() {
-    return null;
+    // TODO: make constant
+    return "4.0";
   }
 
   @Override

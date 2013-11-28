@@ -27,7 +27,7 @@ public abstract class BindingTarget {
   protected String name;
   protected FullQualifiedName type;
   protected List<NavigationPropertyBinding> navigationPropertyBindings;
-  
+
   public String getName() {
     return name;
   }
@@ -54,5 +54,5 @@ public abstract class BindingTarget {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;
   }
-  
+
 }

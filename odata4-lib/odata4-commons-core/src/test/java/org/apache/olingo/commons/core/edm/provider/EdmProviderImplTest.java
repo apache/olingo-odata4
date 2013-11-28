@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -42,6 +43,7 @@ import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.junit.Before;
@@ -73,10 +75,14 @@ public class EdmProviderImplTest {
     when(provider.getComplexType(FQN)).thenReturn(complexType);
 
     Action action = new Action().setName(FQN.getName());
-    when(provider.getAction(FQN, null, null)).thenReturn(action);
+    List<Action> actions = new ArrayList<Action>();
+    actions.add(action);
+    when(provider.getActions(FQN)).thenReturn(actions);
 
-    Function function = new Function().setName(FQN.getName());
-    when(provider.getFunction(FQN, null, null, null)).thenReturn(function);
+    Function function = new Function().setName(FQN.getName()).setParameters(new ArrayList<Parameter>());
+    List<Function> functions = new ArrayList<Function>();
+    functions.add(function);
+    when(provider.getFunctions(FQN)).thenReturn(functions);
 
     edm = new EdmProviderImpl(provider);
   }
@@ -148,12 +154,12 @@ public class EdmProviderImplTest {
 
   @Test
   public void getFunction() {
-    EdmFunction function = edm.getFunction(FQN, null, null, null);
+    EdmFunction function = edm.getFunction(FQN, null, null, new ArrayList<String>());
     assertNotNull(function);
     assertEquals(FQN.getNamespace(), function.getNamespace());
     assertEquals(FQN.getName(), function.getName());
 
-    assertNull(edm.getFunction(WRONG_FQN, null, null, null));
+    assertNull(edm.getFunction(WRONG_FQN, null, null, new ArrayList<String>()));
   }
 
   @Test

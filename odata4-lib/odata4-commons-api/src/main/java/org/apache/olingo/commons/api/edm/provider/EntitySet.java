@@ -27,30 +27,21 @@ public class EntitySet extends BindingTarget {
 
   private boolean includeInServiceDocument;
 
-  public String getName() {
-    return name;
-  }
-
+  @Override
   public EntitySet setName(final String name) {
     this.name = name;
     return this;
   }
 
-  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
-    return navigationPropertyBindings;
-  }
-
+  @Override
   public EntitySet setNavigationPropertyBindings(final List<NavigationPropertyBinding> navigationPropertyBindings) {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;
   }
 
-  public FullQualifiedName getType() {
-    return type;
-  }
-
+  @Override
   public EntitySet setType(final FullQualifiedName entityType) {
-    this.type = entityType;
+    type = entityType;
     return this;
   }
 

@@ -35,9 +35,6 @@ public abstract class PrimitiveTypeBaseTest {
       instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
-      // TODO: How to test without message reference
-      // assertNotNull(e.getMessageReference());
-      // assertEquals(messageReference.getKey(), e.getMessageReference().getKey());
       assertNotNull(e.getLocalizedMessage());
       assertTrue(e.getLocalizedMessage().startsWith(messageReferenceString));
     }
@@ -75,9 +72,6 @@ public abstract class PrimitiveTypeBaseTest {
       instance.valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
-      // TODO: How to test without message reference
-      // assertNotNull(e.getMessageReference());
-      // assertEquals(messageReference.getKey(), e.getMessageReference().getKey());
       assertNotNull(e.getLocalizedMessage());
       assertTrue(e.getLocalizedMessage().startsWith(messageReferenceString));
     }
@@ -116,10 +110,6 @@ public abstract class PrimitiveTypeBaseTest {
       instance.fromUriLiteral(value);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
-      // TODO: How to test without message reference
-      // assertNotNull(e.getMessageReference());
-      // assertEquals(EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.getKey(),
-      // e.getMessageReference().getKey());
       assertNotNull(e.getLocalizedMessage());
       assertTrue(e.getLocalizedMessage().startsWith("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT"));
     }

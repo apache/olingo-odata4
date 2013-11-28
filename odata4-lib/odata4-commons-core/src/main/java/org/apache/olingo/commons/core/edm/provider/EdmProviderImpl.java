@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.EnumType;
 import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.commons.api.exception.ODataException;
 import org.apache.olingo.commons.core.edm.EdmImpl;
@@ -119,12 +121,43 @@ public class EdmProviderImpl extends EdmImpl {
   }
 
   @Override
-  public EdmAction createAction(final FullQualifiedName actionName, final FullQualifiedName bindingPatameterTypeName,
+  public EdmAction createAction(final FullQualifiedName actionName, final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection) {
+
     try {
-      Action action = provider.getAction(actionName, bindingPatameterTypeName, isBindingParameterCollection);
-      if (action != null) {
-        return new EdmActionImpl(this, actionName, action);
+      List<Action> actions = provider.getActions(actionName);
+      if (actions != null) {
+        EdmActionImpl actionImpl = null;
+        if (bindingParameterTypeName == null) {
+          // Search for first unbound action
+          for (Action action : actions) {
+            if (action.isBound() == false) {
+              actionImpl = new EdmActionImpl(this, actionName, action);
+              break;
+            }
+          }
+        } else {
+          // Search for bound action where binding parameter matches
+          boolean isCollection = false;
+          if (isBindingParameterCollection == null) {
+            isCollection = false;
+          } else {
+            isCollection = isBindingParameterCollection;
+          }
+          for (Action action : actions) {
+            if (action.isBound() == true) {
+              List<Parameter> parameters = action.getParameters();
+              Parameter parameter = parameters.get(0);
+              if (bindingParameterTypeName.equals(parameter.getType()) && isCollection == parameter.isCollection()) {
+                actionImpl = new EdmActionImpl(this, actionName, action);
+                break;
+              }
+
+            }
+          }
+        }
+
+        return actionImpl;
       }
       return null;
     } catch (ODataException e) {
@@ -134,13 +167,61 @@ public class EdmProviderImpl extends EdmImpl {
 
   @Override
   public EdmFunction createFunction(final FullQualifiedName functionName,
-      final FullQualifiedName bindingPatameterTypeName,
-      final Boolean isBindingParameterCollection, final List<String> parameterNames) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
+      final List<String> parameterNames) {
     try {
-      Function function = provider.getFunction(functionName, bindingPatameterTypeName, isBindingParameterCollection,
-          parameterNames);
-      if (function != null) {
-        return new EdmFunctionImpl(this, functionName, function);
+      List<Function> functions = provider.getFunctions(functionName);
+      if (functions != null) {
+        EdmFunctionImpl functionImpl = null;
+        // TODO: Should we throw an edmexception when parameternames is null?
+        if (bindingParameterTypeName == null) {
+          // Search for matching unbound function
+          for (Function function : functions) {
+            if (function.isBound() == false) {
+              List<Parameter> parameters = function.getParameters();
+              if (parameterNames.size() == parameters.size()) {
+                List<String> functionParameterNames = new ArrayList<String>();
+                for (Parameter parameter : parameters) {
+                  functionParameterNames.add(parameter.getName());
+                }
+
+                if (parameterNames.containsAll(functionParameterNames)) {
+                  functionImpl = new EdmFunctionImpl(this, functionName, function);
+                  break;
+                }
+              }
+            }
+          }
+        } else {
+          // Search for matching bound function
+          boolean isCollection = false;
+          if (isBindingParameterCollection == null) {
+            isCollection = false;
+          } else {
+            isCollection = isBindingParameterCollection;
+          }
+          for (Function function : functions) {
+            if (function.isBound() == true) {
+              List<Parameter> parameters = function.getParameters();
+              Parameter bindingParameter = parameters.get(0);
+              if (bindingParameterTypeName.equals(bindingParameter.getType())
+                  && isCollection == bindingParameter.isCollection()) {
+                // bindingparameter type matches now only parameter names have to match
+                List<String> functionParameterNames = new ArrayList<String>();
+                for (int i = 1; i < parameters.size(); i++) {
+                  functionParameterNames.add(parameters.get(i).getName());
+                }
+
+                if (parameterNames.containsAll(functionParameterNames)) {
+                  functionImpl = new EdmFunctionImpl(this, functionName, function);
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        return functionImpl;
       }
       return null;
     } catch (ODataException e) {
@@ -150,7 +231,7 @@ public class EdmProviderImpl extends EdmImpl {
 
   @Override
   public EdmServiceMetadata createServiceMetadata() {
-    return new EdmServiceMetadataImpl();
+    return new EdmServiceMetadataImpl(provider);
   }
 
   @Override

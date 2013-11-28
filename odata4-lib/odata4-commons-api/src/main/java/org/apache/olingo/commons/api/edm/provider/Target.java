@@ -20,18 +20,18 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
 
-public class TargetPath {
+public class Target {
 
   // What is the name here?
-  private String targetPathName;
+  private String targetName;
   private FullQualifiedName entityContainer;
 
-  public String getTargetPathName() {
-    return targetPathName;
+  public String getTargetName() {
+    return targetName;
   }
 
-  public TargetPath setTargetPathName(final String targetPathName) {
-    this.targetPathName = targetPathName;
+  public Target setTargetName(final String targetPathName) {
+    targetName = targetPathName;
     return this;
   }
 
@@ -39,7 +39,7 @@ public class TargetPath {
     return entityContainer;
   }
 
-  public TargetPath setEntityContainer(final FullQualifiedName entityContainer) {
+  public Target setEntityContainer(final FullQualifiedName entityContainer) {
     this.entityContainer = entityContainer;
     return this;
   }

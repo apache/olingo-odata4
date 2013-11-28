@@ -20,9 +20,9 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.exception.ODataException;
 
 //TODO: Finish
@@ -38,73 +38,69 @@ public abstract class EdmProviderAdapter implements EdmProvider {
 
   @Override
   public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
-     return null;
+    return null;
   }
 
-  // Revisit signature
   @Override
-  public Action getAction(final FullQualifiedName actionName, final FullQualifiedName bindingPatameterTypeName,
-      final Boolean isBindingParameterCollection) throws ODataException {
-     return null;
+  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
+    return null;
   }
 
-  // Revisit Signature
   @Override
-  public Function getFunction(final FullQualifiedName functionName, final FullQualifiedName bindingPatameterTypeName,
-      final Boolean isBindingParameterCollection, final List<String> parameterNames) throws ODataException {
-     return null;
+  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    return null;
   }
 
   @Override
   public Term getTerm(final FullQualifiedName termName) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public Singleton getSingleton(final FullQualifiedName entityContainer, final String name) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
   {
-     return null;
+    return null;
   }
 
   @Override
   public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String name)
       throws ODataException {
-     return null;
+    return null;
   }
 
   // There are no other containers
   @Override
   public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public List<AliasInfo> getAliasInfos() throws ODataException {
-     return null;
+    return null;
   }
 
   @Override
   public List<Schema> getSchemas() throws ODataException {
-     return null;
+    return null;
   }
 }

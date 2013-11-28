@@ -28,7 +28,7 @@ public class PropertyRef {
     return path;
   }
 
-  public PropertyRef setPath(String path) {
+  public PropertyRef setPath(final String path) {
     this.path = path;
     return this;
   }
@@ -38,7 +38,7 @@ public class PropertyRef {
   }
 
   public PropertyRef setPropertyName(final String name) {
-    this.propertyName = name;
+    propertyName = name;
     return this;
   }
 

@@ -59,7 +59,7 @@ public class EdmKeyPropertyRefImpl implements EdmKeyPropertyRef {
       if (ref.getAlias() == null) {
         property = (EdmProperty) edmEntityType.getProperty(ref.getPropertyName());
         if (property == null) {
-          throw new EdmException("Invalid key property ref specified. Can�t find property with name: "
+          throw new EdmException("Invalid key property ref specified. Can´t find property with name: "
               + ref.getPropertyName());
         }
       } else {
@@ -68,14 +68,13 @@ public class EdmKeyPropertyRefImpl implements EdmKeyPropertyRef {
         for (int i = 0; i < splitPath.length; i++) {
           property = (EdmProperty) structType.getProperty(splitPath[i]);
           if (property == null) {
-            throw new EdmException("Invalid key property ref specified. Can�t find property with name: "
+            throw new EdmException("Invalid key property ref specified. Can´t find property with name: "
                 + splitPath[i]);
           }
           EdmType childType = property.getType();
           if (childType.getKind() == EdmTypeKind.COMPLEX) {
             structType = (EdmStructuralType) childType;
           } else {
-            // TODO: Should we check for typekind primitve?
             if (i + 1 != splitPath.length) {
               throw new EdmException("Invalid path: " + ref.getPath() + " Must end after: " + splitPath[i]);
             }

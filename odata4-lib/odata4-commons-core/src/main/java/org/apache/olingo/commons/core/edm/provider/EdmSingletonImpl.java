@@ -18,12 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 
 public class EdmSingletonImpl extends EdmBindingTargetImpl implements EdmSingleton {
 
-  public EdmSingletonImpl(final EdmProviderImpl edm, final String name, final Singleton singleton) {
-    super(edm, name, singleton);
+  public EdmSingletonImpl(final EdmProviderImpl edm, final EdmEntityContainer container, final Singleton singleton) {
+    super(edm, container, singleton);
   }
 }

@@ -18,13 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.commons.core.edm.provider;
 
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.provider.EntitySet;
 
 public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
 
-  public EdmEntitySetImpl(final EdmProviderImpl edm, final String name, final EntitySet entitySet) {
-    super(edm, name, entitySet);
+  public EdmEntitySetImpl(final EdmProviderImpl edm, final EdmEntityContainer container, final EntitySet entitySet) {
+    super(edm, container, entitySet);
   }
 
 }

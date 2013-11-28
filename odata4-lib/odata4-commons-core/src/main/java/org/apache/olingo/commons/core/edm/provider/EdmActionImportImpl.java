@@ -21,32 +21,21 @@ package org.apache.olingo.commons.core.edm.provider;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.provider.ActionImport;
 
-public class EdmActionImportImpl implements EdmActionImport {
+public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmActionImport {
 
-  @Override
-  public EdmEntitySet getReturnedEntitySet() {
-    // TODO Auto-generated method stub
-    return null;
+  private final ActionImport actionImport;
+
+  public EdmActionImportImpl(final EdmProviderImpl edm, final String name, final EdmEntityContainer container,
+      final ActionImport actionImport) {
+    super(edm, name, container, actionImport);
+    this.actionImport = actionImport;
   }
 
   @Override
-  public EdmEntityContainer getEntityContainer() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public EdmAction getOperation() {
-    // TODO Auto-generated method stub
-    return null;
+  public EdmAction getAction() {
+    return edm.getAction(actionImport.getAction(), null, null);
   }
 
 }

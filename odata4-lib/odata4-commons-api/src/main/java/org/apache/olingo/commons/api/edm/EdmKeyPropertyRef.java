@@ -24,7 +24,7 @@ public interface EdmKeyPropertyRef {
    * @return name of the key predicate
    */
   String getKeyPropertyName();
-  
+
   /**
    * @return alias of this reference or null if not set
    */

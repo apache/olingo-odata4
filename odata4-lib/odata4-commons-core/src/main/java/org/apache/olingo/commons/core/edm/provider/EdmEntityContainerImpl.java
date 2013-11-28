@@ -65,7 +65,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
       try {
         Singleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
         if (providerSingleton != null) {
-          singleton = new EdmSingletonImpl(edm, singletonName, providerSingleton);
+          singleton = new EdmSingletonImpl(edm, this, providerSingleton);
           singletons.put(singletonName, singleton);
         }
       } catch (ODataException e) {
@@ -82,7 +82,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
       try {
         EntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
         if (providerEntitySet != null) {
-          entitySet = new EdmEntitySetImpl(edm, entitySetName, providerEntitySet);
+          entitySet = new EdmEntitySetImpl(edm, this, providerEntitySet);
           entitySets.put(entitySetName, entitySet);
         }
       } catch (ODataException e) {
@@ -99,7 +99,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
       try {
         ActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
         if (providerImport != null) {
-          actionImport = new EdmActionImportImpl();
+          actionImport = new EdmActionImportImpl(edm, actionImportName, this, providerImport);
           actionImports.put(actionImportName, actionImport);
         }
       } catch (ODataException e) {
@@ -116,7 +116,7 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
       try {
         FunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
         if (providerImport != null) {
-          functionImport = new EdmFunctionImportImpl();
+          functionImport = new EdmFunctionImportImpl(edm, functionImportName, this, providerImport);
           functionImports.put(functionImportName, functionImport);
         }
       } catch (ODataException e) {

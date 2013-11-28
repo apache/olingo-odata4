@@ -20,9 +20,9 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.commons.api.edm.helper.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.helper.AliasInfo;
 import org.apache.olingo.commons.api.exception.ODataException;
 
 public interface EdmProvider {
@@ -59,32 +59,24 @@ public interface EdmProvider {
    */
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException;
 
-  // Revisit signature
   /**
-   * This method should return a {@link Action} or <b>null</b> if nothing is found
+   * This method should return a list of all {@link Action} for the FullQualifiedname or <b>null</b> if nothing is found
    * @param actionName
-   * @param bindingPatameterTypeName may be null if unbound
-   * @param isBindingParameterCollection may be null if unbound
-   * @return {@link Action} for the given name
+   * @return List of {@link Action} or null
    * @throws ODataException
    */
-  public Action getAction(final FullQualifiedName actionName, final FullQualifiedName bindingPatameterTypeName,
-      final Boolean isBindingParameterCollection) throws ODataException;
+  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException;
 
-  // Revisit Signature
   /**
-   * This method should return a {@link Function} or <b>null</b> if nothing is found
+   * This method should return a list of all {@link Function} for the FullQualifiedname or <b>null</b> if nothing is
+   * found
    * @param functionName
-   * @param bindingPatameterTypeName may be null if unbound
-   * @param isBindingParameterCollection may be null if unbound
-   * @param parameterNames may be null if unbound
-   * @return {@link Function} for given name
+   * @return List of {@link Function} or null
    * @throws ODataException
    */
-  public Function getFunction(final FullQualifiedName functionName, final FullQualifiedName bindingPatameterTypeName,
-      final Boolean isBindingParameterCollection, final List<String> parameterNames) throws ODataException;
+  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException;
 
-  //TODO: document
+  // TODO: document
   public Term getTerm(final FullQualifiedName termName) throws ODataException;
 
   /**

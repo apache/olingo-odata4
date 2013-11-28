@@ -23,6 +23,5 @@ package org.apache.olingo.commons.api.edm;
  */
 public interface EdmActionImport extends EdmOperationImport {
 
-  @Override
-  public EdmAction getOperation();
+  public EdmAction getAction();
 }

@@ -187,11 +187,11 @@ public abstract class EdmImpl implements Edm {
 
   protected abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
 
-  protected abstract EdmAction createAction(FullQualifiedName actionName, FullQualifiedName bindingPatameterTypeName,
+  protected abstract EdmAction createAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
       Boolean isBindingParameterCollection);
 
   protected abstract EdmFunction createFunction(FullQualifiedName functionName,
-      FullQualifiedName bindingPatameterTypeName, Boolean isBindingParameterCollection,
+      FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
       List<String> parameterNames);
 
   protected abstract EdmServiceMetadata createServiceMetadata();

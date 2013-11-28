@@ -32,5 +32,5 @@ public class ODataException extends Exception {
   public ODataException(final Throwable e) {
     super(e);
   }
-  
+
 }
