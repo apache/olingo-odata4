@@ -40,9 +40,9 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.Interval;
-import org.apache.olingo.producer.core.uri.antlr.UriLexer;
-import org.apache.olingo.producer.core.uri.antlr.UriParserParser;
-import org.apache.olingo.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
 /**
  * @author d039346
@@ -221,7 +221,7 @@ public class ParserValidator {
         parser.addParseListener(new TokenWriter());
       }
       // write always a error message in case of syntax errors
-      parser.addErrorListener(new TraceErrorHandler<Object>());
+      //parser.addErrorListener(new TestErrorHandler<Object>());
       // check error message if whether they are allowed or not
       parser.addErrorListener(new ErrorCollector(this));
 
@@ -229,7 +229,7 @@ public class ParserValidator {
       parser.setErrorHandler(new BailErrorStrategy());
 
       // User the faster LL parsing
-      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
       if (logLevel > 1) {
         System.out.println("Step 1 (LL)");
       }
@@ -252,7 +252,7 @@ public class ParserValidator {
         }
 
         // write always a error message in case of syntax errors
-        parser.addErrorListener(new TraceErrorHandler<Object>());
+        parser.addErrorListener(new TestErrorHandler<Object>());
         // check error message if whether they are allowed or not
         parser.addErrorListener(new ErrorCollector(this));
 
@@ -260,7 +260,7 @@ public class ParserValidator {
         parser.setErrorHandler(new DefaultErrorStrategy());
 
         // User the slower SLL parsing
-        parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+        parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 
         if (logLevel > 1) {
           System.out.println("Step 2 (SLL)");

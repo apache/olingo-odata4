@@ -16,10 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
+package org.apache.olingo.odata4.producer.core.uri;
 
-package org.apache.olingo.odata4.producer.api.uri;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 
-public enum UriInfoKind {
-  batch,entity, metadata, all, crossjoin, path;
-
+public class UriInfoImplMetadata extends UriInfoImpl {
+  public UriInfoImplMetadata() {
+    this.setKind(UriInfoKind.metadata);
+  }
 }

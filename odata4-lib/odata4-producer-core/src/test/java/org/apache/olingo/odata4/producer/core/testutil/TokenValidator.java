@@ -34,7 +34,7 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.apache.olingo.producer.core.uri.antlr.UriLexer;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 
 public class TokenValidator {
   private List<? extends Token> tokens = null;
@@ -56,6 +56,7 @@ public class TokenValidator {
 
     first();
     exFirst();
+    logLevel = 0;
     return this;
   }
 

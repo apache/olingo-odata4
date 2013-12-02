@@ -86,31 +86,32 @@ options {
 odataRelativeUriEOF : odataRelativeUri? EOF;
 
 //QM and FRAGMENT enable next lexer mode
-odataRelativeUri    : BATCH                                                      # batchAlt //TODO alt at beginnig
-                    | ENTITY         QM eo=entityOptions                         # entityAlt
-                    | METADATA     ( QM format )? ( FRAGMENT contextFragment )?  # metadataAlt
-                    | resourcePath ( QM queryOptions )?                          # resourcePathAlt
-
+//TODO add the new "ENTITYCAST"
+odataRelativeUri    : BATCH                                                                     # altBatch 
+                    | ENTITY       QM eo=entityOptions                                          # altEntity
+                    | ENTITY       SLASH ns=namespace? odi=odataIdentifier QM eo=entityOptions  # altEntityCast
+                    | METADATA     ( QM format )? ( FRAGMENT contextFragment )?                 # altMetadata
+                    | resourcePath ( QM queryOptions )?                                         # altResourcePath
                     ;
 
 //;------------------------------------------------------------------------------
 //; 1. Resource Path
 //;------------------------------------------------------------------------------
                    
-resourcePath        : ALL           # allAlt
-                    | crossjoin     # crossjoinAlt
-                    | pathSegments  # pathSegmentsAlt
+resourcePath        : vAll=ALL          
+                    | vCJ=crossjoin     
+                    | vPSs=pathSegments  
                     ;
 crossjoin           : CROSSJOIN OPEN odi+=odataIdentifier ( COMMA odi+=odataIdentifier )* CLOSE;
 
-pathSegments        : ps+=pathSegment (SLASH ps+=pathSegment)* constSegment?;
+pathSegments        : vlPS+=pathSegment (SLASH vlPS+=pathSegment)* vCS=constSegment?;
 
-pathSegment         : ns=namespace? odi=odataIdentifier nvl=nameValueOptList*;
+pathSegment         : vNS=namespace? vODI=odataIdentifier vlVPO+=nameValueOptList*;
 
-nameValueOptList    : vo=valueOnly | nvl=nameValueList;
-valueOnly           : OPEN (primitiveLiteral ) CLOSE;
-nameValueList       : OPEN kvp+=nameValuePair ( COMMA kvp+=nameValuePair )* CLOSE;
-nameValuePair       : odi=odataIdentifier EQ (AT ali=odataIdentifier |  val1=primitiveLiteral /*| val2=enumX*/);
+nameValueOptList    : OPEN (vVO=valueOnly | vNVL=nameValueList)? CLOSE;
+valueOnly           : vV=primitiveLiteral ;
+nameValueList       : WSP* vNVP+=nameValuePair WSP* ( COMMA WSP* vNVP+=nameValuePair  WSP*)* ;
+nameValuePair       : vODI=odataIdentifier EQ (AT vALI=odataIdentifier | vVAL=primitiveLiteral /*TODO | val2=enumX*/);
 
 constSegment        : SLASH (v=value | c=count | r=ref );
 
@@ -274,7 +275,7 @@ commonExpr          : OPEN commonExpr CLOSE                                     
                     | memberExpr                                                                #altMember
                     | commonExpr (WSP MUL WSP | WSP DIV WSP | WSP MOD WSP ) commonExpr    #altMult
                     | commonExpr (WSP ADD WSP | WSP SUB WSP) commonExpr                     #altAdd
-                    | commonExpr (WSP GT WSP | WSP GE WSP | WSP LT WSP | WSP LE WSP | WSP ISOF WSP) commonExpr    #altComparisn
+                    | commonExpr (WSP GT WSP | WSP GE WSP | WSP LT WSP | WSP LE WSP | WSP ISOF WSP) commonExpr    #altComparism
                     | commonExpr (WSP EQ_ALPHA WSP | WSP NE WSP) commonExpr                       #altEquality
                     | commonExpr (WSP AND WSP) commonExpr                                     #altAnd
                     | commonExpr (WSP OR WSP) commonExpr                                      #altOr
@@ -372,66 +373,34 @@ castExpr                          : CAST_WORD  WSP? ( commonExpr WSP? COMMA WSP?
 //; Note: the query part of a URI needs to be partially percent-decoded before
 //; applying these rules, see comment at the top of this file
 //;------------------------------------------------------------------------------
-/*
-arrayOrObject       : complexColInUri  
-                    | complexInUri
-                    | rootExprCol
-                    | primitiveColInUri;
-               
-complexColInUri     : BEGIN_ARRAY 
-                      ( complexInUri ( WS* COMMA WS* complexInUri )* )?
-                      END_ARRAY;
-                  
-complexInUri        : BEGIN_OBJECT ( jv+=json_value ( WS* COMMA WS* jv+=json_value)* )? END_OBJECT;
 
-json_value          : annotationInUri 
-                    | primitivePropertyInUri 
-                    | complexPropertyInUri 
-                    | collectionPropertyInUri  
-                    | navigationPropertyInUri
-                    ;
+arrayOrObject       : json_array
+                    | json_object;
 
-collectionPropertyInUri : QUOTATION_MARK odataIdentifier QUOTATION_MARK
-                          NAME_SEPARATOR 
-                          ( primitiveColInUri | complexColInUri )
-                        ;
+json_array          : BEGIN_ARRAY json_value ( WSP? COMMA WSP? json_value)* END_ARRAY;
 
-primitiveColInUri       : BEGIN_ARRAY ( plj+=primitive1LiteralInJSON *( WS* COMMA WS* plj+=primitive1LiteralInJSON )  )? END_ARRAY
-                        ;
-                    
-complexPropertyInUri    : QUOTATION_MARK odataIdentifier QUOTATION_MARK 
-                          NAME_SEPARATOR 
-                           complexInUri
-                        ;
+json_value          : jsonPrimitiv
+                    | rootExpr
+                    | json_object
+                    | json_array;
 
-annotationInUri         : QUOTATION_MARK ns=namespace? odi=odataIdentifier QUOTATION_MARK
-                          NAME_SEPARATOR
-                          ( complexInUri | complexColInUri | primitive1LiteralInJSON | primitiveColInUri );
+json_object         : BEGIN_OBJECT 
+                      STRING_IN_JSON
+                      NAME_SEPARATOR
+                      json_value
+                      END_OBJECT;
 
-primitivePropertyInUri  : QUOTATION_MARK odataIdentifier QUOTATION_MARK 
-                          NAME_SEPARATOR 
-                          primitive1LiteralInJSON;
-
-
-navigationPropertyInUri : QUOTATION_MARK odataIdentifier QUOTATION_MARK
-                          NAME_SEPARATOR ( rootExpr | rootExprCol )
-                        ;
-
-rootExprCol   : BEGIN_ARRAY 
-                ( rootExpr *( WS* COMMA WS* rootExpr ) )?
-                END_ARRAY
-              ;
                                         
 //; JSON syntax: adapted to URI restrictions from [RFC4627]                 
-primitive1LiteralInJSON  : STRING_IN_JSON
-                        | number_in_json
-                        | TRUE
-                        | FALSE
-                        | 'null'
-                        ;
+jsonPrimitiv        : STRING_IN_JSON
+                    | number_in_json
+                    | TRUE
+                    | FALSE
+                    | 'null'
+                    ;
 
 number_in_json          : INT | DECIMAL;
-*/
+
 //;------------------------------------------------------------------------------
 //; 6. Names and identifiers
 //;------------------------------------------------------------------------------

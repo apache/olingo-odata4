@@ -16,39 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.api.uri;
+package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.Collections;
-import java.util.List;
+import org.apache.olingo.odata4.commons.api.edm.EdmAction;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmBindingTarget;
+/**
+ * Covers Functionimports and BoundFunction in URI
+ */
+public class UriPathInfoActionImpl extends UriPathInfoImpl {
 
-public class UriInfo1 {
-  private UriType uriType;
-  private EdmBindingTarget bindingTarget;
-  private List<String> keyNames = Collections.emptyList();
+  private EdmAction action;
 
-  public UriType getUriType() {
-    return uriType;
+  public UriPathInfoActionImpl() {
+    this.setKind(UriPathInfoKind.action);
   }
 
-  public void setUriType(final UriType uriType) {
-    this.uriType = uriType;
+  public UriPathInfoActionImpl setAction(EdmAction action) {
+
+    this.action = action;
+    this.setType(action.getReturnType().getType());
+    this.setCollection(action.getReturnType().isCollection());
+
+    return this;
   }
 
-  public EdmBindingTarget getBindingTarget() {
-    return bindingTarget;
-  }
-
-  public void setBindingTarget(final EdmBindingTarget bindingTarget) {
-    this.bindingTarget = bindingTarget;
-  }
-
-  public void setKeyNames(final List<String> keyNames) {
-    this.keyNames = keyNames;
-  }
-
-  public List<String> getKeyNames() {
-    return keyNames;
-  }
 }

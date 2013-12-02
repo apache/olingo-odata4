@@ -16,9 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-
 package org.apache.olingo.odata4.producer.core.uri;
 
-public class UriPathInfoActionImportImpl extends UriPathInfoImpl {
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 
+public class UriInfoImplCrossjoin extends UriInfoImpl {
+  public UriInfoImplCrossjoin() {
+    this.setKind(UriInfoKind.crossjoin);
+  }
 }

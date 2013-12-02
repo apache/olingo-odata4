@@ -51,4 +51,11 @@ public interface EdmStructuralType extends EdmType {
    * @return {@link EdmStructuralType}
    */
   EdmStructuralType getBaseType();
+  
+  /**
+   * Checks if this type is convertable to parameter {@link targetType}
+   * 
+   * @return true if this type is compatible to the testType ( i.e. this type is a subtype of targetType )
+   */
+  boolean compatibleTo(EdmType targetType);
 }

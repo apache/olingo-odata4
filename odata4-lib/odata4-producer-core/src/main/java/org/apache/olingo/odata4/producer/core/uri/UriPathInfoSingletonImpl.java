@@ -16,10 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
+package org.apache.olingo.odata4.producer.core.uri;
 
-package org.apache.olingo.odata4.producer.api.uri;
+import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 
-public enum UriInfoKind {
-  batch,entity, metadata, all, crossjoin, path;
+public class UriPathInfoSingletonImpl extends UriPathInfoImpl {
+
+  private EdmSingleton singleton;
+  
+  public UriPathInfoSingletonImpl() {
+    this.setKind(UriPathInfoKind.singleton);
+  }
+
+  public UriPathInfoSingletonImpl setSingleton(EdmSingleton singleton) {
+        
+    this.singleton = singleton;
+    this.setType(singleton.getEntityType());
+    return this;
+  }
 
 }

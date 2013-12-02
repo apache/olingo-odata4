@@ -16,33 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-
 package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.List;
+//TODO Check name of this exception when implementing proper error handling
+public class UriParserException extends Exception {
 
-import org.apache.olingo.odata4.producer.api.uri.KeyPredicate;
-
-public class UriPathInfoImplFunctionImport extends UriPathInfoImpl {
-
-  // TODO change to proper Type
-  private Object functionParameter;
-  private List<KeyPredicate> keyPredicates;
-
-  public Object getFunctionParameter() {
-    return functionParameter;
+  public UriParserException(String message, Throwable cause) {
+    super(message, cause);
   }
 
-  public void setFunctionParameter(final Object functionParameter) {
-    this.functionParameter = functionParameter;
-  }
-
-  public List<KeyPredicate> getKeyPredicates() {
-    return keyPredicates;
-  }
-
-  public void setKeyPredicates(final List<KeyPredicate> keyPredicates) {
-    this.keyPredicates = keyPredicates;
-  }
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -1813203179082217112L;
 
 }

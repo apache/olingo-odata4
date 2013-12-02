@@ -18,58 +18,161 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.producer.api.uri.UriPathInfo;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.olingo.odata4.commons.api.edm.EdmElement;
+import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
-//import org.apache.olingo.api.commons.InlineCount;
-//import org.apache.olingo.api.uri.NavigationPropertySegment;
-//import org.apache.olingo.api.uri.NavigationSegment;
-//import org.apache.olingo.api.uri.SelectItem;
-//import org.apache.olingo.api.uri.expression.FilterExpression;
-//import org.apache.olingo.api.uri.expression.OrderByExpression;
 
-/**
- *  
- */
-public class UriPathInfoImpl implements UriPathInfo {
+public abstract class UriPathInfoImpl {
+
+  private EdmType initialType = null;
+  private EdmType finalType = null;
+
   private UriPathInfoKind kind;
-  private EdmEntityContainer entityContainer;
+  private EdmType collectionTypeFilter = null;
+  private UriKeyPredicateList keyPredicates = null;
+  private EdmType singleTypeFilter = null;
+
+  private class PathListItem {
+    private EdmElement property; // ia EdmProperty or EdmNavigationProperty
+
+    private EdmType initialType;
+    private EdmType finalType;
+    private boolean isCollection;
+  }
+
+  private List<PathListItem> pathList = null;
   private boolean isCollection;
-  private EdmEntityType targetType;
 
-  @Override
-  public EdmEntityContainer getEntityContainer() {
-    return entityContainer;
+  public UriPathInfoImpl setType(EdmType edmType) {
+    this.initialType = edmType;
+    this.finalType = edmType;
+    return this;
   }
 
-  public void setEntityContainer(final EdmEntityContainer entityContainer) {
-    this.entityContainer = entityContainer;
+  public EdmType getType() {
+    return finalType;
   }
 
-  @Override
+  public EdmType getInitialType() {
+    return initialType;
+  }
+
+  public FullQualifiedName getFullType() {
+    return new FullQualifiedName(finalType.getNamespace(), finalType.getName());
+  }
+
+  public UriPathInfoImpl setKind(UriPathInfoKind kind) {
+    this.kind = kind;
+    return this;
+  }
+
   public UriPathInfoKind getKind() {
     return kind;
   }
 
-  public void setKind(final UriPathInfoKind kind) {
-    this.kind = kind;
+  public UriPathInfoImpl setKeyPredicates(UriKeyPredicateList keyPredicates) {
+    if ( this.isCollection()!= true) {
+      // throw exception
+    }
+    this.keyPredicates = keyPredicates;
+    this.setCollection(false);
+    return this;
   }
 
-  @Override
-  public boolean isCollection() {
-    return isCollection;
+  public UriKeyPredicateList getKeyPredicates() {
+    return this.keyPredicates;
   }
 
-  public void setCollection(final boolean isCollection) {
+  public UriPathInfoImpl addTypeFilter(EdmStructuralType targetType) {
+    // TODO if there is a navigation path the type filter musst be applied to the last
+    if (pathList == null) {
+      if (keyPredicates == null) {
+        if (collectionTypeFilter != null) {
+          // TODO exception Type filters are not directy chainable
+        }
+        if (targetType.compatibleTo((EdmStructuralType) finalType)) {
+          collectionTypeFilter = targetType;
+          finalType = targetType;
+        } else {
+          // TODO throw exception
+        }
+      } else {
+        if (singleTypeFilter != null) {
+          // TODO exception Type filters are not directy chainable
+        }
+        if (targetType.compatibleTo((EdmStructuralType) finalType)) {
+          singleTypeFilter = targetType;
+          finalType = targetType;
+        } else {
+          // TODO throw exception
+        }
+      }
+    } else {
+      PathListItem last = pathList.get(pathList.size() - 1);
+
+      if (targetType.compatibleTo(last.finalType)) {
+        last.finalType = targetType;
+      }
+    }
+    return this;
+  }
+
+  public UriPathInfoImpl addProperty(EdmProperty property) {
+    if (pathList == null) {
+      pathList = new ArrayList<PathListItem>();
+    }
+
+    PathListItem newItem = new PathListItem();
+    newItem.property = property;
+    newItem.initialType = property.getType();
+    newItem.finalType = property.getType();
+    newItem.isCollection = property.isCollection();
+    pathList.add(newItem);
+
+    this.finalType = newItem.finalType;
+    this.isCollection = newItem.isCollection;
+    return this;
+  }
+
+  public UriPathInfoImpl addNavigationProperty(EdmNavigationProperty property) {
+    if (pathList == null) {
+      pathList = new ArrayList<PathListItem>();
+    }
+    PathListItem newItem = new PathListItem();
+    newItem.property = property;
+    newItem.initialType = property.getType();
+    newItem.finalType = property.getType();
+    newItem.isCollection = property.isCollection();
+    pathList.add(newItem);
+
+    this.finalType = newItem.finalType;
+    this.isCollection = newItem.isCollection;
+    return this;
+  }
+
+  public int getPropertyCount() {
+    return pathList.size();
+  }
+
+  public EdmElement getProperty(int index) {
+    return pathList.get(index).property;
+
+  }
+  
+  public UriPathInfoImpl setCollection(boolean isCollection) {
     this.isCollection = isCollection;
+    return this;
   }
 
-  public EdmEntityType getTargetType() {
-    return targetType;
-  }
+  public boolean isCollection() {
 
-  public void setTargetType(final EdmEntityType targetType) {
-    this.targetType = targetType;
+    return isCollection;
   }
 }

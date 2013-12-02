@@ -16,10 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
+package org.apache.olingo.odata4.producer.core.uri;
 
-package org.apache.olingo.odata4.producer.api.uri;
+import java.util.ArrayList;
+import java.util.List;
 
-public enum UriInfoKind {
-  batch,entity, metadata, all, crossjoin, path;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+
+public class UriInfoImplPath extends UriInfoImpl {
+
+  List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
+
+  public UriInfoImplPath() {
+    this.setKind(UriInfoKind.path);
+  }
+
+  public UriInfoImpl addPathInfo(UriPathInfoImpl pathInfo) {
+    pathInfos.add(pathInfo);
+    return this;
+  }
+
+  public UriPathInfoImpl getLastUriPathInfo() {
+    if (pathInfos.size() > 0) {
+      return pathInfos.get(pathInfos.size() - 1);
+    }
+    return null;
+  }
+
+  public UriPathInfoImpl getUriPathInfo(int index) {
+    return pathInfos.get(index);
+  }
 
 }

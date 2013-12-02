@@ -16,9 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-
 package org.apache.olingo.odata4.producer.core.uri;
 
-public class UriPathInfoSigletonImpl extends UriPathInfoImpl {
+import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
+
+public class UriPathInfoNavEntitySet extends UriPathInfoImpl {
+
+  private EdmNavigationProperty sourceNavigationProperty;
+
+  public UriPathInfoNavEntitySet() {
+    this.setKind(UriPathInfoKind.navEntitySet);
+  }
+
+  public UriPathInfoNavEntitySet addSourceNavigationProperty(EdmNavigationProperty sourceNavigationProperty) {
+    this.sourceNavigationProperty = sourceNavigationProperty;
+    this.setType(sourceNavigationProperty.getType());
+    return this;
+  }
 
 }

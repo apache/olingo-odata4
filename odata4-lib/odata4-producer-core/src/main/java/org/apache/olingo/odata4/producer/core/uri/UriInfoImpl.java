@@ -18,51 +18,19 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.odata4.producer.api.uri.UriInfo;
-import org.apache.olingo.odata4.producer.api.uri.UriInfoBatch;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
-import org.apache.olingo.odata4.producer.api.uri.UriPathInfo;
 
-public class UriInfoImpl implements UriInfo, UriInfoBatch {
+public class UriInfoImpl {
+
   private UriInfoKind kind;
-  private List<UriPathInfo> uriPathInfos = new ArrayList<UriPathInfo>();
-
-  @Override
-  public UriInfoKind getKind() {
-    return kind;
-  }
 
   public UriInfoImpl setKind(final UriInfoKind kind) {
     this.kind = kind;
     return this;
   }
 
-  public void addUriPathInfo(final UriPathInfo uriPathInfo) {
-    uriPathInfos.add(uriPathInfo);
+  public Object getKind() {
+    return kind;
   }
-
-  /*
-   * private Edm edm = null;
-   * private List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
-   * 
-   * public Edm getEdm() {
-   * return edm;
-   * }
-   * 
-   * public void addUriPathInfo(final UriPathInfoImpl uriPathInfoImpl) {
-   * pathInfos.add(uriPathInfoImpl);
-   * }
-   * 
-   * public UriPathInfoImpl getLastUriPathInfo() {
-   * if (!pathInfos.isEmpty()) {
-   * return pathInfos.get(pathInfos.size() - 1);
-   * } else {
-   * return null;
-   * }
-   * }
-   */
 
 }

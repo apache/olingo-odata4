@@ -19,32 +19,22 @@
 
 package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.List;
-
 import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.odata4.producer.api.uri.KeyPredicate;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 
 public class UriPathInfoEntitySetImpl extends UriPathInfoImpl {
+  EdmEntitySet edmEntitySet = null;
 
-  private EdmEntitySet targetEntityset;
-
-  private List<KeyPredicate> keyPredicates;
-
-  public EdmEntitySet getTargetEntityset() {
-    return targetEntityset;
+  public UriPathInfoEntitySetImpl() {
+    this.setKind(UriPathInfoKind.entitySet);
   }
 
-  // TODO add to Interface UriPathInfoEntitySet
-  public void setTargetEntityset(final EdmEntitySet targetEntityset) {
-    this.targetEntityset = targetEntityset;
-  }
+  public UriPathInfoEntitySetImpl setEntitSet(EdmEntitySet edmES) {
 
-  public List<KeyPredicate> getKeyPredicates() {
-    return keyPredicates;
-  }
+    this.edmEntitySet = edmES;
+    this.setType(edmES.getEntityType());
 
-  public void setKeyPredicates(final List<KeyPredicate> keyPredicates) {
-    this.keyPredicates = keyPredicates;
+    return this;
   }
 
 }

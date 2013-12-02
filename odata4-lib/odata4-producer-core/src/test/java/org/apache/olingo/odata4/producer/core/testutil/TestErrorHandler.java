@@ -16,10 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.producer.core.testutil;
 
 import java.util.Collections;
 import java.util.List;
+
+
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.Parser;
@@ -27,7 +29,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 
-public class ErrorHandler<T> extends BaseErrorListener {
+public class TestErrorHandler<T> extends BaseErrorListener {
   @Override
   public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol,
       final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
@@ -41,7 +43,6 @@ public class ErrorHandler<T> extends BaseErrorListener {
       // String lexerTokenName =TestSuiteLexer.tokenNames[e.getOffendingToken().getType()];
       String lexerTokenName = "";
       try {
-        // lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
         lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
       } catch (ArrayIndexOutOfBoundsException es) {
         lexerTokenName = "token error";

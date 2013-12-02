@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.producer.core.uri.antlr;
+package org.apache.olingo.odata4.producer.core.uri.antlr;
 
 import org.antlr.v4.runtime.Lexer;
 import org.apache.olingo.odata4.producer.core.testutil.TokenValidator;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 import org.junit.Test;
 
 public class TestLexer {
@@ -46,8 +47,11 @@ public class TestLexer {
 
   @Test
   public void test() {
-    test.globalMode(Lexer.DEFAULT_MODE);
-    test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')");
+
+    test.globalMode(UriLexer.DEFAULT_MODE);
+    
+    //test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')");
+
     // test.log(1).run("$filter='ABC'").isText("ABC").isType(UriLexer.STRING);
     // test.log(1).run("ODI?$filter=1 add 2 mul 3");
     // test.log(1).run("1  + 2 + 3");
@@ -151,104 +155,106 @@ public class TestLexer {
 
   }
 
-  /*
-   * // ;------------------------------------------------------------------------------
-   * // ; 5. JSON format for function parameters
-   * // ;------------------------------------------------------------------------------
-   * 
-   * @Test
-   * public void testQueryJSON_and_otheres() {
-   * // QUOTATION_MARK
-   * test.run("\"").isText("\"").isType(UriLexer.QUOTATION_MARK);
-   * test.run("%22").isText("%22").isType(UriLexer.QUOTATION_MARK);
-   * 
-   * // Lexer rule QCHAR_UNESCAPED
-   * test.run("\"abc\"").isText("\"abc\"").isType(UriLexer.STRING_IN_JSON);
-   * 
-   * // Lexer rule QCHAR_JSON_SPECIAL
-   * test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * 
-   * // Lexer rule CHAR_IN_JSON
-   * test.run("\"" + cQCHAR_UNESCAPED + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * 
-   * // Lexer rule ESCAPE CHAR_IN_JSON
-   * test.run("\"" + cESCAPE + cQUOTATION_MARK + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + cESCAPE + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "/" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "%2F" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "b" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "f" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "n" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "r" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "t" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * test.run("\"" + cESCAPE + "u12AB" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-   * }
-   * 
-   * // ;------------------------------------------------------------------------------
-   * // ; 6. Names and identifiers
-   * // ;------------------------------------------------------------------------------
-   * 
-   * @Test
-   * public void testNamesAndIdentifiers() {
-   * 
-   * test.run("Binary").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Boolean").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Byte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Date").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("DateTimeOffset").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Decimal").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Double").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Duration").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Guid").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Int16").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Int32").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Int64").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("SByte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Single").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Stream").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("String").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("TimeOfDay").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * 
-   * test.run("Geography").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run("Geometry").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * 
-   * String g = "Geography";
-   * test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * 
-   * g = "Geometry";
-   * test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-   * 
-   * }
-   * 
-   * @Test
-   * public void testNameClaches() {
-   * -- test.run("Collection").isInput().isType(UriLexer.COLLECTION_CS_FIX);
-   * test.run("LineString").isInput().isType(UriLexer.LINESTRING_CS_FIX);
-   * test.run("MultiLineString").isInput().isType(UriLexer.MULTILINESTRING_CS_FIX);
-   * test.run("MultiPoint").isInput().isType(UriLexer.MULTIPOINT_CS_FIX);
-   * test.run("MultiPolygon").isInput().isType(UriLexer.MULTIPOLYGON_CS_FIX);
-   * test.run("Point").isInput().isType(UriLexer.POINT_CS_FIX);
-   * test.run("Polygon").isInput().isType(UriLexer.POLYGON_CS_FIX);
-   * test.run("Srid").isInput().isType(UriLexer.SRID_CS);--
-   * }
-   */
+  
+    // ;------------------------------------------------------------------------------
+    // ; 5. JSON format for function parameters
+    // ;------------------------------------------------------------------------------
+    
+    @Test
+    public void testQueryJSON_and_otheres() {
+    // QUOTATION_MARK
+    //test.run("\"").isText("\"").isType(UriLexer.QUOTATION_MARK);
+    //test.run("%22").isText("%22").isType(UriLexer.QUOTATION_MARK);
+    
+    // Lexer rule QCHAR_UNESCAPED
+    test.run("\"abc\"").isText("\"abc\"").isType(UriLexer.STRING_IN_JSON);
+    
+    // Lexer rule QCHAR_JSON_SPECIAL
+    /*
+    test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    
+    // Lexer rule CHAR_IN_JSON
+    test.run("\"" + cQCHAR_UNESCAPED + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    
+    // Lexer rule ESCAPE CHAR_IN_JSON
+    test.run("\"" + cESCAPE + cQUOTATION_MARK + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + cESCAPE + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "/" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "%2F" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "b" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "f" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "n" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "r" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "t" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    test.run("\"" + cESCAPE + "u12AB" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+    */
+    }
+    
+    // ;------------------------------------------------------------------------------
+    // ; 6. Names and identifiers
+    // ;------------------------------------------------------------------------------
+    
+    @Test
+    public void testNamesAndIdentifiers() {
+    /*
+    test.run("Binary").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Boolean").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Byte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Date").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("DateTimeOffset").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Decimal").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Double").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Duration").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Guid").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Int16").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Int32").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Int64").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("SByte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Single").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Stream").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("String").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("TimeOfDay").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    
+    test.run("Geography").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run("Geometry").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    
+    String g = "Geography";
+    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    
+    g = "Geometry";
+    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+    */
+    }
+    
+    @Test
+    public void testNameClaches() {
+    /*test.run("Collection").isInput().isType(UriLexer.COLLECTION_CS_FIX);
+    test.run("LineString").isInput().isType(UriLexer.LINESTRING_CS_FIX);
+    test.run("MultiLineString").isInput().isType(UriLexer.MULTILINESTRING_CS_FIX);
+    test.run("MultiPoint").isInput().isType(UriLexer.MULTIPOINT_CS_FIX);
+    test.run("MultiPolygon").isInput().isType(UriLexer.MULTIPOLYGON_CS_FIX);
+    test.run("Point").isInput().isType(UriLexer.POINT_CS_FIX);
+    test.run("Polygon").isInput().isType(UriLexer.POLYGON_CS_FIX);
+    test.run("Srid").isInput().isType(UriLexer.SRID_CS);*/
+    }
+   
   // ;------------------------------------------------------------------------------
   // ; 7. Literal Data Values
   // ;------------------------------------------------------------------------------
@@ -299,22 +305,21 @@ public class TestLexer {
     test.run("INF").isInput().isType(UriLexer.NANINFINITY);
 
     // Lexer rule GUID
-    test.run("guid'1234ABCD-12AB-23CD-45EF-123456780ABC'").isInput().isType(UriLexer.GUID);
-    test.run("GuId'1234ABCD-12AB-23CD-45EF-123456780ABC'").isInput().isType(UriLexer.GUID);
+    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").isInput().isType(UriLexer.GUID);
+    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").isInput().isType(UriLexer.GUID);
 
     // Lexer rule DATE
-    test.run("date'2013-11-15'").isInput().isType(UriLexer.DATE);
-    test.run("DaTe'2013-11-15'").isInput().isType(UriLexer.DATE);
-
+    test.run("2013-11-15").isInput().isType(UriLexer.DATE);
+    
     // Lexer rule DATETIMEOFFSET
-    test.run("datetimeoffset'2013-11-15T13:35Z'").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("datetimeoffset'2013-11-15T13:35:10Z'").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("datetimeoffset'2013-11-15T13:35:10.1234Z'").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35Z").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35:10Z").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35:10.1234Z").isInput().isType(UriLexer.DATETIMEOFFSET);
 
-    test.run("datetimeoffset'2013-11-15T13:35:10.1234+01:30'").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("datetimeoffset'2013-11-15T13:35:10.1234-01:12'").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35:10.1234+01:30").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35:10.1234-01:12").isInput().isType(UriLexer.DATETIMEOFFSET);
 
-    test.run("DaTeTiMeOfFsEt'2013-11-15T13:35Z'").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35Z").isInput().isType(UriLexer.DATETIMEOFFSET);
 
     // Lexer rule DURATION
     test.run("duration'PT67S'").isInput().isType(UriLexer.DURATION);
@@ -347,11 +352,11 @@ public class TestLexer {
     test.run("DuRaTiOn'P3DT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
     test.run("DuRaTiOn'-P3DT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
 
-    test.run("timeofday'20:00'").isInput().isType(UriLexer.TIMEOFDAY);
-    test.run("timeofday'20:15:01'").isInput().isType(UriLexer.TIMEOFDAY);
-    test.run("timeofday'20:15:01.02'").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:00").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:15:01").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:15:01.02").isInput().isType(UriLexer.TIMEOFDAY);
 
-    test.run("timeofday'20:15:01.02'").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:15:01.02").isInput().isType(UriLexer.TIMEOFDAY);
 
     // String
     test.run("'ABC'").isText("'ABC'").isType(UriLexer.STRING);

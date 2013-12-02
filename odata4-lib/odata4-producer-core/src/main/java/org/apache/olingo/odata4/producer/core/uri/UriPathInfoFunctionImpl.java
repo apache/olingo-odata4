@@ -18,44 +18,40 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
-import org.apache.olingo.odata4.producer.api.uri.KeyPredicate;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 
 /**
- *  
+ * Covers Functionimports and BoundFunction in URI
  */
-public class KeyPredicateImpl implements KeyPredicate {
+public class UriPathInfoFunctionImpl extends UriPathInfoImpl {
 
-  public KeyPredicateImpl(final String literal, final EdmProperty property) {
-    super();
-    this.literal = literal;
-    this.property = property;
+  private UriParameterlist parameters;
+  private EdmFunction function;
+  private UriKeyPredicateList keyPredicates;
+
+  public UriPathInfoFunctionImpl() {
+    this.setKind(UriPathInfoKind.function);
   }
 
-  private String literal;
-  private EdmProperty property;
-
-  @Override
-  public String getLiteral() {
-    return literal;
+  public UriPathInfoFunctionImpl setParameters(UriParameterlist parameters) {
+    this.parameters = parameters;
+    return this;
   }
 
-  public void setValue(final String value) {
-    literal = value;
+  public UriParameterlist getParameters() {
+    return parameters;
   }
 
-  @Override
-  public EdmProperty getProperty() {
-    return property;
+  public UriPathInfoFunctionImpl setFunction(EdmFunction function) {
+    this.function = function;
+    super.setType(function.getReturnType().getType());
+    super.setCollection(function.getReturnType().isCollection());
+    return this;
   }
 
-  public void setProperty(final EdmProperty property) {
-    this.property = property;
+  public UriPathInfoFunctionImpl setKeyPredicates(UriKeyPredicateList keyPredicates) {
+    this.keyPredicates = keyPredicates;
+    return this;
   }
-
-  @Override
-  public String toString() {
-    return "KeyPredicate: literal=" + literal + ", propertyName=" + property;
-  }
-
 }

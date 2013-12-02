@@ -112,4 +112,5 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     return baseType;
   }
 
+
 }

@@ -36,6 +36,7 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
+
 public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityContainer {
 
   private final FullQualifiedName entityContainerName;

@@ -16,30 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.api.uri;
+package org.apache.olingo.odata4.producer.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 
-/**
- * Key predicate, consisting of a simple-type property and its value as String literal
- * @org.apache.olingo.odata2.DoNotImplement
- * 
- */
-public interface KeyPredicate {
-
-  /**
-   * <p>Gets the literal String in default representation.</p>
-   * <p>The description for {@link org.apache.olingo.odata2.api.edm.EdmLiteral} has some motivation for using
-   * this representation.</p>
-   * @return String literal in default (<em>not</em> URI) representation
-   * @see org.apache.olingo.odata2.api.edm.EdmLiteralKind
-   */
-  public String getLiteral();
-
-  /**
-   * Gets the key property.
-   * @return {@link EdmProperty} simple-type property
-   */
-  public EdmProperty getProperty();
+public class UriInfoImplEntity extends UriInfoImpl {
+  public UriInfoImplEntity() {
+    this.setKind(UriInfoKind.entity);
+  }
 
 }

@@ -16,10 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
+package org.apache.olingo.odata4.producer.core.uri;
 
-package org.apache.olingo.odata4.producer.api.uri;
+import java.util.ArrayList;
+import java.util.List;
 
-public enum UriInfoKind {
-  batch,entity, metadata, all, crossjoin, path;
+public class UriKeyPredicateList {
 
+  private List<String> names = new ArrayList<String>();
+  private List<String> values = new ArrayList<String>();
+
+  public UriKeyPredicateList add(String name, String value) {
+    names.add(name);
+    values.add(value);
+    return this;
+  }
+
+  public List<String> getNames() {
+    return names;
+  }
+
+  public String getName(int index) {
+    return names.get(index);
+
+  }
+
+  public Object getValue(int index) {
+    return values.get(index);
+  }
 }
