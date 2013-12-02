@@ -41,16 +41,22 @@ public class TestParser {
     test = new ParserValidator();
   }
 
-  //@Test
+  @Test
   public void test() {
-    String text = "ODI?$expand=*";
-    text = "aa";
-
-    (new TokenValidator()).log(1).run(text);
-    // test.log(1).run(text);
-
-    //
-
+    /*
+     * test.log(2).run("ODI?$filter=geo.distance("+
+     * "geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')")
+     * .isText("odataRelativeUriEOF(odataRelativeUri("
+     * + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
+     * + "queryOption(systemQueryOption("
+     * + "filter($filter = commonExpr(methodCallExpr("
+     * + "distanceMethodCallExpr("
+     * + "geo.distance( "
+     * + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
+     * + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) , "
+     * + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
+     * + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) ))))))))) <EOF>)");
+     */
   }
 
   // ;------------------------------------------------------------------------------
@@ -277,7 +283,7 @@ public class TestParser {
         + "odataIdentifier(ODI)))) ? queryOptions(queryOption(systemQueryOption("
         + "expand($expand = expandItemList("
         + "expandItem(expandPath(odataIdentifier(ODI)) "
-        + "expandPathExtension(/ ref($ref) ( expandRefOption(skip($skip = 1)) ))))))))) <EOF>)");
+        + "expandPathExtension(/ ref($ref) ( expandRefOption(skipInline($skip = 1)) ))))))))) <EOF>)");
 
     test.run("ODI?$expand=ODI/$count").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment("
@@ -292,7 +298,7 @@ public class TestParser {
         + "expand($expand = expandItemList("
         + "expandItem(expandPath(odataIdentifier(ODI)) expandPathExtension(/ count($count) ( "
         + "expandCountOption("
-        + "filter($filter = commonExpr(primitiveLiteral(1)))) ))))))))) <EOF>)");
+        + "filterInline($filter = commonExpr(primitiveLiteral(1)))) ))))))))) <EOF>)");
 
     test.run("ODI?$expand=ODI/$count($search=\"abc\")").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment("
@@ -300,25 +306,25 @@ public class TestParser {
         + "expand($expand = expandItemList("
         + "expandItem(expandPath(odataIdentifier(ODI)) expandPathExtension(/ count($count) ( "
         + "expandCountOption("
-        + "search($search searchSpecialToken(= searchExpr(searchPhrase(\"abc\"))))) ))))))))) <EOF>)");
+        + "searchInline($search searchSpecialToken(= searchExpr(searchPhrase(\"abc\"))))) ))))))))) <EOF>)");
 
     test.run("ODI?$expand=ODI/$ref($skip=1;$filter=true)").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment("
         + "odataIdentifier(ODI)))) ? queryOptions(queryOption(systemQueryOption("
         + "expand($expand = expandItemList("
         + "expandItem(expandPath(odataIdentifier(ODI)) expandPathExtension(/ ref($ref) ( "
-        + "expandRefOption(skip($skip = 1)) ; "
+        + "expandRefOption(skipInline($skip = 1)) ; "
         + "expandRefOption(expandCountOption("
-        + "filter($filter = commonExpr(primitiveLiteral(booleanNonCase(true)))))) ))))))))) <EOF>)");
+        + "filterInline($filter = commonExpr(primitiveLiteral(booleanNonCase(true)))))) ))))))))) <EOF>)");
 
     test.run("ODI?$expand=ODI($skip=1;$filter=true)").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment("
         + "odataIdentifier(ODI)))) ? queryOptions(queryOption(systemQueryOption("
         + "expand($expand = expandItemList("
         + "expandItem(expandPath(odataIdentifier(ODI)) expandPathExtension(( "
-        + "expandOption(expandRefOption(skip($skip = 1))) ; "
+        + "expandOption(expandRefOption(skipInline($skip = 1))) ; "
         + "expandOption(expandRefOption(expandCountOption("
-        + "filter($filter = commonExpr(primitiveLiteral(booleanNonCase(true))))))) ))))))))) <EOF>)");
+        + "filterInline($filter = commonExpr(primitiveLiteral(booleanNonCase(true))))))) ))))))))) <EOF>)");
 
     // Test parser rule filter ( more filter test in method testExpressions)
     test.run("ODI?$filter=true")
@@ -347,11 +353,12 @@ public class TestParser {
         + "queryOption(systemQueryOption(id($id = abc))))) <EOF>)");
 
     // Test parser rule count
-    /* TODO add count to new mode based lexer
-    test.lexerlog(1).run("ODI?$count=true").isText("odataRelativeUriEOF(odataRelativeUri("
-        + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions(queryOption("
-        + "systemQueryOption("
-        + "inlinecount($count = booleanNonCase(true)))))) <EOF>)");
+    /*
+     * TODO add count to new mode based lexer
+     * test.lexerlog(1).run("ODI?$count=true").isText("odataRelativeUriEOF(odataRelativeUri("
+     * + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions(queryOption("
+     * + "systemQueryOption("
+     * + "inlinecount($count = booleanNonCase(true)))))) <EOF>)");
      */
     test.run("ODI?$count=false").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions(queryOption("
@@ -561,11 +568,6 @@ public class TestParser {
         + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
         + "queryOption(systemQueryOption(filter($filter = commonExpr("
         + "primitiveLiteral(-1.2e-3))))))) <EOF>)");
-
-    test.run("ODI?$filter=X'12AB'").isText("odataRelativeUriEOF(odataRelativeUri("
-        + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
-        + "queryOption(systemQueryOption(filter($filter = commonExpr("
-        + "primitiveLiteral(X'12AB'))))))) <EOF>)");
 
     test.run("ODI?$filter=binary'12AB'").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
@@ -957,23 +959,22 @@ public class TestParser {
         + "filter($filter = commonExpr(methodCallExpr("
         + "ceilingMethodCallExpr(ceiling( commonExpr(primitiveLiteral(12.34)) ))))))))) <EOF>)");
 
-    /* TODO reenable GEOMETRY 
-      test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')")
-      .isText("odataRelativeUriEOF(odataRelativeUri("
-      + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
-      + "queryOption(systemQueryOption("
-      + "filter($filter = commonExpr(methodCallExpr("
-      + "distanceMethodCallExpr("
-      + "geo.distance( "
-      + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
-      + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) , "
-      + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
-      + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) ))))))))) <EOF>)");
-      */
-      // TODO check this 
-      /*
-      test.run("ODI?$filter=geo.length(geometry'SRID=0;LineString(142.1 64.1,3.14 2.78)')")
-      .isText("odataRelativeUriEOF(odataRelativeUri("
+    test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')")
+        .isText("odataRelativeUriEOF(odataRelativeUri("
+            + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
+            + "queryOption(systemQueryOption("
+            + "filter($filter = commonExpr(methodCallExpr("
+            + "distanceMethodCallExpr("
+            + "geo.distance( "
+            + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
+            + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) , "
+            + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
+            + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) ))))))))) <EOF>)");
+
+    // TODO check this
+    /*
+     * test.run("ODI?$filter=geo.length(geometry'SRID=0;LineString(142.1 64.1,3.14 2.78)')")
+     * .isText("odataRelativeUriEOF(odataRelativeUri("
      * + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
      * + "queryOption(systemQueryOption(filter($filter = commonExpr(methodCallExpr("
      * + "geoLengthMethodCallExpr(geo.length ( commonExpr(primitiveLiteral("
@@ -1184,132 +1185,133 @@ public class TestParser {
 
   @Test
   public void testFragment() {
-    /*
-     * test.run("$metadata#Collection($ref)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(Collection($ref))) <EOF>)");
-     * 
-     * test.run("$metadata#Collection(Edm.EntityType)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(Collection(Edm.EntityType))) <EOF>)");
-     * 
-     * test.run("$metadata#Collection(Edm.ComplexType)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(Collection(Edm.ComplexType))) <EOF>)");
-     * 
-     * test.run("$metadata#singletonEntity").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(singletonEntity))) <EOF>)");
-     * 
-     * test.run("$metadata#NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#Edm.Boolean").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(Edm.Boolean)) <EOF>)");
-     * 
-     * test.run("$metadata#ODI/$deletedEntity").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) /$deletedEntity)) <EOF>)");
-     * 
-     * test.run("$metadata#ODI/$link").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) /$link)) <EOF>)");
-     * 
-     * test.run("$metadata#ODI/$deletedLink").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) /$deletedLink)) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/NS.ODI/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI) "
-     * + "/ odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#NS.ODI(*)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(namespace(odataIdentifier(NS) .) odataIdentifier(ODI) "
-     * + "propertyList(( propertyListItem(*) )))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)/NS.ODI/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI) / odataIdentifier(ODI))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)(*)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) propertyList(( propertyListItem(*) )))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)(PROP)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( propertyListItem(propertyListProperty(odataIdentifier(PROP))) )))) <EOF>)");
-     * test.run("$metadata#ODI(1)(NAVPROP+)").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) +)) )))) <EOF>)");
-     * test.run("$metadata#ODI(1)(NAVPROP+(*))").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
-     * + "propertyList(( "
-     * + "propertyListItem(*) )))) )))) <EOF>)");
-     * test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )))) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$delta").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
-     * + "/$delta)) <EOF>)");
-     * 
-     * test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$entity").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
-     * + "entity(/$entity))) <EOF>)");
-     * test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$delta/$entity").isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "$metadata # contextFragment(odataIdentifier(ODI) "
-     * + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
-     * + "propertyList(( "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
-     * + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
-     * + "/$delta entity(/$entity))) <EOF>)");
-     */
+
+    test.run("$metadata#Collection($ref)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(Collection($ref))) <EOF>)");
+
+    test.run("$metadata#Collection(Edm.EntityType)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(Collection(Edm.EntityType))) <EOF>)");
+
+    test.run("$metadata#Collection(Edm.ComplexType)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(Collection(Edm.ComplexType))) <EOF>)");
+
+    test.run("$metadata#singletonEntity").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(singletonEntity))) <EOF>)");
+
+    test.run("$metadata#NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#Edm.Boolean").isText("odataRelativeUriEOF("
+        + "odataRelativeUri($metadata # "
+        + "contextFragment(namespace(odataIdentifier(Edm) .) odataIdentifier(Boolean))) <EOF>)");
+
+    test.run("$metadata#ODI/$deletedEntity").isText("odataRelativeUriEOF("
+        + "odataRelativeUri($metadata # contextFragment(odataIdentifier(ODI) / $deletedEntity)) <EOF>)");
+
+    test.run("$metadata#ODI/$link").isText("odataRelativeUriEOF("
+        + "odataRelativeUri($metadata # contextFragment(odataIdentifier(ODI) / $link)) <EOF>)");
+
+    test.run("$metadata#ODI/$deletedLink").isText("odataRelativeUriEOF("
+        + "odataRelativeUri($metadata # contextFragment(odataIdentifier(ODI) / $deletedLink)) <EOF>)");
+
+    test.run("$metadata#ODI(1)/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#ODI(1)/NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#ODI(1)/NS.ODI/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI) "
+        + "/ odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#NS.ODI(*)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(namespace(odataIdentifier(NS) .) odataIdentifier(ODI) "
+        + "propertyList(( propertyListItem(*) )))) <EOF>)");
+
+    test.run("$metadata#ODI(1)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))))) <EOF>)");
+
+    test.run("$metadata#ODI(1)/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#ODI(1)/NS.ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#ODI(1)/NS.ODI/ODI").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "/ namespace(odataIdentifier(NS) .) odataIdentifier(ODI) / odataIdentifier(ODI))) <EOF>)");
+
+    test.run("$metadata#ODI(1)(*)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) propertyList(( propertyListItem(*) )))) <EOF>)");
+
+    test.run("$metadata#ODI(1)(PROP)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( propertyListItem(propertyListProperty(odataIdentifier(PROP))) )))) <EOF>)");
+    test.run("$metadata#ODI(1)(NAVPROP+)").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) +)) )))) <EOF>)");
+    test.run("$metadata#ODI(1)(NAVPROP+(*))").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
+        + "propertyList(( "
+        + "propertyListItem(*) )))) )))) <EOF>)");
+    test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )))) <EOF>)");
+
+    test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$delta").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
+        + "/ $delta)) <EOF>)");
+
+    test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$entity").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
+        + "/ $entity)) <EOF>)");
+    test.run("$metadata#ODI(1)(NAVPROP+(A,B,C))/$delta/$entity").isText("odataRelativeUriEOF(odataRelativeUri("
+        + "$metadata # contextFragment(odataIdentifier(ODI) "
+        + "nameValueOptList(valueOnly(( primitiveLiteral(1) ))) "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(NAVPROP) + "
+        + "propertyList(( "
+        + "propertyListItem(propertyListProperty(odataIdentifier(A))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(B))) , "
+        + "propertyListItem(propertyListProperty(odataIdentifier(C))) )))) )) "
+        + "/ $delta / $entity)) <EOF>)");
+
   }
 
   @Test

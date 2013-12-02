@@ -346,12 +346,13 @@ public class EdmMock implements Edm {
     when(container1.getFunctionImport(FUNCTION_IMPORT_ALL_LOCATIONS_NAME.getName())).thenReturn(
         allLocationsFunctionImport);
 
-    when(container1.getElement(EMPLOYEES_SET_NAME.getName())).thenReturn(employeesSet);
-    when(container1.getElement(TEAMS_SET_NAME.getName())).thenReturn(teamsSet);
-    when(container1.getElement(COMPANY_SINGLETON_NAME.getName())).thenReturn(company);
-    when(container1.getElement(ACTION_IMPORT1_NAME.getName())).thenReturn(actionImport1);
-    when(container1.getElement(FUNCTION_IMPORT_MAXIMAL_AGE_NAME.getName())).thenReturn(maximalAgeFunctionImport);
-
+    /*
+     * when(container1.getElement(EMPLOYEES_SET_NAME.getName())).thenReturn(employeesSet);
+     * when(container1.getElement(TEAMS_SET_NAME.getName())).thenReturn(teamsSet);
+     * when(container1.getElement(COMPANY_SINGLETON_NAME.getName())).thenReturn(company);
+     * when(container1.getElement(ACTION_IMPORT1_NAME.getName())).thenReturn(actionImport1);
+     * when(container1.getElement(FUNCTION_IMPORT_MAXIMAL_AGE_NAME.getName())).thenReturn(maximalAgeFunctionImport);
+     */
   }
 
   private void enhanceActionImport1() {

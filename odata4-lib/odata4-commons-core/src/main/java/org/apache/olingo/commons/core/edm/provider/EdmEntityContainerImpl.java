@@ -126,9 +126,4 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
     return functionImport;
   }
 
-  @Override
-  public EdmNamed getElement(final String odataIdentifier) {
-    return null;
-  }
-
 }

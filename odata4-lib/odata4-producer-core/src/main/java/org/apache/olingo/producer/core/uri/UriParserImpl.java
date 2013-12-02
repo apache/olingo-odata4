@@ -125,7 +125,7 @@ public class UriParserImpl {
     String odataIdentifier = ""; //TODO ctx.odi.getText();
 
     // get element "odataIdentifier" from EDM
-    EdmNamed edmObject = entityContainer.getElement(odataIdentifier);
+    EdmNamed edmObject = null;// entityContainer.getElement(odataIdentifier);
 
     if (edmObject instanceof EdmEntitySet) {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one
+ * L	icensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership. The ASF licenses this file
@@ -22,15 +22,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.apache.olingo.producer.core.uri.antlr.UriLexer;
 
 public class TokenWriter implements ParseTreeListener {
 
   @Override
   public void visitTerminal(TerminalNode node) {
-    String out = String.format("%1$-" + 20 + "s", node.getText()); ;
-    out +=  UriLexer.tokenNames[node.getSymbol().getType()];
-    System.out.println(out); 
+    /*String out = String.format("%1$-" + 20 + "s", node.getText()); ;
+    int tokenType = node.getSymbol().getType();
+    if (tokenType == -1 ) {
+      out += "-1/EOF";
+    } else {
+      out +=  UriLexer.tokenNames[tokenType];
+    }
+    System.out.println(out); */
   }
 
   @Override

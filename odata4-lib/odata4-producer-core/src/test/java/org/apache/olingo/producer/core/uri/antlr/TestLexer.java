@@ -55,9 +55,10 @@ public class TestLexer {
     test = new TokenValidator();
   }
 
-  // @Test
+   @Test
   public void test() {
-    test.globalMode(UriLexer.MODE_QUERY);
+    test.globalMode(UriLexer.DEFAULT_MODE);
+    test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')");
     // test.log(1).run("$filter='ABC'").isText("ABC").isType(UriLexer.STRING);
     // test.log(1).run("ODI?$filter=1 add 2 mul 3");
     // test.log(1).run("1  + 2 + 3");
@@ -137,7 +138,7 @@ public class TestLexer {
   // ;------------------------------------------------------------------------------
   @Test
   public void testQueryExpressions() {
-    test.globalMode(UriLexer.MODE_SYSTEM_QUERY);
+    test.globalMode(UriLexer.DEFAULT_MODE);
     // assertEquals("expected","actual");
 
     test.run("$it").isText("$it").isType(UriLexer.IMPLICIT_VARIABLE_EXPR);
@@ -265,20 +266,15 @@ public class TestLexer {
 
   @Test
   public void testLiteralDataValues() {
-    test.globalMode(UriLexer.MODE_SYSTEM_QUERY);
+    test.globalMode(UriLexer.DEFAULT_MODE);
     // null
     test.run("null").isInput().isType(UriLexer.NULLVALUE);
 
     // binary
-    test.run("X'ABCD'").isInput().isType(UriLexer.BINARY);
-    test.run("X'ABCD'").isInput().isType(UriLexer.BINARY);
     test.run("binary'ABCD'").isInput().isType(UriLexer.BINARY);
     test.run("BiNaRy'ABCD'").isInput().isType(UriLexer.BINARY);
 
     // not a binary TODO add error handling
-    test.run("x'ABCDA'")
-        .at(0).isText("x").isType(UriLexer.ODATAIDENTIFIER)
-        .at(1).isText("'ABCDA'").isType(UriLexer.STRING);
     test.run("BiNaRy'ABCDA'")
         .at(0).isText("BiNaRy").isType(UriLexer.ODATAIDENTIFIER)
         .at(1).isText("'ABCDA'").isType(UriLexer.STRING);

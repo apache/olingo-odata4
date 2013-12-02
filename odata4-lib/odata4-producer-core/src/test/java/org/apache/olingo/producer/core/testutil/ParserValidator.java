@@ -35,6 +35,7 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -42,71 +43,106 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.apache.olingo.producer.core.uri.antlr.UriLexer;
 import org.apache.olingo.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
-import org.apache.olingo.producer.core.uri.antlr.UriParserParser.TestContext;
 
+/**
+ * @author d039346
+ * 
+ */
 public class ParserValidator {
+  public class UriLexerTrace extends UriLexer {
+    ParserValidator parserValidator = null;
+
+    public UriLexerTrace(ParserValidator parserValidator, ANTLRInputStream antlrInputStream) {
+      super(antlrInputStream);
+      this.parserValidator = parserValidator;
+    }
+
+    @Override
+    public Token emit() {
+      Token t =
+          _factory.create(_tokenFactorySourcePair, _type, _text, _channel, _tokenStartCharIndex, getCharIndex() - 1,
+              _tokenStartLine, _tokenStartCharPositionInLine);
+
+      if (parserValidator.logLevel > 1) {
+        String out = String.format("%1$-" + 20 + "s", t.getText());
+        ;
+        int tokenType = t.getType();
+        if (tokenType == -1) {
+          out += "-1/EOF";
+        } else {
+          out += UriLexer.tokenNames[tokenType];
+        }
+        System.out.println(out);
+      }
+      emit(t);
+
+      return t;
+    }
+
+    @Override
+    public void pushMode(int m) {
+      String out = UriLexer.modeNames[this._mode] + "-->";
+      super.pushMode(m);
+      out += UriLexer.modeNames[this._mode];
+      if (parserValidator.logLevel > 1) {
+        System.out.print(out + "            ");
+      }
+      ;
+
+    }
+
+    @Override
+    public int popMode() {
+      String out = UriLexer.modeNames[this._mode] + "-->";
+      int m = super.popMode();
+      out += UriLexer.modeNames[this._mode];
+
+      if (parserValidator.logLevel > 1) {
+        System.out.print(out + "            ");
+      }
+
+      return m;
+    }
+
+  }
+
   private List<Exception> exceptions = new ArrayList<Exception>();
   private ParserRuleContext root;
 
   private String input = null;
-  //private int exceptionOnStage = -1;
+  // private int exceptionOnStage = -1;
   private Exception curException = null;
-  //private Exception curWeakException = null;
+  // private Exception curWeakException = null;
   private boolean allowFullContext;
   private boolean allowContextSensitifity;
   private boolean allowAmbiguity;
   private int logLevel = 0;
-  private int lexerLog;
+  private int lexerLogLevel = 0;
+
+  // private int lexerLogLevel = 0;
 
   public ParserValidator run(String uri) {
-    return run(uri, false);
-  }
-
-  public ParserValidator runTest(String uri) {
-    return runTest(uri, false);
-  }
-
-  public ParserValidator run(String uri, boolean searchMode) {
     input = uri;
-    if (lexerLog> 0) {
-      (new TokenValidator()).log(lexerLog).run(input);
-      
+    if (lexerLogLevel > 0) {
+      (new TokenValidator()).log(lexerLogLevel).run(input);
     }
-    root = parseInput(uri, searchMode);
-    
-    
-
+    root = parseInput(uri);
+    // LOG > 0 - Write serialized tree
     if (logLevel > 0) {
-
-      System.out.println(ParseTreeSerializer.getTreeAsText(root, new UriParserParser(null).getRuleNames()));
-
+      if (root != null) {
+        System.out.println(ParseTreeSerializer.getTreeAsText(root, new UriParserParser(null).getRuleNames()));
+      } else {
+        System.out.println("root == null");
+      }
     }
 
-    // reset for nest test
+    // reset for next test
     allowFullContext = false;
     allowContextSensitifity = false;
     allowAmbiguity = false;
+    logLevel = 0;
 
-    exFirst();
-    return this;
-  }
-
-  public ParserValidator runTest(String uri, boolean searchMode) {
-    input = uri;
-    root = parseInputTest(uri, searchMode);
-
-    if (logLevel > 0) {
-
-      System.out.println(ParseTreeSerializer.getTreeAsText(root, new UriParserParser(null).getRuleNames()));
-
-    }
-
-    // reset for nest test
-    allowFullContext = false;
-    allowContextSensitifity = false;
-    allowAmbiguity = false;
-
-    exFirst();
+    // exFirst();
     return this;
   }
 
@@ -115,22 +151,40 @@ public class ParserValidator {
     return this;
   }
 
+  /**
+   * Used in fast LL Parsing:
+   * Don't stops the parsing process when the slower full context parsing (with prediction mode SLL) is
+   * required
+   * @return
+   */
   public ParserValidator aFC() {
     allowFullContext = true;
     return this;
   }
 
+  /**
+   * Used in fast LL Parsing:
+   * Allows ContextSensitifity Errors which occur often when using the slower full context parsing
+   * and indicate that there is a context sensitivity ( which may not be an error).
+   * @return
+   */
   public ParserValidator aCS() {
     allowContextSensitifity = true;
     return this;
   }
 
+  /**
+   * Used in fast LL Parsing:
+   * Allows ambiguities
+   * @return
+   */
   public ParserValidator aAM() {
     allowAmbiguity = true;
     return this;
   }
 
   public ParserValidator isText(String expected) {
+    // make sure that there are no exceptions
     assertEquals(null, curException);
     assertEquals(0, exceptions.size());
 
@@ -144,8 +198,9 @@ public class ParserValidator {
     return this;
   }
 
-  private OdataRelativeUriEOFContext parseInput(final String input, boolean searchMode) {
+  private OdataRelativeUriEOFContext parseInput(final String input) {
     UriParserParser parser = null;
+    UriLexer lexer = null;
     OdataRelativeUriEOFContext ret = null;
 
     // Use 2 stage approach to improve performance
@@ -156,84 +211,69 @@ public class ParserValidator {
     try {
       curException = null;
       exceptions.clear();
-      parser = getNewParser(input, searchMode);
+      // create parser
+      lexer = new UriLexerTrace(this, new ANTLRInputStream(input));
+      parser = new UriParserParser(new CommonTokenStream(lexer));
+
+      // write single tokens to System.out
+      if (logLevel > 1) {
+        // can not be used because the listener is called bevore the mode changes
+        parser.addParseListener(new TokenWriter());
+      }
+      // write always a error message in case of syntax errors
+      parser.addErrorListener(new TraceErrorHandler<Object>());
+      // check error message if whether they are allowed or not
+      parser.addErrorListener(new ErrorCollector(this));
+
+      // Bail out of parser at first syntax error. --> procceds in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());
+
+      // User the faster LL parsing
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+      if (logLevel > 1) {
+        System.out.println("Step 1 (LL)");
+      }
       ret = parser.odataRelativeUriEOF();
+
     } catch (Exception ex) {
       curException = ex;
-      //exceptionOnStage = 1;
-      // stage= 2
       try {
+        // clear status
         curException = null;
         exceptions.clear();
-        parser = getNewParser(input, searchMode);
+
+        // create parser
+        lexer = new UriLexerTrace(this, new ANTLRInputStream(input));
+        parser = new UriParserParser(new CommonTokenStream(lexer));
+
+        // write single tokens to System.out
+        if (logLevel > 1) {
+          parser.addParseListener(new TokenWriter());
+        }
+
+        // write always a error message in case of syntax errors
+        parser.addErrorListener(new TraceErrorHandler<Object>());
+        // check error message if whether they are allowed or not
+        parser.addErrorListener(new ErrorCollector(this));
+
+        // Used default error strategy
         parser.setErrorHandler(new DefaultErrorStrategy());
+
+        // User the slower SLL parsing
         parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+
+        if (logLevel > 1) {
+          System.out.println("Step 2 (SLL)");
+        }
         ret = parser.odataRelativeUriEOF();
+
       } catch (Exception ex1) {
         curException = ex1;
-        //exceptionOnStage = 2;
+        // exceptionOnStage = 2;
       }
     }
 
     return ret;
-  }
-
-  private TestContext parseInputTest(final String input, boolean searchMode) {
-    UriParserParser parser = null;
-    TestContext ret = null;
-
-    // Use 2 stage approach to improve performance
-    // see https://github.com/antlr/antlr4/issues/192
-    // TODO verify this
-
-    // stage= 1
-    try {
-      curException = null;
-      exceptions.clear();
-      parser = getNewParser(input, searchMode);
-      parser.setErrorHandler(new BailErrorStrategy());
-      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-      ret = parser.test();
-    } catch (Exception ex) {
-      curException = ex;
-      //exceptionOnStage = 1;
-      // stage= 2
-      try {
-        curException = null;
-        exceptions.clear();
-        parser = getNewParser(input, searchMode);
-        parser.setErrorHandler(new DefaultErrorStrategy());
-        parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-        ret = parser.test();
-      } catch (Exception ex1) {
-        curException = ex1;
-        //exceptionOnStage = 2;
-      }
-    }
-
-    return ret;
-  }
-
-  private UriParserParser getNewParser(final String input, boolean searchMode) {
-    ANTLRInputStream inputStream = new ANTLRInputStream(input);
-
-    // UriLexer lexer = new UriLexer(inputStream);
-    UriLexer lexer = new UriLexer(inputStream);
-    //lexer.setInSearch(searchMode);
-    // lexer.removeErrorListeners();
-    lexer.addErrorListener(new ErrorCollector(this));
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-    UriParserParser parser = new UriParserParser(tokens);
-    if ((lexerLog >0 ) || (logLevel > 0)) {
-      parser.addParseListener(new TokenWriter());
-    }
-    parser.addErrorListener(new TraceErrorHandler<Object>());
-    parser.addErrorListener(new ErrorCollector(this));
-
-    return parser;
   }
 
   private static class ErrorCollector implements ANTLRErrorListener {
@@ -250,21 +290,20 @@ public class ParserValidator {
       tokenValidator.exceptions.add(e);
       trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 
-      fail("syntaxError"); // don't fail here we want to the error message at the caller
+      fail("syntaxError");
     }
 
     @Override
     public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact,
         BitSet ambigAlts, ATNConfigSet configs) {
-      
 
       if (!tokenValidator.allowAmbiguity) {
         System.out.println("reportAmbiguity " +
             ambigAlts + ":" + configs +
             ", input=" + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
-            printStack(recognizer);
+        printStack(recognizer);
         fail("reportAmbiguity");
-      } else {
+      } else if (tokenValidator.logLevel > 0) {
         System.out.println("allowed Ambiguity " +
             ambigAlts + ":" + configs +
             ", input=" + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
@@ -280,7 +319,7 @@ public class ParserValidator {
       if (!tokenValidator.allowFullContext) {
         printStack(recognizer);
         fail("reportAttemptingFullContext");
-      } else {
+      } else if (tokenValidator.logLevel > 0) {
         System.out.println("allowed AttemptingFullContext");
       }
     }
@@ -291,9 +330,8 @@ public class ParserValidator {
       if (!tokenValidator.allowContextSensitifity) {
         printStack(recognizer);
         fail("reportContextSensitivity");
-      }  else {
+      } else if (tokenValidator.logLevel > 0) {
         System.out.println("allowed ContextSensitivity");
-
       }
     }
 
@@ -331,32 +369,31 @@ public class ParserValidator {
 
   public ParserValidator exFirst() {
     try {
-      //curWeakException = exceptions.get(0);
+      // curWeakException = exceptions.get(0);
     } catch (IndexOutOfBoundsException ex) {
-      //curWeakException = null;
+      // curWeakException = null;
     }
     return this;
 
   }
 
   public ParserValidator exLast() {
-    //curWeakException = exceptions.get(exceptions.size() - 1);
+    // curWeakException = exceptions.get(exceptions.size() - 1);
     return this;
   }
 
   public ParserValidator exAt(int index) {
     try {
-      //curWeakException = exceptions.get(index);
+      // curWeakException = exceptions.get(index);
     } catch (IndexOutOfBoundsException ex) {
-      //curWeakException = null;
+      // curWeakException = null;
     }
     return this;
   }
 
-  public ParserValidator lexerlog(int i) {
-    this.lexerLog = i;
+  public ParserValidator lexerLog(int i) {
+    lexerLogLevel = i;
     return this;
-    
   }
 
 }

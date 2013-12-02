@@ -163,12 +163,12 @@ expandPathExtension : SLASH ref   ( OPEN expandRefOption   ( SEMI expandRefOptio
                     | SLASH count ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
                     |             OPEN expandOption      ( SEMI expandOption      )* CLOSE 
                     ;  
-expandCountOption   : filter
-                    | search
+expandCountOption   : filterInline
+                    | searchInline
                     ;
 expandRefOption     : expandCountOption
-                    | orderby
-                    | skip 
+                    | orderbyInline
+                    | skipInline 
                     | top 
                     | inlinecount
                     ;
@@ -178,18 +178,24 @@ expandOption        : expandRefOption
                     | LEVELS;
 
 filter              : FILTER EQ commonExpr;
+filterInline        : FILTER_INLINE EQ commonExpr;
+
+
 
 orderby             : ORDERBY EQ orderbyItem ( COMMA orderbyItem )*;
+orderbyInline       : ORDERBY_INLINE EQ orderbyItem ( COMMA orderbyItem )*;
 orderbyItem         : commonExpr ( WSP ( ASC | DESC ) )?;
 
 //this is completly done in lexer grammer to avoid ambiguities with odataIdentifier and STRING
 skip                : SKIP EQ INT;
+skipInline         : SKIP_INLINE EQ INT;
 top                 : TOP EQ INT;
 format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
 
 inlinecount         : COUNT EQ booleanNonCase;
 
 search              : SEARCH searchSpecialToken;
+searchInline        : SEARCH_INLINE searchSpecialToken;
 
 searchSpecialToken  : EQ WSP? searchExpr;
 
@@ -230,18 +236,14 @@ customValue         : CUSTOMVALUE;
 //ps+=pathSegment (SLASH ps+=pathSegment)*
 //PRIMITIVETYPENAME
 contextFragment     : REF
-                    | PRIMITIVETYPENAME
-                    | 'Collection($ref)'
-                    | 'Collection(Edm.EntityType)'
-                    | 'Collection(Edm.ComplexType)'
-
-                    | COLLECTION_FIX OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
-
+                    /*| PRIMITIVETYPENAME*/
+                    | COLLECTION_REF
+                    | COLLECTION_ENTITY_TYPE
+                    | COLLECTION_COMPLEX_TYPE
+                    | COLLECTION ( /*PRIMITIVETYPENAME |*/ namespace? odataIdentifier ) CLOSE
                     | namespace? odataIdentifier 
-                      ( '/$deletedEntity'
-                      | '/$link'
-                      | '/$deletedLink'
-                      | nameValueOptList? ( SLASH namespace? odataIdentifier)* ( propertyList )? ( '/$delta'  )? ( entity )?
+                      ( SLASH ( DELETED_ENTITY | LINK | DELETED_LINK )
+                      | nameValueOptList? ( SLASH namespace? odataIdentifier)* ( propertyList )? ( SLASH DELTA) ? (SLASH ENTITY) ? 
                       )
                     ;              
 
@@ -249,10 +251,10 @@ propertyList         : OPEN propertyListItem ( COMMA propertyListItem )* CLOSE;
 propertyListItem     : STAR           //; all structural properties
                      | propertyListProperty
                      ;
-propertyListProperty : namespace? odataIdentifier ( SLASH namespace? odataIdentifier)* ( '+' )? ( propertyList)?
+propertyListProperty : namespace? odataIdentifier ( SLASH namespace? odataIdentifier)* ( PLUS )? ( propertyList)?
                      ;
                  
-entity               : '/$entity';
+
 //;------------------------------------------------------------------------------
 //; 4. Expressions
 //;------------------------------------------------------------------------------
@@ -287,8 +289,8 @@ rootExpr            : ROOT pathSegments;
 
 memberExpr          : '$it' | '$it/'? pathSegments;
 
-anyExpr             : 'any' OPEN WS* /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
-allExpr             : 'all' OPEN WS* /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;
+anyExpr             : 'any' OPEN WSP /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
+allExpr             : 'all' OPEN WSP /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;
 
 methodCallExpr      : indexOfMethodCallExpr
                     | toLowerMethodCallExpr
@@ -326,43 +328,43 @@ methodCallExpr      : indexOfMethodCallExpr
                     ;
 
 
-containsMethodCallExpr    : CONTAINS_WORD    WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-startsWithMethodCallExpr  : STARTSWITH_WORD  WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-endsWithMethodCallExpr    : ENDSWITH_WORD    WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-lengthMethodCallExpr      : LENGTH_WORD      WS* commonExpr WS* CLOSE;
-indexOfMethodCallExpr     : INDEXOF_WORD     WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-substringMethodCallExpr   : SUBSTRING_WORD   WS* commonExpr WS* COMMA WS* commonExpr WS* ( COMMA WS* commonExpr WS* )? CLOSE;
-toLowerMethodCallExpr     : TOLOWER_WORD     WS* commonExpr WS* CLOSE;
-toUpperMethodCallExpr     : TOUPPER_WORD     WS* commonExpr WS* CLOSE;
-trimMethodCallExpr        : TRIM_WORD        WS* commonExpr WS* CLOSE;
-concatMethodCallExpr      : CONCAT_WORD      WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+containsMethodCallExpr    : CONTAINS_WORD    WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+startsWithMethodCallExpr  : STARTSWITH_WORD  WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+endsWithMethodCallExpr    : ENDSWITH_WORD    WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+lengthMethodCallExpr      : LENGTH_WORD      WSP? commonExpr WSP? CLOSE;
+indexOfMethodCallExpr     : INDEXOF_WORD     WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+substringMethodCallExpr   : SUBSTRING_WORD   WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? ( COMMA WSP? commonExpr WSP? )? CLOSE;
+toLowerMethodCallExpr     : TOLOWER_WORD     WSP? commonExpr WSP? CLOSE;
+toUpperMethodCallExpr     : TOUPPER_WORD     WSP? commonExpr WSP? CLOSE;
+trimMethodCallExpr        : TRIM_WORD        WSP? commonExpr WSP? CLOSE;
+concatMethodCallExpr      : CONCAT_WORD      WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
 
-yearMethodCallExpr                : YEAR_WORD                WS* commonExpr WS* CLOSE;
-monthMethodCallExpr               : MONTH_WORD               WS* commonExpr WS* CLOSE;
-dayMethodCallExpr                 : DAY_WORD                 WS* commonExpr WS* CLOSE;
-hourMethodCallExpr                : HOUR_WORD                WS* commonExpr WS* CLOSE;
-minuteMethodCallExpr              : MINUTE_WORD              WS* commonExpr WS* CLOSE;
-secondMethodCallExpr              : SECOND_WORD              WS* commonExpr WS* CLOSE;
-fractionalsecondsMethodCallExpr   : FRACTIONALSECONDS_WORD   WS* commonExpr WS* CLOSE;
-totalsecondsMethodCallExpr        : TOTALSECONDS_WORD        WS* commonExpr WS* CLOSE;
-dateMethodCallExpr                : DATE_WORD                WS* commonExpr WS* CLOSE;
-timeMethodCallExpr                : TIME_WORD                WS* commonExpr WS* CLOSE;
-totalOffsetMinutesMethodCallExpr  : TOTALOFFSETMINUTES_WORD  WS* commonExpr WS* CLOSE;
+yearMethodCallExpr                : YEAR_WORD                WSP? commonExpr WSP? CLOSE;
+monthMethodCallExpr               : MONTH_WORD               WSP? commonExpr WSP? CLOSE;
+dayMethodCallExpr                 : DAY_WORD                 WSP? commonExpr WSP? CLOSE;
+hourMethodCallExpr                : HOUR_WORD                WSP? commonExpr WSP? CLOSE;
+minuteMethodCallExpr              : MINUTE_WORD              WSP? commonExpr WSP? CLOSE;
+secondMethodCallExpr              : SECOND_WORD              WSP? commonExpr WSP? CLOSE;
+fractionalsecondsMethodCallExpr   : FRACTIONALSECONDS_WORD   WSP? commonExpr WSP? CLOSE;
+totalsecondsMethodCallExpr        : TOTALSECONDS_WORD        WSP? commonExpr WSP? CLOSE;
+dateMethodCallExpr                : DATE_WORD                WSP? commonExpr WSP? CLOSE;
+timeMethodCallExpr                : TIME_WORD                WSP? commonExpr WSP? CLOSE;
+totalOffsetMinutesMethodCallExpr  : TOTALOFFSETMINUTES_WORD  WSP? commonExpr WSP? CLOSE;
 
-minDateTimeMethodCallExpr         : MINDATETIME_WORD WS* CLOSE;
-maxDateTimeMethodCallExpr         : MAXDATETIME_WORD WS* CLOSE;
-nowMethodCallExpr                 : NOW_WORD         WS* CLOSE;
+minDateTimeMethodCallExpr         : MINDATETIME_WORD WSP? CLOSE;
+maxDateTimeMethodCallExpr         : MAXDATETIME_WORD WSP? CLOSE;
+nowMethodCallExpr                 : NOW_WORD         WSP? CLOSE;
 
-roundMethodCallExpr               : ROUND_WORD   WS* commonExpr WS* CLOSE;
-floorMethodCallExpr               : FLOOR_WORD   WS* commonExpr WS* CLOSE;
-ceilingMethodCallExpr             : CEILING_WORD WS* commonExpr WS* CLOSE;
+roundMethodCallExpr               : ROUND_WORD   WSP? commonExpr WSP? CLOSE;
+floorMethodCallExpr               : FLOOR_WORD   WSP? commonExpr WSP? CLOSE;
+ceilingMethodCallExpr             : CEILING_WORD WSP? commonExpr WSP? CLOSE;
 
-distanceMethodCallExpr            : GEO_DISTANCE_WORD   OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
-geoLengthMethodCallExpr           : GEO_LENGTH_WORD     OPEN WS* commonExpr WS* CLOSE;
-intersectsMethodCallExpr          : GEO_INTERSECTS_WORD OPEN WS* commonExpr WS* COMMA WS* commonExpr WS* CLOSE;
+distanceMethodCallExpr            : GEO_DISTANCE_WORD   WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+geoLengthMethodCallExpr           : GEO_LENGTH_WORD     WSP? commonExpr WSP? CLOSE;
+intersectsMethodCallExpr          : GEO_INTERSECTS_WORD WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
 
-isofExpr                          : ISOF_WORD  WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
-castExpr                          : CAST_WORD  WS* ( commonExpr WS* COMMA WS* )? qualifiedtypename WS* CLOSE;
+isofExpr                          : ISOF_WORD  WSP? ( commonExpr WSP? COMMA WSP? )? qualifiedtypename WSP? CLOSE;
+castExpr                          : CAST_WORD  WSP? ( commonExpr WSP? COMMA WSP? )? qualifiedtypename WSP? CLOSE;
 
 //;------------------------------------------------------------------------------
 //; 5. JSON format for function parameters
@@ -434,9 +436,8 @@ number_in_json          : INT | DECIMAL;
 //; 6. Names and identifiers
 //;------------------------------------------------------------------------------
 
-qualifiedtypename       : PRIMITIVETYPENAME
-                        | namespace odataIdentifier
-                        | 'collection' OPEN ( PRIMITIVETYPENAME | namespace odataIdentifier ) CLOSE
+qualifiedtypename       : namespace odataIdentifier
+                        | 'collection' OPEN ( namespace odataIdentifier ) CLOSE
                         ;
 
 namespace               : (odataIdentifier POINT)+;
@@ -491,7 +492,7 @@ singleEnumValue     : odataIdentifier / INT;
 geographyCollection        : GEOGRAPHY  fullCollectionLiteral SQUOTE;
 fullCollectionLiteral      : sridLiteral collectionLiteral;
 
-collectionLiteral          : (COLLECTION | COLLECTION_FIX) OPEN geoLiteral ( COMMA geoLiteral )* CLOSE;
+collectionLiteral          : (COLLECTION ) OPEN geoLiteral ( COMMA geoLiteral )* CLOSE;
 
 geoLiteral                 : collectionLiteral
                            | lineStringLiteral
