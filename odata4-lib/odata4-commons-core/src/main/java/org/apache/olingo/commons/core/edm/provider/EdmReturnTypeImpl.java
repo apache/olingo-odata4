@@ -58,7 +58,7 @@ public class EdmReturnTypeImpl implements EdmReturnType {
             if (typeImpl == null) {
               typeImpl = edm.getTypeDefinition(typeName);
               if (typeImpl == null) {
-                throw new EdmException("Can�t find type with name: " + typeName);
+                throw new EdmException("Cant find type with name: " + typeName);
               }
             }
           }

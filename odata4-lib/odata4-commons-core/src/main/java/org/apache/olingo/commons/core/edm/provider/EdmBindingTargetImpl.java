@@ -50,13 +50,16 @@ public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBi
           Target providerTarget = binding.getTarget();
           EdmEntityContainer entityContainer = edm.getEntityContainer(providerTarget.getEntityContainer());
           if (entityContainer == null) {
-            throw new EdmException("Can´t find entity container with name: " + providerTarget.getEntityContainer());
+            throw new EdmException("Cant find entity container with name: " + providerTarget.getEntityContainer());
           }
-          bindingTarget = entityContainer.getEntitySet(providerTarget.getTargetName());
+          String targetName = providerTarget.getTargetName();
+          bindingTarget = entityContainer.getEntitySet(targetName);
           if (bindingTarget == null) {
-            bindingTarget = entityContainer.getSingleton(providerTarget.getTargetName());
+            bindingTarget = entityContainer.getSingleton(targetName);
             if (bindingTarget != null) {
               break;
+            }else{
+              throw new EdmException("Cant find target with name: " + targetName);
             }
           } else {
             break;

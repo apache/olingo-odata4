@@ -86,6 +86,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     if (baseType != null) {
       return entityBaseType.getKeyPropertyRefs();
     } else {
+      //TODO: Cache
       return new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
     }
   }
@@ -105,7 +106,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     if (baseTypeName != null) {
       baseType = edm.getEntityType(baseTypeName);
       if (baseType == null) {
-        throw new EdmException("Can�t find base type with name: " + baseTypeName + " for entity type: " + getName());
+        throw new EdmException("Cant find base type with name: " + baseTypeName + " for entity type: " + getName());
       }
     }
     return baseType;

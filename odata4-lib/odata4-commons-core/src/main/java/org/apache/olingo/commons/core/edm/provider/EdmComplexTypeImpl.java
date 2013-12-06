@@ -42,7 +42,7 @@ public class EdmComplexTypeImpl extends EdmStructuralTypeImpl implements EdmComp
     if (baseTypeName != null) {
       baseType = edm.getComplexType(baseTypeName);
       if (baseType == null) {
-        throw new EdmException("Can�t find base type with name: " + baseTypeName + " for complex type: " + getName());
+        throw new EdmException("Cant find base type with name: " + baseTypeName + " for complex type: " + getName());
       }
     }
     return baseType;
