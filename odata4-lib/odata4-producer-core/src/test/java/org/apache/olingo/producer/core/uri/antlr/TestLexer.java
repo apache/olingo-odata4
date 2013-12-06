@@ -18,7 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.producer.core.uri.antlr;
 
-import org.apache.olingo.producer.core.testutil.TokenValidator;
+import org.antlr.v4.runtime.Lexer;
+import org.apache.olingo.odata4.producer.core.testutil.TokenValidator;
 import org.junit.Test;
 
 public class TestLexer {
@@ -32,10 +33,6 @@ public class TestLexer {
   private static final String cOTHER_DELIMS = "!()*+,;";
   private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
 
-  private static final String cQCHAR_NO_AMP = cUNRESERVED + cPCT_ENCODED + cOTHER_DELIMS + ":@/?$'=";
-  // private static final String cQCHAR_NO_AMP_EQ = cUNRESERVED + cPCT_ENCODED + cOTHER_DELIMS + ":@/?$'";
-  // private static final String cQCHAR_NO_AMP_EQ_AT_DOLLAR = cUNRESERVED + cPCT_ENCODED + cOTHER_DELIMS + ":/?'";
-
   // private static final String cPCTENCODEDnoSQUOTE = "%65%66%67";
   // private static final String cPCHARnoSQUOTE = cUNRESERVED + cPCTENCODEDnoSQUOTE + cOTHER_DELIMS + "$&=:@";
 
@@ -43,21 +40,13 @@ public class TestLexer {
 
   private static final String cQCHAR_UNESCAPED = cUNRESERVED + cPCT_ENCODED_UNESCAPED + cOTHER_DELIMS + ":@/?$'=";
 
-  // QCHAR_NO_AMP_DQUOTE : QCHAR_UNESCAPED | ESCAPE ( ESCAPE | QUOTATION_MARK );
-  private static final String cQCHAR_NO_AMP_DQUOTE = cQCHAR_UNESCAPED + "\\\\\\\"";
-
-  private static final String cQCHAR_JSON_SPECIAL = " :{}[]";
-
-  private static final String cESCAPE = "\\";
-  private static final String cQUOTATION_MARK = "\"";
-
   public TestLexer() {
     test = new TokenValidator();
   }
 
-   @Test
+  @Test
   public void test() {
-    test.globalMode(UriLexer.DEFAULT_MODE);
+    test.globalMode(Lexer.DEFAULT_MODE);
     test.run("ODI?$filter=geo.distance(geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')");
     // test.log(1).run("$filter='ABC'").isText("ABC").isType(UriLexer.STRING);
     // test.log(1).run("ODI?$filter=1 add 2 mul 3");
@@ -138,7 +127,7 @@ public class TestLexer {
   // ;------------------------------------------------------------------------------
   @Test
   public void testQueryExpressions() {
-    test.globalMode(UriLexer.DEFAULT_MODE);
+    test.globalMode(Lexer.DEFAULT_MODE);
     // assertEquals("expected","actual");
 
     test.run("$it").isText("$it").isType(UriLexer.IMPLICIT_VARIABLE_EXPR);
@@ -266,7 +255,7 @@ public class TestLexer {
 
   @Test
   public void testLiteralDataValues() {
-    test.globalMode(UriLexer.DEFAULT_MODE);
+    test.globalMode(Lexer.DEFAULT_MODE);
     // null
     test.run("null").isInput().isType(UriLexer.NULLVALUE);
 

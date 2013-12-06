@@ -18,10 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.producer.core.uri.antlr;
 
-import org.apache.olingo.producer.core.testutil.ParserValidator;
-
-import org.apache.olingo.producer.core.testutil.TokenValidator;
-
+import org.apache.olingo.odata4.producer.core.testutil.ParserValidator;
 import org.junit.Test;
 
 /**

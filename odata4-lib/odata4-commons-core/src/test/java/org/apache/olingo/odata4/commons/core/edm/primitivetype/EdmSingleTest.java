@@ -1,0 +1,136 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
+package org.apache.olingo.odata4.commons.core.edm.primitivetype;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
+import org.junit.Test;
+
+public class EdmSingleTest extends PrimitiveTypeBaseTest {
+
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeKind.Single.getEdmPrimitiveTypeInstance();
+
+  @Test
+  public void compatibility() {
+    assertTrue(instance.isCompatible(Uint7.getInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Byte.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int16.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int64.getEdmPrimitiveTypeInstance()));
+  }
+
+  @Test
+  public void toUriLiteral() throws Exception {
+    assertEquals("127", instance.toUriLiteral("127"));
+  }
+
+  @Test
+  public void fromUriLiteral() throws Exception {
+    assertEquals("127", instance.fromUriLiteral("127"));
+  }
+
+  @Test
+  public void valueToString() throws Exception {
+    assertEquals("0", instance.valueToString(0, null, null, null, null, null));
+    assertEquals("8", instance.valueToString((byte) 8, null, null, null, null, null));
+    assertEquals("16", instance.valueToString((short) 16, null, null, null, null, null));
+    assertEquals("32", instance.valueToString(Integer.valueOf(32), null, null, null, null, null));
+    assertEquals("255", instance.valueToString(255L, null, null, null, null, null));
+    assertEquals("0.00390625", instance.valueToString(1.0 / 256, null, null, null, null, null));
+    assertEquals("4.2E-8", instance.valueToString(42e-9, null, null, null, null, null));
+    assertEquals("INF", instance.valueToString(Double.POSITIVE_INFINITY, null, null, null, null, null));
+    assertEquals("-INF", instance.valueToString(Double.NEGATIVE_INFINITY, null, null, null, null, null));
+    assertEquals("NaN", instance.valueToString(Double.NaN, null, null, null, null, null));
+    assertEquals("-0.125", instance.valueToString(-0.125f, null, null, null, null, null));
+    assertEquals("INF", instance.valueToString(Float.POSITIVE_INFINITY, null, null, null, null, null));
+    assertEquals("-INF", instance.valueToString(Float.NEGATIVE_INFINITY, null, null, null, null, null));
+    assertEquals("NaN", instance.valueToString(Float.NaN, null, null, null, null, null));
+    assertEquals("-123456.75", instance.valueToString(new BigDecimal("-123456.75"), null, null, null, null, null));
+
+    expectContentErrorInValueToString(instance, 12345678L);
+    expectContentErrorInValueToString(instance, new BigDecimal("123456789"));
+    expectContentErrorInValueToString(instance, new BigDecimal(BigInteger.ONE, -39));
+    expectContentErrorInValueToString(instance, 42e38);
+    expectContentErrorInValueToString(instance, 12345.6789);
+    expectContentErrorInValueToString(instance, 1E-50);
+
+    expectTypeErrorInValueToString(instance, 'A');
+  }
+
+  @Test
+  public void valueOfString() throws Exception {
+    assertEquals(Float.valueOf(1.42F), instance.valueOfString("1.42", null, null, null, null, null, Float.class));
+    assertEquals(Double.valueOf(-42.42), instance.valueOfString("-42.42", null, null, null, null, null, Double.class));
+    assertEquals(Float.valueOf(42.0F), instance.valueOfString("42", null, null, null, null, null, Float.class));
+    assertEquals(Float.valueOf(2.2E38F), instance.valueOfString("22E37", null, null, null, null, null, Float.class));
+    assertEquals(Float.valueOf(1.23E-38F), instance.valueOfString("12.3E-39", null, null, null, null, null,
+        Float.class));
+    assertEquals(BigDecimal.TEN, instance.valueOfString("10", null, null, null, null, null, BigDecimal.class));
+    assertEquals(Byte.valueOf((byte) 0), instance.valueOfString("0", null, null, null, null, null, Byte.class));
+    assertEquals(Short.valueOf((short) 1), instance.valueOfString("1.00", null, null, null, null, null, Short.class));
+    assertEquals(Integer.valueOf(42), instance.valueOfString("4.2E1", null, null, null, null, null, Integer.class));
+    assertEquals(Long.valueOf(12345678), instance.valueOfString("12345.678E+03", null, null, null, null, null,
+        Long.class));
+
+    assertEquals(Float.valueOf(Float.NaN), instance.valueOfString("NaN", null, null, null, null, null, Float.class));
+    assertEquals(Float.valueOf(Float.NEGATIVE_INFINITY), instance.valueOfString("-INF", null, null, null, null, null,
+        Float.class));
+    assertEquals(Float.valueOf(Float.POSITIVE_INFINITY), instance.valueOfString("INF", null, null, null, null, null,
+        Float.class));
+    assertEquals(Double.valueOf(Double.NaN), instance.valueOfString("NaN", null, null, null, null, null,
+        Double.class));
+    assertEquals(Double.valueOf(Double.NEGATIVE_INFINITY), instance.valueOfString("-INF", null, null, null, null, null,
+        Double.class));
+
+    expectContentErrorInValueOfString(instance, "0.");
+    expectContentErrorInValueOfString(instance, ".0");
+    expectContentErrorInValueOfString(instance, "1E-50");
+    expectContentErrorInValueOfString(instance, "12345.6789");
+    expectContentErrorInValueOfString(instance, "42E42");
+    expectContentErrorInValueOfString(instance, "42.42.42");
+    expectContentErrorInValueOfString(instance, "42.42.42");
+    expectContentErrorInValueOfString(instance, "42D");
+    expectContentErrorInValueOfString(instance, "0x42P4");
+
+    expectUnconvertibleErrorInValueOfString(instance, "INF", BigDecimal.class);
+    expectUnconvertibleErrorInValueOfString(instance, "NaN", BigDecimal.class);
+    expectUnconvertibleErrorInValueOfString(instance, "-INF", Integer.class);
+    expectUnconvertibleErrorInValueOfString(instance, "NaN", Integer.class);
+    expectUnconvertibleErrorInValueOfString(instance, "5E-1", Byte.class);
+    expectUnconvertibleErrorInValueOfString(instance, "5E-1", Short.class);
+    expectUnconvertibleErrorInValueOfString(instance, "5E-1", Integer.class);
+    expectUnconvertibleErrorInValueOfString(instance, "5E-1", Long.class);
+    expectUnconvertibleErrorInValueOfString(instance, "-129", Byte.class);
+    expectUnconvertibleErrorInValueOfString(instance, "128", Byte.class);
+    expectUnconvertibleErrorInValueOfString(instance, "-32769", Short.class);
+    expectUnconvertibleErrorInValueOfString(instance, "32768", Short.class);
+    expectUnconvertibleErrorInValueOfString(instance, "-2147483.65E3", Integer.class);
+    expectUnconvertibleErrorInValueOfString(instance, "2147483.65E3", Integer.class);
+    expectUnconvertibleErrorInValueOfString(instance, "-1E19", Long.class);
+    expectUnconvertibleErrorInValueOfString(instance, "1E19", Long.class);
+
+    expectTypeErrorInValueOfString(instance, "1.42");
+  }
+}
