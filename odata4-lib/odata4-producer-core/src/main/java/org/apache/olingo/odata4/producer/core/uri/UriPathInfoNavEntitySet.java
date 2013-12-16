@@ -34,5 +34,10 @@ public class UriPathInfoNavEntitySet extends UriPathInfoImpl {
     this.setType(sourceNavigationProperty.getType());
     return this;
   }
+  
+  @Override
+  public String toString() {
+    return sourceNavigationProperty.getName()+super.toString();
+  }
 
 }

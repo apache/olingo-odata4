@@ -124,18 +124,15 @@ value               : VALUE;
 
 queryOptions    : qo+=queryOption ( AMP qo+=queryOption )*;
 
-queryOption     : systemQueryOption 
-                | AT aliasAndValue 
-                | customQueryOption 
+queryOption     : systemQueryOption
+                | AT aliasAndValue
+                | customQueryOption
                 ;
 
 entityOptions   : (eob+=entityOption AMP )* ID EQ REST ( AMP eoa+=entityOption )*;
 entityOption    : ( expand | format | select )
                 | customQueryOption 
-
                 ;
-
-
 
 systemQueryOption   : expand
                     | filter 
@@ -273,12 +270,12 @@ commonExpr          : OPEN commonExpr CLOSE                                     
                     | methodCallExpr                                                            #altMethod
                     | ( unary WSP ) commonExpr                                                  #altUnary
                     | memberExpr                                                                #altMember
-                    | commonExpr (WSP MUL WSP | WSP DIV WSP | WSP MOD WSP ) commonExpr    #altMult
-                    | commonExpr (WSP ADD WSP | WSP SUB WSP) commonExpr                     #altAdd
+                    | commonExpr (WSP MUL WSP | WSP DIV WSP | WSP MOD WSP ) commonExpr          #altMult
+                    | commonExpr (WSP ADD WSP | WSP SUB WSP) commonExpr                         #altAdd
                     | commonExpr (WSP GT WSP | WSP GE WSP | WSP LT WSP | WSP LE WSP | WSP ISOF WSP) commonExpr    #altComparism
-                    | commonExpr (WSP EQ_ALPHA WSP | WSP NE WSP) commonExpr                       #altEquality
-                    | commonExpr (WSP AND WSP) commonExpr                                     #altAnd
-                    | commonExpr (WSP OR WSP) commonExpr                                      #altOr
+                    | commonExpr (WSP EQ_ALPHA WSP | WSP NE WSP) commonExpr                     #altEquality
+                    | commonExpr (WSP AND WSP) commonExpr                                       #altAnd
+                    | commonExpr (WSP OR WSP) commonExpr                                        #altOr
                     | rootExpr                                                                  #altRoot  //; $...
                     | AT odataIdentifier                                                        #altAlias  // @...
                     | primitiveLiteral                                                          #altLiteral  // ...
@@ -288,7 +285,8 @@ unary               : (MINUS| NOT) ;
 
 rootExpr            : ROOT pathSegments;
 
-memberExpr          : '$it' | '$it/'? pathSegments;
+memberExpr          : '$it'                     
+                    | '$it/'? ps=pathSegments;
 
 anyExpr             : 'any' OPEN WSP /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
 allExpr             : 'all' OPEN WSP /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;

@@ -16,26 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-
-/**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- */
-public interface EdmType extends EdmNamed {
-
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
-
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
+public abstract class Expression implements Visitable{
 
 
-  
+
 }

@@ -43,11 +43,13 @@ public class ParserAdapter {
       lexer = new UriLexer(new ANTLRInputStream(input));
       parser = new UriParserParser(new CommonTokenStream(lexer));
 
-      // Bail out of parser at first syntax error. --> proceeds in catch block with step 2
+      // bail out of parser at first syntax error. --> proceeds in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());
 
-      // User the faster LL parsing
+      // user the faster LL parsing
       parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+
+      // parse
       ret = parser.odataRelativeUriEOF();
 
     } catch (ParseCancellationException hardException) {
@@ -56,7 +58,6 @@ public class ParserAdapter {
         // create parser
         lexer = new UriLexer(new ANTLRInputStream(input));
         parser = new UriParserParser(new CommonTokenStream(lexer));
-        
 
         // Used default error strategy
         parser.setErrorHandler(new DefaultErrorStrategy());
@@ -64,6 +65,7 @@ public class ParserAdapter {
         // User the slower SLL parsing
         parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 
+        // parse
         ret = parser.odataRelativeUriEOF();
 
       } catch (Exception weakException) {

@@ -28,6 +28,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
+import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
 
 public abstract class UriPathInfoImpl {
 
@@ -64,6 +65,14 @@ public abstract class UriPathInfoImpl {
     return initialType;
   }
 
+  public EdmType getCollectionTypeFilter() {
+    return collectionTypeFilter;
+  }
+
+  public EdmType getSingleTypeFilter() {
+    return singleTypeFilter;
+  }
+
   public FullQualifiedName getFullType() {
     return new FullQualifiedName(finalType.getNamespace(), finalType.getName());
   }
@@ -78,7 +87,7 @@ public abstract class UriPathInfoImpl {
   }
 
   public UriPathInfoImpl setKeyPredicates(UriKeyPredicateList keyPredicates) {
-    if ( this.isCollection()!= true) {
+    if (this.isCollection() != true) {
       // throw exception
     }
     this.keyPredicates = keyPredicates;
@@ -165,7 +174,7 @@ public abstract class UriPathInfoImpl {
     return pathList.get(index).property;
 
   }
-  
+
   public UriPathInfoImpl setCollection(boolean isCollection) {
     this.isCollection = isCollection;
     return this;
@@ -175,4 +184,19 @@ public abstract class UriPathInfoImpl {
 
     return isCollection;
   }
+
+  @Override
+  public String toString() {
+    String ret = "";
+    int i = 0;
+    while (i < pathList.size()) {
+      if (i > 0) {
+        ret += "/";
+      }
+      ret += pathList.get(i).property.getName();
+      i++;
+    }
+    return ret;
+  }
+
 }

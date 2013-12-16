@@ -44,93 +44,35 @@ import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
-/**
- * @author d039346
- * 
- */
+// TODO extend to test also exception which can occure while paring
 public class ParserValidator {
-  public class UriLexerTrace extends UriLexer {
-    ParserValidator parserValidator = null;
-
-    public UriLexerTrace(final ParserValidator parserValidator, final ANTLRInputStream antlrInputStream) {
-      super(antlrInputStream);
-      this.parserValidator = parserValidator;
-    }
-
-    @Override
-    public Token emit() {
-      Token t =
-          _factory.create(_tokenFactorySourcePair, _type, _text, _channel, _tokenStartCharIndex, getCharIndex() - 1,
-              _tokenStartLine, _tokenStartCharPositionInLine);
-
-      if (parserValidator.logLevel > 1) {
-        String out = String.format("%1$-" + 20 + "s", t.getText());
-        ;
-        int tokenType = t.getType();
-        if (tokenType == -1) {
-          out += "-1/EOF";
-        } else {
-          out += UriLexer.tokenNames[tokenType];
-        }
-        System.out.println(out);
-      }
-      emit(t);
-
-      return t;
-    }
-
-    @Override
-    public void pushMode(final int m) {
-      String out = UriLexer.modeNames[_mode] + "-->";
-      super.pushMode(m);
-      out += UriLexer.modeNames[_mode];
-      if (parserValidator.logLevel > 1) {
-        System.out.print(out + "            ");
-      }
-      ;
-
-    }
-
-    @Override
-    public int popMode() {
-      String out = UriLexer.modeNames[_mode] + "-->";
-      int m = super.popMode();
-      out += UriLexer.modeNames[_mode];
-
-      if (parserValidator.logLevel > 1) {
-        System.out.print(out + "            ");
-      }
-
-      return m;
-    }
-
-  }
-
+  
   private List<Exception> exceptions = new ArrayList<Exception>();
   private ParserRuleContext root;
 
   private String input = null;
-  // private int exceptionOnStage = -1;
   private Exception curException = null;
+  // private int exceptionOnStage = -1;
   // private Exception curWeakException = null;
   private boolean allowFullContext;
   private boolean allowContextSensitifity;
   private boolean allowAmbiguity;
-  private int logLevel = 0;
+  public int logLevel = 0;
   private int lexerLogLevel = 0;
 
   // private int lexerLogLevel = 0;
 
   public ParserValidator run(final String uri) {
     input = uri;
+    // just run a short lexer step. E.g. to print the tokens
     if (lexerLogLevel > 0) {
-      (new TokenValidator()).log(lexerLogLevel).run(input);
+      (new TokenValidator()).setLog(lexerLogLevel).run(input);
     }
     root = parseInput(uri);
     // LOG > 0 - Write serialized tree
     if (logLevel > 0) {
       if (root != null) {
-        System.out.println(ParseTreeSerializer.getTreeAsText(root, new UriParserParser(null).getRuleNames()));
+        System.out.println(ParseTreeToText.getTreeAsText(root, new UriParserParser(null).getRuleNames()));
       } else {
         System.out.println("root == null");
       }
@@ -152,8 +94,9 @@ public class ParserValidator {
   }
 
   /**
+   * TODO verify
    * Used in fast LL Parsing:
-   * Don't stops the parsing process when the slower full context parsing (with prediction mode SLL) is
+   * Don't stop the parsing process when the slower full context parsing (with prediction mode SLL) is
    * required
    * @return
    */
@@ -163,6 +106,7 @@ public class ParserValidator {
   }
 
   /**
+   * TODO verify
    * Used in fast LL Parsing:
    * Allows ContextSensitifity Errors which occur often when using the slower full context parsing
    * and indicate that there is a context sensitivity ( which may not be an error).
@@ -174,6 +118,7 @@ public class ParserValidator {
   }
 
   /**
+   * TODO verify
    * Used in fast LL Parsing:
    * Allows ambiguities
    * @return
@@ -184,23 +129,25 @@ public class ParserValidator {
   }
 
   public ParserValidator isText(final String expected) {
-    // make sure that there are no exceptions
+
     assertEquals(null, curException);
+
     assertEquals(0, exceptions.size());
 
-    String text = ParseTreeSerializer.getTreeAsText(root, new UriParserParser(null).getRuleNames());
+    String text = ParseTreeToText.getTreeAsText(root, new UriParserParser(null).getRuleNames());
+
     assertEquals(expected, text);
     return this;
   }
 
-  public ParserValidator isExType(final Class<?> exClass) {
+  public ParserValidator isExeptionType(final Class<?> exClass) {
     assertEquals(exClass, curException.getClass());
     return this;
   }
 
   private OdataRelativeUriEOFContext parseInput(final String input) {
     UriParserParser parser = null;
-    UriLexer lexer = null;
+    UriLexerWithTrace lexer = null;
     OdataRelativeUriEOFContext ret = null;
 
     // Use 2 stage approach to improve performance
@@ -212,38 +159,42 @@ public class ParserValidator {
       curException = null;
       exceptions.clear();
       // create parser
-      lexer = new UriLexerTrace(this, new ANTLRInputStream(input));
+      lexer = new UriLexerWithTrace( new ANTLRInputStream(input), this.lexerLogLevel);
       parser = new UriParserParser(new CommonTokenStream(lexer));
 
       // write single tokens to System.out
       if (logLevel > 1) {
-        // can not be used because the listener is called bevore the mode changes
+        // can not be used because the listener is called before the mode changes
+        // TODO verify this
         parser.addParseListener(new TokenWriter());
       }
       // write always a error message in case of syntax errors
-      //parser.addErrorListener(new TestErrorHandler<Object>());
+      // parser.addErrorListener(new TestErrorHandler<Object>());
       // check error message if whether they are allowed or not
       parser.addErrorListener(new ErrorCollector(this));
 
-      // Bail out of parser at first syntax error. --> procceds in catch block with step 2
+      // bail out of parser at first syntax error. --> proceed in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());
 
-      // User the faster LL parsing
+      // user the faster LL parsing
       parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+
+      // parse
       if (logLevel > 1) {
-        System.out.println("Step 1 (LL)");
+        System.out.println("Step 1");
+        System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode() + ")");
       }
       ret = parser.odataRelativeUriEOF();
 
-    } catch (Exception ex) {
-      curException = ex;
+    } catch (Exception exception) {
+      curException = exception;
       try {
         // clear status
         curException = null;
         exceptions.clear();
 
         // create parser
-        lexer = new UriLexerTrace(this, new ANTLRInputStream(input));
+        lexer = new UriLexerWithTrace(new ANTLRInputStream(input), this.lexerLogLevel);
         parser = new UriParserParser(new CommonTokenStream(lexer));
 
         // write single tokens to System.out
@@ -252,7 +203,7 @@ public class ParserValidator {
         }
 
         // write always a error message in case of syntax errors
-        parser.addErrorListener(new TestErrorHandler<Object>());
+        parser.addErrorListener(new ErrorCollector(this));
         // check error message if whether they are allowed or not
         parser.addErrorListener(new ErrorCollector(this));
 
@@ -262,13 +213,15 @@ public class ParserValidator {
         // User the slower SLL parsing
         parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 
+        // parse
         if (logLevel > 1) {
-          System.out.println("Step 2 (SLL)");
+          System.out.println("Step 2");
+          System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode() + ")");
         }
         ret = parser.odataRelativeUriEOF();
 
-      } catch (Exception ex1) {
-        curException = ex1;
+      } catch (Exception exception1) {
+        curException = exception1;
         // exceptionOnStage = 2;
       }
     }
@@ -277,7 +230,7 @@ public class ParserValidator {
   }
 
   private static class ErrorCollector implements ANTLRErrorListener {
-    ParserValidator tokenValidator;
+    private ParserValidator tokenValidator;
 
     public ErrorCollector(final ParserValidator tokenValidator) {
       this.tokenValidator = tokenValidator;
@@ -288,7 +241,10 @@ public class ParserValidator {
         final int charPositionInLine,
         final String msg, final RecognitionException e) {
 
+      // Collect the exception
+      // TODO needs to be improved
       tokenValidator.exceptions.add(e);
+      System.out.println("syntaxError");
       trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 
       fail("syntaxError");
@@ -299,16 +255,16 @@ public class ParserValidator {
         final boolean exact,
         final BitSet ambigAlts, final ATNConfigSet configs) {
 
+      if (tokenValidator.logLevel > 0) {
+        System.out.println("reportAmbiguity: ");
+        System.out.println(" ambigAlts: " + ambigAlts);
+        System.out.println(" configs: " + configs);
+        System.out.println(" input: " + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
+      }
+
       if (!tokenValidator.allowAmbiguity) {
-        System.out.println("reportAmbiguity " +
-            ambigAlts + ":" + configs +
-            ", input=" + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
         printStack(recognizer);
         fail("reportAmbiguity");
-      } else if (tokenValidator.logLevel > 0) {
-        System.out.println("allowed Ambiguity " +
-            ambigAlts + ":" + configs +
-            ", input=" + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
       }
     }
 
@@ -316,14 +272,16 @@ public class ParserValidator {
     public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
         final int stopIndex,
         final BitSet conflictingAlts, final ATNConfigSet configs) {
+
       // The grammar should be written in order to avoid attempting a full context parse because its negative
       // impact on the performance, so trace and stop here
+      if (tokenValidator.logLevel > 0) {
+        System.out.println("allowed AttemptingFullContext");
+      }
 
       if (!tokenValidator.allowFullContext) {
         printStack(recognizer);
         fail("reportAttemptingFullContext");
-      } else if (tokenValidator.logLevel > 0) {
-        System.out.println("allowed AttemptingFullContext");
       }
     }
 
@@ -331,41 +289,52 @@ public class ParserValidator {
     public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
         final int stopIndex, final int prediction,
         final ATNConfigSet configs) {
+
+      if (tokenValidator.logLevel > 0) {
+        System.out.println("allowed ContextSensitivity");
+      }
+
       if (!tokenValidator.allowContextSensitifity) {
         printStack(recognizer);
         fail("reportContextSensitivity");
-      } else if (tokenValidator.logLevel > 0) {
-        System.out.println("allowed ContextSensitivity");
       }
     }
 
-    private void printStack(final Parser recognizer) {
+    /*
+     * private void printStack(final Parser recognizer) {
+     * List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
+     * Collections.reverse(stack);
+     * 
+     * System.out.println(" Rule stack: " + stack);
+     * }
+     */
+    private void printStack(final Recognizer<?, ?> recognizer) {
       List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
       Collections.reverse(stack);
-
-      System.out.println("rule stack: " + stack);
+      System.out.println(" rule stack: " + stack);
     }
 
     public void trace(final Recognizer<?, ?> recognizer, final Object offendingSymbol,
         final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
+
       System.err.println("-");
-      // check also http://stackoverflow.com/questions/14747952/ll-exact-ambig-detection-interpetation
-      List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
-      Collections.reverse(stack);
-      System.err.println("rule stack: " + stack);
+      // TODO check also http://stackoverflow.com/questions/14747952/ll-exact-ambig-detection-interpetation
+
+      printStack(recognizer);
+
       if (e != null && e.getOffendingToken() != null) {
 
-        // String lexerTokenName =TestSuiteLexer.tokenNames[e.getOffendingToken().getType()];
+        //String lexerTokenName = TestSuiteLexer.tokenNames[e.getOffendingToken().getType()];
         String lexerTokenName = "";
         try {
           lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
         } catch (ArrayIndexOutOfBoundsException es) {
           lexerTokenName = "token error";
         }
-        System.err.println("line " + line + ":" + charPositionInLine + " at " +
+        System.err.println(" line " + line + ":" + charPositionInLine + " at " +
             offendingSymbol + "/" + lexerTokenName + ": " + msg);
       } else {
-        System.err.println("line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
+        System.err.println(" line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
       }
     }
 

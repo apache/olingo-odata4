@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProviderAdapter;
@@ -39,261 +40,186 @@ import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata4.commons.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.odata4.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
-import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
-import org.apache.olingo.odata4.commons.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 
 public class EdmTechProvider extends EdmProviderAdapter {
 
-  private static final String nameSpace = "com.sap.odata.test1";
+  public static final String nameSpace = "com.sap.odata.test1";
 
-  private static final FullQualifiedName nameBFCCollCTPrimCompRTESAllPrim =
+  public static final FullQualifiedName nameBFCCollCTPrimCompRTESAllPrim =
       new FullQualifiedName(nameSpace, "BFCCollCTPrimCompRTESAllPrim");
 
-  private static final FullQualifiedName nameBFCCollStringRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCCollStringRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCCollStringRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCCTPrimCompRTESBaseTwoKeyNav =
+  public static final FullQualifiedName nameBFCCTPrimCompRTESBaseTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCCTPrimCompRTESBaseTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCCTPrimCompRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCCTPrimCompRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCCTPrimCompRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCCTPrimCompRTETTwoKeyNavParam =
+  public static final FullQualifiedName nameBFCCTPrimCompRTETTwoKeyNavParam =
       new FullQualifiedName(nameSpace, "BFCCTPrimCompRTETTwoKeyNavParam");
 
-  private static final FullQualifiedName nameBFCESAllPrimRTCTAllPrim =
+  public static final FullQualifiedName nameBFCESAllPrimRTCTAllPrim =
       new FullQualifiedName(nameSpace, "BFCESAllPrimRTCTAllPrim");
 
-  private static final FullQualifiedName nameBFCESBaseTwoKeyNavRTESBaseTwoKey =
+  public static final FullQualifiedName nameBFCESBaseTwoKeyNavRTESBaseTwoKey =
       new FullQualifiedName(nameSpace, "BFCESBaseTwoKeyNavRTESBaseTwoKey");
 
-  private static final FullQualifiedName nameBFCESKeyNavRTETKeyNav = new FullQualifiedName(nameSpace,
-      "BFCESKeyNavRTETKeyNav");
+  public static final FullQualifiedName nameBFCESKeyNavRTETKeyNav =
+      new FullQualifiedName(nameSpace, "BFCESKeyNavRTETKeyNav");
 
-  private static final FullQualifiedName nameBFCESKeyNavRTETKeyNavParam =
+  public static final FullQualifiedName nameBFCESKeyNavRTETKeyNavParam =
       new FullQualifiedName(nameSpace, "BFCESKeyNavRTETKeyNavParam");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTTwoPrim =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTTwoPrim =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTCollCTTwoPrim");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTCollString =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollString =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTCollString");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTCTTwoPrim =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCTTwoPrim =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTCTTwoPrim");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTString =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTString =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTString");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTStringParam =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTStringParam =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTStringParam");
 
-  private static final FullQualifiedName nameBFCESTwoKeyNavRTTwoKeyNav =
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCESTwoKeyNavRTTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESBaseTwoKey =
+  public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESBaseTwoKey =
       new FullQualifiedName(nameSpace, "BFCETBaseTwoKeyNavRTESBaseTwoKey");
 
-  private static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCETBaseTwoKeyNavRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCETBaseTwoKeyNavRTETTwoKeyNav =
+  public static final FullQualifiedName nameBFCETBaseTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCETBaseTwoKeyNavRTETTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCETKeyNavRTETKeyNav =
+  public static final FullQualifiedName nameBFCETKeyNavRTETKeyNav =
       new FullQualifiedName(nameSpace, "BFCETKeyNavRTETKeyNav");
 
-  private static final FullQualifiedName nameBFCETTwoKeyNavRTCTTwoPrim =
+  public static final FullQualifiedName nameBFCETTwoKeyNavRTCTTwoPrim =
       new FullQualifiedName(nameSpace, "BFCETTwoKeyNavRTCTTwoPrim");
 
-  private static final FullQualifiedName nameBFCETTwoKeyNavRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCETTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCETTwoKeyNavRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCETTwoKeyNavRTETTwoKeyNav =
+  public static final FullQualifiedName nameBFCETTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCETTwoKeyNavRTETTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCSINavRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCSINavRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCSINavRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFCStringRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFCStringRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFCStringRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
+  public static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(nameSpace, "BFESTwoKeyNavRTESTwoKeyNav");
 
-  private static final FullQualifiedName nameBinary = EdmPrimitiveTypeKind.Binary.getFullQualifiedName();
-
-  private static final FullQualifiedName nameBoolean = EdmPrimitiveTypeKind.Boolean.getFullQualifiedName();
-
-  public static final FullQualifiedName nameByte = EdmPrimitiveTypeKind.Byte.getFullQualifiedName();
-
-  private static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
-  public static final FullQualifiedName nameCTPrim = new FullQualifiedName(nameSpace, "CTPrim");
   public static final FullQualifiedName nameCTAllPrim = new FullQualifiedName(nameSpace, "CTAllPrim");
-
-  private static final FullQualifiedName nameCTBase = new FullQualifiedName(nameSpace, "CTBase");
-
-  public static final FullQualifiedName nameCTCollAllPrim =
-      new FullQualifiedName(nameSpace, "CTCollAllPrim");
-
-  public static final FullQualifiedName nameCTCompCollComp =
-      new FullQualifiedName(nameSpace, "CTCompCollComp");
-
+  public static final FullQualifiedName nameCTBase = new FullQualifiedName(nameSpace, "CTBase");
+  public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(nameSpace, "CTCollAllPrim");
+  public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(nameSpace, "CTCompCollComp");
   public static final FullQualifiedName nameCTCompComp = new FullQualifiedName(nameSpace, "CTCompComp");
-
-  private static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(nameSpace,
-      "CTMixPrimCollComp");
-
-  public static final FullQualifiedName nameCTNavFiveProp =
-      new FullQualifiedName(nameSpace, "CTNavFiveProp");
-
+  public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(nameSpace, "CTMixPrimCollComp");
+  public static final FullQualifiedName nameCTNavFiveProp = new FullQualifiedName(nameSpace, "CTNavFiveProp");
+  public static final FullQualifiedName nameCTPrim = new FullQualifiedName(nameSpace, "CTPrim");
   public static final FullQualifiedName nameCTPrimComp = new FullQualifiedName(nameSpace, "CTPrimComp");
-
   public static final FullQualifiedName nameCTPrimEnum = new FullQualifiedName(nameSpace, "CTPrimEnum");
-
-  private static final FullQualifiedName nameCTTwoBase = new FullQualifiedName(nameSpace, "CTTwoBase");
-
+  public static final FullQualifiedName nameCTTwoBase = new FullQualifiedName(nameSpace, "CTTwoBase");
   public static final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
 
+  public static final FullQualifiedName nameBinary = EdmPrimitiveTypeKind.Binary.getFullQualifiedName();
+  public static final FullQualifiedName nameBoolean = EdmPrimitiveTypeKind.Boolean.getFullQualifiedName();
+  public static final FullQualifiedName nameByte = EdmPrimitiveTypeKind.Byte.getFullQualifiedName();
+  public static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
   public static final FullQualifiedName nameDate = EdmPrimitiveTypeKind.Date.getFullQualifiedName();
-
-  public static final FullQualifiedName nameDateTimeOffset =
-      EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName();
-
+  public static final FullQualifiedName nameDateTimeOffset = EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName();
   public static final FullQualifiedName nameDecimal = EdmPrimitiveTypeKind.Decimal.getFullQualifiedName();
-
   public static final FullQualifiedName nameDouble = EdmPrimitiveTypeKind.Double.getFullQualifiedName();
-
   public static final FullQualifiedName nameDuration = EdmPrimitiveTypeKind.Duration.getFullQualifiedName();
-
   public static final FullQualifiedName nameENString = new FullQualifiedName(nameSpace, "ENString");
 
-  private static final FullQualifiedName nameETAllKey = new FullQualifiedName(nameSpace, "ETAllKey");
-
-  private static final FullQualifiedName nameETAllNullable = new FullQualifiedName(nameSpace, "ETAllNullable");
-
-  private static final FullQualifiedName nameETAllPrim = new FullQualifiedName(nameSpace, "ETAllPrim");
-
-  private static final FullQualifiedName nameETBase = new FullQualifiedName(nameSpace, "ETBase");
-
-  private static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(nameSpace, "ETBaseTwoKeyNav");
-
-  private static final FullQualifiedName nameETBaseTwoKeyTwoPrim = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameETAllKey = new FullQualifiedName(nameSpace, "ETAllKey");
+  public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(nameSpace, "ETAllNullable");
+  public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(nameSpace, "ETAllPrim");
+  public static final FullQualifiedName nameETBase = new FullQualifiedName(nameSpace, "ETBase");
+  public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(nameSpace, "ETBaseTwoKeyNav");
+  public static final FullQualifiedName nameETBaseTwoKeyTwoPrim = new FullQualifiedName(nameSpace,
       "ETBaseTwoKeyTwoPrim");
-
   public static final FullQualifiedName nameETCollAllPrim = new FullQualifiedName(nameSpace, "ETCollAllPrim");
-
-  private static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(nameSpace, "ETCompAllPrim");
-
-  private static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(nameSpace, "ETCompCollAllPrim");
-
-  private static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(nameSpace, "ETCompCollComp");
-
-  private static final FullQualifiedName nameETCompComp = new FullQualifiedName(nameSpace, "ETCompComp");
-
-  private static final FullQualifiedName nameETCompMixPrimCollComp = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(nameSpace, "ETCompAllPrim");
+  public static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(nameSpace, "ETCompCollAllPrim");
+  public static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(nameSpace, "ETCompCollComp");
+  public static final FullQualifiedName nameETCompComp = new FullQualifiedName(nameSpace, "ETCompComp");
+  public static final FullQualifiedName nameETCompMixPrimCollComp = new FullQualifiedName(nameSpace,
       "ETCompMixPrimCollComp");
-
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(nameSpace, "ETKeyNav");
-
-  private static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(nameSpace, "ETKeyTwoKeyComp");
-
-  private static final FullQualifiedName nameETMedia = new FullQualifiedName(nameSpace, "ETMedia");
-
-  private static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(nameSpace, "ETMixPrimCollComp");
-
-  private static final FullQualifiedName nameETServerSidePaging =
+  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(nameSpace, "ETKeyTwoKeyComp");
+  public static final FullQualifiedName nameETMedia = new FullQualifiedName(nameSpace, "ETMedia");
+  public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(nameSpace, "ETMixPrimCollComp");
+  public static final FullQualifiedName nameETServerSidePaging =
       new FullQualifiedName(nameSpace, "ETServerSidePaging");
-
-  private static final FullQualifiedName nameETTwoBase = new FullQualifiedName(nameSpace, "ETTwoBase");
-
-  private static final FullQualifiedName nameETTwoBaseTwoKeyTwoPrim = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameETTwoBase = new FullQualifiedName(nameSpace, "ETTwoBase");
+  public static final FullQualifiedName nameETTwoBaseTwoKeyTwoPrim = new FullQualifiedName(nameSpace,
       "ETTwoBaseTwoKeyTwoPrim");
-
   public static final FullQualifiedName nameETTwoKeyNav = new FullQualifiedName(nameSpace, "ETTwoKeyNav");
-
   public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(nameSpace, "ETTwoKeyTwoPrim");
-
   public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(nameSpace, "ETTwoPrim");
 
-  public static final FullQualifiedName nameGuit = EdmPrimitiveTypeKind.Guid.getFullQualifiedName();
-
+  public static final FullQualifiedName nameGuid = EdmPrimitiveTypeKind.Guid.getFullQualifiedName();
   public static final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
-
   public static final FullQualifiedName nameInt32 = EdmPrimitiveTypeKind.Int32.getFullQualifiedName();
-
   public static final FullQualifiedName nameInt64 = EdmPrimitiveTypeKind.Int64.getFullQualifiedName();
-
   public static final FullQualifiedName nameSByte = EdmPrimitiveTypeKind.SByte.getFullQualifiedName();
-
   public static final FullQualifiedName nameSingle = EdmPrimitiveTypeKind.Single.getFullQualifiedName();
-
   public static final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
-
   public static final FullQualifiedName nameTimeOfDay = EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName();
 
-  private static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(nameSpace, "UARTCompCollParam");
-
-  private static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(nameSpace, "UARTCompParam");
-
-  private static final FullQualifiedName nameUARTETCollAllPrimParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(nameSpace, "UARTCompCollParam");
+  public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(nameSpace, "UARTCompParam");
+  public static final FullQualifiedName nameUARTETCollAllPrimParam = new FullQualifiedName(nameSpace,
       "UARTETCollAllPrimParam");
-
-  private static final FullQualifiedName nameUARTETParam = new FullQualifiedName(nameSpace, "UARTETParam");
-
-  private static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(nameSpace, "UARTPrimCollParam");
-
-  private static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
-
-  private static final FullQualifiedName nameUFCRTCollCTTwoPrim =
+  public static final FullQualifiedName nameUARTETParam = new FullQualifiedName(nameSpace, "UARTETParam");
+  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(nameSpace, "UARTPrimCollParam");
+  public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
+  public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
       new FullQualifiedName(nameSpace, "UFCRTCollCTTwoPrim");
-
-  private static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(nameSpace, "UFCRTCollString");
-
-  private static final FullQualifiedName nameUFCRTCollStringTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(nameSpace, "UFCRTCollString");
+  public static final FullQualifiedName nameUFCRTCollStringTwoParam = new FullQualifiedName(nameSpace,
       "UFCRTCollStringTwoParam");
-
-  private static final FullQualifiedName nameUFCRTCTAllPrimTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTCTAllPrimTwoParam = new FullQualifiedName(nameSpace,
       "UFCRTCTAllPrimTwoParam");
-
-  private static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(nameSpace, "UFCRTCTTwoPrim");
-
-  private static final FullQualifiedName nameUFCRTCTTwoPrimParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(nameSpace, "UFCRTCTTwoPrim");
+  public static final FullQualifiedName nameUFCRTCTTwoPrimParam = new FullQualifiedName(nameSpace,
       "UFCRTCTTwoPrimParam");
-
-  private static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam = new FullQualifiedName(nameSpace,
       "UFCRTESMixPrimCollCompTwoParam");
-
-  private static final FullQualifiedName nameUFCRTESTwoKeyNavParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTESTwoKeyNavParam = new FullQualifiedName(nameSpace,
       "UFCRTESTwoKeyNavParam");
-
-  private static final FullQualifiedName nameUFCRTETAllPrimTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTETAllPrimTwoParam = new FullQualifiedName(nameSpace,
       "UFCRTETAllPrimTwoParam");
-
-  private static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(nameSpace, "UFCRTETKeyNav");
-
-  private static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(nameSpace, "UFCRTETMedia");
-
-  private static final FullQualifiedName nameUFCRTETTwoKeyNavParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(nameSpace, "UFCRTETKeyNav");
+  public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(nameSpace, "UFCRTETMedia");
+  public static final FullQualifiedName nameUFCRTETTwoKeyNavParam = new FullQualifiedName(nameSpace,
       "UFCRTETTwoKeyNavParam");
-
-  private static final FullQualifiedName nameUFCRTETTwoKeyNavParamCTTwoPrim = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTETTwoKeyNavParamCTTwoPrim = new FullQualifiedName(nameSpace,
       "UFCRTETTwoKeyNavParamCTTwoPrim");
-
-  private static final FullQualifiedName nameUFCRTString = new FullQualifiedName(nameSpace, "UFCRTString");
-
-  private static final FullQualifiedName nameUFCRTStringTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFCRTString = new FullQualifiedName(nameSpace, "UFCRTString");
+  public static final FullQualifiedName nameUFCRTStringTwoParam = new FullQualifiedName(nameSpace,
       "UFCRTStringTwoParam");
-
-  private static final FullQualifiedName nameUFNRTESMixPrimCollCompTwoParam = new FullQualifiedName(nameSpace,
+  public static final FullQualifiedName nameUFNRTESMixPrimCollCompTwoParam = new FullQualifiedName(nameSpace,
       "UFNRTESMixPrimCollCompTwoParam");
-
-  private static final FullQualifiedName nameUFNRTInt16 = new FullQualifiedName(nameSpace, "UFNRTInt16");
+  public static final FullQualifiedName nameUFNRTInt16 = new FullQualifiedName(nameSpace, "UFNRTInt16");
 
   NavigationProperty collectionNavPropertyETKeyNavMany_ETKeyNav = new NavigationProperty()
       .setName("NavPropertyETKeyNavMany")
@@ -311,7 +237,6 @@ public class EdmTechProvider extends EdmProviderAdapter {
       .setCollection(true)
       .setPartner("NavPropertyETKeyNavOne");
 
-  // Properties typed as collection of simple types
   Property collPropertyBinary = new Property()
       .setName("CollPropertyBinary")
       .setType(nameBinary)
@@ -364,7 +289,7 @@ public class EdmTechProvider extends EdmProviderAdapter {
 
   Property collPropertyGuid = new Property()
       .setName("CollPropertyGuid")
-      .setType(nameGuit)
+      .setType(nameGuid)
       .setCollection(true);
 
   Property collPropertyInt16 = new Property()
@@ -484,7 +409,7 @@ public class EdmTechProvider extends EdmProviderAdapter {
       .setType(nameENString);
   Property propertyGuid = new Property()
       .setName("PropertyGuid")
-      .setType(nameGuit);
+      .setType(nameGuid);
   Property propertyInt16 = new Property()
       .setName("PropertyInt16")
       .setType(nameInt16);
@@ -527,6 +452,39 @@ public class EdmTechProvider extends EdmProviderAdapter {
       .setType(nameTimeOfDay);
 
   @Override
+  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
+  {
+    if (entityContainer.equals(nameContainer)) {
+      if (name.equals("AIRTPrimParam")) {
+        return new ActionImport()
+            .setName("AIRTPrimParam")
+            .setAction(nameUARTPrimParam);
+      } else if (name.equals("AIRTPrimCollParam")) {
+        return new ActionImport()
+            .setName("AIRTPrimCollParam")
+            .setAction(nameUARTPrimCollParam);
+      } else if (name.equals("AIRTCompParam")) {
+        return new ActionImport()
+            .setName("AIRTCompParam")
+            .setAction(nameUARTCompParam);
+      } else if (name.equals("AIRTCompCollParam")) {
+        return new ActionImport()
+            .setName("AIRTCompCollParam")
+            .setAction(nameUARTCompCollParam);
+      } else if (name.equals("AIRTETParam")) {
+        return new ActionImport()
+            .setName("AIRTETParam")
+            .setAction(nameUARTETParam);
+      } else if (name.equals("AIRTETCollAllPrimParam")) {
+        return new ActionImport()
+            .setName("AIRTETCollAllPrimParam")
+            .setAction(nameUARTETCollAllPrimParam);
+      }
+    }
+    return null;
+  }
+
+  @Override
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTPrimParam)) {
       return Arrays.asList(
@@ -534,67 +492,52 @@ public class EdmTechProvider extends EdmProviderAdapter {
               .setBound(false)
               .setReturnType(new ReturnType().setType(nameString))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
-
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     } else if (actionName.equals(nameUARTPrimCollParam)) {
       return Arrays.asList(
           new Action().setName("UARTPrimCollParam")
               .setBound(false)
               .setReturnType(
-                  new ReturnType()
-                      .setType(nameString).setCollection(true))
+                  new ReturnType().setType(nameString).setCollection(true))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     } else if (actionName.equals(nameUARTCompParam)) {
       return Arrays.asList(
           new Action().setName("UARTCompParam")
               .setBound(false)
               .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim))
+                  new ReturnType().setType(nameCTTwoPrim))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     } else if (actionName.equals(nameUARTCompCollParam)) {
       return Arrays.asList(
           new Action().setName("UARTCompCollParam")
               .setBound(false)
               .setReturnType(
-                  new ReturnType()
-                      .setCollection(true)
-                      .setType(nameCTTwoPrim))
+                  new ReturnType().setCollection(true).setType(nameCTTwoPrim))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     } else if (actionName.equals(nameUARTETParam)) {
       return Arrays.asList(
           new Action().setName("UARTCompCollParam")
               .setBound(false)
               .setReturnType(
-                  new ReturnType()
-                      .setType(nameETTwoKeyTwoPrim))
+                  new ReturnType().setType(nameETTwoKeyTwoPrim))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     } else if (actionName.equals(nameUARTETCollAllPrimParam)) {
       return Arrays.asList(
           new Action().setName("UARTETCollAllPrimParam")
               .setBound(false)
               .setReturnType(
-                  new ReturnType()
-                      .setType(nameETCollAllPrim)
-                      .setCollection(true))
-                      
+                  new ReturnType().setType(nameETCollAllPrim).setCollection(true))
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16")
-                      .setType(nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
           );
     }
 
@@ -625,7 +568,8 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
           .setName("CTCollAllPrim")
-          .setProperties(Arrays.asList(collPropertyString,
+          .setProperties(Arrays.asList(
+              collPropertyString,
               collPropertyBoolean, collPropertyByte,
               collPropertySByte,
               collPropertyInt16, collPropertyInt32, collPropertyInt64,
@@ -641,20 +585,20 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (complexTypeName.equals(nameCTMixPrimCollComp)) {
       return new ComplexType()
           .setName("CTMixPrimCollComp")
-          .setProperties(Arrays.asList(propertyInt16, collPropertyString,
-              propertyComplex_CTTwoPrim, collPropertyComplex_CTTwoPrim));
+          .setProperties(Arrays.asList(
+              propertyInt16, collPropertyString, propertyComplex_CTTwoPrim, collPropertyComplex_CTTwoPrim));
     } else if (complexTypeName.equals(nameCTBase)) {
       return new ComplexType()
           .setName("CTBase")
-          .setProperties(
-              Arrays.asList(new Property().setName("AdditionalPropString").setType(
-                  new FullQualifiedName("Edm", "String"))));
+          .setProperties(Arrays.asList(
+              new Property().setName("AdditionalPropString")
+                  .setType(new FullQualifiedName("Edm", "String"))));
     } else if (complexTypeName.equals(nameCTTwoBase)) {
       return new ComplexType()
           .setName("CTTwoBase")
-          .setProperties(
-              Arrays.asList(new Property().setName("AdditionalPropString").setType(
-                  new FullQualifiedName("Edm", "String"))));
+          .setProperties(Arrays.asList(
+              new Property().setName("AdditionalPropString")
+                  .setType(new FullQualifiedName("Edm", "String"))));
     } else if (complexTypeName.equals(nameCTCompComp)) {
       return new ComplexType()
           .setName("CTCompComp")
@@ -800,7 +744,8 @@ public class EdmTechProvider extends EdmProviderAdapter {
     if (entityTypeName.equals(nameETAllPrim)) {
       return new EntityType()
           .setName("ETAllPrim")
-          .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString,
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyString,
               propertyBoolean, propertyByte, propertySByte,
               propertyInt32, propertyInt64,
               propertySingle, propertyDouble, propertyDecimal,
@@ -826,18 +771,21 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETTwoPrim)) {
       return new EntityType()
           .setName("ETTwoPrim")
-          .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString))
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyString))
           .setKey(oneKeyPropertyInt16);
     } else if (entityTypeName.equals(nameETMixPrimCollComp)) {
       return new EntityType()
           .setName("ETMixPrimCollComp")
-          .setProperties(Arrays.asList(propertyInt16_NotNullable, collPropertyString,
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, collPropertyString,
               propertyComplex_CTTwoPrim, collPropertyComplex_CTTwoPrim))
           .setKey(oneKeyPropertyInt16);
     } else if (entityTypeName.equals(nameETTwoKeyTwoPrim)) {
       return new EntityType()
           .setName("ETTwoKeyTwoPrim")
-          .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString))
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyString))
           .setKey(Arrays.asList(
               new PropertyRef().setPropertyName("PropertyInt16"),
               new PropertyRef().setPropertyName("PropertyString")));
@@ -918,8 +866,8 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETKeyTwoKeyComp)) {
       return new EntityType()
           .setName("ETKeyTwoKeyComp")
-          .setProperties(
-              Arrays.asList(propertyInt16_NotNullable, propertyComplex_CTTwoPrim, propertyComplexComplex_CTCompComp))
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyComplex_CTTwoPrim, propertyComplexComplex_CTCompComp))
           .setKey(Arrays.asList(
               new PropertyRef().setPropertyName("PropertyInt16"),
               new PropertyRef().setPropertyName("PropertyComplex/PropertyInt16").setAlias("KeyAlias1"),
@@ -934,8 +882,9 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETAllNullable)) {
       return new EntityType()
           .setName("ETAllNullable")
-          .setProperties(Arrays.asList(new Property()
-              .setName("PropertyKey").setType(nameInt16).setNullable(false),
+          .setProperties(Arrays.asList(
+              new Property()
+                  .setName("PropertyKey").setType(nameInt16).setNullable(false),
               propertyInt16,
               propertyString, propertyBoolean,
               propertyByte, propertySByte,
@@ -957,11 +906,10 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETKeyNav)) {
       return new EntityType()
           .setName("ETCollAllPrim")
-          .setProperties(
-              Arrays.asList(
-                  propertyInt16_NotNullable, propertyString_NotNullable, propertyComplex_CTNavFiveProp,
-                  propertyComplexAllPrim_CTAllPrim, propertyComplexTwoPrim_CTTwoPrim,
-                  collPropertyString, collPropertyInt16, collPropertyComplex_CTPrimComp))
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyString_NotNullable, propertyComplex_CTNavFiveProp,
+              propertyComplexAllPrim_CTAllPrim, propertyComplexTwoPrim_CTTwoPrim,
+              collPropertyString, collPropertyInt16, collPropertyComplex_CTPrimComp))
           .setNavigationProperties(Arrays.asList(
               navPropertyETTwoKeyNavOne_ETTwoKeyNav, collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
               navPropertyETKeyNavOne_ETKeyNav, collectionNavPropertyETKeyNavMany_ETKeyNav,
@@ -971,13 +919,13 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new EntityType()
           .setName("ETTwoKeyNav")
-          .setProperties(
-              Arrays.asList(propertyInt16, propertyString, propertyComplex_CTPrimComp_NotNullable,
-                  propertyComplexEnum_CTPrimEnum_NotNullable,
-                  collPropertyComplex_CTPrimComp,
-                  collPropertyString, propertyComplexTwoPrim_CTTwoPrim,
-                  propertyEnumString_ENString
-                  ))
+          .setProperties(Arrays.asList(
+              propertyInt16, propertyString, propertyComplex_CTPrimComp_NotNullable,
+              propertyComplexEnum_CTPrimEnum_NotNullable,
+              collPropertyComplex_CTPrimComp,
+              collPropertyString, propertyComplexTwoPrim_CTTwoPrim,
+              propertyEnumString_ENString
+              ))
           .setNavigationProperties(Arrays.asList(
               new NavigationProperty()
                   .setName("NavPropertyETKeyNavOne")
@@ -996,7 +944,8 @@ public class EdmTechProvider extends EdmProviderAdapter {
     } else if (entityTypeName.equals(nameETBaseTwoKeyNav)) {
       return new EntityType()
           .setName("ETBaseTwoKeyNav")
-          .setProperties(Arrays.asList(propertyDate, propertyComplex_CTPrimComp_NotNullable))
+          .setProperties(Arrays.asList(
+              propertyDate, propertyComplex_CTPrimComp_NotNullable))
           .setNavigationProperties(Arrays.asList(
               collectionNavPropertyETKeyNavMany_ETKeyNav,
               navPropertyETKeyNavOne_ETKeyNav,
@@ -1026,797 +975,6 @@ public class EdmTechProvider extends EdmProviderAdapter {
               new EnumMember().setName("String3").setValue("3")));
     }
     // complete 20131205
-    return null;
-  }
-
-  @Override
-  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
-    ReturnType returnTypeString = new ReturnType()
-        .setType(nameString);
-
-    ReturnType returnTypeString_NotNullable = new ReturnType()
-        .setType(nameString)
-        .setNullable(false);
-
-    ReturnType returnTypeETTwoKeyNav_NotNullable = new ReturnType()
-        .setType(nameETTwoKeyNav)
-        .setNullable(false);
-
-    ReturnType returnTypeCollectionETTwoKeyNav_NotNullable = new ReturnType()
-        .setType(nameETTwoKeyNav)
-        .setNullable(false)
-        .setCollection(true);
-
-    if (functionName.equals(nameUFNRTInt16)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFNRTInt16")
-              .setBound(false)
-              .setReturnType(returnTypeString)
-          );
-    } else if (functionName.equals(nameUFCRTETKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTETKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETKeyNav)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameUFCRTETTwoKeyNavParam)) {
-      return Arrays.asList(
-          new Function().setName("UFCRTETTwoKeyNavParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameUFCRTETTwoKeyNavParamCTTwoPrim)) {
-      return Arrays.asList(
-          new Function().setName("UFCRTETTwoKeyNavParamCTTwoPrim")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterCTTwoPrim")
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-
-          );
-    } else if (functionName.equals(nameUFCRTStringTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTStringTwoParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterString")
-                      .setType(nameString)
-                      .setNullable(false),
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(returnTypeString_NotNullable)
-
-          );
-    } else if (functionName.equals(nameUFCRTESTwoKeyNavParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTESTwoKeyNavParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETTwoKeyNav)
-                      .setNullable(false).setCollection(true))
-
-          );
-    } else if (functionName.equals(nameUFCRTString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTString")
-              .setBound(true)
-              .setComposable(true)
-              .setReturnType(returnTypeString_NotNullable)
-          );
-    } else if (functionName.equals(nameUFCRTCollStringTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCollStringTwoParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterString")
-                      .setType(nameString)
-                      .setNullable(false),
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameString)
-                      .setNullable(false)
-                      .setCollection(true))
-
-          );
-    } else if (functionName.equals(nameUFCRTCollString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCollString")
-              .setBound(false)
-              .setComposable(true)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameString)
-                      .setNullable(false)
-                      .setCollection(true))
-
-          );
-    } else if (functionName.equals(nameUFCRTCTAllPrimTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCTAllPrimTwoParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterString")
-                      .setType(nameString)
-                      .setNullable(false),
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTAllPrim)
-                      .setNullable(false))
-
-          );
-    } else if (functionName.equals(nameUFCRTCTTwoPrimParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCTTwoPrimParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(Arrays.asList(
-                  new Parameter()
-                      .setName("ParameterString")
-                      .setType(nameString)
-                      .setNullable(false),
-                  new Parameter()
-                      .setName("ParameterInt16")
-                      .setType(nameInt16)
-                      .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false))
-
-          );
-    } else if (functionName.equals(nameUFCRTCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCTTwoPrim")
-              .setBound(false)
-              .setComposable(true)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCTTwoPrim")
-              .setBound(false)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameUFCRTETMedia)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTETMedia")
-              .setBound(false)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETMedia)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameUFCRTString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTString")
-              .setBound(false)
-              .setReturnType(returnTypeString_NotNullable)
-          );
-    } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCollCTTwoPrim")
-              .setBound(false)
-              .setComposable(true)
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameUFNRTESMixPrimCollCompTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFNRTESMixPrimCollCompTwoParam")
-              .setBound(false)
-              .setComposable(false)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("ParameterString")
-                          .setType(nameString)
-                          .setNullable(false),
-                      new Parameter()
-                          .setName("ParameterInt16")
-                          .setType(nameInt16)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETMixPrimCollComp)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-
-    } else if (functionName.equals(nameUFCRTETAllPrimTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTETAllPrimTwoParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("ParameterString")
-                          .setType(nameString)
-                          .setNullable(false),
-                      new Parameter()
-                          .setName("ParameterInt16")
-                          .setType(nameInt16)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETAllPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameUFCRTESMixPrimCollCompTwoParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTESMixPrimCollCompTwoParam")
-              .setBound(false)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("ParameterString")
-                          .setType(nameString)
-                          .setNullable(false),
-                      new Parameter()
-                          .setName("ParameterInt16")
-                          .setType(nameInt16)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETMixPrimCollComp)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETTwoKeyNav)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCStringRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function().setName("BFCStringRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameString)
-                          .setNullable(false)))
-              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTETTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETBaseTwoKeyNavRTETTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETBaseTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCESBaseTwoKeyNavRTESBaseTwoKey)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESBaseTwoKeyNavRTESBaseTwoKey")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETBaseTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETBaseTwoKeyNav)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCESAllPrimRTCTAllPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESAllPrimRTCTAllPrim")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETAllPrim)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTAllPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTCTTwoPrim")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTCollCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTCollCTTwoPrim")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTString")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(returnTypeString_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTCollString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTCollString")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameString)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCETTwoKeyNavRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETTwoKeyNavRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETBaseTwoKeyNavRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETBaseTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCSINavRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCSINavRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESBaseTwoKey)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETBaseTwoKeyNavRTESBaseTwoKey")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETBaseTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETBaseTwoKeyNav)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCCollStringRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCCollStringRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameString)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCCTPrimCompRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCCTPrimCompRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameCTPrimComp)
-                          .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCCTPrimCompRTESBaseTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCCTPrimCompRTESBaseTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameCTPrimComp)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETBaseTwoKeyNav)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCCollCTPrimCompRTESAllPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCCollCTPrimCompRTESAllPrim")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameCTPrimComp)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETAllPrim)
-                      .setNullable(false)
-                      .setCollection(true))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETAllPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCESKeyNavRTETKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESKeyNavRTETKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETKeyNav)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCETKeyNavRTETKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETKeyNavRTETKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETKeyNav)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETKeyNav)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFESTwoKeyNavRTESTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFESTwoKeyNavRTESTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true)))
-              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCETTwoKeyNavRTETTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETTwoKeyNavRTETTwoKeyNav")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCETTwoKeyNavRTCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCETTwoKeyNavRTCTTwoPrim")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameCTTwoPrim)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTStringParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESTwoKeyNavRTStringParam")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETTwoKeyNav)
-                          .setNullable(false)
-                          .setCollection(true),
-                      new Parameter()
-                          .setName("ParameterComplex")
-                          .setType(nameCTTwoPrim)
-                          .setNullable(false)))
-              .setReturnType(returnTypeString_NotNullable)
-          );
-    } else if (functionName.equals(nameBFCESKeyNavRTETKeyNavParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCESKeyNavRTETKeyNavParam")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameETKeyNav)
-                          .setNullable(false)
-                          .setCollection(true),
-                      new Parameter()
-                          .setName("ParameterString")
-                          .setType(nameString)
-                          .setNullable(false)))
-              .setReturnType(
-                  new ReturnType()
-                      .setType(nameETKeyNav)
-                      .setNullable(false))
-          );
-    } else if (functionName.equals(nameBFCCTPrimCompRTETTwoKeyNavParam)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BFCCTPrimCompRTETTwoKeyNavParam")
-              .setBound(true)
-              .setComposable(true)
-              .setParameters(
-                  Arrays.asList(
-                      new Parameter()
-                          .setName("BindingParam")
-                          .setType(nameCTPrimComp)
-                          .setNullable(false)
-                          .setCollection(true),
-                      new Parameter()
-                          .setName("ParameterString")
-                          .setType(nameString)
-                          .setNullable(false)))
-              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
-          );
-    }
-    return null;
-    // complete 20131210
-  }
-
-  @Override
-  public Singleton getSingleton(final FullQualifiedName entityContainer, final String name) throws ODataException {
-    if (entityContainer.equals(nameContainer)) {
-
-      if (name.equals("SI")) {
-        return new Singleton()
-            .setName("SI")
-            .setType(nameETTwoPrim);
-      } else if (name.equals("SINav")) {
-        return new Singleton()
-            .setName("SI")
-            .setType(nameETTwoKeyNav);
-      }
-
-    }
-    return null;
-  }
-
-  @Override
-  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
-  {
-    if (entityContainer.equals(nameContainer)) {
-      if (name.equals("AIRTPrimParam")) {
-        return new ActionImport()
-            .setName("AIRTPrimParam")
-            .setAction(nameUARTPrimParam);
-      } else if (name.equals("AIRTPrimCollParam")) {
-        return new ActionImport()
-            .setName("AIRTPrimCollParam")
-            .setAction(nameUARTPrimCollParam);
-      } else if (name.equals("AIRTCompParam")) {
-        return new ActionImport()
-            .setName("AIRTCompParam")
-            .setAction(nameUARTCompParam);
-      } else if (name.equals("AIRTCompCollParam")) {
-        return new ActionImport()
-            .setName("AIRTCompCollParam")
-            .setAction(nameUARTCompCollParam);
-      } else if (name.equals("AIRTETParam")) {
-        return new ActionImport()
-            .setName("AIRTETParam")
-            .setAction(nameUARTETParam);
-      } else if (name.equals("AIRTETCollAllPrimParam")) {
-        return new ActionImport()
-            .setName("AIRTETCollAllPrimParam")
-            .setAction(nameUARTETCollAllPrimParam);
-      }
-    }
     return null;
   }
 
@@ -1958,6 +1116,666 @@ public class EdmTechProvider extends EdmProviderAdapter {
             .setIncludeInServiceDocument(true);
 
       }
+    }
+    return null;
+  }
+
+  @Override
+  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    ReturnType returnTypeString = new ReturnType()
+        .setType(nameString);
+
+    ReturnType returnTypeString_NotNullable = new ReturnType()
+        .setType(nameString)
+        .setNullable(false);
+
+    ReturnType returnTypeETTwoKeyNav_NotNullable = new ReturnType()
+        .setType(nameETTwoKeyNav)
+        .setNullable(false);
+
+    ReturnType returnTypeCollectionETTwoKeyNav_NotNullable = new ReturnType()
+        .setType(nameETTwoKeyNav)
+        .setNullable(false)
+        .setCollection(true);
+
+    if (functionName.equals(nameUFNRTInt16)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFNRTInt16")
+              .setBound(false)
+              .setReturnType(returnTypeString)
+          );
+    } else if (functionName.equals(nameUFCRTETKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTETKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameETKeyNav).setNullable(false))
+          );
+    } else if (functionName.equals(nameUFCRTETTwoKeyNavParam)) {
+      return Arrays.asList(
+          new Function().setName("UFCRTETTwoKeyNavParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameUFCRTETTwoKeyNavParamCTTwoPrim)) {
+      return Arrays.asList(
+          new Function().setName("UFCRTETTwoKeyNavParamCTTwoPrim")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterCTTwoPrim")
+                      .setType(nameCTTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+
+          );
+    } else if (functionName.equals(nameUFCRTStringTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTStringTwoParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(returnTypeString_NotNullable)
+
+          );
+    } else if (functionName.equals(nameUFCRTESTwoKeyNavParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTESTwoKeyNavParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETTwoKeyNav).setNullable(false).setCollection(true))
+
+          );
+    } else if (functionName.equals(nameUFCRTString)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTString")
+              .setBound(true)
+              .setComposable(true)
+              .setReturnType(returnTypeString_NotNullable)
+          );
+    } else if (functionName.equals(nameUFCRTCollStringTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCollStringTwoParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameString).setNullable(false).setCollection(true))
+
+          );
+    } else if (functionName.equals(nameUFCRTCollString)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCollString")
+              .setBound(false)
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameString).setNullable(false).setCollection(true))
+
+          );
+    } else if (functionName.equals(nameUFCRTCTAllPrimTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCTAllPrimTwoParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTAllPrim).setNullable(false))
+
+          );
+    } else if (functionName.equals(nameUFCRTCTTwoPrimParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCTTwoPrimParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false))
+
+          );
+    } else if (functionName.equals(nameUFCRTCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCTTwoPrim")
+              .setBound(false)
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCTTwoPrim")
+              .setBound(false)
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameUFCRTETMedia)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTETMedia")
+              .setBound(false)
+              .setReturnType(
+                  new ReturnType().setType(nameETMedia).setNullable(false))
+          );
+    } else if (functionName.equals(nameUFCRTString)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTString")
+              .setBound(false)
+              .setReturnType(returnTypeString_NotNullable)
+          );
+    } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCollCTTwoPrim")
+              .setBound(false)
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameUFNRTESMixPrimCollCompTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFNRTESMixPrimCollCompTwoParam")
+              .setBound(false)
+              .setComposable(false)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETMixPrimCollComp).setNullable(false).setCollection(true))
+          );
+
+    } else if (functionName.equals(nameUFCRTETAllPrimTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTETAllPrimTwoParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETAllPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameUFCRTESMixPrimCollCompTwoParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTESMixPrimCollCompTwoParam")
+              .setBound(false)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false),
+                  new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETMixPrimCollComp).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter()
+                          .setName("BindingParam")
+                          .setType(nameETTwoKeyNav)
+                          .setNullable(false)
+                          .setCollection(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETTwoKeyNav).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCStringRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function().setName("BFCStringRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("BindingParam").setType(nameString).setNullable(false)))
+              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTETTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETBaseTwoKeyNavRTETTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("BindingParam").setType(nameETBaseTwoKeyNav).setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCESBaseTwoKeyNavRTESBaseTwoKey)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESBaseTwoKeyNavRTESBaseTwoKey")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETBaseTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameETBaseTwoKeyNav).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCESAllPrimRTCTAllPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESAllPrimRTCTAllPrim")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETAllPrim)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTAllPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTCTTwoPrim")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTCollCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTCollCTTwoPrim")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTString)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTString")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(returnTypeString_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTCollString)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTCollString")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameString).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCETTwoKeyNavRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETTwoKeyNavRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETBaseTwoKeyNavRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETBaseTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCSINavRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCSINavRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESBaseTwoKey)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETBaseTwoKeyNavRTESBaseTwoKey")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETBaseTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType()
+                      .setType(nameETBaseTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCCollStringRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCCollStringRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameString)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCCTPrimCompRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCCTPrimCompRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameCTPrimComp)
+                      .setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCCTPrimCompRTESBaseTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCCTPrimCompRTESBaseTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("BindingParam").setType(nameCTPrimComp).setNullable(false)))
+              .setReturnType(
+                  new ReturnType()
+                      .setType(nameETBaseTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCCollCTPrimCompRTESAllPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCCollCTPrimCompRTESAllPrim")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameCTPrimComp)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameETAllPrim).setNullable(false).setCollection(true))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETAllPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESKeyNavRTETKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESKeyNavRTETKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(
+                  new ReturnType().setType(nameETKeyNav).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCETKeyNavRTETKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETKeyNavRTETKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETKeyNav)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETKeyNav).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFESTwoKeyNavRTESTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFESTwoKeyNavRTESTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true)))
+              .setReturnType(returnTypeCollectionETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCETTwoKeyNavRTETTwoKeyNav)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETTwoKeyNavRTETTwoKeyNav")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCETTwoKeyNavRTCTTwoPrim)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCETTwoKeyNavRTCTTwoPrim")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTStringParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTStringParam")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETTwoKeyNav)
+                      .setNullable(false)
+                      .setCollection(true),
+                  new Parameter()
+                      .setName("ParameterComplex")
+                      .setType(nameCTTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(returnTypeString_NotNullable)
+          );
+    } else if (functionName.equals(nameBFCESKeyNavRTETKeyNavParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESKeyNavRTETKeyNavParam")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameETKeyNav)
+                      .setNullable(false)
+                      .setCollection(true),
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false)))
+              .setReturnType(
+                  new ReturnType().setType(nameETKeyNav).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCCTPrimCompRTETTwoKeyNavParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCCTPrimCompRTETTwoKeyNavParam")
+              .setBound(true)
+              .setComposable(true)
+              .setParameters(Arrays.asList(
+                  new Parameter()
+                      .setName("BindingParam")
+                      .setType(nameCTPrimComp)
+                      .setNullable(false)
+                      .setCollection(true),
+                  new Parameter()
+                      .setName("ParameterString")
+                      .setType(nameString)
+                      .setNullable(false)))
+              .setReturnType(returnTypeETTwoKeyNav_NotNullable)
+          );
+    }
+    return null;
+    // complete 20131210
+  }
+
+  @Override
+  public Singleton getSingleton(final FullQualifiedName entityContainer, final String name) throws ODataException {
+    if (entityContainer.equals(nameContainer)) {
+
+      if (name.equals("SI")) {
+        return new Singleton()
+            .setName("SI")
+            .setType(nameETTwoPrim);
+      } else if (name.equals("SINav")) {
+        return new Singleton()
+            .setName("SI")
+            .setType(nameETTwoKeyNav);
+      }
+
     }
     return null;
   }

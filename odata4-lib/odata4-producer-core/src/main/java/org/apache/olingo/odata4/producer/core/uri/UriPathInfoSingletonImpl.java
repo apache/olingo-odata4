@@ -24,16 +24,21 @@ import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 public class UriPathInfoSingletonImpl extends UriPathInfoImpl {
 
   private EdmSingleton singleton;
-  
+
   public UriPathInfoSingletonImpl() {
     this.setKind(UriPathInfoKind.singleton);
   }
 
   public UriPathInfoSingletonImpl setSingleton(EdmSingleton singleton) {
-        
+
     this.singleton = singleton;
     this.setType(singleton.getEntityType());
     return this;
+  }
+  
+  @Override
+  public String toString() {
+    return singleton.getName() + super.toString();
   }
 
 }

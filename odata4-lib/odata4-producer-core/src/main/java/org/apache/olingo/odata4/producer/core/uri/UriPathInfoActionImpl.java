@@ -40,5 +40,10 @@ public class UriPathInfoActionImpl extends UriPathInfoImpl {
 
     return this;
   }
+  
+  @Override
+  public String toString() {
+    return action.getName() + super.toString();
+  }
 
 }

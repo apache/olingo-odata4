@@ -36,6 +36,7 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 
+//TODO extend to test also exception which can occure while paring
 public class TokenValidator {
   private List<? extends Token> tokens = null;
   private List<Exception> exceptions = new ArrayList<Exception>();
@@ -43,7 +44,6 @@ public class TokenValidator {
   private Exception curException = null;
   private String input = null;
   private int logLevel = 0;
-
   private int mode;
 
   public TokenValidator run(final String uri) {
@@ -82,62 +82,20 @@ public class TokenValidator {
     return this;
   }
 
-  public TokenValidator log(final int logLevel) {
+  public TokenValidator setLog(final int logLevel) {
     this.logLevel = logLevel;
-    return this;
-  }
-
-  public TokenValidator isText(final String expected) {
-    assertEquals(expected, curToken.getText());
-    return this;
-  }
-
-  public TokenValidator isAllText(final String expected) {
-    String tmp = "";
-
-    for (Token curToken : tokens) {
-      tmp += curToken.getText();
-    }
-    assertEquals(expected, tmp);
-    return this;
-  }
-
-  public TokenValidator isAllInput() {
-    String tmp = "";
-
-    for (Token curToken : tokens) {
-      tmp += curToken.getText();
-    }
-    assertEquals(input, tmp);
-    return this;
-  }
-
-  public TokenValidator isInput() {
-    assertEquals(input, curToken.getText());
-    return this;
-  }
-
-  public TokenValidator isType(final int expected) {
-    // assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
-    assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
-    return this;
-  }
-
-  public TokenValidator isExType(final Class<?> exClass) {
-    assertEquals(exClass, curException.getClass());
     return this;
   }
 
   private List<? extends Token> parseInput(final String input) {
     ANTLRInputStream inputStream = new ANTLRInputStream(input);
 
-    UriLexer lexer = new TestUriLexer(this, inputStream, mode);
-    // lexer.setInSearch(searchMode);
-    // lexer.removeErrorListeners();
+    UriLexer lexer = new UriLexerWithTrace(inputStream, logLevel, mode);
     lexer.addErrorListener(new ErrorCollector(this));
     return lexer.getAllTokens();
   }
 
+  // navigate within the tokenlist
   public TokenValidator first() {
     try {
       curToken = tokens.get(0);
@@ -147,23 +105,8 @@ public class TokenValidator {
     return this;
   }
 
-  public TokenValidator exFirst() {
-    try {
-      curException = exceptions.get(0);
-    } catch (IndexOutOfBoundsException ex) {
-      curException = null;
-    }
-    return this;
-
-  }
-
   public TokenValidator last() {
     curToken = tokens.get(tokens.size() - 1);
-    return this;
-  }
-
-  public TokenValidator exLast() {
-    curException = exceptions.get(exceptions.size() - 1);
     return this;
   }
 
@@ -176,6 +119,22 @@ public class TokenValidator {
     return this;
   }
 
+  public TokenValidator exLast() {
+    curException = exceptions.get(exceptions.size() - 1);
+    return this;
+  }
+
+  // navigate within the exception list
+  public TokenValidator exFirst() {
+    try {
+      curException = exceptions.get(0);
+    } catch (IndexOutOfBoundsException ex) {
+      curException = null;
+    }
+    return this;
+
+  }
+
   public TokenValidator exAt(final int index) {
     try {
       curException = exceptions.get(index);
@@ -185,36 +144,48 @@ public class TokenValidator {
     return this;
   }
 
-  private static class TestUriLexer extends UriLexer {
-    private TokenValidator validator;
-
-    public TestUriLexer(final TokenValidator validator, final CharStream input, final int mode) {
-      super(input);
-      super.mode(mode);
-      this.validator = validator;
-    }
-
-    @Override
-    public void pushMode(final int m) {
-      if (validator.logLevel > 0) {
-        System.out.println("OnMode" + ": " + UriLexer.modeNames[m]);
-      }
-      super.pushMode(m);
-
-    }
-
-    @Override
-    public int popMode() {
-      int m = super.popMode();
-      if (validator.logLevel > 0) {
-        System.out.println("OnMode" + ": " + UriLexer.modeNames[m]);
-      }
-
-      return m;
-    }
-
+  // test functions
+  public TokenValidator isText(final String expected) {
+    assertEquals(expected, curToken.getText());
+    return this;
   }
 
+  public TokenValidator isAllText(final String expected) {
+    String actual = "";
+
+    for (Token curToken : tokens) {
+      actual += curToken.getText();
+    }
+    assertEquals(expected, actual);
+    return this;
+  }
+
+  public TokenValidator isAllInput() {
+    String actual = "";
+
+    for (Token curToken : tokens) {
+      actual += curToken.getText();
+    }
+    assertEquals(input, actual);
+    return this;
+  }
+
+  public TokenValidator isInput() {
+    assertEquals(input, curToken.getText());
+    return this;
+  }
+
+  public TokenValidator isType(final int expected) {
+    assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
+    return this;
+  }
+
+  public TokenValidator isExType(final Class<?> exClass) {
+    assertEquals(exClass, curException.getClass());
+    return this;
+  }
+
+  // TODO create ErrorCollector for both ParserValidator and LexerValidator
   private static class ErrorCollector implements ANTLRErrorListener {
     TokenValidator tokenValidator;
 

@@ -54,4 +54,11 @@ public class UriPathInfoFunctionImpl extends UriPathInfoImpl {
     this.keyPredicates = keyPredicates;
     return this;
   }
+  
+  @Override
+  public String toString() {
+    return function.getName() + super.toString();
+  }
+
+  
 }

@@ -30,7 +30,7 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.Tree;
 
-public class ParseTreeSerializer {
+public class ParseTreeToText {
 
   public static String getTreeAsText(final Tree contextTree, final String[] ruleNames) {
     return toStringTree(contextTree, Arrays.asList(ruleNames));

@@ -16,26 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.api.edm.EdmAction;
+import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 
 /**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
+ * Covers Functionimports and BoundFunction in URI
  */
-public interface EdmType extends EdmNamed {
+public class UriPathInfoIT extends UriPathInfoImpl {
 
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
+  private boolean explicitIT;
 
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
 
+  public UriPathInfoIT() {
+    this.setKind(UriPathInfoKind.it);
+    this.setCollection(false);
+  }
+  @Override
+  public String toString() {
+ 
+    if (explicitIT) {
+      return "$it" + super.toString();
+    }
+    return super.toString();
+  }
 
   
+  public UriPathInfoIT setIsExplicitIT(boolean explicitIT) {
+    this.explicitIT =explicitIT;
+    return this; 
+  }
+
+  
+
 }

@@ -33,8 +33,16 @@ public class UriPathInfoEntitySetImpl extends UriPathInfoImpl {
 
     this.edmEntitySet = edmES;
     this.setType(edmES.getEntityType());
+    this.setCollection(true);
 
     return this;
   }
+  
+  
+  @Override
+  public String toString() {
+    return edmEntitySet.getName() + super.toString();
+  }
+
 
 }

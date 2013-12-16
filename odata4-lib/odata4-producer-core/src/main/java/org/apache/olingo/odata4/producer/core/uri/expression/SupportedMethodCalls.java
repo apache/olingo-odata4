@@ -16,26 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+public enum SupportedMethodCalls {
+  MUL("mul"), DIV("div"), MOD("mod"),
+  ADD("add"), SUB("sub"), GT("gt"), GE("ge"), LT("lt"), LE("le"),
+  ISOF("isof"),
+  EQ("eq"), NE("ne"),
+  AND("and"), OR("or");
 
-/**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- */
-public interface EdmType extends EdmNamed {
+  private String syntax;
 
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
+  private SupportedMethodCalls(final String syntax) {
+    this.syntax = syntax;
+  }
 
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
+  @Override
+  public String toString() {
+    return syntax;
+  }
 
+  public static SupportedMethodCalls get(String operator) {
+    for (SupportedMethodCalls op : SupportedMethodCalls.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
+  }
 
-  
 }

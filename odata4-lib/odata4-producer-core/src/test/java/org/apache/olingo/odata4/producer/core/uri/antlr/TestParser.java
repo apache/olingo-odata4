@@ -40,7 +40,7 @@ public class TestParser {
 
   @Test
   public void test() {
-    test.log(2).aAM().aFC().aCS().run("ODI?$filter=(1) mul 2").isText("odataRelativeUriEOF(odataRelativeUri("
+    test.aAM().aFC().aCS().run("ODI?$filter=(1) mul 2").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
         + "queryOption(systemQueryOption("
         + "filter($filter = commonExpr("

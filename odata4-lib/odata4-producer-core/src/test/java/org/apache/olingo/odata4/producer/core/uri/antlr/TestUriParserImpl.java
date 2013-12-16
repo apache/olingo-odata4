@@ -18,16 +18,24 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.antlr;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechProvider;
+import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
+import org.apache.olingo.odata4.producer.core.testutil.FilterTreeToText;
 import org.apache.olingo.odata4.producer.core.testutil.UriResourcePathValidator;
+import org.apache.olingo.odata4.producer.core.uri.SystemQueryParameter;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
+import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
 import org.junit.Test;
 
 public class TestUriParserImpl {
@@ -53,7 +61,7 @@ public class TestUriParserImpl {
 
   public TestUriParserImpl() {
     test = new UriResourcePathValidator();
-    edm = new EdmProviderImpl(new EdmTechProvider());
+    edm = new EdmProviderImpl(new EdmTechTestProvider());
     test.setEdm(edm);
   }
 
@@ -68,9 +76,10 @@ public class TestUriParserImpl {
 
   @Test
   public void testShortUris() {
-    test.run("$batch").isKind(UriInfoKind.batch);
-    test.run("$all").isKind(UriInfoKind.all);
-    test.run("$crossjoin(abc)").isKind(UriInfoKind.crossjoin);
+    //TODO create on validator for these URIs, because the will more complicated in future
+    //test.run("$batch").isKind(UriInfoKind.batch);
+    //test.run("$all").isKind(UriInfoKind.all);
+    //test.run("$crossjoin(abc)").isKind(UriInfoKind.crossjoin);
   }
 
   @Test
@@ -116,7 +125,9 @@ public class TestUriParserImpl {
         .isKeyPredicate(10, "PropertyDuration", "duration'P10DT5H34M21.123456789012S'")
         .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
         .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55.123456789012");
+  }
 
+  public void testEntitySet_Prop() {
     // with property
     test.run("ESAllPrim(1)/PropertyString")
         .isUriPathInfoKind(UriPathInfoKind.entitySet)
@@ -138,13 +149,14 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySetNav() {
+  public void testEntitySet_NavProp() {
 
     test.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne")
         .at(0)
         .isUriPathInfoKind(UriPathInfoKind.entitySet)
-        .isInitialType(EdmTechProvider.nameETKeyNav)
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isInitialType(EdmTechProvider.nameETKeyNav)
+
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isProperty(0, "NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav)
         .at(1)
@@ -200,17 +212,57 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testTypeFilter() {
-    // test.run("ESTwoPrim");
+  public void testEntitySet_TypeFilter() {
+
+    // filter
     test.run("ESTwoPrim/com.sap.odata.test1.ETBase")
         .isUriPathInfoKind(UriPathInfoKind.entitySet)
-        .isType(new FullQualifiedName("com.sap.odata.test1", "ETBase"));
+        .isInitialType(EdmTechProvider.nameETTwoPrim)
+        .isCollectionTypeFilter(EdmTechProvider.nameETBase)
+        .isSingleTypeFilter(null)
+        .isType(EdmTechProvider.nameETBase)
+        .isCollection(true);
 
-    test.run("ESTwoPrim/com.sap.odata.test1.ETBase/AdditionalPropertyString_5")
+    // filter before key predicate
+    test.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)")
         .isUriPathInfoKind(UriPathInfoKind.entitySet)
-        .isType(new FullQualifiedName("Edm", "String"))
-        .isProperties(Arrays.asList("AdditionalPropertyString_5"))
-        .isProperty(0, "AdditionalPropertyString_5", EdmTechProvider.nameString);
+        .isInitialType(EdmTechProvider.nameETTwoPrim)
+        .isCollectionTypeFilter(EdmTechProvider.nameETBase)
+        .isSingleTypeFilter(null)
+        .isType(EdmTechProvider.nameETBase)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isCollection(false);
+
+    test.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)/AdditionalPropertyString_5")
+        .isUriPathInfoKind(UriPathInfoKind.entitySet)
+        .isInitialType(EdmTechProvider.nameETTwoPrim)
+        .isCollectionTypeFilter(EdmTechProvider.nameETBase)
+        .isSingleTypeFilter(null)
+        .isType(EdmTechProvider.nameString)
+
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isProperty(0, "AdditionalPropertyString_5", EdmTechProvider.nameString)
+        .isCollection(false);
+
+    // filter after key predicate
+    test.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase")
+        .isUriPathInfoKind(UriPathInfoKind.entitySet)
+        .isInitialType(EdmTechProvider.nameETTwoPrim)
+        .isCollectionTypeFilter(null)
+        .isSingleTypeFilter(EdmTechProvider.nameETBase)
+        .isType(EdmTechProvider.nameETBase)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isCollection(false);
+
+    test.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase/AdditionalPropertyString_5")
+        .isUriPathInfoKind(UriPathInfoKind.entitySet)
+        .isType(EdmTechProvider.nameString)
+        .isInitialType(EdmTechProvider.nameETTwoPrim)
+        .isCollectionTypeFilter(null)
+        .isSingleTypeFilter(EdmTechProvider.nameETBase)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isProperty(0, "AdditionalPropertyString_5", EdmTechProvider.nameString)
+        .isCollection(false);
   }
 
   @Test
@@ -234,8 +286,8 @@ public class TestUriParserImpl {
     test.run("SINav/NavPropertyETKeyNavOne")
         .at(0)
         .isUriPathInfoKind(UriPathInfoKind.singleton)
-        .isType(EdmTechProvider.nameETKeyNav)
         .isInitialType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EdmTechProvider.nameETKeyNav)
         .isCollection(false)
         .at(1)
         .isType(EdmTechProvider.nameETKeyNav);
@@ -243,8 +295,8 @@ public class TestUriParserImpl {
     test.run("SINav/NavPropertyETKeyNavOne/PropertyInt16")
         .at(0)
         .isUriPathInfoKind(UriPathInfoKind.singleton)
-        .isType(EdmTechProvider.nameETKeyNav)
         .isInitialType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EdmTechProvider.nameETKeyNav)
         .isCollection(false)
         .at(1)
         .isInitialType(EdmTechProvider.nameETKeyNav)
@@ -253,8 +305,9 @@ public class TestUriParserImpl {
     test.run("SINav/NavPropertyETKeyNavMany(1)")
         .at(0)
         .isUriPathInfoKind(UriPathInfoKind.singleton)
-        .isType(EdmTechProvider.nameETKeyNav)
         .isInitialType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EdmTechProvider.nameETKeyNav)
+
         .isCollection(true)
         .at(1)
         .isType(EdmTechProvider.nameETKeyNav);
@@ -262,8 +315,8 @@ public class TestUriParserImpl {
     test.run("SINav/NavPropertyETKeyNavMany(1)/PropertyInt16")
         .at(0)
         .isUriPathInfoKind(UriPathInfoKind.singleton)
-        .isType(EdmTechProvider.nameETKeyNav)
         .isInitialType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EdmTechProvider.nameETKeyNav)
         .isCollection(true)
         .at(1)
         .isInitialType(EdmTechProvider.nameETKeyNav)
@@ -273,7 +326,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testActionImport() {
-    
+
     test.run("AIRTPrimParam")
         .isUriPathInfoKind(UriPathInfoKind.action)
         .isType(EdmTechProvider.nameString);
@@ -293,16 +346,19 @@ public class TestUriParserImpl {
         .isType(EdmTechProvider.nameETCollAllPrim)
         .isCollection(true);
 
+    //the parser can to this, but should not, as defined per ABNF
+    /*
     test.run("AIRTETCollAllPrimParam(1)")
         .isUriPathInfoKind(UriPathInfoKind.action)
         .isType(EdmTechProvider.nameETCollAllPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isCollection(false);  
+        .isCollection(false);
     test.run("AIRTETCollAllPrimParam(ParameterInt16=1)")
         .isUriPathInfoKind(UriPathInfoKind.action)
         .isType(EdmTechProvider.nameETCollAllPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isCollection(false);
+        */
   }
 
   /*
@@ -346,9 +402,48 @@ public class TestUriParserImpl {
 
   @Test
   public void testErrors() {
-    //the following is wrong and must throw an error behind an Action are not () allowed
-    //test.run("AIRTPrimParam()");
+    // the following is wrong and must throw an error behind an Action are not () allowed
+    // test.run("AIRTPrimParam()");
+
   }
-  
-  
+
+  @Test
+  public void testFilter() {
+    test.run("ESAllPrim?$filter=1")
+        .isUriPathInfoKind(UriPathInfoKind.entitySet)
+        .hasQueryParameter(SystemQueryParameter.FILTER.toString(), 1)
+        .isFilterString("1");
+
+  }
+
+  @Test
+  public void testFilterSimpleSameBinaryBinaryBinaryPriority() {
+
+    test.runFilter("1 add 2 add 3 add 4").is("<<<1 add 2> add 3> add 4>");
+    test.runFilter("1 add 2 add 3 div 4").is("<<1 add 2> add <3 div 4>>");
+    test.runFilter("1 add 2 div 3 add 4").is("<<1 add <2 div 3>> add 4>");
+    test.runFilter("1 add 2 div 3 div 4").is("<1 add <<2 div 3> div 4>>");
+    test.runFilter("1 div 2 add 3 add 4").is("<<<1 div 2> add 3> add 4>");
+    test.runFilter("1 div 2 add 3 div 4").is("<<1 div 2> add <3 div 4>>");
+    test.runFilter("1 div 2 div 3 add 4").is("<<<1 div 2> div 3> add 4>");
+    test.runFilter("1 div 2 div 3 div 4").is("<<<1 div 2> div 3> div 4>");
+
+  }
+
+  @Test
+  public void testFilterComplexMixedPriority() {
+    test.runFilter("a      or c      and e     ").isCompr("< a       or < c       and  e      >>");
+    test.runFilter("a      or c      and e eq f").isCompr("< a       or < c       and <e eq f>>>");
+    test.runFilter("a      or c eq d and e     ").isCompr("< a       or <<c eq d> and  e      >>");
+    test.runFilter("a      or c eq d and e eq f").isCompr("< a       or <<c eq d> and <e eq f>>>");
+    test.runFilter("a eq b or c      and e     ").isCompr("<<a eq b> or < c       and  e      >>");
+    test.runFilter("a eq b or c      and e eq f").isCompr("<<a eq b> or < c       and <e eq f>>>");
+    test.runFilter("a eq b or c eq d and e     ").isCompr("<<a eq b> or <<c eq d> and  e      >>");
+    test.runFilter("a eq b or c eq d and e eq f").isCompr("<<a eq b> or <<c eq d> and <e eq f>>>");
+  }
+
+  @Test
+  public void textFilterMember() {
+    test.runFilter("a").is("a");
+  }
 }

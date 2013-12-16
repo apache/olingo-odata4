@@ -18,11 +18,18 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 
 public class UriInfoImpl {
 
   private UriInfoKind kind;
+
+  private Map<String, List<Object>> queryParameter = new HashMap<String, List<Object>>();
 
   public UriInfoImpl setKind(final UriInfoKind kind) {
     this.kind = kind;
@@ -33,4 +40,16 @@ public class UriInfoImpl {
     return kind;
   }
 
+  public List<Object> getQueryParameters(String name) {
+    return queryParameter.get(name);
+  }
+
+  public void addQueryParameter(String name, Object object) {
+    List<Object> entry = queryParameter.get(name);
+    if (entry != null) {
+      entry.add(object);
+    } else {
+      queryParameter.put(name, Arrays.asList(object));
+    }
+  }
 }

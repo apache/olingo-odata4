@@ -16,26 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
 
-/**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- */
-public interface EdmType extends EdmNamed {
+public class Member extends Expression implements Visitable {
 
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
+  private boolean isIT;
+  UriInfoImplPath path;
 
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
+  public Member setIT(boolean isIT) {
+    this.isIT = isIT;
+    return this;
+  }
 
+  public boolean isIT() {
+    return isIT;
+  }
 
-  
+  public Member setPath(UriInfoImplPath pathSegments) {
+    this.path = pathSegments;
+    return this;
+  }
+
+  @Override
+  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+    return visitor.visitMember(this);
+
+  }
+
+  public UriInfoImplPath getPath() {
+    return path;
+  }
 }

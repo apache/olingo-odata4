@@ -16,26 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+public class UnaryOperator extends Expression implements Visitable {
 
-/**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- */
-public interface EdmType extends EdmNamed {
+  private SupportedUnaryOperators operator;
+  private Expression expression;
 
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
+  public void setOperand(Expression expression) {
+    this.expression = expression;
 
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
+  }
 
+  public void setOperator(SupportedUnaryOperators operator) {
+    this.operator = operator;
 
-  
+  }
+
+  @Override
+  public Object accept(ExpressionVisitor visitor) throws ExceptionVisitExpression {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

@@ -158,17 +158,23 @@ DESC            : 'desc';
 MUL             : 'mul';
 DIV             : 'div';
 MOD             : 'mod';
+
 ADD             : 'add';
 SUB             : 'sub';
+
 GT              : 'gt';
 GE              : 'ge';
 LT              : 'lt';
 LE              : 'le';
+ISOF            : 'isof';
+
 EQ_ALPHA        : 'eq';
 NE              : 'ne';
+
 AND             : 'and';
 OR              : 'or';
-ISOF            : 'isof';
+
+
 NOT             : 'not';
 MINUS           :'-';
 NANINFINITY     : 'NaN' | '-INF' | 'INF';

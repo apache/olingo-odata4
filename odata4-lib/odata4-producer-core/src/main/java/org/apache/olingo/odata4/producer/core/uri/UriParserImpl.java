@@ -21,6 +21,9 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import java.util.List;
 
+import javax.annotation.processing.SupportedAnnotationTypes;
+
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
@@ -37,24 +40,54 @@ import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAddContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAliasContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAndContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltBatchContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltComparismContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEntityCastContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEntityContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEqualityContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltLiteralContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMemberContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMetadataContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMethodContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMultContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltOrContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltPharenthesisContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltResourcePathContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltRootContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltUnaryContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.CustomQueryOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FilterContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FormatContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.IdContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.InlinecountContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MemberExprContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NameValueListContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NameValueOptListContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NameValuePairContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OrderbyContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.PathSegmentContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.PathSegmentsContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.QueryOptionContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.QueryOptionsContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ResourcePathContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SearchContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SelectContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkipContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkiptokenContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SystemQueryOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TopContext;
+import org.apache.olingo.odata4.producer.core.uri.expression.*;
 
 public class UriParserImpl {
   private Edm edm = null;
   private EdmEntityContainer edmEntityContainer = null;
+  private UriPathInfoImpl lastUriPathInfo;
 
   public UriParserImpl(Edm edm) {
     this.edm = edm;
@@ -68,7 +101,9 @@ public class UriParserImpl {
 
   private UriInfoImpl readODataRelativeUriEOF(OdataRelativeUriEOFContext node) {
     OdataRelativeUriContext first = (OdataRelativeUriContext) node.getChild(0);
-    return readODataRelativeUri(first);
+
+    UriInfoImpl uriInfo = readODataRelativeUri(first);
+    return uriInfo;
   }
 
   private UriInfoImpl readODataRelativeUri(OdataRelativeUriContext node) {
@@ -94,7 +129,12 @@ public class UriParserImpl {
     QueryOptionsContext qoc = (QueryOptionsContext) node.getChild(2); // is null if there are no options
 
     if (rpc.vPSs != null) {
-      return readPathSegments(rpc.vPSs);
+      UriInfoImplPath uriInfo = readPathSegments(rpc.vPSs, null);
+      
+      if (qoc != null) {
+        readQueryParameter(uriInfo, qoc);
+      }
+      return uriInfo;
     } else if (rpc.vCJ != null) {
       return new UriInfoImplCrossjoin();
     } else if (rpc.vAll != null) {
@@ -104,21 +144,165 @@ public class UriParserImpl {
     return null;
   }
 
-  private UriInfoImpl readPathSegments(PathSegmentsContext pathSegments) {
-    int iSegment = 0;
+  private void readQueryParameter(UriInfoImplPath uriInfoImplPath, QueryOptionsContext qoc) {
+    for (QueryOptionContext queryOption : qoc.qo) {
+      readQueryOption(uriInfoImplPath, queryOption);
+    }
+  }
+
+  private void readQueryOption(UriInfoImplPath uriInfoImplPath, QueryOptionContext queryOption) {
+    ParseTree firstChild = queryOption.getChild(0);
+
+    if (firstChild instanceof SystemQueryOptionContext) {
+      readSystemQueryOption(uriInfoImplPath, firstChild);
+    } else if (firstChild instanceof CustomQueryOptionContext) {
+      // TODO read custom request option
+    } else if (firstChild.getText().equals("@")) {
+      // TODO read ailas and value
+    }
+
+  }
+
+  private void readSystemQueryOption(UriInfoImplPath uriInfoImplPath, ParseTree systemQueryOption) {
+    ParseTree firstChild = systemQueryOption.getChild(0);
+    if (firstChild instanceof ExpandContext) {
+      // TODO implement
+    } else if (firstChild instanceof FilterContext) {
+      Expression expression = readFilterOption(firstChild);
+      uriInfoImplPath.setSystemParameter(SystemQueryParameter.FILTER, expression);
+      return;
+    } else if (firstChild instanceof FormatContext) {
+      // TODO implement
+    } else if (firstChild instanceof IdContext) {
+      // TODO implement
+    } else if (firstChild instanceof InlinecountContext) {
+      // TODO implement
+    } else if (firstChild instanceof OrderbyContext) {
+      // TODO implement
+    } else if (firstChild instanceof SearchContext) {
+      // TODO implement
+    } else if (firstChild instanceof SelectContext) {
+      // TODO implement
+    } else if (firstChild instanceof SkipContext) {
+      // TODO implement
+    } else if (firstChild instanceof SkiptokenContext) {
+      // TODO implement
+    } else if (firstChild instanceof TopContext) {
+      // TODO implement
+    }
+  }
+
+  private Expression readFilterOption(ParseTree filter) {
+    return readCommonExpression(filter.getChild(2));
+  }
+
+  private Expression readCommonExpression(ParseTree expressionContext) {
+    // Expression ret = null;
+
+    if (expressionContext instanceof AltPharenthesisContext) {
+      return readCommonExpression(expressionContext.getChild(1));
+    } else if (expressionContext instanceof AltMethodContext) {
+      return readMethod(expressionContext);
+    } else if (expressionContext instanceof AltUnaryContext) {
+      UnaryOperator unary = new UnaryOperator();
+      unary.setOperator(SupportedUnaryOperators.get(expressionContext.getChild(0).getText()));
+      unary.setOperand(readCommonExpression(expressionContext.getChild(1)));
+      return unary;
+    } else if (expressionContext instanceof AltMemberContext) {
+      return readMember(expressionContext);
+    } else if (expressionContext instanceof AltMultContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltAddContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltComparismContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltEqualityContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltAndContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltOrContext) {
+      return readBinary(expressionContext);
+    } else if (expressionContext instanceof AltRootContext) {
+      // TODO
+    } else if (expressionContext instanceof AltAliasContext) {
+      Alias alias = new Alias();
+      alias.setReference(expressionContext.getChild(1).getText());
+      // TODO collect all aliases and verify them afterwards
+      return alias;
+    } else if (expressionContext instanceof AltLiteralContext) {
+      Literal literal = new Literal();
+      literal.setText(expressionContext.getText());
+      return literal;
+    }
+    return null;
+  }
+
+  private Expression readMember(ParseTree expressionContext) {
+    MemberExprContext context = (MemberExprContext) expressionContext.getChild(0);
+
+    Member member = new Member();
+    
+    UriPathInfoIT  pathInfoIT =  new UriPathInfoIT();
+    
+
+    if (context.ps!= null) {
+      if (context.getChild(0).getText().startsWith("$it/")) {
+        member.setIT(true); // TODO check if this is required 
+        pathInfoIT.setIsExplicitIT(true);
+      }
+      UriParserImpl parser = new UriParserImpl(this.edm);
+      
+      UriInfoImplPath path = parser.readPathSegments(context.ps, 
+          new UriPathInfoIT().setType(lastUriPathInfo.getType()));
+      member.setPath(path);
+    } else    {
+      member.setIT(true);
+    }
+    return member;
+      
+  }
+
+  private Expression readMethod(ParseTree expressionContext) {
+    MethodCall expression = new MethodCall();
+    expression.setMethod(SupportedMethodCalls.get(expressionContext.getChild(0).getText()));
+    int i = 1;
+    while (i < expressionContext.getChildCount()) {
+      expression.addParameter(readCommonExpression(expressionContext.getChild(i)));
+      i++;
+    }
+    return expression;
+  }
+
+  private Expression readBinary(ParseTree expressionContext) {
+    BinaryOperator expression = new BinaryOperator();
+    expression.setLeftOperand(readCommonExpression(expressionContext.getChild(0)));
+    expression.setOperator(SupportedBinaryOperators.get(expressionContext.getChild(2).getText()));
+    expression.setRightOperand(readCommonExpression(expressionContext.getChild(4)));
+    return expression;
+  }
+
+  private UriInfoImplPath readPathSegments(PathSegmentsContext pathSegments, UriPathInfoImpl usePrevPathInfo) {
+    
+    UriPathInfoImpl prevPathInfo = usePrevPathInfo;
     UriInfoImplPath infoImpl = new UriInfoImplPath();
-    PathSegmentContext firstChild = (PathSegmentContext) pathSegments.vlPS.get(iSegment);
-    UriPathInfoImpl firstPathInfo = readFirstPathSegment(infoImpl, firstChild);
+    
+    int iSegment = 0;
 
-    iSegment++;
-
-    UriPathInfoImpl prevPathInfo = firstPathInfo;
+    if (prevPathInfo == null) {
+      PathSegmentContext firstChild = (PathSegmentContext) pathSegments.vlPS.get(iSegment);
+      UriPathInfoImpl firstPathInfo = readFirstPathSegment(infoImpl, firstChild);
+      iSegment++;
+      prevPathInfo = firstPathInfo;
+    } else {
+      infoImpl.addPathInfo(prevPathInfo);
+    }
 
     while (iSegment < pathSegments.vlPS.size()) {
       PathSegmentContext nextChild = (PathSegmentContext) pathSegments.vlPS.get(iSegment);
       prevPathInfo = readNextPathSegment(infoImpl, nextChild, prevPathInfo);
       iSegment++;
     }
+    lastUriPathInfo = prevPathInfo;
     return infoImpl;
   }
 

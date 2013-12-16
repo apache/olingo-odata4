@@ -20,5 +20,5 @@
 package org.apache.olingo.odata4.producer.api.uri;
 
 public enum UriPathInfoKind {
-  entitySet, navEntitySet, singleton, action, function;
+  entitySet, navEntitySet, singleton, action, function, it;
 }

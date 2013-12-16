@@ -19,13 +19,19 @@
 package org.apache.olingo.odata4.producer.core.uri;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
 
 public class UriInfoImplPath extends UriInfoImpl {
 
-  List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
+  private List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
+
+  private Expression spFilter;
 
   public UriInfoImplPath() {
     this.setKind(UriInfoKind.path);
@@ -45,6 +51,37 @@ public class UriInfoImplPath extends UriInfoImpl {
 
   public UriPathInfoImpl getUriPathInfo(int index) {
     return pathInfos.get(index);
+  }
+
+  public void setSystemParameter(SystemQueryParameter filter, Expression expression) {
+    spFilter = expression;
+    addQueryParameter(filter.toString(), expression);
+  }
+
+  public Expression getFilter() {
+    return this.spFilter;
+  }
+
+  @Override
+  public String toString() {
+    String ret = "";
+    int i = 0;
+    while (i < pathInfos.size()) {
+      if ( i > 0 ) { 
+        ret += "/";
+      }
+        
+      ret += pathInfos.get(i).toString();
+      
+      
+      
+      i++;
+      
+    }
+    
+    
+
+    return ret;
   }
 
 }

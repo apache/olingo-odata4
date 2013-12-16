@@ -16,26 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+public class BinaryOperator extends Expression implements Visitable {
 
-/**
- * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- */
-public interface EdmType extends EdmNamed {
+  private SupportedBinaryOperators operator;
+  private Expression left;
+  private Expression right;
 
-  /**
-   * Namespace of this {@link EdmType}
-   * @return namespace as String
-   */
-  String getNamespace();
+  public BinaryOperator setOperator(SupportedBinaryOperators operator) {
+    this.operator = operator;
+    return this;
+  }
 
-  /**
-   * @return {@link EdmTypeKind} of this {@link EdmType}
-   */
-  EdmTypeKind getKind();
+  public void setLeftOperand(Expression operand) {
+    this.left = operand;
 
+  }
 
-  
+  public void setRightOperand(Expression operand) {
+    this.right = operand;
+
+  }
+
+  @Override
+  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+    T left = this.left.accept(visitor);
+    T right = this.right.accept(visitor);
+    return visitor.visitBinaryOperator(operator,left,right);
+  }
+ 
+
 }
