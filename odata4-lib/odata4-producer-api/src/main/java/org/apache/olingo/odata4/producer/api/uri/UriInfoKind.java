@@ -20,6 +20,5 @@
 package org.apache.olingo.odata4.producer.api.uri;
 
 public enum UriInfoKind {
-  batch,entity, metadata, all, crossjoin, path;
-
+  all, batch, crossjoin, entityId, metadata, resource, service;
 }

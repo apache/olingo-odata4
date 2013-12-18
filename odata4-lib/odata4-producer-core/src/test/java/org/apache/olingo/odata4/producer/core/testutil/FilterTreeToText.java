@@ -20,15 +20,21 @@ package org.apache.olingo.odata4.producer.core.testutil;
 
 import java.util.List;
 
-import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
-import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.expression.ExpressionVisitor;
-import org.apache.olingo.odata4.producer.core.uri.expression.Member;
-import org.apache.olingo.odata4.producer.core.uri.expression.SupportedBinaryOperators;
-import org.apache.olingo.odata4.producer.core.uri.expression.SupportedMethodCalls;
-import org.apache.olingo.odata4.producer.core.uri.expression.SupportedUnaryOperators;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedUnaryOperators;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionVisitor;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MemberImpl;
+
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
+  
+  public static String Serialize(FilterOptionImpl filter) throws ExceptionVisitExpression {
+    return filter.getExpression().accept(new FilterTreeToText());
+  }
 
   @Override
   public String visitBinaryOperator(SupportedBinaryOperators operator, String left, String right)
@@ -53,8 +59,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
       text += parameters.get(i);
       i++;
     }
-    // TODO Auto-generated method stub
-    return text + ")";
+    return text + ")>";
   }
 
   @Override
@@ -63,22 +68,15 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitMember(Member member) throws ExceptionVisitExpression {
+  public String visitMember(MemberImpl member) throws ExceptionVisitExpression {
     String ret = "";
     if (member.isIT()) {
       ret += "$it";
     }
 
-    UriInfoImplPath path = member.getPath();
+    UriInfoImpl path = (UriInfoImpl) member.getPath();
     if (path != null) {
-      /*
-       * if (member.isIT()) {
-       * ret +="/";
-       * }
-       */
-
       ret += path.toString();
-
     }
     return ret;
   }

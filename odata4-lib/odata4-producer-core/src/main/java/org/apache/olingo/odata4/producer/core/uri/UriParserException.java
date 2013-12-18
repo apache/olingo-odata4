@@ -20,14 +20,19 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 //TODO Check name of this exception when implementing proper error handling
 public class UriParserException extends Exception {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -1813203179082217112L;
 
   public UriParserException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = -1813203179082217112L;
+  public UriParserException(String message) {
+    super(message, null);
+  }
+
+  
 
 }

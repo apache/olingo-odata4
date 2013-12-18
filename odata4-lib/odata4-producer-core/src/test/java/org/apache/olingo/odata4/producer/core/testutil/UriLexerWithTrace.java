@@ -64,7 +64,7 @@ public class UriLexerWithTrace extends UriLexer{
     out += UriLexer.modeNames[_mode];
 
     if (logLevel > 1) {
-      System.out.print(out + "            ");
+      System.out.println(out + "            ");
     }
   }
 
@@ -78,7 +78,7 @@ public class UriLexerWithTrace extends UriLexer{
     out += UriLexer.modeNames[_mode];
 
     if (logLevel > 1) {
-      System.out.print(out + "            ");
+      System.out.println(out + "            ");
     }
 
     return m;

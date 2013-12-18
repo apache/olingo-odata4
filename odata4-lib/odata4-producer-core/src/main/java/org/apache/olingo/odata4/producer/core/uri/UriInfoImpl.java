@@ -18,38 +18,276 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
+import org.apache.olingo.odata4.producer.api.uri.UriInfo;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoAll;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoBatch;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoCrossjoin;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoEntityId;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoMetadata;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoService;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.FormatOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.IdOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FormatOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.IdOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SearchOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipTokenOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SystemQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.TopOptionImpl;
 
-public class UriInfoImpl {
+public class UriInfoImpl implements UriInfo {
 
   private UriInfoKind kind;
 
-  private Map<String, List<Object>> queryParameter = new HashMap<String, List<Object>>();
+  private List<String> entitySetNames = new ArrayList<String>(); // for $entity
+  private EdmEntityType entityTypeCast; // for $entity
 
-  public UriInfoImpl setKind(final UriInfoKind kind) {
+  // Query options
+  private List<CustomQueryOptionImpl> customQueryOptions;
+  private ExpandOptionImpl expandOption;
+  private FilterOptionImpl filterOption;
+  private FormatOptionImpl formatOption;
+  private IdOption idOption;
+  private InlineCountImpl inlineCountOption;
+  private OrderByImpl orderByOption;
+  private SearchOptionImpl searchOption;
+  private SelectOptionImpl selectOption;
+  private SkipOptionImpl skipOption;
+  private SkipTokenOptionImpl skipTokenOption;
+  private TopOptionImpl topOption;
+
+  private UriResourcePart lastPathPart;
+  private List<UriResourcePart> pathParts = new ArrayList<UriResourcePart>();
+
+  public UriInfoImpl(Edm edm) {
+    // this.edm = edm;
+  }
+
+  @Override
+  public UriInfoAll asUriInfoAll() {
+    return this;
+  }
+
+  @Override
+  public UriInfoBatch asUriInfoBatch() {
+    return this;
+  }
+
+  @Override
+  public UriInfoCrossjoin asUriInfoCrossjoin() {
+    return this;
+  }
+
+  @Override
+  public UriInfoEntityId asUriInfoEntityId() {
+    return this;
+  }
+
+  @Override
+  public UriInfoMetadata asUriInfoMetadata() {
+    return this;
+  }
+
+  @Override
+  public UriInfoResource asUriInfoResource() {
+    return this;
+  }
+
+  @Override
+  public List<String> getEntitySetNames() {
+    return Collections.unmodifiableList(entitySetNames);
+  }
+
+  public void addEntitySetName(String entitySet) {
+    entitySetNames.add(entitySet);
+  }
+
+  @Override
+  public List<UriResourcePart> getUriResourceParts() {
+    List<UriResourcePart> returnList = new ArrayList<UriResourcePart>();
+    for (UriResourcePart part : pathParts) {
+      returnList.add(part);
+    }
+    return Collections.unmodifiableList(returnList);
+  }
+
+  public void addPathInfo(UriResourcePartImpl uriPathInfo) {
+    pathParts.add(uriPathInfo);
+    lastPathPart = uriPathInfo;
+  }
+
+  @Override
+  public String getContext() {
+    return null;
+  }
+
+  @Override
+  public List<CustomQueryOption> getCustomQueryOptions() {
+    List<CustomQueryOption> retList = new ArrayList<CustomQueryOption>();
+    for (CustomQueryOptionImpl item : customQueryOptions) {
+      retList.add(item);
+    }
+    return retList;
+  }
+
+  @Override
+  public EdmEntityType getEntityTypeCast() {
+    return entityTypeCast;
+  }
+
+  @Override
+  public ExpandOption getExpandOption() {
+    return expandOption;
+  }
+
+  @Override
+  public FilterOption getFilterOption() {
+    return filterOption;
+  }
+
+  @Override
+  public FormatOption getFormatOption() {
+    return formatOption;
+  }
+
+  @Override
+  public IdOption getIdOption() {
+    return idOption;
+  }
+
+  @Override
+  public InlineCountOption getInlineCountOption() {
+    return inlineCountOption;
+  }
+
+  @Override
+  public UriInfoKind getKind() {
+    return kind;
+  }
+
+  public UriResourcePart getLastUriPathInfo() {
+    return lastPathPart;
+  }
+
+  @Override
+  public OrderByOption getOrderByOption() {
+
+    return orderByOption;
+  }
+
+  @Override
+  public SearchOption getSearchOption() {
+
+    return searchOption;
+  }
+
+  @Override
+  public SelectOption getSelectOption() {
+    return selectOption;
+  }
+
+  @Override
+  public SkipOption getSkipOption() {
+    return skipOption;
+  }
+
+  @Override
+  public SkipTokenOption getSkipTokenOption() {
+    return skipTokenOption;
+  }
+
+  @Override
+  public TopOption getTopOption() {
+    return topOption;
+  }
+
+  public UriInfoImpl setEntityTypeCast(EdmEntityType type) {
+
+    entityTypeCast = type;
+    return this;
+  }
+
+  public UriInfoImpl setFormat(FormatOptionImpl formatOption) {
+    this.formatOption = formatOption;
+    return this;
+  }
+
+  protected UriInfoImpl setKind(final UriInfoKind kind) {
     this.kind = kind;
     return this;
   }
 
-  public Object getKind() {
-    return kind;
-  }
+  public UriInfoImpl setQueryOptions(List<QueryOptionImpl> list) {
 
-  public List<Object> getQueryParameters(String name) {
-    return queryParameter.get(name);
-  }
+    for (QueryOptionImpl item : list) {
+      if (item instanceof SystemQueryOptionImpl) {
+        SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
 
-  public void addQueryParameter(String name, Object object) {
-    List<Object> entry = queryParameter.get(name);
-    if (entry != null) {
-      entry.add(object);
-    } else {
-      queryParameter.put(name, Arrays.asList(object));
+        if (sysItem.getKind() == SystemQueryOptionEnum.EXPAND) {
+          expandOption = (ExpandOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.FILTER) {
+          filterOption = (FilterOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.FORMAT) {
+          formatOption = (FormatOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.ID) {
+          idOption = (IdOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.INLINECOUNT) {
+          inlineCountOption = (InlineCountImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.ORDERBY) {
+          orderByOption = (OrderByImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.SEARCH) {
+          searchOption = (SearchOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.SELECT) {
+          selectOption = (SelectOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.SKIP) {
+          skipOption = (SkipOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.SKIPTOKEN) {
+          skipTokenOption = (SkipTokenOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SystemQueryOptionEnum.TOP) {
+          topOption = (TopOptionImpl) sysItem;
+        }
+      } else if (item instanceof CustomQueryOptionImpl) {
+        customQueryOptions.add((CustomQueryOptionImpl) item);
+      }
     }
+    return this;
   }
+
+  @Override
+  public UriInfoService asUriInfoService() {
+    return this;
+  }
+
+  public void clearPathInfo() {
+    pathParts.clear();
+
+  }
+
 }

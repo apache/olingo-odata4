@@ -19,6 +19,23 @@
 
 package org.apache.olingo.odata4.producer.api.uri;
 
-public interface UriInfo {
+public interface UriInfo extends
+    UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
+    UriInfoEntityId, UriInfoMetadata, UriInfoResource {
+  
+  public UriInfoService asUriInfoService();
+
+  public UriInfoAll asUriInfoAll();
+
+  public UriInfoBatch asUriInfoBatch();
+
+  public UriInfoCrossjoin asUriInfoCrossjoin();
+
+  public UriInfoEntityId asUriInfoEntityId();
+
+  public UriInfoMetadata asUriInfoMetadata();
+
+  public UriInfoResource asUriInfoResource();
+
   public UriInfoKind getKind();
 }

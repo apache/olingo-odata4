@@ -21,45 +21,158 @@ package org.apache.olingo.odata4.producer.core.testutil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
-import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.Filter;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriParserException;
+import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
 
-public class FilterValidator {
+public class FilterValidator implements Validator {
+  private Edm edm;
 
-  UriResourcePathValidator uriResourcePathValidator;
-  Filter filter;
+  private Validator invokedBy;
+  private FilterOptionImpl filter;
 
-  public FilterValidator(UriResourcePathValidator uriResourcePathValidator) {
+  private int logLevel;
 
-    this.uriResourcePathValidator = uriResourcePathValidator;
-
-    filter = ((UriInfoImplPath) uriResourcePathValidator.uriInfo).getFilter();
-    if (filter.getTree() == null) {
-      fail("FilterValidator: no filter found");
-    }
-    return;
+  // --- Setup ---
+  public FilterValidator SetUriResourcePathValidator(UriResourcePathValidator uriResourcePathValidator) {
+    this.invokedBy = uriResourcePathValidator;
+    return this;
   }
 
-  // Validates the serialized filterTree against a given filterString
-  // The given filterString is compressed before to allow better readable code in the unit tests 
+  public FilterValidator setUriValidator(UriValidator uriValidator) {
+    this.invokedBy = uriValidator;
+    return this;
+  }
+
+  public FilterValidator setEdm(final Edm edm) {
+    this.edm = edm;
+    return this;
+  }
+
+  public FilterValidator setFilter(FilterOptionImpl filter) {
+    this.filter = filter;
+
+    if (filter.getExpression() == null) {
+
+      fail("FilterValidator: no filter found");
+    }
+    return this;
+  }
+  
+  public FilterValidator log(final int logLevel) {
+    this.logLevel = logLevel;
+    return this;
+  }
+
+  // --- Execution ---
+  public FilterValidator runOnETTwoKeyNav(String filter) {
+    String uri = "SINav?$filter=" + filter.trim();
+    return runUri(uri);
+  }
+
+  public FilterValidator runOnETAllPrim(String filter) {
+    String uri = "ESAllPrim(1)?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+
+  public FilterValidator runOnETKeyNav(String filter) {
+    String uri = "ESKeyNav(1)?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+
+  
+  public FilterValidator runOnCTTwoPrim(String filter) {
+    String uri = "SINav/PropertyComplexTwoPrim?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  public FilterValidator runOnString(String filter) {
+    String uri = "SINav/PropertyString?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  public FilterValidator runOnInt32(String filter) {
+    String uri = "ESCollAllPrim(1)/CollPropertyInt32?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  
+  public FilterValidator runOnDateTimeOffset(String filter) {
+    String uri = "ESCollAllPrim(1)/CollPropertyDateTimeOffset?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  public FilterValidator runOnDuration(String filter) {
+    String uri = "ESCollAllPrim(1)/CollPropertyDuration?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  public FilterValidator runOnTimeOfDay(String filter) {
+    String uri = "ESCollAllPrim(1)/CollPropertyTimeOfDay?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  
+  public FilterValidator runESabc(String filter) {
+    String uri = "ESabc?$filter=" + filter.trim(); 
+    return runUri(uri);
+  }
+  
+  public FilterValidator runUri(String uri) { 
+  
+    UriInfoImpl uriInfo = null;
+    try {
+
+      uriInfo = ParserAdapter.parseUri(uri, new UriParseTreeVisitor(edm));
+    } catch (UriParserException e) {
+      fail("Exception occured while parsing the URI: " + uri + "\n"
+          + " Exception: " + e.getMessage());
+    }
+
+    if (uriInfo.getKind() != UriInfoKind.resource) {
+      fail("Filtervalidator can only be used on resourcePaths");
+    }
+
+    setFilter((FilterOptionImpl) uriInfo.getFilterOption());
+
+    return this;
+  }
+
+  // --- Navigation ---
+  public Validator goUp() {
+    return invokedBy;
+  }
+
+  // --- Validation ---
+
+  /**
+   * Validates the serialized filterTree against a given filterString
+   * The given filterString is compressed before to allow better readable code in the unit tests
+   * @param toBeCompr
+   * @return
+   */
   public FilterValidator isCompr(String toBeCompr) {
     return is(compress(toBeCompr));
   }
 
   public FilterValidator is(String expectedFilterAsString) {
     try {
-      String actualFilterAsText = filter.getTree().accept(new FilterTreeToText());
+      String actualFilterAsText = FilterTreeToText.Serialize((FilterOptionImpl) filter);
       assertEquals(expectedFilterAsString, actualFilterAsText);
     } catch (ExceptionVisitExpression e) {
       fail("Exception occured while converting the filterTree into text" + "\n"
           + " Exception: " + e.getMessage());
-
     }
 
     return this;
   }
+
+  // --- Helper ---
 
   private String compress(String expected) {
     String ret = expected.replaceAll("\\s+", " ");
@@ -67,4 +180,5 @@ public class FilterValidator {
     ret = ret.replaceAll(" >", ">");
     return ret;
   }
+
 }

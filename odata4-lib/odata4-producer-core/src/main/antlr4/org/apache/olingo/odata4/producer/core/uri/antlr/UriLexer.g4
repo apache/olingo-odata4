@@ -62,7 +62,7 @@ POINT           : '.';
 AT              : '@';
 EQ              : '=' ;
 STAR            : '*';
-SEMI            : ';';
+SEMI            : ';' | '%3b';
 FRAGMENT        : '#';
 COLON           : ':';
 
@@ -112,10 +112,14 @@ REF           : '$ref';
 COUNT         : '$count';
 
 //inlined query parameters ( e.g. $skip)
-SKIP_INLINE   : '$skip';
-FILTER_INLINE : '$filter';
-ORDERBY_INLINE: '$orderby';
-
+TOP_I    : '$top' -> type(TOP);
+SKIP_I   : '$skip' -> type(SKIP);
+FILTER_I : '$filter' -> type(FILTER);
+ORDERBY_I: '$orderby' -> type(ORDERBY);
+SELECT_I: '$select' -> type(SELECT);
+EXPAND_I: '$expand' -> type(EXPAND);
+LEVELS_I: '$levels' -> type(LEVELS);
+MAX: 'max';
 
 ROOT            : '$root/';
 
@@ -158,9 +162,13 @@ DESC            : 'desc';
 MUL             : 'mul';
 DIV             : 'div';
 MOD             : 'mod';
+HAS             : 'has';
 
 ADD             : 'add';
 SUB             : 'sub';
+
+ANY_LAMDA       : 'any';
+ALL_LAMDA       : 'all';
 
 GT              : 'gt';
 GE              : 'ge';
@@ -179,7 +187,8 @@ NOT             : 'not';
 MINUS           :'-';
 NANINFINITY     : 'NaN' | '-INF' | 'INF';
 
-IMPLICIT_VARIABLE_EXPR  : '$it';
+IT  : '$it';
+ITSLASH  : '$it/';
 LEVELS               : '$levels';
 
 CONTAINS_WORD             : 'contains(';
@@ -229,10 +238,6 @@ LINK                      : '$link';
 DELETED_LINK              : '$deletedLink';
 DELTA                     : '$delta';
 
-
-LEVELSMAX                     : '$levels=max';
-
-
 //ODI
 ODATAIDENTIFIER             : ODI_LEADINGCHARACTER (ODI_CHARACTER)*;
 
@@ -262,26 +267,26 @@ SEARCH              : '$search'     ->                    pushMode(MODE_SYSTEM_Q
 EQ_q          : '=' -> type(EQ);
 AMP_q         : '&' -> type(AMP);
 
-CUSTOMNAME    : ~[&=@$] ~[&=]*;
-CUSTOMVALUE   : ~[&=]+;
+AT_Q          : '@' -> pushMode(DEFAULT_MODE);
+
+CUSTOMNAME    : ~[&=@$] ~[&=]* -> pushMode(MODE_SYSTEM_QUERY_REST);
 
 //;==============================================================================
 mode MODE_SYSTEM_QUERY_PCHAR;
 //;==============================================================================
 
-AMP_sqp   : '&' -> popMode,popMode;
+AMP_sqp   : '&' -> type(AMP),       popMode;
 
-//fragment EQ_sqp : '=';
 fragment ALPHA_sqp          : 'a'..'z'|'A'..'Z';
 fragment A_TO_F_sqp         : 'a'..'f'|'A'..'F';
 fragment DIGIT_sqp          : '0'..'9';
 fragment HEXDIG_sqp         : DIGIT_sqp | A_TO_F_sqp;
 fragment PCT_ENCODED_sqp    : '%' HEXDIG_sqp HEXDIG_sqp;
-fragment SUB_DELIMS_sqp     : '$' | '&' | '\'' | EQ_sqp | OTHER_DELIMS_sqp;
+fragment SUB_DELIMS_sqp     : '$' | /*'&' |*/ '\'' | EQ_sqp | OTHER_DELIMS_sqp;
 fragment OTHER_DELIMS_sqp   : '!' | '(' | ')' | '*' | '+' | ',' | ';';
 fragment UNRESERVED_sqp     : ALPHA_sqp | DIGIT_sqp | '-' |'.' | '_' | '~'; 
 fragment PCHAR              : UNRESERVED_sqp | PCT_ENCODED_sqp | SUB_DELIMS_sqp | ':' | '@'; 
-fragment PCHARSTART         : UNRESERVED_sqp | PCT_ENCODED_sqp | '$' | '&' | '\'' | OTHER_DELIMS_sqp | ':' | '@'; 
+fragment PCHARSTART         : UNRESERVED_sqp | PCT_ENCODED_sqp | '$' | /*'&' |*/ '\'' | OTHER_DELIMS_sqp | ':' | '@'; 
 
 
 ATOM : [Aa][Tt][Oo][Mm];
@@ -289,6 +294,7 @@ JSON : [Jj][Ss][Oo][Nn];
 XML  : [Xx][Mm][Ll];
 
 PCHARS : PCHARSTART PCHAR*;
+
 
 SLASH_sqp : '/' -> type(SLASH);
 EQ_sqp    : '=' -> type(EQ);

@@ -179,6 +179,7 @@ public class EdmProviderImpl extends EdmImpl {
           for (Function function : functions) {
             if (function.isBound() == false) {
               List<Parameter> parameters = function.getParameters();
+              // TODO add check for parameters == null;
               if (parameterNames.size() == parameters.size()) {
                 List<String> functionParameterNames = new ArrayList<String>();
                 for (Parameter parameter : parameters) {

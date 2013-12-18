@@ -29,7 +29,26 @@ import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
 public class ParserAdapter {
-  static public OdataRelativeUriEOFContext parseInput(final String input) throws UriParserException {
+  public static UriInfoImpl parseUri(final String input, UriParseTreeVisitor uriParseTreeVisitor)
+      throws UriParserException {
+
+    try {
+      UriInfoImpl uriInput = (UriInfoImpl) parseInput(input).accept(uriParseTreeVisitor);
+      return uriInput;
+    } catch (ParseCancellationException e) {
+      // unpack UriParserException
+      Throwable cause = e.getCause();
+      if (cause instanceof UriParserException) {
+        throw (UriParserException) cause;
+      }
+
+    }
+
+    return null;
+
+  }
+
+  static private OdataRelativeUriEOFContext parseInput(final String input) throws UriParserSyntaxException {
     UriParserParser parser = null;
     UriLexer lexer = null;
     OdataRelativeUriEOFContext ret = null;
@@ -42,6 +61,10 @@ public class ParserAdapter {
       // create parser
       lexer = new UriLexer(new ANTLRInputStream(input));
       parser = new UriParserParser(new CommonTokenStream(lexer));
+      
+      // TODO create better error collector
+      parser.addErrorListener(new ErrorCollector());
+      
 
       // bail out of parser at first syntax error. --> proceeds in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());
@@ -69,12 +92,12 @@ public class ParserAdapter {
         ret = parser.odataRelativeUriEOF();
 
       } catch (Exception weakException) {
-        throw new UriParserException("Error in Parser", weakException);
+        throw new UriParserSyntaxException("Error in syntax", weakException);
 
         // exceptionOnStage = 2;
       }
     } catch (Exception hardException) {
-      throw new UriParserException("Error in Parser", hardException);
+      throw new UriParserSyntaxException("Error in syntax", hardException);
     }
 
     return ret;

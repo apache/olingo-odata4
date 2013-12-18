@@ -19,36 +19,37 @@
 package org.apache.olingo.odata4.producer.core.testutil;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
-import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.atn.ATNConfigSet;
-import org.antlr.v4.runtime.dfa.DFA;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 
 //TODO extend to test also exception which can occure while paring
 public class TokenValidator {
+
+  private String input = null;
+
   private List<? extends Token> tokens = null;
-  private List<Exception> exceptions = new ArrayList<Exception>();
   private Token curToken = null;
   private Exception curException = null;
-  private String input = null;
+
+  private int startMode;
   private int logLevel = 0;
-  private int mode;
+
+  // --- Setup ---
+
+  public TokenValidator log(final int logLevel) {
+    this.logLevel = logLevel;
+    return this;
+  }
+
+  // --- Execution ---
 
   public TokenValidator run(final String uri) {
     input = uri;
-    exceptions.clear();
+
     tokens = parseInput(uri);
     if (logLevel > 0) {
       showTokens();
@@ -57,43 +58,11 @@ public class TokenValidator {
     first();
     exFirst();
     logLevel = 0;
+
     return this;
   }
 
-  public TokenValidator showTokens() {
-    boolean first = true;
-    System.out.println("input: " + input);
-    String nL = "\n";
-    String out = "[" + nL;
-    for (Token token : tokens) {
-      if (!first) {
-        out += ",";
-        first = false;
-      }
-      int index = token.getType();
-      if (index != -1) {
-        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
-      } else {
-        out += "\"" + token.getText() + "\"" + "     " + index + nL;
-      }
-    }
-    out += ']';
-    System.out.println("tokens: " + out);
-    return this;
-  }
-
-  public TokenValidator setLog(final int logLevel) {
-    this.logLevel = logLevel;
-    return this;
-  }
-
-  private List<? extends Token> parseInput(final String input) {
-    ANTLRInputStream inputStream = new ANTLRInputStream(input);
-
-    UriLexer lexer = new UriLexerWithTrace(inputStream, logLevel, mode);
-    lexer.addErrorListener(new ErrorCollector(this));
-    return lexer.getAllTokens();
-  }
+  // --- Navigation ---
 
   // navigate within the tokenlist
   public TokenValidator first() {
@@ -120,14 +89,14 @@ public class TokenValidator {
   }
 
   public TokenValidator exLast() {
-    curException = exceptions.get(exceptions.size() - 1);
+    //curException = exceptions.get(exceptions.size() - 1);
     return this;
   }
 
   // navigate within the exception list
   public TokenValidator exFirst() {
     try {
-      curException = exceptions.get(0);
+      //curException = exceptions.get(0);
     } catch (IndexOutOfBoundsException ex) {
       curException = null;
     }
@@ -137,14 +106,15 @@ public class TokenValidator {
 
   public TokenValidator exAt(final int index) {
     try {
-      curException = exceptions.get(index);
+      //curException = exceptions.get(index);
     } catch (IndexOutOfBoundsException ex) {
       curException = null;
     }
     return this;
   }
 
-  // test functions
+  // --- Validation ---
+  
   public TokenValidator isText(final String expected) {
     assertEquals(expected, curToken.getText());
     return this;
@@ -185,46 +155,40 @@ public class TokenValidator {
     return this;
   }
 
-  // TODO create ErrorCollector for both ParserValidator and LexerValidator
-  private static class ErrorCollector implements ANTLRErrorListener {
-    TokenValidator tokenValidator;
-
-    public ErrorCollector(final TokenValidator tokenValidator) {
-      this.tokenValidator = tokenValidator;
-    }
-
-    @Override
-    public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
-        final int charPositionInLine,
-        final String msg, final RecognitionException e) {
-      tokenValidator.exceptions.add(e);
-    }
-
-    @Override
-    public void reportAmbiguity(final Parser recognizer, final DFA dfa, final int startIndex, final int stopIndex,
-        final boolean exact,
-        final BitSet ambigAlts, final ATNConfigSet configs) {
-      fail("reportAmbiguity");
-    }
-
-    @Override
-    public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
-        final int stopIndex,
-        final BitSet conflictingAlts, final ATNConfigSet configs) {
-      fail("reportAttemptingFullContext");
-    }
-
-    @Override
-    public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
-        final int stopIndex, final int prediction,
-        final ATNConfigSet configs) {
-      fail("reportContextSensitivity");
-    }
-
+  public void globalMode(final int mode) {
+    this.startMode = mode;
   }
 
-  public void globalMode(final int mode) {
-    this.mode = mode;
+  // --- Helper ---
+
+  private List<? extends Token> parseInput(final String input) {
+    ANTLRInputStream inputStream = new ANTLRInputStream(input);
+
+    UriLexer lexer = new UriLexerWithTrace(inputStream, logLevel, startMode);
+    //lexer.addErrorListener(new ErrorCollector(this));
+    return lexer.getAllTokens();
+  }
+
+  public TokenValidator showTokens() {
+    boolean first = true;
+    System.out.println("input: " + input);
+    String nL = "\n";
+    String out = "[" + nL;
+    for (Token token : tokens) {
+      if (!first) {
+        out += ",";
+        first = false;
+      }
+      int index = token.getType();
+      if (index != -1) {
+        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
+      } else {
+        out += "\"" + token.getText() + "\"" + "     " + index + nL;
+      }
+    }
+    out += ']';
+    System.out.println("tokens: " + out);
+    return this;
   }
 
 }

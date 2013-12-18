@@ -28,102 +28,135 @@ import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.producer.api.uri.UriInfo;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
-import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.UriParameter;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
-import org.apache.olingo.odata4.producer.core.uri.UriKeyPredicateList;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
-import org.apache.olingo.odata4.producer.core.uri.UriParserImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriPathInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriPathInfoEntitySetImpl;
-import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceComplexPropertyImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceNavigationPropertyImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourcePartImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceEntitySetImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
+import org.apache.olingo.odata4.producer.core.uri.UriResourcePropertyImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourcePathValidator {
+public class UriResourcePathValidator implements Validator {
   private Edm edm;
-  // this validator can only be used on resourcePaths
-  public UriInfoImplPath uriInfo = null;
-  private UriPathInfoImpl uriPathInfo = null;
+  private Validator invokedBy;
+  private UriInfo uriInfo = null;
 
-  public UriResourcePathValidator run(String uri) {
-    UriInfoImpl uriInfoTmp = null;
-    uriPathInfo = null;
-    try {
-      uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-    } catch (UriParserException e) {
-      fail("Exception occured while parsing the URI: " + uri + "\n"
-          + " Exception: " + e.getMessage());
-    }
+  private UriResourcePartImpl uriPathInfo = null;
 
-    if (!(uriInfoTmp instanceof UriInfoImplPath)) {
-      fail("Validator can only be used on resourcePaths");
-    }
-    this.uriInfo = (UriInfoImplPath) uriInfoTmp;
+  // --- Setup ---
 
-    last();
+  public UriResourcePathValidator setUriValidator(UriValidator uriValidator) {
+    invokedBy = uriValidator;
     return this;
   }
-  
-  
-  // short cut which avoid adding the ESabc?$filter when testing filter to each URI
-  public FilterValidator runFilter(String filter) {
-    String uri = "ESabc?$filter=" + filter.trim(); // TODO check what to do with trailing spaces in the URI
-    this.run(uri);
-    return new FilterValidator(this);
-  }
-  
+
   public UriResourcePathValidator setEdm(final Edm edm) {
     this.edm = edm;
     return this;
   }
 
-  // navigation for uriPathInfo
-  public UriResourcePathValidator at(int index) {
+  public UriResourcePathValidator setUriInfoImplPath(UriInfoImpl uriInfoPath) {
+    this.uriInfo = uriInfoPath;
+    last();
+    return this;
+  }
+
+  // --- Execution ---
+
+  public UriResourcePathValidator run(String uri) {
+    UriInfoImpl uriInfoTmp = null;
+    uriPathInfo = null;
     try {
-      uriPathInfo = uriInfo.getUriPathInfo(index);
-    } catch (IndexOutOfBoundsException ex) {
-      uriPathInfo = null;
+      uriInfoTmp = ParserAdapter.parseUri(uri, new UriParseTreeVisitor(edm));
+    } catch (UriParserException e) {
+      fail("Exception occured while parsing the URI: " + uri + "\n"
+          + " Exception: " + e.getMessage());
     }
 
+    if (uriInfoTmp.getKind() != UriInfoKind.resource) {
+      fail("Validator can only be used on resourcePaths");
+    }
+    this.uriInfo = uriInfoTmp;
+
+    first();
+    return this;
+  }
+
+  // --- Navigation ---
+
+  public UriValidator goUpUriValidator() {
+    return (UriValidator) invokedBy;
+  }
+
+  public UriResourcePathValidator at(int index) {
+    try {
+      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(index);
+    } catch (IndexOutOfBoundsException ex) {
+      fail("not enought segemnts");
+    }
     return this;
   }
 
   public UriResourcePathValidator first() {
     try {
-      uriPathInfo = ((UriInfoImplPath) uriInfo).getUriPathInfo(0);
+      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(0);
     } catch (IndexOutOfBoundsException ex) {
-      uriPathInfo = null;
+      fail("not enought segemnts");
     }
     return this;
   }
 
   public UriResourcePathValidator last() {
-    if (uriInfo instanceof UriInfoImplPath) {
-      uriPathInfo = ((UriInfoImplPath) uriInfo).getLastUriPathInfo();
-    } else {
-      fail("UriInfo not instanceof UriInfoImplPath");
+    try {
+      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1);
+    } catch (IndexOutOfBoundsException ex) {
+      fail("not enought segemnts");
     }
 
     return this;
   }
 
-  // check types
+  // --- Validation ---
 
-  public UriResourcePathValidator isInitialType(FullQualifiedName expectedType) {
-    EdmType actualType = uriPathInfo.getInitialType();
+  public UriResourcePathValidator isTypeFilter(FullQualifiedName expectedType) {
+    
+    if (uriPathInfo.getKind() != UriResourceKind.complexProperty) {
+      fail("type wrong ujriResourceKind ( you may also check isTypeFilterOnEntry or isTypeFilterOnCollection");
+    } 
+    
+    EdmType actualType= ((UriResourceComplexPropertyImpl) uriPathInfo).getComplexTypeFilter();
+
     if (actualType == null) {
-      fail("isInitialType: actualType == null");
+      fail("type information not set");
     }
 
-    FullQualifiedName actualTypeName = new FullQualifiedName(actualType.getNamespace(), actualType.getName());
+    FullQualifiedName actualName = new FullQualifiedName(actualType.getNamespace(), actualType.getName());
 
-    assertEquals(expectedType.toString(), actualTypeName.toString());
+    assertEquals(expectedType.toString(), actualName.toString());
     return this;
   }
 
   public UriResourcePathValidator isType(FullQualifiedName type) {
-    EdmType actualType = uriPathInfo.getType();
+    if (!(uriPathInfo instanceof UriResourceImplTyped)) {
+      fail("not typed");
+    }
+    UriResourceImplTyped uriPathInfoTyped = (UriResourceImplTyped) uriPathInfo;
+
+    EdmType actualType = uriPathInfoTyped.getType();
     if (actualType == null) {
       fail("type information not set");
     }
@@ -134,9 +167,14 @@ public class UriResourcePathValidator {
     return this;
   }
 
-  public UriResourcePathValidator isSingleTypeFilter(FullQualifiedName type) {
+  public UriResourcePathValidator isTypeFilterOnEntry(FullQualifiedName type) {
+    if (!(uriPathInfo instanceof UriResourceImplKeyPred)) {
+      fail("not typed");
+    }
+    UriResourceImplKeyPred uriPathInfoKeyPred = (UriResourceImplKeyPred) uriPathInfo;
+
     // input parameter type may be null in order to assert that the singleTypeFilter is not set
-    EdmType actualType = uriPathInfo.getSingleTypeFilter();
+    EdmType actualType = uriPathInfoKeyPred.getTypeFilterOnEntry();
     if (type == null) {
       assertEquals(type, actualType);
     } else {
@@ -146,9 +184,14 @@ public class UriResourcePathValidator {
     return this;
   }
 
-  public UriResourcePathValidator isCollectionTypeFilter(FullQualifiedName expectedType) {
+  public UriResourcePathValidator isTypeFilterOnCollection(FullQualifiedName expectedType) {
+    if (!(uriPathInfo instanceof UriResourceImplKeyPred)) {
+      fail("not typed");
+    }
+    UriResourceImplKeyPred uriPathInfoKeyPred = (UriResourceImplKeyPred) uriPathInfo;
+
     // input parameter type may be null in order to assert that the collectionTypeFilter is not set
-    EdmType actualType = uriPathInfo.getCollectionTypeFilter();
+    EdmType actualType = uriPathInfoKeyPred.getTypeFilterOnCollection();
     if (expectedType == null) {
       assertEquals(expectedType, actualType);
     } else {
@@ -160,27 +203,39 @@ public class UriResourcePathValidator {
   }
 
   // other functions
-  public UriResourcePathValidator hasQueryParameter(String parameter, int count) {
+  public UriResourcePathValidator checkCustomParameter(int index, String name, String value) {
     if (uriInfo == null) {
       fail("hasQueryParameter: uriInfo == null");
     }
 
-    int actualCount = uriInfo.getQueryParameters(parameter).size();
-    assertEquals(count, actualCount);
+    List<CustomQueryOption> list = uriInfo.getCustomQueryOptions();
+    if (list.size() <= index) {
+      fail("not enought queryParameters");
+    }
+
+    CustomQueryOptionImpl option = (CustomQueryOptionImpl) list.get(index);
+    assertEquals(name, option.getName());
+    assertEquals(value, option.getText());
     return this;
   }
 
   public UriResourcePathValidator isCollection(boolean isCollection) {
-    EdmType type = uriPathInfo.getType();
+    if (!(uriPathInfo instanceof UriResourceImplTyped)) {
+      fail("not typed");
+    }
+    UriResourceImplTyped uriPathInfoTyped = (UriResourceImplTyped) uriPathInfo;
+
+    EdmType type = uriPathInfoTyped.getType();
     if (type == null) {
       fail("isCollection: type == null");
     }
-    assertEquals(isCollection, uriPathInfo.isCollection());
+    assertEquals(isCollection, uriPathInfoTyped.isCollection());
     return this;
   }
 
   public UriResourcePathValidator isFilterString(String expectedFilterTreeAsString) {
-    Expression filterTree = this.uriInfo.getFilter().getTree();
+
+    ExpressionImpl filterTree = (ExpressionImpl) this.uriInfo.getFilterOption().getExpression();
     try {
       String filterTreeAsString = filterTree.accept(new FilterTreeToText());
       assertEquals(expectedFilterTreeAsString, filterTreeAsString);
@@ -192,15 +247,15 @@ public class UriResourcePathValidator {
   }
 
   public UriResourcePathValidator isKeyPredicate(int index, String name, String value) {
-    if (!(uriPathInfo instanceof UriPathInfoEntitySetImpl)) {
-      //TODO add and "or" for FunctionImports 
+    if (!(uriPathInfo instanceof UriResourceEntitySetImpl)) {
+      // TODO add and "or" for FunctionImports
       fail("isKeyPredicate: uriPathInfo is not instanceof UriPathInfoEntitySetImpl");
     }
 
-    UriPathInfoEntitySetImpl info = (UriPathInfoEntitySetImpl) uriPathInfo;
-    UriKeyPredicateList keyPredicates = info.getKeyPredicates();
-    assertEquals(name, keyPredicates.getName(index));
-    assertEquals(value, keyPredicates.getValue(index));
+    UriResourceEntitySetImpl info = (UriResourceEntitySetImpl) uriPathInfo;
+    List<UriParameter> keyPredicates = info.getKeyPredicates();
+    assertEquals(name, keyPredicates.get(index).getName());
+    assertEquals(value, keyPredicates.get(index).getText());
     return this;
 
   }
@@ -210,39 +265,54 @@ public class UriResourcePathValidator {
     return this;
   }
 
-  public UriResourcePathValidator isProperties(List<String> asList) {
-    assertNotNull(uriPathInfo);
-
-    int index = 0;
-    while (index < asList.size()) {
-      String propertyName = uriPathInfo.getProperty(index).getName();
-
-      assertEquals(asList.get(index), propertyName);
-
-      index++;
+  public UriResourcePathValidator isProperty(String name, FullQualifiedName type) {
+    if (!(uriPathInfo instanceof UriResourcePropertyImpl)) {
+      // TODO add and "or" for FunctionImports
+      fail("not a property");
     }
 
-    return this;
-  }
+    UriResourcePropertyImpl uriPathInfoProp = (UriResourcePropertyImpl) uriPathInfo;
 
-  public UriResourcePathValidator isProperty(int index, String name, FullQualifiedName type) {
-    if (index >= uriPathInfo.getPropertyCount()) {
-      fail("isProperty: invalid index");
-    }
-
-    EdmElement property = uriPathInfo.getProperty(index);
+    EdmElement property = uriPathInfoProp.getProperty();
 
     assertEquals(name, property.getName());
     assertEquals(type, new FullQualifiedName(property.getType().getNamespace(), property.getType().getName()));
     return this;
   }
 
-  public UriResourcePathValidator isUriPathInfoKind(UriPathInfoKind infoType) {
+  public UriResourcePathValidator isComplexProperty(int index, String name, FullQualifiedName type) {
+    if (!(uriPathInfo instanceof UriResourceComplexPropertyImpl)) {
+      // TODO add and "or" for FunctionImports
+      fail("not a property");
+    }
+
+    UriResourceComplexPropertyImpl uriPathInfoProp = (UriResourceComplexPropertyImpl) uriPathInfo;
+
+    EdmElement property = uriPathInfoProp.getProperty();
+
+    assertEquals(name, property.getName());
+    assertEquals(type, new FullQualifiedName(property.getType().getNamespace(), property.getType().getName()));
+    return this;
+  }
+
+  public UriResourcePathValidator isUriPathInfoKind(UriResourceKind infoType) {
     assertNotNull(uriPathInfo);
     assertEquals(infoType, uriPathInfo.getKind());
     return this;
   }
 
-  
+  public UriResourcePathValidator isNav(String name, FullQualifiedName type) {
+    if (!(uriPathInfo instanceof UriResourceNavigationPropertyImpl)) {
+      // TODO add and "or" for FunctionImports
+      fail("not a property");
+    }
 
+    UriResourceNavigationPropertyImpl uriPathInfoProp = (UriResourceNavigationPropertyImpl) uriPathInfo;
+
+    EdmElement property = uriPathInfoProp.getNavigationProperty();
+
+    assertEquals(name, property.getName());
+    assertEquals(type, new FullQualifiedName(property.getType().getNamespace(), property.getType().getName()));
+    return this;
+  }
 }

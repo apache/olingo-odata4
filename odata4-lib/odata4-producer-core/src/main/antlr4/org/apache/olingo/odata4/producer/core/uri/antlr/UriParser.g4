@@ -68,9 +68,6 @@ options {
 }
 
 
-
-
-
 //;------------------------------------------------------------------------------
 //; 0. URI
 //;------------------------------------------------------------------------------
@@ -88,10 +85,10 @@ odataRelativeUriEOF : odataRelativeUri? EOF;
 //QM and FRAGMENT enable next lexer mode
 //TODO add the new "ENTITYCAST"
 odataRelativeUri    : BATCH                                                                     # altBatch 
-                    | ENTITY       QM eo=entityOptions                                          # altEntity
-                    | ENTITY       SLASH ns=namespace? odi=odataIdentifier QM eo=entityOptions  # altEntityCast
-                    | METADATA     ( QM format )? ( FRAGMENT contextFragment )?                 # altMetadata
-                    | resourcePath ( QM queryOptions )?                                         # altResourcePath
+                    | ENTITY       QM vEO=entityOptions                                          # altEntity
+                    | ENTITY       SLASH vNS=namespace vODI=odataIdentifier QM vEO=entityOptionsCast  # altEntityCast
+                    | METADATA     ( QM vF=format )? ( FRAGMENT vCF=contextFragment )?                 # altMetadata
+                    | vRP=resourcePath ( QM vQO=queryOptions )?                                         # altResourcePath
                     ;
 
 //;------------------------------------------------------------------------------
@@ -100,20 +97,20 @@ odataRelativeUri    : BATCH                                                     
                    
 resourcePath        : vAll=ALL          
                     | vCJ=crossjoin     
-                    | vPSs=pathSegments  
+                    | vlPS=pathSegments  
                     ;
-crossjoin           : CROSSJOIN OPEN odi+=odataIdentifier ( COMMA odi+=odataIdentifier )* CLOSE;
+crossjoin           : CROSSJOIN OPEN WSP? vlODI+=odataIdentifier WSP? ( COMMA WSP? vlODI+=odataIdentifier  WSP?)* CLOSE;
 
 pathSegments        : vlPS+=pathSegment (SLASH vlPS+=pathSegment)* vCS=constSegment?;
 
-pathSegment         : vNS=namespace? vODI=odataIdentifier vlVPO+=nameValueOptList*;
+pathSegment         : vNS=namespace? vODI=odataIdentifier vlNVO+=nameValueOptList*;
 
 nameValueOptList    : OPEN (vVO=valueOnly | vNVL=nameValueList)? CLOSE;
-valueOnly           : vV=primitiveLiteral ;
-nameValueList       : WSP* vNVP+=nameValuePair WSP* ( COMMA WSP* vNVP+=nameValuePair  WSP*)* ;
-nameValuePair       : vODI=odataIdentifier EQ (AT vALI=odataIdentifier | vVAL=primitiveLiteral /*TODO | val2=enumX*/);
+valueOnly           : vV=commonExpr ;
+nameValueList       : WSP* vlNVP+=nameValuePair WSP* ( COMMA WSP* vlNVP+=nameValuePair  WSP*)* ;
+nameValuePair       : vODI=odataIdentifier EQ (AT vALI=odataIdentifier | vCOM=commonExpr /*TODO | val2=enumX*/);
 
-constSegment        : SLASH (v=value | c=count | r=ref );
+constSegment        : SLASH (vV=value | vC=count | vR=ref );
 
 count               : COUNT;
 ref                 : REF;
@@ -122,24 +119,32 @@ value               : VALUE;
 //; 2. Query Options
 //;------------------------------------------------------------------------------
 
-queryOptions    : qo+=queryOption ( AMP qo+=queryOption )*;
+queryOptions    : vlQO+=queryOption ( AMP vlQO+=queryOption )*;
 
 queryOption     : systemQueryOption
-                | AT aliasAndValue
+                | AT_Q aliasAndValue
                 | customQueryOption
                 ;
 
-entityOptions   : (eob+=entityOption AMP )* ID EQ REST ( AMP eoa+=entityOption )*;
-entityOption    : ( expand | format | select )
+entityOptions   : (vlEOb+=entityOption AMP )* vlEOm=id ( AMP vlEOa+=entityOption )*;
+entityOption    : format
                 | customQueryOption 
                 ;
+
+entityOptionsCast : (vlEOb+=entityOptionCast AMP )* vlEOm=id ( AMP vlEOa+=entityOptionCast )*;
+entityOptionCast  : expand 
+                  | format 
+                  | select 
+                  | filter
+                  | customQueryOption 
+                  ;
 
 systemQueryOption   : expand
                     | filter 
                     | format 
                     | id
                     | inlinecount 
-                    | orderby 
+                    | orderBy 
                     | search
                     | select 
                     | skip 
@@ -149,44 +154,41 @@ systemQueryOption   : expand
 
 id                  : ID EQ REST;
 skiptoken           : SKIPTOKEN EQ REST;
-expand              : EXPAND EQ expandItemList;
+expand              : EXPAND EQ vlEI+=expandItem ( COMMA vlEI+=expandItem )*;
 
-expandItemList      : expandItem ( COMMA expandItem )*;
+expandItem          : vS=STAR ( SLASH vR=ref | OPEN LEVELS EQ ( vL=INT | vM=MAX)  CLOSE )?
+                    | vEP=expandPath vEPE=expandPathExtension?;
 
-expandItem          : STAR ( SLASH ref | OPEN (LEVELS EQ INT | LEVELSMAX)  CLOSE )?
-                    | expandPath expandPathExtension?;
+expandPath          : expandPathSegment ( SLASH expandPathSegment )*;
+expandPathSegment   : vNS=namespace? vODI=odataIdentifier;
 
-expandPath          : ( namespace? odataIdentifier ) ( SLASH namespace? odataIdentifier )*;
-expandPathExtension : SLASH ref   ( OPEN expandRefOption   ( SEMI expandRefOption   )* CLOSE )?
-                    | SLASH count ( OPEN expandCountOption ( SEMI expandCountOption )* CLOSE )?
-                    |             OPEN expandOption      ( SEMI expandOption      )* CLOSE 
+expandPathExtension : OPEN vlEO+=expandOption                        ( SEMI vlEO+=expandOption       )* CLOSE 
+                    | SLASH vR=ref   ( OPEN vlEOR+=expandRefOption   ( SEMI vlEOR+=expandRefOption   )* CLOSE )?
+                    | SLASH vC=count ( OPEN vlEOC+=expandCountOption ( SEMI vlEOC+=expandCountOption )* CLOSE )?
                     ;  
-expandCountOption   : filterInline
-                    | searchInline
+expandCountOption   : filter
+                    | search
                     ;
 expandRefOption     : expandCountOption
-                    | orderbyInline
-                    | skipInline 
+                    | orderBy
+                    | skip
                     | top 
                     | inlinecount
                     ;
 expandOption        : expandRefOption
                     | select 
                     | expand
-                    | LEVELS;
+                    | levels;
+
+levels              : LEVELS EQ ( INT | MAX );
 
 filter              : FILTER EQ commonExpr;
-filterInline        : FILTER_INLINE EQ commonExpr;
 
-
-
-orderby             : ORDERBY EQ orderbyItem ( COMMA orderbyItem )*;
-orderbyInline       : ORDERBY_INLINE EQ orderbyItem ( COMMA orderbyItem )*;
-orderbyItem         : commonExpr ( WSP ( ASC | DESC ) )?;
+orderBy             : ORDERBY EQ orderByItem ( COMMA orderByItem )*;
+orderByItem         : commonExpr ( WSP ( ASC | DESC ) )?;
 
 //this is completly done in lexer grammer to avoid ambiguities with odataIdentifier and STRING
 skip                : SKIP EQ INT;
-skipInline         : SKIP_INLINE EQ INT;
 top                 : TOP EQ INT;
 format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
 
@@ -209,13 +211,12 @@ searchExpr          : (NOT WSP) searchExpr
 searchPhrase        : SEARCHPHRASE;
 searchWord          : SEARCHWORD;  
 
-select              : SELECT EQ selectItem ( COMMA selectItem )*;
-selectItem          : namespace? STAR
-                    | (namespace? odataIdentifier nameValueOptList? ) ( SLASH namespace? odataIdentifier nameValueOptList? )*
-                    ;
+select              : SELECT EQ vlSI+=selectItem ( COMMA vlSI+=selectItem )*;
+selectItem          : vlSS+=selectSegment ( SLASH vlSS+=selectSegment ) *;
+selectSegment       : vNS=namespace? ( vODI=odataIdentifier | vS=STAR );
 
-aliasAndValue       : odataIdentifier EQ parameterValue;
-parameterValue      : //arrayOrObject
+aliasAndValue       : vODI=ODATAIDENTIFIER EQ vV=parameterValue;
+parameterValue      : //TODO json not supported arrayOrObject
                       commonExpr
                     ;
 
@@ -224,21 +225,18 @@ parameterValue      : //arrayOrObject
 customQueryOption   : customName ( EQ customValue)?
                     ;
 customName          : CUSTOMNAME;
-customValue         : CUSTOMVALUE;
+customValue         : REST;
 
 
 
 //;------------------------------------------------------------------------------
 //; 3. Context URL Fragments
 //;------------------------------------------------------------------------------
-//ps+=pathSegment (SLASH ps+=pathSegment)*
-//PRIMITIVETYPENAME
+//TODO add ps+=pathSegment (SLASH ps+=pathSegment)*
 contextFragment     : REF
-                    /*| PRIMITIVETYPENAME*/
                     | COLLECTION_REF
                     | COLLECTION_ENTITY_TYPE
                     | COLLECTION_COMPLEX_TYPE
-                    | COLLECTION ( /*PRIMITIVETYPENAME |*/ namespace? odataIdentifier ) CLOSE
                     | namespace? odataIdentifier 
                       ( SLASH ( DELETED_ENTITY | LINK | DELETED_LINK )
                       | nameValueOptList? ( SLASH namespace? odataIdentifier)* ( propertyList )? ( SLASH DELTA) ? (SLASH ENTITY) ? 
@@ -267,15 +265,19 @@ test_expr   : INT
             | test_expr ( WSP '!' WSP | WSP '*' WSP ) test_expr;
 
 commonExpr          : OPEN commonExpr CLOSE                                                     #altPharenthesis
+                    | vE1=commonExpr (WSP HAS WSP) vE2=commonExpr                               #altHas
                     | methodCallExpr                                                            #altMethod
                     | ( unary WSP ) commonExpr                                                  #altUnary
+                    | anyExpr                                                                   #altAny
+                    | allExpr                                                                   #altAll
                     | memberExpr                                                                #altMember
-                    | commonExpr (WSP MUL WSP | WSP DIV WSP | WSP MOD WSP ) commonExpr          #altMult
-                    | commonExpr (WSP ADD WSP | WSP SUB WSP) commonExpr                         #altAdd
-                    | commonExpr (WSP GT WSP | WSP GE WSP | WSP LT WSP | WSP LE WSP | WSP ISOF WSP) commonExpr    #altComparism
-                    | commonExpr (WSP EQ_ALPHA WSP | WSP NE WSP) commonExpr                     #altEquality
-                    | commonExpr (WSP AND WSP) commonExpr                                       #altAnd
-                    | commonExpr (WSP OR WSP) commonExpr                                        #altOr
+                    | vE1=commonExpr (WSP vO=MUL WSP | WSP vO=DIV WSP | WSP vO=MOD WSP ) vE2=commonExpr  #altMult
+                    | vE1=commonExpr (WSP vO=ADD WSP | WSP vO=SUB WSP) vE2=commonExpr           #altAdd
+                    | vE1=commonExpr (WSP vO=GT WSP | WSP vO=GE WSP | WSP vO=LT WSP 
+                                     | WSP vO=LE WSP | WSP vO=ISOF WSP) vE2=commonExpr          #altComparism
+                    | vE1=commonExpr (WSP vO=EQ_ALPHA WSP | WSP vO=NE WSP) vE2=commonExpr       #altEquality
+                    | vE1=commonExpr (WSP AND WSP) vE2=commonExpr                               #altAnd
+                    | vE1=commonExpr (WSP OR WSP) vE2=commonExpr                                #altOr
                     | rootExpr                                                                  #altRoot  //; $...
                     | AT odataIdentifier                                                        #altAlias  // @...
                     | primitiveLiteral                                                          #altLiteral  // ...
@@ -283,13 +285,13 @@ commonExpr          : OPEN commonExpr CLOSE                                     
 
 unary               : (MINUS| NOT) ;
 
-rootExpr            : ROOT pathSegments;
+rootExpr            : ROOT vPs=pathSegments;
 
-memberExpr          : '$it'                     
-                    | '$it/'? ps=pathSegments;
+memberExpr          :  vIt=IT ( SLASH (vANY=anyExpr | vALL=allExpr))?
+                    |  vIts=ITSLASH? vPs=pathSegments ( SLASH (vANY=anyExpr | vALL=allExpr))?;
 
-anyExpr             : 'any' OPEN WSP /* [ lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr ] WS* */ CLOSE;
-allExpr             : 'all' OPEN WSP /*   lambdaVariableExpr BWS COLON BWS lambdaPredicateExpr   WS* */ CLOSE;
+anyExpr             : ANY_LAMDA OPEN WSP? ( vLV=odataIdentifier WSP? COLON WSP? vLE=commonExpr WSP? )?  CLOSE;
+allExpr             : ALL_LAMDA OPEN WSP?   vLV=odataIdentifier WSP? COLON WSP? vLE=commonExpr WSP? CLOSE;
 
 methodCallExpr      : indexOfMethodCallExpr
                     | toLowerMethodCallExpr
@@ -327,43 +329,43 @@ methodCallExpr      : indexOfMethodCallExpr
                     ;
 
 
-containsMethodCallExpr    : CONTAINS_WORD    WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
-startsWithMethodCallExpr  : STARTSWITH_WORD  WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
-endsWithMethodCallExpr    : ENDSWITH_WORD    WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
-lengthMethodCallExpr      : LENGTH_WORD      WSP? commonExpr WSP? CLOSE;
-indexOfMethodCallExpr     : INDEXOF_WORD     WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
-substringMethodCallExpr   : SUBSTRING_WORD   WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? ( COMMA WSP? commonExpr WSP? )? CLOSE;
-toLowerMethodCallExpr     : TOLOWER_WORD     WSP? commonExpr WSP? CLOSE;
-toUpperMethodCallExpr     : TOUPPER_WORD     WSP? commonExpr WSP? CLOSE;
-trimMethodCallExpr        : TRIM_WORD        WSP? commonExpr WSP? CLOSE;
-concatMethodCallExpr      : CONCAT_WORD      WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+containsMethodCallExpr    : CONTAINS_WORD    WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+startsWithMethodCallExpr  : STARTSWITH_WORD  WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+endsWithMethodCallExpr    : ENDSWITH_WORD    WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+lengthMethodCallExpr      : LENGTH_WORD      WSP? vE1=commonExpr WSP? CLOSE;
+indexOfMethodCallExpr     : INDEXOF_WORD     WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+substringMethodCallExpr   : SUBSTRING_WORD   WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? ( COMMA WSP? vE3=commonExpr WSP? )? CLOSE;
+toLowerMethodCallExpr     : TOLOWER_WORD     WSP? vE1=commonExpr WSP? CLOSE;
+toUpperMethodCallExpr     : TOUPPER_WORD     WSP? vE1=commonExpr WSP? CLOSE;
+trimMethodCallExpr        : TRIM_WORD        WSP? vE1=commonExpr WSP? CLOSE;
+concatMethodCallExpr      : CONCAT_WORD      WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
 
-yearMethodCallExpr                : YEAR_WORD                WSP? commonExpr WSP? CLOSE;
-monthMethodCallExpr               : MONTH_WORD               WSP? commonExpr WSP? CLOSE;
-dayMethodCallExpr                 : DAY_WORD                 WSP? commonExpr WSP? CLOSE;
-hourMethodCallExpr                : HOUR_WORD                WSP? commonExpr WSP? CLOSE;
-minuteMethodCallExpr              : MINUTE_WORD              WSP? commonExpr WSP? CLOSE;
-secondMethodCallExpr              : SECOND_WORD              WSP? commonExpr WSP? CLOSE;
-fractionalsecondsMethodCallExpr   : FRACTIONALSECONDS_WORD   WSP? commonExpr WSP? CLOSE;
-totalsecondsMethodCallExpr        : TOTALSECONDS_WORD        WSP? commonExpr WSP? CLOSE;
-dateMethodCallExpr                : DATE_WORD                WSP? commonExpr WSP? CLOSE;
-timeMethodCallExpr                : TIME_WORD                WSP? commonExpr WSP? CLOSE;
-totalOffsetMinutesMethodCallExpr  : TOTALOFFSETMINUTES_WORD  WSP? commonExpr WSP? CLOSE;
+yearMethodCallExpr                : YEAR_WORD                WSP? vE1=commonExpr WSP? CLOSE;
+monthMethodCallExpr               : MONTH_WORD               WSP? vE1=commonExpr WSP? CLOSE;
+dayMethodCallExpr                 : DAY_WORD                 WSP? vE1=commonExpr WSP? CLOSE;
+hourMethodCallExpr                : HOUR_WORD                WSP? vE1=commonExpr WSP? CLOSE;
+minuteMethodCallExpr              : MINUTE_WORD              WSP? vE1=commonExpr WSP? CLOSE;
+secondMethodCallExpr              : SECOND_WORD              WSP? vE1=commonExpr WSP? CLOSE;
+fractionalsecondsMethodCallExpr   : FRACTIONALSECONDS_WORD   WSP? vE1=commonExpr WSP? CLOSE;
+totalsecondsMethodCallExpr        : TOTALSECONDS_WORD        WSP? vE1=commonExpr WSP? CLOSE;
+dateMethodCallExpr                : DATE_WORD                WSP? vE1=commonExpr WSP? CLOSE;
+timeMethodCallExpr                : TIME_WORD                WSP? vE1=commonExpr WSP? CLOSE;
+totalOffsetMinutesMethodCallExpr  : TOTALOFFSETMINUTES_WORD  WSP? vE1=commonExpr WSP? CLOSE;
 
 minDateTimeMethodCallExpr         : MINDATETIME_WORD WSP? CLOSE;
 maxDateTimeMethodCallExpr         : MAXDATETIME_WORD WSP? CLOSE;
 nowMethodCallExpr                 : NOW_WORD         WSP? CLOSE;
 
-roundMethodCallExpr               : ROUND_WORD   WSP? commonExpr WSP? CLOSE;
-floorMethodCallExpr               : FLOOR_WORD   WSP? commonExpr WSP? CLOSE;
-ceilingMethodCallExpr             : CEILING_WORD WSP? commonExpr WSP? CLOSE;
+roundMethodCallExpr               : ROUND_WORD   WSP? vE1=commonExpr WSP? CLOSE;
+floorMethodCallExpr               : FLOOR_WORD   WSP? vE1=commonExpr WSP? CLOSE;
+ceilingMethodCallExpr             : CEILING_WORD WSP? vE1=commonExpr WSP? CLOSE;
 
-distanceMethodCallExpr            : GEO_DISTANCE_WORD   WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
-geoLengthMethodCallExpr           : GEO_LENGTH_WORD     WSP? commonExpr WSP? CLOSE;
-intersectsMethodCallExpr          : GEO_INTERSECTS_WORD WSP? commonExpr WSP? COMMA WSP? commonExpr WSP? CLOSE;
+distanceMethodCallExpr            : GEO_DISTANCE_WORD   WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+geoLengthMethodCallExpr           : GEO_LENGTH_WORD     WSP? vE1=commonExpr WSP? CLOSE;
+intersectsMethodCallExpr          : GEO_INTERSECTS_WORD WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
 
-isofExpr                          : ISOF_WORD  WSP? ( commonExpr WSP? COMMA WSP? )? qualifiedtypename WSP? CLOSE;
-castExpr                          : CAST_WORD  WSP? ( commonExpr WSP? COMMA WSP? )? qualifiedtypename WSP? CLOSE;
+isofExpr                          : ISOF_WORD  WSP? ( vE1=commonExpr WSP? COMMA WSP? )? vNS=namespace vODI=odataIdentifier WSP? CLOSE;
+castExpr                          : CAST_WORD  WSP? ( vE1=commonExpr WSP? COMMA WSP? )? vNS=namespace vODI=odataIdentifier WSP? CLOSE;
 
 //;------------------------------------------------------------------------------
 //; 5. JSON format for function parameters
@@ -428,6 +430,7 @@ primitiveLiteral    : nullrule
                     | GUID
                     | string
                     | TIMEOFDAY
+                    | enumX
                     | geographyCollection
                     | geographyLineString
                     | geographyMultilineString
@@ -442,7 +445,6 @@ primitiveLiteral    : nullrule
                     | geometryMultipolygon
                     | geometryPoint
                     | geometryPolygon
-                    | enumX
                     ;
 
 
@@ -451,7 +453,7 @@ booleanNonCase      : BOOLEAN | TRUE | FALSE;
 string              : STRING;
 
 
-enumX               : namespace odataIdentifier STRING /*SQUOTE enumValue SQUOTE*/;
+enumX               : namespace odataIdentifier STRING;
 enumValue           : singleEnumValue *( COMMA singleEnumValue );
 singleEnumValue     : odataIdentifier / INT;
 
