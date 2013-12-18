@@ -19,21 +19,23 @@
 package org.apache.olingo.odata4.producer.core.uri.expression;
 
 public enum SupportedBinaryOperators {
+  //multiplicative
   MUL("mul"), DIV("div"), MOD("mod"),
-  ADD("add"), SUB("sub"), GT("gt"), GE("ge"), LT("lt"), LE("le"),
+  //additive
+  ADD("add"), SUB("sub"),
+  //comparism
+  GT("gt"), GE("ge"), LT("lt"), LE("le"),
+  //isof
   ISOF("isof"),
+  //equality
   EQ("eq"), NE("ne"),
+  //and/or
   AND("and"), OR("or");
 
   private String syntax;
 
   private SupportedBinaryOperators(final String syntax) {
     this.syntax = syntax;
-  }
-
-  @Override
-  public String toString() {
-    return syntax;
   }
 
   public static SupportedBinaryOperators get(String operator) {
@@ -44,5 +46,11 @@ public enum SupportedBinaryOperators {
     }
     return null;
   }
+  
+  @Override
+  public String toString() {
+    return syntax;
+  }
+
 
 }

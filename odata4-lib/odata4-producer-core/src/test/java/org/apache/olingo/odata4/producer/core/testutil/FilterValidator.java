@@ -24,18 +24,19 @@ import static org.junit.Assert.fail;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
 import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.Filter;
 
 public class FilterValidator {
 
   UriResourcePathValidator uriResourcePathValidator;
-  Expression filterTree;
+  Filter filter;
 
   public FilterValidator(UriResourcePathValidator uriResourcePathValidator) {
 
     this.uriResourcePathValidator = uriResourcePathValidator;
 
-    filterTree = ((UriInfoImplPath) uriResourcePathValidator.uriInfo).getFilter();
-    if (filterTree == null) {
+    filter = ((UriInfoImplPath) uriResourcePathValidator.uriInfo).getFilter();
+    if (filter.getTree() == null) {
       fail("FilterValidator: no filter found");
     }
     return;
@@ -49,7 +50,7 @@ public class FilterValidator {
 
   public FilterValidator is(String expectedFilterAsString) {
     try {
-      String actualFilterAsText = filterTree.accept(new FilterTreeToText());
+      String actualFilterAsText = filter.getTree().accept(new FilterTreeToText());
       assertEquals(expectedFilterAsString, actualFilterAsText);
     } catch (ExceptionVisitExpression e) {
       fail("Exception occured while converting the filterTree into text" + "\n"

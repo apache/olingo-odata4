@@ -18,6 +18,19 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
+import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
+
 public class Filter extends SystemQueryOption {
+  
+  
+  Expression expression;
+
+  public Filter(Expression expression) {
+    this.expression = expression;
+  }
+
+  public Expression getTree() {
+    return expression;
+  }
   
 }

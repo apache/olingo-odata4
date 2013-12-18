@@ -24,7 +24,6 @@ public class Literal extends Expression implements Visitable {
 
   public void setText(String text) {
     this.text = text;
-
   }
 
   @Override

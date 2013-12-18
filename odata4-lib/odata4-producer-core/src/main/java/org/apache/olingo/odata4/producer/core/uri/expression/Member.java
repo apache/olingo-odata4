@@ -22,30 +22,33 @@ import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
 
 public class Member extends Expression implements Visitable {
 
-  private boolean isIT;
-  UriInfoImplPath path;
-
-  public Member setIT(boolean isIT) {
-    this.isIT = isIT;
-    return this;
-  }
+  private boolean isIT; // means $it as defined in the ABNF 
+  private UriInfoImplPath path;
 
   public boolean isIT() {
     return isIT;
   }
+  
+  public Member setIT(boolean isIT) {
+    this.isIT = isIT;
+    return this;
+  } 
 
+  
+  public UriInfoImplPath getPath() {
+    return path;
+  }
+  
   public Member setPath(UriInfoImplPath pathSegments) {
     this.path = pathSegments;
     return this;
   }
+   
 
   @Override
   public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
     return visitor.visitMember(this);
-
   }
 
-  public UriInfoImplPath getPath() {
-    return path;
-  }
+  
 }

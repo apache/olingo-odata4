@@ -26,9 +26,11 @@ public interface ExpressionVisitor<T> {
   
   T visitUnaryOperator( SupportedUnaryOperators operator, T operand) throws ExceptionVisitExpression;
   
-  T visitMethoCall( SupportedMethodCalls methodCall, List<T> parameters)throws ExceptionVisitExpression;
+  T visitMethodCall( SupportedMethodCalls methodCall, List<T> parameters)throws ExceptionVisitExpression;
   
   T visitLiteral(String literal) throws ExceptionVisitExpression;
 
-  T visitMember(Member member) throws ExceptionVisitExpression;;
+  T visitMember(Member member) throws ExceptionVisitExpression;
+
+  T visitAlias(String referenceName) throws ExceptionVisitExpression;
 }

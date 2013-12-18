@@ -22,16 +22,14 @@ package org.apache.olingo.odata4.producer.core.uri.expression;
 public class Alias extends Expression {
 
   private String referenceName;
-  //TODO add object which is referenced
 
   public void setReference(String referenceName) {
     this.referenceName = referenceName;
   }
 
   @Override
-  public Object accept(ExpressionVisitor visitor) throws ExceptionVisitExpression {
-    // TODO Auto-generated method stub
-    return null;
+  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+    return visitor.visitAlias(referenceName);
   }
 
 }

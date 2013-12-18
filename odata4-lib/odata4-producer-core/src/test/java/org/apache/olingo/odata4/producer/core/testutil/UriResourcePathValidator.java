@@ -180,7 +180,7 @@ public class UriResourcePathValidator {
   }
 
   public UriResourcePathValidator isFilterString(String expectedFilterTreeAsString) {
-    Expression filterTree = this.uriInfo.getFilter();
+    Expression filterTree = this.uriInfo.getFilter().getTree();
     try {
       String filterTreeAsString = filterTree.accept(new FilterTreeToText());
       assertEquals(expectedFilterTreeAsString, filterTreeAsString);

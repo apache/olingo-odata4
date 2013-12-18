@@ -35,9 +35,12 @@ public class MethodCall extends Expression  implements Visitable{
   }
 
   @Override
-  public Object accept(ExpressionVisitor visitor) throws ExceptionVisitExpression {
-
-    return null;
+  public <T> T accept(ExpressionVisitor<T>  visitor) throws ExceptionVisitExpression {
+    List<T> userParameters = new ArrayList<T>();
+    for (Expression parameter : parameters ) {
+      userParameters.add(parameter.accept(visitor));
+    }
+    return visitor.visitMethodCall(method, userParameters);
   }
 
 }

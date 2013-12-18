@@ -18,13 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.expression;
 
-public class BinaryOperator extends Expression implements Visitable {
+public class Binary extends Expression implements Visitable {
 
   private SupportedBinaryOperators operator;
   private Expression left;
   private Expression right;
 
-  public BinaryOperator setOperator(SupportedBinaryOperators operator) {
+  public Binary setOperator(SupportedBinaryOperators operator) {
     this.operator = operator;
     return this;
   }

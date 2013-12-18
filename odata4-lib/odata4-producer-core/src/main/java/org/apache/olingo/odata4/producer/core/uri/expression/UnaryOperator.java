@@ -25,18 +25,16 @@ public class UnaryOperator extends Expression implements Visitable {
 
   public void setOperand(Expression expression) {
     this.expression = expression;
-
   }
 
   public void setOperator(SupportedUnaryOperators operator) {
     this.operator = operator;
-
   }
 
   @Override
-  public Object accept(ExpressionVisitor visitor) throws ExceptionVisitExpression {
-    // TODO Auto-generated method stub
-    return null;
+  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+    T operand = expression.accept(visitor); 
+    return visitor.visitUnaryOperator(operator, operand);
   }
 
 }

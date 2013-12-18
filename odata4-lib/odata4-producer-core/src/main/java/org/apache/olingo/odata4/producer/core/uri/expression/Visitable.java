@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.expression;
 
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 
 

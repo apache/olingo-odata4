@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImplPath;
 import org.apache.olingo.odata4.producer.core.uri.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.core.uri.expression.ExpressionVisitor;
-import org.apache.olingo.odata4.producer.core.uri.expression.Literal;
 import org.apache.olingo.odata4.producer.core.uri.expression.Member;
 import org.apache.olingo.odata4.producer.core.uri.expression.SupportedBinaryOperators;
 import org.apache.olingo.odata4.producer.core.uri.expression.SupportedMethodCalls;
@@ -43,13 +42,13 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitMethoCall(SupportedMethodCalls methodCall, List<String> parameters)
+  public String visitMethodCall(SupportedMethodCalls methodCall, List<String> parameters)
       throws ExceptionVisitExpression {
     String text = "<" + methodCall + "(";
     int i = 0;
-    while (i< parameters.size()) {
-      if (i > 0 ) {
-        text +=",";
+    while (i < parameters.size()) {
+      if (i > 0) {
+        text += ",";
       }
       text += parameters.get(i);
       i++;
@@ -58,10 +57,9 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
     return text + ")";
   }
 
-
   @Override
   public String visitLiteral(String literal) throws ExceptionVisitExpression {
-    return "" + literal + "";
+    return literal;
   }
 
   @Override
@@ -72,16 +70,22 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
     }
 
     UriInfoImplPath path = member.getPath();
-    if (path!= null) {
-      /*if (member.isIT()) {
-        ret +="/";
-      }*/
-      
+    if (path != null) {
+      /*
+       * if (member.isIT()) {
+       * ret +="/";
+       * }
+       */
+
       ret += path.toString();
-      
-      
+
     }
     return ret;
+  }
+
+  @Override
+  public String visitAlias(String referenceName) throws ExceptionVisitExpression {
+    return "<" + referenceName + ">";
   }
 
 }

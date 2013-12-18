@@ -19,19 +19,19 @@
 package org.apache.olingo.odata4.producer.core.uri;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.Filter;
 
 public class UriInfoImplPath extends UriInfoImpl {
 
   private List<UriPathInfoImpl> pathInfos = new ArrayList<UriPathInfoImpl>();
 
-  private Expression spFilter;
+  
+  //TODO add other systemQueryParamters
+  private Filter spFilter;
 
   public UriInfoImplPath() {
     this.setKind(UriInfoKind.path);
@@ -54,11 +54,11 @@ public class UriInfoImplPath extends UriInfoImpl {
   }
 
   public void setSystemParameter(SystemQueryParameter filter, Expression expression) {
-    spFilter = expression;
+    spFilter = new Filter(expression);
     addQueryParameter(filter.toString(), expression);
   }
 
-  public Expression getFilter() {
+  public Filter getFilter() {
     return this.spFilter;
   }
 
@@ -70,17 +70,11 @@ public class UriInfoImplPath extends UriInfoImpl {
       if ( i > 0 ) { 
         ret += "/";
       }
-        
+
       ret += pathInfos.get(i).toString();
-      
-      
-      
       i++;
-      
     }
     
-    
-
     return ret;
   }
 

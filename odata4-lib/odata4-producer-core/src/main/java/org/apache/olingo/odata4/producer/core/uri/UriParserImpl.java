@@ -21,8 +21,6 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import java.util.List;
 
-import javax.annotation.processing.SupportedAnnotationTypes;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
@@ -82,7 +80,16 @@ import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkipCont
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkiptokenContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SystemQueryOptionContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TopContext;
-import org.apache.olingo.odata4.producer.core.uri.expression.*;
+import org.apache.olingo.odata4.producer.core.uri.expression.Alias;
+import org.apache.olingo.odata4.producer.core.uri.expression.Binary;
+import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.expression.Literal;
+import org.apache.olingo.odata4.producer.core.uri.expression.Member;
+import org.apache.olingo.odata4.producer.core.uri.expression.MethodCall;
+import org.apache.olingo.odata4.producer.core.uri.expression.SupportedBinaryOperators;
+import org.apache.olingo.odata4.producer.core.uri.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.producer.core.uri.expression.SupportedUnaryOperators;
+import org.apache.olingo.odata4.producer.core.uri.expression.UnaryOperator;
 
 public class UriParserImpl {
   private Edm edm = null;
@@ -158,7 +165,7 @@ public class UriParserImpl {
     } else if (firstChild instanceof CustomQueryOptionContext) {
       // TODO read custom request option
     } else if (firstChild.getText().equals("@")) {
-      // TODO read ailas and value
+      // TODO read alias and value
     }
 
   }
@@ -274,7 +281,7 @@ public class UriParserImpl {
   }
 
   private Expression readBinary(ParseTree expressionContext) {
-    BinaryOperator expression = new BinaryOperator();
+    Binary expression = new Binary();
     expression.setLeftOperand(readCommonExpression(expressionContext.getChild(0)));
     expression.setOperator(SupportedBinaryOperators.get(expressionContext.getChild(2).getText()));
     expression.setRightOperand(readCommonExpression(expressionContext.getChild(4)));
