@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.odata4.commons.api.edm.provider.EdmProviderAdapter;
+import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumMember;
@@ -43,7 +43,7 @@ import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 
-public class EdmTechProvider extends EdmProviderAdapter {
+public class EdmTechProvider extends EdmProvider {
 
   public static final String nameSpace = "com.sap.odata.test1";
 

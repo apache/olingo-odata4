@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 
-//TODO: Finish
 public class ActionImport extends OperationImport {
   private FullQualifiedName action;
 

@@ -18,7 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
+import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Function;
@@ -35,6 +37,15 @@ public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
   @Override
   public boolean isComposable() {
     return function.isComposable();
+  }
+
+  @Override
+  public EdmReturnType getReturnType() {
+    EdmReturnType returnType = super.getReturnType();
+    if (returnType == null) {
+      throw new EdmException("ReturnType for a function must not be null");
+    }
+    return returnType;
   }
 
 }

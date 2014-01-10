@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 
-//TODO: Finish
 public abstract class StructuralType {
 
   protected String name;

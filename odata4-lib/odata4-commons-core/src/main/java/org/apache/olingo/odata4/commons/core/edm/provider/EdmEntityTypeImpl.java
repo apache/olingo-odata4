@@ -37,6 +37,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
   private final List<String> keyPredicateNames = new ArrayList<String>();
   private final HashMap<String, EdmKeyPropertyRef> keyPropertyRefs = new HashMap<String, EdmKeyPropertyRef>();
   private final EdmEntityType entityBaseType;
+  private ArrayList<EdmKeyPropertyRef> keyPropertyRefsList;
 
   public EdmEntityTypeImpl(final EdmProviderImpl edm, final FullQualifiedName name, final EntityType entityType) {
     super(edm, name, entityType, EdmTypeKind.ENTITY);
@@ -86,8 +87,10 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     if (baseType != null) {
       return entityBaseType.getKeyPropertyRefs();
     } else {
-      // TODO: Cache
-      return new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
+      if(keyPropertyRefsList == null){
+        keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
+      }
+      return keyPropertyRefsList;
     }
   }
 
@@ -106,7 +109,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     if (baseTypeName != null) {
       baseType = edm.getEntityType(baseTypeName);
       if (baseType == null) {
-        throw new EdmException("Cant find base type with name: " + baseTypeName + " for entity type: " + getName());
+        throw new EdmException("Cannot find base type with name: " + baseTypeName + " for entity type: " + getName());
       }
     }
     return baseType;

@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-//TODO: finish
 public abstract class OperationImport {
 
   protected String name;

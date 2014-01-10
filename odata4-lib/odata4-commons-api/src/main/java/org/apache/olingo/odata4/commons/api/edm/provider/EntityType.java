@@ -22,9 +22,8 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 
-//TODO: Finish
 public class EntityType extends StructuralType {
-  // Anything except which have to be new?
+
   private List<PropertyRef> key;
   private boolean hasStream;
 

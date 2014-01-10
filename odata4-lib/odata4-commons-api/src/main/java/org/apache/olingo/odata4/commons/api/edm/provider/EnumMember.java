@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-//TODO: Finish
 public class EnumMember {
 
   private String name;

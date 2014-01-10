@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.odata4.commons.api.edm.helper.EdmEntitySetInfo;
 import org.apache.olingo.odata4.commons.api.edm.helper.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.helper.EdmSingletonInfo;
@@ -38,8 +39,7 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   @Override
   public String getDataServiceVersion() {
-    // TODO: make constant
-    return "4.0";
+    return ODataServiceVersion.V40;
   }
 
   @Override

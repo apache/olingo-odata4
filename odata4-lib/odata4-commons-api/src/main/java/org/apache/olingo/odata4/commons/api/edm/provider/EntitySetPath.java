@@ -18,8 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-//TODO: finish
-//DO we really need this class?
+//TODO: Do we really need this class?
 public class EntitySetPath {
 
   private String bindingParameter;

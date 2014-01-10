@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.commons.api.edm.helper.EntityContainerInfo;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
-public interface EdmProvider {
+public abstract class EdmProvider {
 
   /**
    * This method should return an {@link EnumType} or <b>null</b> if nothing is found
@@ -33,7 +33,9 @@ public interface EdmProvider {
    * @return {@link EnumType} for given name
    * @throws ODataException
    */
-  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException;
+  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link TypeDefinition} or <b>null</b> if nothing is found
@@ -41,7 +43,9 @@ public interface EdmProvider {
    * @return {@link TypeDefinition} for given name
    * @throws ODataException
    */
-  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException;
+  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link EntityType} or <b>null</b> if nothing is found
@@ -49,7 +53,9 @@ public interface EdmProvider {
    * @return {@link EntityType} for the given name
    * @throws ODataException
    */
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException;
+  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a {@link ComplexType} or <b>null</b> if nothing is found
@@ -57,7 +63,9 @@ public interface EdmProvider {
    * @return {@link StructuralType} for the given name
    * @throws ODataException
    */
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException;
+  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a list of all {@link Action} for the FullQualifiedname or <b>null</b> if nothing is found
@@ -65,7 +73,9 @@ public interface EdmProvider {
    * @return List of {@link Action} or null
    * @throws ODataException
    */
-  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException;
+  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a list of all {@link Function} for the FullQualifiedname or <b>null</b> if nothing is
@@ -74,10 +84,14 @@ public interface EdmProvider {
    * @return List of {@link Function} or null
    * @throws ODataException
    */
-  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException;
+  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    return null;
+  };
 
   // TODO: document
-  public Term getTerm(final FullQualifiedName termName) throws ODataException;
+  public Term getTerm(final FullQualifiedName termName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link EntitySet} or <b>null</b> if nothing is found
@@ -87,7 +101,9 @@ public interface EdmProvider {
    * @throws ODataException
    */
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
-      throws ODataException;
+      throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link Singleton} or <b>null</b> if nothing is found
@@ -97,7 +113,9 @@ public interface EdmProvider {
    * @throws ODataException
    */
   public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
-      throws ODataException;
+      throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link ActionImport} or <b>null</b> if nothing is found
@@ -107,7 +125,9 @@ public interface EdmProvider {
    * @throws ODataException
    */
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
-      throws ODataException;
+      throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a {@link FunctionImport} or <b>null</b> if nothing is found
@@ -117,7 +137,9 @@ public interface EdmProvider {
    * @throws ODataException
    */
   public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
-      throws ODataException;
+      throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return an {@link EntityContainerInfo} or <b>null</b> if nothing is found
@@ -125,19 +147,25 @@ public interface EdmProvider {
    * @return {@link EntityContainerInfo} for the given name
    * @throws ODataException
    */
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException;
+  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a list of all namespaces which have an alias
    * @return List of alias info
    * @throws ODataException
    */
-  public List<AliasInfo> getAliasInfos() throws ODataException;
+  public List<AliasInfo> getAliasInfos() throws ODataException {
+    return null;
+  };
 
   /**
    * This method should return a collection of all {@link Schema}
    * @return List<{@link Schema}>
    * @throws ODataException
    */
-  public List<Schema> getSchemas() throws ODataException;
+  public List<Schema> getSchemas() throws ODataException {
+    return null;
+  };
 }

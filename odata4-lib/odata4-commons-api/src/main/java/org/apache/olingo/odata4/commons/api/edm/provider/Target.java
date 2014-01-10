@@ -22,7 +22,6 @@ import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 
 public class Target {
 
-  // What is the name here?
   private String targetName;
   private FullQualifiedName entityContainer;
 

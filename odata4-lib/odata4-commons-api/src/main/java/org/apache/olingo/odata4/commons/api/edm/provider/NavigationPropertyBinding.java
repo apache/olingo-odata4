@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-//TODO: finish
 public class NavigationPropertyBinding {
 
   private String path;

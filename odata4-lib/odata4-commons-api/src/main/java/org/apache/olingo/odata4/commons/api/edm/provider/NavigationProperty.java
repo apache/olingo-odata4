@@ -23,14 +23,12 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmOnDelete;
 import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 
-//TODO: finish
 public class NavigationProperty {
 
   private String name;
   private FullQualifiedName type;
   private boolean isCollection;
 
-  // Should we make the partner a path class?
   private String partner;
   private boolean containsTarget;
   private List<ReferentialConstraint> referentialConstraints;

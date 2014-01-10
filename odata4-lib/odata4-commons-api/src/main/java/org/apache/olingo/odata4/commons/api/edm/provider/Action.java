@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-//TODO: Finish
 public class Action extends Operation {
   @Override
   public Action setName(final String name) {

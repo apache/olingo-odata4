@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-//TODO: Finish
 public class Function extends Operation {
 
   private boolean isComposable;

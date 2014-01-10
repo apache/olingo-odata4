@@ -52,7 +52,7 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
         if (kind != null) {
           propertyType = kind.getEdmPrimitiveTypeInstance();
         } else {
-          throw new EdmException("Can�t find type with name: " + typeName);
+          throw new EdmException("Cannot find type with name: " + typeName);
         }
       } else {
         propertyType = edm.getComplexType(typeName);
@@ -61,7 +61,7 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
           if (propertyType == null) {
             propertyType = edm.getTypeDefinition(typeName);
             if (propertyType == null) {
-              throw new EdmException("Can�t find type with name: " + typeName);
+              throw new EdmException("Cannot find type with name: " + typeName);
             }
           }
         }

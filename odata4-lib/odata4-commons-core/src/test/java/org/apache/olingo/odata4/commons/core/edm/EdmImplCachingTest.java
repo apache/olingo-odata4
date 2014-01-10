@@ -50,8 +50,6 @@ public class EdmImplCachingTest {
   private final FullQualifiedName NAME2 = new FullQualifiedName("testNamespace2", "testName2");
   private Edm edm;
 
-  // TODO: Test with alias
-
   @Test
   public void cacheEntityContainer() {
     EdmEntityContainer entityContainer = edm.getEntityContainer(null);
