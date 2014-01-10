@@ -39,7 +39,7 @@ public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavi
     if (typeImpl == null) {
       typeImpl = edm.getEntityType(navigationProperty.getType());
       if (typeImpl == null) {
-        throw new EdmException("Can�t find type with name: " + navigationProperty.getType());
+        throw new EdmException("Cannot find type with name: " + navigationProperty.getType());
       }
     }
     return typeImpl;

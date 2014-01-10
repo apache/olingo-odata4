@@ -46,7 +46,7 @@ public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
         if (kind != null) {
           typeImpl = kind.getEdmPrimitiveTypeInstance();
         } else {
-          throw new EdmException("Cant find type with name: " + typeName);
+          throw new EdmException("Cannot find type with name: " + typeName);
         }
       } else {
         typeImpl = edm.getComplexType(typeName);
@@ -57,7 +57,7 @@ public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
             if (typeImpl == null) {
               typeImpl = edm.getTypeDefinition(typeName);
               if (typeImpl == null) {
-                throw new EdmException("Cant find type with name: " + typeName);
+                throw new EdmException("Cannot find type with name: " + typeName);
               }
             }
           }

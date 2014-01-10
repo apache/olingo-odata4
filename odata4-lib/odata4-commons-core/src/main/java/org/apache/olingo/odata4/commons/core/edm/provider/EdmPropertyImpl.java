@@ -36,11 +36,7 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
   public EdmPropertyImpl(final EdmProviderImpl edm, final Property property) {
     super(edm, property.getName());
     this.property = property;
-    if (EdmPrimitiveType.EDM_NAMESPACE.equals(property.getType().getNamespace())) {
-      isPrimitive = true;
-    } else {
-      isPrimitive = false;
-    }
+    isPrimitive = EdmPrimitiveType.EDM_NAMESPACE.equals(property.getType().getNamespace());
   }
 
   @Override
