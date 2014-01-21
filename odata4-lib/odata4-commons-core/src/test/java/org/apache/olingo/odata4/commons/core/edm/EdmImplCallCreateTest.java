@@ -37,7 +37,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata4.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type SByte.
  */
-final class EdmSByte extends SingletonPrimitiveType {
+public final class EdmSByte extends SingletonPrimitiveType {
 
   private static final EdmSByte instance = new EdmSByte();
 

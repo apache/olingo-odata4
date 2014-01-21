@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -33,10 +34,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
@@ -113,6 +114,11 @@ public class EdmEntityTypeImplTest {
 
     typeWithComplexKey = new EdmEntityTypeImpl(edm, typeWithComplexKeyName, typeWithComplexKeyProvider);
   }
+  
+  @Test
+  public void hasStream(){
+    assertFalse(typeWithBaseType.hasStream());
+  }
 
   @Test
   public void complexKeyWithAlias() {
@@ -174,9 +180,6 @@ public class EdmEntityTypeImplTest {
     assertNotNull(keyPropertyRef);
     assertEquals("Id", keyPropertyRef.getKeyPropertyName());
     assertNull(keyPropertyRef.getAlias());
-
-    // Should we support this?
-    // EdmPoperty keyProperty = keyPropertyRef.getProperty();
 
     List<EdmKeyPropertyRef> keyPropertyRefs = typeWithBaseType.getKeyPropertyRefs();
     assertNotNull(keyPropertyRefs);

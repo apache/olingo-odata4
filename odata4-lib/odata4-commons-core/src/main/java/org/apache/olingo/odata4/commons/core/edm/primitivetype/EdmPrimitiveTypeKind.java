@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.commons.core.edm.primitivetype;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 //TODO: Should we delete this typekind and use a facade?
 public enum EdmPrimitiveTypeKind {

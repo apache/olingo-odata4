@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmMapping;
+import org.apache.olingo.odata4.commons.api.edm.EdmMapping;
 
 public class Mapping implements EdmMapping {
 

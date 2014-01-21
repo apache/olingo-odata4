@@ -19,11 +19,11 @@
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.api.edm.EdmMapping;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmMapping;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 

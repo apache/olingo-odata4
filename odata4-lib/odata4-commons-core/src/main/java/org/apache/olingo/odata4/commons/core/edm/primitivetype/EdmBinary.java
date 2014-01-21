@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Binary.
  */
-class EdmBinary extends SingletonPrimitiveType {
+public class EdmBinary extends SingletonPrimitiveType {
 
   private static final EdmBinary instance = new EdmBinary();
   {

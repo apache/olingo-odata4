@@ -23,7 +23,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the internal primitive type "unsigned 7-bit integer".
  */
-final class Uint7 extends SingletonPrimitiveType {
+public final class Uint7 extends SingletonPrimitiveType {
 
   private static final Uint7 instance = new Uint7();
 

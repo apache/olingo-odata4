@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Int64.
  */
-final class EdmInt64 extends SingletonPrimitiveType {
+public final class EdmInt64 extends SingletonPrimitiveType {
 
   private static final EdmInt64 instance = new EdmInt64();
 
@@ -81,7 +81,7 @@ final class EdmInt64 extends SingletonPrimitiveType {
    * @throws IllegalArgumentException if the conversion is not possible
    * @throws ClassCastException if the return type is not allowed
    */
-  protected static <T> T convertNumber(final Number value, final Class<T> returnType) throws IllegalArgumentException,
+  public static <T> T convertNumber(final Number value, final Class<T> returnType) throws IllegalArgumentException,
       ClassCastException {
     if (returnType.isAssignableFrom(Long.class)) {
       return returnType.cast(value.longValue());

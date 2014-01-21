@@ -38,10 +38,9 @@ public interface EdmOperation extends EdmType {
 
   /**
    * @param bindingParameterEntitySet
-   * @param path
    * @return {@link EdmEntitySet} for this binding
    */
-  EdmEntitySet getReturnedEntitySet(EdmEntitySet bindingParameterEntitySet, String path);
+  EdmEntitySet getReturnedEntitySet(EdmEntitySet bindingParameterEntitySet);
 
   /**
    * @return {@link EdmReturnType} of this operation

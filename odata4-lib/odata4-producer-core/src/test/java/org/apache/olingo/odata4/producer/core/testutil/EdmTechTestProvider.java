@@ -21,10 +21,10 @@ package org.apache.olingo.odata4.producer.core.testutil;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;

@@ -30,8 +30,8 @@ import org.apache.olingo.odata4.commons.api.edm.EdmOperation;
 import org.apache.olingo.odata4.commons.api.edm.EdmParameter;
 import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySetPath;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Operation;
 import org.apache.olingo.odata4.commons.api.edm.provider.Parameter;
 
@@ -74,26 +74,23 @@ public class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
   }
 
   @Override
-  public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet, final String path) {
+  public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
     EntitySetPath entitySetPath = operation.getEntitySetPath();
     EdmEntitySet returnedEntitySet = null;
     if (bindingParameterEntitySet != null && entitySetPath != null && entitySetPath.getBindingParameter() != null
         && entitySetPath.getPath() != null) {
-      String finalPath = "";
-      if (path != null) {
-        finalPath = path + "/" + entitySetPath.getPath();
-      } else {
-        finalPath = entitySetPath.getPath();
+      EdmBindingTarget relatedBindingTarget =
+          bindingParameterEntitySet.getRelatedBindingTarget(entitySetPath.getPath());
+      if (relatedBindingTarget == null) {
+        throw new EdmException("Cannot find entity set with path: " + entitySetPath.getPath());
       }
-
-      EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.getRelatedBindingTarget(finalPath);
       if (relatedBindingTarget instanceof EdmEntitySet) {
         returnedEntitySet = (EdmEntitySet) relatedBindingTarget;
       } else {
         throw new EdmException("BindingTarget with name: " + relatedBindingTarget.getName() + " must be an entity set");
       }
-    }
 
+    }
     return returnedEntitySet;
   }
 

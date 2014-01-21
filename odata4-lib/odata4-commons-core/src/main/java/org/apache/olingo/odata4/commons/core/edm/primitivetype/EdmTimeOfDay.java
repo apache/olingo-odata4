@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 
-final class EdmTimeOfDay extends SingletonPrimitiveType {
+public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
       "(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,3}?)0*)?)?");

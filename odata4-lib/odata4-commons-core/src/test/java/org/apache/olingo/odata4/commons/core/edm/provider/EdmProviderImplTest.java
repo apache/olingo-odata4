@@ -35,13 +35,13 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.odata4.commons.api.edm.helper.EntityContainerInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Function;
 import org.apache.olingo.odata4.commons.api.edm.provider.Parameter;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
@@ -65,7 +65,8 @@ public class EdmProviderImplTest {
     EnumType enumType = new EnumType().setName(FQN.getName());
     when(provider.getEnumType(FQN)).thenReturn(enumType);
 
-    TypeDefinition typeDefinition = new TypeDefinition().setName(FQN.getName());
+    TypeDefinition typeDefinition =
+        new TypeDefinition().setName(FQN.getName()).setUnderlyingType(new FullQualifiedName("Edm", "String"));
     when(provider.getTypeDefinition(FQN)).thenReturn(typeDefinition);
 
     EntityType entityType = new EntityType().setName(FQN.getName()).setKey(new ArrayList<PropertyRef>());

@@ -16,32 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.provider;
+package org.apache.olingo.odata4.commons.api.edm;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmMember;
+import java.net.URI;
 
-public class EnumMember implements EdmMember{
+/**
+ * Objects of this class contain information about one entity set inside the EntityDataModel.
+ */
+public interface EdmEntitySetInfo {
 
-  private String name;
-  private String value;
+  // TODO: Either make this a class or alias info an interface!
+  /**
+   * @return the entity container name which contains this entity set.
+   */
+  public String getEntityContainerName();
 
-  // Annotations?
+  /**
+   * @return the entity set name
+   */
+  public String getEntitySetName();
 
-  public String getName() {
-    return name;
-  }
+  /**
+   * We use a {@link URI} object here to ensure the right encoding.
+   * If a string representation is needed the toASCIIString() method can be used.
+   * @return the uri to this entity set e.g. "Employees"
+   */
+  public URI getEntitySetUri();
 
-  public EnumMember setName(final String name) {
-    this.name = name;
-    return this;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public EnumMember setValue(final String value) {
-    this.value = value;
-    return this;
-  }
 }

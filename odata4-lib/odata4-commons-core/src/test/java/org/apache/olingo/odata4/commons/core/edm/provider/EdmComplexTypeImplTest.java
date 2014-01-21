@@ -30,9 +30,9 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;

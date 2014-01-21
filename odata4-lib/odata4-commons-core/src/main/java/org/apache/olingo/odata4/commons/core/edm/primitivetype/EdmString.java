@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type String.
  */
-final class EdmString extends SingletonPrimitiveType {
+public final class EdmString extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN_ASCII = Pattern.compile("\\p{ASCII}*");
   private static final EdmString instance = new EdmString();

@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmMappable;
 
 /**
  * A CSDL Property element

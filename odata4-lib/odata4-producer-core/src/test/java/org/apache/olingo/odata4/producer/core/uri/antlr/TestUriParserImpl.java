@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;

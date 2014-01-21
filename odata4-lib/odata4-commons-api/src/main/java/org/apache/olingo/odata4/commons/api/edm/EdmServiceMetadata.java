@@ -21,9 +21,6 @@ package org.apache.olingo.odata4.commons.api.edm;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmEntitySetInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmFunctionImportInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmSingletonInfo;
 
 /**
  * This interface gives access to the metadata of a service,

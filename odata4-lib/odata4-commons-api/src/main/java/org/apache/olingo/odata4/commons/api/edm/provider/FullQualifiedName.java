@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.api.edm.provider;
 
 /**
  * A full qualified name of any element in the EDM consists of a name and a namespace.

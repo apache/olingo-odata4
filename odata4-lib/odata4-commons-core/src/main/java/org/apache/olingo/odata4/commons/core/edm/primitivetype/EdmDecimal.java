@@ -29,7 +29,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Decimal.
  */
-final class EdmDecimal extends SingletonPrimitiveType {
+public final class EdmDecimal extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile("(?:\\+|-)?(?:0*(\\p{Digit}+?))(?:\\.(\\p{Digit}+?)0*)?");
   private static final EdmDecimal instance = new EdmDecimal();

@@ -16,32 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.provider;
+package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmMember;
+import java.net.URI;
 
-public class EnumMember implements EdmMember{
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
 
-  private String name;
-  private String value;
+public class EdmFunctionImportInfoImpl implements EdmFunctionImportInfo {
 
-  // Annotations?
+  private EntityContainer entityContainer;
+  private FunctionImport functionImport;
 
-  public String getName() {
-    return name;
+  public EdmFunctionImportInfoImpl(EntityContainer entityContainer, FunctionImport functionImport) {
+    this.entityContainer = entityContainer;
+    this.functionImport = functionImport;
   }
 
-  public EnumMember setName(final String name) {
-    this.name = name;
-    return this;
+  @Override
+  public String getEntityContainerName() {
+    return entityContainer.getName();
   }
 
-  public String getValue() {
-    return value;
+  @Override
+  public String getFunctionImportName() {
+    return functionImport.getName();
   }
 
-  public EnumMember setValue(final String value) {
-    this.value = value;
-    return this;
+  @Override
+  public URI getFunctionImportUri() {
+    return null;
   }
+
 }

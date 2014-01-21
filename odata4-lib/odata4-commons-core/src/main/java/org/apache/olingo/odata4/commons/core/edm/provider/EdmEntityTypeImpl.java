@@ -27,8 +27,8 @@ import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
 
 public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntityType {

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public class ActionMapKey {
   private final FullQualifiedName actionName;

@@ -16,28 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.api.edm;
 
-public class AliasInfo {
-  private String namespace;
-  private String alias;
+/**
+ * EdmMapping holds custom mapping information which can be applied to a CSDL element.
+ */
+public interface EdmMapping {
 
-  public String getNamespace() {
-    return namespace;
-  }
+  /**
+   * Get the mapping value
+   * 
+   * @return mapping name as String
+   */
+  String getInternalName();
 
-  public AliasInfo setNamespace(final String namespace) {
-    this.namespace = namespace;
-    return this;
-  }
+  /**
+   * Get the set object for this mapping
+   * 
+   * @return {@link Object} object
+   */
+  Object getObject();
 
-  public String getAlias() {
-    return alias;
-  }
+  /**
+   * Gets the key under which the resource source value can be found in the data map.
+   * @return the key of the media resource source
+   */
+  String getMediaResourceSourceKey();
 
-  public AliasInfo setAlias(final String alias) {
-    this.alias = alias;
-    return this;
-  }
-
+  /**
+   * Gets the key under which the resource mime type can be found in the data map.
+   * @return the key of the media resource type
+   */
+  String getMediaResourceMimeTypeKey();
 }

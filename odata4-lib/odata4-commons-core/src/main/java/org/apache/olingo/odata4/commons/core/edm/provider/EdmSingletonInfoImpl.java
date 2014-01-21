@@ -16,17 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.core.edm.provider;
 
-/**
- * EdmMappable can be applied to CSDL elements to associate additional information.
- */
-public interface EdmMappable {
+import java.net.URI;
 
-  /**
-   * Get mapping information applied to an EDM element
-   * 
-   * @return {@link EdmMapping}
-   */
-  EdmMapping getMapping();
+import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+
+public class EdmSingletonInfoImpl implements EdmSingletonInfo {
+
+  private final EntityContainer entityContainer;
+  private final Singleton singleton;
+
+  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
+    this.entityContainer = entityContainer;
+    this.singleton = singleton;
+  }
+
+  @Override
+  public String getEntityContainerName() {
+    return entityContainer.getName();
+  }
+
+  @Override
+  public String getSingletonName() {
+    return singleton.getName();
+  }
+
+  @Override
+  public URI getEntitySetUri() {
+    return null;
+  }
+
 }

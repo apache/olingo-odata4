@@ -16,28 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.api.edm;
 
-public class EntityContainerInfo {
-  private FullQualifiedName containerName;
-  private FullQualifiedName extendsContainer;
+import java.net.URI;
 
-  public FullQualifiedName getContainerName() {
-    return containerName;
-  }
+/**
+ * Objects of this class contain information about one function import inside the EntityDataModel.
+ */
+public interface EdmFunctionImportInfo {
 
-  public EntityContainerInfo setContainerName(final FullQualifiedName containerName) {
-    this.containerName = containerName;
-    return this;
-  }
+  /**
+   * @return the entity container name which contains this function import.
+   */
+  public String getEntityContainerName();
 
-  public FullQualifiedName getExtendsContainer() {
-    return extendsContainer;
-  }
+  /**
+   * @return the function import name
+   */
+  public String getFunctionImportName();
 
-  public EntityContainerInfo setExtendsContainer(final FullQualifiedName extendsContainer) {
-    this.extendsContainer = extendsContainer;
-    return this;
-  }
-
+  /**
+   * We use a {@link URI} object here to ensure the right encoding.
+   * If a string representation is needed the toASCIIString() method can be used.
+   * @return the uri to this function import
+   */
+  public URI getFunctionImportUri();
 }

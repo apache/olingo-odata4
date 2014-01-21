@@ -21,16 +21,16 @@ package org.apache.olingo.odata4.producer.core.testutil;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.EntityContainerInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.edm.provider.ActionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumMember;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Function;
 import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.NavigationProperty;

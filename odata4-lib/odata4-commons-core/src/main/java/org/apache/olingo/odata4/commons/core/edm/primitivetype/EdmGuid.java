@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Guid.
  */
-final class EdmGuid extends SingletonPrimitiveType {
+public final class EdmGuid extends SingletonPrimitiveType {
 
   private static final String PATTERN = "\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}";
   private static final EdmGuid instance = new EdmGuid();

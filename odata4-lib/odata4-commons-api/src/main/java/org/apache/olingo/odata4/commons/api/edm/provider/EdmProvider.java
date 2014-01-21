@@ -20,9 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.AliasInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.EntityContainerInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
 public abstract class EdmProvider {

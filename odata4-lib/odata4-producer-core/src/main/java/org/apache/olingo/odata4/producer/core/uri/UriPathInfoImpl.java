@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.odata4.producer.core.uri.expression.Expression;
 

@@ -23,7 +23,7 @@ import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 /**
  * Abstract singleton implementation of the EDM primitive-type interface.
  */
-abstract class SingletonPrimitiveType extends AbstractPrimitiveType {
+public abstract class SingletonPrimitiveType extends AbstractPrimitiveType {
 
   @Override
   public boolean equals(final Object obj) {

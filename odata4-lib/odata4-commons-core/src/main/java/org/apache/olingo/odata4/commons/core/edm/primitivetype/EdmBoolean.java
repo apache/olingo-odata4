@@ -23,7 +23,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Boolean.
  */
-final class EdmBoolean extends SingletonPrimitiveType {
+public final class EdmBoolean extends SingletonPrimitiveType {
 
   private static final EdmBoolean instance = new EdmBoolean();
 

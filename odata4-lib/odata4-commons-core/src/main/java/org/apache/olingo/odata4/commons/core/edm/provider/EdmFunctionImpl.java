@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Function;
 
 public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {

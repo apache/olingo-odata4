@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 
-final class EdmDuration extends SingletonPrimitiveType {
+public final class EdmDuration extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
       "[-+]?P(?:(\\p{Digit}+)D)?(?:T(?:(\\p{Digit}+)H)?(?:(\\p{Digit}+)M)?"

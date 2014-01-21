@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Single.
  */
-final class EdmSingle extends SingletonPrimitiveType {
+public final class EdmSingle extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
       "(?:\\+|-)?\\p{Digit}{1,9}(?:\\.\\p{Digit}{1,9})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,2})?");

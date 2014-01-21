@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.odata4.commons.core.edm.EdmImpl;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;

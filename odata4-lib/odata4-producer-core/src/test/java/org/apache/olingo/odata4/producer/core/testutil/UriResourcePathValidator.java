@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriPathInfoKind;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;

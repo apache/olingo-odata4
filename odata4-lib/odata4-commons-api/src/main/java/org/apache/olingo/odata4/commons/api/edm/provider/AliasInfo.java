@@ -18,30 +18,26 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmMember;
+public class AliasInfo {
+  private String namespace;
+  private String alias;
 
-public class EnumMember implements EdmMember{
-
-  private String name;
-  private String value;
-
-  // Annotations?
-
-  public String getName() {
-    return name;
+  public String getNamespace() {
+    return namespace;
   }
 
-  public EnumMember setName(final String name) {
-    this.name = name;
+  public AliasInfo setNamespace(final String namespace) {
+    this.namespace = namespace;
     return this;
   }
 
-  public String getValue() {
-    return value;
+  public String getAlias() {
+    return alias;
   }
 
-  public EnumMember setValue(final String value) {
-    this.value = value;
+  public AliasInfo setAlias(final String alias) {
+    this.alias = alias;
     return this;
   }
+
 }

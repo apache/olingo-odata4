@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Double.
  */
-final class EdmDouble extends SingletonPrimitiveType {
+public final class EdmDouble extends SingletonPrimitiveType {
 
   protected static final String NEGATIVE_INFINITY = "-INF";
   protected static final String POSITIVE_INFINITY = "INF";

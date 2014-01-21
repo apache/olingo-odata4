@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.core.edm.primitivetype;
+package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -26,28 +26,51 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmMember;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.primitivetype.PrimitiveTypeBaseTest;
 import org.junit.Test;
 
 public class EdmEnumTest extends PrimitiveTypeBaseTest {
 
   private final EdmEnumType instance;
+  private final EdmEnumType nonFlagsInstance;
 
   public EdmEnumTest() {
-    EdmMember member1 = mock(EdmMember.class);
-    when(member1.getName()).thenReturn("first");
-    when(member1.getValue()).thenReturn("1");
-    EdmMember member2 = mock(EdmMember.class);
-    when(member2.getName()).thenReturn("second");
-    when(member2.getValue()).thenReturn("64");
-    instance = new EdmEnum("namespace", "name",
-        EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance(),
-        Arrays.asList(member1, member2),
-        true);
+    List<EnumMember> memberList = new ArrayList<EnumMember>();
+    memberList.add(new EnumMember().setName("first").setValue("1"));
+    memberList.add(new EnumMember().setName("second").setValue("64"));
+
+    EnumType enumType =
+        new EnumType().setName("name").setMembers(memberList).setFlags(true).setUnderlyingType(
+            EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
+
+    FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
+    instance = new EdmEnumImpl(mock(EdmProviderImpl.class), enumName, enumType);
+
+    EnumType enumType2 = new EnumType().setName("name").setMembers(memberList).setFlags(false).setUnderlyingType(
+        EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
+    nonFlagsInstance = new EdmEnumImpl(mock(EdmProviderImpl.class), enumName, enumType2);
+
+//    EdmMember member1 = mock(EdmMember.class);
+//    when(member1.getName()).thenReturn("first");
+//    when(member1.getValue()).thenReturn("1");
+//    EdmMember member2 = mock(EdmMember.class);
+//    when(member2.getName()).thenReturn("second");
+//    when(member2.getValue()).thenReturn("64");
+//    instance = new EdmEnumImpl("namespace", "name",
+//        EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance(),
+//        Arrays.asList(member1, member2),
+//        true);
   }
 
   @Test
@@ -145,11 +168,7 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
     assertEquals(Long.valueOf(1), instance.valueOfString("first", null, null, null, null, null, Long.class));
     assertEquals(Byte.valueOf((byte) 65), instance.valueOfString("first,64", null, null, null, null, null, Byte.class));
     assertEquals(Integer.valueOf(1), instance.valueOfString("1,1,first", null, null, null, null, null, Integer.class));
-
-    final EdmEnumType nonFlagsInstance = new EdmEnum("namespace", "name",
-        instance.getUnderlyingType(),
-        Arrays.asList(instance.getMember("first"), instance.getMember("second")),
-        false);
+    
     assertEquals(Integer.valueOf(1), nonFlagsInstance.valueOfString("1", null, null, null, null, null, Integer.class));
     expectContentErrorInValueOfString(nonFlagsInstance, "1,64");
 

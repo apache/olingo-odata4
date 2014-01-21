@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public abstract class EdmTypeImpl extends EdmNamedImpl implements EdmType {
 

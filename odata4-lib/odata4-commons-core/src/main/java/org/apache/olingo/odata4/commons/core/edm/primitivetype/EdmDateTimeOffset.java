@@ -29,7 +29,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type DateTimeOffset.
  */
-final class EdmDateTimeOffset extends SingletonPrimitiveType {
+public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
       "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"

@@ -29,10 +29,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
@@ -81,7 +81,7 @@ public class EdmPropertyImplTest {
       assertFalse(property.isCollection());
       assertFalse(property.isPrimitive());
       final EdmType type = property.getType();
-      // TODO: assertEquals(EdmTypeKind.ENUM, type.getKind());
+      assertEquals(EdmTypeKind.ENUM, type.getKind());
       assertEquals("ns", type.getNamespace());
       assertEquals("enum", type.getName());
     }
@@ -91,14 +91,14 @@ public class EdmPropertyImplTest {
       EdmProvider provider = mock(EdmProvider.class);
       EdmProviderImpl edm = new EdmProviderImpl(provider);
       final FullQualifiedName typeName = new FullQualifiedName("ns", "definition");
-      TypeDefinition typeProvider = new TypeDefinition();
+      TypeDefinition typeProvider = new TypeDefinition().setUnderlyingType(new FullQualifiedName("Edm", "String"));
       when(provider.getTypeDefinition(typeName)).thenReturn(typeProvider);
       Property propertyProvider = new Property();
       propertyProvider.setType(typeName);
       final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
       assertFalse(property.isPrimitive());
       final EdmType type = property.getType();
-      // TODO: assertEquals(EdmTypeKind.DEFINITION, type.getKind());
+      assertEquals(EdmTypeKind.DEFINITION, type.getKind());
       assertEquals("ns", type.getNamespace());
       assertEquals("definition", type.getName());
     }

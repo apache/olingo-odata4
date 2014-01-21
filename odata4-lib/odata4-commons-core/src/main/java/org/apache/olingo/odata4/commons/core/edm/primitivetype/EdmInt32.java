@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the EDM primitive type Int32.
  */
-final class EdmInt32 extends SingletonPrimitiveType {
+public final class EdmInt32 extends SingletonPrimitiveType {
 
   private static final EdmInt32 instance = new EdmInt32();
 

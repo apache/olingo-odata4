@@ -19,22 +19,37 @@
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmEntitySetInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmFunctionImportInfo;
-import org.apache.olingo.odata4.commons.api.edm.helper.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.odata4.commons.api.edm.provider.Schema;
+import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
 public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
-  public EdmServiceMetadataImpl(final EdmProvider provider) {}
+  private EdmProvider provider;
+  private ArrayList<EdmEntitySetInfo> entitySetInfos;
+  private ArrayList<EdmFunctionImportInfo> functionImportInfos;
+  private ArrayList<EdmSingletonInfo> singletonInfos;
+
+  public EdmServiceMetadataImpl(final EdmProvider provider) {
+    this.provider = provider;
+  }
 
   @Override
   public InputStream getMetadata() {
-    return null;
+    throw new RuntimeException("Not yet implemented");
   }
 
   @Override
@@ -44,17 +59,56 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   @Override
   public List<EdmEntitySetInfo> getEntitySetInfos() {
-    return null;
+    if (entitySetInfos == null) {
+      try {
+        entitySetInfos = new ArrayList<EdmEntitySetInfo>();
+        for (Schema schema : provider.getSchemas()) {
+          EntityContainer entityContainer = schema.getEntityContainer();
+          for (EntitySet set : entityContainer.getEntitySets()) {
+            entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer, set));
+          }
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return entitySetInfos;
   }
 
   @Override
   public List<EdmSingletonInfo> getSingletonInfos() {
-    return null;
+    if (singletonInfos == null) {
+      try {
+        singletonInfos = new ArrayList<EdmSingletonInfo>();
+        for (Schema schema : provider.getSchemas()) {
+          EntityContainer entityContainer = schema.getEntityContainer();
+          for (Singleton singleton : entityContainer.getSingletons()) {
+            singletonInfos.add(new EdmSingletonInfoImpl(entityContainer, singleton));
+          }
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return singletonInfos;
   }
 
   @Override
   public List<EdmFunctionImportInfo> getFunctionImportInfos() {
-    return null;
+    if (functionImportInfos == null) {
+      try {
+        functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
+        for (Schema schema : provider.getSchemas()) {
+          EntityContainer entityContainer = schema.getEntityContainer();
+          for (FunctionImport functionImport : entityContainer.getFunctionImports()) {
+            functionImportInfos.add(new EdmFunctionImportInfoImpl(entityContainer, functionImport));
+          }
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return functionImportInfos;
   }
 
 }

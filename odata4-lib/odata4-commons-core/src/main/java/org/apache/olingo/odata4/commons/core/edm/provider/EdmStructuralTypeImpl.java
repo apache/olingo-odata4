@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.StructuralType;

@@ -16,36 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.core.edm.provider;
 
-/**
- * EdmMapping holds custom mapping information which can be applied to a CSDL element.
- */
-public interface EdmMapping {
+import java.net.URI;
 
-  /**
-   * Get the mapping value
-   * 
-   * @return mapping name as String
-   */
-  String getInternalName();
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
 
-  /**
-   * Get the set object for this mapping
-   * 
-   * @return {@link Object} object
-   */
-  Object getObject();
+public class EdmEntitySetInfoImpl implements EdmEntitySetInfo {
 
-  /**
-   * Gets the key under which the resource source value can be found in the data map.
-   * @return the key of the media resource source
-   */
-  String getMediaResourceSourceKey();
+  private final EntityContainer entityContainer;
+  private final EntitySet set;
 
-  /**
-   * Gets the key under which the resource mime type can be found in the data map.
-   * @return the key of the media resource type
-   */
-  String getMediaResourceMimeTypeKey();
+  public EdmEntitySetInfoImpl(EntityContainer entityContainer, EntitySet set) {
+    this.entityContainer = entityContainer;
+    this.set = set;
+  }
+
+  @Override
+  public String getEntityContainerName() {
+    return entityContainer.getName();
+  }
+
+  @Override
+  public String getEntitySetName() {
+    return set.getName();
+  }
+
+  @Override
+  public URI getEntitySetUri() {
+    return null;
+  }
+
 }

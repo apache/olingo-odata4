@@ -16,29 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm.helper;
+package org.apache.olingo.odata4.commons.api.edm;
 
-import java.net.URI;
 
 /**
- * Objects of this class contain information about one singleton inside the EntityDataModel.
+ * EdmMappable can be applied to CSDL elements to associate additional information.
  */
-public interface EdmSingletonInfo {
+public interface EdmMappable {
 
   /**
-   * @return the entity container name which contains this singleton.
+   * Get mapping information applied to an EDM element
+   * 
+   * @return {@link EdmMapping}
    */
-  public String getEntityContainerName();
-
-  /**
-   * @return the singleton name
-   */
-  public String getSingletonName();
-
-  /**
-   * We use a {@link URI} object here to ensure the right encoding.
-   * If a string representation is needed the toASCIIString() method can be used.
-   * @return the uri to this singleton e.g. "EmployeeOfTheMonth"
-   */
-  public URI getEntitySetUri();
+  EdmMapping getMapping();
 }

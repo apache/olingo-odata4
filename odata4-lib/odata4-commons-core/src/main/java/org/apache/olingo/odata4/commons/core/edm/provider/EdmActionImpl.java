@@ -20,8 +20,8 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Action;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public class EdmActionImpl extends EdmOperationImpl implements EdmAction {
 

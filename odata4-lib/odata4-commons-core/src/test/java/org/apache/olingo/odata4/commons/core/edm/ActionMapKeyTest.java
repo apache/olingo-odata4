@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.commons.core.edm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.junit.Test;
 
 public class ActionMapKeyTest {

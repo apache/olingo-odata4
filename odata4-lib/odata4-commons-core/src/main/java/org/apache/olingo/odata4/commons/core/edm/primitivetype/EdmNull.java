@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 /**
  * Implementation of the simple type Null.
  */
-final class EdmNull extends SingletonPrimitiveType {
+public final class EdmNull extends SingletonPrimitiveType {
 
   private static final EdmNull instance = new EdmNull();
 

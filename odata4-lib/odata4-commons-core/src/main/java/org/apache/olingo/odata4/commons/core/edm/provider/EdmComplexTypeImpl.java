@@ -22,8 +22,8 @@ import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.helper.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public class EdmComplexTypeImpl extends EdmStructuralTypeImpl implements EdmComplexType {
 
