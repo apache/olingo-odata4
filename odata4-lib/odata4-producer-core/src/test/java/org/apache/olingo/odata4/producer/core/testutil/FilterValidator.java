@@ -39,7 +39,7 @@ public class FilterValidator implements Validator {
   private int logLevel;
 
   // --- Setup ---
-  public FilterValidator SetUriResourcePathValidator(UriResourcePathValidator uriResourcePathValidator) {
+  public FilterValidator SetUriResourcePathValidator(UriResourceValidator uriResourcePathValidator) {
     this.invokedBy = uriResourcePathValidator;
     return this;
   }

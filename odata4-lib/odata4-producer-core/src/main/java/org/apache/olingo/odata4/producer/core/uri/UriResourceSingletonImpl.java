@@ -18,22 +18,35 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceSingleton;
 
-public class UriResourceSingletonImpl extends UriResourceImplTyped {
+public class UriResourceSingletonImpl extends UriResourceImplTyped implements UriResourceSingleton {
 
   private EdmSingleton singleton;
 
   public UriResourceSingletonImpl() {
     super(UriResourceKind.singleton);
   }
+  
 
+  @Override
+  public EdmSingleton getSingleton() {
+    return singleton;
+  }
+  
   public UriResourceSingletonImpl setSingleton(EdmSingleton singleton) {
 
     this.singleton = singleton;
     return this;
+  }
+  
+  @Override
+  public EdmEntityType getEntityTypeFilter() {
+    return (EdmEntityType) typeFilter;
   }
 
   @Override
@@ -45,10 +58,24 @@ public class UriResourceSingletonImpl extends UriResourceImplTyped {
   public EdmType getType() {
     return singleton.getEntityType();
   }
+  
+  @Override
+  public EdmEntityType getEntityType() {
+    return singleton.getEntityType();
+  }
 
   @Override
   public boolean isCollection() {
     return false;
   }
+
+
+  
+
+
+  
+
+
+  
 
 }

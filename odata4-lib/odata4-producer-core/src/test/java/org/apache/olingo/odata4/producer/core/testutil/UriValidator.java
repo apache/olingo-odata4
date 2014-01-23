@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
@@ -60,12 +61,12 @@ public class UriValidator implements Validator {
   }
 
   // Navigation
-  public UriResourcePathValidator goPath() {
+  public UriResourceValidator goPath() {
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("goPath can only be used on resourcePaths");
     }
 
-    return new UriResourcePathValidator()
+    return new UriResourceValidator()
         .setUriValidator(this)
         .setEdm(edm)
         .setUriInfoImplPath(uriInfo);
@@ -125,15 +126,21 @@ public class UriValidator implements Validator {
     return this;
   }
 
-  public UriValidator isEntityType(FullQualifiedName nameetbase) {
+  public UriValidator isEntityType(FullQualifiedName fullName) {
     if (uriInfo.getKind() != UriInfoKind.entityId) {
       fail("isKeyPredicate: uriPathInfo is not instanceof UriInfoImplCrossjoin");
     }
- 
-    assertEquals(nameetbase.toString(), uriInfo.getEntityTypeCast().toString()); 
+
+    assertEquals(fullName.toString(), fullName(uriInfo.getEntityTypeCast()));
     return this;
   }
-  
-  
+
+  private String fullName(EdmEntityType type) {
+    return type.getNamespace() + "." + type.getName();
+  }
+
+  public void isID(String idAsText) {
+    assertEquals(idAsText, uriInfo.getIdOption().getText());
+  }
 
 }

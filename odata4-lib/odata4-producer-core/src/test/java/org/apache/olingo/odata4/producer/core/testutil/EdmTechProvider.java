@@ -568,7 +568,7 @@ public class EdmTechProvider extends EdmProvider {
                   new Parameter().setName("ParameterInt16").setType(nameInt16)))
 
               .setReturnType(
-                  new ReturnType().setCollection(true).setType(nameCTTwoPrim))
+                  new ReturnType().setType(nameCTTwoPrim).setCollection(true))
           );
 
     } else if (actionName.equals(nameUARTETParam)) {

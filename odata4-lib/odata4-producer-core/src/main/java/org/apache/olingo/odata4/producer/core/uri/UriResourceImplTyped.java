@@ -31,7 +31,7 @@ public abstract class UriResourceImplTyped extends UriResourcePartImpl implement
     super(kind);
   }
 
-  public EdmType getComplexTypeFilter() {//TODO rename to TypeFilter
+  public EdmType getTypeFilter() {//TODO rename to TypeFilter
     return typeFilter;
   }
   

@@ -232,7 +232,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     EdmActionImport edmAI = edmEntityContainer.getActionImport(odi);
     if (edmAI != null) {
       UriResourceActionImpl uriPathInfo = new UriResourceActionImpl();
-      uriPathInfo.setAction(edmAI.getAction());
+      uriPathInfo.setActionImport(edmAI);
+      
       uriInfoResource.addPathInfo(uriPathInfo);
       return null;
     }
@@ -339,7 +340,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
           } else {
             // is
-            if (lastSegment.getComplexTypeFilter() != null) {
+            if (lastSegment.getTypeFilter() != null) {
               throw wrap(new UriParserSemanticException("Chaining typefilters not allowed"));
             }
 
@@ -376,7 +377,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
           } else {
 
-            if (lastSegment.getComplexTypeFilter() != null) {
+            if (lastSegment.getTypeFilter() != null) {
               throw wrap(new UriParserSemanticException("Chaining Typefilters not allowed"));
             }
 
@@ -459,7 +460,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return lastKeyPred.getTypeFilterOnCollection();
       }
     }
-    EdmType type = lastSegment.getComplexTypeFilter();
+    EdmType type = lastSegment.getTypeFilter();
     if (type != null) {
       return type;
     }
@@ -557,7 +558,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (type == null) {
       throw wrap(new UriParserSemanticException("Expected EntityTypeName"));
     }
-
+    uriInfo.setEntityTypeCast(type);
+    
     contextUriInfo = uriInfo;
     contextType.push(uriInfo.getEntityTypeCast());
 
@@ -1049,8 +1051,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
      * lastPathInfo.addTypeFilter(typeFilter);
      * }
      */
-
-    return id.setValue(ctx.children.get(2).getText());
+    
+    String text =   ctx.children.get(2).getText();
+        
+    return id.setValue(text).setText(text);
   }
 
   @Override

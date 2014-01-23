@@ -31,7 +31,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEn
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.producer.core.testutil.FilterValidator;
-import org.apache.olingo.odata4.producer.core.testutil.UriResourcePathValidator;
+import org.apache.olingo.odata4.producer.core.testutil.UriResourceValidator;
 import org.apache.olingo.odata4.producer.core.testutil.UriValidator;
 import org.junit.Test;
 
@@ -56,21 +56,21 @@ public class TestUriParserImpl {
       + "," + PropertySByte + "," + PropertyInt32 + "," + PropertyInt64 + "," + PropertyDecimal + "," + PropertyDate
       + "," + PropertyDateTimeOffset + "," + PropertyDuration + "," + PropertyGuid + "," + PropertyTimeOfDay;
   FilterValidator testFilter = null;
-  UriResourcePathValidator testPath = null;
+  UriResourceValidator testPath = null;
   UriValidator testUri = null;
 
   public TestUriParserImpl() {
     edm = new EdmProviderImpl(new EdmTechTestProvider());
 
     testUri = new UriValidator().setEdm(edm);
-    testPath = new UriResourcePathValidator().setEdm(edm);
+    testPath = new UriResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
 
   }
 
   @Test
   public void test() {
-
+    // use this method for error analysis
     testPath.run("ESAllKey(" + allKeys + ")")
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isKeyPredicate(0, "PropertyString", "'ABC'")
@@ -79,7 +79,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testActionImport() {
-
+    
     testPath.run("AIRTPrimParam")
         .isUriPathInfoKind(UriResourceKind.action)
         .isType(EdmTechProvider.nameString);
@@ -484,7 +484,7 @@ public class TestUriParserImpl {
         .isType(EdmTechProvider.nameETKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
-        .isNav("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav)
+        .isNav("NavPropertyETTwoKeyNavOne")
         .isUriPathInfoKind(UriResourceKind.navigationProperty)
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .at(2)
@@ -524,7 +524,7 @@ public class TestUriParserImpl {
         .isType(EdmTechProvider.nameETKeyNav)
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isNav("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav)
+        .isNav("NavPropertyETTwoKeyNavMany")
         .at(1)
         .isUriPathInfoKind(UriResourceKind.navigationProperty)
         .isType(EdmTechProvider.nameETTwoKeyNav)
