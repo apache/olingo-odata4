@@ -280,16 +280,30 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
-  public UriResourceValidator isKeyPredicate(int index, String name, String value) {
-    if (!(uriPathInfo instanceof UriResourceEntitySetImpl)) {
+  public UriResourceValidator isKeyPredicate(int index, String name, String text) {
+    if (!(uriPathInfo instanceof UriResourceImplKeyPred)) {
       // TODO add and "or" for FunctionImports
       fail("isKeyPredicate: uriPathInfo is not instanceof UriPathInfoEntitySetImpl");
     }
 
-    UriResourceEntitySetImpl info = (UriResourceEntitySetImpl) uriPathInfo;
+    UriResourceImplKeyPred info = (UriResourceImplKeyPred) uriPathInfo;
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
-    assertEquals(value, keyPredicates.get(index).getText());
+    assertEquals(text, keyPredicates.get(index).getText());
+    return this;
+
+  }
+  
+  public UriResourceValidator isParameter(int index, String name, String text) {
+    if (!(uriPathInfo instanceof UriResourceFunctionImpl)) {
+      // TODO add and "or" for FunctionImports
+      fail("isKeyPredicate: uriPathInfo is not instanceof UriResourceFunctionImpl");
+    }
+
+    UriResourceFunctionImpl info = (UriResourceFunctionImpl) uriPathInfo;
+    List<UriParameter> keyPredicates = info.getParameters();
+    assertEquals(name, keyPredicates.get(index).getName());
+    assertEquals(text, keyPredicates.get(index).getText());
     return this;
 
   }

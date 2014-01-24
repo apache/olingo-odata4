@@ -96,6 +96,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
@@ -109,6 +111,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
@@ -127,6 +131,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("CollPropertyComplex")
@@ -139,6 +144,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("CollPropertyComplex")
@@ -157,6 +163,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("PropertyComplex")
@@ -169,6 +177,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("PropertyComplex")
@@ -187,6 +197,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isFunction("BFCETTwoKeyNavRTESTwoKeyNav");
   }
@@ -200,6 +212,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTESTwoKeyNav");
@@ -212,6 +226,8 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'(''2'')'")
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTESTwoKeyNav");
   }
@@ -252,6 +268,8 @@ public class TestByAbapResourcePath {
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav);
   }
 
@@ -339,6 +357,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavOne")
         .isType(EdmTechProvider.nameETTwoKeyNav);
@@ -350,6 +369,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavOne")
         .isType(EdmTechProvider.nameETTwoKeyNav)
@@ -364,6 +384,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavOne")
         .n()
@@ -380,6 +401,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavOne")
         .n()
@@ -393,8 +415,11 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isSimple("PropertyString")
         .isType(EdmTechProvider.nameString);
@@ -423,6 +448,8 @@ public class TestByAbapResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isNav("NavPropertyETTwoKeyNavOne")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
@@ -483,6 +510,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isComplex("PropertyComplexTwoPrim")
         .isType(EdmTechProvider.nameCTTwoPrim)
@@ -496,8 +524,11 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESKeyNavRTETKeyNavParam")
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isComplex("PropertyComplexTwoPrim")
         .isType(EdmTechProvider.nameCTTwoPrim)
@@ -547,6 +578,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isParameter(0, "ParameterString", "'2'")
         .isType(EdmTechProvider.nameETTwoKeyNav);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
@@ -563,6 +595,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isParameter(0, "ParameterString", "'3'")
         .isType(EdmTechProvider.nameETTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
@@ -580,7 +613,10 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav"); // check for properties
+        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'");
+
   }
 
   @Test
@@ -591,6 +627,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isComplex("CollPropertyComplex")
         .isType(EdmTechProvider.nameCTPrimComp)
@@ -648,6 +685,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("CollPropertyString")
         .n()
@@ -658,6 +696,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("CollPropertyString")
         .n()
@@ -674,6 +713,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("PropertyString")
         .n()
@@ -684,6 +724,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("PropertyString")
         .n()
@@ -696,6 +737,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("PropertyString")
         .n()
@@ -735,6 +777,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isAction("BAETTwoKeyNavRTETTwoKeyNav");
 
@@ -742,6 +786,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isAction("BAETTwoKeyNavRTETTwoKeyNav");
   }
@@ -764,6 +809,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isAction("BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
@@ -774,6 +821,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav)
         .n()
         .isAction("BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
@@ -878,6 +927,7 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim, false)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBase)
+        .isKeyPredicate(0, "PropertyInt16", "-32768")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(-32768)")
@@ -885,14 +935,17 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase)
+        .isKeyPredicate(0, "PropertyInt16", "-32768");
 
     testUri.run("ESTwoPrim/Namespace1_Alias.ETTwoBase(-32768)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase)
+        .isKeyPredicate(0, "PropertyInt16", "-32768");
+
   }
 
   @Test
@@ -903,6 +956,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isSimple("PropertyDate");
@@ -913,6 +968,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
@@ -935,7 +992,11 @@ public class TestByAbapResourcePath {
     testUri.run("ESFourKeyAlias(PropertyInt16=1,KeyAlias1=2,KeyAlias2='3',KeyAlias3='4')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isEntitySet("ESFourKeyAlias");
+        .isEntitySet("ESFourKeyAlias")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "KeyAlias1", "2")
+        .isKeyPredicate(2, "KeyAlias2", "'3'")
+        .isKeyPredicate(3, "KeyAlias3", "'4'");
 
     testUri.run("ESCollAllPrim(null)")
         .isKind(UriInfoKind.resource).goPath()
@@ -954,7 +1015,20 @@ public class TestByAbapResourcePath {
         + "PropertyTimeOfDay=12:34:55.123456789012)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isEntitySet("ESAllKey");
+        .isEntitySet("ESAllKey")
+        .isKeyPredicate(0, "PropertyString", "'O''Neil'")
+        .isKeyPredicate(1, "PropertyBoolean", "true")
+        .isKeyPredicate(2, "PropertyByte", "255")
+        .isKeyPredicate(3, "PropertySByte", "-128")
+        .isKeyPredicate(4, "PropertyInt16", "-32768")
+        .isKeyPredicate(5, "PropertyInt32", "-2147483648")
+        .isKeyPredicate(6, "PropertyInt64", "-9223372036854775808")
+        .isKeyPredicate(7, "PropertyDecimal", "0.1")
+        .isKeyPredicate(8, "PropertyDate", "2013-09-25")
+        .isKeyPredicate(9, "PropertyDateTimeOffset", "2002-10-10T12:00:00-05:00")
+        .isKeyPredicate(10, "PropertyDuration", "duration'P10DT5H34M21.123456789012S'")
+        .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
+        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55.123456789012");
   }
 
   @Test
@@ -968,6 +1042,7 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim)
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBase);
 
     testUri.run("ESTwoPrim(1)/com.sap.odata.test1.ETTwoBase")
@@ -975,6 +1050,7 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim)
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)")
@@ -982,6 +1058,7 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim)
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EdmTechProvider.nameETBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(1)")
@@ -989,6 +1066,7 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim)
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase")
@@ -996,6 +1074,7 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoPrim")
         .isType(EdmTechProvider.nameETTwoPrim)
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .isTypeFilterOnCollection(EdmTechProvider.nameETBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase")
@@ -1013,6 +1092,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')")
@@ -1020,7 +1101,9 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'");
   }
 
   @Test
@@ -1029,6 +1112,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isComplex("PropertyComplex");
 
@@ -1036,6 +1121,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isComplex("PropertyComplex")
         .n()
@@ -1048,6 +1135,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESMixPrimCollComp")
+        .isKeyPredicate(0, "PropertyInt16", "5")
         .n()
         .isComplex("CollPropertyComplex")
         .isType(EdmTechProvider.nameCTTwoPrim, true);
@@ -1081,6 +1169,8 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
@@ -1094,6 +1184,8 @@ public class TestByAbapResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
         .isComplex("PropertyComplex")
         .n()
@@ -1106,6 +1198,9 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplexTwoPrim")
@@ -1119,6 +1214,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplexTwoPrim")
@@ -1132,6 +1229,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany");
 
@@ -1139,6 +1237,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETKeyNavMany");
 
@@ -1146,6 +1245,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETKeyNavMany");
 
@@ -1153,8 +1253,10 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "2")
         .n()
         .isSimple("PropertyInt16");
 
@@ -1162,6 +1264,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETKeyNavMany")
         .n()
@@ -1171,18 +1274,23 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETKeyNavMany")
-        .isType(EdmTechProvider.nameETKeyNav, false);
+        .isType(EdmTechProvider.nameETKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "2");
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
         + "/NavPropertyETKeyNavMany(4)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isNav("NavPropertyETKeyNavMany")
         .isType(EdmTechProvider.nameETKeyNav, false);
@@ -1191,6 +1299,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isComplex("PropertyComplex")
         .n()
@@ -1202,6 +1311,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1215,6 +1325,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETMediaMany")
         .isType(EdmTechProvider.nameETMedia, false)
@@ -1226,6 +1337,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1240,6 +1352,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1256,6 +1369,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isNav("NavPropertyETKeyNavMany");
@@ -1266,6 +1381,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isNav("NavPropertyETKeyNavMany");
@@ -1276,6 +1393,8 @@ public class TestByAbapResourcePath {
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
@@ -1288,12 +1407,17 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "4")
+        .isKeyPredicate(1, "PropertyString", "'5'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav)
         .n()
         .isNav("NavPropertyETBaseTwoKeyNavMany");
@@ -1304,12 +1428,17 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "4")
+        .isKeyPredicate(1, "PropertyString", "'5'")
         .n()
         .isNav("NavPropertyETKeyNavMany");
 
@@ -1328,6 +1457,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("PropertyByte");
 
@@ -1335,6 +1465,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("PropertyByte")
         .n()
@@ -1344,6 +1475,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESMixPrimCollComp")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isComplex("PropertyComplex")
         .n()
@@ -1356,6 +1488,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESCollAllPrim")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isSimple("CollPropertyString")
         .isType(EdmTechProvider.nameString, true);
@@ -1364,6 +1497,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1374,6 +1508,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1397,12 +1532,14 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
+        .isKeyPredicate(0, "PropertyInt16", "-32768")
         .n()
         .isRef();
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$ref")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1411,6 +1548,7 @@ public class TestByAbapResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isNav("NavPropertyETTwoKeyNavMany")
         .n()
@@ -1432,6 +1570,7 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
@@ -1444,8 +1583,11 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTETTwoKeyNav");
   }
@@ -1463,7 +1605,10 @@ public class TestByAbapResourcePath {
     testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isFunctionImport("FICRTETTwoKeyNavParam");
+        .isFunctionImport("FICRTETTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'");
 
     testUri.run("FICRTETMedia()/$value")
         .isKind(UriInfoKind.resource).goPath()
@@ -1493,6 +1638,7 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
 
@@ -1502,6 +1648,9 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
 
@@ -1511,8 +1660,11 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'");
   }
 
   @Test
@@ -1523,6 +1675,8 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
         .isFunction("UFCRTESMixPrimCollCompTwoParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'")
         .isType(EdmTechProvider.nameETMixPrimCollComp);
 
     testUri.run("FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
@@ -1530,6 +1684,8 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FINRTESMixPrimCollCompTwoParam")
         .isFunction("UFNRTESMixPrimCollCompTwoParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'")
         .isType(EdmTechProvider.nameETMixPrimCollComp);
 
     testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count")
@@ -1537,6 +1693,8 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
         .isFunction("UFCRTESMixPrimCollCompTwoParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'")
         .isType(EdmTechProvider.nameETMixPrimCollComp)
         .n()
         .isCount();
@@ -1567,6 +1725,7 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
 
@@ -1575,6 +1734,7 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
@@ -1586,8 +1746,11 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'");
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
         + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
@@ -1596,8 +1759,11 @@ public class TestByAbapResourcePath {
         .first()
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
+        .isParameter(0, "ParameterInt16", "1")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isKeyPredicate(0, "PropertyInt16", "2")
+        .isKeyPredicate(1, "PropertyString", "'3'")
         .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav);
 
   }
@@ -1629,7 +1795,8 @@ public class TestByAbapResourcePath {
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNav("NavPropertyETKeyNavMany");
+        .isNav("NavPropertyETKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "1");
 
   }
 
@@ -1705,7 +1872,10 @@ public class TestByAbapResourcePath {
         .first()
         .isSingleton("SINav")
         .n()
-        .isNav("NavPropertyETTwoKeyNavMany");
+        .isNav("NavPropertyETTwoKeyNavMany")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'");
+
   }
 
   @Test
