@@ -32,41 +32,32 @@ public class UriResourceNavigationPropertyImpl extends UriResourceImplKeyPred im
   }
 
   @Override
-  public String toString() {
-    return navigationProperty.getName() + super.toString();
-  }
-
-  @Override
   public EdmNavigationProperty getNavigationProperty() {
     return navigationProperty;
   }
 
-  public UriResourceNavigationPropertyImpl addNavigationProperty(EdmNavigationProperty property) {
-    this.navigationProperty = property;
+  public UriResourceNavigationPropertyImpl setNavigationProperty(final EdmNavigationProperty property) {
+    navigationProperty = property;
     return this;
 
   }
 
   @Override
   public EdmType getType() {
-    /*if (singleTypeFilter != null) {
-      return singleTypeFilter;
-    } else if (collectionTypeFilter != null) {
-      return collectionTypeFilter;
-    }*/
     return navigationProperty.getType();
   }
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null ) {
+    if (keyPredicates != null) {
       return false;
     }
     return navigationProperty.isCollection();
-      
-
   }
 
-  
+  @Override
+  public String toString() {
+    return navigationProperty.getName();
+  }
 
 }

@@ -31,21 +31,11 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
   private EdmType type;
   private boolean isCollection;
 
-
   public UriResourceItImpl() {
     super(UriResourceKind.it);
   }
 
-  @Override
-  public String toString() {
-
-    if (explicitIT) {
-      return "$it" + super.toString();
-    }
-    return super.toString();
-  }
-
-  public UriResourceItImpl setIsExplicitIT(boolean explicitIT) {
+  public UriResourceItImpl setIsExplicitIT(final boolean explicitIT) {
     this.explicitIT = explicitIT;
     return this;
   }
@@ -62,22 +52,25 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null ) {
+    if (keyPredicates != null) {
       return false;
     }
     return isCollection;
   }
 
-  public UriResourceItImpl setType(EdmType type) {
+  public UriResourceItImpl setType(final EdmType type) {
     this.type = type;
     return this;
   }
 
-  public UriResourceItImpl setCollection(boolean isCollection) {
+  public UriResourceItImpl setCollection(final boolean isCollection) {
     this.isCollection = isCollection;
     return this;
   }
 
- 
+  @Override
+  public String toString() {
+    return "$it";
+  }
 
 }

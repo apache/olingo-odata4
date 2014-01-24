@@ -50,7 +50,7 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
     return retList;
   }
 
-  public UriResourceFunctionImpl setParameters(List<UriParameterImpl> parameters) {
+  public UriResourceFunctionImpl setParameters(final List<UriParameterImpl> parameters) {
     this.parameters = parameters;
     return this;
   }
@@ -60,7 +60,7 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
     return function;
   }
 
-  public UriResourceFunctionImpl setFunction(EdmFunction function) {
+  public UriResourceFunctionImpl setFunction(final EdmFunction function) {
     this.function = function;
     return this;
   }
@@ -70,8 +70,9 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
     return functionImport;
   }
 
-  public UriResourceFunctionImpl setFunctionImport(EdmFunctionImport edmFI, List<UriParameterImpl> parameters) {
-    this.functionImport = edmFI;
+  public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFI,
+      final List<UriParameterImpl> parameters) {
+    functionImport = edmFI;
     this.parameters = parameters;
 
     List<String> names = new ArrayList<String>();
@@ -85,26 +86,28 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
   }
 
   @Override
-  public String toString() {
-    return function.getName() + super.toString();
-  }
-
-  @Override
   public EdmType getType() {
 
     return function.getReturnType().getType();
-     
+
   }
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null ) {
+    if (keyPredicates != null) {
       return false;
     }
     return function.getReturnType().isCollection();
   }
 
-  
+  @Override
+  public String toString() {
+    if (functionImport != null) {
+      return functionImport.getName();
+    } else if (function != null) {
+      return function.getName();
+    }
+    return "";
+  }
 
-  
 }

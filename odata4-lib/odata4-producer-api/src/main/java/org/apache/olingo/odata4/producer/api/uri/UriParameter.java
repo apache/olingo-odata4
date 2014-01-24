@@ -22,9 +22,12 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expressi
 
 public interface UriParameter {
 
-  public  String getAlias();
-  public  String getText();
-  public  Expression getExression();
-  public  String getName();
+  public String getAlias();
+
+  public String getText();
+
+  public Expression getExression();
+
+  public String getName();
 
 }

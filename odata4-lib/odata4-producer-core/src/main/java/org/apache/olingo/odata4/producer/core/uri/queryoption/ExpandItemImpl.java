@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExceptionVisitExpand;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelExpandOption;
@@ -35,18 +34,11 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.VisitableExpand;
 
-public class ExpandItemImpl implements ExpandItem, VisitableExpand {
-  private Edm edm;
 
-  private ExpandSegment lastExpandSegment = null;
-
-  private List<ExpandSegment> segments = new ArrayList<ExpandSegment>();
-
-  private boolean isStar;
+public class ExpandItemImpl implements ExpandItem  {
   private LevelExpandOption levelExpandOption;
   private FilterOption filterOption;
   private SearchOption searchOption;
@@ -57,49 +49,44 @@ public class ExpandItemImpl implements ExpandItem, VisitableExpand {
   private SelectOption selectOption;
   private ExpandOption expandOption;
 
-  public ExpandItemImpl setEdm(Edm edm) {
-    this.edm = edm;
+  private UriInfoResource resourcePath;
+
+  private boolean isStar;
+
+  private boolean isRef;
+
+  public ExpandItemImpl setEdm(final Edm edm) {
     return this;
   }
 
-  
-  public ExpandItemImpl setStar(boolean isStar) {
-    this.isStar = isStar;
-    return this;
-  }
-
-  
-
-  public ExpandSegment getLastSegement() {
-    return lastExpandSegment;
-  }
-   
-  
-  public ExpandItemImpl setExpandQueryOption(QueryOptionImpl item) {
+  public ExpandItemImpl setExpandQueryOption(final QueryOptionImpl item) {
     if (item instanceof SystemQueryOptionImpl) {
-        SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
+      SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
 
-        if (sysItem.getKind() == SystemQueryOptionEnum.EXPAND) {
-          expandOption = (ExpandOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.FILTER) {
-          filterOption = (FilterOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.INLINECOUNT) {
-          inlineCountOption = (InlineCountImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.ORDERBY) {
-          orderByOption = (OrderByImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SEARCH) {
-          searchOption = (SearchOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SELECT) {
-          selectOption = (SelectOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SKIP) {
-          skipOption = (SkipOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.TOP) {
-          topOption = (TopOptionImpl) sysItem;
-        }
+      if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
+        expandOption = (ExpandOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
+        filterOption = (FilterOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
+        inlineCountOption = (InlineCountOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
+        orderByOption = (OrderByImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
+        searchOption = (SearchOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
+        selectOption = (SelectOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
+        skipOption = (SkipOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
+        topOption = (TopOptionImpl) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.LEVEL) {
+        levelExpandOption = (LevelExpandOption) sysItem;
       }
+    }
     return this;
   }
-  public ExpandItemImpl setExpandQueryOptions(List<QueryOptionImpl> list) {
+
+  public ExpandItemImpl setExpandQueryOptions(final List<QueryOptionImpl> list) {
 
     for (QueryOptionImpl item : list) {
       setExpandQueryOption(item);
@@ -107,40 +94,8 @@ public class ExpandItemImpl implements ExpandItem, VisitableExpand {
     return this;
   }
 
-  public ExpandItemImpl addSegment(ExpandSegment segment) {
-    lastExpandSegment = segment;
-    segments.add(segment);
-    return this;
-  }
-
-
-  @Override
-  public <T> T accept(ExpandVisitor<T> visitor) throws ExceptionVisitExpand {
-
-    List<T> parameters = new ArrayList<T>();
-    for (ExpandSegment segment : segments) {
-      parameters.add(segment.accept(visitor));
-    }
-
-    // TODO implement visitor pattern for options
-
-    return null; //visitor.visitExpandItem(parameters, isStar, isRef, finalType);
-  }
-
-  @Override
-  public boolean isStar() {
-    return isStar;
-  }
-
   
 
-  
-
-  @Override
-  public List<UriResourceProperty> getPropertyChainList() {
-
-    return null;
-  }
 
   @Override
   public LevelExpandOption getLevel() {
@@ -188,6 +143,35 @@ public class ExpandItemImpl implements ExpandItem, VisitableExpand {
     return expandOption;
   }
 
+  public ExpandItemImpl setResourcePath(final UriInfoResource resourcePath) {
+    this.resourcePath = resourcePath;
+    return this;
+  }
 
+  @Override
+  public UriInfoResource getPath() {
+
+    return resourcePath;
+  }
+
+  @Override
+  public boolean isStar() {
+    return isStar;
+  }
+
+  public ExpandItemImpl setIsStar(final boolean isStar) {
+    this.isStar = isStar;
+    return this;
+  }
+
+  @Override
+  public boolean isRef() {
+    return isRef;
+  }
+
+  public ExpandItemImpl setIsRef(final boolean isRef) {
+    this.isRef = isRef;
+    return this;
+  }
 
 }

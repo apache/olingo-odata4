@@ -18,16 +18,20 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
+
 public class AliasImpl extends ExpressionImpl {
 
   private String referenceName;
 
-  public void setReference(String referenceName) {
+  public void setReference(final String referenceName) {
     this.referenceName = referenceName;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     return visitor.visitAlias(referenceName);
   }
 

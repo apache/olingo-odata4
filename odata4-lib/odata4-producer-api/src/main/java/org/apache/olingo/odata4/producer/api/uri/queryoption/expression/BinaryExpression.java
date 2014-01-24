@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface BinaryExpression {
+public interface BinaryExpression extends Expression {
 
   public SupportedBinaryOperators getOperator();
 

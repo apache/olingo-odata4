@@ -19,24 +19,22 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 
-/*TODO implement*/
+/* TODO implement */
 public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
-  private boolean isMax;
   private String value;
 
   public TopOptionImpl() {
-    setKind(SystemQueryOptionEnum.TOP);
+    setKind(SupportedQueryOptions.TOP);
   }
 
   public String getValue() {
     return value;
   }
-  
-  public TopOptionImpl setValue(String value) {
+
+  public TopOptionImpl setValue(final String value) {
     this.value = value;
     return this;
   }
@@ -46,5 +44,5 @@ public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
 }

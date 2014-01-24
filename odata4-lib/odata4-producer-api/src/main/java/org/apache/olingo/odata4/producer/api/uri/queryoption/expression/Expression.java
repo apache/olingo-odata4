@@ -18,6 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface Expression {
+public interface Expression extends VisitableExression {
 
 }

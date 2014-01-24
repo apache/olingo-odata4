@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 
 public interface AliasQueryOption extends QueryOption {
-  public Expression getAliasValue();
   
+  public Expression getAliasValue();
+
 }

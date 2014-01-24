@@ -32,7 +32,7 @@ public class UriResourceAllImpl extends UriResourceImplTyped implements UriResou
   private ExpressionImpl expression;
 
   public UriResourceAllImpl() {
-    super(UriResourceKind.lamdaAll);
+    super(UriResourceKind.lambdaAll);
   }
 
   @Override
@@ -49,8 +49,8 @@ public class UriResourceAllImpl extends UriResourceImplTyped implements UriResou
   public String getLamdaVariable() {
     return lamdaVariable;
   }
-  
-  public UriResourceAllImpl setLamdaVariable(String lamdaVariable) {
+
+  public UriResourceAllImpl setLamdaVariable(final String lamdaVariable) {
     this.lamdaVariable = lamdaVariable;
     return this;
   };
@@ -59,9 +59,14 @@ public class UriResourceAllImpl extends UriResourceImplTyped implements UriResou
   public Expression getExpression() {
     return expression;
   }
-  
-  public UriResourceAllImpl setExpression(ExpressionImpl expression) {
+
+  public UriResourceAllImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
   };
+
+  @Override
+  public String toString() {
+    return "all";
+  }
 }

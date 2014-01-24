@@ -19,5 +19,7 @@
 package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
 public interface InlineCountOption extends SystemQueryOption {
-  boolean getInlineCountValue();
+  
+  boolean getvalue();
+  
 }

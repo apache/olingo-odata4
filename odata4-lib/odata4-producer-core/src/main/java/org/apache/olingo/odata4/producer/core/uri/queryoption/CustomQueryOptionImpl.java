@@ -21,6 +21,5 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
 
 public class CustomQueryOptionImpl extends QueryOptionImpl implements CustomQueryOption {
-  
 
 }

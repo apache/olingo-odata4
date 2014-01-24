@@ -31,7 +31,7 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
   protected List<UriParameterImpl> keyPredicates = null;
   protected EdmType singleTypeFilter = null;
 
-  public UriResourceImplKeyPred(UriResourceKind kind) {
+  public UriResourceImplKeyPred(final UriResourceKind kind) {
     super(kind);
   }
 
@@ -58,18 +58,17 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
     return retList;
   }
 
-  public UriResourceImplKeyPred setKeyPredicates(List<UriParameterImpl> list) {
+  public UriResourceImplKeyPred setKeyPredicates(final List<UriParameterImpl> list) {
     keyPredicates = list;
     return this;
   }
 
-  public void setSingleTypeFilter(EdmType singleTypeFilter) {
+  public void setSingleTypeFilter(final EdmType singleTypeFilter) {
     this.singleTypeFilter = singleTypeFilter;
   }
 
-  public void setCollectionTypeFilter(EdmType collectionTypeFilter) {
+  public void setCollectionTypeFilter(final EdmType collectionTypeFilter) {
     this.collectionTypeFilter = collectionTypeFilter;
   }
-
 
 }

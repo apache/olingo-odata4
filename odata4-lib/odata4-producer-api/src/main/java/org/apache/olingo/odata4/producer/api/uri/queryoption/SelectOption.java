@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 import java.util.List;
 
 public interface SelectOption extends SystemQueryOption {
-  
+
   List<SelectItem> getSelectItems();
-  
+
 }

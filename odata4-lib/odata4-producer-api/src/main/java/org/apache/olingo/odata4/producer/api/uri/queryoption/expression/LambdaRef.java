@@ -18,8 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface LambdaRef {
+public interface LambdaRef extends Expression {
 
-  public  String getVariableText();
+  public String getVariableName();
 
 }

@@ -18,14 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-import java.util.List;
-
-import org.apache.olingo.odata4.producer.api.uri.UriResourceProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 
 public interface ExpandItem {
-  boolean isStar();
-
-  List<UriResourceProperty> getPropertyChainList();
 
   LevelExpandOption getLevel();
 
@@ -44,4 +39,11 @@ public interface ExpandItem {
   SelectOption getSelect();
 
   ExpandOption getExpand();
+
+  UriInfoResource getPath();
+
+  boolean isStar();
+
+  boolean isRef();
+
 }

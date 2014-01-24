@@ -19,18 +19,18 @@
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
 public enum SupportedMethodCalls {
-  CONTAINS("contains"),STARTSWITH("startswith"),ENDSWITH("endswith"),LENGTH("length"),
-  INDEXOF("indexof"),SUBSTRING("substring"),TOLOWER("tolower"),TOUPPER("toupper"),TRIM("trim"),
+  CONTAINS("contains"), STARTSWITH("startswith"), ENDSWITH("endswith"), LENGTH("length"),
+  INDEXOF("indexof"), SUBSTRING("substring"), TOLOWER("tolower"), TOUPPER("toupper"), TRIM("trim"),
   CONCAT("concat"),
-  
-  YEAR("year"),MONTH("month"),DAY("day"),HOUR("hour"),MINUTE("minute"),SECOND("second"),
-  FRACTIONALSECOND("fractionalsecond"),TOTALSECONDS("totalseconds"),DATE("date"),TIME("time"),
-  TOTALOFFSETMINUTES("totaloffsetminutes"),MINDATETIME("mindatetime"),MAXDATETIME("maxdatetime"),NOW("now"),
-  
-  ROUND("round"),FLOOR("floor"),
-  
-  
-  CEILING("ceiling"),DISTANCE("distance"),GEOLENGTH("geolength"),INTERSECTS("intersects"), CAST("cast"), ISOF("isof");
+
+  YEAR("year"), MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"),
+  FRACTIONALSECOND("fractionalsecond"), TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
+  TOTALOFFSETMINUTES("totaloffsetminutes"), MINDATETIME("mindatetime"), MAXDATETIME("maxdatetime"), NOW("now"),
+
+  ROUND("round"), FLOOR("floor"),
+
+  CEILING("ceiling"), DISTANCE("distance"), GEOLENGTH("geolength"), INTERSECTS("intersects"), CAST("cast"),
+  ISOF("isof");
 
   private String syntax;
 
@@ -43,9 +43,9 @@ public enum SupportedMethodCalls {
     return syntax;
   }
 
-  public static SupportedMethodCalls get(String operator) {
+  public static SupportedMethodCalls get(final String operator) {
     for (SupportedMethodCalls op : SupportedMethodCalls.values()) {
-      if (op.toString().equals(operator+'(')) {
+      if (op.toString().equals(operator + '(')) {
         return op;
       }
     }

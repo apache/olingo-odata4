@@ -18,22 +18,43 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.testutil;
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceIt;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceCount;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceAction;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceAll;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceAny;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceEntitySet;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceFunction;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceNavigation;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceSingleton;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceRef;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceRoot;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceValue;
+
+import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedUnaryOperators;
-import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MemberImpl;
-
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceActionImpl;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
-  
-  public static String Serialize(FilterOptionImpl filter) throws ExceptionVisitExpression {
-    return filter.getExpression().accept(new FilterTreeToText());
+
+  public static String Serialize(FilterOption filter) throws ExceptionVisitExpression, ODataApplicationException {
+    Expression expression = filter.getExpression();
+    return expression.accept(new FilterTreeToText());
   }
 
   @Override
@@ -68,15 +89,34 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitMember(MemberImpl member) throws ExceptionVisitExpression {
+  public String visitMember(UriInfoResource resource) throws ExceptionVisitExpression, ODataApplicationException {
     String ret = "";
-    if (member.isIT()) {
-      ret += "$it";
-    }
 
-    UriInfoImpl path = (UriInfoImpl) member.getPath();
-    if (path != null) {
-      ret += path.toString();
+    UriInfoResource path = resource;
+
+    for (UriResourcePart item : path.getUriResourceParts()) {
+      String tmp = "";
+      if (item instanceof UriResourceIt) {
+        if (((UriResourceIt) item).isExplicitIt()) {
+          tmp = "$it";
+        }
+      } else if ( item instanceof UriResourceAll) {
+        UriResourceAll all = (UriResourceAll) item;
+        tmp = visitLambdaExpression(all.getLamdaVariable(), all.getExpression());
+      } else if ( item instanceof UriResourceAny) {
+        UriResourceAny any = (UriResourceAny) item;
+        tmp = visitLambdaExpression(any.getLamdaVariable(), any.getExpression());
+      } else {
+        tmp = item.toString();
+      }
+      
+             
+      
+      if (ret.length() != 0) {
+        ret += "/";
+      }
+      ret += tmp;
+
     }
     return ret;
   }
@@ -84,6 +124,23 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   @Override
   public String visitAlias(String referenceName) throws ExceptionVisitExpression {
     return "<" + referenceName + ">";
+  }
+
+  @Override
+  public String visitLambdaExpression(String variableText, Expression expression) 
+      throws ExceptionVisitExpression, ODataApplicationException {
+    return "<" + variableText + ";" + expression.accept(this) + ">";
+  }
+
+  @Override
+  public String visitTypeLiteral(EdmType type) {
+    return type.toString();
+  }
+
+  @Override
+  public String visitLambdaReference(String variableText) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

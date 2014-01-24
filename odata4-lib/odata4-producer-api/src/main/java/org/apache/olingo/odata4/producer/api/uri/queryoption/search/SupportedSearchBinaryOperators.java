@@ -27,8 +27,13 @@ public enum SupportedSearchBinaryOperators {
   private SupportedSearchBinaryOperators(final String syntax) {
     this.syntax = syntax;
   }
+  
+  @Override
+  public String toString() {
+    return syntax;
+  }
 
-  public static SupportedSearchBinaryOperators get(String operator) {
+  public static SupportedSearchBinaryOperators get(final String operator) {
     for (SupportedSearchBinaryOperators op : SupportedSearchBinaryOperators.values()) {
       if (op.toString().equals(operator)) {
         return op;
@@ -37,8 +42,5 @@ public enum SupportedSearchBinaryOperators {
     return null;
   }
 
-  @Override
-  public String toString() {
-    return syntax;
-  }
+
 }

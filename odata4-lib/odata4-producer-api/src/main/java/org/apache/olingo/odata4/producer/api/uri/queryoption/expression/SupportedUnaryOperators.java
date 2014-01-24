@@ -32,7 +32,7 @@ public enum SupportedUnaryOperators {
     return syntax;
   }
 
-  public static SupportedUnaryOperators get(String operator) {
+  public static SupportedUnaryOperators get(final String operator) {
     for (SupportedUnaryOperators op : SupportedUnaryOperators.values()) {
       if (op.toString().equals(operator)) {
         return op;
@@ -40,5 +40,5 @@ public enum SupportedUnaryOperators {
     }
     return null;
   }
- 
+
 }

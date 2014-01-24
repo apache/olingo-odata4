@@ -26,11 +26,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourceFunction extends UriResourcePartTyped {
 
-
   EdmFunction getFunction();
 
   /**
-   * Convenience method which return the {@link EdmFunctionImport} which was used in
+   * Convenience method which returns the {@link EdmFunctionImport} which was used in
    * the resource path to define the {@link EdmFunction}.
    * @return
    */

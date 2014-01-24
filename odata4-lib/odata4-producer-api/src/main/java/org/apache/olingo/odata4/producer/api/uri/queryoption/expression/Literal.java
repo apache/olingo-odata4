@@ -18,8 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface Literal {
+public interface Literal extends Expression {
 
-  public  String getText();
+  public String getText();
 
 }

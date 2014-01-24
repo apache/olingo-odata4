@@ -110,7 +110,7 @@ valueOnly           : vV=commonExpr ;
 nameValueList       : WSP* vlNVP+=nameValuePair WSP* ( COMMA WSP* vlNVP+=nameValuePair  WSP*)* ;
 nameValuePair       : vODI=odataIdentifier EQ (AT vALI=odataIdentifier | vCOM=commonExpr /*TODO | val2=enumX*/);
 
-constSegment        : SLASH (vV=value | vC=count | vR=ref );
+constSegment        : SLASH (vV=value | vC=count | vR=ref | vAll=allExpr | vAny=anyExpr);
 
 count               : COUNT;
 ref                 : REF;
@@ -159,8 +159,10 @@ expand              : EXPAND EQ vlEI+=expandItem ( COMMA vlEI+=expandItem )*;
 expandItem          : vS=STAR ( SLASH vR=ref | OPEN LEVELS EQ ( vL=INT | vM=MAX)  CLOSE )?
                     | vEP=expandPath vEPE=expandPathExtension?;
 
-expandPath          : expandPathSegment ( SLASH expandPathSegment )*;
-expandPathSegment   : vNS=namespace? vODI=odataIdentifier;
+
+expandPath          : vlPS+=pathSegment (SLASH vlPS+=pathSegment)*;
+//expandPath          : expandPathSegment ( SLASH expandPathSegment )*;
+//expandPathSegment   : vNS=namespace? vODI=odataIdentifier;
 
 expandPathExtension : OPEN vlEO+=expandOption                        ( SEMI vlEO+=expandOption       )* CLOSE 
                     | SLASH vR=ref   ( OPEN vlEOR+=expandRefOption   ( SEMI vlEOR+=expandRefOption   )* CLOSE )?

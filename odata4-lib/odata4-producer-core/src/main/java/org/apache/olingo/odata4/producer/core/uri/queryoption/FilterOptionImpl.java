@@ -18,9 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
 public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOption {
@@ -28,10 +27,10 @@ public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOpt
   private ExpressionImpl expression;
 
   public FilterOptionImpl() {
-    setKind(SystemQueryOptionEnum.FILTER);
+    setKind(SupportedQueryOptions.FILTER);
   }
-  
-  public FilterOptionImpl  setExpression(ExpressionImpl expression) {
+
+  public FilterOptionImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
   }
@@ -40,7 +39,5 @@ public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOpt
   public ExpressionImpl getExpression() {
     return expression;
   }
-
-
 
 }

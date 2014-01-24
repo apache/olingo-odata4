@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
 public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryOption {
-  // TODO change value of alias to a interface which need to be defined
+
   private ExpressionImpl aliasValue;
 
   @Override
@@ -30,13 +30,9 @@ public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryO
     return aliasValue;
   }
 
-  
-  
-  public AliasQueryOptionImpl setAliasValue(ExpressionImpl aliasValue) {
+  public AliasQueryOptionImpl setAliasValue(final ExpressionImpl aliasValue) {
     this.aliasValue = aliasValue;
     return this;
   }
- 
-
 
 }

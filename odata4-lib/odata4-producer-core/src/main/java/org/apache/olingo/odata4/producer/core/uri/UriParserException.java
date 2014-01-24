@@ -23,16 +23,14 @@ public class UriParserException extends Exception {
   /**
    * 
    */
-  private static final long serialVersionUID = -1813203179082217112L;
+  private static final long serialVersionUID = 1L;
 
-  public UriParserException(String message, Throwable cause) {
+  public UriParserException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
-  public UriParserException(String message) {
+  public UriParserException(final String message) {
     super(message, null);
   }
-
-  
 
 }

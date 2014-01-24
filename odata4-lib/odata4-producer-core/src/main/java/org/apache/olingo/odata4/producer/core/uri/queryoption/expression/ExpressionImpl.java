@@ -20,12 +20,6 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 
-public class ExpressionImpl implements Expression, VisitableExression {
-
-  @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
-    // TODO Auto-generated method stub
-    return null;
-  }
+public abstract class ExpressionImpl implements Expression {
 
 }

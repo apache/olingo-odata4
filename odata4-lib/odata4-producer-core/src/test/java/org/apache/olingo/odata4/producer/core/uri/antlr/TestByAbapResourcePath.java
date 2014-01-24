@@ -20,8 +20,10 @@ package org.apache.olingo.odata4.producer.core.uri.antlr;
 
 // sync 20.1.2014
 import java.util.Arrays;
+import java.util.Stack;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
@@ -43,7 +45,6 @@ public class TestByAbapResourcePath {
     testUri = new UriValidator().setEdm(edm);
     testRes = new UriResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
-
   }
 
   @Test
@@ -1940,7 +1941,6 @@ public class TestByAbapResourcePath {
         .isSimple("CollPropertyString")
         .isType(EdmTechProvider.nameString, true);
     testUri.run("SINav/CollPropertyString/$count")
-
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
@@ -1951,137 +1951,766 @@ public class TestByAbapResourcePath {
         .isCount();
   }
 
-  // TODO make rest
   @Test
   public void runExpand() {
-    testUri.run("ESKeyNav(1)?$expand=*");
-    testUri.run("ESKeyNav(1)?$expand=*/$ref");
-    testUri.run("ESKeyNav(1)?$expand=*/$ref,NavPropertyETKeyNavMany");
-    testUri.run("ESKeyNav(1)?$expand=*($levels=3)");
-    testUri.run("ESKeyNav(1)?$expand=*($levels=max)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($filter=PropertyInt16 eq 1)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($orderby=PropertyInt16)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($top=2)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($count=true)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1;$top=3)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1%3b$top=3)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count($filter=PropertyInt16 gt 1)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($filter=PropertyInt16 eq 1)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($orderby=PropertyInt16)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($top=2)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($count=true)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETKeyNavMany)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=5)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=max)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1;$top=2)");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1%3b$top=2)");
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?$expand=NavPropertyETKeyNavMany");
-    testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/NavPropertyETKeyNavMany");
-    testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/NavPropertyETTwoKeyNavMany");
-    testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav");
-    testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav/NavPropertyETTwoKeyNavOne");
-    testUri
-        .run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav"
-            + "/com.sap.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne");
-    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)");
-    testUri
-        .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
-            + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav($select=PropertyString)");
-    testUri
-        .run("ESKeyNav?$expand=NavPropertyETKeyNavOne($expand=NavPropertyETKeyNavMany("
-            + "$expand=NavPropertyETKeyNavOne))");
-    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyInt16)");
-    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyComplex/PropertyInt16)");
+    testUri.run("ESKeyNav(1)?$expand=*")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .isSegStar(0);
+
+    testUri.run("ESKeyNav(1)?$expand=*/$ref")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .isSegStar(0)
+        .isSegRef(1);
+
+    testUri.run("ESKeyNav(1)?$expand=*/$ref,NavPropertyETKeyNavMany")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .isSegStar(0).isSegRef(1)
+        .n()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany");
+
+    testUri.run("ESKeyNav(1)?$expand=*($levels=3)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .isSegStar(0)
+        .isLevels("3");
+
+    testUri.run("ESKeyNav(1)?$expand=*($levels=max)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .isSegStar(0)
+        .isLevels("max");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef();
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavOne")
+        .isType(EdmTechProvider.nameETKeyNav, false)
+        .n().isRef();
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($filter=PropertyInt16 eq 1)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator().isFilterSerialized("<PropertyInt16 eq 1>");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($orderby=PropertyInt16)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator();// .isFilterSerialized(""); TODO check order BY
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator()
+        .isSkipText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($top=2)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator()
+        .isTopText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($count=true)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator()
+        .isCountText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1;$top=3)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator()
+        .isSkipText("1")
+        .isTopText("3");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1%3b$top=3)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isRef()
+        .goUpExpandValidator()
+        .isSkipText("1")
+        .isTopText("3");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isCount();
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavOne")
+        .isType(EdmTechProvider.nameETKeyNav, false)
+        .n().isCount();
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count($filter=PropertyInt16 gt 1)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .n().isCount()
+        .goUpExpandValidator()
+        .isFilterSerialized("<PropertyInt16 gt 1>");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($filter=PropertyInt16 eq 1)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isFilterSerialized("<PropertyInt16 eq 1>");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($orderby=PropertyInt16)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator();// TODO check orderby
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSkipText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($top=2)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isTopText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($count=true)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isCountText("1");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSelectText("PropertyString");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .goExpand()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETTwoKeyNavOne");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETKeyNavMany)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .goExpand()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=5)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavOne")
+        .isType(EdmTechProvider.nameETKeyNav, false)
+        .goUpExpandValidator()
+        .isLevelsText("5");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($select=PropertyString)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSelectText("PropertyString");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=max)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavOne")
+        .isType(EdmTechProvider.nameETKeyNav, false)
+        .goUpExpandValidator()
+        .isLevelsText("max");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1;$top=2)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSkipText("1")
+        .isTopText("2");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1%3b$top=2)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSkipText("max")
+        .isTopText("2");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?$expand=NavPropertyETKeyNavMany")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'Hugo'")
+        .goExpand()
+        .first()
+        .goPath().first()
+        .isIt().n()
+        .isNav("NavPropertyETKeyNavMany")
+        .isType(EdmTechProvider.nameETKeyNav, true);
+
+    testUri.run("ESTwoKeyNav?"
+        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isNav("NavPropertyETKeyNavMany");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?"
+        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'Hugo'")
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isNav("NavPropertyETKeyNavMany");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?"
+        + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isNav("NavPropertyETTwoKeyNavMany");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
+        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isNav("NavPropertyETTwoKeyNavMany")
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+
+    testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav/NavPropertyETTwoKeyNavOne")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isComplex("PropertyComplexNav")
+        .isType(EdmTechProvider.nameCTBasePrimCompNav)
+        .n()
+        .isNav("NavPropertyETTwoKeyNavOne");
+
+    testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav"
+        + "/com.sap.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n()
+        .isComplex("PropertyComplexNav")
+        .isType(EdmTechProvider.nameCTBasePrimCompNav)
+        .n()
+        .isNav("NavPropertyETTwoKeyNavOne");
+
+    testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .goExpand().first()
+        .goPath()
+        .first().isUriPathInfoKind(UriResourceKind.it)
+        .n().isNav("NavPropertyETKeyNavMany")
+        .n().isRef()
+        .goUpExpandValidator()
+        .n()
+        .goPath()
+        .first().isUriPathInfoKind(UriResourceKind.it)
+        .n().isNav("NavPropertyETTwoKeyNavMany")
+        .goUpExpandValidator()
+        .isSkipText("2")
+        .isTopText("1");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
+        + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav($select=PropertyString)")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n().isNav("NavPropertyETTwoKeyNavMany")
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav)
+        .goUpExpandValidator(); // TODO check select
+
+    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($expand=NavPropertyETKeyNavMany("
+        + "$expand=NavPropertyETKeyNavOne))")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETKeyNav)
+        .n().isNav("NavPropertyETKeyNavOne")
+        .goUpExpandValidator()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETKeyNav)
+        .n().isNav("NavPropertyETKeyNavMany")
+        .goUpExpandValidator()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETKeyNav)
+        .n().isNav("NavPropertyETKeyNavOne");
+
+    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyInt16)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETKeyNav)
+        .n().isNav("NavPropertyETKeyNavOne")
+        .goUpExpandValidator();
+    // .isSelectText("PropertyInt16") //TODO check select
+
+    testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyComplex/PropertyInt16)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .goExpand().first()
+        .goPath().first()
+        .isUriPathInfoKind(UriResourceKind.it)
+        .isType(EdmTechProvider.nameETKeyNav)
+        .n().isNav("NavPropertyETKeyNavOne")
+        .goUpExpandValidator();
+    // .isSelectText("PropertyInt16")//TODO check select
+  }
+
+  private void isSkipText(String string) {
+    // TODO Auto-generated method stub
+
   }
 
   @Test
   public void runTop() {
     // top
-    testUri.run("ESKeyNav?$top=1");
-    testUri.run("ESKeyNav?$top=0");
-    testUri.run("ESKeyNav?$top=-3");
+    testUri.run("ESKeyNav?$top=1")
+        .isKind(UriInfoKind.resource).goPath()
+        .isEntitySet("ESKeyNav")
+        .isTopText("1");
+
+    testUri.run("ESKeyNav?$top=0")
+        .isKind(UriInfoKind.resource).goPath()
+        .isEntitySet("ESKeyNav")
+        .isTopText("0");
+
+    testUri.run("ESKeyNav?$top=-3")
+        .isKind(UriInfoKind.resource).goPath()
+        .isEntitySet("ESKeyNav")
+        .isTopText("-3");
   }
 
   @Test
   public void runFormat() {
     // format
-    testUri.run("ESKeyNav(1)?$format=atom");
-    testUri.run("ESKeyNav(1)?$format=json");
-    testUri.run("ESKeyNav(1)?$format=xml");
-    testUri.run("ESKeyNav(1)?$format=IANA_content_type/must_contain_a_slash");
-    testUri.run("ESKeyNav(1)?$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27");
+    testUri.run("ESKeyNav(1)?$format=atom")
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText("atom");
+    testUri.run("ESKeyNav(1)?$format=json")
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText("json");
+    testUri.run("ESKeyNav(1)?$format=xml")
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText("xml");
+    testUri.run("ESKeyNav(1)?$format=IANA_content_type/must_contain_a_slash")
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText("IANA_content_type/must_contain_a_slash");
+    testUri.run("ESKeyNav(1)?$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
+        .isKind(UriInfoKind.resource).goPath()
+        .isFormatText("Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27");
   }
 
   @Test
   public void runCount() {
     // count
-    testUri.run("ESAllPrim?$count=true");
-    testUri.run("ESAllPrim?$count=false");
+    testUri.run("ESAllPrim?$count=true")
+        .isKind(UriInfoKind.resource).goPath()
+        .isInlineCountText("true");
+    testUri.run("ESAllPrim?$count=false")
+        .isKind(UriInfoKind.resource).goPath()
+        .isInlineCountText("false");
     // testUri.run("ESAllPrim?$count=foo");
   }
 
   @Test
-  public void rest() {
+  public void skip() {
     // skip
-    testUri.run("ESAllPrim?$skip=3");
-    testUri.run("ESAllPrim?$skip=0");
-    testUri.run("ESAllPrim?$skip=-3");
-    testUri.run("ESAllPrim?$skiptoken=foo");
+    testUri.run("ESAllPrim?$skip=3")
+        .isKind(UriInfoKind.resource).goPath()
+        .isSkipText("3");
+    testUri.run("ESAllPrim?$skip=0")
+        .isKind(UriInfoKind.resource).goPath()
+        .isSkipText("0");
+    testUri.run("ESAllPrim?$skip=-3")
+        .isKind(UriInfoKind.resource).goPath()
+        .isSkipText("-3");
+  }
+
+  @Test
+  public void skiptoken() {
+
+    testUri.run("ESAllPrim?$skiptoken=foo")
+        .isKind(UriInfoKind.resource).goPath()
+        .isSkipTokenText("foo");
+  }
+
+  @Test
+  public void misc() {
+
     testUri.run("");
 
-    testUri.run("$all");
-    testUri.run("$metadata");
-    testUri.run("$batch");
-    testUri.run("$crossjoin(ESKeyNav)");
-    testUri.run("ESKeyNav");
-    testUri.run("ESKeyNav(1)");
-    testUri.run("SINav");
-    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')");
-    testUri.run("FICRTETKeyNav()");
-    testUri.run("FICRTCollCTTwoPrim()");
-    testUri.run("FICRTCTAllPrimTwoParam(ParameterInt16=1,ParameterString='2')");
-    testUri.run("FICRTCollStringTwoParam(ParameterInt16=1,ParameterString='2')");
-    testUri.run("FICRTStringTwoParam(ParameterInt16=1)");
-    testUri.run("FICRTStringTwoParam(ParameterInt16=1,ParameterString='2')");
-    testUri.run("AIRTETParam");
-    testUri.run("AIRTPrimParam");
-    testUri.run("ESKeyNav/$count");
-    testUri.run("ESKeyNav/$ref");
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()");
-    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim");
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()");
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav");
-    testUri.run("ESTwoKeyNav/$count");
-    testUri.run("ESTwoKeyNav/$ref");
-    testUri.run("ESKeyNav(1)");
-    testUri.run("ESKeyNav(1)/$ref");
-    testUri.run("ESMedia(1)/$value");
-    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim");
-    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()");
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav");
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$ref");
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$value");
+    testUri.run("$all")
+        .isKind(UriInfoKind.all);
+
+    testUri.run("$metadata")
+        .isKind(UriInfoKind.metadata);
+
+    testUri.run("$batch")
+        .isKind(UriInfoKind.batch);
+
+    testUri.run("$crossjoin(ESKeyNav)")
+        .isKind(UriInfoKind.crossjoin)
+        .isCrossJoinEntityList(Arrays.asList("ESKeyNav"));
+
+    testUri.run("ESKeyNav")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav");
+    testUri.run("ESKeyNav(1)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1");
+
+    testUri.run("SINav")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isSingleton("SINav");
+
+    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
+        .isKind(UriInfoKind.resource)
+        .goPath()
+        .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
+        .isType(EdmTechProvider.nameETMixPrimCollComp)
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'");
+
+    testUri.run("FICRTETKeyNav()")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTETKeyNav")
+        .isType(EdmTechProvider.nameETKeyNav);
+
+    testUri.run("FICRTCollCTTwoPrim()")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTCollCTTwoPrim")
+        .isType(EdmTechProvider.nameCTTwoPrim);
+
+    testUri.run("FICRTCTAllPrimTwoParam(ParameterInt16=1,ParameterString='2')")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTCTAllPrimTwoParam")
+        .isType(EdmTechProvider.nameCTAllPrim)
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'");
+
+    testUri.run("FICRTCollStringTwoParam(ParameterInt16=1,ParameterString='2')")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTCollStringTwoParam")
+        .isType(EdmTechProvider.nameString)
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'2'");
+
+    testUri.run("FICRTStringTwoParam(ParameterInt16=1)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTStringTwoParam")
+        .isFunction("UFCRTStringTwoParam")
+        .isType(EdmTechProvider.nameString)
+        .isParameter(0, "ParameterInt16", "1");
+
+    testUri.run("FICRTStringTwoParam(ParameterInt16=1,ParameterString='2')")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTStringTwoParam")
+        .isFunction("UFCRTStringTwoParam")
+        .isType(EdmTechProvider.nameString)
+        .isParameter(0, "ParameterInt16", "1");
+
+    testUri.run("AIRTETParam")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isActionImport("AIRTETParam");
+
+    testUri.run("AIRTPrimParam")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isActionImport("AIRTPrimParam");
+
+    testUri.run("ESKeyNav/$count")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .n().isCount();
+
+    testUri.run("ESKeyNav/$ref")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .n().isRef();
+
+    testUri.run("ESKeyNav/$count")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .n().isCount();
+
+    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+
+    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESAllPrim")
+        .n().isAction("BAESAllPrimRTETAllPrim");
+
+    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+
+    testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+
+    testUri.run("ESTwoKeyNav/$count")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .n()
+        .isCount();
+
+    testUri.run("ESTwoKeyNav/$ref")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .n()
+        .isRef();
+
+    testUri.run("ESKeyNav(1)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1");
+
+    testUri.run("ESKeyNav(1)/$ref")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .n()
+        .isRef();
+
+    testUri.run("ESMedia(1)/$value")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESMedia")
+        .n()
+        .isValue();
+
+    testUri.run("ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESAllPrim")
+        .n().isAction("BAESAllPrimRTETAllPrim");
+
+    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$ref")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n().isRef();
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$value")
+        .goPath().first()
+        .isEntitySet("ESTwoKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .n().isValue();
+
   }
 
   @Test
   public void testSpecial() {
-    testFilter.runOnETKeyNav("any()");
+    // testFilter.runOnETKeyNav("any()");
 
   }
 
@@ -2327,7 +2956,7 @@ public class TestByAbapResourcePath {
 
     testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,com.sap.odata.test1.ETKeyPrimNav)");
     // testFilter.runOnETKeyNav("Xcast(NavPropertyETKeyPrimNavOne,com.sap.odata.test1.ETKeyNav)");
-    testFilter.runOnETKeyNav("any()");
+    // testFilter.runOnETKeyNav("any()");
 
     testFilter.runOnETKeyNav("any(d:d/PropertyInt16 eq 1)");
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString')");

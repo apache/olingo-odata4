@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
 public interface FormatOption extends SystemQueryOption {
-  // TODO select best representation for format
+  
+  // TODO Select best representation for format
   Object getFormat();
 }

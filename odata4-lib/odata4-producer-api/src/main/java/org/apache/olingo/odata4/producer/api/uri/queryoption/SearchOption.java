@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.search.SearchExpression;
 
 public interface SearchOption extends SystemQueryOption {
-  
+
   SearchExpression getSearchExpression();
+  
 }

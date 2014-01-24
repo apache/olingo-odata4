@@ -22,7 +22,7 @@ package org.apache.olingo.odata4.producer.api.uri;
 public interface UriInfo extends
     UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
     UriInfoEntityId, UriInfoMetadata, UriInfoResource {
-  
+
   public UriInfoService asUriInfoService();
 
   public UriInfoAll asUriInfoAll();

@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,10 +17,28 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandSegment;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-public class ExpandSegmentIt extends ExpandSegment {
+/* TODO implement */
+public class SkiptokenOptionImpl extends SystemQueryOptionImpl implements SkiptokenOption {
+  private String skipTokenValue;
+
+  public SkiptokenOptionImpl() {
+    setKind(SupportedQueryOptions.SKIPTOKEN);
+  }
+
+  
+  @Override
+  public String getValue() {
+    return skipTokenValue;
+  }
+
+  public SkiptokenOptionImpl setValue(String skipTokenValue) {
+    this.skipTokenValue = skipTokenValue;
+    return this;
+  }
 
 }

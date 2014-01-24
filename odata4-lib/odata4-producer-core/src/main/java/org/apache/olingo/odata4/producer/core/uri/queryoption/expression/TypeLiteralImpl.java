@@ -19,7 +19,11 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.TypeLiteral;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
 public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral, VisitableExression {
 
@@ -29,17 +33,15 @@ public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral, Visi
   public EdmType getType() {
     return type;
   }
-  
-  public TypeLiteralImpl setType(EdmType type) {
+
+  public TypeLiteralImpl setType(final EdmType type) {
     this.type = type;
     return this;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
-    return null;
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+    return visitor.visitTypeLiteral(type);
   }
-
-
 
 }

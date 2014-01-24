@@ -21,5 +21,6 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 
 public interface FilterOption extends SystemQueryOption {
+  
   Expression getExpression();
 }

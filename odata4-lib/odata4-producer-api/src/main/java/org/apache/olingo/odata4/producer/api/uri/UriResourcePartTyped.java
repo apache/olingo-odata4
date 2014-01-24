@@ -22,7 +22,9 @@ package org.apache.olingo.odata4.producer.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourcePartTyped extends UriResourcePart {
+  
   EdmType getType();
 
   boolean isCollection();
+  
 }

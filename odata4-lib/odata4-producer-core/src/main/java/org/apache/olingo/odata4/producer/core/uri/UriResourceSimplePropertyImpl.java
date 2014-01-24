@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
@@ -27,20 +26,18 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourceSimpleProperty;
 public class UriResourceSimplePropertyImpl extends UriResourceImplTyped implements UriResourceSimpleProperty {
 
   EdmProperty property;
-  
+
   public UriResourceSimplePropertyImpl() {
     super(UriResourceKind.simpleProperty);
   }
-
-  
 
   @Override
   public EdmProperty getProperty() {
     return property;
   }
-  
-  public UriResourceSimplePropertyImpl setProperty( EdmProperty property) {
-   this.property = property;
+
+  public UriResourceSimplePropertyImpl setProperty(final EdmProperty property) {
+    this.property = property;
     return this;
   }
 
@@ -53,7 +50,10 @@ public class UriResourceSimplePropertyImpl extends UriResourceImplTyped implemen
   public boolean isCollection() {
     return property.isCollection();
   }
- 
-  
+
+  @Override
+  public String toString() {
+    return property.getName();
+  }
 
 }

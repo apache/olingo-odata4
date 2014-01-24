@@ -18,7 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Literal;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
 public class LiteralImpl extends ExpressionImpl implements Literal, VisitableExression {
 
@@ -29,13 +33,13 @@ public class LiteralImpl extends ExpressionImpl implements Literal, VisitableExr
     return text;
   }
 
-  public LiteralImpl setText(String text) {
+  public LiteralImpl setText(final String text) {
     this.text = text;
     return this;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     return visitor.visitLiteral(text);
   }
 

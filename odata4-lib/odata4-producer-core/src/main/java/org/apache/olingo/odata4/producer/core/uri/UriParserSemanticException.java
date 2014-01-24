@@ -24,16 +24,14 @@ public class UriParserSemanticException extends UriParserException {
   /**
    * 
    */
-  private static final long serialVersionUID = -1813203179082217112L;
-  
-  public UriParserSemanticException(String message, Throwable cause) {
+  private static final long serialVersionUID = 1L;
+
+  public UriParserSemanticException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
-  public UriParserSemanticException(String message) {
+  public UriParserSemanticException(final String message) {
     super(message, null);
   }
-
- 
 
 }

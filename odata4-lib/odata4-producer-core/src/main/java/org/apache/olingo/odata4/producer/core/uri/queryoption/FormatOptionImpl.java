@@ -19,25 +19,23 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FormatOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
-
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
 public class FormatOptionImpl extends SystemQueryOptionImpl implements FormatOption {
   private String value;
 
   public FormatOptionImpl() {
-    setKind(SystemQueryOptionEnum.FORMAT);
+    setKind(SupportedQueryOptions.FORMAT);
   }
 
-  public FormatOptionImpl setValue(String value) {
+  public FormatOptionImpl setValue(final String value) {
     this.value = value;
     return this;
   }
-  
+
   @Override
   public String getFormat() {
     return value;
   }
 
-  
 }

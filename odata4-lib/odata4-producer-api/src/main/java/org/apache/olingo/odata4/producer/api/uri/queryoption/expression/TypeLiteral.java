@@ -20,10 +20,8 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
-public interface TypeLiteral {
+public interface TypeLiteral extends Expression {
 
-  public  EdmType getType();
-
-
+  public EdmType getType();
 
 }

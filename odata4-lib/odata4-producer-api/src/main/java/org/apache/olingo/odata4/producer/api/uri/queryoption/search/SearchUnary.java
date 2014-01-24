@@ -19,5 +19,7 @@
 package org.apache.olingo.odata4.producer.api.uri.queryoption.search;
 
 public interface SearchUnary {
+  
   SearchExpression getOperand();
+  
 }

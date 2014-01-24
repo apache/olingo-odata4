@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -32,11 +31,10 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 
 class ErrorCollector implements ANTLRErrorListener {
-  
-  private List<Exception> exceptions = new ArrayList<Exception>();
-  //private ParserValidator tokenValidator;
 
- 
+  private List<Exception> exceptions = new ArrayList<Exception>();
+
+  // private ParserValidator tokenValidator;
 
   @Override
   public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
@@ -49,7 +47,7 @@ class ErrorCollector implements ANTLRErrorListener {
     System.out.println("syntaxError");
     trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 
-    //fail("syntaxError");
+    // fail("syntaxError");
   }
 
   @Override
@@ -58,49 +56,53 @@ class ErrorCollector implements ANTLRErrorListener {
       final BitSet ambigAlts, final ATNConfigSet configs) {
 
     /*
-    if (tokenValidator.logLevel > 0) {
-      System.out.println("reportAmbiguity: ");
-      System.out.println(" ambigAlts: " + ambigAlts);
-      System.out.println(" configs: " + configs);
-      System.out.println(" input: " + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
-    }*/
-/*
-    if (!tokenValidator.allowAmbiguity) {
-      printStack(recognizer);
-      fail("reportAmbiguity");
-    }*/
+     * if (tokenValidator.logLevel > 0) {
+     * System.out.println("reportAmbiguity: ");
+     * System.out.println(" ambigAlts: " + ambigAlts);
+     * System.out.println(" configs: " + configs);
+     * System.out.println(" input: " + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
+     * }
+     */
+    /*
+     * if (!tokenValidator.allowAmbiguity) {
+     * printStack(recognizer);
+     * fail("reportAmbiguity");
+     * }
+     */
   }
 
   @Override
   public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex,
       final BitSet conflictingAlts, final ATNConfigSet configs) {
-/*
-    // The grammar should be written in order to avoid attempting a full context parse because its negative
-    // impact on the performance, so trace and stop here
-    if (tokenValidator.logLevel > 0) {
-      System.out.println("allowed AttemptingFullContext");
-    }
-
-    if (!tokenValidator.allowFullContext) {
-      printStack(recognizer);
-      fail("reportAttemptingFullContext");
-    }*/
+    /*
+     * // The grammar should be written in order to avoid attempting a full context parse because its negative
+     * // impact on the performance, so trace and stop here
+     * if (tokenValidator.logLevel > 0) {
+     * System.out.println("allowed AttemptingFullContext");
+     * }
+     * 
+     * if (!tokenValidator.allowFullContext) {
+     * printStack(recognizer);
+     * fail("reportAttemptingFullContext");
+     * }
+     */
   }
 
   @Override
   public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex, final int prediction,
       final ATNConfigSet configs) {
-/*
-    if (tokenValidator.logLevel > 0) {
-      System.out.println("allowed ContextSensitivity");
-    }
-
-    if (!tokenValidator.allowContextSensitifity) {
-      printStack(recognizer);
-      fail("reportContextSensitivity");
-    }*/
+    /*
+     * if (tokenValidator.logLevel > 0) {
+     * System.out.println("allowed ContextSensitivity");
+     * }
+     * 
+     * if (!tokenValidator.allowContextSensitifity) {
+     * printStack(recognizer);
+     * fail("reportContextSensitivity");
+     * }
+     */
   }
 
   /*
@@ -130,8 +132,8 @@ class ErrorCollector implements ANTLRErrorListener {
       // String lexerTokenName = TestSuiteLexer.tokenNames[e.getOffendingToken().getType()];
       String lexerTokenName = "";
       try {
-        //TODO check how the Lexer is accessed in the new package structure
-        //lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
+        // TODO check how the Lexer is accessed in the new package structure
+        // lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
       } catch (ArrayIndexOutOfBoundsException es) {
         lexerTokenName = "token error";
       }

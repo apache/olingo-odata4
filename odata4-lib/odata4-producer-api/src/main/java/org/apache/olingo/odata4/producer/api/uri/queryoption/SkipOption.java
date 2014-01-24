@@ -20,6 +20,6 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
 public interface SkipOption extends SystemQueryOption {
 
-  String getSkipValue();
-  
+  String getValue();
+
 }

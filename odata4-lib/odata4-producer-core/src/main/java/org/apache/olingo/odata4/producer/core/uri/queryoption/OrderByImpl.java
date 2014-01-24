@@ -18,34 +18,34 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-public class OrderByImpl extends SystemQueryOptionImpl implements OrderByOption{
-  
+public class OrderByImpl extends SystemQueryOptionImpl implements OrderByOption {
+
   private List<OrderByOptionImpl> orders;
 
   public OrderByImpl() {
-    setKind(SystemQueryOptionEnum.ORDERBY);
+    setKind(SupportedQueryOptions.ORDERBY);
   }
-  
-  public List<OrderByItem>  getOrders() {
+
+  @Override
+  public List<OrderByItem> getOrders() {
     List<OrderByItem> retList = new ArrayList<OrderByItem>();
-    for ( OrderByOptionImpl item: orders) {
+    for (OrderByOptionImpl item : orders) {
       retList.add(item);
     }
     return Collections.unmodifiableList(retList);
   }
-  
-  public OrderByImpl addOrder(OrderByOptionImpl order) {
+
+  public OrderByImpl addOrder(final OrderByOptionImpl order) {
     orders.add(order);
     return this;
   }
-  
+
 }

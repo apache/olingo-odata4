@@ -19,6 +19,6 @@
 
 package org.apache.olingo.odata4.producer.api.uri;
 
-public interface UriInfoAll  {
+public interface UriInfoAll {
 
 }

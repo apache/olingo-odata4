@@ -18,15 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourceSingleton extends UriResourcePartTyped {
-  
 
   EdmSingleton getSingleton();
+
   EdmEntityType getEntityType();
+
   EdmEntityType getEntityTypeFilter();
+  
 }

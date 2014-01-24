@@ -18,28 +18,20 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-
 import org.apache.olingo.odata4.producer.api.uri.queryoption.IdOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
 public class IdOptionImpl extends SystemQueryOptionImpl implements IdOption {
   private String value;
-  
 
   public IdOptionImpl() {
-    setKind(SystemQueryOptionEnum.ID);
+    setKind(SupportedQueryOptions.ID);
   }
-  
-  public IdOptionImpl setValue(String value) {
+
+  public IdOptionImpl setValue(final String value) {
     this.value = value;
     return this;
   }
-  
-  //TODO remove
-  public String getValue() {
-    return value;
-  }
-
 
   @Override
   public String getIdValue() {

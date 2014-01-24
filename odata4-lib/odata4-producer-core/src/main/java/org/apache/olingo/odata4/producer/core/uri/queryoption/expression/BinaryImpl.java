@@ -18,11 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.BinaryExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
 
-public class BinaryImpl extends ExpressionImpl implements BinaryExpression, VisitableExression {
+public class BinaryImpl extends ExpressionImpl implements BinaryExpression {
 
   private SupportedBinaryOperators operator;
   private ExpressionImpl left;
@@ -33,7 +36,7 @@ public class BinaryImpl extends ExpressionImpl implements BinaryExpression, Visi
     return operator;
   }
 
-  public BinaryExpression setOperator(SupportedBinaryOperators operator) {
+  public BinaryExpression setOperator(final SupportedBinaryOperators operator) {
     this.operator = operator;
     return this;
   }
@@ -43,8 +46,8 @@ public class BinaryImpl extends ExpressionImpl implements BinaryExpression, Visi
     return left;
   }
 
-  public void setLeftOperand(ExpressionImpl operand) {
-    this.left = operand;
+  public void setLeftOperand(final ExpressionImpl operand) {
+    left = operand;
   }
 
   @Override
@@ -52,13 +55,13 @@ public class BinaryImpl extends ExpressionImpl implements BinaryExpression, Visi
     return right;
   }
 
-  public void setRightOperand(ExpressionImpl operand) {
-    this.right = operand;
+  public void setRightOperand(final ExpressionImpl operand) {
+    right = operand;
 
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     T left = this.left.accept(visitor);
     T right = this.right.accept(visitor);
     return visitor.visitBinaryOperator(operator, left, right);

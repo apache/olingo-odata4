@@ -31,34 +31,28 @@ public class UriResourceSingletonImpl extends UriResourceImplTyped implements Ur
   public UriResourceSingletonImpl() {
     super(UriResourceKind.singleton);
   }
-  
 
   @Override
   public EdmSingleton getSingleton() {
     return singleton;
   }
-  
-  public UriResourceSingletonImpl setSingleton(EdmSingleton singleton) {
+
+  public UriResourceSingletonImpl setSingleton(final EdmSingleton singleton) {
 
     this.singleton = singleton;
     return this;
   }
-  
+
   @Override
   public EdmEntityType getEntityTypeFilter() {
     return (EdmEntityType) typeFilter;
   }
 
   @Override
-  public String toString() {
-    return singleton.getName() + super.toString();
-  }
-
-  @Override
   public EdmType getType() {
     return singleton.getEntityType();
   }
-  
+
   @Override
   public EdmEntityType getEntityType() {
     return singleton.getEntityType();
@@ -69,13 +63,9 @@ public class UriResourceSingletonImpl extends UriResourceImplTyped implements Ur
     return false;
   }
 
-
-  
-
-
-  
-
-
-  
+  @Override
+  public String toString() {
+    return singleton.toString();
+  }
 
 }

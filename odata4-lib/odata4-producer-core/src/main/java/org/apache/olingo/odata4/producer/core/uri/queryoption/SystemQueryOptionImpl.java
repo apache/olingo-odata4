@@ -19,31 +19,24 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
+public class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption {
 
-public class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption{
+  private SupportedQueryOptions kind;
 
-  private SystemQueryOptionEnum kind;
-  
   @Override
-  public SystemQueryOptionEnum getKind() {
+  public SupportedQueryOptions getKind() {
     return kind;
   }
 
-  
-  void setKind(SystemQueryOptionEnum kind) {
+  void setKind(final SupportedQueryOptions kind) {
     this.kind = kind;
   }
 
-  
-  
   @Override
   public String getName() {
     return kind.toString();
   }
-  
-  
 
-  
 }

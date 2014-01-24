@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,33 +17,10 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
+package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+public interface SkiptokenOption extends SystemQueryOption {
 
-
-public class InlineCountImpl extends SystemQueryOptionImpl implements InlineCountOption {
-
-  private String count;
-
-  public InlineCountImpl() {
-    setKind(SystemQueryOptionEnum.INLINECOUNT);
-  }
-
-  public String getCount() {
-    return count;
-  }
-
-  public InlineCountImpl setCount(String count) {
-    this.count = count;
-    return this;
-  }
-
-  @Override
-  public boolean getInlineCountValue() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+  String getValue();
 
 }

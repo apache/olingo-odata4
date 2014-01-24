@@ -24,22 +24,21 @@ import java.util.List;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExceptionVisitExpand;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandVisitor;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.VisitableExpand;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOption, VisitableExpand {
+public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOption {
 
   List<ExpandItemImpl> expandItems = new ArrayList<ExpandItemImpl>();
 
   public ExpandOptionImpl() {
-    setKind(SystemQueryOptionEnum.EXPAND);
+    setKind(SupportedQueryOptions.EXPAND);
   }
 
-  public void addExpandItem(ExpandItemImpl expandItem) {
+  public void addExpandItem(final ExpandItemImpl expandItem) {
     expandItems.add(expandItem);
   }
 
+  @Override
   public List<ExpandItem> getExpandItems() {
     List<ExpandItem> retList = new ArrayList<ExpandItem>();
     for (ExpandItemImpl item : expandItems) {
@@ -48,14 +47,5 @@ public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOpt
     return retList;
   }
 
-  @Override
-  public <T> T accept(ExpandVisitor<T> visitor) throws ExceptionVisitExpand {
-    List<T> parameters = new ArrayList<T>();
-    for (ExpandItemImpl expandItem : expandItems) {
-      parameters.add(expandItem.accept(visitor));
-    }
-
-    return visitor.visitExpand(parameters);
-  }
 
 }

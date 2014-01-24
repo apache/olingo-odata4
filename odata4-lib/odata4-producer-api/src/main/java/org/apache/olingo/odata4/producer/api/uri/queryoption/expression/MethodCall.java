@@ -20,12 +20,10 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
 import java.util.List;
 
-public interface MethodCall {
+public interface MethodCall extends Expression {
 
   public SupportedMethodCalls getMethod();
 
   public List<Expression> getParameters();
-
-
 
 }

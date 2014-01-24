@@ -27,4 +27,9 @@ public class UriResourceCountImpl extends UriResourcePartImpl implements UriReso
     super(UriResourceKind.count);
   }
 
+  @Override
+  public String toString() {
+    return "$count";
+  }
+
 }

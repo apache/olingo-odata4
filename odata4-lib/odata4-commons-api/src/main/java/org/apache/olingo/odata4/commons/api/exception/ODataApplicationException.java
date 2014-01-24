@@ -16,10 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.commons.api.exception;
 
-import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandSegment;
+public class ODataApplicationException extends Exception {
+  private static final long serialVersionUID = 1L;
 
-public class ExpandSegmentRef extends ExpandSegment {
+  public ODataApplicationException(final String msg) {
+    super(msg);
+  }
+
+  public ODataApplicationException(final String msg, final Throwable e) {
+    super(msg, e);
+  }
+
+  public ODataApplicationException(final Throwable e) {
+    super(e);
+  }
 
 }

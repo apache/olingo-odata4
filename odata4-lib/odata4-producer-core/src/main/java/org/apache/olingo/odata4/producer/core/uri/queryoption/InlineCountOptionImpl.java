@@ -16,25 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
+package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import java.util.List;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedUnaryOperators;
+public class InlineCountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
 
-public interface ExpressionVisitor<T> {
+  private boolean count;
 
-  T visitBinaryOperator(SupportedBinaryOperators operator, T left, T right) throws ExceptionVisitExpression;
+  public InlineCountOptionImpl() {
+    setKind(SupportedQueryOptions.INLINECOUNT);
+  }
 
-  T visitUnaryOperator(SupportedUnaryOperators operator, T operand) throws ExceptionVisitExpression;
+  
+  @Override
+  public boolean getvalue() {
+    return count;
+  }
 
-  T visitMethodCall(SupportedMethodCalls methodCall, List<T> parameters) throws ExceptionVisitExpression;
 
-  T visitLiteral(String literal) throws ExceptionVisitExpression;
+  public InlineCountOptionImpl setValue(boolean count) {
+    this.count = count;
+    return this;
+  }
 
-  T visitMember(MemberImpl member) throws ExceptionVisitExpression;
+  
 
-  T visitAlias(String referenceName) throws ExceptionVisitExpression;
 }

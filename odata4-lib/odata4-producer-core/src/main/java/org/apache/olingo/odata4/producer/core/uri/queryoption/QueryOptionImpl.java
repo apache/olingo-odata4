@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.QueryOption;
 
-public class QueryOptionImpl implements QueryOption {
+public abstract class QueryOptionImpl implements QueryOption {
   private String name;
   private String text;
 
@@ -29,7 +29,7 @@ public class QueryOptionImpl implements QueryOption {
     return name;
   }
 
-  public QueryOptionImpl setName(String name) {
+  public QueryOptionImpl setName(final String name) {
     this.name = name;
     return this;
   }
@@ -39,8 +39,8 @@ public class QueryOptionImpl implements QueryOption {
     return text;
   }
 
-  public QueryOptionImpl setText(String value) {
-    this.text = value;
+  public QueryOptionImpl setText(final String value) {
+    text = value;
     return this;
   }
 

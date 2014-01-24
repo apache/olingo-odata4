@@ -20,30 +20,26 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-/*TODO implement*/
+/* TODO implement */
 public class SkipOptionImpl extends SystemQueryOptionImpl implements SkipOption {
-  private boolean isMax;
   private String value;
 
   public SkipOptionImpl() {
-    setKind(SystemQueryOptionEnum.SEARCH);
+    setKind(SupportedQueryOptions.SKIP);
   }
-  
+
+  @Override
   public String getValue() {
     return value;
   }
 
-  public SkipOptionImpl setValue(String value) {
+
+  public SkipOptionImpl setValue(final String value) {
     this.value = value;
     return this;
   }
 
-  @Override
-  public String getSkipValue() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
+
 }

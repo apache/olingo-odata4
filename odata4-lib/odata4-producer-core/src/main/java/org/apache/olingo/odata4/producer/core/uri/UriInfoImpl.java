@@ -44,21 +44,21 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.IdOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipTokenOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkiptokenOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.TopOptionImpl;
 
@@ -75,20 +75,16 @@ public class UriInfoImpl implements UriInfo {
   private FilterOptionImpl filterOption;
   private FormatOptionImpl formatOption;
   private IdOption idOption;
-  private InlineCountImpl inlineCountOption;
+  private InlineCountOptionImpl inlineCountOption;
   private OrderByImpl orderByOption;
   private SearchOptionImpl searchOption;
   private SelectOptionImpl selectOption;
   private SkipOptionImpl skipOption;
-  private SkipTokenOptionImpl skipTokenOption;
+  private SkiptokenOptionImpl skipTokenOption;
   private TopOptionImpl topOption;
 
-  private UriResourcePart lastPathPart;
+  private UriResourcePart lastResourcePart;
   private List<UriResourcePart> pathParts = new ArrayList<UriResourcePart>();
-
-  public UriInfoImpl(Edm edm) {
-    // this.edm = edm;
-  }
 
   @Override
   public UriInfoAll asUriInfoAll() {
@@ -125,26 +121,27 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableList(entitySetNames);
   }
 
-  public void addEntitySetName(String entitySet) {
+  public void addEntitySetName(final String entitySet) {
     entitySetNames.add(entitySet);
   }
 
   @Override
   public List<UriResourcePart> getUriResourceParts() {
     List<UriResourcePart> returnList = new ArrayList<UriResourcePart>();
-    for (UriResourcePart part : pathParts) {
-      returnList.add(part);
+    for (UriResourcePart item : pathParts) {
+      returnList.add(item);
     }
     return Collections.unmodifiableList(returnList);
   }
 
-  public void addPathInfo(UriResourcePartImpl uriPathInfo) {
+  public void addPathInfo(final UriResourcePartImpl uriPathInfo) {
     pathParts.add(uriPathInfo);
-    lastPathPart = uriPathInfo;
+    lastResourcePart = uriPathInfo;
   }
 
   @Override
   public String getContext() {
+    // TODO add support for UTI context part
     return null;
   }
 
@@ -192,13 +189,12 @@ public class UriInfoImpl implements UriInfo {
     return kind;
   }
 
-  public UriResourcePart getLastUriPathInfo() {
-    return lastPathPart;
+  public UriResourcePart getLastResourcePart() {
+    return lastResourcePart;
   }
 
   @Override
   public OrderByOption getOrderByOption() {
-
     return orderByOption;
   }
 
@@ -219,7 +215,7 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public SkipTokenOption getSkipTokenOption() {
+  public SkiptokenOption getSkipTokenOption() {
     return skipTokenOption;
   }
 
@@ -228,13 +224,12 @@ public class UriInfoImpl implements UriInfo {
     return topOption;
   }
 
-  public UriInfoImpl setEntityTypeCast(EdmEntityType type) {
-
+  public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
     entityTypeCast = type;
     return this;
   }
 
-  public UriInfoImpl setFormat(FormatOptionImpl formatOption) {
+  public UriInfoImpl setFormat(final FormatOptionImpl formatOption) {
     this.formatOption = formatOption;
     return this;
   }
@@ -244,33 +239,33 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public UriInfoImpl setQueryOptions(List<QueryOptionImpl> list) {
+  public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
 
     for (QueryOptionImpl item : list) {
       if (item instanceof SystemQueryOptionImpl) {
         SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
 
-        if (sysItem.getKind() == SystemQueryOptionEnum.EXPAND) {
+        if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
           expandOption = (ExpandOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.FILTER) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
           filterOption = (FilterOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.FORMAT) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.FORMAT) {
           formatOption = (FormatOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.ID) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.ID) {
           idOption = (IdOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.INLINECOUNT) {
-          inlineCountOption = (InlineCountImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.ORDERBY) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
+          inlineCountOption = (InlineCountOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
           orderByOption = (OrderByImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SEARCH) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
           searchOption = (SearchOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SELECT) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
           selectOption = (SelectOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SKIP) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
           skipOption = (SkipOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.SKIPTOKEN) {
-          skipTokenOption = (SkipTokenOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SystemQueryOptionEnum.TOP) {
+        } else if (sysItem.getKind() == SupportedQueryOptions.SKIPTOKEN) {
+          skipTokenOption = (SkiptokenOptionImpl) sysItem;
+        } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
           topOption = (TopOptionImpl) sysItem;
         }
       } else if (item instanceof CustomQueryOptionImpl) {
@@ -287,7 +282,5 @@ public class UriInfoImpl implements UriInfo {
 
   public void clearPathInfo() {
     pathParts.clear();
-
   }
-
 }

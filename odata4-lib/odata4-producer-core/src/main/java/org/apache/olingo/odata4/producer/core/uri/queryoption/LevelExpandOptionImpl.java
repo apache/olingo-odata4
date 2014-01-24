@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,30 +17,42 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.api.uri.queryoption;
+package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-public enum SystemQueryOptionEnum {
-  FILTER("$filter"),
-  FORMAT("$format"),
-  EXPAND("$expand"),
-  ID("$id"),
-  INLINECOUNT("$inlinecount"),
-  ORDERBY("$orderby"),
-  SEARCH("$search"),
-  SELECT("$select"),
-  SKIP("$skip"),
-  SKIPTOKEN("$skiptoken"),
-  TOP("$top"),
-  LEVEL("$level");
+import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelExpandOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-  String syntax;
+public class LevelExpandOptionImpl extends SystemQueryOptionImpl implements LevelExpandOption {
+  private boolean isMax;
+  private int value;
 
-  private SystemQueryOptionEnum(final String syntax) {
-    this.syntax = syntax;
+  public LevelExpandOptionImpl() {
+    setKind(SupportedQueryOptions.LEVEL);
+  }
+
+  public LevelExpandOptionImpl setValue(final int value) {
+    this.value = value;
+    return this;
+  }
+
+  public int getValue() {
+    return value;
   }
 
   @Override
-  public String toString() {
-    return syntax;
+  public boolean isMax() {
+    return isMax;
   }
+
+  public LevelExpandOptionImpl setMax() {
+    isMax = true;
+    return this;
+
+  }
+
+  @Override
+  public int getLevel() {
+    return value;
+  }
+
 }

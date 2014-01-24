@@ -21,43 +21,47 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.MethodCall;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
-public class MethodCallImpl extends ExpressionImpl  implements MethodCall, VisitableExression{
+public class MethodCallImpl extends ExpressionImpl implements MethodCall, VisitableExression {
 
   private SupportedMethodCalls method;
   private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
-  
+
   @Override
   public SupportedMethodCalls getMethod() {
     return method;
   }
 
-  public MethodCallImpl setMethod(SupportedMethodCalls methodCalls) {
-    this.method = methodCalls;
+  public MethodCallImpl setMethod(final SupportedMethodCalls methodCalls) {
+    method = methodCalls;
     return this;
   }
-  
+
   @Override
   public List<Expression> getParameters() {
     List<Expression> list = new ArrayList<Expression>();
-    for ( ExpressionImpl item : parameters) {
+    for (ExpressionImpl item : parameters) {
       list.add(item);
     }
     return list;
   }
 
-  public MethodCallImpl addParameter(ExpressionImpl readCommonExpression) {
+  public MethodCallImpl addParameter(final ExpressionImpl readCommonExpression) {
     parameters.add(readCommonExpression);
     return this;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T>  visitor) throws ExceptionVisitExpression {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     List<T> userParameters = new ArrayList<T>();
-    for (ExpressionImpl parameter : parameters ) {
+    for (ExpressionImpl parameter : parameters) {
       userParameters.add(parameter.accept(visitor));
     }
     return visitor.visitMethodCall(method, userParameters);

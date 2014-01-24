@@ -33,7 +33,7 @@ public class UriParameterImpl implements UriParameter {
     return name;
   }
 
-  public UriParameterImpl setName(String name) {
+  public UriParameterImpl setName(final String name) {
     this.name = name;
     return this;
   }
@@ -43,7 +43,7 @@ public class UriParameterImpl implements UriParameter {
     return alias;
   }
 
-  public UriParameterImpl setAlias(String alias) {
+  public UriParameterImpl setAlias(final String alias) {
     this.alias = alias;
     return this;
   }
@@ -53,7 +53,7 @@ public class UriParameterImpl implements UriParameter {
     return text;
   }
 
-  public UriParameterImpl setText(String text) {
+  public UriParameterImpl setText(final String text) {
     this.text = text;
     return this;
   }
@@ -64,7 +64,7 @@ public class UriParameterImpl implements UriParameter {
     return expression;
   }
 
-  public UriParameterImpl setExpression(Expression expression) {
+  public UriParameterImpl setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }

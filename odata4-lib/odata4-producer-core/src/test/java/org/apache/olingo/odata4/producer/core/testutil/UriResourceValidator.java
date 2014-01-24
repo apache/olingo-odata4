@@ -28,12 +28,14 @@ import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfo;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
@@ -50,7 +52,7 @@ import org.apache.olingo.odata4.producer.core.uri.UriResourcePropertyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceSimplePropertyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriResourceValidator implements Validator {
@@ -63,7 +65,7 @@ public class UriResourceValidator implements Validator {
 
   // --- Setup ---
 
-  public UriResourceValidator setUriValidator(UriValidator uriValidator) {
+  public UriResourceValidator setUpValidator(Validator uriValidator) {
     invokedBy = uriValidator;
     return this;
   }
@@ -106,23 +108,24 @@ public class UriResourceValidator implements Validator {
     return (UriValidator) invokedBy;
   }
 
-  public UriResourceValidator at(int index) {
-    uriResourceIndex = index;
-    try {
-      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(index);
-    } catch (IndexOutOfBoundsException ex) {
-      fail("not enought segemnts");
+  public ExpandValidator goUpExpandValidator() {
+    return (ExpandValidator) invokedBy;
+  }
+
+  public ExpandValidator goExpand() {
+
+    ExpandOptionImpl expand = (ExpandOptionImpl) uriInfo.getExpandOption();
+    if (expand == null) {
+      fail("goExpand can only be used if there is an expand option");
     }
-    return this;
+
+    return new ExpandValidator().setUpValidator(this).setExpand(expand);
   }
 
   public UriResourceValidator first() {
     uriResourceIndex = 0;
-    try {
-      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(0);
-    } catch (IndexOutOfBoundsException ex) {
-      fail("not enought segemnts");
-    }
+    uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(0);
+
     return this;
   }
 
@@ -147,6 +150,16 @@ public class UriResourceValidator implements Validator {
       fail("not enought segemnts");
     }
 
+    return this;
+  }
+
+  public UriResourceValidator at(int index) {
+    uriResourceIndex = index;
+    try {
+      uriPathInfo = (UriResourcePartImpl) uriInfo.getUriResourceParts().get(index);
+    } catch (IndexOutOfBoundsException ex) {
+      fail("not enought segemnts");
+    }
     return this;
   }
 
@@ -275,6 +288,8 @@ public class UriResourceValidator implements Validator {
       assertEquals(expectedFilterTreeAsString, filterTreeAsString);
     } catch (ExceptionVisitExpression e) {
       fail("isFilterString: Exception " + e.getMessage() + " occured");
+    } catch (ODataApplicationException e) {
+      fail("isFilterString: Exception " + e.getMessage() + " occured");
     }
 
     return this;
@@ -293,7 +308,7 @@ public class UriResourceValidator implements Validator {
     return this;
 
   }
-  
+
   public UriResourceValidator isParameter(int index, String name, String text) {
     if (!(uriPathInfo instanceof UriResourceFunctionImpl)) {
       // TODO add and "or" for FunctionImports
@@ -360,7 +375,7 @@ public class UriResourceValidator implements Validator {
     assertEquals(name, ((UriResourceFunctionImpl) uriPathInfo).getFunction().getName());
     return this;
   }
-  
+
   public UriResourceValidator isFunctionImport(String name) {
     assertEquals(UriResourceKind.function, uriPathInfo.getKind());
     assertEquals(name, ((UriResourceFunctionImpl) uriPathInfo).getFunctionImport().getName());
@@ -415,8 +430,36 @@ public class UriResourceValidator implements Validator {
   public UriResourceValidator isNav(String name) {
     assertEquals(UriResourceKind.navigationProperty, uriPathInfo.getKind());
     assertEquals(name, ((UriResourceNavigationPropertyImpl) uriPathInfo).getNavigationProperty().getName());
-    // assertEquals(type, new FullQualifiedName(property.getType().getNamespace(), property.getType().getName()));
     return this;
   }
 
+  public UriResourceValidator isIt() {
+    assertEquals(UriResourceKind.it, uriPathInfo.getKind());
+    return this;
+  }
+
+  public UriResourceValidator isTopText(String topText) {
+    assertEquals(topText,uriInfo.getTopOption().getText());
+    return this;
+  }
+
+  public UriResourceValidator isFormatText(String formatText) {
+    assertEquals(formatText,uriInfo.getFormatOption().getText());
+    return this;
+  }
+
+  public UriResourceValidator isInlineCountText(String inlineCountText) {
+    assertEquals(inlineCountText,uriInfo.getInlineCountOption().getText());
+    return this;
+  }
+
+  public UriResourceValidator isSkipText(String skipText) {
+    assertEquals(skipText,uriInfo.getSkipOption().getText());
+    return this;
+  }
+
+  public UriResourceValidator isSkipTokenText(String skipTokenText) {
+    assertEquals(skipTokenText,uriInfo.getSkipTokenOption().getText());
+    return this;
+  }
 }

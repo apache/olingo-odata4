@@ -22,6 +22,6 @@ public interface LevelExpandOption {
 
   boolean isMax();
 
-  String getLevel();
+  int getLevel();
 
 }

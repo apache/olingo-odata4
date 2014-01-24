@@ -24,10 +24,13 @@ import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourceNavigation extends UriResourcePartTyped {
-  
+
   List<UriParameter> getKeyPredicates();
+
   EdmNavigationProperty getNavigationProperty();
-  
+
   EdmType getTypeFilterOnCollection();
+
   EdmType getTypeFilterOnEntry();
+  
 }

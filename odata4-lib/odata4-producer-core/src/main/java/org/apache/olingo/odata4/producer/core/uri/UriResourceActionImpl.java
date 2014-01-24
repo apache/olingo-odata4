@@ -38,7 +38,7 @@ public class UriResourceActionImpl extends UriResourceImplTyped implements UriRe
     return action;
   }
 
-  public UriResourceActionImpl setAction(EdmAction action) {
+  public UriResourceActionImpl setAction(final EdmAction action) {
     this.action = action;
     return this;
   }
@@ -48,20 +48,15 @@ public class UriResourceActionImpl extends UriResourceImplTyped implements UriRe
     return actionImport;
   }
 
-  public UriResourceActionImpl setActionImport(EdmActionImport actionImport) {
+  public UriResourceActionImpl setActionImport(final EdmActionImport actionImport) {
     this.actionImport = actionImport;
-    this.setAction(actionImport.getAction());
+    setAction(actionImport.getAction());
     return this;
   }
 
   @Override
-  public String toString() {
-    return action.getName() + super.toString();
-  }
-
-  @Override
   public boolean isCollection() {
-    if ( action != null) {
+    if (action != null) {
       return action.getReturnType().isCollection();
     }
     return false;
@@ -72,4 +67,13 @@ public class UriResourceActionImpl extends UriResourceImplTyped implements UriRe
     return action.getReturnType().getType();
   }
 
+  @Override
+  public String toString() {
+    if (actionImport != null) {
+      return actionImport.getName();
+    } else if (action != null) {
+      return action.getName();
+    }
+    return "";
+  }
 }

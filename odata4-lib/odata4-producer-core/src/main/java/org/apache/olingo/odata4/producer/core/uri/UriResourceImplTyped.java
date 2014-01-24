@@ -26,16 +26,16 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 public abstract class UriResourceImplTyped extends UriResourcePartImpl implements UriResourcePartTyped {
 
   protected EdmType typeFilter = null;
-  
-  public UriResourceImplTyped(UriResourceKind kind) {
+
+  public UriResourceImplTyped(final UriResourceKind kind) {
     super(kind);
   }
 
-  public EdmType getTypeFilter() {//TODO rename to TypeFilter
+  public EdmType getTypeFilter() {
     return typeFilter;
   }
-  
-  public UriResourceImplTyped setTypeFilter(EdmStructuralType typeFilter) {
+
+  public UriResourceImplTyped setTypeFilter(final EdmStructuralType typeFilter) {
     this.typeFilter = typeFilter;
     return this;
   }

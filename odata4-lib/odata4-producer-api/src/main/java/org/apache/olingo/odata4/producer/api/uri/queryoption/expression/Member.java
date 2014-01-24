@@ -20,10 +20,8 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 
-public interface Member {
+public interface Member extends Expression {
 
-  public  boolean isIT();
-
-  public  UriInfoResource getPath();
+  public UriInfoResource getPath();
 
 }

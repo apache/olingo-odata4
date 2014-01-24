@@ -67,7 +67,7 @@ public class UriValidator implements Validator {
     }
 
     return new UriResourceValidator()
-        .setUriValidator(this)
+        .setUpValidator(this)
         .setEdm(edm)
         .setUriInfoImplPath(uriInfo);
   }

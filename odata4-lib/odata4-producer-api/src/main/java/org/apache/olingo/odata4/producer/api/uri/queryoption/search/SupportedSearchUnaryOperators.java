@@ -32,7 +32,7 @@ public enum SupportedSearchUnaryOperators {
     return syntax;
   }
 
-  public static SupportedSearchUnaryOperators get(String operator) {
+  public static SupportedSearchUnaryOperators get(final String operator) {
     for (SupportedSearchUnaryOperators op : SupportedSearchUnaryOperators.values()) {
       if (op.toString().equals(operator)) {
         return op;

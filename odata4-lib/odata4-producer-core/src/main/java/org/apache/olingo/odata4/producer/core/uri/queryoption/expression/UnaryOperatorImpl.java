@@ -18,9 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedUnaryOperators;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.UnaryOperator;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
 public class UnaryOperatorImpl extends ExpressionImpl implements UnaryOperator, VisitableExression {
 
@@ -32,7 +36,7 @@ public class UnaryOperatorImpl extends ExpressionImpl implements UnaryOperator, 
     return operator;
   }
 
-  public void setOperator(SupportedUnaryOperators operator) {
+  public void setOperator(final SupportedUnaryOperators operator) {
     this.operator = operator;
   }
 
@@ -41,12 +45,12 @@ public class UnaryOperatorImpl extends ExpressionImpl implements UnaryOperator, 
     return expression;
   }
 
-  public void setOperand(ExpressionImpl expression) {
+  public void setOperand(final ExpressionImpl expression) {
     this.expression = expression;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     T operand = expression.accept(visitor);
     return visitor.visitUnaryOperator(operator, operand);
   }

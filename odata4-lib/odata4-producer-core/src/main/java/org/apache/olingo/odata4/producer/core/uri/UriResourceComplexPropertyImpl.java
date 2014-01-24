@@ -37,14 +37,14 @@ public class UriResourceComplexPropertyImpl extends UriResourceImplTyped impleme
     return property;
   }
 
-  public UriResourceComplexPropertyImpl setProperty(EdmProperty property) {
+  public UriResourceComplexPropertyImpl setProperty(final EdmProperty property) {
     this.property = property;
     return this;
   }
 
   @Override
   public EdmComplexType getComplexType() {
-    return (EdmComplexType) this.getType();
+    return (EdmComplexType) getType();
   }
 
   @Override
@@ -60,6 +60,11 @@ public class UriResourceComplexPropertyImpl extends UriResourceImplTyped impleme
   @Override
   public boolean isCollection() {
     return property.isCollection();
+  }
+
+  @Override
+  public String toString() {
+    return property.getName();
   }
 
 }

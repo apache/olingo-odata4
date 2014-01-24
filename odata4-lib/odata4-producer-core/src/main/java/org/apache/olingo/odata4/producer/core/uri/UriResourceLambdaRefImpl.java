@@ -16,40 +16,52 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
+package org.apache.olingo.odata4.producer.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmElement;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExceptionVisitExpand;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandVisitor;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.VisitableExpand;
-/*TODO fix this*/
-public class ExpandSegment  implements VisitableExpand {
-  private EdmType typeFilter;
-  private EdmElement property;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceIt;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaRef;
 
-  public ExpandSegment setProperty(EdmElement property) {
-    this.property = property;
-    return this;
-  }
+public class UriResourceLambdaRefImpl extends UriResourceImplTyped implements UriResourceLambdaRef {
 
-  public EdmType getType() {
-    return property.getType();
-  }
-  
-  public EdmType getTypeFilter() {
-    return this.typeFilter;
-  }
-  
+  private EdmType type;
+  private boolean isCollection;
+  private String variableText;
 
-  public void setFilter(EdmStructuralType type) {
-    this.typeFilter = type;
+  public UriResourceLambdaRefImpl() {
+    super(UriResourceKind.lambdaVariable);
   }
   
   @Override
-  public <T> T accept(ExpandVisitor<T> visitor) throws ExceptionVisitExpand {
-    return null;//visitor.visitExpandSegment(property, initialType, finalType); 
+  public String getVariableText() {
+    return variableText;
   }
-  
+
+  public UriResourceLambdaRefImpl setVariableText(String variableText) {
+    this.variableText = variableText;
+    return this;
+  }
+
+  @Override
+  public EdmType getType() {
+    return type;
+  }
+
+  public UriResourceLambdaRefImpl setType(EdmType type) {
+    this.type = type;
+    return this;
+
+  }
+
+  @Override
+  public boolean isCollection() {
+    return isCollection;
+  }
+
+  public UriResourceLambdaRefImpl isCollection(boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
+  }
+
 }

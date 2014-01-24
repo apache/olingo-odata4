@@ -18,7 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-
 public interface UriResourcePart {
+  
   UriResourceKind getKind();
+
+  @Override
+  String toString();
+  
 }

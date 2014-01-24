@@ -32,7 +32,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
  * Indicates a URL access to an single Entity
  */
 public interface UriInfoEntityId {
-  
+
   public List<CustomQueryOption> getCustomQueryOptions();
 
   public EdmEntityType getEntityTypeCast();

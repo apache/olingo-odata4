@@ -22,13 +22,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExceptionVisitExpression;
 
 public class FilterValidator implements Validator {
   private Edm edm;
@@ -165,6 +166,9 @@ public class FilterValidator implements Validator {
       String actualFilterAsText = FilterTreeToText.Serialize((FilterOptionImpl) filter);
       assertEquals(expectedFilterAsString, actualFilterAsText);
     } catch (ExceptionVisitExpression e) {
+      fail("Exception occured while converting the filterTree into text" + "\n"
+          + " Exception: " + e.getMessage());
+    } catch (ODataApplicationException e) {
       fail("Exception occured while converting the filterTree into text" + "\n"
           + " Exception: " + e.getMessage());
     }

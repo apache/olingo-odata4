@@ -24,10 +24,10 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 /**
  * Covers Functionimports and BoundFunction in URI
  */
-public class UriResourcePartImpl implements UriResourcePart {
+public abstract class UriResourcePartImpl implements UriResourcePart {
   protected UriResourceKind kind;
 
-  public UriResourcePartImpl(UriResourceKind kind) {
+  public UriResourcePartImpl(final UriResourceKind kind) {
     this.kind = kind;
   }
 

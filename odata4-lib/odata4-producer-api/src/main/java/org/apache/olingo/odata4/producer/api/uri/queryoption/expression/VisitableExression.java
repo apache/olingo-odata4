@@ -16,39 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
+package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 
-
-
-
-
-
-
-/* TODO update documentation*/
 public interface VisitableExression {
 
   /**
    * Method {@link #accept(ExpressionVisitor)} is called when traversing the expression tree. This method is invoked on
-   * each
-   * expression used as node in an expression tree. The implementations should
+   * each expression used as node in an expression tree. The implementations should
    * behave as follows:
-   * <li>Call accept on all sub nodes and store the returned Objects
-   * <li>Call the appropriate method on the {@link ExpressionVisitor} instance and provide the stored objects to that
-   * instance
+   * <li>Call accept on all sub nodes and store the returned Objects which are of the generic type T
+   * <li>Call the appropriate method on the {@link ExpressionVisitor} instance and provide the stored return objects 
+   * to that instance
    * <li>Return the object which should be passed to the processing algorithm of the parent expression node
    * <br>
    * <br>
    * @param visitor
-   * Object ( implementing {@link ExpressionVisitor}) whose methods are called during traversing a expression node of
-   * the expression tree.
+   * Object (implementing {@link ExpressionVisitor}) whose methods are called during traversing a
+   * expression node of the expression tree.
    * @return
-   * Object which should be passed to the processing algorithm of the parent expression node
+   * Object of type T which should be passed to the processing algorithm of the parent expression node
    * @throws ExceptionVisitExpression
    * Exception occurred the OData library while traversing the tree
    * @throws ODataApplicationException
    * Exception thrown by the application who implemented the visitor
    */
-  <T> T accept(ExpressionVisitor<T> visitor)   throws ExceptionVisitExpression;
-}
+  <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException;
 
+}

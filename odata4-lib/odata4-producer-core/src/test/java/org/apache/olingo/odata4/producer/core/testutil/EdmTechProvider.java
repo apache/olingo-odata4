@@ -674,7 +674,7 @@ public class EdmTechProvider extends EdmProvider {
               propertyDecimal, propertySingle, propertyDouble,
               propertyDuration, propertyGuid, propertyInt16,
               propertyInt32, propertyInt64, propertySByte,
-              propertyTimeOfDay/* ,TODO propertyStream */));
+              propertyTimeOfDay/* TODO add steam property */));
 
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
@@ -688,7 +688,7 @@ public class EdmTechProvider extends EdmProvider {
               collPropertyDecimal, collPropertyBinary,
               collPropertyDate, collPropertyDateTimeOffset,
               collPropertyDuration, collPropertyGuid,
-              collPropertyTimeOfDay /* ,TODO collectionPropertyStream */));
+              collPropertyTimeOfDay /* TODO add collectionPropertyStream */));
 
     } else if (complexTypeName.equals(nameCTTwoPrim)) {
       return new ComplexType()
@@ -1089,7 +1089,7 @@ public class EdmTechProvider extends EdmProvider {
               propertySingle, propertyDouble,
               propertyDecimal, propertyBinary, propertyDate,
               propertyDateTimeOffset,
-              propertyDuration, propertyGuid, propertyTimeOfDay /* TODO add stream */,
+              propertyDuration, propertyGuid, propertyTimeOfDay /* TODO add stream property */,
               collPropertyString, collPropertyBoolean,
               collPropertyByte, collPropertySByte,
               collPropertyInt16,
@@ -1097,7 +1097,7 @@ public class EdmTechProvider extends EdmProvider {
               collPropertySingle, collPropertyDouble,
               collPropertyDecimal, collPropertyBinary, collPropertyDate,
               collPropertyDateTimeOffset,
-              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add stream, */));
+              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add stream property */));
 
     } else if (entityTypeName.equals(nameETKeyNav)) {
       return new EntityType()
@@ -1374,6 +1374,15 @@ public class EdmTechProvider extends EdmProvider {
               .setName("UFCRTStringTwoParam")
               .setParameters(Arrays.asList(
                   new Parameter()
+                      .setName("ParameterInt16")
+                      .setType(nameInt16)))
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameString)),
+          new Function()
+              .setName("UFCRTStringTwoParam")
+              .setParameters(Arrays.asList(
+                  new Parameter()
                       .setName("ParameterString")
                       .setType(nameString),
                   new Parameter()
@@ -1382,6 +1391,7 @@ public class EdmTechProvider extends EdmProvider {
               .setComposable(true)
               .setReturnType(
                   new ReturnType().setType(nameString))
+
           );
 
     } else if (functionName.equals(nameUFCRTESTwoKeyNavParam)) {

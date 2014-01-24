@@ -22,7 +22,9 @@ package org.apache.olingo.odata4.producer.api.uri;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FormatOption;
 
 public interface UriInfoMetadata {
+
   public String getContext();
 
   public FormatOption getFormatOption();
+  
 }

@@ -18,10 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface UnaryOperator {
+public interface UnaryOperator extends Expression {
 
-  public abstract Expression getOperand();
+  public Expression getOperand();
 
-  public abstract SupportedUnaryOperators getOperator();
+  public SupportedUnaryOperators getOperator();
 
 }

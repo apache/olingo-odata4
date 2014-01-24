@@ -16,8 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
+package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-public interface LevelOption {
-  boolean isMax();
+public enum SupportedQueryOptions {
+  FILTER("$filter"),
+  FORMAT("$format"),
+  EXPAND("$expand"),
+  ID("$id"),
+  INLINECOUNT("$inlinecount"),
+  ORDERBY("$orderby"),
+  SEARCH("$search"),
+  SELECT("$select"),
+  SKIP("$skip"),
+  SKIPTOKEN("$skiptoken"),
+  TOP("$top"),
+  LEVEL("$level");
+
+  String syntax;
+
+  private SupportedQueryOptions(final String syntax) {
+    this.syntax = syntax;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
+  }
 }

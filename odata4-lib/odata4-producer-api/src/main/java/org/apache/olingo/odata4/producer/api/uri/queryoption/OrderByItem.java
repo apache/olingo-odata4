@@ -28,7 +28,7 @@ public interface OrderByItem {
    * @return if false (default) the sort order is ascending, if true the sort order is descending
    */
   boolean isDescending();
-  
+
   Expression getExpression();
 
 }

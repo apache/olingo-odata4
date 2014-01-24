@@ -35,9 +35,6 @@ public interface SelectItem {
 
   EdmEntityType getEntityTypeCast();
 
-  EdmAction getAction();
-
-  EdmFunction getFunction();
-
   List<UriResourceProperty> getPropertyChainList();
+  
 }

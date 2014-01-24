@@ -20,14 +20,14 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.search.SearchExpression;
 
-/*TODO implement*/
+/* TODO implement */
 public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOption {
 
   public SearchOptionImpl() {
-    setKind(SystemQueryOptionEnum.SEARCH);
+    setKind(SupportedQueryOptions.SEARCH);
   }
 
   @Override
@@ -36,5 +36,4 @@ public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOpt
     return null;
   }
 
-  
 }

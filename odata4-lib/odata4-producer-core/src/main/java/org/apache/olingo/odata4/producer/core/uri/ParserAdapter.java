@@ -29,7 +29,7 @@ import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
 public class ParserAdapter {
-  public static UriInfoImpl parseUri(final String input, UriParseTreeVisitor uriParseTreeVisitor)
+  public static UriInfoImpl parseUri(final String input, final UriParseTreeVisitor uriParseTreeVisitor)
       throws UriParserException {
 
     try {
@@ -61,10 +61,9 @@ public class ParserAdapter {
       // create parser
       lexer = new UriLexer(new ANTLRInputStream(input));
       parser = new UriParserParser(new CommonTokenStream(lexer));
-      
+
       // TODO create better error collector
       parser.addErrorListener(new ErrorCollector());
-      
 
       // bail out of parser at first syntax error. --> proceeds in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());

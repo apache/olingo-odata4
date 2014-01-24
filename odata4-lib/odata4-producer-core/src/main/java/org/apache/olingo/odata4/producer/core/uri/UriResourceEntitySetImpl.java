@@ -37,14 +37,9 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
     return edmEntitySet;
   }
 
-  public UriResourceEntitySetImpl setEntitSet(EdmEntitySet edmES) {
-    this.edmEntitySet = edmES;
+  public UriResourceEntitySetImpl setEntitSet(final EdmEntitySet edmES) {
+    edmEntitySet = edmES;
     return this;
-  }
-
-  @Override
-  public String toString() {
-    return edmEntitySet.getName() + super.toString();
   }
 
   @Override
@@ -54,11 +49,7 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
 
   @Override
   public EdmType getType() {
-    /*if (singleTypeFilter != null) {
-      return singleTypeFilter;
-    } else if (collectionTypeFilter != null) {
-      return collectionTypeFilter;
-    }*/
+
     return edmEntitySet.getEntityType();
 
   }
@@ -69,6 +60,11 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return edmEntitySet.getName();
   }
 
 }

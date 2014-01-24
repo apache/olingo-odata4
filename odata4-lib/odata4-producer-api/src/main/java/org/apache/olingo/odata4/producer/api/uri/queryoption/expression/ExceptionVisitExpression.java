@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -17,36 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOptionEnum;
+package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-/*TODO implement*/
-public class SkipTokenOptionImpl extends SystemQueryOptionImpl implements SkipTokenOption{
-  private boolean isMax;
-  private String token;
+public class ExceptionVisitExpression extends Exception {
 
-  public SkipTokenOptionImpl() {
-    setKind(SystemQueryOptionEnum.SEARCH);
-  }
-  
-  public String getToken() {
-    return token;
-  }
-  
-  public SkipTokenOptionImpl
-  setToken( String token) {
-    this.token  = token;
-    return this;
-  }
+  private static final long serialVersionUID = 1L;
 
-  @Override
-  public String getSkipTokenValue() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  
-
-  
 }

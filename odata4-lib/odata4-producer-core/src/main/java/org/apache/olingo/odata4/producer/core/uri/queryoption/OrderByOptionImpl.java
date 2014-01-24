@@ -31,21 +31,20 @@ public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByI
   public boolean isDescending() {
     return descending;
   }
-  
-  public OrderByItem setSortOrder( boolean  descending) {
+
+  public OrderByItem setSortOrder(final boolean descending) {
     this.descending = descending;
     return this;
   }
 
-  
+  @Override
   public ExpressionImpl getExpression() {
     return expression;
   }
-  
-  public OrderByItem  setExpression(ExpressionImpl expression) {
+
+  public OrderByItem setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
   }
 
-  
 }

@@ -18,37 +18,30 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Member;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
 public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
 
-  private boolean isIT; // means $it as defined in the ABNF
   private UriInfoResource path;
-
-  @Override
-  public boolean isIT() {
-    return isIT;
-  }
-
-  public Member setIT(boolean isIT) {
-    this.isIT = isIT;
-    return this;
-  }
 
   @Override
   public UriInfoResource getPath() {
     return path;
   }
 
-  public Member setPath(UriInfoResource pathSegments) {
-    this.path = pathSegments;
+  public Member setPath(final UriInfoResource pathSegments) {
+    path = pathSegments;
     return this;
   }
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression {
-    return visitor.visitMember(this);
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+    return visitor.visitMember(path);
   }
 
 }
