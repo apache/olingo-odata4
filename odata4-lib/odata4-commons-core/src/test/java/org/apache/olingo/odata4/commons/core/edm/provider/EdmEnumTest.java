@@ -24,14 +24,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
-import org.apache.olingo.odata4.commons.api.edm.EdmMember;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumMember;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;

@@ -42,11 +42,10 @@ public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
     if (typeImpl == null) {
       FullQualifiedName typeName = parameter.getType();
       if (EdmPrimitiveType.EDM_NAMESPACE.equals(typeName.getNamespace())) {
-        EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOf(typeName.getName());
-        if (kind != null) {
-          typeImpl = kind.getEdmPrimitiveTypeInstance();
-        } else {
-          throw new EdmException("Cannot find type with name: " + typeName);
+        try {
+          typeImpl = EdmPrimitiveTypeKind.valueOf(typeName.getName()).getEdmPrimitiveTypeInstance();
+        } catch (IllegalArgumentException e) {
+          throw new EdmException("Cannot find type with name: " + typeName, e);
         }
       } else {
         typeImpl = edm.getComplexType(typeName);

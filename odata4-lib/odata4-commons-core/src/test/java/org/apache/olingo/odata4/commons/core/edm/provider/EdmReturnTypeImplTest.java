@@ -16,25 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.commons.api.edm;
+package org.apache.olingo.odata4.commons.core.edm.provider;
 
-public class EdmException extends RuntimeException {
+import org.apache.olingo.odata4.commons.api.edm.provider.ReturnType;
+import org.junit.Test;
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+public class EdmReturnTypeImplTest {
 
-  public EdmException(final Exception e) {
-    super(e);
+  @Test
+  public void primitiveReturnType(){
   }
-
-  public EdmException(final String msg) {
-    super(msg);
-  }
-
-  public EdmException(String string, Exception e) {
-    super(string, e);
-  }
-
+  
+  
 }

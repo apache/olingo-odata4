@@ -18,23 +18,36 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmAction;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.api.edm.EdmParameter;
+import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
+import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.odata4.commons.api.edm.provider.Action;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySetPath;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.Parameter;
 import org.apache.olingo.odata4.commons.api.edm.provider.ReturnType;
 import org.junit.Before;
+import org.junit.Test;
 
 public class EdmActionImplTest {
 
-  private EdmActionImpl actionImpl1;
-  private EdmActionImpl actionImpl2;
-  private EdmActionImpl actionImpl3;
+  private EdmAction actionImpl1;
+  private EdmAction actionImpl2;
+  private EdmAction actionImpl3;
 
   @Before
   public void setup() {
@@ -46,7 +59,7 @@ public class EdmActionImplTest {
     actionImpl1 = new EdmActionImpl(provider, action1Name, action1);
 
     FullQualifiedName action2Name = new FullQualifiedName("namespace", "action2");
-    FullQualifiedName returnTypeName = new FullQualifiedName("returnNamespace", "returnName");
+    FullQualifiedName returnTypeName = new FullQualifiedName("Edm", "String");
     ReturnType returnType = new ReturnType().setType(returnTypeName);
     Action action2 = new Action().setName("action2").setParameters(parameters).setReturnType(returnType);
     actionImpl2 = new EdmActionImpl(provider, action2Name, action2);
@@ -57,7 +70,86 @@ public class EdmActionImplTest {
         new Action().setName("action3").setParameters(parameters).setReturnType(returnType).setEntitySetPath(
             entitySetPath);
     actionImpl3 = new EdmActionImpl(provider, action3Name, action3);
+  }
 
+  @Test
+  public void action1BasicMethodCalls() {
+    assertTrue(actionImpl1.isBound());
+    assertEquals(EdmTypeKind.ACTION, actionImpl1.getKind());
+    assertNull(actionImpl1.getReturnType());
+    // assertEquals("returnName", actionImpl1.getReturnType().getType().getName());
+    assertNotNull(actionImpl1.getParameterNames());
+
+    for (String name : actionImpl1.getParameterNames()) {
+      EdmParameter parameter = actionImpl1.getParameter(name);
+      assertNotNull(parameter);
+      assertEquals(name, parameter.getName());
+    }
+
+    assertNull(actionImpl1.getReturnedEntitySet(null));
+    assertNull(actionImpl1.getReturnedEntitySet(mock(EdmEntitySet.class)));
+  }
+
+  @Test
+  public void action2BasicMethodCalls() {
+    assertFalse(actionImpl2.isBound());
+    assertEquals(EdmTypeKind.ACTION, actionImpl2.getKind());
+    assertEquals("String", actionImpl2.getReturnType().getType().getName());
+    assertNotNull(actionImpl2.getParameterNames());
+
+    for (String name : actionImpl2.getParameterNames()) {
+      EdmParameter parameter = actionImpl2.getParameter(name);
+      assertNotNull(parameter);
+      assertEquals(name, parameter.getName());
+    }
+
+    assertNull(actionImpl2.getReturnedEntitySet(null));
+    assertNull(actionImpl2.getReturnedEntitySet(mock(EdmEntitySet.class)));
+  }
+
+  @Test
+  public void action3BasicMethodCalls() {
+    assertFalse(actionImpl3.isBound());
+    assertEquals(EdmTypeKind.ACTION, actionImpl3.getKind());
+    assertEquals("String", actionImpl3.getReturnType().getType().getName());
+    assertNotNull(actionImpl3.getParameterNames());
+
+    for (String name : actionImpl3.getParameterNames()) {
+      EdmParameter parameter = actionImpl3.getParameter(name);
+      assertNotNull(parameter);
+      assertEquals(name, parameter.getName());
+    }
+
+    actionImpl3.getReturnedEntitySet(null);
+  }
+
+  @Test
+  public void action3getReturnedEntitySetWithEntitySet() {
+    EdmEntitySet set = mock(EdmEntitySet.class);
+    when(set.getRelatedBindingTarget("path")).thenReturn(set);
+
+    EdmEntitySet returnedEntitySet = actionImpl3.getReturnedEntitySet(set);
+
+    assertEquals(set, returnedEntitySet);
+  }
+
+  @Test(expected = EdmException.class)
+  public void action3getReturnedEntitySetWithNullReturn() {
+    EdmEntitySet set = mock(EdmEntitySet.class);
+    when(set.getRelatedBindingTarget("path")).thenReturn(null);
+
+    actionImpl3.getReturnedEntitySet(set);
+    fail();
+  }
+
+  @Test(expected = EdmException.class)
+  public void action3getReturnedEntitySetWithSingleton() {
+    EdmSingleton singleton = mock(EdmSingleton.class);
+    EdmEntitySet set = mock(EdmEntitySet.class);
+    when(set.getRelatedBindingTarget("path")).thenReturn(singleton);
+
+    actionImpl3.getReturnedEntitySet(set);
+    fail();
   }
 
 }

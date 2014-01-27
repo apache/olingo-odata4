@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmParameter;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
@@ -80,7 +81,7 @@ public class EdmParameterImplTest {
     final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
     assertFalse(parameter.isCollection());
     final EdmType type = parameter.getType();
-    // TODO: assertEquals(EdmTypeKind.ENUM, type.getKind());
+    assertEquals(EdmTypeKind.ENUM, type.getKind());
     assertEquals("ns", type.getNamespace());
     assertEquals("enum", type.getName());
   }
@@ -96,7 +97,7 @@ public class EdmParameterImplTest {
     parameterProvider.setType(typeName);
     final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
     final EdmType type = parameter.getType();
-    // TODO: assertEquals(EdmTypeKind.DEFINITION, type.getKind());
+    assertEquals(EdmTypeKind.DEFINITION, type.getKind());
     assertEquals("ns", type.getNamespace());
     assertEquals("definition", type.getName());
   }
@@ -117,4 +118,23 @@ public class EdmParameterImplTest {
     assertEquals(Integer.valueOf(128), parameter.getMaxLength());
     assertFalse(parameter.isNullable());
   }
+
+  @Test(expected = EdmException.class)
+  public void getTypeWithInvalidSimpleType() {
+    EdmProviderImpl edm = new EdmProviderImpl(mock(EdmProvider.class));
+    Parameter parameterProvider = new Parameter();
+    parameterProvider.setType(new FullQualifiedName("Edm", "wrong"));
+    final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
+    parameter.getType();
+  }
+
+  @Test(expected = EdmException.class)
+  public void getTypeWithNonexistingType() {
+    EdmProviderImpl edm = new EdmProviderImpl(mock(EdmProvider.class));
+    Parameter parameterProvider = new Parameter();
+    parameterProvider.setType(new FullQualifiedName("wrong", "wrong"));
+    final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
+    parameter.getType();
+  }
+
 }

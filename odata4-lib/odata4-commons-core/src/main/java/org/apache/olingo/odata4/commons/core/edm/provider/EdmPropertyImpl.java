@@ -44,11 +44,10 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
     if (propertyType == null) {
       FullQualifiedName typeName = property.getType();
       if (isPrimitive) {
-        EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOf(typeName.getName());
-        if (kind != null) {
-          propertyType = kind.getEdmPrimitiveTypeInstance();
-        } else {
-          throw new EdmException("Cannot find type with name: " + typeName);
+        try {
+          propertyType = EdmPrimitiveTypeKind.valueOf(typeName.getName()).getEdmPrimitiveTypeInstance();
+        } catch (IllegalArgumentException e) {
+          throw new EdmException("Cannot find type with name: " + typeName, e);
         }
       } else {
         propertyType = edm.getComplexType(typeName);

@@ -119,7 +119,7 @@ public class EdmPropertyImplTest {
     fail();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = EdmException.class)
   public void getTypeReturnsNoTypeKind() throws Exception {
     EdmProvider provider = mock(EdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);

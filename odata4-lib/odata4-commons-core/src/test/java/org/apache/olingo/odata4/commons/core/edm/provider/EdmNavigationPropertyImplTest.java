@@ -20,11 +20,13 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
@@ -55,5 +57,17 @@ public class EdmNavigationPropertyImplTest {
     assertEquals(EdmTypeKind.ENTITY, type.getKind());
     assertEquals("ns", type.getNamespace());
     assertEquals("entity", type.getName());
+
+    //Test caching
+    EdmType cachedType = property.getType();
+    assertTrue(type == cachedType);
+  }
+
+  @Test(expected = EdmException.class)
+  public void navigationPropertyWithNonExistentType() throws Exception {
+    EdmProviderImpl edm = mock(EdmProviderImpl.class);
+    NavigationProperty propertyProvider = new NavigationProperty();
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
+    property.getType();
   }
 }

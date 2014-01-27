@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
@@ -123,5 +124,17 @@ public class EdmComplexTypeImplTest {
 
     property = type.getProperty("nav2");
     assertTrue(property == type.getProperty("nav2"));
+  }
+
+  @Test(expected = EdmException.class)
+  public void nonExistingBaseType() throws Exception {
+    EdmProvider provider = mock(EdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
+    FullQualifiedName typeWithNonexistingBaseTypeName = new FullQualifiedName("namespace", "typeName");
+    ComplexType complexTypeForNonexistingBaseType =
+        new ComplexType().setBaseType(new FullQualifiedName("wrong", "wrong"));
+    complexTypeForNonexistingBaseType.setName("typeName");
+    when(provider.getComplexType(typeWithNonexistingBaseTypeName)).thenReturn(complexTypeForNonexistingBaseType);
+    new EdmComplexTypeImpl(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);
   }
 }

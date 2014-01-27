@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.odata4.commons.api.edm.EdmTypeDefinition;
@@ -37,9 +38,13 @@ public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefini
     super(edm, typeDefinitionName.getName());
     this.typeDefinitionName = typeDefinitionName;
     this.typeDefinition = typeDefinition;
-    //TODO: Should we check for edmNamespace in the underlying type name?
-    this.edmPrimitiveTypeInstance =
-        EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()).getEdmPrimitiveTypeInstance();
+    // TODO: Should we check for edmNamespace in the underlying type name?
+    try {
+      this.edmPrimitiveTypeInstance =
+          EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()).getEdmPrimitiveTypeInstance();
+    } catch (IllegalArgumentException e) {
+      throw new EdmException("Invalid underlying type: " + typeDefinitionName, e);
+    }
   }
 
   @Override
