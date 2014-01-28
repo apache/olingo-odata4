@@ -18,36 +18,21 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
-import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+import org.apache.olingo.odata4.commons.api.edm.provider.EnumMember;
+import org.junit.Test;
 
-public class EdmSingletonInfoImpl implements EdmSingletonInfo {
+public class EdmMemberImplTest {
 
-  private final EntityContainer entityContainer;
-  private final Singleton singleton;
+  @Test
+  public void enumMember() {
+    EnumMember member = new EnumMember().setName("name").setValue("value");
+    EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), member);
 
-  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
-    this.entityContainer = entityContainer;
-    this.singleton = singleton;
-  }
-
-  @Override
-  public String getEntityContainerName() {
-    return entityContainer.getName();
-  }
-
-  @Override
-  public String getSingletonName() {
-    return singleton.getName();
-  }
-
-  @Override
-  public URI getEntitySetUri() {
-    throw new EdmException("Not yet implemented");
+    assertEquals("name", memberImpl.getName());
+    assertEquals("value", memberImpl.getValue());
   }
 
 }

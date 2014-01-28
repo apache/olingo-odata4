@@ -18,36 +18,34 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
+import org.junit.Test;
 
-public class EdmSingletonInfoImpl implements EdmSingletonInfo {
+public class EdmEntitySetInfoImplTest {
 
-  private final EntityContainer entityContainer;
-  private final Singleton singleton;
+  @Test
+  public void entitySetTest() {
+    EntitySet providerEntitySet = new EntitySet().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
-    this.entityContainer = entityContainer;
-    this.singleton = singleton;
+    EdmEntitySetInfo info = new EdmEntitySetInfoImpl(providerContainer, providerEntitySet);
+
+    assertEquals("name", info.getEntitySetName());
+    assertEquals("container", info.getEntityContainerName());
   }
 
-  @Override
-  public String getEntityContainerName() {
-    return entityContainer.getName();
-  }
+  @Test(expected = EdmException.class)
+  public void getUriTest() {
+    EntitySet providerEntitySet = new EntitySet().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  @Override
-  public String getSingletonName() {
-    return singleton.getName();
+    EdmEntitySetInfo info = new EdmEntitySetInfoImpl(providerContainer, providerEntitySet);
+    info.getEntitySetUri();
   }
-
-  @Override
-  public URI getEntitySetUri() {
-    throw new EdmException("Not yet implemented");
-  }
-
+  
 }

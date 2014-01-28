@@ -18,36 +18,34 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+import org.junit.Test;
 
-public class EdmSingletonInfoImpl implements EdmSingletonInfo {
+public class EdmSingletonInfoImplTest {
 
-  private final EntityContainer entityContainer;
-  private final Singleton singleton;
+  @Test
+  public void singletonTest() {
+    Singleton providerSingleton = new Singleton().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
-    this.entityContainer = entityContainer;
-    this.singleton = singleton;
+    EdmSingletonInfo info = new EdmSingletonInfoImpl(providerContainer, providerSingleton);
+
+    assertEquals("name", info.getSingletonName());
+    assertEquals("container", info.getEntityContainerName());
   }
 
-  @Override
-  public String getEntityContainerName() {
-    return entityContainer.getName();
-  }
+  @Test(expected = EdmException.class)
+  public void getUriTest() {
+    Singleton providerSingleton = new Singleton().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  @Override
-  public String getSingletonName() {
-    return singleton.getName();
-  }
-
-  @Override
-  public URI getEntitySetUri() {
-    throw new EdmException("Not yet implemented");
+    EdmSingletonInfo info = new EdmSingletonInfoImpl(providerContainer, providerSingleton);
+    info.getEntitySetUri();
   }
 
 }

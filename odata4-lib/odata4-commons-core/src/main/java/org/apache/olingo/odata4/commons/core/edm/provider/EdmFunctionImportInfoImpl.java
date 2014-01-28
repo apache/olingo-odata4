@@ -20,6 +20,7 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import java.net.URI;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
@@ -46,7 +47,7 @@ public class EdmFunctionImportInfoImpl implements EdmFunctionImportInfo {
 
   @Override
   public URI getFunctionImportUri() {
-    return null;
+    throw new EdmException("Not yet implemented");
   }
 
 }

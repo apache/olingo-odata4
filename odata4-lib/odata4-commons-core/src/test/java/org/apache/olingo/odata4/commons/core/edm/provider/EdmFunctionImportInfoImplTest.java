@@ -18,36 +18,33 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
+import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
+import org.junit.Test;
 
-public class EdmSingletonInfoImpl implements EdmSingletonInfo {
+public class EdmFunctionImportInfoImplTest {
+  
+  @Test
+  public void functionImportTest() {
+    FunctionImport providerFunctionImport = new FunctionImport().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  private final EntityContainer entityContainer;
-  private final Singleton singleton;
+    EdmFunctionImportInfo info = new EdmFunctionImportInfoImpl(providerContainer, providerFunctionImport);
 
-  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
-    this.entityContainer = entityContainer;
-    this.singleton = singleton;
+    assertEquals("name", info.getFunctionImportName());
+    assertEquals("container", info.getEntityContainerName());
   }
 
-  @Override
-  public String getEntityContainerName() {
-    return entityContainer.getName();
-  }
+  @Test(expected = EdmException.class)
+  public void getUriTest() {
+    FunctionImport providerFunctionImport = new FunctionImport().setName("name");
+    EntityContainer providerContainer = new EntityContainer().setName("container");
 
-  @Override
-  public String getSingletonName() {
-    return singleton.getName();
+    EdmFunctionImportInfo info = new EdmFunctionImportInfoImpl(providerContainer, providerFunctionImport);
+    info.getFunctionImportUri();
   }
-
-  @Override
-  public URI getEntitySetUri() {
-    throw new EdmException("Not yet implemented");
-  }
-
 }

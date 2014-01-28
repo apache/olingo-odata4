@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 import java.net.URI;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
 
@@ -46,7 +47,7 @@ public class EdmEntitySetInfoImpl implements EdmEntitySetInfo {
 
   @Override
   public URI getEntitySetUri() {
-    return null;
+    throw new EdmException("Not yet implemented");
   }
 
 }

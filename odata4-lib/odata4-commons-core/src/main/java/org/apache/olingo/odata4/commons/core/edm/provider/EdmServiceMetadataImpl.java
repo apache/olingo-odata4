@@ -42,6 +42,7 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
   private ArrayList<EdmEntitySetInfo> entitySetInfos;
   private ArrayList<EdmFunctionImportInfo> functionImportInfos;
   private ArrayList<EdmSingletonInfo> singletonInfos;
+  private List<Schema> schemas;
 
   public EdmServiceMetadataImpl(final EdmProvider provider) {
     this.provider = provider;
@@ -62,10 +63,21 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
     if (entitySetInfos == null) {
       try {
         entitySetInfos = new ArrayList<EdmEntitySetInfo>();
-        for (Schema schema : provider.getSchemas()) {
+        if (schemas == null) {
+          schemas = provider.getSchemas();
+          if (schemas == null) {
+            throw new EdmException("Provider doe not define any schemas.");
+          }
+        }
+        for (Schema schema : schemas) {
           EntityContainer entityContainer = schema.getEntityContainer();
-          for (EntitySet set : entityContainer.getEntitySets()) {
-            entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer, set));
+          if (entityContainer != null) {
+            List<EntitySet> entitySets = entityContainer.getEntitySets();
+            if (entitySets != null) {
+              for (EntitySet set : entitySets) {
+                entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer, set));
+              }
+            }
           }
         }
       } catch (ODataException e) {
@@ -80,10 +92,21 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
     if (singletonInfos == null) {
       try {
         singletonInfos = new ArrayList<EdmSingletonInfo>();
-        for (Schema schema : provider.getSchemas()) {
+        if (schemas == null) {
+          schemas = provider.getSchemas();
+          if (schemas == null) {
+            throw new EdmException("Provider doe not define any schemas.");
+          }
+        }
+        for (Schema schema : schemas) {
           EntityContainer entityContainer = schema.getEntityContainer();
-          for (Singleton singleton : entityContainer.getSingletons()) {
-            singletonInfos.add(new EdmSingletonInfoImpl(entityContainer, singleton));
+          if (entityContainer != null) {
+            List<Singleton> singletons = entityContainer.getSingletons();
+            if (singletons != null) {
+              for (Singleton singleton : singletons) {
+                singletonInfos.add(new EdmSingletonInfoImpl(entityContainer, singleton));
+              }
+            }
           }
         }
       } catch (ODataException e) {
@@ -98,10 +121,21 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
     if (functionImportInfos == null) {
       try {
         functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
-        for (Schema schema : provider.getSchemas()) {
+        if (schemas == null) {
+          schemas = provider.getSchemas();
+          if (schemas == null) {
+            throw new EdmException("Provider doe not define any schemas.");
+          }
+        }
+        for (Schema schema : schemas) {
           EntityContainer entityContainer = schema.getEntityContainer();
-          for (FunctionImport functionImport : entityContainer.getFunctionImports()) {
-            functionImportInfos.add(new EdmFunctionImportInfoImpl(entityContainer, functionImport));
+          if (entityContainer != null) {
+            List<FunctionImport> functionImports = entityContainer.getFunctionImports();
+            if (functionImports != null) {
+              for (FunctionImport functionImport : functionImports) {
+                functionImportInfos.add(new EdmFunctionImportInfoImpl(entityContainer, functionImport));
+              }
+            }
           }
         }
       } catch (ODataException e) {
