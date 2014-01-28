@@ -36,7 +36,6 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.provider.Singleton;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
-
 public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityContainer {
 
   private final FullQualifiedName entityContainerName;
@@ -66,7 +65,9 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
         Singleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
         if (providerSingleton != null) {
           singleton = new EdmSingletonImpl(edm, this, providerSingleton);
-          singletons.put(singletonName, singleton);
+          if (singleton != null) {
+            singletons.put(singletonName, singleton);
+          }
         }
       } catch (ODataException e) {
         throw new EdmException(e);
@@ -83,7 +84,9 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
         EntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
         if (providerEntitySet != null) {
           entitySet = new EdmEntitySetImpl(edm, this, providerEntitySet);
-          entitySets.put(entitySetName, entitySet);
+          if (entitySet != null) {
+            entitySets.put(entitySetName, entitySet);
+          }
         }
       } catch (ODataException e) {
         throw new EdmException(e);
@@ -100,7 +103,9 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
         ActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
         if (providerImport != null) {
           actionImport = new EdmActionImportImpl(edm, actionImportName, this, providerImport);
-          actionImports.put(actionImportName, actionImport);
+          if (actionImport != null) {
+            actionImports.put(actionImportName, actionImport);
+          }
         }
       } catch (ODataException e) {
         throw new EdmException(e);
@@ -117,7 +122,9 @@ public class EdmEntityContainerImpl extends EdmNamedImpl implements EdmEntityCon
         FunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
         if (providerImport != null) {
           functionImport = new EdmFunctionImportImpl(edm, functionImportName, this, providerImport);
-          functionImports.put(functionImportName, functionImport);
+          if (functionImport != null) {
+            functionImports.put(functionImportName, functionImport);
+          }
         }
       } catch (ODataException e) {
         throw new EdmException(e);
