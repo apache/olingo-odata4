@@ -76,4 +76,5 @@ public class UriResourceActionImpl extends UriResourceImplTyped implements UriRe
     }
     return "";
   }
+
 }

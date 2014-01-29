@@ -27,13 +27,13 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptio
 
 public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOption {
 
-  private List<SelectItemOptionImpl> selectItems;
+  private List<SelectItemImpl> selectItems;
 
   public SelectOptionImpl() {
     setKind(SupportedQueryOptions.SELECT);
   }
 
-  public SelectOptionImpl setSelectItems(final List<SelectItemOptionImpl> selectItems) {
+  public SelectOptionImpl setSelectItems(final List<SelectItemImpl> selectItems) {
     this.selectItems = selectItems;
     return this;
   }
@@ -41,7 +41,7 @@ public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOpt
   @Override
   public List<SelectItem> getSelectItems() {
     List<SelectItem> retList = new ArrayList<SelectItem>();
-    for (SelectItemOptionImpl item : selectItems) {
+    for (SelectItemImpl item : selectItems) {
       retList.add(item);
     }
     return retList;

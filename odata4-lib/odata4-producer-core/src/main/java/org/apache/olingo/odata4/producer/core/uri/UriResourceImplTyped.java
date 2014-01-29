@@ -20,6 +20,7 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 
@@ -38,6 +39,18 @@ public abstract class UriResourceImplTyped extends UriResourcePartImpl implement
   public UriResourceImplTyped setTypeFilter(final EdmStructuralType typeFilter) {
     this.typeFilter = typeFilter;
     return this;
+  }
+
+  @Override
+  public String toString(boolean includeFilters) {
+    if (typeFilter != null) {
+      return toString() + "/" + getFQN(typeFilter).toString();
+    }
+    return toString();
+  }
+  
+  private FullQualifiedName getFQN(EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 
 }

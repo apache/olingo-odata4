@@ -21,12 +21,12 @@ package org.apache.olingo.odata4.producer.core.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceAny;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceAnyImpl extends UriResourceImplTyped implements UriResourceAny {
+public class UriResourceAnyImpl extends UriResourceImplTyped implements UriResourceLambdaAny {
   protected EdmProperty property;
   private String lamdaVariable;
   private ExpressionImpl expression;
@@ -46,7 +46,7 @@ public class UriResourceAnyImpl extends UriResourceImplTyped implements UriResou
   }
 
   @Override
-  public String getLamdaVariable() {
+  public String getVariable() {
     return lamdaVariable;
   }
 

@@ -20,10 +20,11 @@ package org.apache.olingo.odata4.producer.api.uri;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 
-public interface UriResourceAll extends UriResourcePartTyped {
+public interface UriResourceLambdaAll extends UriResourcePartTyped {
   
-  public String getLamdaVariable();
+  public String getVariable();
 
   public Expression getExpression();
   
 }
+

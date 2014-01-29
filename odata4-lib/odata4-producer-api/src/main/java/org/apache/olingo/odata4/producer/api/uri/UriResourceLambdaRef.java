@@ -18,14 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
-/**
- * Class indicating the $it reference. $it may be used within filter to
- * refer to the last EDM object reference in the resource path. Since $it is 
- * optional in some cases ( e.g. first member expressions) the {@link #isExplicitIt()} 
- * method can be used to check if $it was explicitly noted in the URI
- */
 public interface UriResourceLambdaRef extends UriResourcePartTyped {
 
   public  String getVariableText();

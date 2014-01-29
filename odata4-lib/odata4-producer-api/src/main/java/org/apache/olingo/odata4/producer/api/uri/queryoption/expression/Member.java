@@ -18,10 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 
 public interface Member extends Expression {
 
   public UriInfoResource getPath();
+
+  public EdmType getType();
+  
+  public boolean isCollection();
 
 }

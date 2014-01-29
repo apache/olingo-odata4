@@ -22,14 +22,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Member;
 import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriParserException;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
+import org.apache.olingo.odata4.producer.core.uri.UriParserException;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.LiteralImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MemberImpl;
 
 public class FilterValidator implements Validator {
   private Edm edm;
@@ -37,7 +44,7 @@ public class FilterValidator implements Validator {
   private Validator invokedBy;
   private FilterOptionImpl filter;
 
-  private int logLevel;
+  private Expression curExpression;
 
   // --- Setup ---
   public FilterValidator SetUriResourcePathValidator(UriResourceValidator uriResourcePathValidator) {
@@ -59,14 +66,8 @@ public class FilterValidator implements Validator {
     this.filter = filter;
 
     if (filter.getExpression() == null) {
-
       fail("FilterValidator: no filter found");
     }
-    return this;
-  }
-  
-  public FilterValidator log(final int logLevel) {
-    this.logLevel = logLevel;
     return this;
   }
 
@@ -77,55 +78,52 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator runOnETAllPrim(String filter) {
-    String uri = "ESAllPrim(1)?$filter=" + filter.trim(); 
+    String uri = "ESAllPrim(1)?$filter=" + filter.trim();
     return runUri(uri);
   }
 
   public FilterValidator runOnETKeyNav(String filter) {
-    String uri = "ESKeyNav(1)?$filter=" + filter.trim(); 
+    String uri = "ESKeyNav(1)?$filter=" + filter.trim();
     return runUri(uri);
   }
 
-  
   public FilterValidator runOnCTTwoPrim(String filter) {
-    String uri = "SINav/PropertyComplexTwoPrim?$filter=" + filter.trim(); 
+    String uri = "SINav/PropertyComplexTwoPrim?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
+
   public FilterValidator runOnString(String filter) {
-    String uri = "SINav/PropertyString?$filter=" + filter.trim(); 
+    String uri = "SINav/PropertyString?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
+
   public FilterValidator runOnInt32(String filter) {
-    String uri = "ESCollAllPrim(1)/CollPropertyInt32?$filter=" + filter.trim(); 
+    String uri = "ESCollAllPrim(1)/CollPropertyInt32?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
-  
+
   public FilterValidator runOnDateTimeOffset(String filter) {
-    String uri = "ESCollAllPrim(1)/CollPropertyDateTimeOffset?$filter=" + filter.trim(); 
+    String uri = "ESCollAllPrim(1)/CollPropertyDateTimeOffset?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
+
   public FilterValidator runOnDuration(String filter) {
-    String uri = "ESCollAllPrim(1)/CollPropertyDuration?$filter=" + filter.trim(); 
+    String uri = "ESCollAllPrim(1)/CollPropertyDuration?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
+
   public FilterValidator runOnTimeOfDay(String filter) {
-    String uri = "ESCollAllPrim(1)/CollPropertyTimeOfDay?$filter=" + filter.trim(); 
+    String uri = "ESCollAllPrim(1)/CollPropertyTimeOfDay?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
-  
+
   public FilterValidator runESabc(String filter) {
-    String uri = "ESabc?$filter=" + filter.trim(); 
+    String uri = "ESabc?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
-  public FilterValidator runUri(String uri) { 
-  
+
+  public FilterValidator runUri(String uri) {
+
     UriInfoImpl uriInfo = null;
     try {
 
@@ -140,7 +138,7 @@ public class FilterValidator implements Validator {
     }
 
     setFilter((FilterOptionImpl) uriInfo.getFilterOption());
-
+    this.curExpression = this.filter.getExpression();
     return this;
   }
 
@@ -183,6 +181,57 @@ public class FilterValidator implements Validator {
     ret = ret.replaceAll("< ", "<");
     ret = ret.replaceAll(" >", ">");
     return ret;
+  }
+
+  public FilterValidator isType(FullQualifiedName fullName) {
+    EdmType actualType = null;
+    if (curExpression instanceof MemberImpl) {
+      Member member = (Member) curExpression;
+      actualType = member.getType();
+    }
+
+    if (actualType == null) {
+      fail("Current expression not typed");
+    }
+
+    FullQualifiedName actualName = new FullQualifiedName(actualType.getNamespace(), actualType.getName());
+    assertEquals(fullName, actualName);
+    return this;
+  }
+
+  public FilterValidator left() {
+    if (curExpression instanceof BinaryImpl) {
+      curExpression = ((BinaryImpl) curExpression).getLeftOperand();
+    } else {
+      fail("Current expression not a binary operator");
+    }
+    return this;
+  }
+
+  public FilterValidator root() {
+    curExpression = filter.getExpression();
+    return this;
+  }
+
+  public FilterValidator right() {
+    if (curExpression instanceof BinaryImpl) {
+      curExpression = ((BinaryImpl) curExpression).getRightOperand();
+    } else {
+      fail("Current expression not a binary operator");
+    }
+    return this;
+    
+  }
+
+  public FilterValidator isLiteral(String literalText) {
+    if (curExpression instanceof LiteralImpl) {
+      String actualLiteralText =  ((LiteralImpl) curExpression).getText();
+      assertEquals(literalText, actualLiteralText); 
+    } else {
+      fail("Current expression not a literal");
+    }
+    return this;
+    
   }
 
 }

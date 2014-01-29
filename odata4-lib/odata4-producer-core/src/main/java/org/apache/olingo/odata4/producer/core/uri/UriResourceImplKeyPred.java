@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 
@@ -29,15 +30,15 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
 
   protected EdmType collectionTypeFilter = null;
   protected List<UriParameterImpl> keyPredicates = null;
-  protected EdmType singleTypeFilter = null;
+  protected EdmType entryTypeFilter = null;
 
   public UriResourceImplKeyPred(final UriResourceKind kind) {
     super(kind);
   }
 
   public EdmType getComplexTypeFilter() {
-    if (singleTypeFilter != null) {
-      return singleTypeFilter;
+    if (entryTypeFilter != null) {
+      return entryTypeFilter;
     }
     return collectionTypeFilter;
   }
@@ -47,7 +48,7 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
   }
 
   public EdmType getTypeFilterOnEntry() {
-    return singleTypeFilter;
+    return entryTypeFilter;
   }
 
   public List<UriParameter> getKeyPredicates() {
@@ -63,12 +64,39 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
     return this;
   }
 
-  public void setSingleTypeFilter(final EdmType singleTypeFilter) {
-    this.singleTypeFilter = singleTypeFilter;
+  public void setEntryTypeFilter(final EdmType singleTypeFilter) {
+    this.entryTypeFilter = singleTypeFilter;
   }
 
   public void setCollectionTypeFilter(final EdmType collectionTypeFilter) {
     this.collectionTypeFilter = collectionTypeFilter;
+  }
+  @Override
+  public String toString(boolean includeFilters) {
+
+    if (includeFilters == true) {
+      String tmp = "";
+      if (collectionTypeFilter != null) {
+        tmp += getFQN(collectionTypeFilter).toString();
+      }
+
+      if (entryTypeFilter != null) {
+        if (tmp.length() == 0) {
+          tmp = getFQN(entryTypeFilter).toString();
+        } else {
+          tmp += "/()" + getFQN(entryTypeFilter).toString();
+        }
+      }
+      if (tmp.length() != 0) {
+        return toString()+ "/" + tmp ;
+      }
+    }
+
+    return toString();
+  }
+  
+  private FullQualifiedName getFQN(EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 
 }

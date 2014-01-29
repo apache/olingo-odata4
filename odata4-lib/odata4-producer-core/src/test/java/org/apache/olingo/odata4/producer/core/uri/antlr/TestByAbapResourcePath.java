@@ -20,10 +20,8 @@ package org.apache.olingo.odata4.producer.core.uri.antlr;
 
 // sync 20.1.2014
 import java.util.Arrays;
-import java.util.Stack;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
@@ -1951,7 +1949,7 @@ public class TestByAbapResourcePath {
         .isCount();
   }
 
-  @Test
+  //@Test
   public void runExpand() {
 
     testUri.run("ESKeyNav(1)?$expand=*")
@@ -2714,27 +2712,80 @@ public class TestByAbapResourcePath {
 
   }
 
-  @Test
+  //@Test
   public void TestFilter() {
+/*
+    testFilter.runOnETTwoKeyNav("PropertyString")
+        .is("<$it/PropertyString>")
+        .isType(EdmTechProvider.nameString);
 
-    testFilter.runOnETTwoKeyNav("PropertyString");
-    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyInt16");
-    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16");
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16 eq 1");
+    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyInt16")
+        .is("<$it/PropertyComplex/PropertyInt16>")
+        .isType(EdmTechProvider.nameInt16);
+
+    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate")
+        .is("<$it/PropertyComplex/PropertyComplex/PropertyDate>")
+        .isType(EdmTechProvider.nameDate);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne")
+        .is("<$it/NavPropertyETTwoKeyNavOne>")
+        .isType(EdmTechProvider.nameETTwoKeyNav);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString")
+        .is("<$it/NavPropertyETTwoKeyNavOne/PropertyString>")
+        .isType(EdmTechProvider.nameString);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex")
+        .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex>")
+        .isType(EdmTechProvider.nameCTPrimComp);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex")
+        .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex>")
+        .isType(EdmTechProvider.nameCTAllPrim);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16")
+        .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16>")
+        .isType(EdmTechProvider.nameInt16);
+    
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16 eq 1")
+        .is("<<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16> eq <1>>")
+        .root().left()
+        .isType(EdmTechProvider.nameInt16)
+        .root().right()
+        .isLiteral("1");
+       
     // testFilter
     // .runOnETTwoKeyNav(
     // "NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')/PropertyString eq 'SomeString'");
-    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12");
-    testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'");
+    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+        .is("<<$it/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
+        .root().left()
+        .isType(EdmTechProvider.nameDate)
+        .root().right()
+        .isLiteral("2013-11-12");
+    
+    testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
+        .is("<<$it/com.sap.odata.test1.CTBase/AdditionalPropString> eq <'SomeString'>>")
+        .root().left()
+        .isType(EdmTechProvider.nameString)
+        .root().right()
+        .isLiteral("'SomeString'");
+    
     testFilter
-        .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12");
+        .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+        .is("<<$it/NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
+        .root().left()
+        .isType(EdmTechProvider.nameDate)
+        .root().right()
+        .isLiteral("2013-11-12");
+        */
     testFilter
-        .runOnETTwoKeyNav("PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'");
+        .runOnETTwoKeyNav("PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
+        .is("<<$it/PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
+        .root().left()
+        .isType(EdmTechProvider.nameString)
+        .root().right()
+        .isLiteral("'SomeString'");
 
     /*
      * Xinvalid
@@ -2747,68 +2798,134 @@ public class TestByAbapResourcePath {
      * XPropertyComplexAllPrim/PropertyDate eq 1
      */
 
-    testFilter.runOnETAllPrim("PropertySByte add PropertySByte");
-    testFilter.runOnETAllPrim("PropertyByte add PropertyByte");
-    testFilter.runOnETAllPrim("PropertyInt16 add PropertyInt16");
-    testFilter.runOnETAllPrim("PropertyInt32 add PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 add PropertyInt64");
-    testFilter.runOnETAllPrim("PropertySingle add PropertySingle");
-    testFilter.runOnETAllPrim("PropertyDouble add PropertyDouble");
-    testFilter.runOnETAllPrim("PropertyDecimal add PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertySByte add PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertySByte add PropertyInt32");
-    testFilter.runOnETAllPrim("PropertySByte add PropertyInt64");
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset add PropertyDuration");
-    testFilter.runOnETAllPrim("PropertyDuration add PropertyDuration");
-    testFilter.runOnETAllPrim("PropertyDate add PropertyDuration");
-    testFilter.runOnETAllPrim("PropertySByte sub PropertySByte");
-    testFilter.runOnETAllPrim("PropertyByte sub PropertyByte");
-    testFilter.runOnETAllPrim("PropertyInt16 sub PropertyInt16");
-    testFilter.runOnETAllPrim("PropertyInt32 sub PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 sub PropertyInt64");
-    testFilter.runOnETAllPrim("PropertySingle sub PropertySingle");
-    testFilter.runOnETAllPrim("PropertyDouble sub PropertyDouble");
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt64");
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyByte");
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDuration");
-    testFilter.runOnETAllPrim("PropertyDuration sub PropertyDuration");
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDateTimeOffset");
-    testFilter.runOnETAllPrim("PropertyDate sub PropertyDuration");
-    testFilter.runOnETAllPrim("PropertyDate sub PropertyDate");
-    testFilter.runOnETAllPrim("PropertySByte mul PropertySByte");
-    testFilter.runOnETAllPrim("PropertyByte mul PropertyByte");
-    testFilter.runOnETAllPrim("PropertyInt16 mul PropertyInt16");
-    testFilter.runOnETAllPrim("PropertyInt32 mul PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt64");
-    testFilter.runOnETAllPrim("PropertySingle mul PropertySingle");
-    testFilter.runOnETAllPrim("PropertyDouble mul PropertyDouble");
-    testFilter.runOnETAllPrim("PropertyDecimal mul PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertySByte");
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertySByte div PropertySByte");
-    testFilter.runOnETAllPrim("PropertyByte div PropertyByte");
-    testFilter.runOnETAllPrim("PropertyInt16 div PropertyInt16");
-    testFilter.runOnETAllPrim("PropertyInt32 div PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 div PropertyInt64");
-    testFilter.runOnETAllPrim("PropertySingle div PropertySingle");
-    testFilter.runOnETAllPrim("PropertyDouble div PropertyDouble");
-    testFilter.runOnETAllPrim("PropertyDecimal div PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertyByte div PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyByte div PropertyDecimal");
-    testFilter.runOnETAllPrim("PropertyByte div PropertySByte");
+    testFilter.runOnETAllPrim("PropertySByte add PropertySByte")
+        .is("<<$it/PropertySByte> add <$it/PropertySByte>>")
+        .root().left()
+        .isType(EdmTechProvider.nameByte)
+        .root().right()
+        .isType(EdmTechProvider.nameByte);
+    
+    /**/
+    testFilter.runOnETAllPrim("PropertyByte add PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt16 add PropertyInt16")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt32 add PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 add PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySingle add PropertySingle")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDouble add PropertyDouble")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal add PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte add PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte add PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte add PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset add PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDuration add PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDate add PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte sub PropertySByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte sub PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt16 sub PropertyInt16")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt32 sub PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 sub PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySingle sub PropertySingle")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDouble sub PropertyDouble")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDuration sub PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDateTimeOffset")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDate sub PropertyDuration")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDate sub PropertyDate")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte mul PropertySByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte mul PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt16 mul PropertyInt16")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt32 mul PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySingle mul PropertySingle")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDouble mul PropertyDouble")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal mul PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertySByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySByte div PropertySByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte div PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt16 div PropertyInt16")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt32 div PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 div PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySingle div PropertySingle")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDouble div PropertyDouble")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal div PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte div PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte div PropertyDecimal")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte div PropertySByte")
+        .is("");
     // testFilter.runOnETAllPrim("PropertyByte div 0");
     // testFilter.runOnETAllPrim("0 div 0");
-    testFilter.runOnETAllPrim("PropertySByte mod PropertySByte");
-    testFilter.runOnETAllPrim("PropertyByte mod PropertyByte");
-    testFilter.runOnETAllPrim("PropertyInt16 mod PropertyInt16");
-    testFilter.runOnETAllPrim("PropertyInt32 mod PropertyInt32");
-    testFilter.runOnETAllPrim("PropertyInt64 mod PropertyInt64");
-    testFilter.runOnETAllPrim("PropertySingle mod PropertySingle");
-    testFilter.runOnETAllPrim("PropertyDouble mod PropertyDouble");
-    testFilter.runOnETAllPrim("PropertyDecimal mod PropertyDecimal");
+    testFilter.runOnETAllPrim("PropertySByte mod PropertySByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyByte mod PropertyByte")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt16 mod PropertyInt16")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt32 mod PropertyInt32")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyInt64 mod PropertyInt64")
+        .is("");
+    testFilter.runOnETAllPrim("PropertySingle mod PropertySingle")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDouble mod PropertyDouble")
+        .is("");
+    testFilter.runOnETAllPrim("PropertyDecimal mod PropertyDecimal")
+        .is("");
 
     // testFilter.runOnETAllPrim("XPropertyByte mod 0");
     // testFilter.runOnETAllPrim("com.sap.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias)");

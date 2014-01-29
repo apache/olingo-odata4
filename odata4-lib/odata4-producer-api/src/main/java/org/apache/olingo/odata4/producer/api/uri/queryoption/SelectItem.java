@@ -20,10 +20,9 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceProperty;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 
 public interface SelectItem {
 
@@ -31,10 +30,10 @@ public interface SelectItem {
 
   boolean isAllOperationsInSchema();
 
-  String getNameSpace();
+  FullQualifiedName getAllOperationsInSchemaNameSpace();
 
   EdmEntityType getEntityTypeCast();
 
-  List<UriResourceProperty> getPropertyChainList();
+  List<UriResourcePart> getPropertyChainList();
   
 }

@@ -19,12 +19,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExceptionVisitExpand;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;

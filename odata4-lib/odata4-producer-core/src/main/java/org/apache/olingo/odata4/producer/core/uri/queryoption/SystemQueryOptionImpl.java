@@ -18,8 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SystemQueryOption;
 
 public class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption {
 

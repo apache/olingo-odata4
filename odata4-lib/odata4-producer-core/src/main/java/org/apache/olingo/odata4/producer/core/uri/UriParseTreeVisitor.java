@@ -46,17 +46,119 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserBaseVisitor;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AliasAndValueContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AllExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAddContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAllContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAndContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltAnyContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltBatchContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltComparismContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEntityCastContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEntityContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltEqualityContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltLiteralContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMetadataContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltMultContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltOrContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AltResourcePathContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.AnyExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.CastExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.CeilingMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ConcatMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ConstSegmentContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ContainsMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.CrossjoinContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.CustomQueryOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.DayMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.DistanceMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.EndsWithMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.EntityOptionCastContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.EntityOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.EntityOptionsCastContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.EntityOptionsContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandCountOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandItemContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandPathContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandPathExtensionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ExpandRefOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FilterContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FloorMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FormatContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.FractionalsecondsMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.GeoLengthMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.HourMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.IdContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.IndexOfMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.InlinecountContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.IntersectsMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.IsofExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.LengthMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MaxDateTimeMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MemberExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MinDateTimeMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MinuteMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.MonthMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NameValueOptListContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NameValuePairContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NamespaceContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.NowMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataIdentifierContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OrderByContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.PathSegmentContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.PathSegmentsContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.QueryOptionContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.QueryOptionsContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ResourcePathContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.RootExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.RoundMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SecondMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SelectContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SelectItemContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SelectSegmentContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkipContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SkiptokenContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.StartsWithMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.SubstringMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TimeMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ToLowerMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.ToUpperMethodCallExprContext;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TopContext;
-import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.*;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.*;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.*;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TotalOffsetMinutesMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TotalsecondsMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.TrimMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.UnaryContext;
+import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.YearMethodCallExprContext;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.AliasQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandItemImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.FormatOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.IdOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.LevelExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectItemImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkiptokenOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SystemQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.LiteralImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MemberImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MethodCallImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.TypeLiteralImpl;
 
 /**
  * UriVisitor
@@ -122,9 +224,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   /**
    * Set within method {@link #visitSelectItem(SelectItemContext ctx)} to allow nodes
    * deeper in the expand tree at {@link #visitSelectSegment(SelectSegmentContext ctx)} appending path segments to the
-   * currently processed {@link SelectItemOptionImpl}.
+   * currently processed {@link SelectItemImpl}.
    */
-  private SelectItemOptionImpl contextSelectItem;
+  private SelectItemImpl contextSelectItem;
 
   private Stack<LastTypeColl> contextTypes = new Stack<LastTypeColl>();
 
@@ -310,7 +412,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               if (lastKeyPred.getTypeFilterOnEntry() != null) {
                 throw wrap(new UriParserSemanticException("Single type filters are not chainable"));
               }
-              lastKeyPred.setSingleTypeFilter(filterEntityType);
+              lastKeyPred.setEntryTypeFilter(filterEntityType);
               return null;
             } else {
               if (lastKeyPred.getTypeFilterOnCollection() != null) {
@@ -350,7 +452,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               if (lastKeyPred.getTypeFilterOnEntry() != null) {
                 throw wrap(new UriParserSemanticException("Single TypeFilter are not chainable"));
               }
-              lastKeyPred.setSingleTypeFilter(filterComplexType);
+              lastKeyPred.setEntryTypeFilter(filterComplexType);
               return null;
             } else {
               if (lastKeyPred.getTypeFilterOnCollection() != null) {
@@ -1002,13 +1104,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
     }
     String text = ctx.children.get(2).getText();
-    if ( ctx.getChildCount()> 4) {
+    if (ctx.getChildCount() > 4) {
       text += ctx.children.get(3).getText();
       text += ctx.children.get(4).getText();
     }
-    
+
     format.setText(text);
-     
 
     return format;
   }
@@ -1349,10 +1450,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSelect(final SelectContext ctx) {
-    List<SelectItemOptionImpl> selectItems = new ArrayList<SelectItemOptionImpl>();
+    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
 
     for (SelectItemContext si : ctx.vlSI) {
-      selectItems.add((SelectItemOptionImpl) si.accept(this));
+      selectItems.add((SelectItemImpl) si.accept(this));
     }
 
     return new SelectOptionImpl().setSelectItems(selectItems);
@@ -1360,7 +1461,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSelectItem(final SelectItemContext ctx) {
-    SelectItemOptionImpl selectItem = new SelectItemOptionImpl();
+    SelectItemImpl selectItem = new SelectItemImpl();
 
     contextSelectItem = selectItem;
     for (SelectSegmentContext si : ctx.vlSS) {
@@ -1381,7 +1482,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         FullQualifiedName fullName = new FullQualifiedName(namespace, "*");
         contextSelectItem.addAllOperationsInSchema(fullName);
       } else {
-        contextSelectItem.addStar();
+        contextSelectItem.setStar(true);
       }
       return null;
     }
@@ -1392,6 +1493,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       EdmType prevType = contextSelectItem.getType();
       if (prevType == null) {
         prevType = this.contextTypes.peek().type;
+        // add It to selectItem
+        UriResourceItImpl it = new UriResourceItImpl();
+        it.setType(prevType);
+        it.setCollection(this.contextTypes.peek().isCollection);
       }
 
       if (!(prevType instanceof EdmStructuralType)) {
@@ -1399,16 +1504,28 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       EdmStructuralType structType = (EdmStructuralType) prevType;
-      EdmElement property = (EdmElement) structType.getProperty(odi);
-      if (property == null) {
+      EdmElement element = structType.getProperty(odi);
+      if (element == null) {
         throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi));
-
       }
 
       // create new segment
-      SelectSegmentImpl newSegment = new SelectSegmentImpl().setProperty(property);
-      contextSelectItem.addSegment(newSegment);
-
+      // SelectSegmentImpl newSegment = new SelectSegmentImpl().setProperty(property);
+      // contextSelectItem.addSegment(newSegment);
+      if (element instanceof EdmProperty) {
+        EdmProperty property = (EdmProperty) element;
+        if (property.isPrimitive()) {
+          UriResourceSimplePropertyImpl simple = new UriResourceSimplePropertyImpl();
+          simple.setProperty(property);
+          contextSelectItem.addPath(simple);
+        } else {
+          UriResourceComplexPropertyImpl complex = new UriResourceComplexPropertyImpl();
+          complex.setProperty(property);
+          contextSelectItem.addPath(complex);
+        }
+      } else {
+        throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed"));
+      }
       return this;
 
     } else {
@@ -1424,47 +1541,58 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
             if (((EdmStructuralType) prevType).compatibleTo(ct)) {
-              SelectSegmentImpl lastSegment = contextSelectItem.getLastSegment();
-              lastSegment.setTypeCast(ct);
+              UriResourcePart lastSegment = contextSelectItem.getLastPart();
+              if (lastSegment instanceof UriResourceImplKeyPred) {
+                UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastSegment;
+                lastKeyPred.setCollectionTypeFilter(ct);
+              } else if (lastSegment instanceof UriResourceImplTyped) {
+                {
+                  UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastSegment;
+                  lastTyped.setTypeFilter(ct);
+                }
+
+                return this;
+              }
+            }
+          }
+        } else {
+          prevType = this.contextTypes.peek().type;
+          if (prevType instanceof EdmEntityType) {
+            EdmEntityType et = edm.getEntityType(fullName);
+            if (((EdmStructuralType) prevType).compatibleTo(et)) {
+              contextSelectItem.setEntityTypeCast(et);
               return this;
             }
           }
         }
-      } else {
-        prevType = this.contextTypes.peek().type;
-        if (prevType instanceof EdmEntityType) {
-          EdmEntityType et = edm.getEntityType(fullName);
-          if (((EdmStructuralType) prevType).compatibleTo(et)) {
-            contextSelectItem.setEntityTypeCast(et);
-            return this;
-          }
+
+        FullQualifiedName finalTypeName = new FullQualifiedName(prevType.getNamespace(), prevType.getName());
+
+        // check for action
+        EdmAction action = edm.getAction(fullName, finalTypeName, null);
+        // TODO verify that null ignores if it is a collection
+
+        if (action != null) {
+          UriResourceActionImpl uriAction = new UriResourceActionImpl();
+          uriAction.setAction(action);
+          contextSelectItem.addPath(uriAction);
         }
+
+        // check for function
+        EdmFunction function = edm.getFunction(fullName, finalTypeName, null, null);
+        // TODO verify that null ignores if it is a collection
+
+        if (function != null) {
+          UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();
+          uriFunction.setFunction(function);
+          contextSelectItem.addPath(uriFunction);
+        }
+
       }
-
-      FullQualifiedName finalTypeName = new FullQualifiedName(prevType.getNamespace(), prevType.getName());
-
-      // check for action
-      EdmAction action = edm.getAction(fullName, finalTypeName, null);
-      // TODO verify that null ignores if it is a collection
-
-      if (action != null) {
-        contextSelectItem.addSegment(new SelectSegmentImpl().setAction(action));
-      }
-
-      // check for function
-      EdmFunction function = edm.getFunction(fullName, finalTypeName, null, null);
-      // TODO verify that null ignores if it is a collection
-
-      if (function != null) {
-        contextSelectItem.addSegment(new SelectSegmentImpl().setFunction(function));
-      }
-
     }
-
     return null;
   }
 
-  
   @Override
   public Object visitSkip(SkipContext ctx) {
     SkipOptionImpl skiptoken = new SkipOptionImpl();
@@ -1512,7 +1640,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
-  
   @Override
   public Object visitTop(TopContext ctx) {
     TopOptionImpl top = new TopOptionImpl();

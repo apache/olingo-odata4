@@ -26,7 +26,7 @@ public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryO
   private ExpressionImpl aliasValue;
 
   @Override
-  public ExpressionImpl getAliasValue() {
+  public ExpressionImpl getValue() {
     return aliasValue;
   }
 

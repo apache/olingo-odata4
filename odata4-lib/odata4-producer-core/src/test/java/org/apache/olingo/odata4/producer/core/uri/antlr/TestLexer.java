@@ -18,10 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.antlr;
 
-import org.junit.Test;
 import org.antlr.v4.runtime.Lexer;
 import org.apache.olingo.odata4.producer.core.testutil.TokenValidator;
-import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
+import org.junit.Test;
 
 
 public class TestLexer {

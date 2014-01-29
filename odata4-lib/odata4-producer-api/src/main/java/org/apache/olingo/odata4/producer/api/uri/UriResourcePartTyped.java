@@ -26,5 +26,7 @@ public interface UriResourcePartTyped extends UriResourcePart {
   EdmType getType();
 
   boolean isCollection();
+
+  String toString(boolean includeFilters);
   
 }
