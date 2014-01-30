@@ -58,7 +58,7 @@ public class EdmNavigationPropertyImplTest {
     assertEquals("ns", type.getNamespace());
     assertEquals("entity", type.getName());
 
-    //Test caching
+    // Test caching
     EdmType cachedType = property.getType();
     assertTrue(type == cachedType);
   }

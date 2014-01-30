@@ -110,12 +110,12 @@ public class EdmImplCallCreateTest {
     assertNotNull(action);
     assertEquals(FQN.getNamespace(), action.getNamespace());
     assertEquals(FQN.getName(), action.getName());
-    
+
     EdmAction action2 = edm.getAction(FQN, FQN, true);
     assertNotNull(action2);
     assertEquals(FQN.getNamespace(), action2.getNamespace());
     assertEquals(FQN.getName(), action2.getName());
-    
+
     assertNotSame(action, action2);
 
     assertNull(edm.getAction(WRONG_FQN, null, null));
@@ -127,12 +127,12 @@ public class EdmImplCallCreateTest {
     assertNotNull(function);
     assertEquals(FQN.getNamespace(), function.getNamespace());
     assertEquals(FQN.getName(), function.getName());
-    
+
     EdmFunction function2 = edm.getFunction(FQN, FQN, true, new ArrayList<String>());
     assertNotNull(function2);
     assertEquals(FQN.getNamespace(), function2.getNamespace());
     assertEquals(FQN.getName(), function2.getName());
-    
+
     assertNotSame(function, function2);
 
     assertNull(edm.getFunction(WRONG_FQN, null, null, null));
@@ -217,7 +217,8 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    public EdmFunction createBoundFunction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
+    public EdmFunction createBoundFunction(final FullQualifiedName fqn,
+        final FullQualifiedName bindingParameterTypeName,
         final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
       if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
         EdmFunction function = mock(EdmFunction.class);
@@ -239,7 +240,7 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    protected EdmAction createUnboundAction(FullQualifiedName fqn) {
+    protected EdmAction createUnboundAction(final FullQualifiedName fqn) {
       if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
         EdmAction action = mock(EdmAction.class);
         when(action.getNamespace()).thenReturn(fqn.getNamespace());
@@ -250,7 +251,7 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    protected EdmFunction createUnboundFunction(FullQualifiedName fqn, List<String> parameterNames) {
+    protected EdmFunction createUnboundFunction(final FullQualifiedName fqn, final List<String> parameterNames) {
       if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
         EdmFunction function = mock(EdmFunction.class);
         when(function.getNamespace()).thenReturn(fqn.getNamespace());

@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FunctionImport;
 import org.junit.Test;
 
 public class EdmFunctionImportInfoImplTest {
-  
+
   @Test
   public void functionImportTest() {
     FunctionImport providerFunctionImport = new FunctionImport().setName("name");

@@ -30,7 +30,7 @@ public class EdmSingletonInfoImpl implements EdmSingletonInfo {
   private final EntityContainer entityContainer;
   private final Singleton singleton;
 
-  public EdmSingletonInfoImpl(EntityContainer entityContainer, Singleton singleton) {
+  public EdmSingletonInfoImpl(final EntityContainer entityContainer, final Singleton singleton) {
     this.entityContainer = entityContainer;
     this.singleton = singleton;
   }

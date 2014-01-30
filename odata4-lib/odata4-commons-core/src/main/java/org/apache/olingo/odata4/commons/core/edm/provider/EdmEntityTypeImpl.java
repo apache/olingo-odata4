@@ -87,7 +87,7 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     if (baseType != null) {
       return entityBaseType.getKeyPropertyRefs();
     } else {
-      if(keyPropertyRefsList == null){
+      if (keyPropertyRefsList == null) {
         keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
       }
       return keyPropertyRefsList;
@@ -114,6 +114,5 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     }
     return baseType;
   }
-
 
 }

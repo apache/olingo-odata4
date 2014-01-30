@@ -40,7 +40,7 @@ public class EdmTypeDefinitionImpl extends EdmNamedImpl implements EdmTypeDefini
     this.typeDefinition = typeDefinition;
     // TODO: Should we check for edmNamespace in the underlying type name?
     try {
-      this.edmPrimitiveTypeInstance =
+      edmPrimitiveTypeInstance =
           EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()).getEdmPrimitiveTypeInstance();
     } catch (IllegalArgumentException e) {
       throw new EdmException("Invalid underlying type: " + typeDefinitionName, e);

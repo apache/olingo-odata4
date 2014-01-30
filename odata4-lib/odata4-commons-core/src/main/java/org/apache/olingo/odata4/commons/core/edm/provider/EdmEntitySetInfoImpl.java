@@ -30,7 +30,7 @@ public class EdmEntitySetInfoImpl implements EdmEntitySetInfo {
   private final EntityContainer entityContainer;
   private final EntitySet set;
 
-  public EdmEntitySetInfoImpl(EntityContainer entityContainer, EntitySet set) {
+  public EdmEntitySetInfoImpl(final EntityContainer entityContainer, final EntitySet set) {
     this.entityContainer = entityContainer;
     this.set = set;
   }

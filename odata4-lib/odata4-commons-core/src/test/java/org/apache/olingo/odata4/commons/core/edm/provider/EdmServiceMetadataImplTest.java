@@ -126,7 +126,7 @@ public class EdmServiceMetadataImplTest {
     callGetFunctionImportInfosAndExpectException(serviceMetadata);
   }
 
-  private void callGetFunctionImportInfosAndExpectException(EdmServiceMetadata svc) {
+  private void callGetFunctionImportInfosAndExpectException(final EdmServiceMetadata svc) {
     try {
       svc.getFunctionImportInfos();
     } catch (EdmException e) {
@@ -137,7 +137,7 @@ public class EdmServiceMetadataImplTest {
 
   }
 
-  private void callGetSingletonInfosAndExpectException(EdmServiceMetadata svc) {
+  private void callGetSingletonInfosAndExpectException(final EdmServiceMetadata svc) {
     try {
       svc.getSingletonInfos();
     } catch (EdmException e) {
@@ -147,7 +147,7 @@ public class EdmServiceMetadataImplTest {
     fail("Expected EdmException was not thrown");
   }
 
-  private void callGetEntitySetInfosAndExpectException(EdmServiceMetadata svc) {
+  private void callGetEntitySetInfosAndExpectException(final EdmServiceMetadata svc) {
     try {
       svc.getEntitySetInfos();
     } catch (EdmException e) {
@@ -160,7 +160,7 @@ public class EdmServiceMetadataImplTest {
   private class CustomProvider extends EdmProvider {
     private List<Schema> schemas;
 
-    public CustomProvider(boolean fillSchema) {
+    public CustomProvider(final boolean fillSchema) {
       schemas = new ArrayList<Schema>();
       if (fillSchema) {
         List<EntitySet> entitySets = new ArrayList<EntitySet>();

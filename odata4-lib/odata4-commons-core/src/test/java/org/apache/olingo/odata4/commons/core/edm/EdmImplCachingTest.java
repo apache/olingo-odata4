@@ -351,7 +351,7 @@ public class EdmImplCachingTest {
     }
 
     @Override
-    protected EdmAction createUnboundAction(FullQualifiedName fqn) {
+    protected EdmAction createUnboundAction(final FullQualifiedName fqn) {
       if (NAME1.equals(fqn)) {
         EdmAction action = mock(EdmAction.class);
         when(action.getNamespace()).thenReturn(fqn.getNamespace());
@@ -367,7 +367,7 @@ public class EdmImplCachingTest {
     }
 
     @Override
-    protected EdmFunction createUnboundFunction(FullQualifiedName fqn, List<String> parameterNames) {
+    protected EdmFunction createUnboundFunction(final FullQualifiedName fqn, final List<String> parameterNames) {
       if (NAME1.equals(fqn)) {
         EdmFunction function = mock(EdmFunction.class);
         when(function.getNamespace()).thenReturn(fqn.getNamespace());

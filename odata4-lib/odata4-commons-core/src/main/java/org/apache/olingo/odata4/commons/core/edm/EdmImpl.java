@@ -149,7 +149,7 @@ public abstract class EdmImpl implements Edm {
       final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection, final List<String> parameterNames) {
     FullQualifiedName functionFqn = resolvePossibleAlias(functionName);
-    if(bindingParameterTypeName == null){
+    if (bindingParameterTypeName == null) {
       FunctionMapKey key =
           new FunctionMapKey(functionFqn, bindingParameterTypeName, isBindingParameterCollection, parameterNames);
       EdmFunction function = unboundFunctions.get(key);
@@ -160,7 +160,7 @@ public abstract class EdmImpl implements Edm {
         }
       }
       return function;
-    }else{
+    } else {
       FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
       FunctionMapKey key =
           new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
@@ -214,10 +214,11 @@ public abstract class EdmImpl implements Edm {
   protected abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
 
   protected abstract EdmAction createUnboundAction(FullQualifiedName actionName);
-  
+
   protected abstract EdmFunction createUnboundFunction(FullQualifiedName functionName, List<String> parameterNames);
 
-  protected abstract EdmAction createBoundAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
+  protected abstract EdmAction createBoundAction(FullQualifiedName actionName,
+      FullQualifiedName bindingParameterTypeName,
       Boolean isBindingParameterCollection);
 
   protected abstract EdmFunction createBoundFunction(FullQualifiedName functionName,

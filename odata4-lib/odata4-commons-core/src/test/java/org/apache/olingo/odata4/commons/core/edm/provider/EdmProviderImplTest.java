@@ -84,7 +84,7 @@ public class EdmProviderImplTest {
   }
 
   @Test
-  public void convertExceptionsTest() throws Exception{
+  public void convertExceptionsTest() throws Exception {
     EdmProvider localProvider = mock(EdmProvider.class);
     FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
     when(localProvider.getEntityContainerInfo(fqn)).thenThrow(new ODataException("msg"));
@@ -94,7 +94,7 @@ public class EdmProviderImplTest {
     when(localProvider.getComplexType(fqn)).thenThrow(new ODataException("msg"));
     when(localProvider.getActions(fqn)).thenThrow(new ODataException("msg"));
     when(localProvider.getFunctions(fqn)).thenThrow(new ODataException("msg"));
-    
+
     Edm localEdm = new EdmProviderImpl(localProvider);
 
     callMethodAndExpectEdmException(localEdm, "getEntityContainer");
@@ -102,28 +102,28 @@ public class EdmProviderImplTest {
     callMethodAndExpectEdmException(localEdm, "getTypeDefinition");
     callMethodAndExpectEdmException(localEdm, "getEntityType");
     callMethodAndExpectEdmException(localEdm, "getComplexType");
-    
-    //seperate because of signature
+
+    // seperate because of signature
     try {
       localEdm.getAction(fqn, null, null);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
     }
-    
+
     try {
       localEdm.getFunction(fqn, null, null, null);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
     }
   }
-  
-  private void callMethodAndExpectEdmException(Edm localEdm, String methodName) throws Exception {
+
+  private void callMethodAndExpectEdmException(final Edm localEdm, final String methodName) throws Exception {
     Method method = localEdm.getClass().getMethod(methodName, FullQualifiedName.class);
     try {
       method.invoke(localEdm, new FullQualifiedName("namespace", "name"));
     } catch (InvocationTargetException e) {
       Throwable cause = e.getCause();
-      if(cause instanceof EdmException){
+      if (cause instanceof EdmException) {
         return;
       }
     }
@@ -131,10 +131,10 @@ public class EdmProviderImplTest {
   }
 
   @Test(expected = EdmException.class)
-  public void convertExceptionsAliasTest() throws Exception{
+  public void convertExceptionsAliasTest() throws Exception {
     EdmProvider localProvider = mock(EdmProvider.class);
     when(localProvider.getAliasInfos()).thenThrow(new ODataException("msg"));
-    
+
     Edm localEdm = new EdmProviderImpl(localProvider);
     localEdm.getEntityContainer(null);
   }

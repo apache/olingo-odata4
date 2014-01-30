@@ -47,5 +47,5 @@ public class EdmEntitySetInfoImplTest {
     EdmEntitySetInfo info = new EdmEntitySetInfoImpl(providerContainer, providerEntitySet);
     info.getEntitySetUri();
   }
-  
+
 }

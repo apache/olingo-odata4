@@ -59,7 +59,7 @@ public class EdmEnumImpl extends EdmNamedImpl implements EdmEnumType {
 
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
-    return this.equals(primitiveType);
+    return equals(primitiveType);
   }
 
   @Override
@@ -80,8 +80,9 @@ public class EdmEnumImpl extends EdmNamedImpl implements EdmEnumType {
   }
 
   @Override
-  public <T> T valueOfString(String value, Boolean isNullable, Integer maxLength, Integer precision, Integer scale,
-      Boolean isUnicode, Class<T> returnType) throws EdmPrimitiveTypeException {
+  public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale,
+      final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
@@ -92,8 +93,9 @@ public class EdmEnumImpl extends EdmNamedImpl implements EdmEnumType {
   }
 
   @Override
-  public String valueToString(Object value, Boolean isNullable, Integer maxLength, Integer precision, Integer scale,
-      Boolean isUnicode) throws EdmPrimitiveTypeException {
+  public String valueToString(final Object value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale,
+      final Boolean isUnicode) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");

@@ -167,7 +167,8 @@ public class EdmEntityContainerImplTest {
 
   private class CustomProvider extends EdmProvider {
     @Override
-    public EntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) throws ODataException {
+    public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+        throws ODataException {
       if (entitySetName != null) {
         return new EntitySet().setName("entitySetName");
       }
@@ -175,7 +176,8 @@ public class EdmEntityContainerImplTest {
     }
 
     @Override
-    public Singleton getSingleton(FullQualifiedName entityContainer, String singletonName) throws ODataException {
+    public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+        throws ODataException {
       if (singletonName != null) {
         return new Singleton().setName("singletonName");
       }
@@ -183,7 +185,7 @@ public class EdmEntityContainerImplTest {
     }
 
     @Override
-    public ActionImport getActionImport(FullQualifiedName entityContainer, String actionImportName)
+    public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       if (actionImportName != null) {
         return new ActionImport().setName("singletonName");
@@ -192,7 +194,7 @@ public class EdmEntityContainerImplTest {
     }
 
     @Override
-    public FunctionImport getFunctionImport(FullQualifiedName entityContainer, String functionImportName)
+    public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
         throws ODataException {
       if (functionImportName != null) {
         return new FunctionImport().setName("singletonName");

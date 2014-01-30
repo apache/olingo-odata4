@@ -109,7 +109,7 @@ public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmSt
   }
 
   @Override
-  public boolean compatibleTo(EdmType targetType) {
+  public boolean compatibleTo(final EdmType targetType) {
     EdmStructuralType sourceType = this;
     if (targetType == null) {
       throw new EdmException("Target type must not be null");

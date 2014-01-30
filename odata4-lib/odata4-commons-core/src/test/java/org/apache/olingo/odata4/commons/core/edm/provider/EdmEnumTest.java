@@ -165,7 +165,7 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
     assertEquals(Long.valueOf(1), instance.valueOfString("first", null, null, null, null, null, Long.class));
     assertEquals(Byte.valueOf((byte) 65), instance.valueOfString("first,64", null, null, null, null, null, Byte.class));
     assertEquals(Integer.valueOf(1), instance.valueOfString("1,1,first", null, null, null, null, null, Integer.class));
-    
+
     assertEquals(Integer.valueOf(1), nonFlagsInstance.valueOfString("1", null, null, null, null, null, Integer.class));
     expectContentErrorInValueOfString(nonFlagsInstance, "1,64");
 

@@ -30,7 +30,7 @@ public class EdmFunctionImportInfoImpl implements EdmFunctionImportInfo {
   private EntityContainer entityContainer;
   private FunctionImport functionImport;
 
-  public EdmFunctionImportInfoImpl(EntityContainer entityContainer, FunctionImport functionImport) {
+  public EdmFunctionImportInfoImpl(final EntityContainer entityContainer, final FunctionImport functionImport) {
     this.entityContainer = entityContainer;
     this.functionImport = functionImport;
   }

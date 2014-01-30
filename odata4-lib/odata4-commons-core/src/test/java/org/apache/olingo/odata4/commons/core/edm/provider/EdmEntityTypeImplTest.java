@@ -114,9 +114,9 @@ public class EdmEntityTypeImplTest {
 
     typeWithComplexKey = new EdmEntityTypeImpl(edm, typeWithComplexKeyName, typeWithComplexKeyProvider);
   }
-  
+
   @Test
-  public void hasStream(){
+  public void hasStream() {
     assertFalse(typeWithBaseType.hasStream());
   }
 

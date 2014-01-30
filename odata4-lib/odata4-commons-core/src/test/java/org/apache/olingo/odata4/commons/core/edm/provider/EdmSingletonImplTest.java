@@ -116,12 +116,12 @@ public class EdmSingletonImplTest {
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);
     singleton.getRelatedBindingTarget("path");
   }
-  
+
   @Test(expected = EdmException.class)
   public void nonExsistingEntityType() throws Exception {
     EdmProvider provider = mock(EdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
-    
+
     Singleton singleton = new Singleton().setName("name");
     final EdmSingleton edmSingleton = new EdmSingletonImpl(edm, null, singleton);
     edmSingleton.getEntityType();

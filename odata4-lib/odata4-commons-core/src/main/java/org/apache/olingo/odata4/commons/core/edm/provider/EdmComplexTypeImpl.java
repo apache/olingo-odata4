@@ -48,5 +48,4 @@ public class EdmComplexTypeImpl extends EdmStructuralTypeImpl implements EdmComp
     return baseType;
   }
 
- 
 }

@@ -221,7 +221,7 @@ public class EdmProviderImpl extends EdmImpl {
   }
 
   @Override
-  protected EdmAction createUnboundAction(FullQualifiedName actionName) {
+  protected EdmAction createUnboundAction(final FullQualifiedName actionName) {
     try {
       List<Action> actions = actionsMap.get(actionName);
       if (actions == null) {
@@ -247,7 +247,7 @@ public class EdmProviderImpl extends EdmImpl {
   }
 
   @Override
-  protected EdmFunction createUnboundFunction(FullQualifiedName functionName, List<String> parameterNames) {
+  protected EdmFunction createUnboundFunction(final FullQualifiedName functionName, final List<String> parameterNames) {
     try {
       List<Function> functions = functionsMap.get(functionName);
       if (functions == null) {
