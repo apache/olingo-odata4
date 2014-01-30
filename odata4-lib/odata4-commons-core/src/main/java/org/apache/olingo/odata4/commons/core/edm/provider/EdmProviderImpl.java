@@ -173,19 +173,19 @@ public class EdmProviderImpl extends EdmImpl {
       EdmFunctionImpl functionImpl = null;
       for (Function function : functions) {
         if (function.isBound() == true) {
-          List<Parameter> parameters = function.getParameters();
-          if (parameters == null || parameters.size() == 0) {
+          List<Parameter> providerParameters = function.getParameters();
+          if (providerParameters == null || providerParameters.size() == 0) {
             throw new EdmException("No parameter specified for bound function: " + functionName);
           }
-          Parameter bindingParameter = parameters.get(0);
+          Parameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getType())
               && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
-            if (parameterNames.size() == parameters.size()) {
-              List<String> functionParameterNames = new ArrayList<String>();
-              for (Parameter parameter : parameters) {
-                functionParameterNames.add(parameter.getName());
+            if (parameterNames.size() == providerParameters.size() - 1) {
+              List<String> providerParameterNames = new ArrayList<String>();
+              for (int i = 1; i < providerParameters.size(); i++) {
+                providerParameterNames.add(providerParameters.get(i).getName());
               }
-              if (parameterNames.containsAll(functionParameterNames)) {
+              if (parameterNames.containsAll(providerParameterNames)) {
                 functionImpl = new EdmFunctionImpl(this, functionName, function);
                 break;
               }

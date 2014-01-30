@@ -190,20 +190,20 @@ public class TestUriParserImpl {
         .isType(EdmTechProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testPath.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
+    testPath.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
         .isCollection(true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
         .isType(EdmTechProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testPath.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testPath.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isType(EdmTechProvider.nameETTwoKeyNav)
         .isCollection(true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)

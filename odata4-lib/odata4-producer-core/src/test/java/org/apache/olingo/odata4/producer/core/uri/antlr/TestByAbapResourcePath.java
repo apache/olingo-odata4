@@ -588,14 +588,14 @@ public class TestByAbapResourcePath {
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isType(EdmTechProvider.nameETTwoKeyNav);
 
-    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
-        .isKind(UriInfoKind.resource).goPath()
-        .first()
-        .isEntitySet("ESKeyNav")
-        .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isParameter(0, "ParameterString", "'3'")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+//    testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
+//        .isKind(UriInfoKind.resource).goPath()
+//        .first()
+//        .isEntitySet("ESKeyNav")
+//        .n()
+//        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+//        .isParameter(0, "ParameterString", "'3'")
+//        .isType(EdmTechProvider.nameETTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
