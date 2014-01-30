@@ -24,7 +24,7 @@ public enum SupportedMethodCalls {
   CONCAT("concat"),
 
   YEAR("year"), MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"),
-  FRACTIONALSECOND("fractionalsecond"), TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
+  FRACTIONALSECONDS("fractionalseconds"), TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
   TOTALOFFSETMINUTES("totaloffsetminutes"), MINDATETIME("mindatetime"), MAXDATETIME("maxdatetime"), NOW("now"),
 
   ROUND("round"), FLOOR("floor"),

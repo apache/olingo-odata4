@@ -32,7 +32,7 @@ public class UriResourceNavigationPropertyImpl extends UriResourceImplKeyPred im
   }
 
   @Override
-  public EdmNavigationProperty getNavigationProperty() {
+  public EdmNavigationProperty getProperty() {
     return navigationProperty;
   }
 

@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 
 public interface ExpandItem {
 
-  LevelExpandOption getLevel();
+  LevelsExpandOption getLevels();
 
   FilterOption getFilter();
 

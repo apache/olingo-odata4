@@ -47,7 +47,7 @@ public class UriValidator implements Validator {
   }
 
   // Execution
-  public UriValidator run(String uri) {
+  public UriValidator run(final String uri) {
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
@@ -63,7 +63,7 @@ public class UriValidator implements Validator {
   // Navigation
   public UriResourceValidator goPath() {
     if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("goPath can only be used on resourcePaths");
+      fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
     return new UriResourceValidator()
@@ -72,7 +72,7 @@ public class UriValidator implements Validator {
         .setUriInfoImplPath(uriInfo);
   }
 
-  public FilterValidator goFilter(int index) {
+  public FilterValidator goFilter() {
     FilterOptionImpl filter = (FilterOptionImpl) uriInfo.getFilterOption();
     if (filter == null) {
       fail("no filter found");
@@ -82,12 +82,12 @@ public class UriValidator implements Validator {
   }
 
   // Validation
-  public UriValidator isKind(UriInfoKind kind) {
+  public UriValidator isKind(final UriInfoKind kind) {
     assertEquals(kind, uriInfo.getKind());
     return this;
   }
 
-  public UriValidator isCustomParameter(int index, String name, String value) {
+  public UriValidator isCustomParameter(final int index, final String name, final String value) {
     if (uriInfo == null) {
       fail("hasQueryParameter: uriInfo == null");
     }
@@ -103,9 +103,9 @@ public class UriValidator implements Validator {
     return this;
   }
 
-  public void isCrossJoinEntityList(List<String> entitySets) {
+  public void isCrossJoinEntityList(final List<String> entitySets) {
     if (uriInfo.getKind() != UriInfoKind.crossjoin) {
-      fail("isKeyPredicate: uriPathInfo is not instanceof UriInfoImplCrossjoin");
+      fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
     int i = 0;
@@ -116,31 +116,50 @@ public class UriValidator implements Validator {
 
   }
 
-  public UriValidator isSQO_Id(String text) {
+  public UriValidator isIdText(final String text) {
     assertEquals(text, uriInfo.getIdOption().getText());
     return this;
   }
 
-  public UriValidator isSQO_Format(String text) {
-    assertEquals(text, uriInfo.getFormatOption().getText());
+  
+  public UriValidator isExpandText(final String text) {
+    assertEquals(text, uriInfo.getExpandOption().getText());
+    return this;
+  }
+  
+  public UriValidator isSelectText(final String text) {
+    assertEquals(text, uriInfo.getSelectOption().getText());
     return this;
   }
 
-  public UriValidator isEntityType(FullQualifiedName fullName) {
+  
+  public UriValidator isFormatText(final String text) {
+    assertEquals(text, uriInfo.getFormatOption().getText());
+    return this;
+  }
+  
+  public UriValidator isFragmentText(final String text) {
+    if (uriInfo.getKind() != UriInfoKind.metadata) {
+      fail("invalid resource kind: " + uriInfo.getKind().toString());
+    }
+    
+    assertEquals(text, uriInfo.getFragment());
+    
+    
+    return this;
+  }
+
+  public UriValidator isEntityType(final FullQualifiedName fullName) {
     if (uriInfo.getKind() != UriInfoKind.entityId) {
-      fail("isKeyPredicate: uriPathInfo is not instanceof UriInfoImplCrossjoin");
+      fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
     assertEquals(fullName.toString(), fullName(uriInfo.getEntityTypeCast()));
     return this;
   }
 
-  private String fullName(EdmEntityType type) {
+  private String fullName(final EdmEntityType type) {
     return type.getNamespace() + "." + type.getName();
-  }
-
-  public void isID(String idAsText) {
-    assertEquals(idAsText, uriInfo.getIdOption().getText());
   }
 
 }

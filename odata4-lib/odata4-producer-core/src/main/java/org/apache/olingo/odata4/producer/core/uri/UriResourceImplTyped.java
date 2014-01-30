@@ -42,14 +42,14 @@ public abstract class UriResourceImplTyped extends UriResourcePartImpl implement
   }
 
   @Override
-  public String toString(boolean includeFilters) {
+  public String toString(final boolean includeFilters) {
     if (typeFilter != null) {
       return toString() + "/" + getFQN(typeFilter).toString();
     }
     return toString();
   }
-  
-  private FullQualifiedName getFQN(EdmType type) {
+
+  private FullQualifiedName getFQN(final EdmType type) {
     return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 

@@ -36,7 +36,8 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
     super(kind);
   }
 
-  public EdmType getComplexTypeFilter() {
+  @Override
+  public EdmType getTypeFilter() {
     if (entryTypeFilter != null) {
       return entryTypeFilter;
     }
@@ -65,14 +66,15 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
   }
 
   public void setEntryTypeFilter(final EdmType singleTypeFilter) {
-    this.entryTypeFilter = singleTypeFilter;
+    entryTypeFilter = singleTypeFilter;
   }
 
   public void setCollectionTypeFilter(final EdmType collectionTypeFilter) {
     this.collectionTypeFilter = collectionTypeFilter;
   }
+
   @Override
-  public String toString(boolean includeFilters) {
+  public String toString(final boolean includeFilters) {
 
     if (includeFilters == true) {
       String tmp = "";
@@ -88,14 +90,14 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
         }
       }
       if (tmp.length() != 0) {
-        return toString()+ "/" + tmp ;
+        return toString() + "/" + tmp;
       }
     }
 
     return toString();
   }
-  
-  private FullQualifiedName getFQN(EdmType type) {
+
+  private FullQualifiedName getFQN(final EdmType type) {
     return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 

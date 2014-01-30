@@ -33,22 +33,24 @@ public class ParserAdapter {
       throws UriParserException {
 
     try {
-      UriInfoImpl uriInput = (UriInfoImpl) parseInput(input).accept(uriParseTreeVisitor);
+      OdataRelativeUriEOFContext parseTree = parseInput(input, true);
+      //reset visitor
+      uriParseTreeVisitor.init();
+      parseTree.accept(uriParseTreeVisitor);
+      UriInfoImpl uriInput = uriParseTreeVisitor.getUriInfo();
       return uriInput;
     } catch (ParseCancellationException e) {
-      // unpack UriParserException
       Throwable cause = e.getCause();
       if (cause instanceof UriParserException) {
         throw (UriParserException) cause;
       }
-
     }
-
     return null;
-
   }
 
-  static private OdataRelativeUriEOFContext parseInput(final String input) throws UriParserSyntaxException {
+
+  static private OdataRelativeUriEOFContext parseInput(final String input, boolean onResource)
+      throws UriParserSyntaxException {
     UriParserParser parser = null;
     UriLexer lexer = null;
     OdataRelativeUriEOFContext ret = null;

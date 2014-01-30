@@ -192,6 +192,7 @@ public class EdmTechProvider extends EdmProvider {
       new FullQualifiedName(nameSpace, "ETCompMixPrimCollComp");
   public static final FullQualifiedName nameETFourKeyAlias = new FullQualifiedName(nameSpace, "ETFourKeyAlias");
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(nameSpace, "ETKeyNav");
+  public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(nameSpace, "ETKeyPrimNav");
   public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(nameSpace, "ETKeyTwoKeyComp");
   public static final FullQualifiedName nameETMedia = new FullQualifiedName(nameSpace, "ETMedia");
   public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(nameSpace, "ETMixPrimCollComp");
@@ -378,6 +379,9 @@ public class EdmTechProvider extends EdmProvider {
    * .setName("PropertyStream")
    * .setType(EdmStream.getFullQualifiedName());
    */
+  NavigationProperty navPropertyETKeyPrimNavOne = new NavigationProperty()
+      .setName("NavPropertyETKeyPrimNavOne")
+      .setType(nameETKeyPrimNav);
 
   NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
       .setName("NavPropertyETTwoKeyNavOne")
@@ -1115,6 +1119,17 @@ public class EdmTechProvider extends EdmProvider {
               navPropertyETKeyNavOne_ETKeyNav, collectionNavPropertyETKeyNavMany_ETKeyNav,
               navPropertyETMediaOne_ETMedia, collectionNavPropertyETMediaMany_ETMedia
               ));
+    } else if (entityTypeName.equals(nameETKeyPrimNav)) {
+      return new EntityType()
+          .setName("ETKeyNav")
+          .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              propertyInt16_NotNullable, propertyString_NotNullable))
+          .setNavigationProperties(Arrays.asList(
+              navPropertyETTwoKeyNavOne_ETTwoKeyNav, collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
+              navPropertyETKeyNavOne_ETKeyNav, collectionNavPropertyETKeyNavMany_ETKeyNav,
+              navPropertyETMediaOne_ETMedia, collectionNavPropertyETMediaMany_ETMedia
+              ));
 
     } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new EntityType()
@@ -1558,6 +1573,15 @@ public class EdmTechProvider extends EdmProvider {
               .setName("BFCESTwoKeyNavRTESTwoKeyNav")
               .setBound(true)
               .setParameters(Arrays.asList(
+                  new Parameter().setName("BindingParam").setType(nameETTwoKeyNav).setCollection(true)))
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameETTwoKeyNav).setCollection(true)),
+
+          new Function()
+              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+              .setBound(true)
+              .setParameters(Arrays.asList(
                   new Parameter().setName("BindingParam").setType(nameETTwoKeyNav).setCollection(true),
                   new Parameter().setName("ParameterString").setType(nameString).setCollection(false)))
               .setComposable(true)
@@ -1566,9 +1590,8 @@ public class EdmTechProvider extends EdmProvider {
           new Function()
               .setName("BFCESTwoKeyNavRTESTwoKeyNav")
               .setBound(true)
-
               .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(nameETTwoKeyNav).setCollection(true)))
+                  new Parameter().setName("BindingParam").setType(nameETKeyNav).setCollection(true)))
               .setComposable(true)
               .setReturnType(
                   new ReturnType().setType(nameETTwoKeyNav).setCollection(true)),
@@ -1576,7 +1599,8 @@ public class EdmTechProvider extends EdmProvider {
               .setName("BFCESTwoKeyNavRTESTwoKeyNav")
               .setBound(true)
               .setParameters(
-                  Arrays.asList(new Parameter().setName("BindingParam").setType(nameETKeyNav).setCollection(true)))
+                  Arrays.asList(new Parameter().setName("BindingParam").setType(nameETKeyNav).setCollection(true),
+                      new Parameter().setName("ParameterString").setType(nameString).setCollection(false)))
               .setComposable(true)
               .setReturnType(
                   new ReturnType().setType(nameETTwoKeyNav).setCollection(true))

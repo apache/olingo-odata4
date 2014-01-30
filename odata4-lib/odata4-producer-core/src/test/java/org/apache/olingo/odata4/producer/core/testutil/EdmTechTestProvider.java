@@ -29,10 +29,14 @@ import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata4.commons.api.exception.ODataException;
 
-//Adds a abc entity set with properties a,b,c,d,e,f to the technical reference scenario
-public class EdmTechTestProvider extends EdmTechProvider {
 
-  public static final FullQualifiedName nameCTabc = new FullQualifiedName(nameSpace, "CTabc");
+/**
+ * Implement the EdmTechProvider and
+ * <li>adds a entity type <b>ETabc with</b> properties a,b,c,d,e,f</li>
+ * <li>adds a complex type <b>CTabc</b> with properties a,b,c,d,e,f</li>
+ * <li>adds a <b>abc</b> entity set of type <b>ETabc</b></li> 
+ */
+public class EdmTechTestProvider extends EdmTechProvider {
 
   Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
   Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
@@ -40,6 +44,8 @@ public class EdmTechTestProvider extends EdmTechProvider {
   Property propertyDInt16 = new Property().setName("d").setType(nameInt16);
   Property propertyEInt16 = new Property().setName("e").setType(nameInt16);
   Property propertyFInt16 = new Property().setName("f").setType(nameInt16);
+  
+  public static final FullQualifiedName nameCTabc = new FullQualifiedName(nameSpace, "CTabc");
   public static final FullQualifiedName nameETabc = new FullQualifiedName(nameSpace, "ETabc");
 
   @Override

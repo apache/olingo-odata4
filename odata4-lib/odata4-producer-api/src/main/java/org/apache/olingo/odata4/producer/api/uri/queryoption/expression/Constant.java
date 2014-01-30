@@ -16,43 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceSimpleProperty;
 
-public class UriResourcePropertyImpl extends UriResourceImplTyped implements UriResourceSimpleProperty {
-  protected EdmProperty property;
+public interface Constant extends Expression {
 
-  public UriResourcePropertyImpl(final UriResourceKind kind) {
-    super(kind);
-  }
+  public boolean isNull();
 
-  @Override
-  public EdmProperty getProperty() {
-    return property;
-  }
+  public boolean isTrue();
 
-  public UriResourcePropertyImpl setProperty(final EdmProperty property) {
-    this.property = property;
-    return this;
-  }
+  public boolean isFalse();
 
-  @Override
-  public EdmType getType() {
-    return property.getType();
-  }
+  public SupportedConstants getKind();
 
-  @Override
-  public boolean isCollection() {
-    return property.isCollection();
-  }
-
-  @Override
-  public String toString() {
-    return property.getName();
-  }
+  public EdmType getType();
 
 }

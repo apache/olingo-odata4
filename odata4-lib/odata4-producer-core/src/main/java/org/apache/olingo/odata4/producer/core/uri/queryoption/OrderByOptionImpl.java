@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -19,31 +18,33 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByItem {
+public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByOption {
 
-  private ExpressionImpl expression;
-  private boolean descending;
+  private List<OrderByItemImpl> orders= new ArrayList<OrderByItemImpl>();
 
-  @Override
-  public boolean isDescending() {
-    return descending;
-  }
-
-  public OrderByItem setSortOrder(final boolean descending) {
-    this.descending = descending;
-    return this;
+  public OrderByOptionImpl() {
+    setKind(SupportedQueryOptions.ORDERBY);
   }
 
   @Override
-  public ExpressionImpl getExpression() {
-    return expression;
+  public List<OrderByItem> getOrders() {
+    List<OrderByItem> retList = new ArrayList<OrderByItem>();
+    for (OrderByItemImpl item : orders) {
+      retList.add(item);
+    }
+    return Collections.unmodifiableList(retList);
   }
 
-  public OrderByItem setExpression(final ExpressionImpl expression) {
-    this.expression = expression;
+  public OrderByOptionImpl addOrder(final OrderByItemImpl order) {
+    orders.add(order);
     return this;
   }
 

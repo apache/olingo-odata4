@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelExpandOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
@@ -35,9 +35,8 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 
-
-public class ExpandItemImpl implements ExpandItem  {
-  private LevelExpandOption levelExpandOption;
+public class ExpandItemImpl implements ExpandItem {
+  private LevelsExpandOption levelsExpandOption;
   private FilterOption filterOption;
   private SearchOption searchOption;
   private OrderByOption orderByOption;
@@ -68,7 +67,7 @@ public class ExpandItemImpl implements ExpandItem  {
       } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
         inlineCountOption = (InlineCountOptionImpl) sysItem;
       } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
-        orderByOption = (OrderByImpl) sysItem;
+        orderByOption = (OrderByOptionImpl) sysItem;
       } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
         searchOption = (SearchOptionImpl) sysItem;
       } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
@@ -77,8 +76,8 @@ public class ExpandItemImpl implements ExpandItem  {
         skipOption = (SkipOptionImpl) sysItem;
       } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
         topOption = (TopOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.LEVEL) {
-        levelExpandOption = (LevelExpandOption) sysItem;
+      } else if (sysItem.getKind() == SupportedQueryOptions.LEVELS) {
+        levelsExpandOption = (LevelsExpandOption) sysItem;
       }
     }
     return this;
@@ -92,12 +91,9 @@ public class ExpandItemImpl implements ExpandItem  {
     return this;
   }
 
-  
-
-
   @Override
-  public LevelExpandOption getLevel() {
-    return levelExpandOption;
+  public LevelsExpandOption getLevels() {
+    return levelsExpandOption;
   }
 
   @Override

@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -17,27 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
+package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
+import java.util.List;
 
-/* TODO implement */
-public class SkiptokenOptionImpl extends SystemQueryOptionImpl implements SkiptokenOption {
-  private String skipTokenValue;
+import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 
-  public SkiptokenOptionImpl() {
-    setKind(SupportedQueryOptions.SKIPTOKEN);
-  }
+public interface Enumeration extends Expression {
 
-  @Override
-  public String getValue() {
-    return skipTokenValue;
-  }
-
-  public SkiptokenOptionImpl setValue(final String skipTokenValue) {
-    this.skipTokenValue = skipTokenValue;
-    return this;
-  }
+  public List<String> getEnumValues();
+  public EdmEnumType getType();
 
 }

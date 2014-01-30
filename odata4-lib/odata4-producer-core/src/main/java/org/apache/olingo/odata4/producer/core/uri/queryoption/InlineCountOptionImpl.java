@@ -29,18 +29,14 @@ public class InlineCountOptionImpl extends SystemQueryOptionImpl implements Inli
     setKind(SupportedQueryOptions.INLINECOUNT);
   }
 
-  
   @Override
   public boolean getvalue() {
     return count;
   }
 
-
-  public InlineCountOptionImpl setValue(boolean count) {
+  public InlineCountOptionImpl setValue(final boolean count) {
     this.count = count;
     return this;
   }
-
-  
 
 }

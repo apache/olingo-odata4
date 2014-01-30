@@ -22,23 +22,22 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 
-public class UriLexerWithTrace extends UriLexer{
-  int  logLevel = 0;
+public class UriLexerWithTrace extends UriLexer {
+  int logLevel = 0;
 
-  
-  public UriLexerWithTrace( final ANTLRInputStream antlrInputStream, int logLevel) {
+  public UriLexerWithTrace(final ANTLRInputStream antlrInputStream, final int logLevel) {
     super(antlrInputStream);
     this.logLevel = logLevel;
   }
-  
-  public UriLexerWithTrace( final ANTLRInputStream antlrInputStream, int logLevel, final int mode) {
+
+  public UriLexerWithTrace(final ANTLRInputStream antlrInputStream, final int logLevel, final int mode) {
     super(antlrInputStream);
     super.mode(mode);
     this.logLevel = logLevel;
   }
 
   @Override
-  public void emit(Token token) {
+  public void emit(final Token token) {
     if (logLevel > 1) {
       String out = String.format("%1$-" + 20 + "s", token.getText());
 

@@ -46,5 +46,4 @@ public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOpt
     return retList;
   }
 
-
 }

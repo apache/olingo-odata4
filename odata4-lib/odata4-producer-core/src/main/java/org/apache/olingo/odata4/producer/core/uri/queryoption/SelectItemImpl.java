@@ -62,7 +62,7 @@ public class SelectItemImpl implements SelectItem {
     return isStar;
   }
 
-  public SelectItemImpl setStar(boolean isStar) {
+  public SelectItemImpl setStar(final boolean isStar) {
     this.isStar = isStar;
     return this;
   }
@@ -90,7 +90,7 @@ public class SelectItemImpl implements SelectItem {
     return entityTypeCast;
   }
 
-  public SelectItemImpl setEntityTypeCast(EdmEntityType entityTypeCast) {
+  public SelectItemImpl setEntityTypeCast(final EdmEntityType entityTypeCast) {
     this.entityTypeCast = entityTypeCast;
     return this;
   }
@@ -101,14 +101,13 @@ public class SelectItemImpl implements SelectItem {
     return null;
   }
 
-
   public UriResourcePart getLastPart() {
     return lastResourcePart;
   }
 
-  public SelectItemImpl addPath(UriResourceImplTyped resourcePart) {
+  public SelectItemImpl addPath(final UriResourceImplTyped resourcePart) {
     parts.add(resourcePart);
-    this.lastResourcePart = resourcePart;
+    lastResourcePart = resourcePart;
     return this;
   }
 

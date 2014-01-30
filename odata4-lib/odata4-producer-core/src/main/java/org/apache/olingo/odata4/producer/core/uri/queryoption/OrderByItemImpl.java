@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,50 +17,33 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaRef;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceLambdaRefImpl extends UriResourceImplTyped implements UriResourceLambdaRef {
+public class OrderByItemImpl extends SystemQueryOptionImpl implements OrderByItem {
 
-  private EdmType type;
-  private boolean isCollection;
-  private String variableText;
+  private ExpressionImpl expression;
+  private boolean descending = false; // default sort order is ascending
 
-  public UriResourceLambdaRefImpl() {
-    super(UriResourceKind.lambdaVariable);
-  }
-  
   @Override
-  public String getVariableText() {
-    return variableText;
+  public boolean isDescending() {
+    return descending;
   }
 
-  public UriResourceLambdaRefImpl setVariableText(String variableText) {
-    this.variableText = variableText;
+  public OrderByItem setSortOrder(final boolean descending) {
+    this.descending = descending;
     return this;
   }
 
   @Override
-  public EdmType getType() {
-    return type;
+  public ExpressionImpl getExpression() {
+    return expression;
   }
 
-  public UriResourceLambdaRefImpl setType(EdmType type) {
-    this.type = type;
-    return this;
-
-  }
-
-  @Override
-  public boolean isCollection() {
-    return isCollection;
-  }
-
-  public UriResourceLambdaRefImpl isCollection(boolean isCollection) {
-    this.isCollection = isCollection;
+  public OrderByItem setExpression(final ExpressionImpl expression) {
+    this.expression = expression;
     return this;
   }
 

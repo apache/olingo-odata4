@@ -19,19 +19,27 @@
 package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceIt;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaRef;
 
-/**
- * Covers Functionimports and BoundFunction in URI
- */
-public class UriResourceItImpl extends UriResourceImplKeyPred implements UriResourceIt {
+public class UriResourceLambdaVarImpl extends UriResourceImplTyped implements UriResourceLambdaRef {
 
   private EdmType type;
   private boolean isCollection;
+  private String variableText;
 
-  public UriResourceItImpl() {
-    super(UriResourceKind.it);
+  public UriResourceLambdaVarImpl() {
+    super(UriResourceKind.lambdaVariable);
+  }
+
+  @Override
+  public String getVariableText() {
+    return variableText;
+  }
+
+  public UriResourceLambdaVarImpl setVariableText(final String variableText) {
+    this.variableText = variableText;
+    return this;
   }
 
   @Override
@@ -39,27 +47,24 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
     return type;
   }
 
+  public UriResourceLambdaVarImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+
+  }
+
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
     return isCollection;
   }
 
-  public UriResourceItImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
-  public UriResourceItImpl setCollection(final boolean isCollection) {
+  public UriResourceLambdaVarImpl isCollection(final boolean isCollection) {
     this.isCollection = isCollection;
     return this;
   }
 
   @Override
   public String toString() {
-    return "$it";
+    return variableText;
   }
-
 }

@@ -67,6 +67,4 @@ public class UriResourceComplexPropertyImpl extends UriResourceImplTyped impleme
     return property.getName();
   }
 
- 
-
 }

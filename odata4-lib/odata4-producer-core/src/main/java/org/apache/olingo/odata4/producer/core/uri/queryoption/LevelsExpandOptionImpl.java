@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -18,34 +19,40 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-public class OrderByImpl extends SystemQueryOptionImpl implements OrderByOption {
+public class LevelsExpandOptionImpl extends SystemQueryOptionImpl implements LevelsExpandOption {
+  private boolean isMax;
+  private int value;
 
-  private List<OrderByOptionImpl> orders;
+  public LevelsExpandOptionImpl() {
+    setKind(SupportedQueryOptions.LEVELS);
+  }
 
-  public OrderByImpl() {
-    setKind(SupportedQueryOptions.ORDERBY);
+  public LevelsExpandOptionImpl setValue(final int value) {
+    this.value = value;
+    return this;
+  }
+
+  public int getValue() {
+    return value;
   }
 
   @Override
-  public List<OrderByItem> getOrders() {
-    List<OrderByItem> retList = new ArrayList<OrderByItem>();
-    for (OrderByOptionImpl item : orders) {
-      retList.add(item);
-    }
-    return Collections.unmodifiableList(retList);
+  public boolean isMax() {
+    return isMax;
   }
 
-  public OrderByImpl addOrder(final OrderByOptionImpl order) {
-    orders.add(order);
+  public LevelsExpandOptionImpl setMax() {
+    isMax = true;
     return this;
+
+  }
+
+  @Override
+  public int getLevel() {
+    return value;
   }
 
 }

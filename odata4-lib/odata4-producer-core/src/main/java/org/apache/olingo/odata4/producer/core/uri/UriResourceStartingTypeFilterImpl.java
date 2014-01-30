@@ -19,19 +19,21 @@
 package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceIt;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceStartingTypeFilter;
 
-/**
- * Covers Functionimports and BoundFunction in URI
- */
-public class UriResourceItImpl extends UriResourceImplKeyPred implements UriResourceIt {
+public class UriResourceStartingTypeFilterImpl extends UriResourceImplKeyPred implements UriResourceStartingTypeFilter {
 
   private EdmType type;
   private boolean isCollection;
 
-  public UriResourceItImpl() {
-    super(UriResourceKind.it);
+  public UriResourceStartingTypeFilterImpl() {
+    super(UriResourceKind.startingTypeFilter);
+  }
+
+  @Override
+  public UriResourceKind getKind() {
+    return kind;
   }
 
   @Override
@@ -39,27 +41,19 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
     return type;
   }
 
-  @Override
-  public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return isCollection;
-  }
-
-  public UriResourceItImpl setType(final EdmType type) {
+  public UriResourceStartingTypeFilterImpl setType(final EdmType type) {
     this.type = type;
     return this;
   }
 
-  public UriResourceItImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
+  @Override
+  public boolean isCollection() {
+    return isCollection;
   }
 
-  @Override
-  public String toString() {
-    return "$it";
+  public UriResourceStartingTypeFilterImpl setIsCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
   }
 
 }

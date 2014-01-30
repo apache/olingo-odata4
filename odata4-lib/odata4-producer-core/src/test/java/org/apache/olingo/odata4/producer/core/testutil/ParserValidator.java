@@ -56,7 +56,7 @@ public class ParserValidator {
   }
 
   public ParserValidator lexerLog(final int logLevel) {
-    this.lexerLogLevel = logLevel;
+    lexerLogLevel = logLevel;
     return this;
   }
 
@@ -127,7 +127,7 @@ public class ParserValidator {
   }
 
   // --- Navigation ---
-  
+
   public ParserValidator exFirst() {
     try {
       // curWeakException = exceptions.get(0);
@@ -187,13 +187,13 @@ public class ParserValidator {
       exceptions.clear();
 
       // create parser
-      lexer = new UriLexerWithTrace(new ANTLRInputStream(input), this.lexerLogLevel);
+      lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
       parser = new UriParserParser(new CommonTokenStream(lexer));
 
       // write always a error message in case of syntax errors
       // parser.addErrorListener(new TestErrorHandler<Object>());
       // check error message if whether they are allowed or not
-      //parser.addErrorListener(new ErrorCollector());
+      // parser.addErrorListener(new ErrorCollector());
 
       // bail out of parser at first syntax error. --> proceed in catch block with step 2
       parser.setErrorHandler(new BailErrorStrategy());
@@ -216,13 +216,13 @@ public class ParserValidator {
         exceptions.clear();
 
         // create parser
-        lexer = new UriLexerWithTrace(new ANTLRInputStream(input), this.lexerLogLevel);
+        lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
         parser = new UriParserParser(new CommonTokenStream(lexer));
 
         // write always a error message in case of syntax errors
-        //parser.addErrorListener(new ErrorCollector(this));
+        // parser.addErrorListener(new ErrorCollector(this));
         // check error message if whether they are allowed or not
-        //parser.addErrorListener(new ErrorCollector(this));
+        // parser.addErrorListener(new ErrorCollector(this));
 
         // Used default error strategy
         parser.setErrorHandler(new DefaultErrorStrategy());

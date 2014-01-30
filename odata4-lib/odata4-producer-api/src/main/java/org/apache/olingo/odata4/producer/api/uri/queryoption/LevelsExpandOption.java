@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -17,42 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption;
+package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelExpandOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
+public interface LevelsExpandOption {
 
-public class LevelExpandOptionImpl extends SystemQueryOptionImpl implements LevelExpandOption {
-  private boolean isMax;
-  private int value;
+  boolean isMax();
 
-  public LevelExpandOptionImpl() {
-    setKind(SupportedQueryOptions.LEVEL);
-  }
-
-  public LevelExpandOptionImpl setValue(final int value) {
-    this.value = value;
-    return this;
-  }
-
-  public int getValue() {
-    return value;
-  }
-
-  @Override
-  public boolean isMax() {
-    return isMax;
-  }
-
-  public LevelExpandOptionImpl setMax() {
-    isMax = true;
-    return this;
-
-  }
-
-  @Override
-  public int getLevel() {
-    return value;
-  }
+  int getLevel();
 
 }

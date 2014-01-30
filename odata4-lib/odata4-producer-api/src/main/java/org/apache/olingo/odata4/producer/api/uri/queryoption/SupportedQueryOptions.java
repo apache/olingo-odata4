@@ -30,7 +30,7 @@ public enum SupportedQueryOptions {
   SKIP("$skip"),
   SKIPTOKEN("$skiptoken"),
   TOP("$top"),
-  LEVEL("$level");
+  LEVELS("$level");
 
   String syntax;
 

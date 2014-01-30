@@ -18,13 +18,37 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceRoot;
 
-public class UriResourceRootImpl extends UriResourcePartImpl implements UriResourceRoot {
+public class UriResourceRootImpl extends UriResourceImplTyped implements UriResourceRoot {
+
+  private EdmType type;
+  private boolean isCollection;
 
   public UriResourceRootImpl() {
     super(UriResourceKind.root);
+  }
+
+  @Override
+  public EdmType getType() {
+    return type;
+  }
+
+  public UriResourceRootImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+  }
+
+  @Override
+  public boolean isCollection() {
+    return isCollection;
+  }
+
+  public UriResourceRootImpl setIsCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
   }
 
   @Override

@@ -52,7 +52,7 @@ import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.IdOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
@@ -69,18 +69,20 @@ public class UriInfoImpl implements UriInfo {
   private EdmEntityType entityTypeCast; // for $entity
 
   // Query options
-  private List<CustomQueryOptionImpl> customQueryOptions;
+  private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
   private ExpandOptionImpl expandOption;
   private FilterOptionImpl filterOption;
   private FormatOptionImpl formatOption;
   private IdOption idOption;
   private InlineCountOptionImpl inlineCountOption;
-  private OrderByImpl orderByOption;
+  private OrderByOptionImpl orderByOption;
   private SearchOptionImpl searchOption;
   private SelectOptionImpl selectOption;
   private SkipOptionImpl skipOption;
   private SkiptokenOptionImpl skipTokenOption;
   private TopOptionImpl topOption;
+
+  private String fragment;
 
   private UriResourcePart lastResourcePart;
   private List<UriResourcePart> pathParts = new ArrayList<UriResourcePart>();
@@ -136,12 +138,6 @@ public class UriInfoImpl implements UriInfo {
   public void addPathInfo(final UriResourcePartImpl uriPathInfo) {
     pathParts.add(uriPathInfo);
     lastResourcePart = uriPathInfo;
-  }
-
-  @Override
-  public String getContext() {
-    // TODO add support for UTI context part
-    return null;
   }
 
   @Override
@@ -255,7 +251,7 @@ public class UriInfoImpl implements UriInfo {
         } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
           inlineCountOption = (InlineCountOptionImpl) sysItem;
         } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
-          orderByOption = (OrderByImpl) sysItem;
+          orderByOption = (OrderByOptionImpl) sysItem;
         } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
           searchOption = (SearchOptionImpl) sysItem;
         } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
@@ -281,5 +277,14 @@ public class UriInfoImpl implements UriInfo {
 
   public void clearPathInfo() {
     pathParts.clear();
+  }
+
+  public String getFragment() {
+    return fragment;
+  }
+
+  public UriInfoImpl setFragment(String fragment) {
+    this.fragment = fragment;
+    return this;
   }
 }

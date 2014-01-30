@@ -35,11 +35,9 @@ public class SkipOptionImpl extends SystemQueryOptionImpl implements SkipOption 
     return value;
   }
 
-
   public SkipOptionImpl setValue(final String value) {
     this.value = value;
     return this;
   }
-
 
 }

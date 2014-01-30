@@ -30,63 +30,62 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Exceptio
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.LevelExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
 
-public class ExpandValidator  implements Validator{
+public class ExpandValidator implements Validator {
   private Edm edm;
   private Validator invokedByValidator;
+
   private int expandItemIndex;
   private ExpandOptionImpl expandOption;
   private ExpandItem expandItem;
 
   // --- Setup ---
 
-  public ExpandValidator setUpValidator(Validator parentValidator) {
-    this.invokedByValidator = parentValidator;
+  public ExpandValidator setGoUpValidator(final Validator parentValidator) {
+    invokedByValidator = parentValidator;
     return this;
   }
 
-  
-  public ExpandValidator setExpand(ExpandOptionImpl expand) {
-    this.expandOption = expand;
+  public ExpandValidator setExpand(final ExpandOptionImpl expand) {
+    expandOption = expand;
     first();
     return this;
   }
-  
+
   public ExpandValidator setEdm(final Edm edm) {
     this.edm = edm;
     return this;
   }
 
   // --- Navigation ---
-  
+
   public UriResourceValidator goPath() {
     UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getPath();
-    
-    
+
     if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("goPath can only be used on resourcePaths");
+      fail("goPath() can only be used on UriInfoKind.resource");
     }
 
     return new UriResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
         .setUriInfoImplPath(uriInfo);
-    
+
   }
-  
+
   public ExpandValidator goExpand() {
     ExpandValidator val = new ExpandValidator();
-    val.setExpand( (ExpandOptionImpl)expandItem.getExpand());
-    val.setUpValidator(this);
+    val.setExpand((ExpandOptionImpl) expandItem.getExpand());
+    val.setGoUpValidator(this);
     return val;
   }
-  
-  public ExpandValidator goUpExpandValidator() {
+
+  public ExpandValidator goUpToExpandValidator() {
     return (ExpandValidator) invokedByValidator;
   }
-  
-  public UriResourceValidator goUpUriResValidator() {
+
+  public UriResourceValidator goUpToUriResourceValidator() {
     return (UriResourceValidator) invokedByValidator;
   }
 
@@ -96,81 +95,79 @@ public class ExpandValidator  implements Validator{
     return this;
   }
 
-  public ExpandValidator n() {
+  public ExpandValidator next() {
     expandItemIndex++;
 
     try {
       expandItem = expandOption.getExpandItems().get(expandItemIndex);
     } catch (IndexOutOfBoundsException ex) {
-      fail("not enought segemnts");
+      fail("not enought segments");
     }
     return this;
 
   }
 
-  public ExpandValidator isSegStar(int index) {
+  public ExpandValidator isSegmentStar(final int index) {
     assertEquals(true, expandItem.isStar());
     return this;
   }
 
-  public ExpandValidator isSegRef(int index) {
+  public ExpandValidator isSegmentRef(final int index) {
     assertEquals(true, expandItem.isRef());
     return this;
   }
 
+  public ExpandValidator isLevelText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getLevels();
+    assertEquals(text, option.getText());
+    return this;
+  }
+
+  public ExpandValidator isSkipText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSkip();
+    assertEquals(text, option.getText());
+    return this;
+  }
+
+  public ExpandValidator isTopText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getTop();
+    assertEquals(text, option.getText());
+    return this;
+  }
+
+  public ExpandValidator isInlineCountText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getInlineCount();
+    assertEquals(text, option.getText());
+    return this;
+  }
+
+  public ExpandValidator isSelectText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSelect();
+    assertEquals(text, option.getText());
+    return this;
+  }
   
-  
-
-  public ExpandValidator isLevels(String text) {
-    LevelExpandOptionImpl obj = (LevelExpandOptionImpl) expandItem.getLevel();
-    assertEquals(text, obj.getText());
+  public ExpandValidator isFilterText(final String text) {
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getFilter();
+    assertEquals(text, option.getText());
     return this;
   }
 
-  public ExpandValidator isSkipText(String string) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  public ExpandValidator isTopText(String string) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  public ExpandValidator isCountText(String string) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  public ExpandValidator isSegCount(int i) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  public ExpandValidator isSelectText(String string) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  public ExpandValidator isLevelsText(String string) {
-
-    return this;
-  }
-
-  public ExpandValidator isFilterSerialized(String serialized) {
+  public ExpandValidator isFilterSerialized(final String serialized) {
     FilterOptionImpl filter = (FilterOptionImpl) expandItem.getFilter();
 
     try {
       String tmp = FilterTreeToText.Serialize(filter);
       assertEquals(serialized, tmp);
     } catch (ExceptionVisitExpression e) {
-      fail(e.getMessage());
+      fail("Exception occured while converting the filterTree into text" + "\n"
+          + " Exception: " + e.getMessage());
     } catch (ODataApplicationException e) {
-      fail(e.getMessage());
+      fail("Exception occured while converting the filterTree into text" + "\n"
+          + " Exception: " + e.getMessage());
     }
 
     return this;
   }
 
-  
 }

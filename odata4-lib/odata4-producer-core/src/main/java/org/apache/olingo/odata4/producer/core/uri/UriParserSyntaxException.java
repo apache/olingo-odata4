@@ -23,7 +23,7 @@ public class UriParserSyntaxException extends UriParserException {
   /**
    * 
    */
-  private static final long serialVersionUID =  1L;
+  private static final long serialVersionUID = 1L;
 
   public UriParserSyntaxException(final String message, final Throwable cause) {
     super(message, cause);

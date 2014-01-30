@@ -67,6 +67,4 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
     return edmEntitySet.getName();
   }
 
-  
-
 }

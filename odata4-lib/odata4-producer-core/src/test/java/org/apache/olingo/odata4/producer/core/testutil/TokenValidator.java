@@ -89,14 +89,14 @@ public class TokenValidator {
   }
 
   public TokenValidator exLast() {
-    //curException = exceptions.get(exceptions.size() - 1);
+    // curException = exceptions.get(exceptions.size() - 1);
     return this;
   }
 
   // navigate within the exception list
   public TokenValidator exFirst() {
     try {
-      //curException = exceptions.get(0);
+      // curException = exceptions.get(0);
     } catch (IndexOutOfBoundsException ex) {
       curException = null;
     }
@@ -106,7 +106,7 @@ public class TokenValidator {
 
   public TokenValidator exAt(final int index) {
     try {
-      //curException = exceptions.get(index);
+      // curException = exceptions.get(index);
     } catch (IndexOutOfBoundsException ex) {
       curException = null;
     }
@@ -114,7 +114,7 @@ public class TokenValidator {
   }
 
   // --- Validation ---
-  
+
   public TokenValidator isText(final String expected) {
     assertEquals(expected, curToken.getText());
     return this;
@@ -156,7 +156,7 @@ public class TokenValidator {
   }
 
   public void globalMode(final int mode) {
-    this.startMode = mode;
+    startMode = mode;
   }
 
   // --- Helper ---
@@ -165,7 +165,7 @@ public class TokenValidator {
     ANTLRInputStream inputStream = new ANTLRInputStream(input);
 
     UriLexer lexer = new UriLexerWithTrace(inputStream, logLevel, startMode);
-    //lexer.addErrorListener(new ErrorCollector(this));
+    // lexer.addErrorListener(new ErrorCollector(this));
     return lexer.getAllTokens();
   }
 

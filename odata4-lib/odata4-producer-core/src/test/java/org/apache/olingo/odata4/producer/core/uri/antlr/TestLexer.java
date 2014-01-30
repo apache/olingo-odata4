@@ -22,14 +22,13 @@ import org.antlr.v4.runtime.Lexer;
 import org.apache.olingo.odata4.producer.core.testutil.TokenValidator;
 import org.junit.Test;
 
-
 public class TestLexer {
 
   private TokenValidator test = null;
 
   private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";// last two chars are not in
                                                                          // cPCT_ENCODED_UNESCAPED
-  //private static final String cPCT_ENCODED_UNESCAPED = "%45%46%47";
+  // private static final String cPCT_ENCODED_UNESCAPED = "%45%46%47";
   private static final String cUNRESERVED = "ABCabc123-._~";
   private static final String cOTHER_DELIMS = "!()*+,;";
   private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
@@ -39,20 +38,15 @@ public class TestLexer {
 
   private static final String cPCHAR = cUNRESERVED + cPCT_ENCODED + cSUB_DELIMS + ":@";
 
-  //private static final String cQCHAR_UNESCAPED = cUNRESERVED + cPCT_ENCODED_UNESCAPED + cOTHER_DELIMS + ":@/?$'=";
+  // private static final String cQCHAR_UNESCAPED = cUNRESERVED + cPCT_ENCODED_UNESCAPED + cOTHER_DELIMS + ":@/?$'=";
 
   public TestLexer() {
     test = new TokenValidator();
   }
 
-  @Test
+  //@Test
   public void test() {
-    //test.log(1).run("Orders?$filter=Items/any(d:d/Quantity gt 100)");
-   /* test.globalMode(UriLexer.MODE_QUERY);
-    String reserved = "/";
-    test.log(1).run("$format=" + cPCHAR + "/" + cPCHAR + reserved)
-    .isType(UriLexer.FORMAT).at(4)
-    .isText(cPCHAR);*/
+    //test.log(1).run("$metadata?$format=atom#asdfaf");
   }
 
   // ;------------------------------------------------------------------------------
@@ -142,106 +136,107 @@ public class TestLexer {
 
   }
 
-  
-    // ;------------------------------------------------------------------------------
-    // ; 5. JSON format for function parameters
-    // ;------------------------------------------------------------------------------
-    
-    @Test
-    public void testQueryJSON_and_otheres() {
+  // ;------------------------------------------------------------------------------
+  // ; 5. JSON format for function parameters
+  // ;------------------------------------------------------------------------------
+
+  @Test
+  public void testQueryJSON_and_otheres() {
     // QUOTATION_MARK
-    //test.run("\"").isText("\"").isType(UriLexer.QUOTATION_MARK);
-    //test.run("%22").isText("%22").isType(UriLexer.QUOTATION_MARK);
-    
+    // test.run("\"").isText("\"").isType(UriLexer.QUOTATION_MARK);
+    // test.run("%22").isText("%22").isType(UriLexer.QUOTATION_MARK);
+
     // Lexer rule QCHAR_UNESCAPED
     test.run("\"abc\"").isText("\"abc\"").isType(UriLexer.STRING_IN_JSON);
-    
+
     // Lexer rule QCHAR_JSON_SPECIAL
     /*
-    test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    
-    // Lexer rule CHAR_IN_JSON
-    test.run("\"" + cQCHAR_UNESCAPED + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    
-    // Lexer rule ESCAPE CHAR_IN_JSON
-    test.run("\"" + cESCAPE + cQUOTATION_MARK + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + cESCAPE + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "/" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "%2F" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "b" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "f" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "n" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "r" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "t" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    test.run("\"" + cESCAPE + "u12AB" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
-    */
-    }
-    
-    // ;------------------------------------------------------------------------------
-    // ; 6. Names and identifiers
-    // ;------------------------------------------------------------------------------
-    
-    @Test
-    public void testNamesAndIdentifiers() {
+     * test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * 
+     * // Lexer rule CHAR_IN_JSON
+     * test.run("\"" + cQCHAR_UNESCAPED + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cQCHAR_JSON_SPECIAL + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * 
+     * // Lexer rule ESCAPE CHAR_IN_JSON
+     * test.run("\"" + cESCAPE + cQUOTATION_MARK + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + cESCAPE + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "/" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "%2F" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "b" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "f" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "n" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "r" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "t" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     * test.run("\"" + cESCAPE + "u12AB" + "\"").isInput().isType(UriLexer.STRING_IN_JSON);
+     */
+  }
+
+  // ;------------------------------------------------------------------------------
+  // ; 6. Names and identifiers
+  // ;------------------------------------------------------------------------------
+
+  @Test
+  public void testNamesAndIdentifiers() {
     /*
-    test.run("Binary").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Boolean").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Byte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Date").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("DateTimeOffset").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Decimal").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Double").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Duration").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Guid").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Int16").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Int32").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Int64").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("SByte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Single").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Stream").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("String").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("TimeOfDay").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    
-    test.run("Geography").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run("Geometry").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    
-    String g = "Geography";
-    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    
-    g = "Geometry";
-    test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
-    */
-    }
-    
-    @Test
-    public void testNameClaches() {
-    /*test.run("Collection").isInput().isType(UriLexer.COLLECTION_CS_FIX);
-    test.run("LineString").isInput().isType(UriLexer.LINESTRING_CS_FIX);
-    test.run("MultiLineString").isInput().isType(UriLexer.MULTILINESTRING_CS_FIX);
-    test.run("MultiPoint").isInput().isType(UriLexer.MULTIPOINT_CS_FIX);
-    test.run("MultiPolygon").isInput().isType(UriLexer.MULTIPOLYGON_CS_FIX);
-    test.run("Point").isInput().isType(UriLexer.POINT_CS_FIX);
-    test.run("Polygon").isInput().isType(UriLexer.POLYGON_CS_FIX);
-    test.run("Srid").isInput().isType(UriLexer.SRID_CS);*/
-    }
-   
+     * test.run("Binary").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Boolean").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Byte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Date").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("DateTimeOffset").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Decimal").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Double").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Duration").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Guid").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Int16").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Int32").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Int64").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("SByte").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Single").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Stream").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("String").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("TimeOfDay").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * 
+     * test.run("Geography").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run("Geometry").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * 
+     * String g = "Geography";
+     * test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * 
+     * g = "Geometry";
+     * test.run(g ).isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Collection").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiLineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiPoint").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "MultiPolygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Point").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "LineString").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     * test.run(g + "Polygon").isInput().isType(UriLexer.PRIMITIVETYPENAME);
+     */
+  }
+
+  @Test
+  public void testNameClaches() {
+    /*
+     * test.run("Collection").isInput().isType(UriLexer.COLLECTION_CS_FIX);
+     * test.run("LineString").isInput().isType(UriLexer.LINESTRING_CS_FIX);
+     * test.run("MultiLineString").isInput().isType(UriLexer.MULTILINESTRING_CS_FIX);
+     * test.run("MultiPoint").isInput().isType(UriLexer.MULTIPOINT_CS_FIX);
+     * test.run("MultiPolygon").isInput().isType(UriLexer.MULTIPOLYGON_CS_FIX);
+     * test.run("Point").isInput().isType(UriLexer.POINT_CS_FIX);
+     * test.run("Polygon").isInput().isType(UriLexer.POLYGON_CS_FIX);
+     * test.run("Srid").isInput().isType(UriLexer.SRID_CS);
+     */
+  }
+
   // ;------------------------------------------------------------------------------
   // ; 7. Literal Data Values
   // ;------------------------------------------------------------------------------
@@ -297,7 +292,7 @@ public class TestLexer {
 
     // Lexer rule DATE
     test.run("2013-11-15").isInput().isType(UriLexer.DATE);
-    
+
     // Lexer rule DATETIMEOFFSET
     test.run("2013-11-15T13:35Z").isInput().isType(UriLexer.DATETIMEOFFSET);
     test.run("2013-11-15T13:35:10Z").isInput().isType(UriLexer.DATETIMEOFFSET);
@@ -392,25 +387,27 @@ public class TestLexer {
     test.run("$format=A/:@" + reserved).isType(UriLexer.FORMAT).at(4).isText(":@");
     // Test lexer rule PCHAR all
     test.run("$format=" + cPCHAR + "/" + cPCHAR).isAllInput().isType(UriLexer.FORMAT);
-    
-    /*test.run("$format=" + cPCHAR + "/" + cPCHAR + reserved)
-        .isType(UriLexer.FORMAT).at(4)
-        .isText(cPCHAR);*/
+
+    /*
+     * test.run("$format=" + cPCHAR + "/" + cPCHAR + reserved)
+     * .isType(UriLexer.FORMAT).at(4)
+     * .isText(cPCHAR);
+     */
 
     // Test lexer rule QCHAR_NO_AMP
-    //String amp = "&";
+    // String amp = "&";
     // Test lexer rule UNRESERVED
-    //test.run("$id=" + cUNRESERVED).isAllInput().isType(UriLexer.ID);
-    //test.run("$id=" + cUNRESERVED + amp).isType(UriLexer.ID).at(2).isText(cUNRESERVED);
+    // test.run("$id=" + cUNRESERVED).isAllInput().isType(UriLexer.ID);
+    // test.run("$id=" + cUNRESERVED + amp).isType(UriLexer.ID).at(2).isText(cUNRESERVED);
     // Test lexer rule PCT_ENCODED
-    //test.run("$id=" + cPCT_ENCODED).isAllInput().isType(UriLexer.ID);
-    //test.run("$id=" + cPCT_ENCODED + amp).isType(UriLexer.ID).at(2).isText(cPCT_ENCODED);
+    // test.run("$id=" + cPCT_ENCODED).isAllInput().isType(UriLexer.ID);
+    // test.run("$id=" + cPCT_ENCODED + amp).isType(UriLexer.ID).at(2).isText(cPCT_ENCODED);
     // Test lexer rule OTHER_DELIMS
-    //test.run("$id=" + cOTHER_DELIMS).isAllInput().isType(UriLexer.ID);
-    //test.run("$id=" + cOTHER_DELIMS + amp).isType(UriLexer.ID).at(2).isText(cOTHER_DELIMS);
+    // test.run("$id=" + cOTHER_DELIMS).isAllInput().isType(UriLexer.ID);
+    // test.run("$id=" + cOTHER_DELIMS + amp).isType(UriLexer.ID).at(2).isText(cOTHER_DELIMS);
     // Lexer rule QCHAR_NO_AMP rest
-    //test.run("$id=:@/?$'=").isAllText("$id=:@/?$'=").isType(UriLexer.ID);
-    //test.run("$id=:@/?$'=" + amp).isType(UriLexer.ID).at(2).isText(":@/?$'=");
+    // test.run("$id=:@/?$'=").isAllText("$id=:@/?$'=").isType(UriLexer.ID);
+    // test.run("$id=:@/?$'=" + amp).isType(UriLexer.ID).at(2).isText(":@/?$'=");
 
   }
 

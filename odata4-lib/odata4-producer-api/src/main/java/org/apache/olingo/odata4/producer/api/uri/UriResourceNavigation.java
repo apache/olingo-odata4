@@ -27,7 +27,7 @@ public interface UriResourceNavigation extends UriResourcePartTyped {
 
   List<UriParameter> getKeyPredicates();
 
-  EdmNavigationProperty getNavigationProperty();
+  EdmNavigationProperty getProperty();
 
   EdmType getTypeFilterOnCollection();
 

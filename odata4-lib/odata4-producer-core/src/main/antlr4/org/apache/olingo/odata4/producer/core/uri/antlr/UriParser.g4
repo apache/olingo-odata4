@@ -186,8 +186,8 @@ levels              : LEVELS EQ ( INT | MAX );
 
 filter              : FILTER EQ commonExpr;
 
-orderBy             : ORDERBY EQ orderByItem ( COMMA orderByItem )*;
-orderByItem         : commonExpr ( WSP ( ASC | DESC ) )?;
+orderBy             : ORDERBY EQ WSP* vlOI+=orderByItem ( WSP* COMMA WSP* vlOI+=orderByItem )*;
+orderByItem         : vC=commonExpr ( WSP ( vA=ASC | vD=DESC ) )?;
 
 //this is completly done in lexer grammer to avoid ambiguities with odataIdentifier and STRING
 skip                : SKIP EQ INT;
@@ -235,15 +235,7 @@ customValue         : REST;
 //; 3. Context URL Fragments
 //;------------------------------------------------------------------------------
 //TODO add ps+=pathSegment (SLASH ps+=pathSegment)*
-contextFragment     : REF
-                    | COLLECTION_REF
-                    | COLLECTION_ENTITY_TYPE
-                    | COLLECTION_COMPLEX_TYPE
-                    | namespace? odataIdentifier 
-                      ( SLASH ( DELETED_ENTITY | LINK | DELETED_LINK )
-                      | nameValueOptList? ( SLASH namespace? odataIdentifier)* ( propertyList )? ( SLASH DELTA) ? (SLASH ENTITY) ? 
-                      )
-                    ;              
+contextFragment     : REST;
 
 propertyList         : OPEN propertyListItem ( COMMA propertyListItem )* CLOSE;
 propertyListItem     : STAR           //; all structural properties
@@ -432,7 +424,7 @@ primitiveLiteral    : nullrule
                     | GUID
                     | string
                     | TIMEOFDAY
-                    | enumX
+                    | enumLit
                     | geographyCollection
                     | geographyLineString
                     | geographyMultilineString
@@ -454,10 +446,10 @@ nullrule            : NULLVALUE;// (SQUOTE qualifiedtypename SQUOTE)?;
 booleanNonCase      : BOOLEAN | TRUE | FALSE;
 string              : STRING;
 
-
-enumX               : namespace odataIdentifier STRING;
-enumValue           : singleEnumValue *( COMMA singleEnumValue );
-singleEnumValue     : odataIdentifier / INT;
+enumLit             : vNS=namespace vODI=odataIdentifier vValues=STRING;
+//enum             : namespace odataIdentifier STRING;
+enumValues         : vlODI+=odataIdentifier ( COMMA vlODI+=odataIdentifier )*;
+//singleEnumValue  : odataIdentifier / INT;
 
 
 geographyCollection        : GEOGRAPHY  fullCollectionLiteral SQUOTE;

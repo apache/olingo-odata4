@@ -16,12 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.api.uri.queryoption;
+package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-public interface LevelExpandOption {
+public enum SupportedConstants {
+  
+  TRUE("true"),
+  FALSE("false"),
+  NULL("null");
+  
+  private String syntax;
 
-  boolean isMax();
+  private SupportedConstants(final String syntax) {
+    this.syntax = syntax;
+  }
 
-  int getLevel();
+  public static SupportedConstants get(final String operator) {
+    for (SupportedConstants op : SupportedConstants.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
+  }
 
 }

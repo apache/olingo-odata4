@@ -19,6 +19,9 @@
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
 public enum SupportedBinaryOperators {
+  
+  //enum
+  HAS("has"),
   // multiplicative
   MUL("mul"), DIV("div"), MOD("mod"),
   // additive

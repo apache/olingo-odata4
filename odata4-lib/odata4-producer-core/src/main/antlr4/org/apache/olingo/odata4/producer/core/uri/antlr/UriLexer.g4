@@ -28,6 +28,7 @@ AMP             : '&'                 ->        pushMode(MODE_QUERY);           
 STRING          : '\''                -> more,  pushMode(MODE_STRING);              //reads up to next single '
 QUOTATION_MARK  : ('\u0022' | '%22')  -> more,  pushMode(MODE_JSON_STRING);         //reads up to next unescaped "
 SEARCH_INLINE   : '$search'           ->        pushMode(MODE_SYSTEM_QUERY_SEARCH); //
+FRAGMENT        : '#'                 ->        pushMode(MODE_FRAGMENT); //
 
 GEOGRAPHY    : G E O G R A P H Y SQUOTE         -> pushMode(MODE_ODATA_GEO); //TODO make case insensitive
 GEOMETRY     : G E O M E T R Y   SQUOTE         -> pushMode(MODE_ODATA_GEO);
@@ -63,7 +64,6 @@ AT              : '@';
 EQ              : '=' ;
 STAR            : '*';
 SEMI            : ';' | '%3b';
-FRAGMENT        : '#';
 COLON           : ':';
 
 EQ_sq           : '='           -> type(EQ);
@@ -298,6 +298,15 @@ PCHARS : PCHARSTART PCHAR*;
 
 SLASH_sqp : '/' -> type(SLASH);
 EQ_sqp    : '=' -> type(EQ);
+FRAGMENT_sqp  : '#'     -> type(FRAGMENT),  pushMode(MODE_FRAGMENT);
+
+//;==============================================================================
+mode MODE_FRAGMENT;
+// Read the remaining characters of a URI queryparameter up to an & or # 
+// character.
+//;==============================================================================
+
+REST_F          : .* -> type(REST);
 
 //;==============================================================================
 mode MODE_SYSTEM_QUERY_REST;

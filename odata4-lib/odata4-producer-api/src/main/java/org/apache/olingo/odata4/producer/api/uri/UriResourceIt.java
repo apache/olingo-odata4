@@ -31,6 +31,4 @@ public interface UriResourceIt extends UriResourcePartTyped {
   EdmType getTypeFilterOnCollection();
 
   EdmType getTypeFilterOnEntry();
-
-   boolean isExplicitIt();
 }
