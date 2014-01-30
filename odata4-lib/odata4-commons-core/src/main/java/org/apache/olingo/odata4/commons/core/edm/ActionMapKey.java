@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.core.edm;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public class ActionMapKey {
@@ -27,6 +28,10 @@ public class ActionMapKey {
 
   public ActionMapKey(final FullQualifiedName actionName, final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection) {
+    if (actionName == null || bindingParameterTypeName == null || isBindingParameterCollection == null) {
+      throw new EdmException(
+          "Action name, binding parameter type and binding parameter collection must not be null for bound actions");
+    }
     this.actionName = actionName;
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
@@ -34,20 +39,8 @@ public class ActionMapKey {
 
   @Override
   public int hashCode() {
-    String forHash = actionName.toString();
-
-    if (bindingParameterTypeName != null) {
-      forHash = forHash + bindingParameterTypeName.toString();
-    } else {
-      forHash = forHash + "TypeNull";
-    }
-
-    if (isBindingParameterCollection != null) {
-      forHash = forHash + isBindingParameterCollection.toString();
-    } else {
-      forHash = forHash + "CollectionNull";
-    }
-
+    String forHash =
+        actionName.toString() + bindingParameterTypeName.toString() + isBindingParameterCollection.toString();
     return forHash.hashCode();
   }
 
@@ -60,16 +53,9 @@ public class ActionMapKey {
       return false;
     }
     final ActionMapKey other = (ActionMapKey) obj;
-
-    if (actionName.equals(other.actionName)) {
-      if ((bindingParameterTypeName == null && other.bindingParameterTypeName == null)
-          || (bindingParameterTypeName != null && bindingParameterTypeName.equals(other.bindingParameterTypeName))) {
-        if ((isBindingParameterCollection == null && other.isBindingParameterCollection == null)
-            || (isBindingParameterCollection != null && isBindingParameterCollection
-                .equals(other.isBindingParameterCollection))) {
-          return true;
-        }
-      }
+    if (actionName.equals(other.actionName) && bindingParameterTypeName.equals(other.bindingParameterTypeName)
+        && isBindingParameterCollection.equals(other.isBindingParameterCollection)) {
+      return true;
     }
     return false;
   }

@@ -21,31 +21,32 @@ package org.apache.olingo.odata4.commons.core.edm.provider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
-import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.odata4.commons.api.edm.provider.Action;
+import org.apache.olingo.odata4.commons.api.edm.provider.AliasInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.EnumType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.edm.provider.Function;
-import org.apache.olingo.odata4.commons.api.edm.provider.Parameter;
 import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata4.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.odata4.commons.api.exception.ODataException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,17 +76,67 @@ public class EdmProviderImplTest {
     ComplexType complexType = new ComplexType().setName(FQN.getName());
     when(provider.getComplexType(FQN)).thenReturn(complexType);
 
-    Action action = new Action().setName(FQN.getName());
-    List<Action> actions = new ArrayList<Action>();
-    actions.add(action);
-    when(provider.getActions(FQN)).thenReturn(actions);
-
-    Function function = new Function().setName(FQN.getName()).setParameters(new ArrayList<Parameter>());
-    List<Function> functions = new ArrayList<Function>();
-    functions.add(function);
-    when(provider.getFunctions(FQN)).thenReturn(functions);
+    List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
+    aliasInfos.add(new AliasInfo().setAlias("alias").setNamespace("namespace"));
+    when(provider.getAliasInfos()).thenReturn(aliasInfos);
 
     edm = new EdmProviderImpl(provider);
+  }
+
+  @Test
+  public void convertExceptionsTest() throws Exception{
+    EdmProvider localProvider = mock(EdmProvider.class);
+    FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
+    when(localProvider.getEntityContainerInfo(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getEnumType(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getTypeDefinition(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getEntityType(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getComplexType(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getActions(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getFunctions(fqn)).thenThrow(new ODataException("msg"));
+    
+    Edm localEdm = new EdmProviderImpl(localProvider);
+
+    callMethodAndExpectEdmException(localEdm, "getEntityContainer");
+    callMethodAndExpectEdmException(localEdm, "getEnumType");
+    callMethodAndExpectEdmException(localEdm, "getTypeDefinition");
+    callMethodAndExpectEdmException(localEdm, "getEntityType");
+    callMethodAndExpectEdmException(localEdm, "getComplexType");
+    
+    //seperate because of signature
+    try {
+      localEdm.getAction(fqn, null, null);
+    } catch (EdmException e) {
+      assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
+    }
+    
+    try {
+      localEdm.getFunction(fqn, null, null, null);
+    } catch (EdmException e) {
+      assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
+    }
+  }
+  
+  private void callMethodAndExpectEdmException(Edm localEdm, String methodName) throws Exception {
+    Method method = localEdm.getClass().getMethod(methodName, FullQualifiedName.class);
+    try {
+      method.invoke(localEdm, new FullQualifiedName("namespace", "name"));
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if(cause instanceof EdmException){
+        return;
+      }
+    }
+    fail("EdmException expected for method: " + methodName);
+  }
+
+  @Test(expected = EdmException.class)
+  public void convertExceptionsAliasTest() throws Exception{
+    EdmProvider localProvider = mock(EdmProvider.class);
+    when(localProvider.getAliasInfos()).thenThrow(new ODataException("msg"));
+    
+    Edm localEdm = new EdmProviderImpl(localProvider);
+    localEdm.getEntityContainer(null);
   }
 
   @Test
@@ -141,26 +192,6 @@ public class EdmProviderImplTest {
     assertEquals(FQN.getName(), complexType.getName());
 
     assertNull(edm.getComplexType(WRONG_FQN));
-  }
-
-  @Test
-  public void getAction() {
-    EdmAction action = edm.getAction(FQN, null, null);
-    assertNotNull(action);
-    assertEquals(FQN.getNamespace(), action.getNamespace());
-    assertEquals(FQN.getName(), action.getName());
-
-    assertNull(edm.getAction(WRONG_FQN, null, null));
-  }
-
-  @Test
-  public void getFunction() {
-    EdmFunction function = edm.getFunction(FQN, null, null, new ArrayList<String>());
-    assertNotNull(function);
-    assertEquals(FQN.getNamespace(), function.getNamespace());
-    assertEquals(FQN.getName(), function.getName());
-
-    assertNull(edm.getFunction(WRONG_FQN, null, null, new ArrayList<String>()));
   }
 
   @Test

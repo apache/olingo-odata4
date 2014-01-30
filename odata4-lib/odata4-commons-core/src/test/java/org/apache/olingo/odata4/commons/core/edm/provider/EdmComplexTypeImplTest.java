@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.commons.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -73,6 +74,21 @@ public class EdmComplexTypeImplTest {
     when(provider.getComplexType(name)).thenReturn(complexType);
 
     type = new EdmComplexTypeImpl(edm, name, complexType);
+  }
+
+  @Test
+  public void typeMustBeCompatibletoBasetype() {
+    assertTrue(type.compatibleTo(baseType));
+  }
+
+  @Test
+  public void baseTypeMustNotBeCompatibleToType() {
+    assertFalse(baseType.compatibleTo(type));
+  }
+
+  @Test(expected = EdmException.class)
+  public void nullForCompatibleTypeMustResultInEdmException() {
+    assertFalse(type.compatibleTo(null));
   }
 
   @Test

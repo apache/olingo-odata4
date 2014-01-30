@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 
 public class FunctionMapKey {
@@ -34,6 +35,10 @@ public class FunctionMapKey {
   public FunctionMapKey(final FullQualifiedName functionName, final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection, final List<String> parameterNames) {
     this.functionName = functionName;
+    if (bindingParameterTypeName != null && isBindingParameterCollection == null) {
+      throw new EdmException(
+          "Indicator that the bindingparameter is a collection must not be null if its an bound function.");
+    }
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
     if (parameterNames != null) {

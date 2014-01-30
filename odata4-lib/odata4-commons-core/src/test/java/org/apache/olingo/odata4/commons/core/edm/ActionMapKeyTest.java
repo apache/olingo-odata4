@@ -20,7 +20,9 @@ package org.apache.olingo.odata4.commons.core.edm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.junit.Test;
 
@@ -30,55 +32,68 @@ public class ActionMapKeyTest {
   private final FullQualifiedName fqnType = new FullQualifiedName("namespace2", "name2");
 
   @Test
+  public void invalidParametersTest() {
+    createAndCheckForEdmException(null, null, null);
+    createAndCheckForEdmException(fqn, null, null);
+    createAndCheckForEdmException(fqn, fqnType, null);
+    createAndCheckForEdmException(fqn, null, true);
+    createAndCheckForEdmException(null, fqnType, true);
+    createAndCheckForEdmException(null, fqnType, null);
+    createAndCheckForEdmException(null, null, true);
+
+  }
+
+  private void createAndCheckForEdmException(FullQualifiedName fqn, FullQualifiedName typeName, Boolean collection) {
+    try {
+      new ActionMapKey(fqn, typeName, collection);
+    } catch (EdmException e) {
+      return;
+    }
+    fail("EdmException expected for parameters: " + fqn + " " + typeName + " " + collection);
+  }
+
+  @Test
   public void testEqualsMethod() {
-    ActionMapKey key1 = new ActionMapKey(fqn, null, null);
-    ActionMapKey someKey = new ActionMapKey(fqn, null, null);
-    assertEquals(key1, someKey);
+    ActionMapKey key;
+    ActionMapKey someKey;
 
-    key1 = new ActionMapKey(fqn, null, new Boolean(true));
-    someKey = new ActionMapKey(fqn, null, true);
-    assertEquals(key1, someKey);
-
-    key1 = new ActionMapKey(fqn, fqnType, false);
+    key = new ActionMapKey(fqn, fqnType, false);
     someKey = new ActionMapKey(fqn, fqnType, false);
-    assertEquals(key1, someKey);
+    assertEquals(key, someKey);
 
-    key1 = new ActionMapKey(fqn, fqnType, null);
-    someKey = new ActionMapKey(fqn, fqnType, null);
-    assertEquals(key1, someKey);
-
-    key1 = new ActionMapKey(fqn, fqnType, true);
-    someKey = new ActionMapKey(fqn, fqnType, null);
-    assertNotSame(key1, someKey);
-
-    key1 = new ActionMapKey(fqn, fqnType, true);
+    key = new ActionMapKey(fqn, fqnType, new Boolean(false));
     someKey = new ActionMapKey(fqn, fqnType, false);
-    assertNotSame(key1, someKey);
+    assertEquals(key, someKey);
 
-    key1 = new ActionMapKey(fqn, null, true);
+    key = new ActionMapKey(fqn, fqnType, true);
     someKey = new ActionMapKey(fqn, fqnType, false);
-    assertNotSame(key1, someKey);
+    assertNotSame(key, someKey);
 
-    key1 = new ActionMapKey(fqn, null, true);
-    someKey = new ActionMapKey(fqn, null, false);
-    assertNotSame(key1, someKey);
+    key = new ActionMapKey(fqn, fqnType, true);
+    someKey = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    assertNotSame(key, someKey);
   }
 
   @Test
   public void testHashMethod() {
-    ActionMapKey key1 = new ActionMapKey(fqn, null, null);
-    ActionMapKey someKey = new ActionMapKey(fqn, null, null);
-    assertEquals(key1.hashCode(), someKey.hashCode());
+    ActionMapKey key;
+    ActionMapKey someKey;
 
-    key1 = new ActionMapKey(fqn, null, new Boolean(true));
-    someKey = new ActionMapKey(fqn, null, true);
-    assertEquals(key1.hashCode(), someKey.hashCode());
-
-    someKey = new ActionMapKey(fqn, fqnType, true);
-    assertNotSame(key1.hashCode(), someKey.hashCode());
-
+    key = new ActionMapKey(fqn, fqnType, false);
     someKey = new ActionMapKey(fqn, fqnType, false);
-    assertNotSame(key1.hashCode(), someKey.hashCode());
+    assertEquals(key.hashCode(), someKey.hashCode());
+
+    key = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    someKey = new ActionMapKey(fqn, fqnType, false);
+    assertEquals(key.hashCode(), someKey.hashCode());
+
+    key = new ActionMapKey(fqn, fqnType, true);
+    someKey = new ActionMapKey(fqn, fqnType, false);
+    assertNotSame(key.hashCode(), someKey.hashCode());
+
+    key = new ActionMapKey(fqn, fqnType, true);
+    someKey = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    assertNotSame(key.hashCode(), someKey.hashCode());
   }
 
 }

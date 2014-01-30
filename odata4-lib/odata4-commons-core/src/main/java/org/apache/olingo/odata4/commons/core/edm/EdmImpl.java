@@ -42,8 +42,10 @@ public abstract class EdmImpl implements Edm {
       new HashMap<FullQualifiedName, EdmTypeDefinition>();
   private final Map<FullQualifiedName, EdmEntityType> entityTypes = new HashMap<FullQualifiedName, EdmEntityType>();
   private final Map<FullQualifiedName, EdmComplexType> complexTypes = new HashMap<FullQualifiedName, EdmComplexType>();
-  private final Map<ActionMapKey, EdmAction> actions = new HashMap<ActionMapKey, EdmAction>();
-  private final Map<FunctionMapKey, EdmFunction> functions = new HashMap<FunctionMapKey, EdmFunction>();
+  private final Map<FullQualifiedName, EdmAction> unboundActions = new HashMap<FullQualifiedName, EdmAction>();
+  private final Map<FunctionMapKey, EdmFunction> unboundFunctions = new HashMap<FunctionMapKey, EdmFunction>();
+  private final Map<ActionMapKey, EdmAction> boundActions = new HashMap<ActionMapKey, EdmAction>();
+  private final Map<FunctionMapKey, EdmFunction> boundFunctions = new HashMap<FunctionMapKey, EdmFunction>();
   private EdmServiceMetadata serviceMetadata;
   private Map<String, String> aliasToNamespaceInfo;
 
@@ -119,16 +121,27 @@ public abstract class EdmImpl implements Edm {
   public EdmAction getAction(final FullQualifiedName actionName, final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection) {
     FullQualifiedName actionFqn = resolvePossibleAlias(actionName);
-    FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
-    ActionMapKey key = new ActionMapKey(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
-    EdmAction action = actions.get(key);
-    if (action == null) {
-      action = createAction(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
-      if (action != null) {
-        actions.put(key, action);
+    if (bindingParameterTypeName == null) {
+      EdmAction action = unboundActions.get(actionName);
+      if (action == null) {
+        action = createUnboundAction(actionFqn);
+        if (action != null) {
+          unboundActions.put(actionName, action);
+        }
       }
+      return action;
+    } else {
+      FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
+      ActionMapKey key = new ActionMapKey(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
+      EdmAction action = boundActions.get(key);
+      if (action == null) {
+        action = createBoundAction(actionFqn, bindingParameterTypeFqn, isBindingParameterCollection);
+        if (action != null) {
+          boundActions.put(key, action);
+        }
+      }
+      return action;
     }
-    return action;
   }
 
   @Override
@@ -136,18 +149,31 @@ public abstract class EdmImpl implements Edm {
       final FullQualifiedName bindingParameterTypeName,
       final Boolean isBindingParameterCollection, final List<String> parameterNames) {
     FullQualifiedName functionFqn = resolvePossibleAlias(functionName);
-    FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
-    FunctionMapKey key =
-        new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
-    EdmFunction function = functions.get(key);
-    if (function == null) {
-      function = createFunction(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection,
-          parameterNames);
-      if (function != null) {
-        functions.put(key, function);
+    if(bindingParameterTypeName == null){
+      FunctionMapKey key =
+          new FunctionMapKey(functionFqn, bindingParameterTypeName, isBindingParameterCollection, parameterNames);
+      EdmFunction function = unboundFunctions.get(key);
+      if (function == null) {
+        function = createUnboundFunction(functionFqn, parameterNames);
+        if (function != null) {
+          unboundFunctions.put(key, function);
+        }
       }
+      return function;
+    }else{
+      FullQualifiedName bindingParameterTypeFqn = resolvePossibleAlias(bindingParameterTypeName);
+      FunctionMapKey key =
+          new FunctionMapKey(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection, parameterNames);
+      EdmFunction function = boundFunctions.get(key);
+      if (function == null) {
+        function = createBoundFunction(functionFqn, bindingParameterTypeFqn, isBindingParameterCollection,
+            parameterNames);
+        if (function != null) {
+          boundFunctions.put(key, function);
+        }
+      }
+      return function;
     }
-    return function;
   }
 
   @Override
@@ -187,13 +213,16 @@ public abstract class EdmImpl implements Edm {
 
   protected abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
 
-  protected abstract EdmAction createAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
+  protected abstract EdmAction createUnboundAction(FullQualifiedName actionName);
+  
+  protected abstract EdmFunction createUnboundFunction(FullQualifiedName functionName, List<String> parameterNames);
+
+  protected abstract EdmAction createBoundAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
       Boolean isBindingParameterCollection);
 
-  protected abstract EdmFunction createFunction(FullQualifiedName functionName,
+  protected abstract EdmFunction createBoundFunction(FullQualifiedName functionName,
       FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
       List<String> parameterNames);
 
   protected abstract EdmServiceMetadata createServiceMetadata();
-
 }

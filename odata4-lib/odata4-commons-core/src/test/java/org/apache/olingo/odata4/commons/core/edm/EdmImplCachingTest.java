@@ -21,7 +21,6 @@ package org.apache.olingo.odata4.commons.core.edm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -142,7 +141,7 @@ public class EdmImplCachingTest {
   }
 
   @Test
-  public void cacheActionSimple() {
+  public void cacheUnboundAction() {
     EdmAction action = edm.getAction(NAME1, null, null);
     assertNotNull(action);
 
@@ -158,37 +157,24 @@ public class EdmImplCachingTest {
   }
 
   @Test
-  public void cacheActionComlex() {
-    EdmAction action = edm.getAction(NAME1, null, null);
+  public void cacheBoundAction() {
+    EdmAction action = edm.getAction(NAME1, NAME2, true);
     assertNotNull(action);
 
-    EdmAction cachedAction = edm.getAction(NAME1, null, true);
-    assertNull(cachedAction);
+    EdmAction cachedAction = edm.getAction(NAME1, NAME2, true);
+    assertNotNull(cachedAction);
 
-    cachedAction = edm.getAction(NAME1, null, false);
-    assertNull(cachedAction);
+    assertTrue(action == cachedAction);
+    assertEquals(action, cachedAction);
 
-    cachedAction = edm.getAction(NAME1, NAME2, null);
-    assertNull(cachedAction);
+    EdmAction action2 = edm.getAction(NAME2, NAME2, true);
+    assertNotNull(action2);
+    assertNotSame(action, action2);
 
-    cachedAction = edm.getAction(NAME1, NAME2, true);
-    assertNull(cachedAction);
-
-    cachedAction = edm.getAction(NAME1, NAME2, false);
-    assertNull(cachedAction);
-
-    cachedAction = edm.getAction(NAME1, NAME1, null);
-    assertNull(cachedAction);
-
-    cachedAction = edm.getAction(NAME1, NAME1, true);
-    assertNull(cachedAction);
-
-    cachedAction = edm.getAction(NAME1, NAME1, false);
-    assertNull(cachedAction);
   }
 
   @Test
-  public void cacheFunctionSimple() {
+  public void cacheUnboundFunctionNoParameters() {
     EdmFunction function = edm.getFunction(NAME1, null, null, null);
     assertNotNull(function);
 
@@ -205,35 +191,43 @@ public class EdmImplCachingTest {
   }
 
   @Test
-  public void cacheFunctionComplex() {
-    EdmFunction function = edm.getFunction(NAME1, null, null, null);
+  public void cacheBoundFunction() {
+    EdmFunction function = edm.getFunction(NAME1, NAME2, true, new ArrayList<String>());
     assertNotNull(function);
 
-    EdmFunction cachedfunction = edm.getFunction(NAME1, null, false, null);
-    assertNull(cachedfunction);
+    EdmFunction cachedfunction = edm.getFunction(NAME1, NAME2, true, new ArrayList<String>());
+    assertNotNull(cachedfunction);
 
-    cachedfunction = edm.getFunction(NAME1, null, true, null);
-    assertNull(cachedfunction);
+    assertTrue(function == cachedfunction);
+    assertEquals(function, cachedfunction);
 
-    cachedfunction = edm.getFunction(NAME1, null, new Boolean(true), null);
-    assertNull(cachedfunction);
+    EdmFunction function2 = edm.getFunction(NAME2, NAME2, true, new ArrayList<String>());
+    assertNotNull(function2);
 
-    cachedfunction = edm.getFunction(NAME1, NAME2, null, null);
-    assertNull(cachedfunction);
-
-    cachedfunction = edm.getFunction(NAME1, NAME2, true, null);
-    assertNull(cachedfunction);
-
-    cachedfunction = edm.getFunction(NAME1, NAME2, false, null);
-    assertNull(cachedfunction);
-
-    cachedfunction = edm.getFunction(NAME1, null, null, new ArrayList<String>());
-    assertNull(cachedfunction);
+    assertNotSame(function, function2);
   }
 
   @Test
-  public void cacheFunctionComplexWithListContent() {
+  public void cacheUnboundFunctionWithParameters() {
+    ArrayList<String> parameters1 = new ArrayList<String>();
+    parameters1.add("A");
+    parameters1.add("B");
+    EdmFunction function = edm.getFunction(NAME1, NAME2, true, parameters1);
+    assertNotNull(function);
 
+    ArrayList<String> parameters2 = new ArrayList<String>();
+    parameters2.add("B");
+    parameters2.add("A");
+    EdmFunction cachedfunction = edm.getFunction(NAME1, NAME2, true, parameters2);
+    assertNotNull(cachedfunction);
+
+    assertTrue(function == cachedfunction);
+    assertEquals(function, cachedfunction);
+
+    EdmFunction function2 = edm.getFunction(NAME2, NAME2, true, new ArrayList<String>());
+    assertNotNull(function2);
+
+    assertNotSame(function, function2);
   }
 
   @Test
@@ -312,9 +306,9 @@ public class EdmImplCachingTest {
     }
 
     @Override
-    public EdmAction createAction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
+    public EdmAction createBoundAction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
         final Boolean isBindingParameterCollection) {
-      if (NAME1.equals(fqn) && bindingParameterTypeName == null && isBindingParameterCollection == null) {
+      if (NAME1.equals(fqn)) {
         EdmAction action = mock(EdmAction.class);
         when(action.getNamespace()).thenReturn(fqn.getNamespace());
         when(action.getName()).thenReturn(fqn.getName());
@@ -329,10 +323,10 @@ public class EdmImplCachingTest {
     }
 
     @Override
-    public EdmFunction createFunction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
+    public EdmFunction createBoundFunction(final FullQualifiedName fqn,
+        final FullQualifiedName bindingParameterTypeName,
         final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
-      if (NAME1.equals(fqn) && bindingParameterTypeName == null && isBindingParameterCollection == null
-          && bindingParameterNames == null) {
+      if (NAME1.equals(fqn)) {
         EdmFunction function = mock(EdmFunction.class);
         when(function.getNamespace()).thenReturn(fqn.getNamespace());
         when(function.getName()).thenReturn(fqn.getName());
@@ -354,6 +348,38 @@ public class EdmImplCachingTest {
     @Override
     protected Map<String, String> createAliasToNamespaceInfo() {
       return new HashMap<String, String>();
+    }
+
+    @Override
+    protected EdmAction createUnboundAction(FullQualifiedName fqn) {
+      if (NAME1.equals(fqn)) {
+        EdmAction action = mock(EdmAction.class);
+        when(action.getNamespace()).thenReturn(fqn.getNamespace());
+        when(action.getName()).thenReturn(fqn.getName());
+        return action;
+      } else if (NAME2.equals(fqn)) {
+        EdmAction action = mock(EdmAction.class);
+        when(action.getNamespace()).thenReturn(fqn.getNamespace());
+        when(action.getName()).thenReturn(fqn.getName());
+        return action;
+      }
+      return null;
+    }
+
+    @Override
+    protected EdmFunction createUnboundFunction(FullQualifiedName fqn, List<String> parameterNames) {
+      if (NAME1.equals(fqn)) {
+        EdmFunction function = mock(EdmFunction.class);
+        when(function.getNamespace()).thenReturn(fqn.getNamespace());
+        when(function.getName()).thenReturn(fqn.getName());
+        return function;
+      } else if (NAME2.equals(fqn)) {
+        EdmFunction function = mock(EdmFunction.class);
+        when(function.getNamespace()).thenReturn(fqn.getNamespace());
+        when(function.getName()).thenReturn(fqn.getName());
+        return function;
+      }
+      return null;
     }
   }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
@@ -31,7 +32,6 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.provider.Property;
 import org.apache.olingo.odata4.commons.api.edm.provider.StructuralType;
-
 
 public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmStructuralType {
 
@@ -107,12 +107,13 @@ public abstract class EdmStructuralTypeImpl extends EdmTypeImpl implements EdmSt
     }
     return navigationPropertyNames;
   }
-  
 
   @Override
   public boolean compatibleTo(EdmType targetType) {
     EdmStructuralType sourceType = this;
-
+    if (targetType == null) {
+      throw new EdmException("Target type must not be null");
+    }
     while (sourceType.getName() != targetType.getName() ||
         sourceType.getNamespace() != targetType.getNamespace()) {
       sourceType = sourceType.getBaseType();
