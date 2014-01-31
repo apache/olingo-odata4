@@ -77,6 +77,13 @@ public class EdmComplexTypeImplTest {
   }
 
   @Test
+  public void noPropertiesAndNoNavPropertiesMustNotResultInException() {
+    EdmProviderImpl edm = mock(EdmProviderImpl.class);
+    ComplexType complexType = new ComplexType().setName("n");
+    new EdmComplexTypeImpl(edm, new FullQualifiedName("n", "n"), complexType);
+  }
+
+  @Test
   public void typeMustBeCompatibletoBasetype() {
     assertTrue(type.compatibleTo(baseType));
   }

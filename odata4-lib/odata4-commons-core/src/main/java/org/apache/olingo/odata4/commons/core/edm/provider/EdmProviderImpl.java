@@ -170,6 +170,10 @@ public class EdmProviderImpl extends EdmImpl {
           return null;
         }
       }
+      List<String> parameterNamesCopy = parameterNames;
+      if (parameterNamesCopy == null) {
+        parameterNamesCopy = Collections.emptyList();
+      }
       EdmFunctionImpl functionImpl = null;
       for (Function function : functions) {
         if (function.isBound() == true) {
@@ -180,12 +184,12 @@ public class EdmProviderImpl extends EdmImpl {
           Parameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getType())
               && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
-            if (parameterNames.size() == providerParameters.size() - 1) {
+            if (parameterNamesCopy.size() == providerParameters.size() - 1) {
               List<String> providerParameterNames = new ArrayList<String>();
               for (int i = 1; i < providerParameters.size(); i++) {
                 providerParameterNames.add(providerParameters.get(i).getName());
               }
-              if (parameterNames.containsAll(providerParameterNames)) {
+              if (parameterNamesCopy.containsAll(providerParameterNames)) {
                 functionImpl = new EdmFunctionImpl(this, functionName, function);
                 break;
               }

@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
@@ -51,7 +52,6 @@ public class EdmEntityTypeImplTest {
   private EdmEntityType typeWithBaseType;
   private EdmEntityType typeWithComplexKey;
 
-  // TODO: test with abstract types and keys
   @Before
   public void setupTypes() throws Exception {
     EdmProvider provider = mock(EdmProvider.class);
@@ -185,6 +185,7 @@ public class EdmEntityTypeImplTest {
     assertNotNull(keyPropertyRefs);
     assertEquals(1, keyPropertyRefs.size());
     assertEquals("Id", keyPropertyRefs.get(0).getKeyPropertyName());
+    assertTrue(keyPropertyRefs == typeWithBaseType.getKeyPropertyRefs());
   }
 
   @Test
@@ -239,6 +240,37 @@ public class EdmEntityTypeImplTest {
 
     property = typeWithBaseType.getProperty("nav2");
     assertTrue(property == typeWithBaseType.getProperty("nav2"));
+  }
+
+  @Test(expected = EdmException.class)
+  public void noKeyOnTypeWithoutBaseTypeMustResultInException() {
+    EdmProviderImpl edm = mock(EdmProviderImpl.class);
+    EntityType entityType = new EntityType().setName("n");
+    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+  }
+
+  @Test
+  public void abstractTypeDoesNotNeedKey() {
+    EdmProviderImpl edm = mock(EdmProviderImpl.class);
+    EntityType entityType = new EntityType().setName("n").setAbstract(true);
+    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+  }
+
+  @Test(expected = EdmException.class)
+  public void invalidBaseType() {
+    EdmProviderImpl edm = mock(EdmProviderImpl.class);
+    EntityType entityType = new EntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
+    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+  }
+
+  @Test
+  public void abstractTypeWithAbstractBaseTypeDoesNotNeedKey() throws Exception {
+    EdmProvider provider = mock(EdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
+    FullQualifiedName baseName = new FullQualifiedName("n", "base");
+    when(provider.getEntityType(baseName)).thenReturn(new EntityType().setName("base").setAbstract(true));
+    EntityType entityType = new EntityType().setName("n").setAbstract(true).setBaseType(baseName);
+    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
 }

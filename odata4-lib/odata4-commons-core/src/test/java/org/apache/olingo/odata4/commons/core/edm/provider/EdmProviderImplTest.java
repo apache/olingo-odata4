@@ -84,6 +84,24 @@ public class EdmProviderImplTest {
   }
 
   @Test
+  public void nothingSpecifiedMustNotResultInExceptions() throws Exception {
+    EdmProvider localProvider = mock(EdmProvider.class);
+    when(localProvider.getActions(FQN)).thenReturn(null);
+    when(localProvider.getFunctions(FQN)).thenReturn(null);
+    Edm localEdm = new EdmProviderImpl(localProvider);
+    localEdm.getAction(FQN, null, null);
+    localEdm.getFunction(FQN, null, null, null);
+    localEdm.getAction(FQN, FQN, true);
+    localEdm.getFunction(FQN, FQN, true, null);
+    localEdm.getComplexType(FQN);
+    localEdm.getEntityContainer(FQN);
+    localEdm.getEntityType(FQN);
+    localEdm.getEnumType(FQN);
+    localEdm.getTypeDefinition(FQN);
+    localEdm.getServiceMetadata();
+  }
+
+  @Test
   public void convertExceptionsTest() throws Exception {
     EdmProvider localProvider = mock(EdmProvider.class);
     FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
@@ -112,6 +130,17 @@ public class EdmProviderImplTest {
 
     try {
       localEdm.getFunction(fqn, null, null, null);
+    } catch (EdmException e) {
+      assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
+    }
+    try {
+      localEdm.getAction(fqn, fqn, true);
+    } catch (EdmException e) {
+      assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
+    }
+
+    try {
+      localEdm.getFunction(fqn, fqn, true, null);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.odata4.commons.api.exception.ODataException: msg", e.getMessage());
     }

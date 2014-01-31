@@ -44,17 +44,20 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
     this.entityType = entityType;
     if (baseType == null) {
       entityBaseType = null;
-      if (entityType.getKey() == null && !entityType.isAbstract()) {
+      List<PropertyRef> key = entityType.getKey();
+      if (key == null && !entityType.isAbstract()) {
         throw new EdmException("Non-Abstract entity types must define a key.");
       }
-      for (PropertyRef ref : entityType.getKey()) {
-        EdmKeyPropertyRef edmKeyRef = new EdmKeyPropertyRefImpl(this, ref);
-        if (ref.getAlias() != null) {
-          keyPredicateNames.add(ref.getAlias());
-          keyPropertyRefs.put(ref.getAlias(), edmKeyRef);
-        } else {
-          keyPredicateNames.add(ref.getPropertyName());
-          keyPropertyRefs.put(ref.getPropertyName(), edmKeyRef);
+      if (key != null) {
+        for (PropertyRef ref : key) {
+          EdmKeyPropertyRef edmKeyRef = new EdmKeyPropertyRefImpl(this, ref);
+          if (ref.getAlias() != null) {
+            keyPredicateNames.add(ref.getAlias());
+            keyPropertyRefs.put(ref.getAlias(), edmKeyRef);
+          } else {
+            keyPredicateNames.add(ref.getPropertyName());
+            keyPropertyRefs.put(ref.getPropertyName(), edmKeyRef);
+          }
         }
       }
     } else {
@@ -75,32 +78,30 @@ public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntit
 
   @Override
   public List<String> getKeyPredicateNames() {
-    if (baseType != null) {
+    if (keyPredicateNames.isEmpty() && baseType != null) {
       return entityBaseType.getKeyPredicateNames();
-    } else {
-      return keyPredicateNames;
     }
+    return keyPredicateNames;
   }
 
   @Override
   public List<EdmKeyPropertyRef> getKeyPropertyRefs() {
-    if (baseType != null) {
-      return entityBaseType.getKeyPropertyRefs();
-    } else {
-      if (keyPropertyRefsList == null) {
-        keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
-      }
-      return keyPropertyRefsList;
+    if (keyPropertyRefsList == null) {
+      keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
     }
+    if (keyPropertyRefsList.isEmpty() && entityBaseType != null) {
+      return entityBaseType.getKeyPropertyRefs();
+    }
+    return keyPropertyRefsList;
   }
 
   @Override
   public EdmKeyPropertyRef getKeyPropertyRef(final String keyPredicateName) {
-    if (baseType != null) {
+    EdmKeyPropertyRef edmKeyPropertyRef = keyPropertyRefs.get(keyPredicateName);
+    if (edmKeyPropertyRef == null && entityBaseType != null) {
       return entityBaseType.getKeyPropertyRef(keyPredicateName);
-    } else {
-      return keyPropertyRefs.get(keyPredicateName);
     }
+    return edmKeyPropertyRef;
   }
 
   @Override

@@ -12,6 +12,7 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.provider.TypeDefinition;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.junit.Test;
+
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
