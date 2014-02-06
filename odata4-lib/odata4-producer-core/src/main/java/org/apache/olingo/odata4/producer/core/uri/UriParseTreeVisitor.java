@@ -46,6 +46,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
@@ -154,14 +155,14 @@ import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.IdOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.InlineCountOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.LevelsExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByItemImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectItemImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.SkiptokenOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.TopOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
@@ -1139,10 +1140,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (ctx.vR != null) {
         expandItem.setIsRef(true);
       } else if (ctx.vM != null) {
-        expandItem.setExpandQueryOption(new LevelsExpandOptionImpl().setMax().setText(ctx.vM.getText()));
+        LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
+        levels.setText(ctx.vM.getText());
+        expandItem.setSystemQueryOption(levels);
       } else if (ctx.vL != null) {
         // TODO set value as integer
-        expandItem.setExpandQueryOption(new LevelsExpandOptionImpl().setText(ctx.vL.getText()));
+        LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
+        levels.setText(ctx.vL.getText());
+        expandItem.setSystemQueryOption(levels);
       }
 
     } else if (ctx.vEP != null) {
@@ -1154,7 +1159,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
         List<SystemQueryOptionImpl> list = (List<SystemQueryOptionImpl>) ctx.vEPE.accept(this);
         for (SystemQueryOptionImpl option : list) {
-          expandItem.setExpandQueryOption(option);
+          expandItem.setSystemQueryOption(option);
         }
         contextExpandItemPath = contextExpandItemPathBU;
       }
@@ -1203,14 +1208,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       targetType = getLastType(lastSegment);
       isColl = lastSegment.isCollection();
     } else {
-      if (contextExpandItemPath.getPath() == null) {
+      if (contextExpandItemPath.getResourcePath() == null) {
         // use the type of the last resource path segement
         UriResourceImplTyped lastSegment = (UriResourceImplTyped) contextUriInfo.getLastResourcePart();
         targetType = getLastType(lastSegment);
         isColl = lastSegment.isCollection();
       } else {
         // use the type of the last ''expand'' path segement
-        UriInfoImpl info = (UriInfoImpl) contextExpandItemPath.getPath();
+        UriInfoImpl info = (UriInfoImpl) contextExpandItemPath.getResourcePath();
         targetType = getLastType((UriResourceImplTyped) info.getLastResourcePart());
         isColl = ((UriResourceImplTyped) info.getLastResourcePart()).isCollection();
       }
@@ -1219,14 +1224,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     contextTypes.push(new LastTypeColl(targetType, isColl));
 
     if (ctx.vC != null) {
-      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getPath();
+      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getResourcePath();
       resourcePath.addPathInfo(new UriResourceCountImpl());
 
       for (ExpandCountOptionContext s : ctx.vlEOC) {
         list.add((SystemQueryOptionImpl) s.accept(this));
       }
     } else if (ctx.vR != null) {
-      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getPath();
+      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getResourcePath();
       resourcePath.addPathInfo(new UriResourceRefImpl());
 
       for (ExpandRefOptionContext s : ctx.vlEOR) {
@@ -1263,16 +1268,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     TerminalNodeImpl c2 = (TerminalNodeImpl) ctx.children.get(2);
     if (c2.symbol.getType() == UriLexer.ATOM) {
-      format.setValue("atom");
+      format.setFormat("atom");
     } else if (c2.symbol.getType() == UriLexer.JSON) {
-      format.setValue("json");
+      format.setFormat("json");
     } else if (c2.symbol.getType() == UriLexer.XML) {
-      format.setValue("xml");
+      format.setFormat("xml");
     } else if (c2.symbol.getType() == UriLexer.PCHARS) {
       if (ctx.getChildCount() == 2) {
-        format.setValue(c2.getText());
+        format.setFormat(c2.getText());
       } else {
-        format.setValue(c2.getText() + "/" + ctx.children.get(4).getText());
+        format.setFormat(c2.getText() + "/" + ctx.children.get(4).getText());
       }
     }
     String text = ctx.children.get(2).getText();
@@ -1371,7 +1376,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitLevels(LevelsContext ctx) {
 
-    LevelsExpandOptionImpl levels = new LevelsExpandOptionImpl();
+    LevelsOptionImpl levels = new LevelsOptionImpl();
 
     String text = ctx.children.get(2).getText();
 
@@ -1548,7 +1553,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitOrderByItem(OrderByItemContext ctx) {
     OrderByItemImpl oItem = new OrderByItemImpl();
     if (ctx.vD != null) {
-      oItem.setSortOrder(true);
+      oItem.setDescending(true);
     }
 
     oItem.setExpression((ExpressionImpl) ctx.vC.accept(this));
@@ -1752,11 +1757,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (property.isPrimitive()) {
           UriResourceSimplePropertyImpl simple = new UriResourceSimplePropertyImpl();
           simple.setProperty(property);
-          contextSelectItem.addPath(simple);
+          
+          UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getPath();
+          resourcePath.addPathInfo(simple);
         } else {
           UriResourceComplexPropertyImpl complex = new UriResourceComplexPropertyImpl();
           complex.setProperty(property);
-          contextSelectItem.addPath(complex);
+          
+          UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getPath();
+          resourcePath.addPathInfo(complex);
         }
       } else {
         throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed"));
@@ -1776,7 +1785,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
             if (((EdmStructuralType) prevType).compatibleTo(ct)) {
-              UriResourcePart lastSegment = contextSelectItem.getLastPart();
+              UriResourcePart lastSegment = ((UriInfoImpl)contextSelectItem.getPath()).getLastResourcePart();
               if (lastSegment instanceof UriResourceImplKeyPred) {
                 UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastSegment;
                 lastKeyPred.setCollectionTypeFilter(ct);
@@ -1810,7 +1819,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (action != null) {
           UriResourceActionImpl uriAction = new UriResourceActionImpl();
           uriAction.setAction(action);
-          contextSelectItem.addPath(uriAction);
+          
+          UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getPath();
+          resourcePath.addPathInfo(uriAction);
         }
 
         // check for function
@@ -1820,7 +1831,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (function != null) {
           UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();
           uriFunction.setFunction(function);
-          contextSelectItem.addPath(uriFunction);
+          
+          UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getPath();
+          resourcePath.addPathInfo(uriFunction);
         }
 
       }
@@ -1839,7 +1852,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSkiptoken(final SkiptokenContext ctx) {
-    SkiptokenOptionImpl skiptoken = new SkiptokenOptionImpl();
+    SkipTokenOptionImpl skiptoken = new SkipTokenOptionImpl();
 
     String text = ctx.children.get(2).getText();
 

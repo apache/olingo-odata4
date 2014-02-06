@@ -32,7 +32,7 @@ public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOpt
 
   @Override
   public SearchExpression getSearchExpression() {
-    // TODO Auto-generated method stub
+    // TODO $search not supported yet
     return null;
   }
 

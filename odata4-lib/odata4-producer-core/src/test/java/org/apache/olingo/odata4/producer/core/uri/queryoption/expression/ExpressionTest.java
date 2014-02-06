@@ -52,6 +52,21 @@ import org.junit.Test;
 
 public class ExpressionTest {
   Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
+  
+  @Test
+  public void testSupportedOperators() {
+    assertEquals(SupportedUnaryOperators.MINUS, SupportedUnaryOperators.get("-") );
+    assertEquals(null, SupportedUnaryOperators.get("XXX") );
+    
+    assertEquals(SupportedBinaryOperators.MOD, SupportedBinaryOperators.get("mod") );
+    assertEquals(null, SupportedBinaryOperators.get("XXX") );
+    
+    assertEquals(SupportedMethodCalls.CONCAT, SupportedMethodCalls.get("concat") );
+    assertEquals(null, SupportedMethodCalls.get("XXX") );
+    
+    assertEquals(SupportedConstants.TRUE, SupportedConstants.get("true") );
+    assertEquals(null, SupportedConstants.get("XXX") );
+  }
 
   @Test
   public void testAliasExpression() throws ExceptionVisitExpression, ODataApplicationException {

@@ -40,7 +40,7 @@ public interface ExpandItem {
 
   ExpandOption getExpand();
 
-  UriInfoResource getPath();
+  UriInfoResource getResourcePath();
 
   boolean isStar();
 

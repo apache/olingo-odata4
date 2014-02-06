@@ -40,7 +40,7 @@ public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByO
     for (OrderByItemImpl item : orders) {
       retList.add(item);
     }
-    return Collections.unmodifiableList(retList);
+    return retList;
   }
 
   public OrderByOptionImpl addOrder(final OrderByItemImpl order) {

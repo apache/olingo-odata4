@@ -43,7 +43,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
@@ -57,7 +57,7 @@ import org.apache.olingo.odata4.producer.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipOptionImpl;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.SkiptokenOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.TopOptionImpl;
 
@@ -79,7 +79,7 @@ public class UriInfoImpl implements UriInfo {
   private SearchOptionImpl searchOption;
   private SelectOptionImpl selectOption;
   private SkipOptionImpl skipOption;
-  private SkiptokenOptionImpl skipTokenOption;
+  private SkipTokenOptionImpl skipTokenOption;
   private TopOptionImpl topOption;
 
   private String fragment;
@@ -211,7 +211,7 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public SkiptokenOption getSkipTokenOption() {
+  public SkipTokenOption getSkipTokenOption() {
     return skipTokenOption;
   }
 
@@ -260,7 +260,7 @@ public class UriInfoImpl implements UriInfo {
         } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
           skipOption = (SkipOptionImpl) sysItem;
         } else if (sysItem.getKind() == SupportedQueryOptions.SKIPTOKEN) {
-          skipTokenOption = (SkiptokenOptionImpl) sysItem;
+          skipTokenOption = (SkipTokenOptionImpl) sysItem;
         } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
           topOption = (TopOptionImpl) sysItem;
         }

@@ -30,6 +30,7 @@ public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
     setKind(SupportedQueryOptions.TOP);
   }
 
+  @Override
   public String getValue() {
     return value;
   }
@@ -39,10 +40,6 @@ public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
     return this;
   }
 
-  @Override
-  public String getTopValue() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  
 
 }

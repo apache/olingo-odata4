@@ -30,7 +30,7 @@ public class InlineCountOptionImpl extends SystemQueryOptionImpl implements Inli
   }
 
   @Override
-  public boolean getvalue() {
+  public boolean getValue() {
     return count;
   }
 

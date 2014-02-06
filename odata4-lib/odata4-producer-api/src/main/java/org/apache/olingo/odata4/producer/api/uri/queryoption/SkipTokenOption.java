@@ -19,7 +19,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-public interface SkiptokenOption extends SystemQueryOption {
+public interface SkipTokenOption extends SystemQueryOption {
 
   String getValue();
 

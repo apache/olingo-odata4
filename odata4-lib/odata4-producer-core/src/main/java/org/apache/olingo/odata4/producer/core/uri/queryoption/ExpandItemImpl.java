@@ -52,41 +52,34 @@ public class ExpandItemImpl implements ExpandItem {
 
   private boolean isRef;
 
-  public ExpandItemImpl setEdm(final Edm edm) {
-    return this;
-  }
+  public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
 
-  public ExpandItemImpl setExpandQueryOption(final QueryOptionImpl item) {
-    if (item instanceof SystemQueryOptionImpl) {
-      SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
-
-      if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
-        expandOption = (ExpandOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
-        filterOption = (FilterOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
-        inlineCountOption = (InlineCountOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
-        orderByOption = (OrderByOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
-        searchOption = (SearchOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
-        selectOption = (SelectOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
-        skipOption = (SkipOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
-        topOption = (TopOptionImpl) sysItem;
-      } else if (sysItem.getKind() == SupportedQueryOptions.LEVELS) {
-        levelsExpandOption = (LevelsExpandOption) sysItem;
-      }
+    if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
+      expandOption = (ExpandOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
+      filterOption = (FilterOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
+      inlineCountOption = (InlineCountOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
+      orderByOption = (OrderByOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
+      searchOption = (SearchOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
+      selectOption = (SelectOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
+      skipOption = (SkipOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
+      topOption = (TopOptionImpl) sysItem;
+    } else if (sysItem.getKind() == SupportedQueryOptions.LEVELS) {
+      levelsExpandOption = (LevelsExpandOption) sysItem;
     }
     return this;
   }
 
-  public ExpandItemImpl setExpandQueryOptions(final List<QueryOptionImpl> list) {
+  public ExpandItemImpl setSystemQueryOptions(final List<SystemQueryOptionImpl> list) {
 
-    for (QueryOptionImpl item : list) {
-      setExpandQueryOption(item);
+    for (SystemQueryOptionImpl item : list) {
+      setSystemQueryOption(item);
     }
     return this;
   }
@@ -143,7 +136,7 @@ public class ExpandItemImpl implements ExpandItem {
   }
 
   @Override
-  public UriInfoResource getPath() {
+  public UriInfoResource getResourcePath() {
 
     return resourcePath;
   }

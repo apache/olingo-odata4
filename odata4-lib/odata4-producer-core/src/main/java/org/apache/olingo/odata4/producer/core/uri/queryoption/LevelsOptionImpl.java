@@ -19,25 +19,36 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-/* TODO implement */
-public class SkiptokenOptionImpl extends SystemQueryOptionImpl implements SkiptokenOption {
-  private String skipTokenValue;
+public class LevelsOptionImpl extends SystemQueryOptionImpl implements LevelsExpandOption {
+  private boolean isMax;
+  private int value;
 
-  public SkiptokenOptionImpl() {
-    setKind(SupportedQueryOptions.SKIPTOKEN);
+  public LevelsOptionImpl() {
+    setKind(SupportedQueryOptions.LEVELS);
+  }
+
+  public LevelsOptionImpl setLevel(final int value) {
+    this.value = value;
+    return this;
   }
 
   @Override
-  public String getValue() {
-    return skipTokenValue;
+  public boolean isMax() {
+    return isMax;
   }
 
-  public SkiptokenOptionImpl setValue(final String skipTokenValue) {
-    this.skipTokenValue = skipTokenValue;
+  public LevelsOptionImpl setMax() {
+    isMax = true;
     return this;
+
+  }
+
+  @Override
+  public int getLevel() {
+    return value;
   }
 
 }

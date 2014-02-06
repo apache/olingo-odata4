@@ -61,7 +61,7 @@ public class ExpandValidator implements Validator {
   // --- Navigation ---
 
   public UriResourceValidator goPath() {
-    UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getPath();
+    UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getResourcePath();
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("goPath() can only be used on UriInfoKind.resource");

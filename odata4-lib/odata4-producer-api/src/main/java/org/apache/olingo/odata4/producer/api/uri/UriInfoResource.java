@@ -30,7 +30,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkiptokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 
 public interface UriInfoResource {
@@ -55,7 +55,7 @@ public interface UriInfoResource {
 
   SkipOption getSkipOption();
 
-  SkiptokenOption getSkipTokenOption();
+  SkipTokenOption getSkipTokenOption();
 
   TopOption getTopOption();
 

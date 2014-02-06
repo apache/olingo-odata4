@@ -22,7 +22,7 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class OrderByItemImpl extends SystemQueryOptionImpl implements OrderByItem {
+public class OrderByItemImpl implements OrderByItem {
 
   private ExpressionImpl expression;
   private boolean descending = false; // default sort order is ascending
@@ -32,7 +32,7 @@ public class OrderByItemImpl extends SystemQueryOptionImpl implements OrderByIte
     return descending;
   }
 
-  public OrderByItem setSortOrder(final boolean descending) {
+  public OrderByItem setDescending(final boolean descending) {
     this.descending = descending;
     return this;
   }

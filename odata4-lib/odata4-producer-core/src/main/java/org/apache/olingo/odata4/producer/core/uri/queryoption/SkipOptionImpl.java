@@ -22,7 +22,6 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 
-/* TODO implement */
 public class SkipOptionImpl extends SystemQueryOptionImpl implements SkipOption {
   private String value;
 

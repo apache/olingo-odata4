@@ -18,43 +18,76 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-//TODO rework this 
+ 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.FormatOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.IdOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
 import org.apache.olingo.odata4.producer.core.uri.UriResourcePartImpl;
 
 public class SelectItemImpl implements SelectItem {
 
-  private UriResourceImplTyped lastResourcePart;
+  private UriInfoResource path;
+
   private List<UriResourcePartImpl> parts = new ArrayList<UriResourcePartImpl>();
   private boolean isStar;
   private FullQualifiedName addOperationsInSchemaNameSpace;
   private EdmEntityType entityTypeCast;
 
   public EdmType getType() {
-    if (lastResourcePart != null) {
-      if (lastResourcePart instanceof UriResourceImplKeyPred) {
-        UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastResourcePart;
-        if (lastKeyPred.getTypeFilterOnEntry() != null) {
-          return lastKeyPred.getTypeFilterOnEntry();
-        } else if (lastKeyPred.getTypeFilterOnCollection() != null) {
-          return lastKeyPred.getTypeFilterOnCollection();
-        }
+    UriInfoImpl uriInfo = (UriInfoImpl) path;
+    UriResourcePartImpl lastResourcePart = null;
+    if (uriInfo != null) {
+      lastResourcePart = (UriResourcePartImpl) uriInfo.getLastResourcePart();
+    }
+
+    if (lastResourcePart instanceof UriResourceImplKeyPred) {
+      UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastResourcePart;
+      if (lastKeyPred.getTypeFilterOnEntry() != null) {
+        return lastKeyPred.getTypeFilterOnEntry();
+      } else if (lastKeyPred.getTypeFilterOnCollection() != null) {
+        return lastKeyPred.getTypeFilterOnCollection();
       }
-      EdmType type = lastResourcePart.getTypeFilter();
+      return lastKeyPred.getType();
+    } else if (lastResourcePart instanceof UriResourceImplTyped) {
+      UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastResourcePart;
+      EdmType type = lastTyped.getTypeFilter();
       if (type != null) {
         return type;
       }
+      return lastTyped.getType();
+    } else {
+      return null;
     }
-    return null;
+  }
+
+  @Override
+  public UriInfoResource getPath() {
+    if (this.path == null) {
+      this.path = new UriInfoImpl().setKind(UriInfoKind.resource);
+    }
+    return path;
   }
 
   @Override
@@ -92,22 +125,6 @@ public class SelectItemImpl implements SelectItem {
 
   public SelectItemImpl setEntityTypeCast(final EdmEntityType entityTypeCast) {
     this.entityTypeCast = entityTypeCast;
-    return this;
-  }
-
-  @Override
-  public List<UriResourcePart> getPropertyChainList() {
-
-    return null;
-  }
-
-  public UriResourcePart getLastPart() {
-    return lastResourcePart;
-  }
-
-  public SelectItemImpl addPath(final UriResourceImplTyped resourcePart) {
-    parts.add(resourcePart);
-    lastResourcePart = resourcePart;
     return this;
   }
 

@@ -43,9 +43,9 @@ public enum SupportedMethodCalls {
     return syntax;
   }
 
-  public static SupportedMethodCalls get(final String operator) {
+  public static SupportedMethodCalls get(final String method) {
     for (SupportedMethodCalls op : SupportedMethodCalls.values()) {
-      if (op.toString().equals(operator + '(')) {
+      if (op.toString().equals(method )) {
         return op;
       }
     }

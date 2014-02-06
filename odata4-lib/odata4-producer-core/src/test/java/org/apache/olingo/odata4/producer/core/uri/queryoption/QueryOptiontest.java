@@ -20,33 +20,351 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmAction;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
+import org.apache.olingo.odata4.producer.core.testutil.EdmTechProvider;
+import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.producer.core.testutil.FilterTreeToText;
+import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceActionImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.LiteralImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.MemberImpl;
 import org.junit.Test;
 
+//TOOD add getKind check to all
 public class QueryOptiontest {
+
+  Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
 
   @Test
   public void testAliasQueryOption() {
     AliasQueryOptionImpl option = new AliasQueryOptionImpl();
-    
+
     ExpressionImpl expression = new LiteralImpl();
-    
+
     option.setAliasValue(expression);
-    assertEquals( expression, option.getValue());
+    assertEquals(expression, option.getValue());
+  }
+
+  @Test
+  public void testExandItemImpl() {
+    ExpandItemImpl option = new ExpandItemImpl();
+
+    // input options
+    ExpandOptionImpl expand = new ExpandOptionImpl();
+    FilterOptionImpl filter = new FilterOptionImpl();
+    InlineCountOptionImpl inlinecount = new InlineCountOptionImpl();
+    OrderByOptionImpl orderby = new OrderByOptionImpl();
+    SearchOptionImpl search = new SearchOptionImpl();
+    SelectOptionImpl select = new SelectOptionImpl();
+    SkipOptionImpl skip = new SkipOptionImpl();
+    TopOptionImpl top = new TopOptionImpl();
+    LevelsOptionImpl levels = new LevelsOptionImpl();
+
+    option.setSystemQueryOption(expand);
+    option.setSystemQueryOption(filter);
+    option.setSystemQueryOption(inlinecount);
+    option.setSystemQueryOption(orderby);
+    option.setSystemQueryOption(search);
+    option.setSystemQueryOption(select);
+    option.setSystemQueryOption(skip);
+    option.setSystemQueryOption(top);
+    option.setSystemQueryOption(levels);
+
+    assertEquals(expand, option.getExpand());
+    assertEquals(filter, option.getFilter());
+    assertEquals(inlinecount, option.getInlineCount());
+    assertEquals(orderby, option.getOrderBy());
+    assertEquals(search, option.getSearch());
+    assertEquals(select, option.getSelect());
+    assertEquals(skip, option.getSkip());
+    assertEquals(top, option.getTop());
+    assertEquals(levels, option.getLevels());
+
+    // just for completeness
+    option = new ExpandItemImpl();
+    option.setSystemQueryOption(new IdOptionImpl());
+
+    option = new ExpandItemImpl();
+    List<SystemQueryOptionImpl> list = new ArrayList<SystemQueryOptionImpl>();
+    list.add(expand);
+    list.add(filter);
+    option.setSystemQueryOptions(list);
+    assertEquals(expand, option.getExpand());
+    assertEquals(filter, option.getFilter());
+
+    option = new ExpandItemImpl();
+    assertEquals(false, option.isRef());
+    option.setIsRef(true);
+    assertEquals(true, option.isRef());
+
+    option = new ExpandItemImpl();
+    assertEquals(false, option.isStar());
+    option.setIsStar(true);
+    assertEquals(true, option.isStar());
+
+    option = new ExpandItemImpl();
+    UriInfoResource resource = new UriInfoImpl().asUriInfoResource();
+    option.setResourcePath(resource);
+    assertEquals(resource, option.getResourcePath());
+
+  }
+
+  @Test
+  public void testExpandOptionImpl() {
+    ExpandOptionImpl option = new ExpandOptionImpl();
+    assertEquals(SupportedQueryOptions.EXPAND, option.getKind());
+
+    ExpandItemImpl item1 = new ExpandItemImpl();
+    ExpandItemImpl item2 = new ExpandItemImpl();
+    option.addExpandItem(item1);
+    option.addExpandItem(item2);
+    assertEquals(item1, option.getExpandItems().get(0));
+    assertEquals(item2, option.getExpandItems().get(1));
+  }
+
+  @Test
+  public void testFilterOptionImpl() {
+    FilterOptionImpl option = new FilterOptionImpl();
+    assertEquals(SupportedQueryOptions.FILTER, option.getKind());
+
+    AliasImpl expression = new AliasImpl();
+
+    option.setExpression(expression);
+    assertEquals(expression, option.getExpression());
+  }
+
+  @Test
+  public void testFormatOptionImpl() {
+    FormatOptionImpl option = new FormatOptionImpl();
+    assertEquals(SupportedQueryOptions.FORMAT, option.getKind());
+
+    option.setFormat("A");
+
+    assertEquals("A", option.getFormat());
+  }
+
+  @Test
+  public void testIdOptionImpl() {
+    IdOptionImpl option = new IdOptionImpl();
+    assertEquals(SupportedQueryOptions.ID, option.getKind());
+
+    option.setValue("A");
+
+    assertEquals("A", option.getValue());
+  }
+
+  @Test
+  public void testInlineCountImpl() {
+    InlineCountOptionImpl option = new InlineCountOptionImpl();
+    assertEquals(SupportedQueryOptions.INLINECOUNT, option.getKind());
+
+    assertEquals(false, option.getValue());
+    option.setValue(true);
+    assertEquals(true, option.getValue());
+  }
+
+  @Test
+  public void testLevelsExpandOptionImpl() {
+    LevelsOptionImpl option = new LevelsOptionImpl();
+    assertEquals(SupportedQueryOptions.LEVELS, option.getKind());
+
+    assertEquals(0, option.getLevel());
+    option.setLevel(1);
+    assertEquals(1, option.getLevel());
+
+    option = new LevelsOptionImpl();
+    option.setMax();
+    assertEquals(true, option.isMax());
+  }
+
+  @Test
+  public void testOrderByItemImpl() {
+    OrderByItemImpl option = new OrderByItemImpl();
+    
+    AliasImpl expression = new AliasImpl();
+    option.setExpression(expression);
+    assertEquals(expression, option.getExpression());
+
+    assertEquals(false, option.isDescending());
+    option.setDescending(true);
+    assertEquals(true, option.isDescending());
+  }
+
+  @Test
+  public void testOrderByOptionImpl() {
+    OrderByOptionImpl option = new OrderByOptionImpl();
+
+    OrderByItemImpl order0 = new OrderByItemImpl();
+    OrderByItemImpl order1 = new OrderByItemImpl();
+    option.addOrder(order0);
+    option.addOrder(order1);
+
+    assertEquals(order0, option.getOrders().get(0));
+    assertEquals(order1, option.getOrders().get(1));
+  }
+
+  @Test
+  public void testQueryOptionImpl() {
+    QueryOptionImpl option = new AliasQueryOptionImpl();
+
+    option.setName("A");
+    option.setText("B");
+    assertEquals("A", option.getName());
+    assertEquals("B", option.getText());
+  }
+
+  @Test
+  public void testSearchOptionImpl() {
+    SearchOptionImpl option = new SearchOptionImpl();
+    assertEquals(SupportedQueryOptions.SEARCH, option.getKind());
+    // TODO $search not supported yet
+  }
+
+  @Test
+  public void testSelectItemImpl() {
+    SelectItemImpl option = new SelectItemImpl();
+    
+    EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
+
+    // UriResourceImplTyped
+    UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+    EdmAction action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
+    option = new SelectItemImpl();
+    UriInfoImpl infoImpl = (UriInfoImpl) option.getPath();
+    infoImpl.addPathInfo(new UriResourceActionImpl().setAction(action)).asUriInfoResource();
+    assertEquals(action.getReturnType().getType(), option.getType());
+
+    // UriResourceImplTyped with filter
+    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+    action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
+    option = new SelectItemImpl();
+    infoImpl = (UriInfoImpl) option.getPath();
+    infoImpl.addPathInfo(new UriResourceActionImpl().setAction(action).setTypeFilter(entityType));
+    assertEquals(entityType, option.getType());
+
+    // UriResourceImplKeyPred
+    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+    EdmFunction function = edm.getFunction(EdmTechProvider.nameUFCRTETKeyNav, null, null, null);
+    option = new SelectItemImpl();
+    infoImpl = (UriInfoImpl) option.getPath();
+    infoImpl.addPathInfo(new UriResourceFunctionImpl().setFunction(function));
+    assertEquals(function.getReturnType().getType(), option.getType());
+
+    // UriResourceImplKeyPred typeFilter on entry
+    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+    EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
+    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
+        Arrays.asList(("ParameterInt16")));
+    option = new SelectItemImpl();
+    infoImpl = (UriInfoImpl) option.getPath();
+    infoImpl.addPathInfo(new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityBaseType));
+    assertEquals(entityBaseType, option.getType());
+
+    // UriResourceImplKeyPred typeFilter on entry
+    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
+    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
+        Arrays.asList(("ParameterInt16")));
+    infoImpl = (UriInfoImpl) option.getPath();
+    infoImpl.addPathInfo(new UriResourceFunctionImpl().setFunction(function).setCollectionTypeFilter(entityBaseType));
+    assertEquals(entityBaseType, option.getType());
+
+    // no typed collection else case ( e.g. if not path is added)
+    option = new SelectItemImpl();
+    assertEquals(null, option.getType());
+
+    option = new SelectItemImpl();
+    assertEquals(false, option.isStar());
+    option.setStar(true);
+    assertEquals(true, option.isStar());
+
+    option = new SelectItemImpl();
+    assertEquals(false, option.isAllOperationsInSchema());
+    FullQualifiedName fqName = new FullQualifiedName("Namespace", "Name");
+    option.addAllOperationsInSchema(fqName);
+    assertEquals(true, option.isAllOperationsInSchema());
+    assertEquals(fqName, option.getAllOperationsInSchemaNameSpace());
+
+    option = new SelectItemImpl();
+    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
+    option.setEntityTypeCast(entityBaseType);
+    assertEquals(entityBaseType, option.getEntityTypeCast());
+
+  }
+
+  @Test
+  public void testSelectOptionImpl() {
+    SelectOptionImpl option = new SelectOptionImpl();
+    assertEquals(SupportedQueryOptions.SELECT, option.getKind());
+
+    SelectItemImpl item0 = new SelectItemImpl();
+    SelectItemImpl item1 = new SelectItemImpl();
+
+    ArrayList<SelectItemImpl> list = new ArrayList<SelectItemImpl>();
+    list.add(item0);
+    list.add(item1);
+    option.setSelectItems(list);
+
+    assertEquals(item0, option.getSelectItems().get(0));
+    assertEquals(item1, option.getSelectItems().get(1));
+
+  }
+
+  @Test
+  public void testSkipOptionImpl() {
+    SkipOptionImpl option = new SkipOptionImpl();
+    assertEquals(SupportedQueryOptions.SKIP, option.getKind());
+    
+    option.setValue("A");
+    assertEquals("A", option.getValue());
+  }
+  
+  @Test
+  public void testSkipTokenOptionImpl() {
+    SkipTokenOptionImpl option = new SkipTokenOptionImpl();
+    assertEquals(SupportedQueryOptions.SKIPTOKEN, option.getKind());
+    
+    option.setValue("A");
+    assertEquals("A", option.getValue());
   }
   
   
   
+  @Test
+  public void testSystemQueryOptionImpl() {
+    SystemQueryOptionImpl option = new SystemQueryOptionImpl();
+    
+    option.setKind(SupportedQueryOptions.EXPAND);
+    assertEquals(SupportedQueryOptions.EXPAND, option.getKind());
+    
+    assertEquals("$expand", option.getName());
+  }
   
-  
-  
-  //
+  @Test
+  public void testTopOptionImpl() {
+    TopOptionImpl option = new TopOptionImpl();
+    assertEquals(SupportedQueryOptions.TOP, option.getKind());
+    
+    option.setValue("A");
+    assertEquals("A", option.getValue());
+  }
 }
-

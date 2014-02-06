@@ -20,6 +20,6 @@ package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
 public interface TopOption extends SystemQueryOption {
   
-  String getTopValue();
+  String getValue();
   
 }

@@ -34,7 +34,7 @@ public class IdOptionImpl extends SystemQueryOptionImpl implements IdOption {
   }
 
   @Override
-  public String getIdValue() {
+  public String getValue() {
     return value;
   }
 }
