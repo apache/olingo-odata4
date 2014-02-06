@@ -30,15 +30,15 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expressi
 public class EnumerationImpl extends ExpressionImpl implements Enumeration {
 
   private EdmEnumType type;
-  private List<String> enumValues = new ArrayList<String>();
+  private List<String> values = new ArrayList<String>();
 
   @Override
-  public List<String> getEnumValues() {
-    return enumValues;
+  public List<String> getValues() {
+    return values;
   }
 
-  public EnumerationImpl addEnumValue(final String enumValue) {
-    enumValues.add(enumValue);
+  public EnumerationImpl addValue(final String enumValue) {
+    values.add(enumValue);
     return this;
   }
 
@@ -47,14 +47,14 @@ public class EnumerationImpl extends ExpressionImpl implements Enumeration {
     return type;
   }
 
-  public EnumerationImpl setType(final EdmEnumType enumtype) {
-    type = enumtype;
+  public EnumerationImpl setType(final EdmEnumType type) {
+    this.type = type;
     return this;
   }
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
-    return visitor.visitEnum(type, enumValues);
+    return visitor.visitEnum(type, values);
   }
 
 }

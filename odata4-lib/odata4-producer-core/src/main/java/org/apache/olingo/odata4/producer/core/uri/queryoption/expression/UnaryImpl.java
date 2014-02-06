@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Supporte
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.UnaryOperator;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 
-public class UnaryOperatorImpl extends ExpressionImpl implements UnaryOperator, VisitableExression {
+public class UnaryImpl extends ExpressionImpl implements UnaryOperator, VisitableExression {
 
   private SupportedUnaryOperators operator;
   private ExpressionImpl expression;

@@ -18,13 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
 
-import java.util.List;
+public interface AliasExpression  extends Expression {
 
-import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
-
-public interface Enumeration extends Expression {
-
-  public List<String> getValues();
-  public EdmEnumType getType();
-
+  public String getParameterName();
+  
 }

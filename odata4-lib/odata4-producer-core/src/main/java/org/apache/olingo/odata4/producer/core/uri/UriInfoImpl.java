@@ -135,9 +135,10 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableList(returnList);
   }
 
-  public void addPathInfo(final UriResourcePartImpl uriPathInfo) {
+  public UriInfoImpl addPathInfo(final UriResourcePartImpl uriPathInfo) {
     pathParts.add(uriPathInfo);
     lastResourcePart = uriPathInfo;
+    return this;
   }
 
   @Override
@@ -229,7 +230,7 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  protected UriInfoImpl setKind(final UriInfoKind kind) {
+  public UriInfoImpl setKind(final UriInfoKind kind) {
     this.kind = kind;
     return this;
   }

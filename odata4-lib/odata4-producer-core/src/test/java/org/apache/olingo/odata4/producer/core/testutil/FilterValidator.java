@@ -387,7 +387,7 @@ public class FilterValidator implements Validator {
     // check values
     int i = 0;
     for (String item : enumValues) {
-      assertEquals(item, enumeration.getEnumValues().get(i));
+      assertEquals(item, enumeration.getValues().get(i));
       i++;
     }
 

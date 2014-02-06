@@ -65,12 +65,14 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
     return this;
   }
 
-  public void setEntryTypeFilter(final EdmType singleTypeFilter) {
-    entryTypeFilter = singleTypeFilter;
+  public UriResourceImplKeyPred setEntryTypeFilter(final EdmType entryTypeFilter) {
+    this.entryTypeFilter = entryTypeFilter;
+    return this;
   }
 
-  public void setCollectionTypeFilter(final EdmType collectionTypeFilter) {
+  public UriResourceImplKeyPred setCollectionTypeFilter(final EdmType collectionTypeFilter) {
     this.collectionTypeFilter = collectionTypeFilter;
+    return this;
   }
 
   @Override

@@ -40,7 +40,6 @@ public class LambdaRefImpl extends ExpressionImpl implements LambdaRef, Visitabl
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
-
     return visitor.visitLambdaReference(variableText);
   }
 

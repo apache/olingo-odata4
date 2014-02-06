@@ -16,15 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.api.uri.queryoption.expression;
+package org.apache.olingo.odata4.producer.core.uri;
 
-import java.util.List;
-
-import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
-
-public interface Enumeration extends Expression {
-
-  public List<String> getValues();
-  public EdmEnumType getType();
+public class UriInfoImplTest {
 
 }

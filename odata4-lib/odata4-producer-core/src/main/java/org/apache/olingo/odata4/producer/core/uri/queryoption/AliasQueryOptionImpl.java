@@ -34,5 +34,5 @@ public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryO
     this.aliasValue = aliasValue;
     return this;
   }
-
+  
 }

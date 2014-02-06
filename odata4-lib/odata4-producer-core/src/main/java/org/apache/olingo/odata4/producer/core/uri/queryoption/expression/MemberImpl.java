@@ -51,7 +51,6 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
 
   @Override
   public EdmType getType() {
-
     UriInfoImpl uriInfo = (UriInfoImpl) path;
     UriResourcePartImpl lastResourcePart = (UriResourcePartImpl) uriInfo.getLastResourcePart();
 
@@ -70,8 +69,9 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
         return type;
       }
       return lastTyped.getType();
+    } else {
+      return null;
     }
-    return null;
   }
 
   @Override
@@ -82,7 +82,6 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
       UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastResourcePart;
       return lastTyped.isCollection();
     }
-
     return false;
   }
 

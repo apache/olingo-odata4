@@ -222,8 +222,8 @@ public class EdmTechProvider extends EdmProvider {
       new FullQualifiedName(nameSpace, "UARTETCollAllPrimParam");
 
   public static final FullQualifiedName nameUARTETParam = new FullQualifiedName(nameSpace, "UARTETParam");
-  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(nameSpace, "UARTPrimCollParam");
   public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
+  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(nameSpace, "UARTPrimCollParam");
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
       new FullQualifiedName(nameSpace, "UFCRTCollCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCollCTTwoPrimParam =

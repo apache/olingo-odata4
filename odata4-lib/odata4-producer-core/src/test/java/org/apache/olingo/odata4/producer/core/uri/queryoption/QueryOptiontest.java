@@ -16,30 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
+package org.apache.olingo.odata4.producer.core.uri.queryoption;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.AliasExpression;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.BinaryExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedBinaryOperators;
+import org.apache.olingo.odata4.producer.core.testutil.FilterTreeToText;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.AliasImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.LiteralImpl;
+import org.junit.Test;
 
-public class AliasImpl extends ExpressionImpl  implements AliasExpression {
+public class QueryOptiontest {
 
-  private String parameterName;
+  @Test
+  public void testAliasQueryOption() {
+    AliasQueryOptionImpl option = new AliasQueryOptionImpl();
+    
+    ExpressionImpl expression = new LiteralImpl();
+    
+    option.setAliasValue(expression);
+    assertEquals( expression, option.getValue());
+  }
   
-  @Override
-  public String getParameterName() {
-    return parameterName;
-  }
-
-  public void setParameter(final String ParameterName) {
-    this.parameterName = ParameterName;
-  }
-
-  @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
-    return visitor.visitAlias(parameterName);
-  }
-
+  
+  
+  
+  
+  
+  //
 }
+

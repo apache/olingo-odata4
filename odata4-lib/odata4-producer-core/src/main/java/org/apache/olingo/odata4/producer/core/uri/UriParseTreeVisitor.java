@@ -190,6 +190,12 @@ import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.TypeLit
  * <li>Parsing the context of $metadata
  * <li>Evaluation of referential constrains for key predicates
  * 
+ * TODO
+ * <li>clean up
+ * <li>Overview testcases
+ * <li>search
+ * <li>percent decoding
+ * 
  */
 public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   private Edm edm;
@@ -1107,7 +1113,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     String[] values = valueString.split(",");
     for (String item : values) {
-      enum1.addEnumValue(item);
+      enum1.addValue(item);
     }
 
     return enum1;
