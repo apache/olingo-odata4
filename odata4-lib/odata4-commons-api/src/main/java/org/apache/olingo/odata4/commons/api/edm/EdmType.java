@@ -36,6 +36,4 @@ public interface EdmType extends EdmNamed {
    */
   EdmTypeKind getKind();
 
-
-  
 }

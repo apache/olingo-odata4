@@ -20,12 +20,11 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-
 public class Term {
   private String name;
   private FullQualifiedName type;
   private FullQualifiedName baseTerm;
-  //TODO: AppliesTo is a list of csdl elements => should we put this list inside an enum?
+  // TODO: AppliesTo is a list of csdl elements => should we put this list inside an enum?
   private String appliesTo;
   private boolean isCollection;
 

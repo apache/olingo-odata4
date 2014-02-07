@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm;
 
-
 /**
  * A CSDL Property element
  * <p>EdmProperty defines a simple type or a complex type.

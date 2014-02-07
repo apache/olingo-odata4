@@ -51,7 +51,7 @@ public interface EdmStructuralType extends EdmType {
    * @return {@link EdmStructuralType}
    */
   EdmStructuralType getBaseType();
-  
+
   /**
    * Checks if this type is convertable to parameter {@link targetType}
    * 

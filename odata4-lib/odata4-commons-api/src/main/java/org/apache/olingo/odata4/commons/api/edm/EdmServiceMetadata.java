@@ -21,7 +21,6 @@ package org.apache.olingo.odata4.commons.api.edm;
 import java.io.InputStream;
 import java.util.List;
 
-
 /**
  * This interface gives access to the metadata of a service,
  * the calculated Data Service Version and an info list of all entity sets, singletons, and function imports

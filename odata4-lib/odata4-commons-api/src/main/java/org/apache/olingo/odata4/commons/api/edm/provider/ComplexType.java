@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-
 public class ComplexType extends StructuralType {
 
   @Override

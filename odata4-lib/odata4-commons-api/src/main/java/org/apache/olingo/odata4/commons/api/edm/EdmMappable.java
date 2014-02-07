@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm;
 
-
 /**
  * EdmMappable can be applied to CSDL elements to associate additional information.
  */

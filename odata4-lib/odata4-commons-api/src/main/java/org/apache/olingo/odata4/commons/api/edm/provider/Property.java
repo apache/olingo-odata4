@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm.provider;
 
-
 public class Property {
 
   private String name;
@@ -26,7 +25,7 @@ public class Property {
   private FullQualifiedName type;
   private boolean collection;
 
-  //TODO: Mimetype and mapping what here
+  // TODO: Mimetype and mapping what here
   private String mimeType;
   private Mapping mapping;
 

@@ -29,4 +29,11 @@ public interface EdmNavigationProperty extends EdmElement {
    */
   Boolean isNullable();
 
+  /**
+   * @return the partner navigation property
+   */
+  EdmNavigationProperty getPartner();
+
+  String getReferencingPropertyName(String referencedPropertyName);
+
 }

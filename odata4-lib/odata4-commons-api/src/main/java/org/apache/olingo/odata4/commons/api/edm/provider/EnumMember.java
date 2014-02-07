@@ -20,13 +20,14 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmMember;
 
-public class EnumMember implements EdmMember{
+public class EnumMember implements EdmMember {
 
   private String name;
   private String value;
 
   // Annotations?
 
+  @Override
   public String getName() {
     return name;
   }
@@ -36,6 +37,7 @@ public class EnumMember implements EdmMember{
     return this;
   }
 
+  @Override
   public String getValue() {
     return value;
   }

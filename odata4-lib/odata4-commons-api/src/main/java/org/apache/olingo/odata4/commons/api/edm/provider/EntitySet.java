@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.commons.api.edm.provider;
 
 import java.util.List;
 
-
 public class EntitySet extends BindingTarget {
 
   private boolean includeInServiceDocument;

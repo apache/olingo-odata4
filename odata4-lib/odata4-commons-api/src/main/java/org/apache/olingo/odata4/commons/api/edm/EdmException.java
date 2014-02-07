@@ -33,7 +33,7 @@ public class EdmException extends RuntimeException {
     super(msg);
   }
 
-  public EdmException(String string, Exception e) {
+  public EdmException(final String string, final Exception e) {
     super(string, e);
   }
 
