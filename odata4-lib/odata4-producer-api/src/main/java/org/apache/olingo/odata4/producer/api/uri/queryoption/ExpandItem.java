@@ -22,25 +22,25 @@ import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 
 public interface ExpandItem {
 
-  LevelsExpandOption getLevels();
+  LevelsExpandOption getLevelsOption();
 
-  FilterOption getFilter();
+  FilterOption getFilterOption();
 
-  SearchOption getSearch();
+  SearchOption getSearchOption();
 
-  OrderByOption getOrderBy();
+  OrderByOption getOrderByOption();
 
-  SkipOption getSkip();
+  SkipOption getSkipOption();
 
-  TopOption getTop();
+  TopOption getTopOption();
 
-  InlineCountOption getInlineCount();
+  InlineCountOption getInlineCountOption();
 
-  SelectOption getSelect();
+  SelectOption getSelectOption();
 
-  ExpandOption getExpand();
+  ExpandOption getExpandOption();
 
-  UriInfoResource getResourcePath();
+  UriInfoResource getResourceInfo();
 
   boolean isStar();
 

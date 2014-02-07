@@ -18,12 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri.queryoption;
 
-import java.util.List;
-
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
-import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 
 public interface SelectItem {
 
@@ -36,6 +33,6 @@ public interface SelectItem {
   EdmEntityType getEntityTypeCast();
 
 
-  UriInfoResource getPath();
+  UriInfoResource getResourceInfo();
   
 }

@@ -38,6 +38,11 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
   public EdmType getType() {
     return type;
   }
+  
+  public UriResourceItImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+  }
 
   @Override
   public boolean isCollection() {
@@ -45,11 +50,6 @@ public class UriResourceItImpl extends UriResourceImplKeyPred implements UriReso
       return false;
     }
     return isCollection;
-  }
-
-  public UriResourceItImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
   }
 
   public UriResourceItImpl setCollection(final boolean isCollection) {

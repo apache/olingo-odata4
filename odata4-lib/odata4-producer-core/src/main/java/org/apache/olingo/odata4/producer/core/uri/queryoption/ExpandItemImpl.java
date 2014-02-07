@@ -21,7 +21,6 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
@@ -46,7 +45,7 @@ public class ExpandItemImpl implements ExpandItem {
   private SelectOption selectOption;
   private ExpandOption expandOption;
 
-  private UriInfoResource resourcePath;
+  private UriInfoResource resourceInfo;
 
   private boolean isStar;
 
@@ -85,60 +84,60 @@ public class ExpandItemImpl implements ExpandItem {
   }
 
   @Override
-  public LevelsExpandOption getLevels() {
+  public LevelsExpandOption getLevelsOption() {
     return levelsExpandOption;
   }
 
   @Override
-  public FilterOption getFilter() {
+  public FilterOption getFilterOption() {
     return filterOption;
   }
 
   @Override
-  public SearchOption getSearch() {
+  public SearchOption getSearchOption() {
     return searchOption;
   }
 
   @Override
-  public OrderByOption getOrderBy() {
+  public OrderByOption getOrderByOption() {
     return orderByOption;
   }
 
   @Override
-  public SkipOption getSkip() {
+  public SkipOption getSkipOption() {
     return skipOption;
   }
 
   @Override
-  public TopOption getTop() {
+  public TopOption getTopOption() {
     return topOption;
   }
 
   @Override
-  public InlineCountOption getInlineCount() {
+  public InlineCountOption getInlineCountOption() {
     return inlineCountOption;
   }
 
   @Override
-  public SelectOption getSelect() {
+  public SelectOption getSelectOption() {
 
     return selectOption;
   }
 
   @Override
-  public ExpandOption getExpand() {
+  public ExpandOption getExpandOption() {
     return expandOption;
   }
 
-  public ExpandItemImpl setResourcePath(final UriInfoResource resourcePath) {
-    this.resourcePath = resourcePath;
+  public ExpandItemImpl setResourceInfo(final UriInfoResource resourceInfo) {
+    this.resourceInfo = resourceInfo;
     return this;
   }
 
   @Override
-  public UriInfoResource getResourcePath() {
+  public UriInfoResource getResourceInfo() {
 
-    return resourcePath;
+    return resourceInfo;
   }
 
   @Override

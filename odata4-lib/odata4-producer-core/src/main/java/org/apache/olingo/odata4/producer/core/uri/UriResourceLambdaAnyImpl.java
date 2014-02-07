@@ -22,17 +22,17 @@ import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAll;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceAllImpl extends UriResourceImplTyped implements UriResourceLambdaAll {
+public class UriResourceLambdaAnyImpl extends UriResourceImplTyped implements UriResourceLambdaAny {
   protected EdmProperty property;
   private String lamdaVariable;
   private ExpressionImpl expression;
 
-  public UriResourceAllImpl() {
-    super(UriResourceKind.lambdaAll);
+  public UriResourceLambdaAnyImpl() {
+    super(UriResourceKind.lambdaAny);
   }
 
   @Override
@@ -46,11 +46,11 @@ public class UriResourceAllImpl extends UriResourceImplTyped implements UriResou
   }
 
   @Override
-  public String getVariable() {
+  public String getLamdaVariable() {
     return lamdaVariable;
   }
 
-  public UriResourceAllImpl setLamdaVariable(final String lamdaVariable) {
+  public UriResourceLambdaAnyImpl setLamdaVariable(final String lamdaVariable) {
     this.lamdaVariable = lamdaVariable;
     return this;
   };
@@ -60,14 +60,13 @@ public class UriResourceAllImpl extends UriResourceImplTyped implements UriResou
     return expression;
   }
 
-  public UriResourceAllImpl setExpression(final ExpressionImpl expression) {
+  public UriResourceLambdaAnyImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
-  };
+  }
 
   @Override
   public String toString() {
-    return "all";
-  }
-
+    return "any";
+  };
 }

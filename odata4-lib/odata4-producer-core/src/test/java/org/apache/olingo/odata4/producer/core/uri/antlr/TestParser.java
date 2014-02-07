@@ -40,23 +40,7 @@ public class TestParser {
 
   @Test
   public void test() {
-    test.aAM().aFC().aCS().log(1).run("ODI?$filter=PropertyEnumString has com.sap.odata.test1.ENString'String1'");
-
-    // test.log(2).run("ESTwoKeyTwoPrim(PropertyInt16=1,PropertyString='ABC')");
-    /*
-     * test.log(2).run("ODI?$filter=geo.distance("+
-     * "geometry'SRID=0;Point(142.1 64.1)',geometry'SRID=0;Point(142.1 64.1)')")
-     * .isText("odataRelativeUriEOF(odataRelativeUri("
-     * + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
-     * + "queryOption(systemQueryOption("
-     * + "filter($filter = commonExpr(methodCallExpr("
-     * + "distanceMethodCallExpr("
-     * + "geo.distance( "
-     * + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
-     * + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) , "
-     * + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
-     * + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) ))))))))) <EOF>)");
-     */
+    //test.aAM().aFC().aCS().log(1).run("ODI?$filter=PropertyEnumString has com.sap.odata.test1.ENString'String1'");
   }
 
   // ;------------------------------------------------------------------------------

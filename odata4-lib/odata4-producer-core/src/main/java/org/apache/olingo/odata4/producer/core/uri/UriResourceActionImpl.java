@@ -56,10 +56,7 @@ public class UriResourceActionImpl extends UriResourceImplTyped implements UriRe
 
   @Override
   public boolean isCollection() {
-    if (action != null) {
-      return action.getReturnType().isCollection();
-    }
-    return false;
+    return action.getReturnType().isCollection();
   }
 
   @Override

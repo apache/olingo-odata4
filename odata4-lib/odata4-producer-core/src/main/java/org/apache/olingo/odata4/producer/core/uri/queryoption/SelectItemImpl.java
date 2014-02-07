@@ -27,20 +27,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
-import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.FormatOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.IdOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.InlineCountOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.SkipTokenOption;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.TopOption;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
@@ -83,7 +70,7 @@ public class SelectItemImpl implements SelectItem {
   }
 
   @Override
-  public UriInfoResource getPath() {
+  public UriInfoResource getResourceInfo() {
     if (this.path == null) {
       this.path = new UriInfoImpl().setKind(UriInfoKind.resource);
     }

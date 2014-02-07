@@ -58,7 +58,7 @@ public class UriResourceLambdaVarImpl extends UriResourceImplTyped implements Ur
     return isCollection;
   }
 
-  public UriResourceLambdaVarImpl isCollection(final boolean isCollection) {
+  public UriResourceLambdaVarImpl setCollection(final boolean isCollection) {
     this.isCollection = isCollection;
     return this;
   }

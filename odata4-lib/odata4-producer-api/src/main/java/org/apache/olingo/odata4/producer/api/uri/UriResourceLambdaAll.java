@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expressi
 
 public interface UriResourceLambdaAll extends UriResourcePartTyped {
   
-  public String getVariable();
+  public String getLamdaVariable();
 
   public Expression getExpression();
   

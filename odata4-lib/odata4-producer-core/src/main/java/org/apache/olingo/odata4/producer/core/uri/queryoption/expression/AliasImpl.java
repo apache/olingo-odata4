@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.AliasExpression;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.BinaryExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExpressionVisitor;
 

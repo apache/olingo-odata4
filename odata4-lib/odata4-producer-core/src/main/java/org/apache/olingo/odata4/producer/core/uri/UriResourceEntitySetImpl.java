@@ -49,9 +49,7 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
 
   @Override
   public EdmType getType() {
-
     return edmEntitySet.getEntityType();
-
   }
 
   @Override
@@ -66,5 +64,4 @@ public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements 
   public String toString() {
     return edmEntitySet.getName();
   }
-
 }

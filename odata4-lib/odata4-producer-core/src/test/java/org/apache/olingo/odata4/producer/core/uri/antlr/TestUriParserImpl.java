@@ -23,7 +23,6 @@ package org.apache.olingo.odata4.producer.core.uri.antlr;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
@@ -390,7 +389,7 @@ public class TestUriParserImpl {
         .at(1)
         .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
         .at(2)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property -> navigation property -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
@@ -421,7 +420,7 @@ public class TestUriParserImpl {
         .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(2)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property(key) -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavOne")
@@ -455,7 +454,7 @@ public class TestUriParserImpl {
         .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
         .isType(EdmTechProvider.nameETKeyNav)
         .at(3)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property(key) -> navigation property(key) -> property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavMany(1)/PropertyString")
@@ -469,7 +468,7 @@ public class TestUriParserImpl {
         .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(3)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
   }
 
@@ -484,7 +483,7 @@ public class TestUriParserImpl {
         .isEntitySet("ESAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with complex property
     testRes.run("ESCompAllPrim(1)/PropertyComplex")
@@ -502,7 +501,7 @@ public class TestUriParserImpl {
         .at(1)
         .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
         .at(2)
-        .isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
   }
 
   @Test
@@ -541,7 +540,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
         .isType(EdmTechProvider.nameString)
-        .isSimpleProperty("AdditionalPropertyString_5", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("AdditionalPropertyString_5", EdmTechProvider.nameString, false);
 
     // filter after key predicate
     testRes.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase")
@@ -564,7 +563,7 @@ public class TestUriParserImpl {
         .isTypeFilterOnEntry(EdmTechProvider.nameETBase)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .at(1)
-        .isSimpleProperty("AdditionalPropertyString_5", EdmTechProvider.nameString, false)
+        .isPrimitiveProperty("AdditionalPropertyString_5", EdmTechProvider.nameString, false)
         .isType(EdmTechProvider.nameString);
 
   }
@@ -668,7 +667,7 @@ public class TestUriParserImpl {
         .isParameter(0, "ParameterString", "'ABC'")
         .isParameter(1, "ParameterInt16", "1")
         .at(1)
-        .isSimpleProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
     // test chains; returning single entity
     testRes.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/PropertyInt16")
@@ -678,7 +677,7 @@ public class TestUriParserImpl {
         .isType(EdmTechProvider.nameETTwoKeyNav, false)
         .isParameter(0, "ParameterInt16", "1")
         .at(1)
-        .isSimpleProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
     // test chains; returning collection of entity (aka entitySet)
     testRes.run("FICRTESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')")
@@ -700,7 +699,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'ABC'")
         .at(1)
-        .isSimpleProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
   }
 
@@ -894,7 +893,7 @@ public class TestUriParserImpl {
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/PropertyString")
         .at(0).isEntitySet("ESKeyNav")
         .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
-        .at(2).isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .at(2).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property -> navigation property -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
@@ -915,7 +914,7 @@ public class TestUriParserImpl {
         .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'1'")
-        .at(2).isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .at(2).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property(key) -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')/NavPropertyETKeyNavOne")
@@ -943,7 +942,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'1'")
         .at(2).isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .at(3).isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .at(3).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     // with navigation property(key) -> navigation property(key) -> property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')"
@@ -954,7 +953,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(1, "PropertyString", "'1'")
         .at(2).isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(3).isSimpleProperty("PropertyString", EdmTechProvider.nameString, false);
+        .at(3).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
   }
 
   @Test
@@ -968,7 +967,7 @@ public class TestUriParserImpl {
         .isSingleton("SINav")
         .isType(EdmTechProvider.nameETTwoKeyNav)
         .at(1)
-        .isSimpleProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
     // with complex property
     testRes.run("SINav/PropertyComplex")
@@ -986,7 +985,7 @@ public class TestUriParserImpl {
         .at(1)
         .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .at(2)
-        .isSimpleProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
   }
 

@@ -25,15 +25,12 @@ import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmEntityTypeImpl;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmTypeImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
@@ -46,7 +43,6 @@ import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.producer.core.testutil.FilterTreeToText;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceActionImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
 import org.junit.Test;
 
@@ -173,7 +169,7 @@ public class ExpressionTest {
     // UriResourceImplTyped
     UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
     EdmAction action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
-    UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
     expression.setPath(uriInfo);
     assertEquals(action.getReturnType().getType(), expression.getType());
@@ -188,7 +184,7 @@ public class ExpressionTest {
     // UriResourceImplTyped check collection = true case
     resource = new UriInfoImpl().setKind(UriInfoKind.resource);
     action = edm.getAction(EdmTechProvider.nameUARTPrimCollParam, null, null);
-    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
     assertEquals(true, expression.isCollection());
@@ -196,7 +192,7 @@ public class ExpressionTest {
     // UriResourceImplTyped with filter
     resource = new UriInfoImpl().setKind(UriInfoKind.resource);
     action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
-    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
         .asUriInfoResource());
     assertEquals(entityType, expression.getType());
@@ -204,7 +200,7 @@ public class ExpressionTest {
     // UriResourceImplKeyPred
     resource = new UriInfoImpl().setKind(UriInfoKind.resource);
     EdmFunction function = edm.getFunction(EdmTechProvider.nameUFCRTETKeyNav, null, null, null);
-    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function))
         .asUriInfoResource());
     assertEquals(function.getReturnType().getType(), expression.getType());
@@ -214,7 +210,7 @@ public class ExpressionTest {
     EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
-    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityBaseType))
         .asUriInfoResource());
     assertEquals(entityBaseType, expression.getType());
@@ -224,7 +220,7 @@ public class ExpressionTest {
     entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
-    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addPathInfo(
+    expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setCollectionTypeFilter(entityBaseType))
         .asUriInfoResource());
     assertEquals(entityBaseType, expression.getType());

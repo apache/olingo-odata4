@@ -20,53 +20,40 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAny;
-import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePrimitiveProperty;
 
-public class UriResourceAnyImpl extends UriResourceImplTyped implements UriResourceLambdaAny {
-  protected EdmProperty property;
-  private String lamdaVariable;
-  private ExpressionImpl expression;
+public class UriResourcePrimitivePropertyImpl extends UriResourceImplTyped implements UriResourcePrimitiveProperty {
 
-  public UriResourceAnyImpl() {
-    super(UriResourceKind.lambdaAny);
+  EdmProperty property;
+
+  public UriResourcePrimitivePropertyImpl() {
+    super(UriResourceKind.primitiveProperty);
+  }
+
+  @Override
+  public EdmProperty getProperty() {
+    return property;
+  }
+
+  public UriResourcePrimitivePropertyImpl setProperty(final EdmProperty property) {
+    this.property = property;
+    return this;
   }
 
   @Override
   public EdmType getType() {
-    return EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance();
+    return property.getType();
   }
 
   @Override
   public boolean isCollection() {
-    return false;
-  }
-
-  @Override
-  public String getVariable() {
-    return lamdaVariable;
-  }
-
-  public UriResourceAnyImpl setLamdaVariable(final String lamdaVariable) {
-    this.lamdaVariable = lamdaVariable;
-    return this;
-  };
-
-  @Override
-  public Expression getExpression() {
-    return expression;
-  }
-
-  public UriResourceAnyImpl setExpression(final ExpressionImpl expression) {
-    this.expression = expression;
-    return this;
+    return property.isCollection();
   }
 
   @Override
   public String toString() {
-    return "any";
-  };
+    return property.getName();
+  }
+
 }

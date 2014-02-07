@@ -135,7 +135,7 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableList(returnList);
   }
 
-  public UriInfoImpl addPathInfo(final UriResourcePartImpl uriPathInfo) {
+  public UriInfoImpl addResourcePart(final UriResourcePartImpl uriPathInfo) {
     pathParts.add(uriPathInfo);
     lastResourcePart = uriPathInfo;
     return this;
@@ -153,6 +153,11 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public EdmEntityType getEntityTypeCast() {
     return entityTypeCast;
+  }
+  
+  public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
+    entityTypeCast = type;
+    return this;
   }
 
   @Override
@@ -183,6 +188,11 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public UriInfoKind getKind() {
     return kind;
+  }
+  
+  public UriInfoImpl setKind(final UriInfoKind kind) {
+    this.kind = kind;
+    return this;
   }
 
   public UriResourcePart getLastResourcePart() {
@@ -220,53 +230,43 @@ public class UriInfoImpl implements UriInfo {
     return topOption;
   }
 
-  public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
-    entityTypeCast = type;
-    return this;
-  }
-
-  public UriInfoImpl setFormat(final FormatOptionImpl formatOption) {
-    this.formatOption = formatOption;
-    return this;
-  }
-
-  public UriInfoImpl setKind(final UriInfoKind kind) {
-    this.kind = kind;
-    return this;
-  }
-
+  
   public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
 
     for (QueryOptionImpl item : list) {
       if (item instanceof SystemQueryOptionImpl) {
-        SystemQueryOptionImpl sysItem = (SystemQueryOptionImpl) item;
-
-        if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
-          expandOption = (ExpandOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
-          filterOption = (FilterOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.FORMAT) {
-          formatOption = (FormatOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.ID) {
-          idOption = (IdOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
-          inlineCountOption = (InlineCountOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
-          orderByOption = (OrderByOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
-          searchOption = (SearchOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
-          selectOption = (SelectOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
-          skipOption = (SkipOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.SKIPTOKEN) {
-          skipTokenOption = (SkipTokenOptionImpl) sysItem;
-        } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
-          topOption = (TopOptionImpl) sysItem;
-        }
+        setSystemQueryOption((SystemQueryOptionImpl)item);
       } else if (item instanceof CustomQueryOptionImpl) {
         customQueryOptions.add((CustomQueryOptionImpl) item);
       }
+    }
+    return this;
+  }
+
+  public UriInfoImpl setSystemQueryOption(SystemQueryOptionImpl systemOption) {
+    
+    if (systemOption.getKind() == SupportedQueryOptions.EXPAND) {
+      expandOption = (ExpandOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.FILTER) {
+      filterOption = (FilterOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.FORMAT) {
+      formatOption = (FormatOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.ID) {
+      idOption = (IdOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.INLINECOUNT) {
+      inlineCountOption = (InlineCountOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.ORDERBY) {
+      orderByOption = (OrderByOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.SEARCH) {
+      searchOption = (SearchOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.SELECT) {
+      selectOption = (SelectOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.SKIP) {
+      skipOption = (SkipOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.SKIPTOKEN) {
+      skipTokenOption = (SkipTokenOptionImpl) systemOption;
+    } else if (systemOption.getKind() == SupportedQueryOptions.TOP) {
+      topOption = (TopOptionImpl) systemOption;
     }
     return this;
   }
@@ -276,9 +276,6 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public void clearPathInfo() {
-    pathParts.clear();
-  }
 
   public String getFragment() {
     return fragment;

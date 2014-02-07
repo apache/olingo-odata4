@@ -81,15 +81,14 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
     }
 
     setFunction(edmFI.getFunction(names));
+    setParameters(parameters);
 
     return this;
   }
 
   @Override
   public EdmType getType() {
-
     return function.getReturnType().getType();
-
   }
 
   @Override

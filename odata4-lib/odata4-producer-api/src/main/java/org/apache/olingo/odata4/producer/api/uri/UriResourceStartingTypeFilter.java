@@ -18,9 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-import java.util.List;
-
-import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourceStartingTypeFilter extends UriResourcePartTyped {

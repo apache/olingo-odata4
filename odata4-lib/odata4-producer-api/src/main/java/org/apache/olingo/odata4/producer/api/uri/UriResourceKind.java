@@ -21,5 +21,5 @@ package org.apache.olingo.odata4.producer.api.uri;
 
 public enum UriResourceKind {
   action, complexProperty, count, entitySet, function, it, lambdaAll, lambdaAny,
-  lambdaVariable,  navigationProperty, ref, root, simpleProperty, singleton, startingTypeFilter, value, 
+  lambdaVariable,  navigationProperty, ref, root, primitiveProperty, singleton, startingTypeFilter, value, 
 }

@@ -28,7 +28,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
-import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
+import org.apache.olingo.odata4.producer.core.uri.Parser;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
@@ -51,7 +51,7 @@ public class UriValidator implements Validator {
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) ParserAdapter.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = (UriInfoImpl) Parser.parseUri(uri, new UriParseTreeVisitor(edm));
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());

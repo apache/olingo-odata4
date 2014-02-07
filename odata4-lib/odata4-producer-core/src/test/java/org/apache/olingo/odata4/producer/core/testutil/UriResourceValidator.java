@@ -35,21 +35,21 @@ import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.ParserAdapter;
+import org.apache.olingo.odata4.producer.core.uri.Parser;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceActionImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceAllImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceAnyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceComplexPropertyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceLambdaAllImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceLambdaAnyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourcePartImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceSimplePropertyImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourcePrimitivePropertyImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
@@ -87,7 +87,7 @@ public class UriResourceValidator implements Validator {
     UriInfoImpl uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = ParserAdapter.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfoTmp = (UriInfoImpl) Parser.parseUri(uri, new UriParseTreeVisitor(edm));
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -120,12 +120,12 @@ public class UriResourceValidator implements Validator {
     if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
       FilterValidator val = new FilterValidator();
       val.setEdm(edm);
-      val.setExpression(((UriResourceAllImpl) uriPathInfo).getExpression());
+      val.setExpression(((UriResourceLambdaAllImpl) uriPathInfo).getExpression());
       return (val);
     } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
       FilterValidator val = new FilterValidator();
       val.setEdm(edm);
-      val.setExpression(((UriResourceAnyImpl) uriPathInfo).getExpression());
+      val.setExpression(((UriResourceLambdaAnyImpl) uriPathInfo).getExpression());
       return (val);
     } else {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
@@ -136,9 +136,9 @@ public class UriResourceValidator implements Validator {
   public UriResourceValidator isLambdaVar(final String var) {
     String actualVar = null;
     if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
-      actualVar = ((UriResourceAllImpl) uriPathInfo).getVariable();
+      actualVar = ((UriResourceLambdaAllImpl) uriPathInfo).getLamdaVariable();
     } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
-      actualVar = ((UriResourceAnyImpl) uriPathInfo).getVariable();
+      actualVar = ((UriResourceLambdaAnyImpl) uriPathInfo).getLamdaVariable();
     } else {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -361,12 +361,13 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
-  public UriResourceValidator isSimpleProperty(final String name, final FullQualifiedName type, boolean isCollection) {
-    if (!(uriPathInfo instanceof UriResourceSimplePropertyImpl)) {
+  public UriResourceValidator isPrimitiveProperty(final String name, 
+      final FullQualifiedName type, boolean isCollection) {
+    if (!(uriPathInfo instanceof UriResourcePrimitivePropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
 
-    UriResourceSimplePropertyImpl uriPathInfoProp = (UriResourceSimplePropertyImpl) uriPathInfo;
+    UriResourcePrimitivePropertyImpl uriPathInfoProp = (UriResourcePrimitivePropertyImpl) uriPathInfo;
 
     EdmElement property = uriPathInfoProp.getProperty();
 
@@ -390,8 +391,8 @@ public class UriResourceValidator implements Validator {
     assertEquals(isCollection, property.isCollection());
     return this;
   }
-  
-  public UriResourceValidator isNavProperty(final String name,final FullQualifiedName type, boolean isCollection) { 
+
+  public UriResourceValidator isNavProperty(final String name, final FullQualifiedName type, boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourceNavigationPropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -468,8 +469,6 @@ public class UriResourceValidator implements Validator {
     assertEquals(actionName, ((UriResourceActionImpl) uriPathInfo).getActionImport().getName());
     return this;
   }
-
-  
 
   public UriResourceValidator isIt() {
     assertEquals(UriResourceKind.it, uriPathInfo.getKind());

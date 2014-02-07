@@ -24,12 +24,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.apache.olingo.odata4.producer.api.uri.UriInfo;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
-public class ParserAdapter {
-  public static UriInfoImpl parseUri(final String input, final UriParseTreeVisitor uriParseTreeVisitor)
+public class Parser {
+  static public UriInfo parseUri(final String input, final UriParseTreeVisitor uriParseTreeVisitor)
       throws UriParserException {
 
     try {
@@ -58,7 +59,7 @@ public class ParserAdapter {
     // Use 2 stage approach to improve performance
     // see https://github.com/antlr/antlr4/issues/192
 
-    // stage= 1
+    // stage = 1
     try {
       // create parser
       lexer = new UriLexer(new ANTLRInputStream(input));
@@ -77,8 +78,9 @@ public class ParserAdapter {
       ret = parser.odataRelativeUriEOF();
 
     } catch (ParseCancellationException hardException) {
-
+      // stage = 2
       try {
+        
         // create parser
         lexer = new UriLexer(new ANTLRInputStream(input));
         parser = new UriParserParser(new CommonTokenStream(lexer));
@@ -86,7 +88,7 @@ public class ParserAdapter {
         // Used default error strategy
         parser.setErrorHandler(new DefaultErrorStrategy());
 
-        // User the slower SLL parsing
+        // Use the slower SLL parsing
         parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 
         // parse

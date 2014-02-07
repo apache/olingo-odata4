@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.QueryOption;
 
-public abstract class QueryOptionImpl implements QueryOption {
+public class QueryOptionImpl implements QueryOption {
   private String name;
   private String text;
 

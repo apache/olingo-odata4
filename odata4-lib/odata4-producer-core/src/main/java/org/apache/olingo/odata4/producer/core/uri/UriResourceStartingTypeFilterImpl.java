@@ -48,12 +48,20 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceImplKeyPred im
 
   @Override
   public boolean isCollection() {
+    if (keyPredicates != null) {
+      return false;
+    }
     return isCollection;
   }
 
-  public UriResourceStartingTypeFilterImpl setIsCollection(final boolean isCollection) {
+  public UriResourceStartingTypeFilterImpl setCollection(final boolean isCollection) {
     this.isCollection = isCollection;
     return this;
+  }
+  
+  @Override
+  public String toString() {
+    return type.getNamespace()  + "." +type.getName();
   }
 
 }

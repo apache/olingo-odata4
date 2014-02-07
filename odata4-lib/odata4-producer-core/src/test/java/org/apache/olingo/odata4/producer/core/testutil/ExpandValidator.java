@@ -61,7 +61,7 @@ public class ExpandValidator implements Validator {
   // --- Navigation ---
 
   public UriResourceValidator goPath() {
-    UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getResourcePath();
+    UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getResourceInfo();
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("goPath() can only be used on UriInfoKind.resource");
@@ -76,7 +76,7 @@ public class ExpandValidator implements Validator {
 
   public ExpandValidator goExpand() {
     ExpandValidator val = new ExpandValidator();
-    val.setExpand((ExpandOptionImpl) expandItem.getExpand());
+    val.setExpand((ExpandOptionImpl) expandItem.getExpandOption());
     val.setGoUpValidator(this);
     return val;
   }
@@ -118,43 +118,43 @@ public class ExpandValidator implements Validator {
   }
 
   public ExpandValidator isLevelText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getLevels();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getLevelsOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isSkipText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSkip();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSkipOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isTopText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getTop();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getTopOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isInlineCountText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getInlineCount();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getInlineCountOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isSelectText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSelect();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSelectOption();
     assertEquals(text, option.getText());
     return this;
   }
   
   public ExpandValidator isFilterText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getFilter();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getFilterOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isFilterSerialized(final String serialized) {
-    FilterOptionImpl filter = (FilterOptionImpl) expandItem.getFilter();
+    FilterOptionImpl filter = (FilterOptionImpl) expandItem.getFilterOption();
 
     try {
       String tmp = FilterTreeToText.Serialize(filter);

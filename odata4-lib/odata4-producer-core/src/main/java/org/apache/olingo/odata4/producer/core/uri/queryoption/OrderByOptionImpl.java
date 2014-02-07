@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.odata4.producer.api.uri.queryoption.OrderByItem;

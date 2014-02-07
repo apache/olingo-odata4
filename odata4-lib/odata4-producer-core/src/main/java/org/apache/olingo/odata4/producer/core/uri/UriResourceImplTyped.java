@@ -43,8 +43,12 @@ public abstract class UriResourceImplTyped extends UriResourcePartImpl implement
 
   @Override
   public String toString(final boolean includeFilters) {
-    if (typeFilter != null) {
-      return toString() + "/" + getFQN(typeFilter).toString();
+    if (includeFilters) {
+      if (typeFilter != null) {
+        return toString() + "/" + getFQN(typeFilter).toString();
+      } else {
+        return toString();
+      }
     }
     return toString();
   }

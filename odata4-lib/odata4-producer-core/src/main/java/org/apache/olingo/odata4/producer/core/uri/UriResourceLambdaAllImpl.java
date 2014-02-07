@@ -20,40 +20,54 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourceSimpleProperty;
+import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAll;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceSimplePropertyImpl extends UriResourceImplTyped implements UriResourceSimpleProperty {
+public class UriResourceLambdaAllImpl extends UriResourceImplTyped implements UriResourceLambdaAll {
+  protected EdmProperty property;
+  private String lamdaVariable;
+  private ExpressionImpl expression;
 
-  EdmProperty property;
-
-  public UriResourceSimplePropertyImpl() {
-    super(UriResourceKind.simpleProperty);
-  }
-
-  @Override
-  public EdmProperty getProperty() {
-    return property;
-  }
-
-  public UriResourceSimplePropertyImpl setProperty(final EdmProperty property) {
-    this.property = property;
-    return this;
+  public UriResourceLambdaAllImpl() {
+    super(UriResourceKind.lambdaAll);
   }
 
   @Override
   public EdmType getType() {
-    return property.getType();
+    return EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance();
   }
 
   @Override
   public boolean isCollection() {
-    return property.isCollection();
+    return false;
   }
 
   @Override
+  public String getLamdaVariable() {
+    return lamdaVariable;
+  }
+
+  public UriResourceLambdaAllImpl setLamdaVariable(final String lamdaVariable) {
+    this.lamdaVariable = lamdaVariable;
+    return this;
+  };
+
+  @Override
+  public Expression getExpression() {
+    return expression;
+  }
+
+  public UriResourceLambdaAllImpl setExpression(final ExpressionImpl expression) {
+    this.expression = expression;
+    return this;
+  };
+
+  @Override
   public String toString() {
-    return property.getName();
+    return "all";
   }
 
 }

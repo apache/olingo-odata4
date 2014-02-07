@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.producer.core.uri;
 
 import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriParameterImpl implements UriParameter {
   private String name;
@@ -64,7 +65,7 @@ public class UriParameterImpl implements UriParameter {
     return expression;
   }
 
-  public UriParameterImpl setExpression(final Expression expression) {
+  public UriParameterImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
   }

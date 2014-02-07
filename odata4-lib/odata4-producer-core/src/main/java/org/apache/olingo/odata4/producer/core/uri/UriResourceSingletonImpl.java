@@ -65,7 +65,7 @@ public class UriResourceSingletonImpl extends UriResourceImplTyped implements Ur
 
   @Override
   public String toString() {
-    return singleton.toString();
+    return singleton.getName();
   }
 
 }
