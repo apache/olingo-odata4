@@ -202,7 +202,8 @@ public class UriResourceValidator implements Validator {
   public UriResourceValidator isTypeFilter(final FullQualifiedName expectedType) {
 
     if (uriPathInfo.getKind() != UriResourceKind.complexProperty &&
-        uriPathInfo.getKind() != UriResourceKind.singleton) {
+        uriPathInfo.getKind() != UriResourceKind.singleton && 
+        uriPathInfo.getKind() != UriResourceKind.startingTypeFilter) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
 
@@ -330,6 +331,19 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
+  
+  public UriResourceValidator isKeyPredicateRef(final int index, final String name, final String refencedProperty) {
+    if (!(uriPathInfo instanceof UriResourceImplKeyPred)) {
+      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
+    }
+
+    UriResourceImplKeyPred info = (UriResourceImplKeyPred) uriPathInfo;
+    List<UriParameter> keyPredicates = info.getKeyPredicates();
+    assertEquals(name, keyPredicates.get(index).getName());
+    assertEquals(refencedProperty, keyPredicates.get(index).getRefencedProperty());
+    return this;
+
+  }
   public UriResourceValidator isKeyPredicate(final int index, final String name, final String text) {
     if (!(uriPathInfo instanceof UriResourceImplKeyPred)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());

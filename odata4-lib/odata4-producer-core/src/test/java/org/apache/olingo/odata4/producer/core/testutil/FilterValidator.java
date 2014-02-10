@@ -82,6 +82,7 @@ public class FilterValidator implements Validator {
     if (filter.getExpression() == null) {
       fail("FilterValidator: no filter found");
     }
+    setExpression(filter.getExpression());
     return this;
   }
 
@@ -363,7 +364,7 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isMemberExpression() {
+  public FilterValidator isMember() {
     if (!(curExpression instanceof MemberImpl)) {
       fail("Current expression not a member");
     }

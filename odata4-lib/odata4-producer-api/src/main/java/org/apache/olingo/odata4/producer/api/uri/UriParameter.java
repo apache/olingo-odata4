@@ -29,5 +29,7 @@ public interface UriParameter {
   public Expression getExression();
 
   public String getName();
+  
+  public String getRefencedProperty();
 
 }

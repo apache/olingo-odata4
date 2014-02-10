@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm;
 
+import java.util.List;
+
 /**
  * A CSDL NavigationProperty element
  * <p>EdmNavigationProperty allows navigation from one entity type to another via a relationship.

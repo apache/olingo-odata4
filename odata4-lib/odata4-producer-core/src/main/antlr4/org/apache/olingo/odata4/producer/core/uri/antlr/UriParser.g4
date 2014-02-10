@@ -284,7 +284,7 @@ rootExpr            : ROOT vPs=pathSegments;
 memberExpr          :  vIt=IT ( SLASH (vANY=anyExpr | vALL=allExpr))?
                     |  vIts=ITSLASH? vPs=pathSegments ( SLASH (vANY=anyExpr | vALL=allExpr))?;
 
-anyExpr             : ANY_LAMDA OPEN WSP? ( vLV=odataIdentifier WSP? COLON WSP? vLE=commonExpr WSP? )?  CLOSE;
+anyExpr             : ANY_LAMDA OPEN WSP? ( vLV=odataIdentifier WSP? COLON WSP? vLE=commonExpr WSP? )? CLOSE;
 allExpr             : ALL_LAMDA OPEN WSP?   vLV=odataIdentifier WSP? COLON WSP? vLE=commonExpr WSP? CLOSE;
 
 methodCallExpr      : indexOfMethodCallExpr
@@ -380,7 +380,7 @@ json_value          : jsonPrimitiv
 
 json_object         : BEGIN_OBJECT 
                       STRING_IN_JSON
-                      NAME_SEPARATOR
+                      WSP? COLON WSP? 
                       json_value
                       END_OBJECT;
 

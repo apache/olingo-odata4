@@ -36,6 +36,7 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
   protected List<UriParameterImpl> parameters;
   protected EdmFunction function;
   protected EdmFunctionImport functionImport;
+  private boolean isParameterListFilled = false;
 
   public UriResourceFunctionImpl() {
     super(UriResourceKind.function);
@@ -51,6 +52,7 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
   }
 
   public UriResourceFunctionImpl setParameters(final List<UriParameterImpl> parameters) {
+    isParameterListFilled  = true;
     this.parameters = parameters;
     return this;
   }
@@ -73,14 +75,7 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
   public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFI,
       final List<UriParameterImpl> parameters) {
     functionImport = edmFI;
-    this.parameters = parameters;
 
-    List<String> names = new ArrayList<String>();
-    for (UriParameterImpl item : parameters) {
-      names.add(item.getName());
-    }
-
-    setFunction(edmFI.getFunction(names));
     setParameters(parameters);
 
     return this;
@@ -107,6 +102,10 @@ public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements U
       return function.getName();
     }
     return "";
+  }
+
+  public boolean isParameterListFilled() {
+    return isParameterListFilled;
   }
 
 }

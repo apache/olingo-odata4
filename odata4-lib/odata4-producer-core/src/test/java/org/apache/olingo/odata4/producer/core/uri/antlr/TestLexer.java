@@ -46,7 +46,7 @@ public class TestLexer {
 
   //@Test
   public void test() {
-    //test.log(1).run("$metadata?$format=atom#asdfaf");
+    //test.log(1).run("ESTwoKeyNav?$filter=CollPropertyComplex/all( l :true)");
   }
 
   // ;------------------------------------------------------------------------------

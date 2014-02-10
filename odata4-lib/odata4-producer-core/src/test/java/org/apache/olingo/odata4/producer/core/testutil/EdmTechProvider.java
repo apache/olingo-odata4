@@ -1188,7 +1188,7 @@ public class EdmTechProvider extends EdmProvider {
                   .setCollection(true)
               ));
 
-    } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
+    } else if (entityTypeName.equals(nameETFourKeyAlias)) {
       return new EntityType()
           .setName("ETFourKeyAlias")
           .setKey(Arrays.asList(
@@ -1479,6 +1479,17 @@ public class EdmTechProvider extends EdmProvider {
               .setComposable(true)
               .setReturnType(
                   new ReturnType().setType(nameCTTwoPrim))
+          );
+    } else if (functionName.equals(nameUFCRTCollCTTwoPrimParam)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTCollCTTwoPrimParam")
+              .setParameters(Arrays.asList(
+                  new Parameter().setName("ParameterString").setType(nameString),
+                  new Parameter().setName("ParameterInt16").setType(nameInt16)))
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(nameCTTwoPrim).setCollection(true))
           );
 
     } else if (functionName.equals(nameUFCRTCTTwoPrim)) {

@@ -53,18 +53,14 @@ public class TestFullResourcePath {
 
   @Test
   public void test() {
-    /*
-     * testUri.run("ESTwoKeyNav?"
-     * + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
-     * .isKind(UriInfoKind.resource).goPath().first()
-     * .goExpand().first()
-     * .goPath().first()
-     * .isUriPathInfoKind(UriResourceKind.it)
-     * .isType(EdmTechProvider.nameETTwoKeyNav)
-     * .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
-     * .n()
-     * .isNavProperty("NavPropertyETKeyNavMany");
-     */
+    testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')").goPath()
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EdmTechProvider.nameETTwoKeyNav)
+    .isCollection(true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(EdmTechProvider.nameETTwoKeyNav);
   }
 
   @Test
@@ -99,8 +95,6 @@ public class TestFullResourcePath {
         .isUriPathInfoKind(UriResourceKind.function)
         .isType(EdmTechProvider.nameETTwoKeyNav);
   }
-
-  
 
 //DONE
 
@@ -1530,13 +1524,28 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'5'")
         .n()
         .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
-
   }
 
   @Test
   public void runEsNamePpNpRc() {
-    // testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany('2')");
-    // testUri.run("ESKeyNav(PropertyInt16=1)/NavPropertyETTwoKeyNavMany(PropertyString='2')");
+    // checks for using referential constrains to fill missing keys
+    testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany('2')").goPath()
+        .first()
+        .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .n()
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicateRef(0, "PropertyInt16", "PropertyInt16")
+        .isKeyPredicate(1, "PropertyString", "'2'");
+
+    testUri.run("ESKeyNav(PropertyInt16=1)/NavPropertyETTwoKeyNavMany(PropertyString='2')").goPath()
+        .first()
+        .isEntitySet("ESKeyNav")
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .n()
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isKeyPredicateRef(0, "PropertyInt16", "PropertyInt16")
+        .isKeyPredicate(1, "PropertyString", "'2'");
 
   }
 
@@ -2499,7 +2508,6 @@ public class TestFullResourcePath {
         .isFormatText("Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27");
   }
 
-
   @Test
   public void runCount() {
     // count
@@ -2755,72 +2763,82 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void TestFilter() throws UriParserException {
-    /*
-     * testFilter.runOnETTwoKeyNav("PropertyString")
-     * .is("<$it/PropertyString>")
-     * .isType(EdmTechProvider.nameString);
-     * 
-     * testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyInt16")
-     * .is("<$it/PropertyComplex/PropertyInt16>")
-     * .isType(EdmTechProvider.nameInt16);
-     * 
-     * testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate")
-     * .is("<$it/PropertyComplex/PropertyComplex/PropertyDate>")
-     * .isType(EdmTechProvider.nameDate);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne")
-     * .is("<$it/NavPropertyETTwoKeyNavOne>")
-     * .isType(EdmTechProvider.nameETTwoKeyNav);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString")
-     * .is("<$it/NavPropertyETTwoKeyNavOne/PropertyString>")
-     * .isType(EdmTechProvider.nameString);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex")
-     * .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex>")
-     * .isType(EdmTechProvider.nameCTPrimComp);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex")
-     * .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex>")
-     * .isType(EdmTechProvider.nameCTAllPrim);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16")
-     * .is("<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16>")
-     * .isType(EdmTechProvider.nameInt16);
-     * 
-     * testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16 eq 1")
-     * .is("<<$it/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16> eq <1>>")
-     * .root().left()
-     * .isType(EdmTechProvider.nameInt16)
-     * .root().right()
-     * .isLiteral("1");
-     * 
-     * // testFilter
-     * // .runOnETTwoKeyNav(
-     * // "NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')/PropertyString eq 'SomeString'");
-     * testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
-     * .is("<<$it/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
-     * .root().left()
-     * .isType(EdmTechProvider.nameDate)
-     * .root().right()
-     * .isLiteral("2013-11-12");
-     * 
-     * testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
-     * .is("<<$it/com.sap.odata.test1.CTBase/AdditionalPropString> eq <'SomeString'>>")
-     * .root().left()
-     * .isType(EdmTechProvider.nameString)
-     * .root().right()
-     * .isLiteral("'SomeString'");
-     * 
-     * testFilter
-     * .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
-     * .is("<<$it/NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
-     * .root().left()
-     * .isType(EdmTechProvider.nameDate)
-     * .root().right()
-     * .isLiteral("2013-11-12");
-     */
+  public void testFilter() throws UriParserException {
+
+    testFilter.runOnETTwoKeyNav("PropertyString")
+        .is("<PropertyString>")
+        .isType(EdmTechProvider.nameString);
+
+    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyInt16")
+        .is("<PropertyComplex/PropertyInt16>")
+        .isType(EdmTechProvider.nameInt16);
+
+    testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate")
+        .is("<PropertyComplex/PropertyComplex/PropertyDate>")
+        .isType(EdmTechProvider.nameDate);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne")
+        .is("<NavPropertyETTwoKeyNavOne>")
+        .isType(EdmTechProvider.nameETTwoKeyNav);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString")
+        .is("<NavPropertyETTwoKeyNavOne/PropertyString>")
+        .isType(EdmTechProvider.nameString);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex")
+        .is("<NavPropertyETTwoKeyNavOne/PropertyComplex>")
+        .isType(EdmTechProvider.nameCTPrimComp);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex")
+        .is("<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex>")
+        .isType(EdmTechProvider.nameCTAllPrim);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16")
+        .is("<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16>")
+        .isType(EdmTechProvider.nameInt16);
+
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16 eq 1")
+        .is("<<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16> eq <1>>")
+        .root().left()
+        .isType(EdmTechProvider.nameInt16)
+        .root().right()
+        .isLiteral("1");
+
+    // testFilter
+    // .runOnETTwoKeyNav(
+    // "NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')/PropertyString eq 'SomeString'");
+    testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+        .is("<<com.sap.odata.test1.ETTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
+        .root().left()
+        .isType(EdmTechProvider.nameDate)
+        .isMember().goPath()
+        .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameETTwoKeyNav).isTypeFilterOnEntry(EdmTechTestProvider.nameETBaseTwoKeyNav)
+        .n().isPrimitiveProperty("PropertyDate", EdmTechTestProvider.nameDate, false)
+        .goUpFilterValidator()
+        .root().right()
+        .isLiteral("2013-11-12");
+
+    testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
+        .is("<<com.sap.odata.test1.CTTwoPrim/com.sap.odata.test1.CTBase/AdditionalPropString> eq <'SomeString'>>")
+        .root().left()
+        .isType(EdmTechProvider.nameString)
+        .isMember().goPath()
+        .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameCTTwoPrim).isTypeFilterOnEntry(EdmTechTestProvider.nameCTBase)
+        .n().isPrimitiveProperty("AdditionalPropString", EdmTechTestProvider.nameString, false)
+        .goUpFilterValidator()
+        .root().right()
+        .isLiteral("'SomeString'");
+
+    testFilter
+        .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
+        .is("<<NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
+        .root().left()
+        .isType(EdmTechProvider.nameDate)
+        .root().right()
+        .isLiteral("2013-11-12");
+
     testFilter
         .runOnETTwoKeyNav("PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
         .is("<<PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
@@ -3208,7 +3226,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void TestFilterProperties() throws UriParserException {
+  public void testFilterProperties() throws UriParserException {
     // testFilter.runOnETAllPrim("XPropertyByte mod 0");
     // testFilter.runOnETAllPrim("com.sap.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias)");
 
@@ -3257,7 +3275,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void TestFilterPMethods() throws ExceptionVisitExpression, ODataApplicationException, UriParserException {
+  public void testFilterPMethods() throws ExceptionVisitExpression, ODataApplicationException, UriParserException {
 
     testFilter.runOnETKeyNav("indexof(PropertyString,'47') eq 5")
         .is("<<indexof(<PropertyString>,<'47'>)> eq <5>>")
@@ -4169,7 +4187,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void TestHas() throws ExceptionVisitExpression, ODataApplicationException, UriParserException {
+  public void testHas() throws ExceptionVisitExpression, ODataApplicationException, UriParserException {
     /*
      * testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String1'")
      * .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String1>>>")
@@ -4360,7 +4378,7 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyByte eq 255")
         .is("<<PropertyByte> eq <255>>")
         .isBinary(SupportedBinaryOperators.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyByte", 
+        .root().left().goPath().isPrimitiveProperty("PropertyByte",
             EdmTechProvider.nameByte, false).goUpFilterValidator()
         .root().right().isLiteral("255");
 
@@ -4395,7 +4413,8 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyDateTimeOffset eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<PropertyDateTimeOffset> eq <2013-09-25T12:34:56.123456789012-10:24>>")
         .isBinary(SupportedBinaryOperators.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset, false)
+        .root().left().goPath()
+        .isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset, false)
         .goUpFilterValidator()
         .root().right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
 
@@ -4462,7 +4481,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void TestOrderby() throws UriParserException {
+  public void testOrderby() throws UriParserException {
     /*
      * testFilter.runOrderByOnETTwoKeyNav("com.sap.odata.test1.UFCRTETAllPrimTwoParam("
      * + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString'")
@@ -4784,6 +4803,7 @@ public class TestFullResourcePath {
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
         .goOrder(0).right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String1"));
+
     // XPropertyInt16 1
     // XPropertyInt16, PropertyInt32 PropertyDuration
     // XPropertyInt16 PropertyInt32, PropertyDuration desc

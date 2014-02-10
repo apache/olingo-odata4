@@ -28,6 +28,7 @@ public class UriParameterImpl implements UriParameter {
   private String text;
   private String alias;
   private Expression expression;
+  private String referencedProperty;
 
   @Override
   public String getName() {
@@ -61,12 +62,21 @@ public class UriParameterImpl implements UriParameter {
 
   @Override
   public Expression getExression() {
-
     return expression;
   }
 
   public UriParameterImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
+    return this;
+  }
+  
+  @Override
+  public String getRefencedProperty() {
+    return this.referencedProperty;
+  }
+
+  public UriParameterImpl setRefencedProperty(String referencedProperty) {
+    this.referencedProperty = referencedProperty;
     return this;
   }
 }

@@ -994,4 +994,72 @@ public class TestUriParserImpl {
     testUri.run("ESAllPrim(1)/PropertyString/$value");
   }
 
+  @Test
+  public void testMemberStartingWithCast() {
+    // on EntityType entry
+    // TODO inform OTTO
+    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
+        + "$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+        .goFilter().root().isMember().goPath()
+        .at(0)
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnEntry(EdmTechTestProvider.nameETBaseTwoKeyNav)
+        .at(1).isType(EdmTechTestProvider.nameDate);
+
+    // on EntityType collection
+    testUri.run("ESTwoKeyNav?$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
+        .goFilter().root().isMember().goPath()
+        .at(0)
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EdmTechTestProvider.nameETBaseTwoKeyNav)
+        .at(1).isType(EdmTechTestProvider.nameDate);
+
+    testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
+        + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
+        .goFilter().root().isMember().goPath()
+        .at(0)
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameCTTwoPrim, false)
+        .isTypeFilterOnEntry(EdmTechTestProvider.nameCTBase)
+        .at(1).isType(EdmTechTestProvider.nameString);
+
+// on Complex collection
+    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
+        + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
+        .goFilter().root().isMember().goPath()
+        .at(0)
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isType(EdmTechTestProvider.nameCTTwoPrim, true)
+        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTBase)
+        .at(1).isType(EdmTechTestProvider.nameString);
+
+  }
+
+  @Test
+  public void testComplexTypeCastFollowingAsCollection() {
+    // TODO inform OTTO
+    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/com.sap.odata.test1.CTBase");
+
+  }
+
+  @Test
+  public void testLambda() {
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/all( l : true )")
+        .goFilter().is("<CollPropertyComplex/<ALL;<true>>>");
+
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/any( l : true )")
+        .goFilter().is("<CollPropertyComplex/<ANY;<true>>>");
+    testUri.run("ESTwoKeyNav?$filter=CollPropertyComplex/any( )")
+        .goFilter().is("<CollPropertyComplex/<ANY;>>");
+
+    testUri.run("ESTwoKeyNav?$filter=all( l : true )")
+        .goFilter().is("<<ALL;<true>>>");
+    testUri.run("ESTwoKeyNav?$filter=any( l : true )")
+        .goFilter().is("<<ANY;<true>>>");
+    testUri.run("ESTwoKeyNav?$filter=any( )")
+        .goFilter().is("<<ANY;>>");
+  }
+
 }

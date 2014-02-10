@@ -210,9 +210,7 @@ public class UriParameterImplTest {
     impl = new UriResourceFunctionImpl();
     EdmFunctionImport functionImport = edm.getEntityContainer(null).getFunctionImport("FINRTInt16");
     impl.setFunctionImport(functionImport, new ArrayList<UriParameterImpl>());
-
     assertEquals(functionImport, impl.getFunctionImport());
-    assertEquals(functionImport.getFunction(new ArrayList<String>()), impl.getFunction());
     assertEquals("FINRTInt16", impl.toString());
 
     // function collection
@@ -221,8 +219,10 @@ public class UriParameterImplTest {
     assertNotNull(function);
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");
     impl.setFunctionImport(functionImport, Arrays.asList(parameter));
-
     assertEquals("FICRTESTwoKeyNavParam", impl.toString());
+    
+    
+    impl.setFunction(functionImport.getFunction(Arrays.asList("ParameterInt16")));
     assertEquals(true, impl.isCollection());
     impl.setKeyPredicates(new ArrayList<UriParameterImpl>());
     assertEquals(false, impl.isCollection());

@@ -77,7 +77,7 @@ END_OBJECT      : WS* ( '}' / '%7D' ) WS*;
 
 BEGIN_ARRAY     : WS* ( '[' / '%5B' ) WS*;
 END_ARRAY       : WS* ( ']' / '%5D' ) WS*;
-NAME_SEPARATOR  : WS* COLON WS*;
+
 
 //alpha stuff
 fragment ALPHA                : 'a'..'z' | 'A'..'Z';

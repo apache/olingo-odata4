@@ -257,6 +257,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
    */
   private UriInfoImpl contextUriInfo;
 
+  private boolean contextReadingFunctionParameters = false;
+
   // --- class ---
 
   public void init() {
@@ -278,10 +280,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   private FullQualifiedName getFullName(final NamespaceContext vNS, final String odi) {
-      String namespace = vNS.getText();
-      namespace = namespace.substring(0, namespace.length() - 1);
+    String namespace = vNS.getText();
+    namespace = namespace.substring(0, namespace.length() - 1);
 
-      return new FullQualifiedName(namespace, odi);
+    return new FullQualifiedName(namespace, odi);
   }
 
   private LambdaVariables getLambdaVar(final String odi) {
@@ -353,11 +355,24 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmFunctionImport != null) {
 
         // read the URI parameters
+        this.contextReadingFunctionParameters = true;
         List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
+        this.contextReadingFunctionParameters = false;
         ctx.vlNVO.remove(0); // parameters are consumed
 
         UriResourceFunctionImpl uriResource = new UriResourceFunctionImpl();
         uriResource.setFunctionImport(edmFunctionImport, parameters);
+        /* get function from function import */
+        List<String> names = new ArrayList<String>();
+        for (UriParameterImpl item : parameters) {
+          names.add(item.getName());
+        }
+        EdmFunction function = edmFunctionImport.getFunction(names);
+        if (function == null) {
+          throw wrap(new UriParserSemanticException("Function via function import not found"));
+        }
+        uriResource.setFunction(edmFunctionImport.getFunction(names));
+
         contextUriInfo.addResourcePart(uriResource);
         return null;
       }
@@ -565,8 +580,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         throw wrap(new UriParserSemanticException("Expected function parameters"));
       }
 
+      this.contextReadingFunctionParameters = true;
       List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
-
+      this.contextReadingFunctionParameters = false;
       // get names of function parameters
       List<String> names = new ArrayList<String>();
       for (UriParameterImpl item : parameters) {
@@ -624,7 +640,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitAllExpr(final AllExprContext ctx) {
     UriResourceLambdaAllImpl all = new UriResourceLambdaAllImpl();
 
-    // TODO
     UriResourcePart obj = contextUriInfo.getLastResourcePart();
     if (!(obj instanceof UriResourceImplTyped)) {
       throw wrap(new UriParserSemanticException("any only allowed on typed path segments"));
@@ -1451,51 +1466,147 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitNameValueOptList(final NameValueOptListContext ctx) {
-
-    // is key predicate
     if (ctx.vVO != null) {
+
+      // is single key predicate without a name
       String valueText = ctx.vVO.vV.getText();
       ExpressionImpl expression = (ExpressionImpl) ctx.vVO.vV.accept(this);
 
-      if (!(contextUriInfo.getLastResourcePart() instanceof UriResourceImplTyped)) {
+      // get type of last resource part
+      UriResourcePart last = contextUriInfo.getLastResourcePart();
+      if (!(last instanceof UriResourceImplTyped)) {
         throw wrap(new UriParserSyntaxException("Paramterslist on untyped resource path segement not allowed"));
       }
+      EdmEntityType lastType = (EdmEntityType) ((UriResourceImplTyped) last).getType();
 
-      EdmEntityType entityType =
-          (EdmEntityType) ((UriResourceImplTyped) contextUriInfo.getLastResourcePart()).getType();
+      // get list of keys for lastType
+      List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
 
-      List<String> keyPredicates = entityType.getKeyPredicateNames();
-      if (keyPredicates.size() == 1) {
-        String keyName = keyPredicates.get(0);
+      // if there is exactly one key defined in the EDM, then this key the the key written in the URI,
+      // so fill the keylist with this key and return
+      if (lastKeyPredicates.size() == 1) {
+        String keyName = lastKeyPredicates.get(0);
         List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
         list.add(new UriParameterImpl().setName(keyName).setText(valueText).setExpression(expression));
         return list;
       }
 
-      // If there is only a single key in the URI but there are more than one keys defined in the EDM, then reduce
-      // The keylist with the keys defined as referential constrained.
-      // TODO add support vor using refential constrains
-      /*
-       * if (contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl) {
-       * UriResourceNavigationPropertyImpl nav =
-       * (UriResourceNavigationPropertyImpl) contextUriInfo.getLastResourcePart();
-       * nav.getNavigationProperty();
-       * }
-       */
+      // There are more keys defined in the EDM, but only one is written in the URI. This is allowed only if
+      // referential constrains are defined on this navigation property which can be used to will up all required
+      // key.
 
-      throw wrap(new UriParserSyntaxException(
-          "for using a value only keyPredicate there must be exact ONE defined keyProperty"));
+      // for using referential constrains the last resource part must be a navigation property
+      if (!(contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+        throw wrap(new UriParserSyntaxException("Not enougth keyproperties defined"));
+      }
+      UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
 
-    } else {
+      // get the partner of the navigation property
+      EdmNavigationProperty partner = lastNav.getProperty().getPartner();
+      if (partner == null) {
+        throw wrap(new UriParserSyntaxException("Not enougth keyproperties defined"));
+      }
+
+      // create the keylist
       List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
-      if (ctx.vNVL != null) {
-        for (ParseTree c : ctx.vNVL.vlNVP) {
-          list.add((UriParameterImpl) c.accept(this));
+
+      // find the key not filled by referential constrains and collect the other keys filled by
+      // referential constrains
+      String missedKey = null;
+      for (String item : lastKeyPredicates) {
+        String property = partner.getReferencingPropertyName(item);
+        if (property != null) {
+          list.add(new UriParameterImpl().setName(item).setRefencedProperty(property));
+        } else {
+          if (missedKey == null) {
+            missedKey = item;
+          } else {
+            // two of more keys are missing
+            throw wrap(new UriParserSyntaxException("Not enougth referntial contrains defined"));
+          }
         }
       }
-      return list;
 
+      // the missing key is the one which is defined in the URI
+      list.add(new UriParameterImpl().setName(missedKey).setText(valueText).setExpression(expression));
+
+      return list;
+    } else if (ctx.vNVL != null) {
+
+      List<UriParameterImpl> list = new ArrayList<UriParameterImpl>();
+
+      for (ParseTree c : ctx.vNVL.vlNVP) {
+        list.add((UriParameterImpl) c.accept(this));
+      }
+      
+      if (contextReadingFunctionParameters){ 
+        return list;
     }
+
+      UriResourcePart last = contextUriInfo.getLastResourcePart();
+      // if the last resource part is a function
+      /*if (last instanceof UriResourceFunctionImpl) {
+        UriResourceFunctionImpl function = (UriResourceFunctionImpl) last;
+        if (!function.isParameterListFilled()) {
+          return list;
+        }
+      }*/
+
+      // get type of last resource part
+      if (!(last instanceof UriResourceImplTyped)) {
+        throw wrap(new UriParserSyntaxException("Parameterslist on untyped resource path segement not allowed"));
+      }
+      EdmEntityType lastType = (EdmEntityType) ((UriResourceImplTyped) last).getType();
+
+      // get list of keys for lastType
+      List<String> lastKeyPredicates = lastType.getKeyPredicateNames();
+
+      // check if all key are filled from the URI
+      if (list.size() == lastKeyPredicates.size()) {
+        return list;
+      }
+
+      // if not, check if the missing key predicates can be satisfied with help of the defined referential constrains
+
+      // for using referential constrains the last resource part must be a navigation property
+      if (!(contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+        throw wrap(new UriParserSyntaxException("Not enougth keyproperties defined"));
+      }
+      UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
+
+      // get the partner of the navigation property
+      EdmNavigationProperty partner = lastNav.getProperty().getPartner();
+      if (partner == null) {
+        throw wrap(new UriParserSyntaxException("Not enougth keyproperties defined"));
+      }
+
+      // fill missing keys from referential constrains
+      for (String key : lastKeyPredicates) {
+        boolean found = false;
+        for (UriParameterImpl item : list) {
+          if (item.getName().equals(key)) {
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          String property = partner.getReferencingPropertyName(key);
+          if (property != null) {
+            // store the key name as referenced property
+            list.add(0, new UriParameterImpl().setName(key).setRefencedProperty(property));
+          }
+        }
+      }
+
+      // check again if all keyPredicate are filled from the URI
+      if (list.size() == lastKeyPredicates.size()) {
+        return list;
+      }
+
+      throw wrap(new UriParserSyntaxException("Not enougth keyproperties defined"));
+    }
+    return new ArrayList<String>();
   }
 
   @Override
@@ -1752,13 +1863,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (property.isPrimitive()) {
           UriResourcePrimitivePropertyImpl simple = new UriResourcePrimitivePropertyImpl();
           simple.setProperty(property);
-          
+
           UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
           resourcePath.addResourcePart(simple);
         } else {
           UriResourceComplexPropertyImpl complex = new UriResourceComplexPropertyImpl();
           complex.setProperty(property);
-          
+
           UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
           resourcePath.addResourcePart(complex);
         }
@@ -1780,7 +1891,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
             if (((EdmStructuralType) prevType).compatibleTo(ct)) {
-              UriResourcePart lastSegment = ((UriInfoImpl)contextSelectItem.getResourceInfo()).getLastResourcePart();
+              UriResourcePart lastSegment = ((UriInfoImpl) contextSelectItem.getResourceInfo()).getLastResourcePart();
               if (lastSegment instanceof UriResourceImplKeyPred) {
                 UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastSegment;
                 lastKeyPred.setCollectionTypeFilter(ct);
@@ -1814,7 +1925,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (action != null) {
           UriResourceActionImpl uriAction = new UriResourceActionImpl();
           uriAction.setAction(action);
-          
+
           UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
           resourcePath.addResourcePart(uriAction);
         }
@@ -1826,7 +1937,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (function != null) {
           UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();
           uriFunction.setFunction(function);
-          
+
           UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
           resourcePath.addResourcePart(uriFunction);
         }
