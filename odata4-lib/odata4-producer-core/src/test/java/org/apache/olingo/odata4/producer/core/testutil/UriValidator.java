@@ -28,17 +28,23 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
 import org.apache.olingo.odata4.producer.core.uri.Parser;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
+import org.apache.olingo.odata4.producer.core.uri.UriParserSemanticException;
+import org.apache.olingo.odata4.producer.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
 
 public class UriValidator implements Validator {
   private Edm edm;
 
   private UriInfoImpl uriInfo;
+  private Exception exception;
 
   // Setup
   public UriValidator setEdm(final Edm edm) {
@@ -48,10 +54,40 @@ public class UriValidator implements Validator {
 
   // Execution
   public UriValidator run(final String uri) {
+    Parser parser = new Parser();
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) Parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = (UriInfoImpl) parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    } catch (UriParserException e) {
+      fail("Exception occured while parsing the URI: " + uri + "\n"
+          + " Exception: " + e.getMessage());
+    }
+
+    return this;
+  }
+
+  public UriValidator runEx(final String uri) {
+    Parser parser = new Parser();
+    uriInfo = null;
+    try {
+      // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
+      uriInfo = (UriInfoImpl) parser.parseUri(uri, new UriParseTreeVisitor(edm));
+
+    } catch (UriParserException e) {
+      exception = e;
+    }
+
+    return this;
+  }
+
+  public UriValidator log(final String uri) {
+    ParserTest parserTest = new ParserTest();
+    uriInfo = null;
+    try {
+      // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
+      uriInfo = (UriInfoImpl) parserTest.parseUri(uri, new UriParseTreeVisitor(edm));
+      fail("Exception expected");
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -78,6 +114,29 @@ public class UriValidator implements Validator {
       fail("no filter found");
     }
     return new FilterValidator().setUriValidator(this).setFilter(filter);
+
+  }
+  
+  public ExpandValidator goExpand() {
+    ExpandOptionImpl expand = (ExpandOptionImpl) uriInfo.getExpandOption();
+    if (expand == null) {
+      fail("invalid resource kind: " + uriInfo.getKind().toString());
+    }
+
+    return new ExpandValidator().setGoUpValidator(this).setExpand(expand);
+  }
+  
+  
+  public UriResourceValidator goSelectItemPath(final int index) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourceInfo();
+
+    return new UriResourceValidator()
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoImplPath(uriInfo1);
 
   }
 
@@ -116,36 +175,43 @@ public class UriValidator implements Validator {
 
   }
 
+  public UriValidator isExSyntax(long errorID) {
+    assertEquals(UriParserSyntaxException.class, exception.getClass());
+    return this;
+  }
+
+  public UriValidator isExSemantic(long errorID) {
+    assertEquals(UriParserSemanticException.class, exception.getClass());
+    return this;
+  }
+
   public UriValidator isIdText(final String text) {
     assertEquals(text, uriInfo.getIdOption().getText());
     return this;
   }
 
-  
   public UriValidator isExpandText(final String text) {
     assertEquals(text, uriInfo.getExpandOption().getText());
     return this;
   }
-  
+
   public UriValidator isSelectText(final String text) {
     assertEquals(text, uriInfo.getSelectOption().getText());
     return this;
   }
 
-  
   public UriValidator isFormatText(final String text) {
     assertEquals(text, uriInfo.getFormatOption().getText());
     return this;
   }
-  
+
   public UriValidator isFragmentText(final String text) {
     if (uriInfo.getKind() != UriInfoKind.metadata) {
       fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
-    
+
     assertEquals(text, uriInfo.getFragment());
-    
-    
+
     return this;
   }
 
@@ -160,6 +226,22 @@ public class UriValidator implements Validator {
 
   private String fullName(final EdmEntityType type) {
     return type.getNamespace() + "." + type.getName();
+  }
+  
+  public UriValidator isSelectItemStar(final int index) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    assertEquals(true, item.isStar());
+    return this;
+  }
+  
+  public UriValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
+    return this;
   }
 
 }

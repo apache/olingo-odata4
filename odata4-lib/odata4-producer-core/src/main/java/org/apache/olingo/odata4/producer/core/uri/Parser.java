@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -30,27 +31,29 @@ import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.producer.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
 public class Parser {
-  static public UriInfo parseUri(final String input, final UriParseTreeVisitor uriParseTreeVisitor)
+  public UriInfo parseUri(final String input, final UriParseTreeVisitor uriParseTreeVisitor)
       throws UriParserException {
 
     try {
       OdataRelativeUriEOFContext parseTree = parseInput(input, true);
-      //reset visitor
+
+      // reset visitor
       uriParseTreeVisitor.init();
       parseTree.accept(uriParseTreeVisitor);
       UriInfoImpl uriInput = uriParseTreeVisitor.getUriInfo();
+
       return uriInput;
+
     } catch (ParseCancellationException e) {
       Throwable cause = e.getCause();
       if (cause instanceof UriParserException) {
         throw (UriParserException) cause;
       }
     }
-    return null;
+    throw new UriParserSyntaxException("unknown syntax error");
   }
 
-
-  static private OdataRelativeUriEOFContext parseInput(final String input, boolean onResource)
+  private OdataRelativeUriEOFContext parseInput(final String input, boolean onResource)
       throws UriParserSyntaxException {
     UriParserParser parser = null;
     UriLexer lexer = null;
@@ -65,11 +68,11 @@ public class Parser {
       lexer = new UriLexer(new ANTLRInputStream(input));
       parser = new UriParserParser(new CommonTokenStream(lexer));
 
-      // TODO create better error collector
-      parser.addErrorListener(new ErrorCollector());
+      // Set error strategy
+      addStage1ErrorStategy(parser);
 
-      // bail out of parser at first syntax error. --> proceeds in catch block with step 2
-      parser.setErrorHandler(new BailErrorStrategy());
+      // Set error collector
+      addStage1ErrorListener(parser);
 
       // user the faster LL parsing
       parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
@@ -80,13 +83,16 @@ public class Parser {
     } catch (ParseCancellationException hardException) {
       // stage = 2
       try {
-        
+
         // create parser
         lexer = new UriLexer(new ANTLRInputStream(input));
         parser = new UriParserParser(new CommonTokenStream(lexer));
 
-        // Used default error strategy
-        parser.setErrorHandler(new DefaultErrorStrategy());
+        // Set error strategy
+        addStage2ErrorStategy(parser);
+
+        // Set error collector
+        addStage2ErrorListener(parser);
 
         // Use the slower SLL parsing
         parser.getInterpreter().setPredictionMode(PredictionMode.LL);
@@ -104,6 +110,27 @@ public class Parser {
     }
 
     return ret;
+  }
+
+  protected void addStage1ErrorStategy(UriParserParser parser) {
+    // Throw exception at first syntax error
+    parser.setErrorHandler(new BailErrorStrategy());
+
+  }
+
+  protected void addStage2ErrorStategy(UriParserParser parser) {
+    // Throw exception at first syntax error
+    parser.setErrorHandler(new BailErrorStrategy());
+  }
+
+  protected void addStage1ErrorListener(UriParserParser parser) {
+    // No error logging to System.out or System.err, only exceptions used (depending on ErrorStrategy)
+    parser.removeErrorListeners();
+  }
+
+  protected void addStage2ErrorListener(UriParserParser parser) {
+    // No error logging to System.out or System.err, only exceptions used (depending on ErrorStrategy)
+    parser.removeErrorListeners();
   }
 
 }

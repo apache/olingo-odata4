@@ -29,6 +29,7 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfo;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
+import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Member;
@@ -39,6 +40,9 @@ import org.apache.olingo.odata4.producer.core.uri.Parser;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
+import org.apache.olingo.odata4.producer.core.uri.UriParserSemanticException;
+import org.apache.olingo.odata4.producer.core.uri.UriParserSyntaxException;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.BinaryImpl;
@@ -59,6 +63,8 @@ public class FilterValidator implements Validator {
   private Expression rootExpression;
 
   private OrderByOptionImpl orderBy;
+
+  private UriParserException exception;
 
   // --- Setup ---
   public FilterValidator setUriResourcePathValidator(final UriResourceValidator uriResourcePathValidator) {
@@ -108,11 +114,22 @@ public class FilterValidator implements Validator {
     String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
     return runUriOrderBy(uri);
   }
+  
+  public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
+    String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
+    return runUriOrderByEx(uri);
+  }
 
   public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException {
     // TODO change to ESTwoKeyNav
     String uri = "SINav?$filter=" + filter.trim();
     return runUri(uri);
+  }
+
+  public FilterValidator runOnETTwoKeyNavEx(final String filter) throws UriParserException {
+    // TODO change to ESTwoKeyNav
+    String uri = "SINav?$filter=" + filter.trim();
+    return runUriEx(uri);
   }
 
   public FilterValidator runOnETAllPrim(final String filter) throws UriParserException {
@@ -123,6 +140,11 @@ public class FilterValidator implements Validator {
   public FilterValidator runOnETKeyNav(final String filter) throws UriParserException {
     String uri = "ESKeyNav(1)?$filter=" + filter.trim();
     return runUri(uri);
+  }
+  
+  public FilterValidator runOnETKeyNavEx(final String filter) throws UriParserException {
+    String uri = "ESKeyNav(1)?$filter=" + filter.trim();
+    return runUriEx(uri);
   }
 
   public FilterValidator runOnCTTwoPrim(final String filter) throws UriParserException {
@@ -161,9 +183,30 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator runUri(final String uri) throws UriParserException {
+    Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = Parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+
+    if (uriInfo.getKind() != UriInfoKind.resource) {
+      fail("Filtervalidator can only be used on resourcePaths");
+    }
+
+    setFilter((FilterOptionImpl) uriInfo.getFilterOption());
+    curExpression = filter.getExpression();
+    return this;
+  }
+
+  public FilterValidator runUriEx(final String uri) {
+    Parser parser = new Parser();
+    UriInfo uriInfo = null;
+
+    try {
+      uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    } catch (UriParserException e) {
+      this.exception = e;
+      return this;
+    }
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -175,9 +218,10 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator runUriOrderBy(final String uri) throws UriParserException {
+    Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = Parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -186,6 +230,26 @@ public class FilterValidator implements Validator {
     setOrderBy((OrderByOptionImpl) uriInfo.getOrderByOption());
     return this;
   }
+  
+  public FilterValidator runUriOrderByEx(final String uri) {
+    Parser parser = new Parser();
+    UriInfo uriInfo = null;
+
+    try {
+      uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    } catch (UriParserException e) {
+      this.exception = e;
+      return this;
+    }
+
+    if (uriInfo.getKind() != UriInfoKind.resource) {
+      fail("Filtervalidator can only be used on resourcePaths");
+    }
+
+    setOrderBy((OrderByOptionImpl) uriInfo.getOrderByOption());
+    return this;
+  }
+
 
   // --- Navigation ---
 
@@ -327,6 +391,7 @@ public class FilterValidator implements Validator {
     return this;
   }
 
+  
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
       throws ExceptionVisitExpression, ODataApplicationException {
 
@@ -412,6 +477,16 @@ public class FilterValidator implements Validator {
 
   public FilterValidator goOrder(int index) {
     curExpression = orderBy.getOrders().get(index).getExpression();
+    return this;
+  }
+
+  public FilterValidator isExSyntax(long errorID) {
+    assertEquals(UriParserSyntaxException.class, exception.getClass());
+    return this;
+  }
+
+  public FilterValidator isExSemantic(long errorID) {
+    assertEquals(UriParserSemanticException.class, exception.getClass());
     return this;
   }
 

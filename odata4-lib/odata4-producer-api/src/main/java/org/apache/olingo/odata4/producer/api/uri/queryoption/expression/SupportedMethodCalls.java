@@ -29,7 +29,8 @@ public enum SupportedMethodCalls {
 
   ROUND("round"), FLOOR("floor"),
 
-  CEILING("ceiling"), DISTANCE("distance"), GEOLENGTH("geolength"), INTERSECTS("intersects"), CAST("cast"),
+  CEILING("ceiling"), GEODISTANCE("geo.distance"), GEOLENGTH("geo.length"), GEOINTERSECTS("geo.intersects"),
+  CAST("cast"),
   ISOF("isof");
 
   private String syntax;

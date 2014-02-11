@@ -239,53 +239,8 @@ public class QueryOptionTest {
 
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
 
-    // UriResourceImplTyped
-    UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
-    EdmAction action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
-    option = new SelectItemImpl();
-    UriInfoImpl infoImpl = (UriInfoImpl) option.getResourceInfo();
-    infoImpl.addResourcePart(new UriResourceActionImpl().setAction(action)).asUriInfoResource();
-    assertEquals(action.getReturnType().getType(), option.getType());
-
-    // UriResourceImplTyped with filter
-    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
-    action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
-    option = new SelectItemImpl();
-    infoImpl = (UriInfoImpl) option.getResourceInfo();
-    infoImpl.addResourcePart(new UriResourceActionImpl().setAction(action).setTypeFilter(entityType));
-    assertEquals(entityType, option.getType());
-
-    // UriResourceImplKeyPred
-    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
-    EdmFunction function = edm.getFunction(EdmTechProvider.nameUFCRTETKeyNav, null, null, null);
-    option = new SelectItemImpl();
-    infoImpl = (UriInfoImpl) option.getResourceInfo();
-    infoImpl.addResourcePart(new UriResourceFunctionImpl().setFunction(function));
-    assertEquals(function.getReturnType().getType(), option.getType());
-
-    // UriResourceImplKeyPred typeFilter on entry
-    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
-    EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
-        Arrays.asList(("ParameterInt16")));
-    option = new SelectItemImpl();
-    infoImpl = (UriInfoImpl) option.getResourceInfo();
-    infoImpl.addResourcePart(new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityBaseType));
-    assertEquals(entityBaseType, option.getType());
-
-    // UriResourceImplKeyPred typeFilter on entry
-    resource = new UriInfoImpl().setKind(UriInfoKind.resource);
-    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
-        Arrays.asList(("ParameterInt16")));
-    infoImpl = (UriInfoImpl) option.getResourceInfo();
-    infoImpl.addResourcePart(new UriResourceFunctionImpl()
-        .setFunction(function).setCollectionTypeFilter(entityBaseType));
-    assertEquals(entityBaseType, option.getType());
-
     // no typed collection else case ( e.g. if not path is added)
     option = new SelectItemImpl();
-    assertEquals(null, option.getType());
 
     option = new SelectItemImpl();
     assertEquals(false, option.isStar());
@@ -298,11 +253,6 @@ public class QueryOptionTest {
     option.addAllOperationsInSchema(fqName);
     assertEquals(true, option.isAllOperationsInSchema());
     assertEquals(fqName, option.getAllOperationsInSchemaNameSpace());
-
-    option = new SelectItemImpl();
-    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    option.setEntityTypeCast(entityBaseType);
-    assertEquals(entityBaseType, option.getEntityTypeCast());
 
   }
 

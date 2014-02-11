@@ -28,8 +28,6 @@ public enum SupportedBinaryOperators {
   ADD("add"), SUB("sub"),
   // comparism
   GT("gt"), GE("ge"), LT("lt"), LE("le"),
-  // isof
-  ISOF("isof"),
   // equality
   EQ("eq"), NE("ne"),
   // and/or

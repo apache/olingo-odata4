@@ -937,7 +937,7 @@ public class TestParser {
             + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
             + "queryOption(systemQueryOption("
             + "filter($filter = commonExpr(methodCallExpr("
-            + "distanceMethodCallExpr("
+            + "geoDistanceMethodCallExpr("
             + "geo.distance( "
             + "commonExpr(primitiveLiteral(geometryPoint(geometry' fullpointLiteral(sridLiteral(SRID = 0 ;) "
             + "pointLiteral(Point pointData(( positionLiteral(142.1   64.1) )))) '))) , "
@@ -1107,15 +1107,6 @@ public class TestParser {
         + "queryOption(systemQueryOption("
         + "filter($filter = commonExpr(commonExpr(primitiveLiteral(1))   "
         + "le   commonExpr(primitiveLiteral(2)))))))) <EOF>)");
-
-    test.aAM().aFC().aCS().run("ODI?$filter=ODI isof Model.Employee").isText("odataRelativeUriEOF(odataRelativeUri("
-        + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("
-        + "queryOption(systemQueryOption("
-        + "filter($filter = commonExpr(commonExpr(memberExpr(pathSegments(pathSegment(odataIdentifier(ODI)))))   "
-        + "isof   commonExpr(memberExpr("
-        + "pathSegments(pathSegment("
-        + "namespace(odataIdentifier(Model) .) "
-        + "odataIdentifier(Employee))))))))))) <EOF>)");
 
     test.aAM().aFC().aCS().run("ODI?$filter=true and false").isText("odataRelativeUriEOF(odataRelativeUri("
         + "resourcePath(pathSegments(pathSegment(odataIdentifier(ODI)))) ? queryOptions("

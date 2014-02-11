@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
- 
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,44 +36,18 @@ public class SelectItemImpl implements SelectItem {
 
   private UriInfoResource path;
 
-  private List<UriResourcePartImpl> parts = new ArrayList<UriResourcePartImpl>();
   private boolean isStar;
   private FullQualifiedName addOperationsInSchemaNameSpace;
-  private EdmEntityType entityTypeCast;
 
-  public EdmType getType() {
-    UriInfoImpl uriInfo = (UriInfoImpl) path;
-    UriResourcePartImpl lastResourcePart = null;
-    if (uriInfo != null) {
-      lastResourcePart = (UriResourcePartImpl) uriInfo.getLastResourcePart();
-    }
+    @Override
+  public UriInfoResource getResourceInfo() {
 
-    if (lastResourcePart instanceof UriResourceImplKeyPred) {
-      UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastResourcePart;
-      if (lastKeyPred.getTypeFilterOnEntry() != null) {
-        return lastKeyPred.getTypeFilterOnEntry();
-      } else if (lastKeyPred.getTypeFilterOnCollection() != null) {
-        return lastKeyPred.getTypeFilterOnCollection();
-      }
-      return lastKeyPred.getType();
-    } else if (lastResourcePart instanceof UriResourceImplTyped) {
-      UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastResourcePart;
-      EdmType type = lastTyped.getTypeFilter();
-      if (type != null) {
-        return type;
-      }
-      return lastTyped.getType();
-    } else {
-      return null;
-    }
+    return path;
   }
 
-  @Override
-  public UriInfoResource getResourceInfo() {
-    if (this.path == null) {
-      this.path = new UriInfoImpl().setKind(UriInfoKind.resource);
-    }
-    return path;
+  public SelectItemImpl setResourceInfo(UriInfoResource path) {
+    this.path = path;
+    return this;
   }
 
   @Override
@@ -104,15 +77,6 @@ public class SelectItemImpl implements SelectItem {
   public void addAllOperationsInSchema(final FullQualifiedName addOperationsInSchemaNameSpace) {
     this.addOperationsInSchemaNameSpace = addOperationsInSchemaNameSpace;
   }
-
-  @Override
-  public EdmEntityType getEntityTypeCast() {
-    return entityTypeCast;
-  }
-
-  public SelectItemImpl setEntityTypeCast(final EdmEntityType entityTypeCast) {
-    this.entityTypeCast = entityTypeCast;
-    return this;
-  }
+ 
 
 }

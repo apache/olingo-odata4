@@ -23,9 +23,12 @@ package org.apache.olingo.odata4.producer.core.uri.antlr;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.SupportedMethodCalls;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.producer.core.testutil.FilterValidator;
@@ -304,14 +307,15 @@ public class TestUriParserImpl {
         .isKind(UriInfoKind.entityId)
         .isEntityType(EdmTechProvider.nameETBase)
         .isIdText("ESTwoPrim")
-        .isSelectText("*");
+        .isSelectItemStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with expand
     testUri.run("$entity/com.sap.odata.test1.ETBase?$id=ESTwoPrim&$expand=*")
         .isKind(UriInfoKind.entityId)
         .isEntityType(EdmTechProvider.nameETBase)
         .isIdText("ESTwoPrim")
-        .isExpandText("*");
+        .isExpandText("*")
+        .goExpand().first().isSegmentStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
     testUri.run("$entity/com.sap.odata.test1.ETTwoPrim?"
@@ -319,7 +323,8 @@ public class TestUriParserImpl {
         .isFormatText("atom")
         .isCustomParameter(0, "abc", "123")
         .isIdText("ESBase")
-        .isCustomParameter(1, "xyz", "987");
+        .isCustomParameter(1, "xyz", "987")
+        .isSelectItemStar(0);
   }
 
   @Test
@@ -1060,6 +1065,78 @@ public class TestUriParserImpl {
         .goFilter().is("<<ANY;<true>>>");
     testUri.run("ESTwoKeyNav?$filter=any( )")
         .goFilter().is("<<ANY;>>");
+  }
+
+  @Test
+  public void testCustomQueryOption() {
+    testUri.run("ESTwoKeyNav?custom")
+        .isCustomParameter(0, "custom", null);
+    testUri.run("ESTwoKeyNav?custom=ABC")
+        .isCustomParameter(0, "custom", "ABC");
+  }
+
+  @Test
+  public void testGeo() throws UriParserException {
+    // TODO sync
+    testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
+        .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
+        .isMethod(SupportedMethodCalls.GEODISTANCE, 2);
+    testFilter.runOnETAllPrim("geo.length(PropertySByte)")
+        .is("<geo.length(<PropertySByte>)>")
+        .isMethod(SupportedMethodCalls.GEOLENGTH, 1);
+    testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
+        .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
+        .isMethod(SupportedMethodCalls.GEOINTERSECTS, 2);
+  }
+
+  @Test
+  public void testSelect() {
+    testUri.run("ESTwoKeyNav?$select=*")
+        .isSelectItemStar(0);
+
+    testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.*")
+        .isSelectItemAllOp(0, new FullQualifiedName("com.sap.odata.test1", "*"));
+
+    testUri.run("ESTwoKeyNav?$select=PropertyString")
+        .goSelectItemPath(0).isPrimitiveProperty("PropertyString", EdmTechTestProvider.nameString, false);
+
+    testUri.run("ESTwoKeyNav?$select=PropertyComplex")
+        .goSelectItemPath(0).isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false);
+
+    testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyInt16")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false)
+        .n()
+        .isPrimitiveProperty("PropertyInt16", EdmTechTestProvider.nameInt16, false);
+
+    testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyComplex")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false)
+        .n()
+        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTAllPrim, false);
+
+    testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
+        .goSelectItemPath(0)
+        .first()
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isTypeFilterOnCollection(EdmTechTestProvider.nameETBaseTwoKeyNav);
+
+    testUri.run("ESTwoKeyNav/PropertyComplexNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
+        .goSelectItemPath(0)
+        .first()
+        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTTwoBasePrimCompNav);
+
+    testUri.run("ESTwoKeyNav?$select=PropertyComplexNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyComplexNav", EdmTechTestProvider.nameCTBasePrimCompNav, false)
+        .n()
+        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTTwoBasePrimCompNav);
+    ;
+
   }
 
 }

@@ -30,9 +30,6 @@ public interface SelectItem {
 
   FullQualifiedName getAllOperationsInSchemaNameSpace();
 
-  EdmEntityType getEntityTypeCast();
-
-
   UriInfoResource getResourceInfo();
   
 }

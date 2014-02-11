@@ -268,7 +268,7 @@ commonExpr          : OPEN commonExpr CLOSE                                     
                     | vE1=commonExpr (WSP vO=MUL WSP | WSP vO=DIV WSP | WSP vO=MOD WSP ) vE2=commonExpr  #altMult
                     | vE1=commonExpr (WSP vO=ADD WSP | WSP vO=SUB WSP) vE2=commonExpr           #altAdd
                     | vE1=commonExpr (WSP vO=GT WSP | WSP vO=GE WSP | WSP vO=LT WSP 
-                                     | WSP vO=LE WSP | WSP vO=ISOF WSP) vE2=commonExpr          #altComparism
+                                     | WSP vO=LE WSP ) vE2=commonExpr          #altComparism
                     | vE1=commonExpr (WSP vO=EQ_ALPHA WSP | WSP vO=NE WSP) vE2=commonExpr       #altEquality
                     | vE1=commonExpr (WSP AND WSP) vE2=commonExpr                               #altAnd
                     | vE1=commonExpr (WSP OR WSP) vE2=commonExpr                                #altOr
@@ -307,7 +307,7 @@ methodCallExpr      : indexOfMethodCallExpr
                     | roundMethodCallExpr
                     | floorMethodCallExpr
                     | ceilingMethodCallExpr
-                    | distanceMethodCallExpr
+                    | geoDistanceMethodCallExpr
                     | geoLengthMethodCallExpr
                     | totalOffsetMinutesMethodCallExpr
                     | minDateTimeMethodCallExpr
@@ -319,7 +319,7 @@ methodCallExpr      : indexOfMethodCallExpr
                     | endsWithMethodCallExpr
                     | startsWithMethodCallExpr
                     | containsMethodCallExpr
-                    | intersectsMethodCallExpr
+                    | geoIntersectsMethodCallExpr
                     ;
 
 
@@ -354,9 +354,9 @@ roundMethodCallExpr               : ROUND_WORD   WSP? vE1=commonExpr WSP? CLOSE;
 floorMethodCallExpr               : FLOOR_WORD   WSP? vE1=commonExpr WSP? CLOSE;
 ceilingMethodCallExpr             : CEILING_WORD WSP? vE1=commonExpr WSP? CLOSE;
 
-distanceMethodCallExpr            : GEO_DISTANCE_WORD   WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+geoDistanceMethodCallExpr         : GEO_DISTANCE_WORD   WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
 geoLengthMethodCallExpr           : GEO_LENGTH_WORD     WSP? vE1=commonExpr WSP? CLOSE;
-intersectsMethodCallExpr          : GEO_INTERSECTS_WORD WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
+geoIntersectsMethodCallExpr       : GEO_INTERSECTS_WORD WSP? vE1=commonExpr WSP? COMMA WSP? vE2=commonExpr WSP? CLOSE;
 
 isofExpr                          : ISOF_WORD  WSP? ( vE1=commonExpr WSP? COMMA WSP? )? vNS=namespace vODI=odataIdentifier WSP? CLOSE;
 castExpr                          : CAST_WORD  WSP? ( vE1=commonExpr WSP? COMMA WSP? )? vNS=namespace vODI=odataIdentifier WSP? CLOSE;

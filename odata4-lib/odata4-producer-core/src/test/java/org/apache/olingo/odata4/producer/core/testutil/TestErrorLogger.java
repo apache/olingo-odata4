@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.producer.core.uri;
+package org.apache.olingo.odata4.producer.core.testutil;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
@@ -30,11 +29,15 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 
-class ErrorCollector implements ANTLRErrorListener {
+class TestErrorLogger implements ANTLRErrorListener {
 
-  private List<Exception> exceptions = new ArrayList<Exception>();
+  private String prefix;
+  private int logLevel = 0;
 
-  // private ParserValidator tokenValidator;
+  public TestErrorLogger(String prefix, int logLevel) {
+    this.prefix = prefix;
+    this.logLevel = logLevel;
+  }
 
   @Override
   public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
@@ -42,12 +45,11 @@ class ErrorCollector implements ANTLRErrorListener {
       final String msg, final RecognitionException e) {
 
     // Collect the exception
-    // TODO needs to be improved
-    exceptions.add(e);
-    System.out.println("syntaxError");
-    trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
-
-    // fail("syntaxError");
+    if (logLevel > 0) {
+      System.out.println("\n" + prefix + " -- SyntaxError");
+      trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
+    }
+    
   }
 
   @Override
@@ -122,7 +124,7 @@ class ErrorCollector implements ANTLRErrorListener {
   public void trace(final Recognizer<?, ?> recognizer, final Object offendingSymbol,
       final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
 
-    System.err.println("-");
+    System.out.println("Error message: " +  msg);
     // TODO check also http://stackoverflow.com/questions/14747952/ll-exact-ambig-detection-interpetation
 
     printStack(recognizer);
@@ -137,11 +139,36 @@ class ErrorCollector implements ANTLRErrorListener {
       } catch (ArrayIndexOutOfBoundsException es) {
         lexerTokenName = "token error";
       }
-      System.err.println(" line " + line + ":" + charPositionInLine + " at " +
+      System.out.println(" line " + line + ":" + charPositionInLine + " at " +
           offendingSymbol + "/" + lexerTokenName + ": " + msg);
     } else {
-      System.err.println(" line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
+      System.out.println(" line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
     }
   }
+  
+  public static int getDecisionRule(Recognizer<?, ?> recognizer, int decision) {
+    if (recognizer == null || decision < 0) {
+        return -1;
+    }
+
+    if (decision >= recognizer.getATN().decisionToState.size()) {
+        return -1;
+    }
+
+    return recognizer.getATN().decisionToState.get(decision).ruleIndex;
+}
+
+public static String getRuleDisplayName(Recognizer<?, ?> recognizer, int ruleIndex) {
+    if (recognizer == null || ruleIndex < 0) {
+        return Integer.toString(ruleIndex);
+    }
+
+    String[] ruleNames = recognizer.getRuleNames();
+    if (ruleIndex < 0 || ruleIndex >= ruleNames.length) {
+        return Integer.toString(ruleIndex);
+    }
+
+    return ruleNames[ruleIndex];
+}
 
 }

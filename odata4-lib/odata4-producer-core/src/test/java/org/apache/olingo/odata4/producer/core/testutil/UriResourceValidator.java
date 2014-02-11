@@ -34,8 +34,8 @@ import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.producer.core.uri.Parser;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.producer.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
@@ -53,6 +53,7 @@ import org.apache.olingo.odata4.producer.core.uri.UriResourcePrimitivePropertyIm
 import org.apache.olingo.odata4.producer.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.ExpandOptionImpl;
+import org.apache.olingo.odata4.producer.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriResourceValidator implements Validator {
@@ -84,10 +85,11 @@ public class UriResourceValidator implements Validator {
   // --- Execution ---
 
   public UriResourceValidator run(final String uri) {
+    ParserTest testParser = new ParserTest(); 
     UriInfoImpl uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = (UriInfoImpl) Parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, new UriParseTreeVisitor(edm));
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -145,6 +147,19 @@ public class UriResourceValidator implements Validator {
 
     assertEquals(var, actualVar);
     return this;
+  }
+  
+  public UriResourceValidator goSelectItemPath(final int index) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourceInfo();
+
+    return new UriResourceValidator()
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoImplPath(uriInfo1);
+
   }
 
   public ExpandValidator goExpand() {
@@ -369,6 +384,20 @@ public class UriResourceValidator implements Validator {
     return this;
 
   }
+  
+  public UriResourceValidator isParameterAlias(final int index, final String name, final String alias) {
+    if (!(uriPathInfo instanceof UriResourceFunctionImpl)) {
+      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
+    }
+
+    UriResourceFunctionImpl info = (UriResourceFunctionImpl) uriPathInfo;
+    List<UriParameter> keyPredicates = info.getParameters();
+    assertEquals(name, keyPredicates.get(index).getName());
+    assertEquals(alias, keyPredicates.get(index).getAlias());
+    return this;
+
+  }
+
 
   public UriResourceValidator isKind(final UriInfoKind kind) {
     assertEquals(kind, uriInfo.getKind());
@@ -511,6 +540,22 @@ public class UriResourceValidator implements Validator {
 
   public UriResourceValidator isSkipTokenText(final String skipTokenText) {
     assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getText());
+    return this;
+  }
+  
+  public UriResourceValidator isSelectItemStar(final int index) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    assertEquals(true, item.isStar());
+    return this;
+  }
+  
+  public UriResourceValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
+    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    
+    SelectItem item = select.getSelectItems().get(index);
+    assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;
   }
 
