@@ -23,7 +23,6 @@ package org.apache.olingo.odata4.producer.core.uri.antlr;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;

@@ -18,19 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.queryoption;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SelectItem;
-import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
-import org.apache.olingo.odata4.producer.core.uri.UriResourcePartImpl;
 
 public class SelectItemImpl implements SelectItem {
 

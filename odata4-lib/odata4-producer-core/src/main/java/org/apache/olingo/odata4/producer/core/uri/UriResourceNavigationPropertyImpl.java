@@ -23,7 +23,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceNavigation;
 
-public class UriResourceNavigationPropertyImpl extends UriResourceImplKeyPred implements UriResourceNavigation {
+public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl implements UriResourceNavigation {
 
   protected EdmNavigationProperty navigationProperty;
 

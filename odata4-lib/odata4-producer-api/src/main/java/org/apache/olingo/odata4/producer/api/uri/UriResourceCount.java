@@ -18,6 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-public interface UriResourceCount extends UriResourcePart {
+public interface UriResourceCount extends UriResource {
 
 }

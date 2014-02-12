@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceEntitySet;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 
-public class UriResourceEntitySetImpl extends UriResourceImplKeyPred implements UriResourceEntitySet {
+public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements UriResourceEntitySet {
   protected EdmEntitySet edmEntitySet = null;
 
   public UriResourceEntitySetImpl() {

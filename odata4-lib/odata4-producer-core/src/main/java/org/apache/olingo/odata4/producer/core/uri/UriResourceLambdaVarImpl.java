@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaRef;
 
-public class UriResourceLambdaVarImpl extends UriResourceImplTyped implements UriResourceLambdaRef {
+public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaRef {
 
   private EdmType type;
   private boolean isCollection;

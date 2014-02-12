@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceSingleton;
 
-public class UriResourceSingletonImpl extends UriResourceImplTyped implements UriResourceSingleton {
+public class UriResourceSingletonImpl extends UriResourceTypedImpl implements UriResourceSingleton {
 
   private EdmSingleton singleton;
 

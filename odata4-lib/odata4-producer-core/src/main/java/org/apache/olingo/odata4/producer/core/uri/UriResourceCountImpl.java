@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.producer.core.uri;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceCount;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 
-public class UriResourceCountImpl extends UriResourcePartImpl implements UriResourceCount {
+public class UriResourceCountImpl extends UriResourceImpl implements UriResourceCount {
 
   public UriResourceCountImpl() {
     super(UriResourceKind.count);

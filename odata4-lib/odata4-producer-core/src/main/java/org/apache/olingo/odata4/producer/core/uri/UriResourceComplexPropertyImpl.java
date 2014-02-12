@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceComplexProperty;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 
-public class UriResourceComplexPropertyImpl extends UriResourceImplTyped implements UriResourceComplexProperty {
+public class UriResourceComplexPropertyImpl extends UriResourceTypedImpl implements UriResourceComplexProperty {
 
   protected EdmProperty property;
 

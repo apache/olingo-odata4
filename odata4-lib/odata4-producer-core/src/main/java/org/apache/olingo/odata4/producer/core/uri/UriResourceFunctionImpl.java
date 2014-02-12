@@ -31,7 +31,7 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 /**
  * Covers Function imports and BoundFunction in URI
  */
-public class UriResourceFunctionImpl extends UriResourceImplKeyPred implements UriResourceFunction {
+public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements UriResourceFunction {
 
   protected List<UriParameterImpl> parameters;
   protected EdmFunction function;

@@ -32,7 +32,7 @@ import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoMetadata;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoService;
-import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
+import org.apache.olingo.odata4.producer.api.uri.UriResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
@@ -84,8 +84,8 @@ public class UriInfoImpl implements UriInfo {
 
   private String fragment;
 
-  private UriResourcePart lastResourcePart;
-  private List<UriResourcePart> pathParts = new ArrayList<UriResourcePart>();
+  private UriResource lastResourcePart;
+  private List<UriResource> pathParts = new ArrayList<UriResource>();
 
   @Override
   public UriInfoAll asUriInfoAll() {
@@ -127,15 +127,15 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public List<UriResourcePart> getUriResourceParts() {
-    List<UriResourcePart> returnList = new ArrayList<UriResourcePart>();
-    for (UriResourcePart item : pathParts) {
+  public List<UriResource> getUriResourceParts() {
+    List<UriResource> returnList = new ArrayList<UriResource>();
+    for (UriResource item : pathParts) {
       returnList.add(item);
     }
     return Collections.unmodifiableList(returnList);
   }
 
-  public UriInfoImpl addResourcePart(final UriResourcePartImpl uriPathInfo) {
+  public UriInfoImpl addResourcePart(final UriResourceImpl uriPathInfo) {
     pathParts.add(uriPathInfo);
     lastResourcePart = uriPathInfo;
     return this;
@@ -195,7 +195,7 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public UriResourcePart getLastResourcePart() {
+  public UriResource getLastResourcePart() {
     return lastResourcePart;
   }
 

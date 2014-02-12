@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 /**
  * Covers Functionimports and BoundFunction in URI
  */
-public class UriResourceItImpl extends UriResourceImplKeyPred implements UriResourceIt {
+public class UriResourceItImpl extends UriResourceWithKeysImpl implements UriResourceIt {
 
   private EdmType type;
   private boolean isCollection;

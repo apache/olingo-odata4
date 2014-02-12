@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceAction;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 
-public class UriResourceActionImpl extends UriResourceImplTyped implements UriResourceAction {
+public class UriResourceActionImpl extends UriResourceTypedImpl implements UriResourceAction {
 
   protected EdmAction action;
   protected EdmActionImport actionImport;

@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceRoot;
 
-public class UriResourceRootImpl extends UriResourceImplKeyPred implements UriResourceRoot {
+public class UriResourceRootImpl extends UriResourceWithKeysImpl implements UriResourceRoot {
 
   private EdmType type;
   private boolean isCollection;

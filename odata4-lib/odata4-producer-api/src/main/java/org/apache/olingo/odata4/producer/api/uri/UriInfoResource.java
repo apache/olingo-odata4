@@ -59,6 +59,6 @@ public interface UriInfoResource {
 
   TopOption getTopOption();
 
-  List<UriResourcePart> getUriResourceParts();
+  List<UriResource> getUriResourceParts();
 
 }

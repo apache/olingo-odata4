@@ -232,7 +232,7 @@ public class UriParameterImplTest {
 
   @Test
   public void testUriResourceImplKeyPred() {
-    class Mock extends UriResourceImplKeyPred {
+    class Mock extends UriResourceWithKeysImpl {
       EdmType type;
 
       public Mock() {
@@ -282,22 +282,22 @@ public class UriParameterImplTest {
         impl.toString(true));
 
     // set entry
+    // TODO remove ???
     impl = new Mock();
     impl.setType(entityType);
     impl.setEntryTypeFilter(entityTypeBaseEntry);
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
     assertEquals("mock/com.sap.odata.test1.ETTwoBaseTwoKeyNav", impl.toString(true));
-    assertEquals(entityTypeBaseEntry, impl.getTypeFilter());
-
+    
     // set collection
+    // TODO remove ???
     impl = new Mock();
     impl.setType(entityType);
     impl.setCollectionTypeFilter(entityTypeBaseColl);
     assertEquals(entityTypeBaseColl, impl.getTypeFilterOnCollection());
     assertEquals("mock", impl.toString(false));
     assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav", impl.toString(true));
-    assertEquals(entityTypeBaseColl, impl.getTypeFilter());
 
     impl = new Mock();
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");
@@ -311,7 +311,7 @@ public class UriParameterImplTest {
 
   @Test
   public void testUriResourceImplTyped() {
-    class Mock extends UriResourceImplTyped {
+    class Mock extends UriResourceTypedImpl {
       EdmType type;
 
       public Mock() {

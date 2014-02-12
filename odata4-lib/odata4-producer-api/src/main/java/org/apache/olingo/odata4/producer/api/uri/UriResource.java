@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.api.uri;
 
-public interface UriResourcePart {
+public interface UriResource {
   
   UriResourceKind getKind();
 

@@ -21,23 +21,17 @@ package org.apache.olingo.odata4.producer.core.uri.queryoption;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.odata4.producer.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.producer.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceActionImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.LiteralImpl;

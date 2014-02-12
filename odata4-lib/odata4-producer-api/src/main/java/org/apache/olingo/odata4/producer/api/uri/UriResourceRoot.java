@@ -22,6 +22,6 @@ package org.apache.olingo.odata4.producer.api.uri;
  * Class indicating the $root reference. $root may be used within filter to
  * refer to the current OData service
  */
-public interface UriResourceRoot extends UriResourcePart {
+public interface UriResourceRoot extends UriResource {
 
 }

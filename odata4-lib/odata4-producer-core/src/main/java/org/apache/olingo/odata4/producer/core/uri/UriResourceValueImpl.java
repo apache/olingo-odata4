@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.producer.core.uri;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceValue;
 
-public class UriResourceValueImpl extends UriResourcePartImpl implements UriResourceValue {
+public class UriResourceValueImpl extends UriResourceImpl implements UriResourceValue {
 
   public UriResourceValueImpl() {
     super(UriResourceKind.value);

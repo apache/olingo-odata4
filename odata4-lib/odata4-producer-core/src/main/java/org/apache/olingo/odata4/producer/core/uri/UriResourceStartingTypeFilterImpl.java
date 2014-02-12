@@ -22,7 +22,8 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceStartingTypeFilter;
 
-public class UriResourceStartingTypeFilterImpl extends UriResourceImplKeyPred implements UriResourceStartingTypeFilter {
+public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl
+    implements UriResourceStartingTypeFilter {
 
   private EdmType type;
   private boolean isCollection;
@@ -58,10 +59,10 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceImplKeyPred im
     this.isCollection = isCollection;
     return this;
   }
-  
+
   @Override
   public String toString() {
-    return type.getNamespace()  + "." +type.getName();
+    return type.getNamespace() + "." + type.getName();
   }
 
 }

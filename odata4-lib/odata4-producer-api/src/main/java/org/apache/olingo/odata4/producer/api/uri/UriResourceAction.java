@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.producer.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
 
-public interface UriResourceAction extends UriResourcePartTyped {
+public interface UriResourceAction extends  UriResourcePartTyped {
 
   EdmAction getAction();
 

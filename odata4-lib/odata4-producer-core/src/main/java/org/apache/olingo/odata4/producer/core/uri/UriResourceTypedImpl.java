@@ -18,22 +18,43 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 
-/**
- * Covers Functionimports and BoundFunction in URI
- */
-public abstract class UriResourcePartImpl implements UriResourcePart {
-  protected UriResourceKind kind;
+public abstract class UriResourceTypedImpl extends UriResourceImpl implements UriResourcePartTyped {
 
-  public UriResourcePartImpl(final UriResourceKind kind) {
-    this.kind = kind;
+  protected EdmType typeFilter = null;
+
+  public UriResourceTypedImpl(final UriResourceKind kind) {
+    super(kind);
+  }
+
+  public EdmType getTypeFilter() {
+    return typeFilter;
+  }
+
+  public UriResourceTypedImpl setTypeFilter(final EdmStructuralType typeFilter) {
+    this.typeFilter = typeFilter;
+    return this;
   }
 
   @Override
-  public UriResourceKind getKind() {
-    return kind;
+  public String toString(final boolean includeFilters) {
+    if (includeFilters) {
+      if (typeFilter != null) {
+        return toString() + "/" + getFQN(typeFilter).toString();
+      } else {
+        return toString();
+      }
+    }
+    return toString();
+  }
+
+  private FullQualifiedName getFQN(final EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 
 }

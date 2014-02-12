@@ -26,7 +26,7 @@ import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.producer.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceLambdaAnyImpl extends UriResourceImplTyped implements UriResourceLambdaAny {
+public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements UriResourceLambdaAny {
   protected EdmProperty property;
   private String lamdaVariable;
   private ExpressionImpl expression;

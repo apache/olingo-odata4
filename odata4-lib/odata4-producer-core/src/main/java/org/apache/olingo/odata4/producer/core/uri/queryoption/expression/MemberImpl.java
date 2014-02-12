@@ -26,9 +26,9 @@ import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Expressi
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.Member;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.VisitableExression;
 import org.apache.olingo.odata4.producer.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceImplKeyPred;
-import org.apache.olingo.odata4.producer.core.uri.UriResourceImplTyped;
-import org.apache.olingo.odata4.producer.core.uri.UriResourcePartImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceTypedImpl;
+import org.apache.olingo.odata4.producer.core.uri.UriResourceWithKeysImpl;
 
 public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
 
@@ -52,18 +52,18 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
   @Override
   public EdmType getType() {
     UriInfoImpl uriInfo = (UriInfoImpl) path;
-    UriResourcePartImpl lastResourcePart = (UriResourcePartImpl) uriInfo.getLastResourcePart();
+    UriResourceImpl lastResourcePart = (UriResourceImpl) uriInfo.getLastResourcePart();
 
-    if (lastResourcePart instanceof UriResourceImplKeyPred) {
-      UriResourceImplKeyPred lastKeyPred = (UriResourceImplKeyPred) lastResourcePart;
+    if (lastResourcePart instanceof UriResourceWithKeysImpl) {
+      UriResourceWithKeysImpl lastKeyPred = (UriResourceWithKeysImpl) lastResourcePart;
       if (lastKeyPred.getTypeFilterOnEntry() != null) {
         return lastKeyPred.getTypeFilterOnEntry();
       } else if (lastKeyPred.getTypeFilterOnCollection() != null) {
         return lastKeyPred.getTypeFilterOnCollection();
       }
       return lastKeyPred.getType();
-    } else if (lastResourcePart instanceof UriResourceImplTyped) {
-      UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastResourcePart;
+    } else if (lastResourcePart instanceof UriResourceTypedImpl) {
+      UriResourceTypedImpl lastTyped = (UriResourceTypedImpl) lastResourcePart;
       EdmType type = lastTyped.getTypeFilter();
       if (type != null) {
         return type;
@@ -77,9 +77,9 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
   @Override
   public boolean isCollection() {
     UriInfoImpl uriInfo = (UriInfoImpl) path;
-    UriResourcePartImpl lastResourcePart = (UriResourcePartImpl) uriInfo.getLastResourcePart();
-    if (lastResourcePart instanceof UriResourceImplTyped) {
-      UriResourceImplTyped lastTyped = (UriResourceImplTyped) lastResourcePart;
+    UriResourceImpl lastResourcePart = (UriResourceImpl) uriInfo.getLastResourcePart();
+    if (lastResourcePart instanceof UriResourceTypedImpl) {
+      UriResourceTypedImpl lastTyped = (UriResourceTypedImpl) lastResourcePart;
       return lastTyped.isCollection();
     }
     return false;

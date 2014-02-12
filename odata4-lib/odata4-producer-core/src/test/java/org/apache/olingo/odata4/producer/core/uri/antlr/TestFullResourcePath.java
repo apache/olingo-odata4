@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.producer.core.uri.antlr;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
@@ -36,8 +35,6 @@ import org.apache.olingo.odata4.producer.core.testutil.FilterValidator;
 import org.apache.olingo.odata4.producer.core.testutil.UriResourceValidator;
 import org.apache.olingo.odata4.producer.core.testutil.UriValidator;
 import org.apache.olingo.odata4.producer.core.uri.UriParserException;
-import org.apache.olingo.odata4.producer.core.uri.UriParserSemanticException;
-import org.apache.olingo.odata4.producer.core.uri.UriParserSyntaxException;
 import org.junit.Test;
 
 public class TestFullResourcePath {
@@ -2516,7 +2513,7 @@ public class TestFullResourcePath {
         .isFormatText("IANA_content_type/must_contain_a_slash");
     testUri.run("ESKeyNav(1)?$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
         .isKind(UriInfoKind.resource).goPath()
-        .isFormatText("Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27");
+        .isFormatText("Test_all_valid_signsSpecified_for_format_signs&-._~$@'/Aa123&-._~$@'");
   }
 
   @Test

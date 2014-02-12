@@ -25,23 +25,16 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.producer.api.uri.UriParameter;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 
-public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
+public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements UriResourcePartTyped {
 
   protected EdmType collectionTypeFilter = null;
   protected List<UriParameterImpl> keyPredicates = null;
   protected EdmType entryTypeFilter = null;
 
-  public UriResourceImplKeyPred(final UriResourceKind kind) {
+  public UriResourceWithKeysImpl(final UriResourceKind kind) {
     super(kind);
-  }
-
-  @Override
-  public EdmType getTypeFilter() {
-    if (entryTypeFilter != null) {
-      return entryTypeFilter;
-    }
-    return collectionTypeFilter;
   }
 
   public EdmType getTypeFilterOnCollection() {
@@ -60,17 +53,17 @@ public abstract class UriResourceImplKeyPred extends UriResourceImplTyped {
     return retList;
   }
 
-  public UriResourceImplKeyPred setKeyPredicates(final List<UriParameterImpl> list) {
+  public UriResourceWithKeysImpl setKeyPredicates(final List<UriParameterImpl> list) {
     keyPredicates = list;
     return this;
   }
 
-  public UriResourceImplKeyPred setEntryTypeFilter(final EdmType entryTypeFilter) {
+  public UriResourceWithKeysImpl setEntryTypeFilter(final EdmType entryTypeFilter) {
     this.entryTypeFilter = entryTypeFilter;
     return this;
   }
 
-  public UriResourceImplKeyPred setCollectionTypeFilter(final EdmType collectionTypeFilter) {
+  public UriResourceWithKeysImpl setCollectionTypeFilter(final EdmType collectionTypeFilter) {
     this.collectionTypeFilter = collectionTypeFilter;
     return this;
   }

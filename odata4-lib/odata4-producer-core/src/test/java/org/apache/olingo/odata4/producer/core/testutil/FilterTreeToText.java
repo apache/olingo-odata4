@@ -24,9 +24,9 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.producer.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.producer.api.uri.UriResource;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.odata4.producer.api.uri.UriResourceLambdaAny;
-import org.apache.olingo.odata4.producer.api.uri.UriResourcePart;
 import org.apache.olingo.odata4.producer.api.uri.UriResourcePartTyped;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.FilterOption;
 import org.apache.olingo.odata4.producer.api.uri.queryoption.expression.ExceptionVisitExpression;
@@ -93,7 +93,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
 
     UriInfoResource path = resource;
 
-    for (UriResourcePart item : path.getUriResourceParts()) {
+    for (UriResource item : path.getUriResourceParts()) {
       String tmp = "";
       if (item instanceof UriResourceLambdaAll) {
         UriResourceLambdaAll all = (UriResourceLambdaAll) item;

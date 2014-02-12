@@ -79,4 +79,5 @@ public class UriParameterImpl implements UriParameter {
     this.referencedProperty = referencedProperty;
     return this;
   }
+  
 }
