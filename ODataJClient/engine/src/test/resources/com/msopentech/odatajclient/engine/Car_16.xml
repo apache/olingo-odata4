@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright © Microsoft Open Technologies, Inc.
+
+    All Rights Reserved
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+    OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+    ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+    PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+
+    See the Apache License, Version 2.0 for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<entry xml:base="http://192.168.43.55:8080/DefaultService.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://192.168.43.55:8080/DefaultService.svc/Car(16)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(16)" /><title /><updated>2013-08-21T10:31:09Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" type="application/octet-stream" title="Photo" href="Car(16)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(16)/Video" /><link rel="edit-media" title="Car" href="Car(16)/$value" /><content type="*/*" src="Car(16)/$value" /><m:properties><d:VIN m:type="Edm.Int32">16</d:VIN><d:Description>ぁゼをあクびゼゼァァせマほグソバせё裹ｦぽﾝァ</d:Description></m:properties></entry>

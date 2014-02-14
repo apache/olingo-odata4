@@ -1,0 +1,38 @@
+#*
+ * Copyright © Microsoft Open Technologies, Inc.
+ *
+ * All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+ * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+ * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+ *
+ * See the Apache License, Version 2.0 for the specific language
+ * governing permissions and limitations under the License.
+ *#
+#set( $keys = $utility.getEntityKeyType($singleton) )
+#if( $keys.size() > 1 )
+  #set( $type = $utility.getEdmType($singleton).EntityType.Name + "Key" )
+#elseif( $keys.size() == 1 )
+  #set( $type = $keys.values().iterator().next() )
+#else
+  #set( $type = "" )
+#end
+
+@Singleton(name = "$singleton.Name")
+public interface $utility.capitalize($singleton.Name) extends AbstractEntitySet<$utility.getJavaType($singleton.Type), $type, $utility.getJavaType($singleton.Type)Collection> {
+
+#foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($singleton)) )
+    #set( $djt = $utility.getJavaType($dos) )
+    #set( $sIdx = $djt.lastIndexOf('.') + 1 )
+    $djt new$djt.substring($sIdx)();
+    ${djt}Collection new$djt.substring($sIdx)Collection();
+#end
+}

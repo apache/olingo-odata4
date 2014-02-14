@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright © Microsoft Open Technologies, Inc.
+
+    All Rights Reserved
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+    OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+    ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+    PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+
+    See the Apache License, Version 2.0 for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">Unsupported media type requested.</m:message><m:innererror><m:message>A supported MIME type could not be found that matches the content type of the response. None of the supported type(s) 'application/atom+xml;type=entry, application/atom+xml, application/json;odata=minimalmetadata;streaming=true, application/json;odata=minimalmetadata;streaming=false, application/json;odata=minimalmetadata, application/json;odata=fullmetadata;streaming=true, application/json;odata=fullmetadata;streaming=false, application/json;odata=fullmetadata, application/json;odata=nometadata;streaming=true, application/json;odata=nometadata;streaming=false, application/json;odata=nometadata, application/json;streaming=true, application/json;streaming=false, application/json;odata=verbose, application/json' matches the content type 'text/plain; charset=UTF-8'.</m:message><m:type>Microsoft.Data.OData.ODataContentTypeException</m:type><m:stacktrace>   at Microsoft.Data.OData.MediaTypeUtils.GetFormatFromContentType(String contentTypeName, ODataPayloadKind[] supportedPayloadKinds, MediaTypeResolver mediaTypeResolver, MediaType&amp; mediaType, Encoding&amp; encoding, ODataPayloadKind&amp; selectedPayloadKind)&#xD;
+   at Microsoft.Data.OData.MediaTypeUtils.GetFormatFromContentType(String contentTypeHeader, ODataPayloadKind[] supportedPayloadKinds, MediaTypeResolver mediaTypeResolver, MediaType&amp; mediaType, Encoding&amp; encoding, ODataPayloadKind&amp; selectedPayloadKind, String&amp; batchBoundary)&#xD;
+   at Microsoft.Data.OData.ODataMessageReader.ProcessContentType(ODataPayloadKind[] payloadKinds)&#xD;
+   at Microsoft.Data.OData.ODataMessageReader.ReadFromInput[T](Func`2 readFunc, ODataPayloadKind[] payloadKinds)&#xD;
+   at System.Data.Services.Serializers.EntityDeserializer.Read(SegmentInfo segmentInfo)&#xD;
+   at System.Data.Services.Serializers.ODataMessageReaderDeserializer.Deserialize(SegmentInfo segmentInfo)</m:stacktrace></m:innererror></m:error>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright © Microsoft Open Technologies, Inc.
+
+    All Rights Reserved
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+    OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+    ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+    PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+
+    See the Apache License, Version 2.0 for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<entry xml:base="http://192.168.43.55:8080/DefaultService.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://192.168.43.55:8080/DefaultService.svc/ComputerDetail(-10)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="ComputerDetail" href="ComputerDetail(-10)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Computer" type="application/atom+xml;type=entry" title="Computer" href="ComputerDetail(-10)/Computer" /><title /><updated>2013-08-21T10:53:24Z</updated><author><name /><uri>usfvbkyxssojjebyzgvtnzkuikßuxrmllzyglnsssluyxfßssioyroouxafzbhbsabkrsslbyhghicjaplolzqssßhhfix</uri><email>sspayuqgmkizmvtxdeuitrnqcblxoipcsshhfvibxuzssatvjjhoftpk</email></author><m:action metadata="http://192.168.43.55:8080/DefaultService.svc/$metadata#DefaultContainer.ResetComputerDetailsSpecifications" title="ResetComputerDetailsSpecifications" target="http://192.168.43.55:8080/DefaultService.svc/ComputerDetail(-10)/ResetComputerDetailsSpecifications" /><content type="application/xml"><m:properties><d:ComputerDetailId m:type="Edm.Int32">-10</d:ComputerDetailId><d:Manufacturer>sspayuqgmkizmvtxdeuitrnqcblxoipcsshhfvibxuzssatvjjhoftpk</d:Manufacturer><d:Model>usfvbkyxssojjebyzgvtnzkuikßuxrmllzyglnsssluyxfßssioyroouxafzbhbsabkrsslbyhghicjaplolzqssßhhfix</d:Model><d:Serial m:null="true" /><d:SpecificationsBag m:type="Collection(Edm.String)"><d:element>vorjqalydmfuazkatkiydeicefrjhyuaupkfgbxiaehjrqhhqv</d:element><d:element>rbsejgfgelhsdahkoqlnzvbq</d:element><d:element>ssfvnnquahsczxlußnssrhpsszluundyßehyzjedssxom</d:element><d:element>xsqocvqrzbvzhdhtilugpvayirrnomupxinhihazfghqehqymeeaupuesseluinjgbedrarqluedjfx</d:element><d:element>eekuucympfgkucszfuggbmfglpnxnjvhkhalymhtfuggfafulkzedqlksoduqeyukzzhbbasjmee</d:element><d:element>ゾを九クそ</d:element></d:SpecificationsBag><d:PurchaseDate m:type="Edm.DateTime">2020-12-15T01:33:35.8014568</d:PurchaseDate><d:Dimensions m:type="Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions"><d:Width m:type="Edm.Decimal">-8917.92836319839</d:Width><d:Height m:type="Edm.Decimal">-79228162514264337593543950335</d:Height><d:Depth m:type="Edm.Decimal">-79228162514264337593543950335</d:Depth></d:Dimensions></m:properties></content></entry>

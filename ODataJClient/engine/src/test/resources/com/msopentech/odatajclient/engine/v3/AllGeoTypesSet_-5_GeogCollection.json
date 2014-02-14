@@ -1,0 +1,1 @@
+{"odata.metadata":"http://10.10.10.6:8080/DefaultService.svc/$metadata#Edm.GeographyCollection","odata.type":"Edm.GeographyCollection","value":{"type":"GeometryCollection","geometries":[{"type":"GeometryCollection","geometries":[]},{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1.0,2.0]}]}],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}}

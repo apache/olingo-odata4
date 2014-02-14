@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Copyright © Microsoft Open Technologies, Inc.
+
+    All Rights Reserved
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+    OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+    ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+    PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+
+    See the Apache License, Version 2.0 for the specific language
+    governing permissions and limitations under the License.
+
+-->
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+  <edmx:Reference Uri="http://host/service/$metadata">
+    <edmx:Include Namespace="ODataDemo"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://somewhere/Vocabulary/V1">
+    <edmx:Include Alias="Vocabulary1" Namespace="Some.Vocabulary.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Annotations">
+      <Annotations Target="Test">
+        <Annotation Term="org.example.display.EndTime" TimeOfDay="21:45:00"/>,
+        <Annotation Term="org.example.display.EndTime">
+          <TimeOfDay>21:45:00</TimeOfDay>
+        </Annotation>,
+        <Annotation Term='Test' Path="IsMale"/>,
+        <Annotation Term='Test'>
+          <Not>
+            <Path>IsMale</Path>
+          </Not>
+        </Annotation>,
+        <Annotation Term='Test'>
+          <And>
+            <Path>IsMale</Path>
+            <Path>IsMarried</Path>
+          </And>
+        </Annotation>,
+        <Annotation Term="UI.ReferenceFacet" AnnotationPath="Product/Supplier/@UI.LineItem"/>,
+        <Annotation Term="UI.ReferenceFacet">
+          <AnnotationPath>Product/Supplier/@UI.LineItem</AnnotationPath>
+        </Annotation>,
+        <Annotation Term="Vocabulary1.DisplayName">
+          <Apply Function="odata.concat">
+            <Path>Name</Path>
+            <String> in </String>
+            <Path>Address/CountryName</Path>
+          </Apply>
+        </Annotation>,
+        <Annotation Term="org.example.display.Threshold">
+          <Cast Type="Edm.Decimal">
+            <Path>Average</Path>
+          </Cast>
+        </Annotation>,
+        <Annotation Term="Vocabulary1.Tags">
+          <Collection>
+            <String>MasterData</String>
+          </Collection>
+        </Annotation>,
+        <Annotation Term="org.example.person.Gender">
+          <If>
+            <Bool>true</Bool>
+            <String>Female</String>
+            <String>Male</String>
+          </If>
+        </Annotation>,
+        <Annotation Term="org.example.person.Gender">
+          <If>
+            <Path>IsFemale</Path>
+            <String>Female</String>
+            <String>Male</String>
+          </If>
+        </Annotation>,
+        <Annotation Term="Self.IsPreferredCustomer">
+          <IsOf Type="Self.PreferredCustomer">
+            <Path>Customer</Path>
+          </IsOf>
+        </Annotation>,
+        <Annotation Term="org.example.display.DisplayName">
+          <LabeledElement Name="CustomerFirstName" Path="FirstName" />
+        </Annotation>,
+        <Annotation Term="org.example.display.DisplayName">
+          <LabeledElement Name="CustomerFirstName">
+            <Path>FirstName</Path>
+          </LabeledElement>
+        </Annotation>,
+        <Annotation Term="org.example.person.Employee">
+          <Record>
+            <PropertyValue Property="GivenName" Path="FirstName" />
+            <PropertyValue Property="Surname" Path="LastName" />
+            <PropertyValue Property="Manager" Path="DirectSupervisor" />
+            <PropertyValue Property="CostCenter"> 
+              <UrlRef>
+                <Apply Function="odata.fillUriTemplate">
+                  <String>http://host/anotherservice/CostCenters('{ccid}')</String>
+                  <LabeledElement Name="ccid" Path="CostCenterID" /> 
+                </Apply> 
+              </UrlRef>
+            </PropertyValue>
+          </Record>
+        </Annotation>,
+        <Annotation Term="Vocab.Supplier">
+          <UrlRef>
+            <Apply Function="odata.fillUriTemplate">
+              <String>http://host/service/Suppliers({suppID})</String>
+              <LabeledElement Name="suppID">
+                <Apply Function="odata.uriEncode">
+                  <Path>SupplierId</Path>
+                </Apply>
+              </LabeledElement>
+            </Apply>
+          </UrlRef>
+        </Annotation>,
+        <Annotation Term="Core.LongDescription">
+          <UrlRef>
+            <String>http://host/wiki/HowToUse</String>
+          </UrlRef>
+        </Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

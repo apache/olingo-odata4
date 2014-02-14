@@ -1,0 +1,55 @@
+#*
+ * Copyright © Microsoft Open Technologies, Inc.
+ *
+ * All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+ * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+ * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+ *
+ * See the Apache License, Version 2.0 for the specific language
+ * governing permissions and limitations under the License.
+ *#
+#foreach($operation in $container.FunctionImports)
+#set( $function = $utility.getFunctionByName($operation.Function) )
+    @Operation(name = "$function.Name",
+                    isSideEffecting = false#if($function.EntitySetPath),
+                    entitySetPath = "$function.EntitySetPath"#end#if($function.isIsComposable),
+                    isComposable = $function.isIsComposable#end#if($function.ReturnType),
+                    returnType = "$function.ReturnType.Type"#end)
+    #if($function.ReturnType)$utility.getJavaType($function.ReturnType.Type)#{else}void#end $utility.uncapitalize($function.Name)(
+    #if($function.Parameters)
+      #set( $count = $function.Parameters.size() )#*
+      *##foreach($param in $function.Parameters)#*
+        *##set( $count = $count - 1 )#*
+      *#    @Parameter(name = "$param.Name", type = "$param.Type", nullable = $param.Nullable#if ($param.Mode), mode = ParameterMode.$param.Mode.toString()#end) $utility.getJavaType($param.Type) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+    #end#*
+    *##end);
+#end
+
+#foreach($operation in $container.ActionImports)
+#set( $action = $utility.getActionByName($operation.Action) )
+    @Operation(name = "$action.Name",
+                    httpMethod = HttpMethod.POST#if($action.EntitySetPath),
+                    entitySetPath = "$action.EntitySetPath"#end#if($action.ReturnType),
+                    returnType = "$action.ReturnType.Type"#end)
+    #if($action.ReturnType)$utility.getJavaType($action.ReturnType.Type)#{else}void#end $utility.uncapitalize($action.Name)(
+    #if($action.Parameters)
+      #set( $count = $action.Parameters.size() )#*
+      *##foreach($param in $action.Parameters)#*
+        *##set( $count = $count - 1 )#*
+        *##if( !$utility.isSameType($entityType.Name, $param.Type, false) )#*
+      *#    @Parameter(name = "$param.Name", type = "$param.Type", nullable = $param.Nullable#if($param.Mode), mode = ParameterMode.$param.Mode.toString()#end) $utility.getJavaType($param.Type) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+    #end
+    #end#*
+    *##end);
+#end

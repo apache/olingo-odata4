@@ -1,0 +1,32 @@
+{
+  "@odata.context": "http://host/service/$metadata",
+  "value": [
+    {
+      "name": "Orders",
+      "kind": "EntitySet",
+      "url": "Orders"
+    },
+    {
+      "name": "OrderItems",
+      "title": "Order Details",
+      "url": "OrderItems"
+    },
+    {
+      "name": "TopProducts",
+      "title": "Best-Selling Products",
+      "kind": "FunctionImport",
+      "url": "TopProducts"
+    },
+    {
+      "name": "Contoso",
+      "title": "Contoso Ltd.",
+      "kind": "Singleton",
+      "url": "Contoso"
+    },
+    {
+      "name": "Human Resources",
+      "kind": "ServiceDocument",
+      "url": "http://host/HR/"
+    }
+  ]
+}
