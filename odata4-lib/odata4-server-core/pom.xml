@@ -79,7 +79,7 @@
           <visitor>true</visitor>
           <!--maven antlr plugin has trouble with grammer import if the grammerfiles are 
           not directly inside  src/main/antlr4, hence we have to set the libDirectory-->
-          <libDirectory>src/main/antlr4/org/apache/olingo/odata4/producer/core/uri/antlr</libDirectory>
+          <libDirectory>src/main/antlr4/org/apache/olingo/odata4/server/core/uri/antlr</libDirectory>
         </configuration>
       </plugin>
     </plugins>
