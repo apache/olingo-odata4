@@ -62,11 +62,11 @@
   </modules>
 
   <properties>
-    <mockito.version>1.9.0</mockito.version>
-    <junit.version>4.10</junit.version>
-    <commonscodec.version>1.6</commonscodec.version>
+    <mockito.version>1.9.5</mockito.version>
+    <junit.version>4.11</junit.version>
+    <commonscodec.version>1.9</commonscodec.version>
     <antlr.version>4.1</antlr.version>
-    <jackson.version>2.2.2</jackson.version>
+    <jackson.version>2.2.3</jackson.version>
   </properties>
 
   <dependencies>
@@ -92,7 +92,7 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.9</version>
+          <version>0.10</version>
         </plugin>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
@@ -101,7 +101,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
+          <version>3.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -165,7 +165,9 @@
             </goals>
             <configuration>
               <excludes>
-                <exclude>ODataJClient/**</exclude>
+                <exclude>**/META-INF/services/*</exclude>
+                <exclude>**/*.txt</exclude>
+                <exclude>**/*.ini</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**</exclude>
