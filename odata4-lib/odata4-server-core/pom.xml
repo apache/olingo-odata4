@@ -23,7 +23,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>olingo-odata4-producer-core-incubating</artifactId>
+  <artifactId>olingo-odata4-server-core-incubating</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
@@ -37,7 +37,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata4-producer-api-incubating</artifactId>
+      <artifactId>olingo-odata4-server-api-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

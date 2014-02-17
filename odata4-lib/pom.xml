@@ -36,10 +36,10 @@
   </parent>
 
   <modules>
-    <module>odata4-producer-api</module>
-    <module>odata4-producer-core</module>
-    <module>odata4-consumer-api</module>
-    <module>odata4-consumer-core</module>
+    <module>odata4-server-api</module>
+    <module>odata4-server-core</module>
+    <module>odata4-client-api</module>
+    <module>odata4-client-core</module>
     <module>odata4-commons-api</module>
     <module>odata4-commons-core</module>
     <module>odata4-fit</module>
