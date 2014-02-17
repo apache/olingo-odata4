@@ -20,6 +20,8 @@ package org.apache.olingo.odata4.server.core.uri.antlr;
 
 // TODO after adding the external API to the URI processing class this unit test require a mayor rework
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
@@ -66,6 +68,11 @@ public class TestUriParserImpl {
     testUri = new UriValidator().setEdm(edm);
     testRes = new UriResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
+  }
+
+  @Test
+  public void test() throws UriParserException, UnsupportedEncodingException {
+    
   }
 
   @Test
@@ -327,7 +334,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet() {
+  public void testEntitySet() throws UnsupportedEncodingException {
 
     // plain entity set
     testRes.run("ESAllPrim")
@@ -352,7 +359,7 @@ public class TestUriParserImpl {
         .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // with all keys
-    testRes.run("ESAllKey(" + allKeys + ")")
+    testRes.run("ESAllKey(" + encode(allKeys) + ")")
         .isEntitySet("ESAllKey")
         .isKeyPredicate(0, "PropertyString", "'ABC'")
         .isKeyPredicate(1, "PropertyInt16", "1")
@@ -1069,7 +1076,7 @@ public class TestUriParserImpl {
   @Test
   public void testCustomQueryOption() {
     testUri.run("ESTwoKeyNav?custom")
-        .isCustomParameter(0, "custom", null);
+        .isCustomParameter(0, "custom", "");
     testUri.run("ESTwoKeyNav?custom=ABC")
         .isCustomParameter(0, "custom", "ABC");
   }
@@ -1135,6 +1142,12 @@ public class TestUriParserImpl {
         .n()
         .isTypeFilterOnCollection(EdmTechTestProvider.nameCTTwoBasePrimCompNav);
     ;
+
+  }
+
+  public static String encode(String decoded) throws UnsupportedEncodingException {
+
+    return URLEncoder.encode(decoded, "UTF-8");
 
   }
 

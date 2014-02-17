@@ -41,20 +41,9 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedU
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.testutil.FilterTreeToText;
-import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceActionImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceFunctionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.AliasImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.BinaryImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ConstantImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.EnumerationImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ExpressionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LambdaRefImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LiteralImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.MethodCallImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.TypeLiteralImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.UnaryImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceActionImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceFunctionImpl;
 import org.junit.Test;
 
 public class ExpressionTest {

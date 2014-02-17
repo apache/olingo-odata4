@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.server.core.uri.antlr;
 
 import org.antlr.v4.runtime.Lexer;
 import org.apache.olingo.odata4.server.core.testutil.TokenValidator;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 import org.junit.Test;
 
 public class TestLexer {
@@ -29,25 +28,19 @@ public class TestLexer {
 
   private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";// last two chars are not in
                                                                          // cPCT_ENCODED_UNESCAPED
-  // private static final String cPCT_ENCODED_UNESCAPED = "%45%46%47";
   private static final String cUNRESERVED = "ABCabc123-._~";
   private static final String cOTHER_DELIMS = "!()*+,;";
   private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
 
-  // private static final String cPCTENCODEDnoSQUOTE = "%65%66%67";
-  // private static final String cPCHARnoSQUOTE = cUNRESERVED + cPCTENCODEDnoSQUOTE + cOTHER_DELIMS + "$&=:@";
-
   private static final String cPCHAR = cUNRESERVED + cPCT_ENCODED + cSUB_DELIMS + ":@";
-
-  // private static final String cQCHAR_UNESCAPED = cUNRESERVED + cPCT_ENCODED_UNESCAPED + cOTHER_DELIMS + ":@/?$'=";
 
   public TestLexer() {
     test = new TokenValidator();
   }
 
-  //@Test
+  @Test
   public void test() {
-    //test.log(1).run("ESTwoKeyNav?$filter=CollPropertyComplex/all( l :true)");
+   
   }
 
   // ;------------------------------------------------------------------------------

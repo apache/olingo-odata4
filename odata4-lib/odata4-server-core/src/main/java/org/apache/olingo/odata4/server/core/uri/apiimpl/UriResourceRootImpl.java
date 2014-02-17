@@ -16,21 +16,47 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceValue;
+import org.apache.olingo.odata4.server.api.uri.UriResourceRoot;
 
-public class UriResourceValueImpl extends UriResourceImpl implements UriResourceValue {
+public class UriResourceRootImpl extends UriResourceWithKeysImpl implements UriResourceRoot {
 
-  public UriResourceValueImpl() {
-    super(UriResourceKind.value);
+  private EdmType type;
+  private boolean isCollection;
 
+  public UriResourceRootImpl() {
+    super(UriResourceKind.root);
+  }
+
+  @Override
+  public EdmType getType() {
+    return type;
+  }
+
+  public UriResourceRootImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+  }
+
+  @Override
+  public boolean isCollection() {
+    if (keyPredicates != null) {
+      return false;
+    }
+    return isCollection;
+  }
+
+  public UriResourceRootImpl setCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
   }
 
   @Override
   public String toString() {
-    return "$value";
+    return "$root";
   }
 
 }

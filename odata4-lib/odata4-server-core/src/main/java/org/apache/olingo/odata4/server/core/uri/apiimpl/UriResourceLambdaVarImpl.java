@@ -16,56 +16,55 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaRef;
 
-public class UriResourceSingletonImpl extends UriResourceTypedImpl implements UriResourceSingleton {
+public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaRef {
 
-  private EdmSingleton singleton;
+  private EdmType type;
+  private boolean isCollection;
+  private String variableText;
 
-  public UriResourceSingletonImpl() {
-    super(UriResourceKind.singleton);
+  public UriResourceLambdaVarImpl() {
+    super(UriResourceKind.lambdaVariable);
   }
 
   @Override
-  public EdmSingleton getSingleton() {
-    return singleton;
+  public String getVariableText() {
+    return variableText;
   }
 
-  public UriResourceSingletonImpl setSingleton(final EdmSingleton singleton) {
-
-    this.singleton = singleton;
+  public UriResourceLambdaVarImpl setVariableText(final String variableText) {
+    this.variableText = variableText;
     return this;
   }
 
   @Override
-  public EdmEntityType getEntityTypeFilter() {
-    return (EdmEntityType) typeFilter;
-  }
-
-  @Override
   public EdmType getType() {
-    return singleton.getEntityType();
+    return type;
   }
 
-  @Override
-  public EdmEntityType getEntityType() {
-    return singleton.getEntityType();
+  public UriResourceLambdaVarImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+
   }
 
   @Override
   public boolean isCollection() {
-    return false;
+    return isCollection;
+  }
+
+  public UriResourceLambdaVarImpl setCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
   }
 
   @Override
   public String toString() {
-    return singleton.getName();
+    return variableText;
   }
-
 }

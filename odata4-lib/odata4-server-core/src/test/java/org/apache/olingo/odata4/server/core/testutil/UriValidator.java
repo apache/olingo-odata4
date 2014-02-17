@@ -29,12 +29,12 @@ import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectItem;
-import org.apache.olingo.odata4.server.core.uri.Parser;
-import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.parser.Parser;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
@@ -58,7 +58,7 @@ public class UriValidator implements Validator {
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -72,7 +72,7 @@ public class UriValidator implements Validator {
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
 
     } catch (UriParserException e) {
       exception = e;
@@ -83,11 +83,11 @@ public class UriValidator implements Validator {
 
   public UriValidator log(final String uri) {
     ParserTest parserTest = new ParserTest();
+    parserTest.setLogLevel(1);
     uriInfo = null;
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
-      uriInfo = (UriInfoImpl) parserTest.parseUri(uri, new UriParseTreeVisitor(edm));
-      fail("Exception expected");
+      uriInfo = (UriInfoImpl) parserTest.parseUri(uri, edm);
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());
@@ -116,7 +116,7 @@ public class UriValidator implements Validator {
     return new FilterValidator().setUriValidator(this).setFilter(filter);
 
   }
-  
+
   public ExpandValidator goExpand() {
     ExpandOptionImpl expand = (ExpandOptionImpl) uriInfo.getExpandOption();
     if (expand == null) {
@@ -125,11 +125,10 @@ public class UriValidator implements Validator {
 
     return new ExpandValidator().setGoUpValidator(this).setExpand(expand);
   }
-  
-  
+
   public UriResourceValidator goSelectItemPath(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourceInfo();
 
@@ -227,18 +226,18 @@ public class UriValidator implements Validator {
   private String fullName(final EdmEntityType type) {
     return type.getNamespace() + "." + type.getName();
   }
-  
+
   public UriValidator isSelectItemStar(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(true, item.isStar());
     return this;
   }
-  
+
   public UriValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;

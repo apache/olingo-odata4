@@ -16,55 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaRef;
+import org.apache.olingo.odata4.server.api.uri.UriResourcePrimitiveProperty;
 
-public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaRef {
+public class UriResourcePrimitivePropertyImpl extends UriResourceTypedImpl implements UriResourcePrimitiveProperty {
 
-  private EdmType type;
-  private boolean isCollection;
-  private String variableText;
+  EdmProperty property;
 
-  public UriResourceLambdaVarImpl() {
-    super(UriResourceKind.lambdaVariable);
+  public UriResourcePrimitivePropertyImpl() {
+    super(UriResourceKind.primitiveProperty);
   }
 
   @Override
-  public String getVariableText() {
-    return variableText;
+  public EdmProperty getProperty() {
+    return property;
   }
 
-  public UriResourceLambdaVarImpl setVariableText(final String variableText) {
-    this.variableText = variableText;
+  public UriResourcePrimitivePropertyImpl setProperty(final EdmProperty property) {
+    this.property = property;
     return this;
   }
 
   @Override
   public EdmType getType() {
-    return type;
-  }
-
-  public UriResourceLambdaVarImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-
+    return property.getType();
   }
 
   @Override
   public boolean isCollection() {
-    return isCollection;
-  }
-
-  public UriResourceLambdaVarImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
+    return property.isCollection();
   }
 
   @Override
   public String toString() {
-    return variableText;
+    return property.getName();
   }
+
 }

@@ -37,20 +37,20 @@ import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.odata4.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
-import org.apache.olingo.odata4.server.core.uri.UriResourceActionImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceComplexPropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceEntitySetImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceFunctionImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceLambdaAllImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceLambdaAnyImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceNavigationPropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourcePrimitivePropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceSingletonImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceActionImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceComplexPropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceEntitySetImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceFunctionImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAllImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAnyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceNavigationPropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourcePrimitivePropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceSingletonImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.SelectOptionImpl;
@@ -85,11 +85,12 @@ public class UriResourceValidator implements Validator {
   // --- Execution ---
 
   public UriResourceValidator run(final String uri) {
-    ParserTest testParser = new ParserTest(); 
+    ParserTest testParser = new ParserTest();
+    //testParser.setLogLevel(1);
     UriInfoImpl uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
     } catch (UriParserException e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Exception: " + e.getMessage());

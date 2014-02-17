@@ -16,44 +16,52 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
+
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourcePrimitiveProperty;
 
-public class UriResourcePrimitivePropertyImpl extends UriResourceTypedImpl implements UriResourcePrimitiveProperty {
+public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements UriResourceEntitySet {
+  protected EdmEntitySet edmEntitySet = null;
 
-  EdmProperty property;
-
-  public UriResourcePrimitivePropertyImpl() {
-    super(UriResourceKind.primitiveProperty);
+  public UriResourceEntitySetImpl() {
+    super(UriResourceKind.entitySet);
   }
 
   @Override
-  public EdmProperty getProperty() {
-    return property;
+  public EdmEntitySet getEntitySet() {
+    return edmEntitySet;
   }
 
-  public UriResourcePrimitivePropertyImpl setProperty(final EdmProperty property) {
-    this.property = property;
+  public UriResourceEntitySetImpl setEntitSet(final EdmEntitySet edmES) {
+    edmEntitySet = edmES;
     return this;
   }
 
   @Override
+  public EdmEntityType getEntityType() {
+    return edmEntitySet.getEntityType();
+  }
+
+  @Override
   public EdmType getType() {
-    return property.getType();
+    return edmEntitySet.getEntityType();
   }
 
   @Override
   public boolean isCollection() {
-    return property.isCollection();
+    if (keyPredicates == null) {
+      return true;
+    }
+    return false;
   }
 
   @Override
   public String toString() {
-    return property.getName();
+    return edmEntitySet.getName();
   }
-
 }

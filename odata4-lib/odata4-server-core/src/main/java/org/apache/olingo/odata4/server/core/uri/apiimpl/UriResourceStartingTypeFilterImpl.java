@@ -16,62 +16,53 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmAction;
-import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriResourceAction;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourceStartingTypeFilter;
 
-public class UriResourceActionImpl extends UriResourceTypedImpl implements UriResourceAction {
+public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl
+    implements UriResourceStartingTypeFilter {
 
-  protected EdmAction action;
-  protected EdmActionImport actionImport;
+  private EdmType type;
+  private boolean isCollection;
 
-  public UriResourceActionImpl() {
-    super(UriResourceKind.action);
+  public UriResourceStartingTypeFilterImpl() {
+    super(UriResourceKind.startingTypeFilter);
   }
 
   @Override
-  public EdmAction getAction() {
-    return action;
-  }
-
-  public UriResourceActionImpl setAction(final EdmAction action) {
-    this.action = action;
-    return this;
+  public UriResourceKind getKind() {
+    return kind;
   }
 
   @Override
-  public EdmActionImport getActionImport() {
-    return actionImport;
+  public EdmType getType() {
+    return type;
   }
 
-  public UriResourceActionImpl setActionImport(final EdmActionImport actionImport) {
-    this.actionImport = actionImport;
-    setAction(actionImport.getAction());
+  public UriResourceStartingTypeFilterImpl setType(final EdmType type) {
+    this.type = type;
     return this;
   }
 
   @Override
   public boolean isCollection() {
-    return action.getReturnType().isCollection();
+    if (keyPredicates != null) {
+      return false;
+    }
+    return isCollection;
   }
 
-  @Override
-  public EdmType getType() {
-    return action.getReturnType().getType();
+  public UriResourceStartingTypeFilterImpl setCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
   }
 
   @Override
   public String toString() {
-    if (actionImport != null) {
-      return actionImport.getName();
-    } else if (action != null) {
-      return action.getName();
-    }
-    return "";
+    return type.getNamespace() + "." + type.getName();
   }
 
 }

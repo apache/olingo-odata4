@@ -16,53 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceStartingTypeFilter;
+import org.apache.olingo.odata4.server.api.uri.UriResourceValue;
 
-public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl
-    implements UriResourceStartingTypeFilter {
+public class UriResourceValueImpl extends UriResourceImpl implements UriResourceValue {
 
-  private EdmType type;
-  private boolean isCollection;
+  public UriResourceValueImpl() {
+    super(UriResourceKind.value);
 
-  public UriResourceStartingTypeFilterImpl() {
-    super(UriResourceKind.startingTypeFilter);
-  }
-
-  @Override
-  public UriResourceKind getKind() {
-    return kind;
-  }
-
-  @Override
-  public EdmType getType() {
-    return type;
-  }
-
-  public UriResourceStartingTypeFilterImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
-  @Override
-  public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return isCollection;
-  }
-
-  public UriResourceStartingTypeFilterImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
   }
 
   @Override
   public String toString() {
-    return type.getNamespace() + "." + type.getName();
+    return "$value";
   }
 
 }

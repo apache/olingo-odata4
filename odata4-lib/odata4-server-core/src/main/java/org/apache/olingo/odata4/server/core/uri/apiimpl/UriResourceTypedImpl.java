@@ -16,47 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceRoot;
+import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 
-public class UriResourceRootImpl extends UriResourceWithKeysImpl implements UriResourceRoot {
+public abstract class UriResourceTypedImpl extends UriResourceImpl implements UriResourcePartTyped {
 
-  private EdmType type;
-  private boolean isCollection;
+  protected EdmType typeFilter = null;
 
-  public UriResourceRootImpl() {
-    super(UriResourceKind.root);
+  public UriResourceTypedImpl(final UriResourceKind kind) {
+    super(kind);
   }
 
-  @Override
-  public EdmType getType() {
-    return type;
+  public EdmType getTypeFilter() {
+    return typeFilter;
   }
 
-  public UriResourceRootImpl setType(final EdmType type) {
-    this.type = type;
+  public UriResourceTypedImpl setTypeFilter(final EdmStructuralType typeFilter) {
+    this.typeFilter = typeFilter;
     return this;
   }
 
   @Override
-  public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
+  public String toString(final boolean includeFilters) {
+    if (includeFilters) {
+      if (typeFilter != null) {
+        return toString() + "/" + getFQN(typeFilter).toString();
+      } else {
+        return toString();
+      }
     }
-    return isCollection;
+    return toString();
   }
 
-  public UriResourceRootImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
-  }
-
-  @Override
-  public String toString() {
-    return "$root";
+  private FullQualifiedName getFQN(final EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName());
   }
 
 }

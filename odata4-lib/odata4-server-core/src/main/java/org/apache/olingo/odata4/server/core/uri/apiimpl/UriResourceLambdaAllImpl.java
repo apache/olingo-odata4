@@ -16,23 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAny;
+import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements UriResourceLambdaAny {
+public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements UriResourceLambdaAll {
   protected EdmProperty property;
   private String lamdaVariable;
   private ExpressionImpl expression;
 
-  public UriResourceLambdaAnyImpl() {
-    super(UriResourceKind.lambdaAny);
+  public UriResourceLambdaAllImpl() {
+    super(UriResourceKind.lambdaAll);
   }
 
   @Override
@@ -50,7 +50,7 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
     return lamdaVariable;
   }
 
-  public UriResourceLambdaAnyImpl setLamdaVariable(final String lamdaVariable) {
+  public UriResourceLambdaAllImpl setLamdaVariable(final String lamdaVariable) {
     this.lamdaVariable = lamdaVariable;
     return this;
   };
@@ -60,13 +60,14 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
     return expression;
   }
 
-  public UriResourceLambdaAnyImpl setExpression(final ExpressionImpl expression) {
+  public UriResourceLambdaAllImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
-  }
+  };
 
   @Override
   public String toString() {
-    return "any";
-  };
+    return "all";
+  }
+
 }

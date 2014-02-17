@@ -18,13 +18,11 @@
  * under the License.
  ******************************************************************************/
 
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.parser;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -53,49 +51,46 @@ import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedConstants;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.server.core.uri.UriParserException;
+import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
+import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserBaseVisitor;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AliasAndValueContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AllEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AllExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltAddContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltAllContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltAndContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltAnyContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltBatchContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltComparismContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltEntityCastContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltEntityContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltEqualityContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltHasContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltMetadataContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltMultContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltOrContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AltResourcePathContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AnyExprContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.BatchEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.BooleanNonCaseContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CastExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CeilingMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ConcatMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ConstSegmentContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ContainsMethodCallExprContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CrossjoinContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CustomQueryOptionContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CrossjoinEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.DateMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.DayMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EndsWithMethodCallExprContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityOptionCastContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityOptionContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityOptionsCastContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityOptionsContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EnumLitContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandCountOptionContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandItemContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandItemsContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandOptionContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandPathContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandRefOptionContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FilterContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FilterExpressionEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FloorMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FormatContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FractionalsecondsMethodCallExprContext;
@@ -103,7 +98,6 @@ import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.GeoDistanc
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.GeoIntersectsMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.GeoLengthMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.HourMethodCallExprContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.IdContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.IndexOfMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.InlinecountContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.IsofExprContext;
@@ -111,6 +105,7 @@ import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.LengthMeth
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.LevelsContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MaxDateTimeMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MemberExprContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MetadataEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MinDateTimeMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MinuteMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MonthMethodCallExprContext;
@@ -120,19 +115,20 @@ import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.NamespaceC
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.NowMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.NullruleContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OdataIdentifierContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OrderByContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OrderByItemContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OrderListContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.PathSegmentContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.PathSegmentsContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.PrimitiveLiteralContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.QueryOptionContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.QueryOptionsContext;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ResourcePathContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.RootExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.RoundMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SecondMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectEOFContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectItemContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectSegmentContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SkipContext;
@@ -148,13 +144,33 @@ import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.Totalsecon
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.TrimMethodCallExprContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.UnaryContext;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.YearMethodCallExprContext;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriParameterImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceActionImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceComplexPropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceCountImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceEntitySetImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceFunctionImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceItImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAllImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAnyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaVarImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceNavigationPropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourcePrimitivePropertyImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceRefImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceRootImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceSingletonImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceStartingTypeFilterImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceValueImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor.TypeInformation;
 import org.apache.olingo.odata4.server.core.uri.queryoption.AliasQueryOptionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FormatOptionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.IdOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.InlineCountOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByItemImpl;
@@ -195,30 +211,12 @@ import org.apache.olingo.odata4.server.core.uri.queryoption.expression.TypeLiter
  * <li>clean up
  * <li>Overview testcases
  * <li>search
- * <li>percent decoding
- * 
  */
 public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
-  private Edm edm;
 
-  private EdmEntityContainer edmEntityContainer;
-
-  private class LambdaVariables {
-    public boolean isCollection;
-    public String name;
-    public EdmType type;
-  }
-
-  /**
-   * Hold all currently allowed lambda variables
-   * As lambda functions can be nested there may be more than one allowed lambda variables at a time while parsing a
-   * $filter or $orderby expressions.
-   */
-  private Stack<LambdaVariables> allowedLambdaVariables = new Stack<LambdaVariables>();
-
-  private class TypeInformation {
-    private boolean isCollection;
-    private EdmType type;
+  public class TypeInformation {
+    boolean isCollection;
+    EdmType type;
 
     TypeInformation(final EdmType type, final boolean isCollection) {
       this.type = type;
@@ -230,75 +228,43 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     }
   }
 
-  /**
-   * Used to stack type information for nested $expand, $filter query options and other cases.
-   */
-  private Stack<TypeInformation> contextTypes = new Stack<TypeInformation>();
-
-  /**
-   * Set within method {@link #visitExpandItem(ExpandPathContext ctx)} and {@link #visitExpandPathExtension(final
-   * ExpandPathExtensionContext ctx)} to allow nodes
-   * deeper in the expand tree at {@link #visitExpandPathExtension(ExpandPathExtensionContext ctx)} appending path
-   * segments to the currently processed {@link ExpandItemImpl}.
-   */
-  private ExpandItemImpl contextExpandItemPath;
-
-  /**
-   * Set within method {@link #visitSelectItem(SelectItemContext ctx)} to allow nodes
-   * deeper in the expand tree at {@link #visitSelectSegment(SelectSegmentContext ctx)} appending path segments to the
-   * currently processed {@link SelectItemImpl}.
-   */
-  private SelectItemImpl contextSelectItem;
-
-  /**
-   * Stores the currently processed UriInfo objects. There is one URI Info object for the resource path
-   * and one for each new first member access within $filter and $orderBy options.
-   */
-  private UriInfoImpl contextUriInfo;
-
-  private boolean contextReadingFunctionParameters = false;
+  public UriContext context = null;
+  public Edm edm;
+  public EdmEntityContainer edmEntityContainer;
 
   // --- class ---
 
-  public void init() {
-    allowedLambdaVariables.clear();
-    contextUriInfo = null;
-    contextExpandItemPath = null;
-    contextSelectItem = null;
-    contextTypes.clear();
-    contextUriInfo = null;
+  public void setContext(UriContext context) {
+    this.context = context;
   }
 
   public UriInfoImpl getUriInfo() {
-    return contextUriInfo;
+    return context.contextUriInfo;
   }
 
-  public UriParseTreeVisitor(final Edm edm) {
+  public UriParseTreeVisitor(final Edm edm, UriContext context) {
     this.edm = edm;
+    this.context = context;
     edmEntityContainer = edm.getEntityContainer(null);
   }
 
-  /**
-   * Simple percent decoding
-   * @param encoded string
-   * @return decoded string
-   */
-  String decode(String encoded) {
-    try {
-      return URLDecoder.decode(encoded, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw wrap(new UriParserSyntaxException("Error while decoding"));
+  @Override
+  protected Object aggregateResult(Object aggregate, Object nextResult) {
+    if (aggregate != null) {
+      return aggregate;
+    } else {
+      return nextResult;
     }
   }
 
   private FullQualifiedName getFullNameFromContext(final NamespaceContext vNS, final String odi) {
-    String namespace = decode(vNS.getText());
+    String namespace = vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1); // vNS contains a trailing point that has to be removed
     return new FullQualifiedName(namespace, odi);
   }
 
-  private LambdaVariables getLambdaVar(final String odi) {
-    for (LambdaVariables item : allowedLambdaVariables) {
+  private UriContext.LambdaVariables getLambdaVar(final String odi) {
+    for (UriContext.LambdaVariables item : context.allowedLambdaVariables) {
       if (item.name.equals(odi)) {
         return item;
       }
@@ -306,7 +272,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return null;
   }
 
-  private TypeInformation getTypeInformation(final UriResource lastResourcePart) {
+  TypeInformation getTypeInformation(final UriResource lastResourcePart) {
 
     TypeInformation typeInformation = new TypeInformation();
     if (lastResourcePart instanceof UriResourceWithKeysImpl) {
@@ -339,12 +305,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public UriResourceTypedImpl readResourcePathSegment(final PathSegmentContext ctx) {
 
     boolean checkFirst = false;
-    if (contextUriInfo.getLastResourcePart() == null ||
-        contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl) {
+    if (context.contextUriInfo.getLastResourcePart() == null ||
+        context.contextUriInfo.getLastResourcePart() instanceof UriResourceRootImpl) {
       checkFirst = true;
     }
 
-    String odi = decode(ctx.vODI.getText());
+    String odi = ctx.vODI.getText();
 
     if (checkFirst && ctx.vNS == null) {
 
@@ -353,7 +319,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmEntitySet != null) {
         UriResourceEntitySetImpl uriResource = new UriResourceEntitySetImpl()
             .setEntitSet(edmEntitySet);
-        contextUriInfo.addResourcePart(uriResource);
+        context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }
 
@@ -362,7 +328,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmSingleton != null) {
         UriResourceSingletonImpl uriResource = new UriResourceSingletonImpl()
             .setSingleton(edmSingleton);
-        contextUriInfo.addResourcePart(uriResource);
+        context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }
 
@@ -371,7 +337,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmActionImport != null) {
         UriResourceActionImpl uriResource = new UriResourceActionImpl()
             .setActionImport(edmActionImport);
-        contextUriInfo.addResourcePart(uriResource);
+        context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }
 
@@ -380,10 +346,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmFunctionImport != null) {
 
         // read the URI parameters
-        this.contextReadingFunctionParameters = true;
+        this.context.contextReadingFunctionParameters = true;
         @SuppressWarnings("unchecked")
         List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
-        this.contextReadingFunctionParameters = false;
+        this.context.contextReadingFunctionParameters = false;
 
         // mark parameters as consumed
         ctx.vlNVO.remove(0);
@@ -409,20 +375,20 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
 
         uriResource.setFunction(edmFunctionImport.getFunction(names));
-        contextUriInfo.addResourcePart(uriResource);
+        context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }
     }
 
     TypeInformation source = null;
-    UriResource lastResourcePart = contextUriInfo.getLastResourcePart();
+    UriResource lastResourcePart = context.contextUriInfo.getLastResourcePart();
 
     if (lastResourcePart == null) {
-      if (contextTypes.size() == 0) {
+      if (context.contextTypes.size() == 0) {
         throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only applied on typed "
             + "resource parts"));
       }
-      source = contextTypes.peek();
+      source = context.contextTypes.peek();
     } else {
       source = getTypeInformation(lastResourcePart);
 
@@ -435,13 +401,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (ctx.vNS == null) { // without namespace
 
       // first check for lambda variable because a newly add property should not shadow a long used lambda variable
-      LambdaVariables lVar = getLambdaVar(odi);
+      UriContext.LambdaVariables lVar = getLambdaVar(odi);
       if (lVar != null) {
         UriResourceLambdaVarImpl lambdaResource = new UriResourceLambdaVarImpl();
         lambdaResource.setVariableText(lVar.name);
         lambdaResource.setType(lVar.type);
         lambdaResource.setCollection(lVar.isCollection);
-        contextUriInfo.addResourcePart(lambdaResource);
+        context.contextUriInfo.addResourcePart(lambdaResource);
         return null;
       }
 
@@ -463,20 +429,20 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           // create simple property
           UriResourcePrimitivePropertyImpl simpleResource = new UriResourcePrimitivePropertyImpl()
               .setProperty((EdmProperty) property);
-          contextUriInfo.addResourcePart(simpleResource);
+          context.contextUriInfo.addResourcePart(simpleResource);
           return null;
         } else {
           // create complex property
           UriResourceComplexPropertyImpl complexResource = new UriResourceComplexPropertyImpl()
               .setProperty((EdmProperty) property);
-          contextUriInfo.addResourcePart(complexResource);
+          context.contextUriInfo.addResourcePart(complexResource);
           return null;
         }
       } else if (property instanceof EdmNavigationProperty) {
         // create navigation property
         UriResourceNavigationPropertyImpl navigationResource = new UriResourceNavigationPropertyImpl()
             .setNavigationProperty((EdmNavigationProperty) property);
-        contextUriInfo.addResourcePart(navigationResource);
+        context.contextUriInfo.addResourcePart(navigationResource);
         return null;
       } else {
         throw wrap(new UriParserSemanticException("Unkown type for property '" + property + "'"));
@@ -508,7 +474,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             } else {
               uriResource.setEntryTypeFilter(filterEntityType);
             }
-            contextUriInfo.addResourcePart(uriResource);
+            context.contextUriInfo.addResourcePart(uriResource);
             return null;
           } else {
 
@@ -575,7 +541,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             } else {
               uriResource.setEntryTypeFilter(filterComplexType);
             }
-            contextUriInfo.addResourcePart(uriResource);
+            context.contextUriInfo.addResourcePart(uriResource);
             return null;
           } else {
             if (lastResourcePart instanceof UriResourceWithKeysImpl) {
@@ -625,7 +591,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (action != null) {
         UriResourceActionImpl pathInfoAction = new UriResourceActionImpl();
         pathInfoAction.setAction(action);
-        contextUriInfo.addResourcePart(pathInfoAction);
+        context.contextUriInfo.addResourcePart(pathInfoAction);
         return null;
       }
 
@@ -635,10 +601,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             + "'"));
       }
 
-      this.contextReadingFunctionParameters = true;
+      this.context.contextReadingFunctionParameters = true;
       @SuppressWarnings("unchecked")
       List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
-      this.contextReadingFunctionParameters = false;
+      this.context.contextReadingFunctionParameters = false;
 
       // get names of function parameters
       List<String> names = new ArrayList<String>();
@@ -652,7 +618,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
             .setFunction(function)
             .setParameters(parameters);
-        contextUriInfo.addResourcePart(pathInfoFunction);
+        context.contextUriInfo.addResourcePart(pathInfoFunction);
 
         // mark parameters as consumed
         ctx.vlNVO.remove(0);
@@ -666,7 +632,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
             .setFunction(function)
             .setParameters(parameters);
-        contextUriInfo.addResourcePart(pathInfoFunction);
+        context.contextUriInfo.addResourcePart(pathInfoFunction);
 
         // mark parameters as consumed
         ctx.vlNVO.remove(0);
@@ -684,30 +650,37 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitAliasAndValue(final AliasAndValueContext ctx) {
     AliasQueryOptionImpl alias = new AliasQueryOptionImpl();
-    alias.setName(decode(ctx.vODI.getText()));
-    alias.setText(decode(ctx.vV.getText()));
+    alias.setName(ctx.vODI.getText());
+    alias.setText(ctx.vV.getText());
     alias.setAliasValue((ExpressionImpl) ctx.vV.accept(this));
     return alias;
+  }
+
+  @Override
+  public Object visitAllEOF(final AllEOFContext ctx) {
+    UriInfoImpl crossJoin = new UriInfoImpl().setKind(UriInfoKind.all);
+    context.contextUriInfo = crossJoin;
+    return null;
   }
 
   @Override
   public Object visitAllExpr(final AllExprContext ctx) {
     UriResourceLambdaAllImpl all = new UriResourceLambdaAllImpl();
 
-    UriResource obj = contextUriInfo.getLastResourcePart();
+    UriResource obj = context.contextUriInfo.getLastResourcePart();
     if (!(obj instanceof UriResourcePartTyped)) {
       throw wrap(new UriParserSemanticException("any only allowed on typed path segments"));
     }
 
-    LambdaVariables var = new LambdaVariables();
-    var.name = decode(ctx.vLV.getText());
+    UriContext.LambdaVariables var = new UriContext.LambdaVariables();
+    var.name = ctx.vLV.getText();
     var.type = getTypeInformation((UriResourceImpl) obj).type;
     var.isCollection = false;
 
-    all.setLamdaVariable(decode(ctx.vLV.getText()));
-    allowedLambdaVariables.push(var);
+    all.setLamdaVariable(ctx.vLV.getText());
+    context.allowedLambdaVariables.push(var);
     all.setExpression((ExpressionImpl) ctx.vLE.accept(this));
-    allowedLambdaVariables.pop();
+    context.allowedLambdaVariables.pop();
     return all;
   }
 
@@ -730,6 +703,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitAltAll(final AltAllContext ctx) {
+
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
 
     uriInfoImplpath.addResourcePart((UriResourceImpl) super.visitAltAll(ctx));
@@ -760,8 +734,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitAltBatch(final AltBatchContext ctx) {
-    contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.batch);
+  public Object visitBatchEOF(final BatchEOFContext ctx) {
+    context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.batch);
     return null;
   }
 
@@ -787,36 +761,22 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitAltEntity(final AltEntityContext ctx) {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
-
-    @SuppressWarnings("unchecked")
-    List<QueryOptionImpl> list = (List<QueryOptionImpl>) ctx.vEO.accept(this);
-    uriInfo.setQueryOptions(list);
-
-    contextUriInfo = uriInfo;
-    return null;
-  }
-
-  @Override
-  public Object visitAltEntityCast(final AltEntityCastContext ctx) {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
-
-    String odi = decode(ctx.vODI.getText());
+  public Object visitEntityEOF(final EntityEOFContext ctx) {
+    String odi = ctx.vODI.getText();
     FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
 
     EdmEntityType type = edm.getEntityType(fullName);
     if (type == null) {
       throw wrap(new UriParserSemanticException("Expected EntityTypeName"));
     }
-    uriInfo.setEntityTypeCast(type);
+    context.contextUriInfo.setEntityTypeCast(type);
 
-    contextUriInfo = uriInfo;
-    contextTypes.push(new TypeInformation(uriInfo.getEntityTypeCast(), true));
+    // contextUriInfo = uriInfo;
+    context.contextTypes.push(new TypeInformation(context.contextUriInfo.getEntityTypeCast(), true));
 
-    @SuppressWarnings("unchecked")
-    List<QueryOptionImpl> list = (List<QueryOptionImpl>) ctx.vEO.accept(this);
-    uriInfo.setQueryOptions(list);
+    // @SuppressWarnings("unchecked")
+    // List<QueryOptionImpl> list = (List<QueryOptionImpl>) ctx.vEO.accept(this);
+    // uriInfo.setQueryOptions(list);
 
     return null;
   }
@@ -850,19 +810,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitAltMetadata(final AltMetadataContext ctx) {
+  public Object visitMetadataEOF(final MetadataEOFContext ctx) {
     UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.metadata);
 
-    if (ctx.vF != null) {
-      FormatOptionImpl format = (FormatOptionImpl) ctx.vF.accept(this);
-      uriInfo.setSystemQueryOption(format);
-    }
-
-    if (ctx.vCF != null) {
-      uriInfo.setFragment(decode(ctx.vCF.getText()));
-    }
-
-    contextUriInfo = uriInfo;
+    context.contextUriInfo = uriInfo;
     return null;
   }
 
@@ -896,50 +847,33 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return binary;
   }
 
-  @Override
-  public Object visitAltResourcePath(final AltResourcePathContext ctx) {
-    ctx.vRP.accept(this);
-
-    if (ctx.vQO != null) {
-      UriResource lastSegment = contextUriInfo.getLastResourcePart();
-
-      if (lastSegment instanceof UriResourcePartTyped) {
-        UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
-        contextTypes.push(new TypeInformation(getTypeInformation((UriResourceImpl) typed).type, typed.isCollection()));
-      }
-      @SuppressWarnings("unchecked")
-      List<QueryOptionImpl> list = (List<QueryOptionImpl>) ctx.vQO.accept(this);
-      contextUriInfo.setQueryOptions(list);
-    }
-    return null;
-  }
+  
 
   @Override
   public Object visitAnyExpr(final AnyExprContext ctx) {
     UriResourceLambdaAnyImpl any = new UriResourceLambdaAnyImpl();
     if (ctx.vLV != null) {
-      // TODO
-      UriResourceImpl lastResourcePart = (UriResourceImpl) contextUriInfo.getLastResourcePart();
+      UriResourceImpl lastResourcePart = (UriResourceImpl) context.contextUriInfo.getLastResourcePart();
       if (!(lastResourcePart instanceof UriResourcePartTyped)) {
         throw wrap(new UriParserSemanticException("any only allowed on typed path segments"));
       }
 
-      LambdaVariables var = new LambdaVariables();
-      var.name = decode(ctx.vLV.getText());
+      UriContext.LambdaVariables var = new UriContext.LambdaVariables();
+      var.name = ctx.vLV.getText();
       var.type = getTypeInformation(lastResourcePart).type;
       var.isCollection = false;
 
-      any.setLamdaVariable(decode(ctx.vLV.getText()));
-      allowedLambdaVariables.push(var);
+      any.setLamdaVariable(ctx.vLV.getText());
+      context.allowedLambdaVariables.push(var);
       any.setExpression((ExpressionImpl) ctx.vLE.accept(this));
-      allowedLambdaVariables.pop();
+      context.allowedLambdaVariables.pop();
     }
     return any;
   }
 
   @Override
   public Object visitBooleanNonCase(BooleanNonCaseContext ctx) {
-    String text = decode(ctx.getText()).toLowerCase();
+    String text = ctx.getText().toLowerCase();
 
     if (text.equals("false")) {
       return new ConstantImpl().setKind(SupportedConstants.FALSE);
@@ -956,10 +890,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       method.addParameter(onExpression);
     }
 
-    String namespace = decode(ctx.vNS.getText());
+    String namespace = ctx.vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1);
 
-    FullQualifiedName fullName = new FullQualifiedName(namespace, decode(ctx.vODI.getText()));
+    FullQualifiedName fullName = new FullQualifiedName(namespace,ctx.vODI.getText());
     EdmType type = getType(fullName);
     method.setMethod(SupportedMethodCalls.CAST);
     method.addParameter(new TypeLiteralImpl().setType(type));
@@ -1013,13 +947,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitConstSegment(final ConstSegmentContext ctx) {
-    UriInfoImpl uriInfoResource = contextUriInfo;
+    UriInfoImpl uriInfoResource = context.contextUriInfo;
     UriResource pathInfo = uriInfoResource.getLastResourcePart();
 
     if (ctx.vV != null) {
       if (pathInfo instanceof UriResourcePartTyped) {
         if (!((UriResourcePartTyped) pathInfo).isCollection()) {
-          contextUriInfo.addResourcePart(new UriResourceValueImpl());
+          context.contextUriInfo.addResourcePart(new UriResourceValueImpl());
         } else {
           throw wrap(new UriParserSemanticException("$value only allowed on typed path segments"));
         }
@@ -1031,7 +965,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     } else if (ctx.vC != null) {
       if (pathInfo instanceof UriResourcePartTyped) {
         if (((UriResourcePartTyped) pathInfo).isCollection()) {
-          contextUriInfo.addResourcePart(new UriResourceCountImpl());
+          context.contextUriInfo.addResourcePart(new UriResourceCountImpl());
         } else {
           throw wrap(new UriParserSemanticException("$count only allowed on collection properties"));
         }
@@ -1042,7 +976,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (pathInfo instanceof UriResourcePartTyped) {
         EdmType type = ((UriResourcePartTyped) pathInfo).getType();
         if (type instanceof EdmEntityType) {
-          contextUriInfo.addResourcePart(new UriResourceRefImpl());
+          context.contextUriInfo.addResourcePart(new UriResourceRefImpl());
         } else {
           throw wrap(new UriParserSemanticException("$ref only allowd on endity types"));
         }
@@ -1051,9 +985,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
     } else if (ctx.vAll != null) {
-      contextUriInfo.addResourcePart((UriResourceLambdaAllImpl) ctx.vAll.accept(this));
+      context.contextUriInfo.addResourcePart((UriResourceLambdaAllImpl) ctx.vAll.accept(this));
     } else if (ctx.vAny != null) {
-      contextUriInfo.addResourcePart((UriResourceLambdaAnyImpl) ctx.vAny.accept(this));
+      context.contextUriInfo.addResourcePart((UriResourceLambdaAnyImpl) ctx.vAny.accept(this));
     }
     return null;
   }
@@ -1067,28 +1001,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitCrossjoin(final CrossjoinContext ctx) {
+  public Object visitCrossjoinEOF(final CrossjoinEOFContext ctx) {
     UriInfoImpl crossJoin = new UriInfoImpl().setKind(UriInfoKind.crossjoin);
 
     for (OdataIdentifierContext obj : ctx.vlODI) {
-      crossJoin.addEntitySetName(decode(obj.getText()));
+      crossJoin.addEntitySetName(obj.getText());
     }
 
-    contextUriInfo = crossJoin;
+    context.contextUriInfo = crossJoin;
     return null;
-  }
-
-  @Override
-  public Object visitCustomQueryOption(final CustomQueryOptionContext ctx) {
-    CustomQueryOptionImpl queryOption = new CustomQueryOptionImpl();
-    queryOption.setName(decode(ctx.getChild(0).getText()));
-
-    // set value only if present
-    if (ctx.getChildCount() > 1) {
-      queryOption.setText(decode(ctx.getChild(2).getText()));
-    }
-
-    return queryOption;
   }
 
   @Override
@@ -1122,49 +1043,18 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitEntityOptions(final EntityOptionsContext ctx) {
-    List<QueryOptionImpl> queryOptionList = new ArrayList<QueryOptionImpl>();
-
-    for (EntityOptionContext entityOption : ctx.vlEOb) {
-      queryOptionList.add((QueryOptionImpl) entityOption.accept(this));
-    }
-
-    queryOptionList.add((QueryOptionImpl) ctx.vlEOm.accept(this));
-
-    for (EntityOptionContext entityOption : ctx.vlEOa) {
-      queryOptionList.add((QueryOptionImpl) entityOption.accept(this));
-    }
-    return queryOptionList;
-  }
-
-  @Override
-  public Object visitEntityOptionsCast(final EntityOptionsCastContext ctx) {
-    List<QueryOptionImpl> queryOptionList = new ArrayList<QueryOptionImpl>();
-    for (EntityOptionCastContext entityOption : ctx.vlEOb) {
-      queryOptionList.add((QueryOptionImpl) entityOption.accept(this));
-    }
-
-    queryOptionList.add((QueryOptionImpl) ctx.vlEOm.accept(this));
-
-    for (EntityOptionCastContext entityOption : ctx.vlEOa) {
-      queryOptionList.add((QueryOptionImpl) entityOption.accept(this));
-    }
-    return queryOptionList;
-  }
-
-  @Override
   public Object visitEnumLit(final EnumLitContext ctx) {
     EnumerationImpl enum1 = new EnumerationImpl();
 
     // get type
-    String odi = decode(ctx.vODI.getText());
+    String odi = ctx.vODI.getText();
 
     FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
     EdmEnumType edmEnumType = edm.getEnumType(fullName);
 
     enum1.setType(edmEnumType);
 
-    String valueString = decode(ctx.vValues.getText());
+    String valueString = ctx.vValues.getText();
     valueString = valueString.substring(1, valueString.length() - 1);
 
     String[] values = valueString.split(",");
@@ -1176,9 +1066,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitExpand(final ExpandContext ctx) {
+  public Object visitExpandItems(final ExpandItemsContext ctx) {
     ExpandOptionImpl expand = new ExpandOptionImpl();
-    expand.setText(decode(ctx.getChild(2).getText()));
+    expand.setText(ctx.getText());
     for (ExpandItemContext eI : ctx.vlEI) {
       expand.addExpandItem((ExpandItemImpl) eI.accept(this));
     }
@@ -1196,12 +1086,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         expandItem.setIsRef(true);
       } else if (ctx.vM != null) {
         LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
-        levels.setText(decode(ctx.vM.getText()));
+        levels.setText(ctx.vM.getText());
         expandItem.setSystemQueryOption(levels);
       } else if (ctx.vL != null) {
         // TODO set value as integer
         LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
-        levels.setText(decode(ctx.vL.getText()));
+        levels.setText(ctx.vL.getText());
         expandItem.setSystemQueryOption(levels);
       }
 
@@ -1209,15 +1099,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       expandItem = (ExpandItemImpl) ctx.vEP.accept(this);
 
       if (ctx.vEPE != null) {
-        ExpandItemImpl contextExpandItemPathBU = contextExpandItemPath;
-        contextExpandItemPath = expandItem;
+        ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
+        context.contextExpandItemPath = expandItem;
 
         @SuppressWarnings("unchecked")
         List<SystemQueryOptionImpl> list = (List<SystemQueryOptionImpl>) ctx.vEPE.accept(this);
         for (SystemQueryOptionImpl option : list) {
           expandItem.setSystemQueryOption(option);
         }
-        contextExpandItemPath = contextExpandItemPathBU;
+        context.contextExpandItemPath = contextExpandItemPathBU;
       }
     }
 
@@ -1231,23 +1121,23 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     // UriResourceItImpl pathInfoIT = new UriResourceItImpl();
 
-    contextUriInfo.getLastResourcePart();
+    context.contextUriInfo.getLastResourcePart();
 
     // save context
-    ExpandItemImpl contextExpandItemPathBU = contextExpandItemPath;
-    UriInfoImpl uriInfoResourceBU = contextUriInfo;
+    ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
+    UriInfoImpl uriInfoResourceBU = context.contextUriInfo;
 
     // set tmp context
-    contextExpandItemPath = expandItem;
-    contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
+    context.contextExpandItemPath = expandItem;
+    context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
     // contextUriInfo.addPathInfo(pathInfoIT);
 
     super.visitExpandPath(ctx);
-    expandItem.setResourceInfo(contextUriInfo);
+    expandItem.setResourceInfo(context.contextUriInfo);
 
     // reset context
-    contextUriInfo = uriInfoResourceBU;
-    contextExpandItemPath = contextExpandItemPathBU;
+    context.contextUriInfo = uriInfoResourceBU;
+    context.contextExpandItemPath = contextExpandItemPathBU;
 
     return expandItem;
   }
@@ -1258,36 +1148,36 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     EdmType targetType = null;
     boolean isColl = false;
-    if (contextExpandItemPath == null) {
+    if (context.contextExpandItemPath == null) {
       // use the type of the last resource path segement
-      UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) contextUriInfo.getLastResourcePart();
+      UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) context.contextUriInfo.getLastResourcePart();
       targetType = getTypeInformation(lastSegment).type;
       isColl = lastSegment.isCollection();
     } else {
-      if (contextExpandItemPath.getResourceInfo() == null) {
+      if (context.contextExpandItemPath.getResourceInfo() == null) {
         // use the type of the last resource path segement
-        UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) contextUriInfo.getLastResourcePart();
+        UriResourceTypedImpl lastSegment = (UriResourceTypedImpl) context.contextUriInfo.getLastResourcePart();
         targetType = getTypeInformation(lastSegment).type;
         isColl = lastSegment.isCollection();
       } else {
         // use the type of the last ''expand'' path segement
-        UriInfoImpl info = (UriInfoImpl) contextExpandItemPath.getResourceInfo();
+        UriInfoImpl info = (UriInfoImpl) context.contextExpandItemPath.getResourceInfo();
         targetType = getTypeInformation((UriResourceImpl) info.getLastResourcePart()).type;
         isColl = ((UriResourcePartTyped) info.getLastResourcePart()).isCollection();
       }
     }
 
-    contextTypes.push(new TypeInformation(targetType, isColl));
+    context.contextTypes.push(new TypeInformation(targetType, isColl));
 
     if (ctx.vC != null) {
-      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getResourceInfo();
+      UriInfoImpl resourcePath = (UriInfoImpl) context.contextExpandItemPath.getResourceInfo();
       resourcePath.addResourcePart(new UriResourceCountImpl());
 
       for (ExpandCountOptionContext s : ctx.vlEOC) {
         list.add((SystemQueryOptionImpl) s.accept(this));
       }
     } else if (ctx.vR != null) {
-      UriInfoImpl resourcePath = (UriInfoImpl) contextExpandItemPath.getResourceInfo();
+      UriInfoImpl resourcePath = (UriInfoImpl) context.contextExpandItemPath.getResourceInfo();
       resourcePath.addResourcePart(new UriResourceRefImpl());
 
       for (ExpandRefOptionContext s : ctx.vlEOR) {
@@ -1299,7 +1189,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
     }
 
-    contextTypes.pop();
+    context.contextTypes.pop();
     return list;
 
   }
@@ -1308,6 +1198,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitFilter(final FilterContext ctx) {
 
     FilterOptionImpl filter = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(2).accept(this));
+    return filter;
+  }
+
+  @Override
+  public Object visitFilterExpressionEOF(final FilterExpressionEOFContext ctx) {
+
+    FilterOptionImpl filter = new FilterOptionImpl().setExpression((ExpressionImpl) ctx.children.get(0).accept(this));
     return filter;
   }
 
@@ -1331,15 +1228,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       format.setFormat("xml");
     } else if (c2.symbol.getType() == UriLexer.PCHARS) {
       if (ctx.getChildCount() == 2) {
-        format.setFormat(decode(c2.getText()));
+        format.setFormat(c2.getText());
       } else {
-        format.setFormat(decode(c2.getText()) + "/" + decode(ctx.children.get(4).getText()));
+        format.setFormat(c2.getText() + "/" + ctx.children.get(4).getText());
       }
     }
-    String text = decode(ctx.children.get(2).getText());
+    String text = ctx.children.get(2).getText();
     if (ctx.getChildCount() > 4) {
-      text += decode(ctx.children.get(3).getText());
-      text += decode(ctx.children.get(4).getText());
+      text += ctx.children.get(3).getText();
+      text += ctx.children.get(4).getText();
     }
 
     format.setText(text);
@@ -1369,15 +1266,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitId(final IdContext ctx) {
-    IdOptionImpl id = new IdOptionImpl();
-
-    String text = decode(ctx.children.get(2).getText());
-
-    return id.setValue(text).setText(text);
-  }
-
-  @Override
   public ExpressionImpl visitIndexOfMethodCallExpr(final IndexOfMethodCallExprContext ctx) {
     return new MethodCallImpl()
         .setMethod(SupportedMethodCalls.INDEXOF)
@@ -1389,7 +1277,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitInlinecount(final InlinecountContext ctx) {
     InlineCountOptionImpl inlineCount = new InlineCountOptionImpl();
 
-    String text = decode(ctx.children.get(2).getText());
+    String text = ctx.children.get(2).getText();
 
     return inlineCount.setValue(text.equals("true") ? true : false).setText(text);
   }
@@ -1410,11 +1298,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       method.addParameter(onExpression);
     }
 
-    /* TODO improve coding */
-    String namespace = decode(ctx.vNS.getText());
+    String namespace = ctx.vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1);
 
-    FullQualifiedName fullName = new FullQualifiedName(namespace, decode(ctx.vODI.getText()));
+    FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
     method.setMethod(SupportedMethodCalls.ISOF);
     method.addParameter(new TypeLiteralImpl().setType(type));
@@ -1434,7 +1321,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     LevelsOptionImpl levels = new LevelsOptionImpl();
 
-    String text = decode(ctx.children.get(2).getText());
+    String text = ctx.children.get(2).getText();
 
     if (text.equals("max")) {
       levels.setMax();
@@ -1457,7 +1344,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     UriInfoImpl uriInfoImplpath = new UriInfoImpl().setKind(UriInfoKind.resource);
 
-    TypeInformation lastTypeInfo = contextTypes.peek();
+    TypeInformation lastTypeInfo = context.contextTypes.peek();
 
     if (ctx.vIt != null || ctx.vIts != null) {
       UriResourceItImpl pathInfoIT = new UriResourceItImpl();
@@ -1468,15 +1355,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (ctx.vPs != null) {
       // save the context
-      UriInfoImpl backupUriInfoPath = contextUriInfo;
+      UriInfoImpl backupUriInfoPath = context.contextUriInfo;
 
       // set temporary uriInfoPath
-      contextUriInfo = uriInfoImplpath;
+      context.contextUriInfo = uriInfoImplpath;
 
       ctx.vPs.accept(this);
 
       // reset context
-      contextUriInfo = backupUriInfoPath;
+      context.contextUriInfo = backupUriInfoPath;
     }
 
     if (ctx.vALL != null) {
@@ -1515,16 +1402,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (ctx.vVO != null) {
 
       // is single key predicate without a name
-      String valueText = decode(ctx.vVO.vV.getText());
+      String valueText = ctx.vVO.getText();
       ExpressionImpl expression = null;
       try {
-        expression = (ExpressionImpl) ctx.vVO.vV.accept(this);
+        expression = (ExpressionImpl) ctx.vVO.accept(this);
       } catch (Exception ex) {
         throw wrap(new UriParserSemanticException("Invalid key value: " + valueText));
       }
 
       // get type of last resource part
-      UriResource last = contextUriInfo.getLastResourcePart();
+      UriResource last = context.contextUriInfo.getLastResourcePart();
       if (!(last instanceof UriResourcePartTyped)) {
         throw wrap(new UriParserSemanticException("Paramterslist on untyped resource path segement not allowed"));
       }
@@ -1547,7 +1434,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // key.
 
       // for using referential constrains the last resource part must be a navigation property
-      if (!(contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+      if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
         throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
@@ -1590,11 +1477,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         list.add((UriParameterImpl) c.accept(this));
       }
 
-      if (contextReadingFunctionParameters) {
+      if (context.contextReadingFunctionParameters) {
         return list;
       }
 
-      UriResource last = contextUriInfo.getLastResourcePart();
+      UriResource last = context.contextUriInfo.getLastResourcePart();
       // if the last resource part is a function
       /*
        * if (last instanceof UriResourceFunctionImpl) {
@@ -1622,7 +1509,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // if not, check if the missing key predicates can be satisfied with help of the defined referential constrains
 
       // for using referential constrains the last resource part must be a navigation property
-      if (!(contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
+      if (!(context.contextUriInfo.getLastResourcePart() instanceof UriResourceNavigationPropertyImpl)) {
         throw wrap(new UriParserSemanticException("Not enougth keyproperties defined"));
       }
       UriResourceNavigationPropertyImpl lastNav = (UriResourceNavigationPropertyImpl) last;
@@ -1665,13 +1552,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public UriParameterImpl visitNameValuePair(final NameValuePairContext ctx) {
     UriParameterImpl uriParameter = new UriParameterImpl();
-    uriParameter.setName(decode(ctx.vODI.getText()));
+    uriParameter.setName(ctx.vODI.getText());
 
     if (ctx.vCOM != null) {
-      uriParameter.setText(decode(ctx.vCOM.getText()));
+      uriParameter.setText(ctx.vCOM.getText());
       uriParameter.setExpression((ExpressionImpl) ctx.vCOM.accept(this));
     } else {
-      uriParameter.setAlias(decode(ctx.vALI.getText()));
+      uriParameter.setAlias(ctx.vALI.getText());
     }
 
     return uriParameter;
@@ -1688,19 +1575,33 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new ConstantImpl().setKind(SupportedConstants.NULL);
   }
 
-  @Override
-  public Object visitOdataRelativeUriEOF(final OdataRelativeUriEOFContext ctx) {
-    contextUriInfo = null;
-    super.visitOdataRelativeUriEOF(ctx);
-    return contextUriInfo;
-  }
-
+  /*
+   * @Override
+   * public Object visitOdataRelativeUriEOF(final OdataRelativeUriEOFContext ctx) {
+   * contextUriInfo = null;
+   * super.visitOdataRelativeUriEOF(ctx);
+   * return contextUriInfo;
+   * }
+   */
   @Override
   public Object visitOrderBy(final OrderByContext ctx) {
 
     OrderByOptionImpl orderBy = new OrderByOptionImpl();
 
-    for (OrderByItemContext item : ctx.vlOI) {
+    for (OrderByItemContext item : ((OrderListContext) ctx.getChild(2)).vlOI) {
+      OrderByItemImpl oItem = (OrderByItemImpl) item.accept(this);
+      orderBy.addOrder(oItem);
+    }
+
+    return orderBy;
+  }
+
+  @Override
+  public Object visitOrderByEOF(final OrderByEOFContext ctx) {
+
+    OrderByOptionImpl orderBy = new OrderByOptionImpl();
+
+    for (OrderByItemContext item : ((OrderListContext) ctx.getChild(0)).vlOI) {
       OrderByItemImpl oItem = (OrderByItemImpl) item.accept(this);
       orderBy.addOrder(oItem);
     }
@@ -1730,7 +1631,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
      * readNextPathInfoSegment(ctx);
      * }
      */
-    UriResourceImpl pathInfoSegment = (UriResourceImpl) contextUriInfo.getLastResourcePart();
+    UriResourceImpl pathInfoSegment = (UriResourceImpl) context.contextUriInfo.getLastResourcePart();
 
     if (ctx.vlNVO.size() > 0) {
       // check for keyPredicates
@@ -1771,7 +1672,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         child1 instanceof NullruleContext) {
       return child1.accept(this);
     }
-    return new LiteralImpl().setText(decode(ctx.getText()));
+    return new LiteralImpl().setText(ctx.getText());
   }
 
   @Override
@@ -1785,24 +1686,26 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return qpList;
   }
 
-  @Override
-  public Object visitResourcePath(final ResourcePathContext ctx) {
-    if (ctx.vAll != null) {
-      contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
-    } else if (ctx.vCJ != null) {
-      ctx.vCJ.accept(this);
-    } else if (ctx.vlPS != null) {
-      UriInfoImpl uriInfoPath = new UriInfoImpl().setKind(UriInfoKind.resource);
-      contextUriInfo = uriInfoPath;
-      super.visitResourcePath(ctx); // visit all children of ctx
-    }
-    return contextUriInfo;
-  }
+  /*
+   * @Override
+   * public Object visitResourcePath(final ResourcePathContext ctx) {
+   * if (ctx.vAll != null) {
+   * contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
+   * } else if (ctx.vCJ != null) {
+   * ctx.vCJ.accept(this);
+   * } else if (ctx.vlPS != null) {
+   * UriInfoImpl uriInfoPath = new UriInfoImpl().setKind(UriInfoKind.resource);
+   * contextUriInfo = uriInfoPath;
+   * super.visitResourcePath(ctx); // visit all children of ctx
+   * }
+   * return contextUriInfo;
+   * }
+   */
 
   @Override
   public Object visitRootExpr(final RootExprContext ctx) {
 
-    UriResource lastResource = contextUriInfo.getLastResourcePart();
+    UriResource lastResource = context.contextUriInfo.getLastResourcePart();
 
     if (!(lastResource instanceof UriResourcePartTyped)) {
       throw wrap(new UriParserSemanticException("Resource path not typed"));
@@ -1819,14 +1722,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (ctx.vPs != null) {
       // store the context uriInfoPath
-      UriInfoImpl backupUriInfoPath = contextUriInfo;
+      UriInfoImpl backupUriInfoPath = context.contextUriInfo;
 
       // set temporary uriInfoPath to collect the path information of the memberExpression
-      contextUriInfo = uriInfoImplpath;
+      context.contextUriInfo = uriInfoImplpath;
 
       ctx.vPs.accept(this);
 
-      contextUriInfo = backupUriInfoPath;
+      context.contextUriInfo = backupUriInfoPath;
 
     }
     return new MemberImpl()
@@ -1856,18 +1759,29 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       selectItems.add((SelectItemImpl) si.accept(this));
     }
 
-    return new SelectOptionImpl().setSelectItems(selectItems).setText(decode(ctx.children.get(2).getText()));
+    return new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.children.get(2).getText());
+  }
+
+  @Override
+  public Object visitSelectEOF(final SelectEOFContext ctx) {
+    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
+
+    for (SelectItemContext si : ctx.vlSI) {
+      selectItems.add((SelectItemImpl) si.accept(this));
+    }
+
+    return new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.getText());
   }
 
   @Override
   public Object visitSelectItem(final SelectItemContext ctx) {
     SelectItemImpl selectItem = new SelectItemImpl();
 
-    contextSelectItem = selectItem;
+    context.contextSelectItem = selectItem;
     for (SelectSegmentContext si : ctx.vlSS) {
       si.accept(this);
     }
-    contextSelectItem = null;
+    context.contextSelectItem = null;
 
     return selectItem;
   }
@@ -1877,24 +1791,24 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (ctx.vS != null) {
       if (ctx.vNS != null) {
-        String namespace = decode(ctx.vNS.getText());
+        String namespace = ctx.vNS.getText();
         namespace = namespace.substring(0, namespace.length() - 1);
         FullQualifiedName fullName = new FullQualifiedName(namespace, "*");
-        contextSelectItem.addAllOperationsInSchema(fullName);
+        context.contextSelectItem.addAllOperationsInSchema(fullName);
       } else {
-        contextSelectItem.setStar(true);
+        context.contextSelectItem.setStar(true);
       }
       return null;
     }
 
-    String odi = decode(decode(ctx.vODI.getText()));
+    String odi = ctx.vODI.getText();
     if (ctx.vNS == null) {
 
       EdmType prevType = null;
-      if (contextSelectItem.getResourceInfo() == null) {
-        prevType = contextTypes.peek().type;
+      if (context.contextSelectItem.getResourceInfo() == null) {
+        prevType = context.contextTypes.peek().type;
       } else {
-        UriInfoImpl uriInfo = (UriInfoImpl) contextSelectItem.getResourceInfo();
+        UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
           throw wrap(new UriParserSemanticException("prev segement typed"));
@@ -1922,17 +1836,17 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           UriResourcePrimitivePropertyImpl simple = new UriResourcePrimitivePropertyImpl();
           simple.setProperty(property);
 
-          UriInfoImpl uriInfo = (UriInfoImpl) contextSelectItem.getResourceInfo();
+          UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
           if (uriInfo == null) {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(simple);
-            contextSelectItem.setResourceInfo(uriInfo);
+            context.contextSelectItem.setResourceInfo(uriInfo);
           } else {
             uriInfo.addResourcePart(simple);
           }
           return this;
         } else {
-          UriInfoImpl uriInfo = (UriInfoImpl) contextSelectItem.getResourceInfo();
+          UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
 
           UriResourceComplexPropertyImpl complex = new UriResourceComplexPropertyImpl();
           complex.setProperty(property);
@@ -1940,7 +1854,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
           if (uriInfo == null) {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(complex);
-            contextSelectItem.setResourceInfo(uriInfo);
+            context.contextSelectItem.setResourceInfo(uriInfo);
           } else {
             uriInfo.addResourcePart(complex);
           }
@@ -1950,14 +1864,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         throw wrap(new UriParserSemanticException("Only Simple and Complex properties within select allowed"));
       }
     } else {
-      String namespace = decode(ctx.vNS.getText());
+      String namespace = ctx.vNS.getText();
       namespace = namespace.substring(0, namespace.length() - 1);
 
       FullQualifiedName fullName = new FullQualifiedName(namespace, odi);
       // contextSelectItem.addQualifiedThing(fullName);
 
-      if (contextSelectItem.getResourceInfo() == null) {
-        EdmType prevType = contextTypes.peek().type;
+      if (context.contextSelectItem.getResourceInfo() == null) {
+        EdmType prevType = context.contextTypes.peek().type;
 
         // check for complex type cast
         if (prevType instanceof EdmComplexType) {
@@ -1969,7 +1883,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
               UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
               uriInfo.addResourcePart(resourcePart);
-              contextSelectItem.setResourceInfo(uriInfo);
+              context.contextSelectItem.setResourceInfo(uriInfo);
               return this;
             }
           }
@@ -1982,7 +1896,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
               UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
               uriInfo.addResourcePart(resourcePart);
-              contextSelectItem.setResourceInfo(uriInfo);
+              context.contextSelectItem.setResourceInfo(uriInfo);
               return this;
             }
           }
@@ -1991,7 +1905,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
 
       } else {
-        UriInfoImpl uriInfo = (UriInfoImpl) contextSelectItem.getResourceInfo();
+        UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
           throw wrap(new UriParserSemanticException("prev segement typed"));
@@ -2029,10 +1943,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       EdmType prevType = null;
-      if (contextSelectItem.getResourceInfo() == null) {
-        prevType = contextTypes.peek().type;
+      if (context.contextSelectItem.getResourceInfo() == null) {
+        prevType = context.contextTypes.peek().type;
       } else {
-        UriInfoImpl uriInfo = (UriInfoImpl) contextSelectItem.getResourceInfo();
+        UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
         UriResource last = uriInfo.getLastResourcePart();
         if (!(last instanceof UriResourceTypedImpl)) {
           throw wrap(new UriParserSemanticException("prev segement typed"));
@@ -2050,7 +1964,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriResourceActionImpl uriAction = new UriResourceActionImpl();
         uriAction.setAction(action);
 
-        UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
+        UriInfoImpl resourcePath = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
         resourcePath.addResourcePart(uriAction);
       }
 
@@ -2062,7 +1976,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();
         uriFunction.setFunction(function);
 
-        UriInfoImpl resourcePath = (UriInfoImpl) contextSelectItem.getResourceInfo();
+        UriInfoImpl resourcePath = (UriInfoImpl) context.contextSelectItem.getResourceInfo();
         resourcePath.addResourcePart(uriFunction);
       }
     }
@@ -2073,7 +1987,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitSkip(final SkipContext ctx) {
     SkipOptionImpl skiptoken = new SkipOptionImpl();
 
-    String text = decode(ctx.children.get(2).getText());
+    String text = ctx.children.get(2).getText();
 
     return skiptoken.setValue(text).setText(text);
   }
@@ -2082,8 +1996,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitSkiptoken(final SkiptokenContext ctx) {
     SkipTokenOptionImpl skiptoken = new SkipTokenOptionImpl();
 
-    String text = decode(ctx.children.get(2).getText());
-
+    String text = ctx.children.get(2).getText();
+    
     return skiptoken.setValue(text).setText(text);
   }
 
@@ -2121,7 +2035,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitTop(final TopContext ctx) {
     TopOptionImpl top = new TopOptionImpl();
 
-    String text = decode(ctx.children.get(2).getText());
+    String text = ctx.children.get(2).getText();
 
     return top.setValue(text).setText(text);
   }

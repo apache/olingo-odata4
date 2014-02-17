@@ -16,45 +16,56 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
+import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.odata4.server.api.uri.UriResourceSingleton;
 
-public abstract class UriResourceTypedImpl extends UriResourceImpl implements UriResourcePartTyped {
+public class UriResourceSingletonImpl extends UriResourceTypedImpl implements UriResourceSingleton {
 
-  protected EdmType typeFilter = null;
+  private EdmSingleton singleton;
 
-  public UriResourceTypedImpl(final UriResourceKind kind) {
-    super(kind);
+  public UriResourceSingletonImpl() {
+    super(UriResourceKind.singleton);
   }
 
-  public EdmType getTypeFilter() {
-    return typeFilter;
+  @Override
+  public EdmSingleton getSingleton() {
+    return singleton;
   }
 
-  public UriResourceTypedImpl setTypeFilter(final EdmStructuralType typeFilter) {
-    this.typeFilter = typeFilter;
+  public UriResourceSingletonImpl setSingleton(final EdmSingleton singleton) {
+
+    this.singleton = singleton;
     return this;
   }
 
   @Override
-  public String toString(final boolean includeFilters) {
-    if (includeFilters) {
-      if (typeFilter != null) {
-        return toString() + "/" + getFQN(typeFilter).toString();
-      } else {
-        return toString();
-      }
-    }
-    return toString();
+  public EdmEntityType getEntityTypeFilter() {
+    return (EdmEntityType) typeFilter;
   }
 
-  private FullQualifiedName getFQN(final EdmType type) {
-    return new FullQualifiedName(type.getNamespace(), type.getName());
+  @Override
+  public EdmType getType() {
+    return singleton.getEntityType();
+  }
+
+  @Override
+  public EdmEntityType getEntityType() {
+    return singleton.getEntityType();
+  }
+
+  @Override
+  public boolean isCollection() {
+    return false;
+  }
+
+  @Override
+  public String toString() {
+    return singleton.getName();
   }
 
 }

@@ -19,8 +19,8 @@
 package org.apache.olingo.odata4.server.core.testutil;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
-import org.apache.olingo.odata4.server.core.uri.Parser;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser;
+import org.apache.olingo.odata4.server.core.uri.parser.Parser;
 
 public class ParserTest extends Parser {
   TestErrorLogger errorCollector1;

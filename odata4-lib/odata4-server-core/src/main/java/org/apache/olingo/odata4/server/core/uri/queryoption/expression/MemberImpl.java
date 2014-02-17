@@ -25,10 +25,11 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionV
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableExression;
-import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceTypedImpl;
-import org.apache.olingo.odata4.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
+
 
 public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
 

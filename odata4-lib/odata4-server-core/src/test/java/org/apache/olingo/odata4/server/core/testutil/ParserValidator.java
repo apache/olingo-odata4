@@ -23,14 +23,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.atn.PredictionMode;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OdataRelativeUriEOFContext;
 
 // TODO extend to test also exception which can occure while paring
 public class ParserValidator {
@@ -106,7 +100,7 @@ public class ParserValidator {
       (new TokenValidator()).log(lexerLogLevel).run(input);
     }
 
-    root = parseInput(uri);
+    /**///root = parseInput(uri);
 
     // if LOG > 0 - Write serialized tree
     if (logLevel > 0) {
@@ -171,7 +165,7 @@ public class ParserValidator {
   }
 
   // --- Helper ---
-
+/*
   private OdataRelativeUriEOFContext parseInput(final String input) {
     UriParserParser parser = null;
     UriLexerWithTrace lexer = null;
@@ -245,5 +239,5 @@ public class ParserValidator {
 
     return ret;
   }
-
+*/
 }

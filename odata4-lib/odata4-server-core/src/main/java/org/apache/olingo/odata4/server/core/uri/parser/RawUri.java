@@ -16,24 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.parser;
 
-import org.apache.olingo.odata4.server.api.uri.UriResource;
-import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import java.util.List;
 
-/**
- * Covers Functionimports and BoundFunction in URI
- */
-public abstract class UriResourceImpl implements UriResource {
-  protected UriResourceKind kind;
+public class RawUri {
+  public String uri;
+  public String sheme;
+  public String authority;
+  public String path;
+  public String queryOptionString;
+  public String fragment;
+  public List<QueryOption> queryOptionList;
+  public List<QueryOption> queryOptionListDecoded;
 
-  public UriResourceImpl(final UriResourceKind kind) {
-    this.kind = kind;
+  public List<String> pathSegmentList;
+  public List<String> pathSegmentListDecoded;
+
+  public static class QueryOption {
+    public String name;
+    public String value;
+    
+    QueryOption(String name, String value) {
+      this.name = name;
+      this.value = value;
+    }
+    
   }
-
-  @Override
-  public UriResourceKind getKind() {
-    return kind;
-  }
-
 }

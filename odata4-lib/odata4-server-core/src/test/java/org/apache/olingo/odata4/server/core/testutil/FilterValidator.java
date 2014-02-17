@@ -35,12 +35,12 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedConstants;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
-import org.apache.olingo.odata4.server.core.uri.Parser;
-import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
+import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.parser.Parser;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.BinaryImpl;
@@ -184,7 +184,7 @@ public class FilterValidator implements Validator {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    uriInfo = parser.parseUri(uri, edm);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -200,7 +200,7 @@ public class FilterValidator implements Validator {
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = parser.parseUri(uri,  edm);
     } catch (UriParserException e) {
       this.exception = e;
       return this;
@@ -219,7 +219,7 @@ public class FilterValidator implements Validator {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
-    uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+    uriInfo = parser.parseUri(uri, edm);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -234,7 +234,7 @@ public class FilterValidator implements Validator {
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri, new UriParseTreeVisitor(edm));
+      uriInfo = parser.parseUri(uri,edm);
     } catch (UriParserException e) {
       this.exception = e;
       return this;

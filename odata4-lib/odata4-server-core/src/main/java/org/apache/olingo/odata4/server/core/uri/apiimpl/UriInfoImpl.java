@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -231,16 +231,22 @@ public class UriInfoImpl implements UriInfo {
   }
 
   
+  
+  
   public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
 
     for (QueryOptionImpl item : list) {
       if (item instanceof SystemQueryOptionImpl) {
         setSystemQueryOption((SystemQueryOptionImpl)item);
       } else if (item instanceof CustomQueryOptionImpl) {
-        customQueryOptions.add((CustomQueryOptionImpl) item);
+        addCustomQueryOption(item);
       }
     }
     return this;
+  }
+
+  public void addCustomQueryOption(QueryOptionImpl item) {
+    customQueryOptions.add((CustomQueryOptionImpl) item);
   }
 
   public UriInfoImpl setSystemQueryOption(SystemQueryOptionImpl systemOption) {

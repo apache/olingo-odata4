@@ -16,48 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.server.api.uri.UriResourceCount;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceNavigation;
 
-public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl implements UriResourceNavigation {
+public class UriResourceCountImpl extends UriResourceImpl implements UriResourceCount {
 
-  protected EdmNavigationProperty navigationProperty;
-
-  public UriResourceNavigationPropertyImpl() {
-    super(UriResourceKind.navigationProperty);
-  }
-
-  @Override
-  public EdmNavigationProperty getProperty() {
-    return navigationProperty;
-  }
-
-  public UriResourceNavigationPropertyImpl setNavigationProperty(final EdmNavigationProperty property) {
-    navigationProperty = property;
-    return this;
-
-  }
-
-  @Override
-  public EdmType getType() {
-    return navigationProperty.getType();
-  }
-
-  @Override
-  public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return navigationProperty.isCollection();
+  public UriResourceCountImpl() {
+    super(UriResourceKind.count);
   }
 
   @Override
   public String toString() {
-    return navigationProperty.getName();
+    return "$count";
   }
 
 }

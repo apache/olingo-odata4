@@ -16,52 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-package org.apache.olingo.odata4.server.core.uri;
-
-import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourceRef;
 
-public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements UriResourceEntitySet {
-  protected EdmEntitySet edmEntitySet = null;
+public class UriResourceRefImpl extends UriResourceImpl implements UriResourceRef {
 
-  public UriResourceEntitySetImpl() {
-    super(UriResourceKind.entitySet);
-  }
+  public UriResourceRefImpl() {
+    super(UriResourceKind.ref);
 
-  @Override
-  public EdmEntitySet getEntitySet() {
-    return edmEntitySet;
-  }
-
-  public UriResourceEntitySetImpl setEntitSet(final EdmEntitySet edmES) {
-    edmEntitySet = edmES;
-    return this;
-  }
-
-  @Override
-  public EdmEntityType getEntityType() {
-    return edmEntitySet.getEntityType();
-  }
-
-  @Override
-  public EdmType getType() {
-    return edmEntitySet.getEntityType();
-  }
-
-  @Override
-  public boolean isCollection() {
-    if (keyPredicates == null) {
-      return true;
-    }
-    return false;
   }
 
   @Override
   public String toString() {
-    return edmEntitySet.getName();
+    return "$ref";
   }
+
 }

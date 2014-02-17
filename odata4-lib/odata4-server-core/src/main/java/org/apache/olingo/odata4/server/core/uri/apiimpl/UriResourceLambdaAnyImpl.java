@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -17,67 +16,57 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri;
+package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
-import org.apache.olingo.odata4.server.api.uri.UriParameter;
+import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ExpressionImpl;
 
-public class UriParameterImpl implements UriParameter {
-  private String name;
-  private String text;
-  private String alias;
-  private Expression expression;
-  private String referencedProperty;
+public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements UriResourceLambdaAny {
+  protected EdmProperty property;
+  private String lamdaVariable;
+  private ExpressionImpl expression;
 
-  @Override
-  public String getName() {
-    return name;
+  public UriResourceLambdaAnyImpl() {
+    super(UriResourceKind.lambdaAny);
   }
 
-  public UriParameterImpl setName(final String name) {
-    this.name = name;
+  @Override
+  public EdmType getType() {
+    return EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance();
+  }
+
+  @Override
+  public boolean isCollection() {
+    return false;
+  }
+
+  @Override
+  public String getLamdaVariable() {
+    return lamdaVariable;
+  }
+
+  public UriResourceLambdaAnyImpl setLamdaVariable(final String lamdaVariable) {
+    this.lamdaVariable = lamdaVariable;
     return this;
-  }
+  };
 
   @Override
-  public String getAlias() {
-    return alias;
-  }
-
-  public UriParameterImpl setAlias(final String alias) {
-    this.alias = alias;
-    return this;
-  }
-
-  @Override
-  public String getText() {
-    return text;
-  }
-
-  public UriParameterImpl setText(final String text) {
-    this.text = text;
-    return this;
-  }
-
-  @Override
-  public Expression getExression() {
+  public Expression getExpression() {
     return expression;
   }
 
-  public UriParameterImpl setExpression(final ExpressionImpl expression) {
+  public UriResourceLambdaAnyImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
   }
-  
-  @Override
-  public String getRefencedProperty() {
-    return this.referencedProperty;
-  }
 
-  public UriParameterImpl setRefencedProperty(String referencedProperty) {
-    this.referencedProperty = referencedProperty;
-    return this;
-  }
-  
+  @Override
+  public String toString() {
+    return "any";
+  };
 }
