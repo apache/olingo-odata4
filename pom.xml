@@ -152,6 +152,7 @@
 						</goals>
 						<configuration>
 							<excludes>
+                                                                <exclude>ODataJClient/**</exclude>
 								<exclude>**/MANIFEST.MF</exclude>
 								<exclude>.gitignore</exclude>
 								<exclude>.git/**</exclude>
