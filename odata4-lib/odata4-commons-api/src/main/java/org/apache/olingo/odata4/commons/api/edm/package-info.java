@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,16 +15,5 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-/**
- * <h1>Entity Data Model API</h1>
- * <p>
- * The Entity Data Model is described in the OData protocol specification as well as in the Conceptual Schema Definition
- * for the OData Protocol. Both can be found at <a href="http://www.odata.org/">http://www.odata.org/</a>.
- * </p>
- * <p>
- * Many classes and interfaces contain the pragma:" @org.apache.olingo.api.edm.DoNotImplement " to indicate these
- * classes should only be used and not implemented.
- * </p>
  */
 package org.apache.olingo.odata4.commons.api.edm;
