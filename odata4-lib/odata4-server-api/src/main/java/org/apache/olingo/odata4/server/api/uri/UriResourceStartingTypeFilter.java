@@ -25,5 +25,5 @@ public interface UriResourceStartingTypeFilter extends UriResourcePartTyped {
   EdmType getTypeFilterOnCollection();
 
   EdmType getTypeFilterOnEntry();
-  
+
 }

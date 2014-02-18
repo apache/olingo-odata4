@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.server.core.uri.apiimpl;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 

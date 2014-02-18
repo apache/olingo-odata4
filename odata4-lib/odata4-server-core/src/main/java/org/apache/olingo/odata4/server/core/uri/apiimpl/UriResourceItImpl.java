@@ -38,7 +38,7 @@ public class UriResourceItImpl extends UriResourceWithKeysImpl implements UriRes
   public EdmType getType() {
     return type;
   }
-  
+
   public UriResourceItImpl setType(final EdmType type) {
     this.type = type;
     return this;

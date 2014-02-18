@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;

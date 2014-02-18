@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.junit.Test;
 
 public class ActionMapKeyTest {

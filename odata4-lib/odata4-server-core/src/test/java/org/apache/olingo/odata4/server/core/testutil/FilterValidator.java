@@ -23,10 +23,10 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfo;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
@@ -40,7 +40,6 @@ import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.parser.Parser;
-import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.BinaryImpl;
@@ -112,7 +111,7 @@ public class FilterValidator implements Validator {
     String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
     return runUriOrderBy(uri);
   }
-  
+
   public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
     String uri = "ESTwoKeyNav?$orderby=" + orderBy.trim();
     return runUriOrderByEx(uri);
@@ -139,7 +138,7 @@ public class FilterValidator implements Validator {
     String uri = "ESKeyNav(1)?$filter=" + filter.trim();
     return runUri(uri);
   }
-  
+
   public FilterValidator runOnETKeyNavEx(final String filter) throws UriParserException {
     String uri = "ESKeyNav(1)?$filter=" + filter.trim();
     return runUriEx(uri);
@@ -200,9 +199,9 @@ public class FilterValidator implements Validator {
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri,  edm);
+      uriInfo = parser.parseUri(uri, edm);
     } catch (UriParserException e) {
-      this.exception = e;
+      exception = e;
       return this;
     }
 
@@ -228,15 +227,15 @@ public class FilterValidator implements Validator {
     setOrderBy((OrderByOptionImpl) uriInfo.getOrderByOption());
     return this;
   }
-  
+
   public FilterValidator runUriOrderByEx(final String uri) {
     Parser parser = new Parser();
     UriInfo uriInfo = null;
 
     try {
-      uriInfo = parser.parseUri(uri,edm);
+      uriInfo = parser.parseUri(uri, edm);
     } catch (UriParserException e) {
-      this.exception = e;
+      exception = e;
       return this;
     }
 
@@ -247,7 +246,6 @@ public class FilterValidator implements Validator {
     setOrderBy((OrderByOptionImpl) uriInfo.getOrderByOption());
     return this;
   }
-
 
   // --- Navigation ---
 
@@ -389,7 +387,6 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
       throws ExceptionVisitExpression, ODataApplicationException {
 
@@ -417,12 +414,12 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isTypedLiteral(FullQualifiedName fullName) {
+  public FilterValidator isTypedLiteral(final FullQualifiedName fullName) {
     if (!(curExpression instanceof TypeLiteralImpl)) {
       fail("Current expression not a typeLiteral");
     }
 
-    this.isType(fullName);
+    isType(fullName);
 
     return this;
   }
@@ -458,7 +455,7 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isConstant(SupportedConstants kind) {
+  public FilterValidator isConstant(final SupportedConstants kind) {
     if (!(curExpression instanceof ConstantImpl)) {
       fail("Current expression not a constant");
     }
@@ -468,22 +465,22 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isSortOrder(int index, boolean descending) {
+  public FilterValidator isSortOrder(final int index, final boolean descending) {
     assertEquals(descending, orderBy.getOrders().get(index).isDescending());
     return this;
   }
 
-  public FilterValidator goOrder(int index) {
+  public FilterValidator goOrder(final int index) {
     curExpression = orderBy.getOrders().get(index).getExpression();
     return this;
   }
 
-  public FilterValidator isExSyntax(long errorID) {
+  public FilterValidator isExSyntax(final long errorID) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
     return this;
   }
 
-  public FilterValidator isExSemantic(long errorID) {
+  public FilterValidator isExSemantic(final long errorID) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
     return this;
   }

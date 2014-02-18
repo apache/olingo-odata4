@@ -36,11 +36,11 @@ public class RawUri {
   public static class QueryOption {
     public String name;
     public String value;
-    
-    QueryOption(String name, String value) {
+
+    QueryOption(final String name, final String value) {
       this.name = name;
       this.value = value;
     }
-    
+
   }
 }

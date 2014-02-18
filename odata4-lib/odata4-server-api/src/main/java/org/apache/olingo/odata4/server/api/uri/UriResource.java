@@ -19,10 +19,10 @@
 package org.apache.olingo.odata4.server.api.uri;
 
 public interface UriResource {
-  
+
   UriResourceKind getKind();
 
   @Override
   String toString();
-  
+
 }

@@ -46,7 +46,7 @@ public enum SupportedMethodCalls {
 
   public static SupportedMethodCalls get(final String method) {
     for (SupportedMethodCalls op : SupportedMethodCalls.values()) {
-      if (op.toString().equals(method )) {
+      if (op.toString().equals(method)) {
         return op;
       }
     }

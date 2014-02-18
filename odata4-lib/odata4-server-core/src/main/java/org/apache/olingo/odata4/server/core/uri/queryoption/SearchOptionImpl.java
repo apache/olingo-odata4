@@ -35,7 +35,5 @@ public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOpt
     // TODO $search not supported yet
     return null;
   }
-  
-  
 
 }

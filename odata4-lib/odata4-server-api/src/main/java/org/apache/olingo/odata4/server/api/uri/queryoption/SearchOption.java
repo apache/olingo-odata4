@@ -23,5 +23,5 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.search.SearchExpressi
 public interface SearchOption extends SystemQueryOption {
 
   SearchExpression getSearchExpression();
-  
+
 }

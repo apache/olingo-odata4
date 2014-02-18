@@ -20,9 +20,9 @@ package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 
 public interface ExpressionVisitor<T> {
@@ -35,8 +35,8 @@ public interface ExpressionVisitor<T> {
 
   T visitMethodCall(SupportedMethodCalls methodCall, List<T> parameters)
       throws ExceptionVisitExpression, ODataApplicationException;
-  
-  T visitLambdaExpression(String functionText,String variableText, Expression expression)
+
+  T visitLambdaExpression(String functionText, String variableText, Expression expression)
       throws ExceptionVisitExpression, ODataApplicationException;
 
   T visitLiteral(String literal) throws ExceptionVisitExpression, ODataApplicationException;
@@ -50,7 +50,7 @@ public interface ExpressionVisitor<T> {
   T visitLambdaReference(String variableText) throws ExceptionVisitExpression, ODataApplicationException;
 
   T visitEnum(EdmEnumType type, List<String> enumValues) throws ExceptionVisitExpression, ODataApplicationException;
-  
+
   T visitConstant(SupportedConstants kind) throws ExceptionVisitExpression, ODataApplicationException;
-  
+
 }

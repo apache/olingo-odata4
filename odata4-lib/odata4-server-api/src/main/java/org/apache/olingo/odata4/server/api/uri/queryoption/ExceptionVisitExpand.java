@@ -20,6 +20,6 @@ package org.apache.olingo.odata4.server.api.uri.queryoption;
 
 public class ExceptionVisitExpand extends Exception {
 
-   private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
 }

@@ -32,5 +32,5 @@ public interface UriResourceNavigation extends UriResourcePartTyped {
   EdmType getTypeFilterOnCollection();
 
   EdmType getTypeFilterOnEntry();
-   
+
 }

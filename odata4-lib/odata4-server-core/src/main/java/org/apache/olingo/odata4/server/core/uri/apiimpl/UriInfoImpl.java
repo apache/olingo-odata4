@@ -154,7 +154,7 @@ public class UriInfoImpl implements UriInfo {
   public EdmEntityType getEntityTypeCast() {
     return entityTypeCast;
   }
-  
+
   public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
     entityTypeCast = type;
     return this;
@@ -189,7 +189,7 @@ public class UriInfoImpl implements UriInfo {
   public UriInfoKind getKind() {
     return kind;
   }
-  
+
   public UriInfoImpl setKind(final UriInfoKind kind) {
     this.kind = kind;
     return this;
@@ -230,14 +230,11 @@ public class UriInfoImpl implements UriInfo {
     return topOption;
   }
 
-  
-  
-  
   public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
 
     for (QueryOptionImpl item : list) {
       if (item instanceof SystemQueryOptionImpl) {
-        setSystemQueryOption((SystemQueryOptionImpl)item);
+        setSystemQueryOption((SystemQueryOptionImpl) item);
       } else if (item instanceof CustomQueryOptionImpl) {
         addCustomQueryOption(item);
       }
@@ -245,12 +242,12 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public void addCustomQueryOption(QueryOptionImpl item) {
+  public void addCustomQueryOption(final QueryOptionImpl item) {
     customQueryOptions.add((CustomQueryOptionImpl) item);
   }
 
-  public UriInfoImpl setSystemQueryOption(SystemQueryOptionImpl systemOption) {
-    
+  public UriInfoImpl setSystemQueryOption(final SystemQueryOptionImpl systemOption) {
+
     if (systemOption.getKind() == SupportedQueryOptions.EXPAND) {
       expandOption = (ExpandOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.FILTER) {
@@ -282,12 +279,12 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-
+  @Override
   public String getFragment() {
     return fragment;
   }
 
-  public UriInfoImpl setFragment(String fragment) {
+  public UriInfoImpl setFragment(final String fragment) {
     this.fragment = fragment;
     return this;
   }

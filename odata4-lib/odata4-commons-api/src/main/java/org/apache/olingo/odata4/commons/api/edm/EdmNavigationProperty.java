@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.commons.api.edm;
 
-import java.util.List;
 
 /**
  * A CSDL NavigationProperty element

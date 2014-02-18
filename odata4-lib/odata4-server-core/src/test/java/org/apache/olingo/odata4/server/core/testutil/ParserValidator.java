@@ -100,7 +100,7 @@ public class ParserValidator {
       (new TokenValidator()).log(lexerLogLevel).run(input);
     }
 
-    /**///root = parseInput(uri);
+    /**/// root = parseInput(uri);
 
     // if LOG > 0 - Write serialized tree
     if (logLevel > 0) {
@@ -165,79 +165,79 @@ public class ParserValidator {
   }
 
   // --- Helper ---
-/*
-  private OdataRelativeUriEOFContext parseInput(final String input) {
-    UriParserParser parser = null;
-    UriLexerWithTrace lexer = null;
-    OdataRelativeUriEOFContext ret = null;
-
-    // Use 2 stage approach to improve performance
-    // see https://github.com/antlr/antlr4/issues/192
-    // TODO verify this
-
-    // stage= 1
-    try {
-      curException = null;
-      exceptions.clear();
-
-      // create parser
-      lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
-      parser = new UriParserParser(new CommonTokenStream(lexer));
-
-      // write always a error message in case of syntax errors
-      // parser.addErrorListener(new TestErrorHandler<Object>());
-      // check error message if whether they are allowed or not
-      // parser.addErrorListener(new ErrorCollector());
-
-      // bail out of parser at first syntax error. --> proceed in catch block with step 2
-      parser.setErrorHandler(new BailErrorStrategy());
-
-      // user the faster SLL parsing
-      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-
-      // parse
-      if (logLevel > 0) {
-        System.out.println("Step 1");
-        System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode());
-      }
-      ret = parser.odataRelativeUriEOF();
-
-    } catch (Exception exception) {
-      curException = exception;
-      try {
-        // clear status
-        curException = null;
-        exceptions.clear();
-
-        // create parser
-        lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
-        parser = new UriParserParser(new CommonTokenStream(lexer));
-
-        // write always a error message in case of syntax errors
-        // parser.addErrorListener(new ErrorCollector(this));
-        // check error message if whether they are allowed or not
-        // parser.addErrorListener(new ErrorCollector(this));
-
-        // Used default error strategy
-        parser.setErrorHandler(new DefaultErrorStrategy());
-
-        // User the slower SLL parsing
-        parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-
-        // parse
-        if (logLevel > 1) {
-          System.out.println("Step 2");
-          System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode() + ")");
-        }
-        ret = parser.odataRelativeUriEOF();
-
-      } catch (Exception exception1) {
-        curException = exception1;
-        // exceptionOnStage = 2;
-      }
-    }
-
-    return ret;
-  }
-*/
+  /*
+   * private OdataRelativeUriEOFContext parseInput(final String input) {
+   * UriParserParser parser = null;
+   * UriLexerWithTrace lexer = null;
+   * OdataRelativeUriEOFContext ret = null;
+   * 
+   * // Use 2 stage approach to improve performance
+   * // see https://github.com/antlr/antlr4/issues/192
+   * // TODO verify this
+   * 
+   * // stage= 1
+   * try {
+   * curException = null;
+   * exceptions.clear();
+   * 
+   * // create parser
+   * lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
+   * parser = new UriParserParser(new CommonTokenStream(lexer));
+   * 
+   * // write always a error message in case of syntax errors
+   * // parser.addErrorListener(new TestErrorHandler<Object>());
+   * // check error message if whether they are allowed or not
+   * // parser.addErrorListener(new ErrorCollector());
+   * 
+   * // bail out of parser at first syntax error. --> proceed in catch block with step 2
+   * parser.setErrorHandler(new BailErrorStrategy());
+   * 
+   * // user the faster SLL parsing
+   * parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+   * 
+   * // parse
+   * if (logLevel > 0) {
+   * System.out.println("Step 1");
+   * System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode());
+   * }
+   * ret = parser.odataRelativeUriEOF();
+   * 
+   * } catch (Exception exception) {
+   * curException = exception;
+   * try {
+   * // clear status
+   * curException = null;
+   * exceptions.clear();
+   * 
+   * // create parser
+   * lexer = new UriLexerWithTrace(new ANTLRInputStream(input), lexerLogLevel);
+   * parser = new UriParserParser(new CommonTokenStream(lexer));
+   * 
+   * // write always a error message in case of syntax errors
+   * // parser.addErrorListener(new ErrorCollector(this));
+   * // check error message if whether they are allowed or not
+   * // parser.addErrorListener(new ErrorCollector(this));
+   * 
+   * // Used default error strategy
+   * parser.setErrorHandler(new DefaultErrorStrategy());
+   * 
+   * // User the slower SLL parsing
+   * parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+   * 
+   * // parse
+   * if (logLevel > 1) {
+   * System.out.println("Step 2");
+   * System.out.println(" PrectictionMode: " + parser.getInterpreter().getPredictionMode() + ")");
+   * }
+   * ret = parser.odataRelativeUriEOF();
+   * 
+   * } catch (Exception exception1) {
+   * curException = exception1;
+   * // exceptionOnStage = 2;
+   * }
+   * }
+   * 
+   * return ret;
+   * }
+   */
 }

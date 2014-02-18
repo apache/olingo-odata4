@@ -69,15 +69,15 @@ public class UriParameterImpl implements UriParameter {
     this.expression = expression;
     return this;
   }
-  
+
   @Override
   public String getRefencedProperty() {
-    return this.referencedProperty;
+    return referencedProperty;
   }
 
-  public UriParameterImpl setRefencedProperty(String referencedProperty) {
+  public UriParameterImpl setRefencedProperty(final String referencedProperty) {
     this.referencedProperty = referencedProperty;
     return this;
   }
-  
+
 }

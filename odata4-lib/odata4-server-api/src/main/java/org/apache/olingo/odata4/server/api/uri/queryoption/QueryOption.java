@@ -23,5 +23,5 @@ public interface QueryOption {
   public String getName();
 
   public String getText();
-  
+
 }

@@ -20,7 +20,6 @@
 
 package org.apache.olingo.odata4.server.core.uri.parser;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.UriResource;
@@ -53,7 +52,6 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedC
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
-import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserBaseVisitor;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AliasAndValueContext;
@@ -165,7 +163,6 @@ import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceStartingTypeF
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceValueImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
-import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor.TypeInformation;
 import org.apache.olingo.odata4.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
@@ -234,7 +231,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   // --- class ---
 
-  public void setContext(UriContext context) {
+  public void setContext(final UriContext context) {
     this.context = context;
   }
 
@@ -242,14 +239,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return context.contextUriInfo;
   }
 
-  public UriParseTreeVisitor(final Edm edm, UriContext context) {
+  public UriParseTreeVisitor(final Edm edm, final UriContext context) {
     this.edm = edm;
     this.context = context;
     edmEntityContainer = edm.getEntityContainer(null);
   }
 
   @Override
-  protected Object aggregateResult(Object aggregate, Object nextResult) {
+  protected Object aggregateResult(final Object aggregate, final Object nextResult) {
     if (aggregate != null) {
       return aggregate;
     } else {
@@ -346,10 +343,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmFunctionImport != null) {
 
         // read the URI parameters
-        this.context.contextReadingFunctionParameters = true;
+        context.contextReadingFunctionParameters = true;
         @SuppressWarnings("unchecked")
         List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
-        this.context.contextReadingFunctionParameters = false;
+        context.contextReadingFunctionParameters = false;
 
         // mark parameters as consumed
         ctx.vlNVO.remove(0);
@@ -601,10 +598,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             + "'"));
       }
 
-      this.context.contextReadingFunctionParameters = true;
+      context.contextReadingFunctionParameters = true;
       @SuppressWarnings("unchecked")
       List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
-      this.context.contextReadingFunctionParameters = false;
+      context.contextReadingFunctionParameters = false;
 
       // get names of function parameters
       List<String> names = new ArrayList<String>();
@@ -643,7 +640,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     }
   }
 
-  private String getName(EdmType type) {
+  private String getName(final EdmType type) {
     return type.getNamespace() + "." + type.getName();
   }
 
@@ -847,8 +844,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return binary;
   }
 
-  
-
   @Override
   public Object visitAnyExpr(final AnyExprContext ctx) {
     UriResourceLambdaAnyImpl any = new UriResourceLambdaAnyImpl();
@@ -872,7 +867,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitBooleanNonCase(BooleanNonCaseContext ctx) {
+  public Object visitBooleanNonCase(final BooleanNonCaseContext ctx) {
     String text = ctx.getText().toLowerCase();
 
     if (text.equals("false")) {
@@ -893,7 +888,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     String namespace = ctx.vNS.getText();
     namespace = namespace.substring(0, namespace.length() - 1);
 
-    FullQualifiedName fullName = new FullQualifiedName(namespace,ctx.vODI.getText());
+    FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
     method.setMethod(SupportedMethodCalls.CAST);
     method.addParameter(new TypeLiteralImpl().setType(type));
@@ -1317,7 +1312,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitLevels(LevelsContext ctx) {
+  public Object visitLevels(final LevelsContext ctx) {
 
     LevelsOptionImpl levels = new LevelsOptionImpl();
 
@@ -1571,7 +1566,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitNullrule(NullruleContext ctx) {
+  public Object visitNullrule(final NullruleContext ctx) {
     return new ConstantImpl().setKind(SupportedConstants.NULL);
   }
 
@@ -1610,7 +1605,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitOrderByItem(OrderByItemContext ctx) {
+  public Object visitOrderByItem(final OrderByItemContext ctx) {
     OrderByItemImpl oItem = new OrderByItemImpl();
     if (ctx.vD != null) {
       oItem.setDescending(true);
@@ -1997,7 +1992,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     SkipTokenOptionImpl skiptoken = new SkipTokenOptionImpl();
 
     String text = ctx.children.get(2).getText();
-    
+
     return skiptoken.setValue(text).setText(text);
   }
 

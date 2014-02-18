@@ -34,7 +34,7 @@ public class UriDecoder {
 
   static Pattern uriPattern = Pattern.compile("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
 
-  public static RawUri decodeUri(String uri, int scipSegments) throws UriParserSyntaxException {
+  public static RawUri decodeUri(final String uri, final int scipSegments) throws UriParserSyntaxException {
     RawUri rawUri = new RawUri();
 
     Matcher m = uriPattern.matcher(uri);
@@ -53,21 +53,21 @@ public class UriDecoder {
     return rawUri;
   }
 
-  private static void decode(RawUri rawUri) throws UriParserSyntaxException {
+  private static void decode(final RawUri rawUri) throws UriParserSyntaxException {
     rawUri.pathSegmentListDecoded = new ArrayList<String>();
-    for ( String  segment: rawUri.pathSegmentList) {
+    for (String segment : rawUri.pathSegmentList) {
       rawUri.pathSegmentListDecoded.add(decode(segment));
     }
-    
+
     rawUri.queryOptionListDecoded = new ArrayList<QueryOption>();
-    for ( QueryOption  optionPair: rawUri.queryOptionList) {
+    for (QueryOption optionPair : rawUri.queryOptionList) {
       rawUri.queryOptionListDecoded.add(new QueryOption(
           decode(optionPair.name),
           decode(optionPair.value)));
     }
   }
 
-  private static void splittOptions(RawUri rawUri) {
+  private static void splittOptions(final RawUri rawUri) {
     rawUri.queryOptionList = new ArrayList<RawUri.QueryOption>();
 
     if (rawUri.queryOptionString == null) {
@@ -85,7 +85,7 @@ public class UriDecoder {
     }
   }
 
-  private static List<String> splittFirst(String input, char c) {
+  private static List<String> splittFirst(final String input, final char c) {
     int pos = input.indexOf(c, 0);
     if (pos >= 0) {
       return Arrays.asList(input.substring(0, pos), input.substring(pos + 1));
@@ -94,7 +94,7 @@ public class UriDecoder {
     }
   }
 
-  public static void splittPath(RawUri rawUri, int scipSegments) {
+  public static void splittPath(final RawUri rawUri, int scipSegments) {
     List<String> list = splitt(rawUri.path, '/');
 
     if (list.size() > 0) {
@@ -110,7 +110,7 @@ public class UriDecoder {
     }
   }
 
-  public static List<String> splitt(String input, char c) {
+  public static List<String> splitt(final String input, final char c) {
 
     List<String> list = new LinkedList<String>();
 
@@ -129,7 +129,7 @@ public class UriDecoder {
     return list;
   }
 
-  public static String decode(String encoded) throws UriParserSyntaxException {
+  public static String decode(final String encoded) throws UriParserSyntaxException {
     try {
       return URLDecoder.decode(encoded, "UTF-8");
     } catch (UnsupportedEncodingException e) {

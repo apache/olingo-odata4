@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotSame;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.junit.Test;
 
 public class FunctionMapKeyTest {

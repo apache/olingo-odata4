@@ -19,15 +19,7 @@
 package org.apache.olingo.odata4.client.core;
 
 import org.apache.olingo.odata4.client.api.ODataConsumer;
-import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.odata4.commons.core.ODataCommonsCoreImpl;
 
 public class ODataConsumerImpl extends ODataConsumer {
-
-  @Override
-  public Edm createEdm(final EdmProvider provider) {
-    return new ODataCommonsCoreImpl().createEdm(provider);
-  }
 
 }

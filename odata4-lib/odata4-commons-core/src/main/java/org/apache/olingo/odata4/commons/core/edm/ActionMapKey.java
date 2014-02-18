@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.commons.core.edm;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 
 public class ActionMapKey {
   private final FullQualifiedName actionName;

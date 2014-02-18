@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectItem;
@@ -34,7 +34,6 @@ import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.parser.Parser;
-import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
@@ -174,12 +173,12 @@ public class UriValidator implements Validator {
 
   }
 
-  public UriValidator isExSyntax(long errorID) {
+  public UriValidator isExSyntax(final long errorID) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
     return this;
   }
 
-  public UriValidator isExSemantic(long errorID) {
+  public UriValidator isExSemantic(final long errorID) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
     return this;
   }
@@ -235,7 +234,7 @@ public class UriValidator implements Validator {
     return this;
   }
 
-  public UriValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
+  public UriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
 
     SelectItem item = select.getSelectItems().get(index);

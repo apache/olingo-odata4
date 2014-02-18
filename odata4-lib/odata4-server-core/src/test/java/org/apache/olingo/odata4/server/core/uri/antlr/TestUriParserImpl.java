@@ -25,11 +25,11 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.testutil.FilterValidator;
@@ -72,7 +72,7 @@ public class TestUriParserImpl {
 
   @Test
   public void test() throws UriParserException, UnsupportedEncodingException {
-    
+
   }
 
   @Test
@@ -1014,27 +1014,27 @@ public class TestUriParserImpl {
         .goFilter().root().isMember().goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechTestProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnEntry(EdmTechTestProvider.nameETBaseTwoKeyNav)
-        .at(1).isType(EdmTechTestProvider.nameDate);
+        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .at(1).isType(EdmTechProvider.nameDate);
 
     // on EntityType collection
     testUri.run("ESTwoKeyNav?$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember().goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechTestProvider.nameETTwoKeyNav, true)
-        .isTypeFilterOnCollection(EdmTechTestProvider.nameETBaseTwoKeyNav)
-        .at(1).isType(EdmTechTestProvider.nameDate);
+        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .at(1).isType(EdmTechProvider.nameDate);
 
     testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember().goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechTestProvider.nameCTTwoPrim, false)
-        .isTypeFilterOnEntry(EdmTechTestProvider.nameCTBase)
-        .at(1).isType(EdmTechTestProvider.nameString);
+        .isType(EdmTechProvider.nameCTTwoPrim, false)
+        .isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
+        .at(1).isType(EdmTechProvider.nameString);
 
 // on Complex collection
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
@@ -1042,9 +1042,9 @@ public class TestUriParserImpl {
         .goFilter().root().isMember().goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechTestProvider.nameCTTwoPrim, true)
-        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTBase)
-        .at(1).isType(EdmTechTestProvider.nameString);
+        .isType(EdmTechProvider.nameCTTwoPrim, true)
+        .isTypeFilterOnCollection(EdmTechProvider.nameCTBase)
+        .at(1).isType(EdmTechProvider.nameString);
 
   }
 
@@ -1104,48 +1104,48 @@ public class TestUriParserImpl {
         .isSelectItemAllOp(0, new FullQualifiedName("com.sap.odata.test1", "*"));
 
     testUri.run("ESTwoKeyNav?$select=PropertyString")
-        .goSelectItemPath(0).isPrimitiveProperty("PropertyString", EdmTechTestProvider.nameString, false);
+        .goSelectItemPath(0).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplex")
-        .goSelectItemPath(0).isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false);
+        .goSelectItemPath(0).isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyInt16")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechTestProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplex/PropertyComplex")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechTestProvider.nameCTAllPrim, false);
+        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false);
 
     testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
         .goSelectItemPath(0)
         .first()
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isTypeFilterOnCollection(EdmTechTestProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/PropertyComplexNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)
         .first()
         .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTTwoBasePrimCompNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplexNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)
         .first()
-        .isComplexProperty("PropertyComplexNav", EdmTechTestProvider.nameCTBasePrimCompNav, false)
+        .isComplexProperty("PropertyComplexNav", EdmTechProvider.nameCTBasePrimCompNav, false)
         .n()
-        .isTypeFilterOnCollection(EdmTechTestProvider.nameCTTwoBasePrimCompNav);
+        .isTypeFilterOnCollection(EdmTechProvider.nameCTTwoBasePrimCompNav);
     ;
 
   }
 
-  public static String encode(String decoded) throws UnsupportedEncodingException {
+  public static String encode(final String decoded) throws UnsupportedEncodingException {
 
     return URLEncoder.encode(decoded, "UTF-8");
 

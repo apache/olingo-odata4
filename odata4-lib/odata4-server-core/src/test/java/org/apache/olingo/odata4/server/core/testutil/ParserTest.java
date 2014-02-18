@@ -32,20 +32,20 @@ public class ParserTest extends Parser {
   }
 
   @Override
-  protected void addStage2ErrorStategy(UriParserParser parser) {
+  protected void addStage2ErrorStategy(final UriParserParser parser) {
     // Don't throw an at first syntax error, so the error listener will be called
     parser.setErrorHandler(new DefaultErrorStrategy());
   }
 
   @Override
-  protected void addStage1ErrorListener(UriParserParser parser) {
+  protected void addStage1ErrorListener(final UriParserParser parser) {
     // Log error to console
     parser.removeErrorListeners();
     parser.addErrorListener(errorCollector1);
   }
 
   @Override
-  protected void addStage2ErrorListener(UriParserParser parser) {
+  protected void addStage2ErrorListener(final UriParserParser parser) {
     // Log error to console
     parser.removeErrorListeners();
     parser.addErrorListener(errorCollector2);

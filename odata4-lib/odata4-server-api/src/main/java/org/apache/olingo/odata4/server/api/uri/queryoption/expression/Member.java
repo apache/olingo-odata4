@@ -26,7 +26,7 @@ public interface Member extends Expression {
   public UriInfoResource getPath();
 
   public EdmType getType();
-  
+
   public boolean isCollection();
 
 }

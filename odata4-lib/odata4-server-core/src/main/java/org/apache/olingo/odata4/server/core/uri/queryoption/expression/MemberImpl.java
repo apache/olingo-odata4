@@ -18,8 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
@@ -29,7 +29,6 @@ import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
-
 
 public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
 

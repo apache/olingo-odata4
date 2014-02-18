@@ -24,7 +24,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.FormatOption;
 public interface UriInfoMetadata {
 
   public FormatOption getFormatOption();
-  
-  public String getFragment() ;
-  
+
+  public String getFragment();
+
 }

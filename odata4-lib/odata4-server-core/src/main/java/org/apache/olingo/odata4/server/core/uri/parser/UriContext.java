@@ -20,23 +20,24 @@ package org.apache.olingo.odata4.server.core.uri.parser;
 
 import java.util.Stack;
 
-import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandPathContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectItemContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectSegmentContext;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor.TypeInformation;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.SelectItemImpl;
 
 public class UriContext {
-  
+
   public static class LambdaVariables {
     public boolean isCollection;
     public String name;
     public EdmType type;
   }
-  
-  
+
   /**
    * Hold all currently allowed lambda variables
    * As lambda functions can be nested there may be more than one allowed lambda variables at a time while parsing a
@@ -68,12 +69,12 @@ public class UriContext {
   public boolean contextReadingFunctionParameters;
 
   public UriContext() {
-    
-    this.contextExpandItemPath = null;
-    this.contextReadingFunctionParameters = false;
-    this.contextSelectItem = null;
-    this.contextTypes = new Stack<UriParseTreeVisitor.TypeInformation>();
-    this.allowedLambdaVariables = new Stack<UriContext.LambdaVariables>();
-        
+
+    contextExpandItemPath = null;
+    contextReadingFunctionParameters = false;
+    contextSelectItem = null;
+    contextTypes = new Stack<UriParseTreeVisitor.TypeInformation>();
+    allowedLambdaVariables = new Stack<UriContext.LambdaVariables>();
+
   }
 }

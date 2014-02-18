@@ -20,9 +20,9 @@ package org.apache.olingo.odata4.server.core.testutil;
 
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.UriResource;
 import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAll;
@@ -154,7 +154,8 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitConstant(SupportedConstants kind) throws ExceptionVisitExpression, ODataApplicationException {
+  public String visitConstant(final SupportedConstants kind)
+      throws ExceptionVisitExpression, ODataApplicationException {
     // TODO Auto-generated method stub
     return "<" + kind.toString() + ">";
   }
