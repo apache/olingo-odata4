@@ -1,27 +1,28 @@
-/*******************************************************************************
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- ******************************************************************************/
+ */
 package org.apache.olingo.odata4.commons.api.edm;
 
 /**
- * <p>EdmPrimitiveType is a primitive type as defined in the Entity Data Model (EDM).</p>
- * <p>There are methods to convert EDM primitive types from and to Java objects, respectively.
- * The following Java types are supported:
+ * EdmPrimitiveType is a primitive type as defined in the Entity Data Model (EDM).
+ * <br/>
+ * There are methods to convert EDM primitive types from and to Java objects, respectively. The following Java types are
+ * supported:
  * <table frame="hsides" rules="groups">
  * <thead>
  * <tr><th>EDM primitive type</th><th>Java types</th></tr>
@@ -53,103 +54,113 @@ package org.apache.olingo.odata4.commons.api.edm;
  * <tr><td>String</td><td>{@link String}</td></tr>
  * <tr><td>TimeOfDay</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link Long}</td></tr>
  * </tbody>
- * </table></p>
- * <p>The first Java type is the default type for the respective EDM primitive type.</p>
- * <p>For all EDM primitive types, the <code>Nullable</code> facet is taken into account.
- * For <code>Binary</code> and <code>String</code>, <code>MaxLength</code> is also applicable.
- * For <code>String</code>, the facet <code>Unicode</code> is considered additionally.
- * The EDM primitive types <code>DateTimeOffset</code>, <code>Decimal</code>,
- * <code>Duration</code>, and <code>TimeOfDay</code> can have a <code>Precision</code> facet.
- * Additionally, <code>Decimal</code> can have the facet <code>Scale</code>.</p>
+ * </table>
+ * <p>
+ * The first Java type is the default type for the respective EDM primitive type.
+ * </p>
+ * <p>
+ * For all EDM primitive types, the <code>Nullable</code> facet is taken into account. For <code>Binary</code> and
+ * <code>String</code>, <code>MaxLength</code> is also applicable. For <code>String</code>, the facet
+ * <code>Unicode</code> is considered additionally. The EDM primitive types <code>DateTimeOffset</code>,
+ * <code>Decimal</code>, <code>Duration</code>, and <code>TimeOfDay</code> can have a <code>Precision</code> facet.
+ * Additionally, <code>Decimal</code> can have the facet <code>Scale</code>.
+ * </p>
  */
 public interface EdmPrimitiveType extends EdmType {
 
-  public static final String EDM_NAMESPACE = "Edm";
-  public static final String SYSTEM_NAMESPACE = "System";
+  static final String EDM_NAMESPACE = "Edm";
+
+  static final String SYSTEM_NAMESPACE = "System";
 
   /**
    * Checks type compatibility.
+   *
    * @param primitiveType the {@link EdmPrimitiveType} to be tested for compatibility
    * @return <code>true</code> if the provided type is compatible to this type
    */
-  public boolean isCompatible(EdmPrimitiveType primitiveType);
+  boolean isCompatible(EdmPrimitiveType primitiveType);
 
   /**
-   * Returns the default Java type for this EDM primitive type as described in
-   * the documentation of {@link EdmPrimitiveType}.
+   * Returns the default Java type for this EDM primitive type as described in the documentation of
+   * {@link EdmPrimitiveType}.
+   *
    * @return the default Java type
    */
-  public Class<?> getDefaultType();
+  Class<?> getDefaultType();
 
   /**
    * Validates literal value.
+   *
    * @param value the literal value
    * @param isNullable whether the <code>null</code> value is allowed
    * @param maxLength the maximum length
    * @param precision the precision
    * @param scale the scale
-   * @param isUnicode whether non-ASCII characters are allowed
-   * (relevant only for Edm.String)
+   * @param isUnicode whether non-ASCII characters are allowed (relevant only for Edm.String)
    * @return <code>true</code> if the validation is successful
    */
-  public boolean validate(String value,
-      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode);
+  boolean validate(String value,
+          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode);
 
   /**
    * Converts literal representation of value to system data type.
+   *
    * @param value the literal representation of value
    * @param isNullable whether the <code>null</code> value is allowed
    * @param maxLength the maximum length
    * @param precision the precision
    * @param scale the scale
-   * @param isUnicode whether non-ASCII characters are allowed
-   * (relevant only for Edm.String)
-   * @param returnType the class of the returned value; it must be one of the
-   * list in the documentation of {@link EdmPrimitiveType}
+   * @param isUnicode whether non-ASCII characters are allowed (relevant only for Edm.String)
+   * @param returnType the class of the returned value; it must be one of the list in the documentation of
+   * {@link EdmPrimitiveType}
    * @throws EdmPrimitiveTypeException
    * @return the value as an instance of the class the parameter <code>returnType</code> indicates
    */
-  public <T> T valueOfString(String value,
-      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
-      Class<T> returnType) throws EdmPrimitiveTypeException;
+  <T> T valueOfString(String value,
+          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
+          Class<T> returnType) throws EdmPrimitiveTypeException;
 
   /**
-   * <p>Converts system data type to literal representation of value.</p>
-   * <p>Returns <code>null</code> if value is <code>null</code> and <code>null</code>
-   * is an allowed value.</p>
-   * @param value the Java value as Object; its type must be one of the list
-   * in the documentation of {@link EdmPrimitiveType}
+   * Converts system data type to literal representation of value.
+   * <p>
+   * Returns <code>null</code> if value is <code>null</code> and <code>null</code> is an allowed value.
+   * </p>
+   *
+   * @param value the Java value as Object; its type must be one of the list in the documentation of
+   * {@link EdmPrimitiveType}
    * @param isNullable whether the <code>null</code> value is allowed
    * @param maxLength the maximum length
    * @param precision the precision
    * @param scale the scale
-   * @param isUnicode whether non-ASCII characters are allowed
-   * (relevant only for Edm.String)
+   * @param isUnicode whether non-ASCII characters are allowed (relevant only for Edm.String)
    * @throws EdmPrimitiveTypeException
    * @return literal representation as String
    */
-  public String valueToString(Object value,
-      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode)
-      throws EdmPrimitiveTypeException;
+  String valueToString(Object value,
+          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode)
+          throws EdmPrimitiveTypeException;
 
   /**
-   * <p>Converts default literal representation to URI literal representation.</p>
-   * <p>Returns <code>null</code> if the literal is <code>null</code>. Does not
-   * perform any validation.</p>
+   * Converts default literal representation to URI literal representation.
+   * <p>
+   * Returns <code>null</code> if the literal is <code>null</code>. Does not perform any validation.
+   * </p>
+   *
    * @param literal the literal in default representation
    * @return URI literal representation as String
    */
-  public String toUriLiteral(String literal);
+  String toUriLiteral(String literal);
 
   /**
-   * <p>Converts URI literal representation to default literal representation.</p>
-   * <p>Returns <code>null</code> if the literal is <code>null</code>. Checks the
-   * presence of a required prefix and of required surrounding quotation marks
-   * but does not perform any further validation.</p>
+   * Converts URI literal representation to default literal representation.
+   * <p>
+   * Returns <code>null</code> if the literal is <code>null</code>. Checks the presence of a required prefix and of
+   * required surrounding quotation marks but does not perform any further validation.
+   * </p>
+   *
    * @param literal the literal in URI representation
    * @return default literal representation as String
-   * @throws EdmPrimitiveTypeException if a required prefix or required surrounding
-   * quotation marks are missing
+   * @throws EdmPrimitiveTypeException if a required prefix or required surrounding quotation marks are missing
    */
-  public String fromUriLiteral(String literal) throws EdmPrimitiveTypeException;
+  String fromUriLiteral(String literal) throws EdmPrimitiveTypeException;
 }
