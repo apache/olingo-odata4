@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.server.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 
 public interface UriResourceProperty extends UriResourcePartTyped {
-  
+
   EdmProperty getProperty();
-  
+
 }

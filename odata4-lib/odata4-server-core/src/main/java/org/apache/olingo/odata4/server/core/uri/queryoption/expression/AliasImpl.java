@@ -18,22 +18,22 @@
  */
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.AliasExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class AliasImpl extends ExpressionImpl  implements AliasExpression {
+public class AliasImpl extends ExpressionImpl implements AliasExpression {
 
   private String parameterName;
-  
+
   @Override
   public String getParameterName() {
     return parameterName;
   }
 
   public void setParameter(final String ParameterName) {
-    this.parameterName = ParameterName;
+    parameterName = ParameterName;
   }
 
   @Override

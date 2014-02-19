@@ -21,9 +21,9 @@ package org.apache.olingo.odata4.server.core.testutil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectItem;
@@ -75,10 +75,10 @@ public class ExpandValidator implements Validator {
         .setUriInfoImplPath(uriInfo);
 
   }
-  
+
   public UriResourceValidator goSelectItemPath(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     UriInfoImpl uriInfo = (UriInfoImpl) item.getResourceInfo();
 
@@ -88,8 +88,6 @@ public class ExpandValidator implements Validator {
         .setUriInfoImplPath(uriInfo);
 
   }
-  
-    
 
   public ExpandValidator goExpand() {
     ExpandValidator val = new ExpandValidator();
@@ -163,24 +161,23 @@ public class ExpandValidator implements Validator {
     assertEquals(text, option.getText());
     return this;
   }
-  
+
   public ExpandValidator isSelectItemStar(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(true, item.isStar());
     return this;
   }
-  
-  public ExpandValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
+
+  public ExpandValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;
   }
-  
-  
+
   public ExpandValidator isFilterText(final String text) {
     QueryOptionImpl option = (QueryOptionImpl) expandItem.getFilterOption();
     assertEquals(text, option.getText());

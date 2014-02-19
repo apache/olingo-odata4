@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
-import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
@@ -36,11 +35,11 @@ import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmComplexTypeImpl;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmEntitySetImpl;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmSingletonImpl;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmComplexTypeImpl;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmEntitySetImpl;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmSingletonImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriParameterImpl;
@@ -92,10 +91,10 @@ public class UriParameterImplTest {
     assertEquals("", impl.toString());
 
     // action
-    EdmAction action = edm.getAction(EdmTechTestProvider.nameUARTETParam, null, null);
+    EdmAction action = edm.getAction(EdmTechProvider.nameUARTETParam, null, null);
     impl.setAction(action);
     assertEquals(action, impl.getAction());
-    assertEquals(EdmTechTestProvider.nameUARTETParam.getName(), impl.toString());
+    assertEquals(EdmTechProvider.nameUARTETParam.getName(), impl.toString());
 
     // action import
     impl = new UriResourceActionImpl();
@@ -154,7 +153,7 @@ public class UriParameterImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals(property.getType(), impl.getType());
     assertEquals(property.getType(), impl.getComplexType());
-    EdmComplexType complexType = impl.getComplexType(); // must work without cast
+    impl.getComplexType();
 
     EdmComplexTypeImpl complexTypeImplType =
         (EdmComplexTypeImpl) edm.getComplexType(EdmTechProvider.nameCTBasePrimCompNav);
@@ -162,7 +161,7 @@ public class UriParameterImplTest {
     impl.setTypeFilter(complexTypeImplType);
     assertEquals(complexTypeImplType, impl.getTypeFilter());
     assertEquals(complexTypeImplType, impl.getComplexTypeFilter());
-    complexType = impl.getComplexTypeFilter(); // must work without cast
+    impl.getComplexTypeFilter();
 
   }
 
@@ -201,7 +200,7 @@ public class UriParameterImplTest {
 
     assertEquals(entitySet.getEntityType(), impl.getType());
     assertEquals(entitySet.getEntityType(), impl.getEntityType());
-    EdmEntityType entityType = impl.getEntityType(); // must work without cast
+    impl.getEntityType();
 
     // is Collection
     assertEquals(true, impl.isCollection());
@@ -239,8 +238,7 @@ public class UriParameterImplTest {
     UriParameterImpl parameter = new UriParameterImpl().setName("ParameterInt16");
     impl.setFunctionImport(functionImport, Arrays.asList(parameter));
     assertEquals("FICRTESTwoKeyNavParam", impl.toString());
-    
-    
+
     impl.setFunction(functionImport.getFunction(Arrays.asList("ParameterInt16")));
     assertEquals(true, impl.isCollection());
     impl.setKeyPredicates(new ArrayList<UriParameterImpl>());
@@ -263,7 +261,7 @@ public class UriParameterImplTest {
         return type;
       }
 
-      public Mock setType(EdmType type) {
+      public Mock setType(final EdmType type) {
         this.type = type;
         return this;
       }
@@ -308,7 +306,7 @@ public class UriParameterImplTest {
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
     assertEquals("mock/com.sap.odata.test1.ETTwoBaseTwoKeyNav", impl.toString(true));
-    
+
     // set collection
     // TODO remove ???
     impl = new Mock();
@@ -347,7 +345,7 @@ public class UriParameterImplTest {
         return false;
       }
 
-      public Mock setType(EdmType type) {
+      public Mock setType(final EdmType type) {
         this.type = type;
         return this;
       }
@@ -362,7 +360,7 @@ public class UriParameterImplTest {
     Mock impl = new Mock();
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETTwoKeyNav);
     EdmEntityType entityTypeBaseColl = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    EdmEntityType entityTypeBaseEntry = edm.getEntityType(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+    edm.getEntityType(EdmTechProvider.nameETTwoBaseTwoKeyNav);
 
     impl.setType(entityType);
     assertEquals("mock", impl.toString());
@@ -451,7 +449,7 @@ public class UriParameterImplTest {
     impl.setKeyPredicates(keyPredicates);
     assertEquals(false, impl.isCollection());
   }
-  
+
   @Test
   public void testUriResourceSingletonImpl() {
     UriResourceSingletonImpl impl = new UriResourceSingletonImpl();
@@ -466,33 +464,31 @@ public class UriParameterImplTest {
 
     assertEquals(singleton.getEntityType(), impl.getType());
     assertEquals(singleton.getEntityType(), impl.getEntityType());
-    EdmEntityType entityType = impl.getEntityType(); // must work without cast
-    
-    
+    impl.getEntityType();
+
     impl.setTypeFilter(entityTypeBaseColl);
     assertEquals(entityTypeBaseColl, impl.getEntityTypeFilter());
 
     // is Collection
     assertEquals(false, impl.isCollection());
   }
-  
+
   @Test
   public void testUriResourceValueImpl() {
     UriResourceValueImpl impl = new UriResourceValueImpl();
     assertEquals(UriResourceKind.value, impl.getKind());
     assertEquals("$value", impl.toString());
   }
-  
+
   @Test
   public void testUriResourceLambdaVarImpl() {
     UriResourceLambdaVarImpl impl = new UriResourceLambdaVarImpl();
     assertEquals(UriResourceKind.lambdaVariable, impl.getKind());
-    
-    
+
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETTwoKeyNav);
     impl.setType(entityType);
     impl.setVariableText("A");
-    
+
     assertEquals("A", impl.toString());
     assertEquals(entityType, impl.getType());
     assertEquals("A", impl.getVariableText());
@@ -500,14 +496,13 @@ public class UriParameterImplTest {
     impl.setCollection(true);
     assertEquals(true, impl.isCollection());
   }
-  
+
   @Test
-  public void testUriResourceStartingTypeFilterImpl () {
+  public void testUriResourceStartingTypeFilterImpl() {
     UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();
     assertEquals(UriResourceKind.startingTypeFilter, impl.getKind());
 
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETTwoKeyNav);
-    
 
     impl.setType(entityType);
     assertEquals("com.sap.odata.test1.ETTwoKeyNav", impl.toString());
@@ -522,6 +517,6 @@ public class UriParameterImplTest {
     assertEquals(true, impl.isCollection());
     impl.setKeyPredicates(keyPredicates);
     assertEquals(false, impl.isCollection());
-  
+
   }
 }

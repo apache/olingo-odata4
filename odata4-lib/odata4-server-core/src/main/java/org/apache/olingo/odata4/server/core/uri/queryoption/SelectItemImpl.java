@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.uri.queryoption;
 
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectItem;
 
@@ -29,13 +29,13 @@ public class SelectItemImpl implements SelectItem {
   private boolean isStar;
   private FullQualifiedName addOperationsInSchemaNameSpace;
 
-    @Override
+  @Override
   public UriInfoResource getResourceInfo() {
 
     return path;
   }
 
-  public SelectItemImpl setResourceInfo(UriInfoResource path) {
+  public SelectItemImpl setResourceInfo(final UriInfoResource path) {
     this.path = path;
     return this;
   }
@@ -67,6 +67,5 @@ public class SelectItemImpl implements SelectItem {
   public void addAllOperationsInSchema(final FullQualifiedName addOperationsInSchemaNameSpace) {
     this.addOperationsInSchemaNameSpace = addOperationsInSchemaNameSpace;
   }
- 
 
 }

@@ -21,20 +21,19 @@ package org.apache.olingo.odata4.server.core.testutil;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.odata4.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.odata4.commons.api.edm.provider.EntityType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.edm.provider.Property;
-import org.apache.olingo.odata4.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.odata4.commons.api.exception.ODataException;
-
+import org.apache.olingo.odata4.commons.api.ODataException;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.odata4.server.api.edm.provider.ComplexType;
+import org.apache.olingo.odata4.server.api.edm.provider.EntitySet;
+import org.apache.olingo.odata4.server.api.edm.provider.EntityType;
+import org.apache.olingo.odata4.server.api.edm.provider.Property;
+import org.apache.olingo.odata4.server.api.edm.provider.PropertyRef;
 
 /**
  * Implement the EdmTechProvider and
  * <li>adds a entity type <b>ETabc with</b> properties a,b,c,d,e,f</li>
  * <li>adds a complex type <b>CTabc</b> with properties a,b,c,d,e,f</li>
- * <li>adds a <b>abc</b> entity set of type <b>ETabc</b></li> 
+ * <li>adds a <b>abc</b> entity set of type <b>ETabc</b></li>
  */
 public class EdmTechTestProvider extends EdmTechProvider {
 
@@ -44,7 +43,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
   Property propertyDInt16 = new Property().setName("d").setType(nameInt16);
   Property propertyEInt16 = new Property().setName("e").setType(nameInt16);
   Property propertyFInt16 = new Property().setName("f").setType(nameInt16);
-  
+
   public static final FullQualifiedName nameCTabc = new FullQualifiedName(nameSpace, "CTabc");
   public static final FullQualifiedName nameETabc = new FullQualifiedName(nameSpace, "ETabc");
 

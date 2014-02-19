@@ -21,9 +21,9 @@ package org.apache.olingo.odata4.server.api.uri;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
 
 public interface UriResourceLambdaAny extends UriResourcePartTyped {
-  
+
   public String getLamdaVariable();
 
   public Expression getExpression();
-  
+
 }

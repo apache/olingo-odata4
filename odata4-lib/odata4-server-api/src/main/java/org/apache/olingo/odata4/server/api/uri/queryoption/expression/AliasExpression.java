@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public interface AliasExpression  extends Expression {
+public interface AliasExpression extends Expression {
 
   public String getParameterName();
-  
+
 }

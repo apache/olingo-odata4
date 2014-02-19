@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class RawUriTest {
 
-  private RawUri runRawParser(String uri, int scipSegments) throws UriParserSyntaxException {
+  private RawUri runRawParser(final String uri, final int scipSegments) throws UriParserSyntaxException {
     return UriDecoder.decodeUri(uri, scipSegments);
   }
 
@@ -48,10 +48,10 @@ public class RawUriTest {
 
     rawUri = runRawParser("?=", 0);
     checkOption(rawUri, 0, "", "");
-    
+
     rawUri = runRawParser("?=b", 0);
     checkOption(rawUri, 0, "", "b");
-    
+
     rawUri = runRawParser("?a&c", 0);
     checkOption(rawUri, 0, "a", "");
     checkOption(rawUri, 1, "c", "");
@@ -63,17 +63,17 @@ public class RawUriTest {
     rawUri = runRawParser("?a=b&c=d", 0);
     checkOption(rawUri, 0, "a", "b");
     checkOption(rawUri, 1, "c", "d");
-    
+
     rawUri = runRawParser("?=&=", 0);
     checkOption(rawUri, 0, "", "");
     checkOption(rawUri, 1, "", "");
-    
+
     rawUri = runRawParser("?=&c=d", 0);
     checkOption(rawUri, 0, "", "");
     checkOption(rawUri, 1, "c", "d");
   }
 
-  private void checkOption(RawUri rawUri, int index, String name, String value) {
+  private void checkOption(final RawUri rawUri, final int index, final String name, final String value) {
     RawUri.QueryOption option = rawUri.queryOptionListDecoded.get(index);
 
     assertEquals(name, option.name);
@@ -81,7 +81,7 @@ public class RawUriTest {
 
   }
 
-  private void checkOptionCount(RawUri rawUri, int count) {
+  private void checkOptionCount(final RawUri rawUri, final int count) {
     assertEquals(count, rawUri.queryOptionListDecoded.size());
   }
 
@@ -134,7 +134,7 @@ public class RawUriTest {
    * }
    */
 
-  private void checkPath(RawUri rawUri, String path, List<String> list) {
+  private void checkPath(final RawUri rawUri, final String path, final List<String> list) {
     assertEquals(path, rawUri.path);
 
     assertEquals(list.size(), rawUri.pathSegmentListDecoded.size());

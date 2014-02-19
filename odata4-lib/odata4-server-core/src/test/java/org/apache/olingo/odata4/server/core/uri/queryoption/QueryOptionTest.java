@@ -24,11 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
@@ -231,7 +230,7 @@ public class QueryOptionTest {
   public void testSelectItemImpl() {
     SelectItemImpl option = new SelectItemImpl();
 
-    EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
+    edm.getEntityType(EdmTechProvider.nameETKeyNav);
 
     // no typed collection else case ( e.g. if not path is added)
     option = new SelectItemImpl();

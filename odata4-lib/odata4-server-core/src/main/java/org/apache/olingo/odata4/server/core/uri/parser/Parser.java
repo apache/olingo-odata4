@@ -24,6 +24,7 @@ import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.PredictionMode;
@@ -37,7 +38,16 @@ import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.*;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.AllEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.BatchEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.CrossjoinEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.EntityEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.ExpandItemsEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.FilterExpressionEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.MetadataEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.PathSegmentEOFContext;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectEOFContext;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
@@ -60,20 +70,20 @@ public class Parser {
     All, Batch, CrossJoin, Entity, ExpandItems, FilterExpression, Metadata, PathSegment, Orderby, Select
   };
 
-  public Parser setLogLevel(int logLevel) {
+  public Parser setLogLevel(final int logLevel) {
     this.logLevel = logLevel;
     return this;
   }
 
-  public UriInfo parseUri(final String input, Edm edm)
+  public UriInfo parseUri(final String input, final Edm edm)
       throws UriParserException {
-    
+
     boolean readQueryParameter = false;
     boolean readFragment = false;
 
     UriContext context = new UriContext();
-    UriParseTreeVisitor uriParseTreeVisitor = new UriParseTreeVisitor(edm,context );
-        
+    UriParseTreeVisitor uriParseTreeVisitor = new UriParseTreeVisitor(edm, context);
+
     try {
       RawUri uri = UriDecoder.decodeUri(input, 0); // -> 0 segments are before the service url
 
@@ -266,7 +276,7 @@ public class Parser {
     return null;
   }
 
-  private ParserRuleContext parseRule(final String input, ParserEntryRules entryPoint)
+  private ParserRuleContext parseRule(final String input, final ParserEntryRules entryPoint)
       throws UriParserSyntaxException {
     UriParserParser parser = null;
     UriLexer lexer = null;
@@ -314,15 +324,15 @@ public class Parser {
         ret = parser.pathSegmentEOF();
         break;
       case FilterExpression:
-        lexer.mode(UriLexer.DEFAULT_MODE);
+        lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.filterExpressionEOF();
         break;
       case Orderby:
-        lexer.mode(UriLexer.DEFAULT_MODE);
+        lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.orderByEOF();
         break;
       case ExpandItems:
-        lexer.mode(UriLexer.DEFAULT_MODE);
+        lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.expandItemsEOF();
         break;
       case Entity:
@@ -371,15 +381,15 @@ public class Parser {
           ret = parser.pathSegmentEOF();
           break;
         case FilterExpression:
-          lexer.mode(UriLexer.DEFAULT_MODE);
+          lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.filterExpressionEOF();
           break;
         case Orderby:
-          lexer.mode(UriLexer.DEFAULT_MODE);
+          lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.orderByEOF();
           break;
         case ExpandItems:
-          lexer.mode(UriLexer.DEFAULT_MODE);
+          lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.expandItemsEOF();
           break;
         case Entity:
@@ -404,28 +414,28 @@ public class Parser {
     return ret;
   }
 
-  protected void addStage1ErrorStategy(UriParserParser parser) {
+  protected void addStage1ErrorStategy(final UriParserParser parser) {
     // Throw exception at first syntax error
     parser.setErrorHandler(new BailErrorStrategy());
 
   }
 
-  protected void addStage2ErrorStategy(UriParserParser parser) {
+  protected void addStage2ErrorStategy(final UriParserParser parser) {
     // Throw exception at first syntax error
     parser.setErrorHandler(new BailErrorStrategy());
   }
 
-  protected void addStage1ErrorListener(UriParserParser parser) {
+  protected void addStage1ErrorListener(final UriParserParser parser) {
     // No error logging to System.out or System.err, only exceptions used (depending on ErrorStrategy)
     parser.removeErrorListeners();
   }
 
-  protected void addStage2ErrorListener(UriParserParser parser) {
+  protected void addStage2ErrorListener(final UriParserParser parser) {
     // No error logging to System.out or System.err, only exceptions used (depending on ErrorStrategy)
     parser.removeErrorListeners();
   }
 
-  public void showTokens(String input, List<? extends Token> list) {
+  public void showTokens(final String input, final List<? extends Token> list) {
     boolean first = true;
     System.out.println("input: " + input);
     String nL = "\n";

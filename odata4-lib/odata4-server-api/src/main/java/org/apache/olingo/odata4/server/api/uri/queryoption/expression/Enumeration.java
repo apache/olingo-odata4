@@ -25,6 +25,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 public interface Enumeration extends Expression {
 
   public List<String> getValues();
+
   public EdmEnumType getType();
 
 }

@@ -24,11 +24,11 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmElement;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.provider.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfo;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.UriParameter;
@@ -50,7 +50,6 @@ import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceNavigationPro
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourcePrimitivePropertyImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceSingletonImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
-import org.apache.olingo.odata4.server.core.uri.parser.UriParseTreeVisitor;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.SelectOptionImpl;
@@ -86,7 +85,7 @@ public class UriResourceValidator implements Validator {
 
   public UriResourceValidator run(final String uri) {
     ParserTest testParser = new ParserTest();
-    //testParser.setLogLevel(1);
+    // testParser.setLogLevel(1);
     UriInfoImpl uriInfoTmp = null;
     uriPathInfo = null;
     try {
@@ -149,10 +148,10 @@ public class UriResourceValidator implements Validator {
     assertEquals(var, actualVar);
     return this;
   }
-  
+
   public UriResourceValidator goSelectItemPath(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourceInfo();
 
@@ -218,7 +217,7 @@ public class UriResourceValidator implements Validator {
   public UriResourceValidator isTypeFilter(final FullQualifiedName expectedType) {
 
     if (uriPathInfo.getKind() != UriResourceKind.complexProperty &&
-        uriPathInfo.getKind() != UriResourceKind.singleton && 
+        uriPathInfo.getKind() != UriResourceKind.singleton &&
         uriPathInfo.getKind() != UriResourceKind.startingTypeFilter) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -347,7 +346,6 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
-  
   public UriResourceValidator isKeyPredicateRef(final int index, final String name, final String refencedProperty) {
     if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
@@ -360,6 +358,7 @@ public class UriResourceValidator implements Validator {
     return this;
 
   }
+
   public UriResourceValidator isKeyPredicate(final int index, final String name, final String text) {
     if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
@@ -385,7 +384,7 @@ public class UriResourceValidator implements Validator {
     return this;
 
   }
-  
+
   public UriResourceValidator isParameterAlias(final int index, final String name, final String alias) {
     if (!(uriPathInfo instanceof UriResourceFunctionImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
@@ -399,14 +398,13 @@ public class UriResourceValidator implements Validator {
 
   }
 
-
   public UriResourceValidator isKind(final UriInfoKind kind) {
     assertEquals(kind, uriInfo.getKind());
     return this;
   }
 
-  public UriResourceValidator isPrimitiveProperty(final String name, 
-      final FullQualifiedName type, boolean isCollection) {
+  public UriResourceValidator isPrimitiveProperty(final String name,
+      final FullQualifiedName type, final boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourcePrimitivePropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -421,7 +419,8 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
-  public UriResourceValidator isComplexProperty(final String name, final FullQualifiedName type, boolean isCollection) {
+  public UriResourceValidator isComplexProperty(final String name, final FullQualifiedName type,
+      final boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourceComplexPropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -436,7 +435,8 @@ public class UriResourceValidator implements Validator {
     return this;
   }
 
-  public UriResourceValidator isNavProperty(final String name, final FullQualifiedName type, boolean isCollection) {
+  public UriResourceValidator
+      isNavProperty(final String name, final FullQualifiedName type, final boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourceNavigationPropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -543,18 +543,18 @@ public class UriResourceValidator implements Validator {
     assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getText());
     return this;
   }
-  
+
   public UriResourceValidator isSelectItemStar(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(true, item.isStar());
     return this;
   }
-  
-  public UriResourceValidator isSelectItemAllOp(final int index, FullQualifiedName fqn) {
+
+  public UriResourceValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-    
+
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
     return this;

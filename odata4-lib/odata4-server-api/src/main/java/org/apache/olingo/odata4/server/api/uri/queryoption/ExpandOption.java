@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.server.api.uri.queryoption;
 import java.util.List;
 
 public interface ExpandOption extends SystemQueryOption {
-  
+
   List<ExpandItem> getExpandItems();
-  
+
 }

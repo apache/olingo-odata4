@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api;
 
-import org.apache.olingo.odata4.commons.api.edm.Edm;
-import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
 
 //TODO: Exceptionhandling
 public abstract class ODataConsumer {
@@ -44,7 +42,4 @@ public abstract class ODataConsumer {
     }
     return instance;
   }
-
-  public abstract Edm createEdm(EdmProvider provider);
-
 }

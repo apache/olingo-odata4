@@ -28,5 +28,5 @@ public interface UriResourceSingleton extends UriResourcePartTyped {
   EdmEntityType getEntityType();
 
   EdmEntityType getEntityTypeFilter();
-  
+
 }

@@ -52,7 +52,7 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
   }
 
   public UriResourceFunctionImpl setParameters(final List<UriParameterImpl> parameters) {
-    isParameterListFilled  = true;
+    isParameterListFilled = true;
     this.parameters = parameters;
     return this;
   }

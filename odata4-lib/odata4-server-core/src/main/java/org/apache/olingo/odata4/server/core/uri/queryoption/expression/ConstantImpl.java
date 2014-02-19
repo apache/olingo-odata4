@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Constant;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
@@ -31,7 +31,7 @@ public class ConstantImpl extends ExpressionImpl implements Constant {
   SupportedConstants kind;
 
   @Override
-  public <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
     return visitor.visitConstant(kind);
   }
 
@@ -55,7 +55,7 @@ public class ConstantImpl extends ExpressionImpl implements Constant {
     return type;
   }
 
-  public ConstantImpl setType(EdmType type) {
+  public ConstantImpl setType(final EdmType type) {
     this.type = type;
     return this;
   }
@@ -65,7 +65,7 @@ public class ConstantImpl extends ExpressionImpl implements Constant {
     return kind;
   }
 
-  public ConstantImpl setKind(SupportedConstants kind) {
+  public ConstantImpl setKind(final SupportedConstants kind) {
     this.kind = kind;
     return this;
   }

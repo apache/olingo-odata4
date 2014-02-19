@@ -18,24 +18,16 @@
  */
 package org.apache.olingo.odata4.client.core;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.olingo.odata4.client.api.ODataConsumer;
-import org.apache.olingo.odata4.commons.api.edm.provider.EdmProvider;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ODataConsumerTest {
 
-  private ODataConsumer consumer;
-
-  @Before
-  public void before() {
-    consumer = ODataConsumer.create();
-  }
-
   @Test
-  public void edmtest() {
-    EdmProvider provider = null;
-    consumer.createEdm(provider);
+  public void before() {
+    ODataConsumer consumer = ODataConsumer.create();
+    assertNotNull(consumer);
   }
-
 }

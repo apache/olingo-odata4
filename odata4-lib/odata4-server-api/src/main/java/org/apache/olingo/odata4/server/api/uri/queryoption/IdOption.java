@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.server.api.uri.queryoption;
 
 public interface IdOption extends SystemQueryOption {
-  
+
   String getValue();
-  
+
 }

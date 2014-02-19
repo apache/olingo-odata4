@@ -37,12 +37,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata4-producer-api-incubating</artifactId>
+      <artifactId>olingo-odata4-server-api-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata4-consumer-api-incubating</artifactId>
+      <artifactId>olingo-odata4-client-api-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

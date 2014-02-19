@@ -39,6 +39,4 @@ public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
     return this;
   }
 
-  
-
 }

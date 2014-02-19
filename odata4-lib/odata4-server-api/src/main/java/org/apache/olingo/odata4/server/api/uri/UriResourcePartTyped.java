@@ -21,11 +21,11 @@ package org.apache.olingo.odata4.server.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
 public interface UriResourcePartTyped extends UriResource {
-  
+
   EdmType getType();
 
   boolean isCollection();
 
   String toString(boolean includeFilters);
-  
+
 }

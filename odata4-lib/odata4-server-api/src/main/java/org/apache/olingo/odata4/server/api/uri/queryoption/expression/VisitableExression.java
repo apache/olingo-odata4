@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.exception.ODataApplicationException;
+import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 
 public interface VisitableExression {
 
@@ -27,7 +27,7 @@ public interface VisitableExression {
    * each expression used as node in an expression tree. The implementations should
    * behave as follows:
    * <li>Call accept on all sub nodes and store the returned Objects which are of the generic type T
-   * <li>Call the appropriate method on the {@link ExpressionVisitor} instance and provide the stored return objects 
+   * <li>Call the appropriate method on the {@link ExpressionVisitor} instance and provide the stored return objects
    * to that instance
    * <li>Return the object which should be passed to the processing algorithm of the parent expression node
    * <br>

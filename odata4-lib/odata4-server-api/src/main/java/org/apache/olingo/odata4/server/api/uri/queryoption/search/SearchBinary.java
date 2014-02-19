@@ -25,5 +25,5 @@ public interface SearchBinary extends SearchExpression {
   SearchExpression getLeftOperand();
 
   SearchExpression getRightOperand();
-  
+
 }

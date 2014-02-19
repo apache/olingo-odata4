@@ -19,11 +19,11 @@
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
 public enum SupportedConstants {
-  
+
   TRUE("true"),
   FALSE("false"),
   NULL("null");
-  
+
   private String syntax;
 
   private SupportedConstants(final String syntax) {

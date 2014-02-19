@@ -34,7 +34,7 @@ class TestErrorLogger implements ANTLRErrorListener {
   private String prefix;
   private int logLevel = 0;
 
-  public TestErrorLogger(String prefix, int logLevel) {
+  public TestErrorLogger(final String prefix, final int logLevel) {
     this.prefix = prefix;
     this.logLevel = logLevel;
   }
@@ -49,7 +49,7 @@ class TestErrorLogger implements ANTLRErrorListener {
       System.out.println("\n" + prefix + " -- SyntaxError");
       trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
     }
-    
+
   }
 
   @Override
@@ -124,7 +124,7 @@ class TestErrorLogger implements ANTLRErrorListener {
   public void trace(final Recognizer<?, ?> recognizer, final Object offendingSymbol,
       final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
 
-    System.out.println("Error message: " +  msg);
+    System.out.println("Error message: " + msg);
     // TODO check also http://stackoverflow.com/questions/14747952/ll-exact-ambig-detection-interpetation
 
     printStack(recognizer);
@@ -145,30 +145,30 @@ class TestErrorLogger implements ANTLRErrorListener {
       System.out.println(" line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
     }
   }
-  
-  public static int getDecisionRule(Recognizer<?, ?> recognizer, int decision) {
+
+  public static int getDecisionRule(final Recognizer<?, ?> recognizer, final int decision) {
     if (recognizer == null || decision < 0) {
-        return -1;
+      return -1;
     }
 
     if (decision >= recognizer.getATN().decisionToState.size()) {
-        return -1;
+      return -1;
     }
 
     return recognizer.getATN().decisionToState.get(decision).ruleIndex;
-}
+  }
 
-public static String getRuleDisplayName(Recognizer<?, ?> recognizer, int ruleIndex) {
+  public static String getRuleDisplayName(final Recognizer<?, ?> recognizer, final int ruleIndex) {
     if (recognizer == null || ruleIndex < 0) {
-        return Integer.toString(ruleIndex);
+      return Integer.toString(ruleIndex);
     }
 
     String[] ruleNames = recognizer.getRuleNames();
     if (ruleIndex < 0 || ruleIndex >= ruleNames.length) {
-        return Integer.toString(ruleIndex);
+      return Integer.toString(ruleIndex);
     }
 
     return ruleNames[ruleIndex];
-}
+  }
 
 }

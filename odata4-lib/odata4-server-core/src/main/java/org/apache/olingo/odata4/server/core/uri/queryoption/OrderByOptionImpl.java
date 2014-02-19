@@ -27,7 +27,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions
 
 public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByOption {
 
-  private List<OrderByItemImpl> orders= new ArrayList<OrderByItemImpl>();
+  private List<OrderByItemImpl> orders = new ArrayList<OrderByItemImpl>();
 
   public OrderByOptionImpl() {
     setKind(SupportedQueryOptions.ORDERBY);
