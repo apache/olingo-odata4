@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Enumeration;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 
 public class EnumerationImpl extends ExpressionImpl implements Enumeration {
@@ -53,7 +53,7 @@ public class EnumerationImpl extends ExpressionImpl implements Enumeration {
   }
 
   @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitEnum(type, values);
   }
 

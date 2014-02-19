@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.server.api.uri.queryoption.search;
 
 public interface SearchBinary extends SearchExpression {
 
-  SupportedSearchBinaryOperators getOperator();
+  SearchBinaryOperatorKind getOperator();
 
   SearchExpression getLeftOperand();
 

@@ -18,39 +18,41 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public enum SupportedBinaryOperators {
+public enum MethodCallKind {
+  CONTAINS("contains"), STARTSWITH("startswith"), ENDSWITH("endswith"), LENGTH("length"),
+  INDEXOF("indexof"), SUBSTRING("substring"), TOLOWER("tolower"), TOUPPER("toupper"), TRIM("trim"),
+  CONCAT("concat"),
 
-  // enum
-  HAS("has"),
-  // multiplicative
-  MUL("mul"), DIV("div"), MOD("mod"),
-  // additive
-  ADD("add"), SUB("sub"),
-  // comparism
-  GT("gt"), GE("ge"), LT("lt"), LE("le"),
-  // equality
-  EQ("eq"), NE("ne"),
-  // and/or
-  AND("and"), OR("or");
+  YEAR("year"), MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"),
+  FRACTIONALSECONDS("fractionalseconds"), TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
+  TOTALOFFSETMINUTES("totaloffsetminutes"), MINDATETIME("mindatetime"), MAXDATETIME("maxdatetime"), NOW("now"),
+
+  ROUND("round"), FLOOR("floor"),
+
+  CEILING("ceiling"), GEODISTANCE("geo.distance"), GEOLENGTH("geo.length"), GEOINTERSECTS("geo.intersects"),
+  CAST("cast"),
+  ISOF("isof");
 
   private String syntax;
 
-  private SupportedBinaryOperators(final String syntax) {
+  private MethodCallKind(final String syntax) {
     this.syntax = syntax;
-  }
-
-  public static SupportedBinaryOperators get(final String operator) {
-    for (SupportedBinaryOperators op : SupportedBinaryOperators.values()) {
-      if (op.toString().equals(operator)) {
-        return op;
-      }
-    }
-    return null;
   }
 
   @Override
   public String toString() {
     return syntax;
+  }
+
+
+  public static MethodCallKind get(final String method) {
+    for (MethodCallKind op : MethodCallKind.values()) {
+
+      if (op.toString().equals(method)) {
+        return op;
+      }
+    }
+    return null;
   }
 
 }

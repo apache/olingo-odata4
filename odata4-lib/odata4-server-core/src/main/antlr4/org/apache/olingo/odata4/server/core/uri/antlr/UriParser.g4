@@ -347,6 +347,7 @@ odataIdentifier         : ODATAIDENTIFIER;
 primitiveLiteral    : nullrule
                     | booleanNonCase
                     | DECIMAL   //includes double and single literals
+                    | NANINFINITY
                     | INT       //includes int16/int32 and int64 literals
                     | BINARY  
                     | DATE

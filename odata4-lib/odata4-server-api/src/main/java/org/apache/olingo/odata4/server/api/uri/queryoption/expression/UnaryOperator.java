@@ -22,6 +22,6 @@ public interface UnaryOperator extends Expression {
 
   public Expression getOperand();
 
-  public SupportedUnaryOperators getOperator();
+  public UnaryOperatorKind getOperator();
 
 }

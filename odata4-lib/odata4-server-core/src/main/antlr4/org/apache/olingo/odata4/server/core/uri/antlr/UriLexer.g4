@@ -134,8 +134,8 @@ BOOLEAN       :  T R U E |  F A L S E;
 PLUS          : '+';
 SIGN          : PLUS  | '%2B'   |'-';
 INT           : SIGN? DIGITS;
-DECIMAL       : INT '.' DIGITS ('e' SIGN?  DIGITS)?;
-
+DECIMAL       : INT '.' DIGITS (('e'|'E') SIGN?  DIGITS)?;
+NANINFINITY   : 'NaN' | '-INF' | 'INF';
 //primary types
 BINARY                      : B I N A R Y SQUOTE (HEXDIG HEXDIG)* SQUOTE; 
 DATE                        : YEAR '-' MONTH '-' DAY;
@@ -185,7 +185,6 @@ OR              : 'or';
 
 NOT             : 'not';
 MINUS           :'-';
-NANINFINITY     : 'NaN' | '-INF' | 'INF';
 
 IT  : '$it';
 ITSLASH  : '$it/';
@@ -391,7 +390,7 @@ fragment DIGIT_g    : '0'..'9';
 fragment DIGITS_g   : DIGIT_g+;
 SIGN_g              : ('+' | '%2B' |'-') -> type(SIGN);
 INT_g               : SIGN_g? DIGITS_g -> type(INT);
-DECIMAL_g           : INT_g '.' DIGITS_g ('e' SIGN_g?  DIGITS_g)? -> type(DECIMAL);
+DECIMAL_g           : 'SS' INT_g '.' DIGITS_g (('e'|'E') SIGN_g?  DIGITS_g)? -> type(DECIMAL);
 COLLECTION_g        : C_ O_ L_ L_ E_ C_ T_ I_ O_ N_ -> type(COLLECTION);
 LINESTRING          : L_ I_ N_ E_ S_ T_ R_ I_ N_ G_ ;
 MULTILINESTRING     : M_ U_ L_ T_ I_ L_ I_ N_ E_ S_ T_ R_ I_ N_ G_;

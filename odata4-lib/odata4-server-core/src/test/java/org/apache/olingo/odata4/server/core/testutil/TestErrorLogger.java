@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 
 class TestErrorLogger implements ANTLRErrorListener {
 
@@ -44,7 +45,6 @@ class TestErrorLogger implements ANTLRErrorListener {
       final int charPositionInLine,
       final String msg, final RecognitionException e) {
 
-    // Collect the exception
     if (logLevel > 0) {
       System.out.println("\n" + prefix + " -- SyntaxError");
       trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
@@ -57,64 +57,22 @@ class TestErrorLogger implements ANTLRErrorListener {
       final boolean exact,
       final BitSet ambigAlts, final ATNConfigSet configs) {
 
-    /*
-     * if (tokenValidator.logLevel > 0) {
-     * System.out.println("reportAmbiguity: ");
-     * System.out.println(" ambigAlts: " + ambigAlts);
-     * System.out.println(" configs: " + configs);
-     * System.out.println(" input: " + recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
-     * }
-     */
-    /*
-     * if (!tokenValidator.allowAmbiguity) {
-     * printStack(recognizer);
-     * fail("reportAmbiguity");
-     * }
-     */
   }
 
   @Override
   public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex,
       final BitSet conflictingAlts, final ATNConfigSet configs) {
-    /*
-     * // The grammar should be written in order to avoid attempting a full context parse because its negative
-     * // impact on the performance, so trace and stop here
-     * if (tokenValidator.logLevel > 0) {
-     * System.out.println("allowed AttemptingFullContext");
-     * }
-     * 
-     * if (!tokenValidator.allowFullContext) {
-     * printStack(recognizer);
-     * fail("reportAttemptingFullContext");
-     * }
-     */
+
   }
 
   @Override
   public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex, final int prediction,
       final ATNConfigSet configs) {
-    /*
-     * if (tokenValidator.logLevel > 0) {
-     * System.out.println("allowed ContextSensitivity");
-     * }
-     * 
-     * if (!tokenValidator.allowContextSensitifity) {
-     * printStack(recognizer);
-     * fail("reportContextSensitivity");
-     * }
-     */
+
   }
 
-  /*
-   * private void printStack(final Parser recognizer) {
-   * List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
-   * Collections.reverse(stack);
-   * 
-   * System.out.println(" Rule stack: " + stack);
-   * }
-   */
   private void printStack(final Recognizer<?, ?> recognizer) {
     List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
     Collections.reverse(stack);
@@ -125,50 +83,23 @@ class TestErrorLogger implements ANTLRErrorListener {
       final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
 
     System.out.println("Error message: " + msg);
-    // TODO check also http://stackoverflow.com/questions/14747952/ll-exact-ambig-detection-interpetation
 
     printStack(recognizer);
 
+    System.out.println(" line/char :" + line + " / " + charPositionInLine);
+    System.out.println(" sym       :" + offendingSymbol);
     if (e != null && e.getOffendingToken() != null) {
 
-      // String lexerTokenName = TestSuiteLexer.tokenNames[e.getOffendingToken().getType()];
       String lexerTokenName = "";
       try {
-        // TODO check how the Lexer is accessed in the new package structure
-        // lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
+        lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
       } catch (ArrayIndexOutOfBoundsException es) {
         lexerTokenName = "token error";
       }
-      System.out.println(" line " + line + ":" + charPositionInLine + " at " +
-          offendingSymbol + "/" + lexerTokenName + ": " + msg);
-    } else {
-      System.out.println(" line " + line + ":" + charPositionInLine + " at " + offendingSymbol + ": " + msg);
-    }
-  }
 
-  public static int getDecisionRule(final Recognizer<?, ?> recognizer, final int decision) {
-    if (recognizer == null || decision < 0) {
-      return -1;
+      System.out.println(" tokenname:" + lexerTokenName);
     }
 
-    if (decision >= recognizer.getATN().decisionToState.size()) {
-      return -1;
-    }
-
-    return recognizer.getATN().decisionToState.get(decision).ruleIndex;
-  }
-
-  public static String getRuleDisplayName(final Recognizer<?, ?> recognizer, final int ruleIndex) {
-    if (recognizer == null || ruleIndex < 0) {
-      return Integer.toString(ruleIndex);
-    }
-
-    String[] ruleNames = recognizer.getRuleNames();
-    if (ruleIndex < 0 || ruleIndex >= ruleNames.length) {
-      return Integer.toString(ruleIndex);
-    }
-
-    return ruleNames[ruleIndex];
   }
 
 }

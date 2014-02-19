@@ -27,30 +27,31 @@ import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 
 public interface ExpressionVisitor<T> {
 
-  T visitBinaryOperator(SupportedBinaryOperators operator, T left, T right)
-      throws ExceptionVisitExpression, ODataApplicationException;
+  T visitBinaryOperator(BinaryOperatorKind operator, T left, T right)
+      throws ExpressionVisitException, ODataApplicationException;
 
-  T visitUnaryOperator(SupportedUnaryOperators operator, T operand)
-      throws ExceptionVisitExpression, ODataApplicationException;
+  T visitUnaryOperator(UnaryOperatorKind operator, T operand)
+      throws ExpressionVisitException, ODataApplicationException;
 
-  T visitMethodCall(SupportedMethodCalls methodCall, List<T> parameters)
-      throws ExceptionVisitExpression, ODataApplicationException;
+
+  T visitMethodCall(MethodCallKind methodCall, List<T> parameters)
+      throws ExpressionVisitException, ODataApplicationException;
+
 
   T visitLambdaExpression(String functionText, String variableText, Expression expression)
-      throws ExceptionVisitExpression, ODataApplicationException;
+      throws ExpressionVisitException, ODataApplicationException;
 
-  T visitLiteral(String literal) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitLiteral(String literal) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitMember(UriInfoResource member) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitMember(UriInfoResource member) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitAlias(String referenceName) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitAlias(String referenceName) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitTypeLiteral(EdmType type) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitTypeLiteral(EdmType type) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitLambdaReference(String variableText) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitLambdaReference(String variableText) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitEnum(EdmEnumType type, List<String> enumValues) throws ExceptionVisitExpression, ODataApplicationException;
+  T visitEnum(EdmEnumType type, List<String> enumValues) throws ExpressionVisitException, ODataApplicationException;
 
-  T visitConstant(SupportedConstants kind) throws ExceptionVisitExpression, ODataApplicationException;
 
 }

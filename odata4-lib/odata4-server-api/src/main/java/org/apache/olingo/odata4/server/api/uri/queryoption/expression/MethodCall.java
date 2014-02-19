@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface MethodCall extends Expression {
 
-  public SupportedMethodCalls getMethod();
+  public MethodCallKind getMethod();
 
   public List<Expression> getParameters();
 

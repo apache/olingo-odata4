@@ -21,11 +21,11 @@ package org.apache.olingo.odata4.server.core.uri.queryoption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 
-public class InlineCountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
+public class CountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
 
   private boolean count;
 
-  public InlineCountOptionImpl() {
+  public CountOptionImpl() {
     setKind(SupportedQueryOptions.INLINECOUNT);
   }
 
@@ -34,7 +34,7 @@ public class InlineCountOptionImpl extends SystemQueryOptionImpl implements Inli
     return count;
   }
 
-  public InlineCountOptionImpl setValue(final boolean count) {
+  public CountOptionImpl setValue(final boolean count) {
     this.count = count;
     return this;
   }

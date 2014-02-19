@@ -16,32 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
+package org.apache.olingo.odata4.server.api.uri.queryoption.search;
 
-public enum SupportedConstants {
-
-  TRUE("true"),
-  FALSE("false"),
-  NULL("null");
+public enum SearchBinaryOperatorKind {
+  // and/or
+  AND("and"), OR("or");
 
   private String syntax;
 
-  private SupportedConstants(final String syntax) {
+  private SearchBinaryOperatorKind(final String syntax) {
     this.syntax = syntax;
-  }
-
-  public static SupportedConstants get(final String operator) {
-    for (SupportedConstants op : SupportedConstants.values()) {
-      if (op.toString().equals(operator)) {
-        return op;
-      }
-    }
-    return null;
   }
 
   @Override
   public String toString() {
     return syntax;
+  }
+
+  public static SearchBinaryOperatorKind get(final String operator) {
+    for (SearchBinaryOperatorKind op : SearchBinaryOperatorKind.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
   }
 
 }

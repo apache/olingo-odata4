@@ -374,11 +374,12 @@ public class EdmTechProvider extends EdmProvider {
       .setType(nameETMedia);
 
   /*
-   * TODO add stream property
+   * TODO add propertyStream
    * Property propertyStream = new Property()
    * .setName("PropertyStream")
    * .setType(EdmStream.getFullQualifiedName());
    */
+
   NavigationProperty navPropertyETKeyPrimNavOne = new NavigationProperty()
       .setName("NavPropertyETKeyPrimNavOne")
       .setType(nameETKeyPrimNav);
@@ -678,7 +679,7 @@ public class EdmTechProvider extends EdmProvider {
               propertyDecimal, propertySingle, propertyDouble,
               propertyDuration, propertyGuid, propertyInt16,
               propertyInt32, propertyInt64, propertySByte,
-              propertyTimeOfDay/* TODO add steam property */));
+              propertyTimeOfDay/* TODO add propertyStream */));
 
     } else if (complexTypeName.equals(nameCTCollAllPrim)) {
       return new ComplexType()
@@ -928,7 +929,7 @@ public class EdmTechProvider extends EdmProvider {
               propertySingle, propertyDouble, propertyDecimal,
               propertyBinary, propertyDate, propertyDateTimeOffset,
               propertyDuration, propertyGuid,
-              propertyTimeOfDay /* TODO add stream property */));
+              propertyTimeOfDay /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETCollAllPrim)) {
       return new EntityType()
@@ -942,7 +943,7 @@ public class EdmTechProvider extends EdmProvider {
               collPropertyInt16, collPropertyInt32, collPropertyInt64,
               collPropertySingle, collPropertyDouble, collPropertyDecimal,
               collPropertyBinary, collPropertyDate, collPropertyDateTimeOffset,
-              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add stream property */));
+              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETTwoPrim)) {
       return new EntityType()
@@ -1021,7 +1022,7 @@ public class EdmTechProvider extends EdmProvider {
               propertyDecimal, propertyDate,
               propertySingle, propertyDouble, propertyDateTimeOffset,
               propertyDuration, propertyGuid,
-              propertyTimeOfDay /* TODO add stream property */));
+              propertyTimeOfDay /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETCompAllPrim)) {
       return new EntityType()
@@ -1093,7 +1094,7 @@ public class EdmTechProvider extends EdmProvider {
               propertySingle, propertyDouble,
               propertyDecimal, propertyBinary, propertyDate,
               propertyDateTimeOffset,
-              propertyDuration, propertyGuid, propertyTimeOfDay /* TODO add stream property */,
+              propertyDuration, propertyGuid, propertyTimeOfDay /* TODO add propertyStream */,
               collPropertyString, collPropertyBoolean,
               collPropertyByte, collPropertySByte,
               collPropertyInt16,
@@ -1101,7 +1102,7 @@ public class EdmTechProvider extends EdmProvider {
               collPropertySingle, collPropertyDouble,
               collPropertyDecimal, collPropertyBinary, collPropertyDate,
               collPropertyDateTimeOffset,
-              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add stream property */));
+              collPropertyDuration, collPropertyGuid, collPropertyTimeOfDay /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETKeyNav)) {
       return new EntityType()

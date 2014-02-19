@@ -16,20 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
+package org.apache.olingo.odata4.server.api.uri.queryoption.search;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
+public enum SearchUnaryOperatorKind {
+  NOT("not");
 
-public interface Constant extends Expression {
+  private String syntax;
 
-  public boolean isNull();
+  private SearchUnaryOperatorKind(final String syntax) {
+    this.syntax = syntax;
+  }
 
-  public boolean isTrue();
+  @Override
+  public String toString() {
+    return syntax;
+  }
 
-  public boolean isFalse();
-
-  public SupportedConstants getKind();
-
-  public EdmType getType();
-
+  public static SearchUnaryOperatorKind get(final String operator) {
+    for (SearchUnaryOperatorKind op : SearchUnaryOperatorKind.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
+  }
 }

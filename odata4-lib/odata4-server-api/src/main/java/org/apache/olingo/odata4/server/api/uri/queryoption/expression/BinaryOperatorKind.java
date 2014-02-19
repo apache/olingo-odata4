@@ -18,27 +18,40 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public enum SupportedUnaryOperators {
-  MINUS("-"), NOT("not");
+
+public enum BinaryOperatorKind {
+
+  // enum
+  HAS("has"),
+  // multiplicative
+  MUL("mul"), DIV("div"), MOD("mod"),
+  // additive
+  ADD("add"), SUB("sub"),
+  // comparism
+  GT("gt"), GE("ge"), LT("lt"), LE("le"),
+  // equality
+  EQ("eq"), NE("ne"),
+  // and/or
+  AND("and"), OR("or");
 
   private String syntax;
 
-  private SupportedUnaryOperators(final String syntax) {
+  private BinaryOperatorKind(final String syntax) {
     this.syntax = syntax;
   }
 
-  @Override
-  public String toString() {
-    return syntax;
-  }
-
-  public static SupportedUnaryOperators get(final String operator) {
-    for (SupportedUnaryOperators op : SupportedUnaryOperators.values()) {
+  public static BinaryOperatorKind get(final String operator) {
+    for (BinaryOperatorKind op : BinaryOperatorKind.values()) {
       if (op.toString().equals(operator)) {
         return op;
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
   }
 
 }

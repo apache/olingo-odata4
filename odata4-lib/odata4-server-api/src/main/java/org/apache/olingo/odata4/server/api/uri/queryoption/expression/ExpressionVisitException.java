@@ -16,12 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.server.api.uri.optiontree;
+package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+public class ExpressionVisitException extends Exception {
 
-public interface OptionProperty {
-  EdmNavigationProperty getNavigationProperty();
+  private static final long serialVersionUID = 1L;
 
-  OptionNode getOptionNode();
 }

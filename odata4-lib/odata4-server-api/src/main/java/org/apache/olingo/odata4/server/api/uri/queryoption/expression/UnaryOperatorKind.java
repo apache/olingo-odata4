@@ -18,8 +18,27 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public class ExceptionVisitExpression extends Exception {
+public enum UnaryOperatorKind {
+  MINUS("-"), NOT("not");
 
-  private static final long serialVersionUID = 1L;
+  private String syntax;
+
+  private UnaryOperatorKind(final String syntax) {
+    this.syntax = syntax;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
+  }
+
+  public static UnaryOperatorKind get(final String operator) {
+    for (UnaryOperatorKind op : UnaryOperatorKind.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
+  }
 
 }

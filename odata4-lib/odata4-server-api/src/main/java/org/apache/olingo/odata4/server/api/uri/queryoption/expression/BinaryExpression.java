@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
 public interface BinaryExpression extends Expression {
 
-  public SupportedBinaryOperators getOperator();
+  public BinaryOperatorKind getOperator();
 
   public Expression getLeftOperand();
 

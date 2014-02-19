@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.ODataApplicationException;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.LambdaRef;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableExression;
@@ -39,7 +39,7 @@ public class LambdaRefImpl extends ExpressionImpl implements LambdaRef, Visitabl
   }
 
   @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLambdaReference(variableText);
   }
 
