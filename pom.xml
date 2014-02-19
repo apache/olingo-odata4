@@ -190,19 +190,19 @@
             <configuration>
               <excludes>
                 <exclude>**/META-INF/services/*</exclude>
-                <exclude>**/MANIFEST.MF</exclude>
-                <exclude>**/NOTICE</exclude>
-                <exclude>**/DEPENDENCIES</exclude>
-                <exclude>.gitignore</exclude>
-                <exclude>.git/**</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.ini</exclude>
+                <exclude>**/MANIFEST.MF</exclude>
+                <exclude>.gitignore</exclude>
+                <exclude>.git/**</exclude>
                 <exclude>bin/**</exclude>
                 <exclude>**/*.local</exclude>
                 <exclude>**/*.project</exclude>
                 <exclude>**/*.classpath</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.batch</exclude>
+                <exclude>**/NOTICE</exclude>
+                <exclude>**/DEPENDENCIES</exclude>
                 <exclude>**/nb-configuration.xml</exclude>
               </excludes>
             </configuration>
