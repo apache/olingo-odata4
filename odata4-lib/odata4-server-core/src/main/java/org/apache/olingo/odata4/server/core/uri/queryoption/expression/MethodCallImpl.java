@@ -22,24 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.ODataApplicationException;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCall;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCallKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableExression;
 
 public class MethodCallImpl extends ExpressionImpl implements MethodCall, VisitableExression {
 
-  private SupportedMethodCalls method;
+  private MethodCallKind method;
   private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
 
   @Override
-  public SupportedMethodCalls getMethod() {
+  public MethodCallKind getMethod() {
     return method;
   }
 
-  public MethodCallImpl setMethod(final SupportedMethodCalls methodCalls) {
+  public MethodCallImpl setMethod(final MethodCallKind methodCalls) {
     method = methodCalls;
     return this;
   }
@@ -59,7 +59,7 @@ public class MethodCallImpl extends ExpressionImpl implements MethodCall, Visita
   }
 
   @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     List<T> userParameters = new ArrayList<T>();
     for (ExpressionImpl parameter : parameters) {
       userParameters.add(parameter.accept(visitor));

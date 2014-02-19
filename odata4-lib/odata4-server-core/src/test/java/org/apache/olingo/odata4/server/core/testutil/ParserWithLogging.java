@@ -19,14 +19,15 @@
 package org.apache.olingo.odata4.server.core.testutil;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.odata4.server.core.uri.parser.Parser;
 
-public class ParserTest extends Parser {
+public class ParserWithLogging extends Parser {
   TestErrorLogger errorCollector1;
   TestErrorLogger errorCollector2;
 
-  public ParserTest() {
+  public ParserWithLogging() {
     errorCollector1 = new TestErrorLogger("Stage 1", 1);
     errorCollector2 = new TestErrorLogger("Stage 2", 1);
   }
@@ -42,6 +43,7 @@ public class ParserTest extends Parser {
     // Log error to console
     parser.removeErrorListeners();
     parser.addErrorListener(errorCollector1);
+    parser.addErrorListener(new DiagnosticErrorListener());
   }
 
   @Override
@@ -49,5 +51,6 @@ public class ParserTest extends Parser {
     // Log error to console
     parser.removeErrorListeners();
     parser.addErrorListener(errorCollector2);
+    parser.addErrorListener(new DiagnosticErrorListener());
   }
 }

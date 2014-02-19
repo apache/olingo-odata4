@@ -50,12 +50,12 @@ import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.PathSegmen
 import org.apache.olingo.odata4.server.core.uri.antlr.UriParserParser.SelectEOFContext;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
+import org.apache.olingo.odata4.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.IdOptionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.InlineCountOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.SelectOptionImpl;
@@ -198,7 +198,7 @@ public class Parser {
             idOption.setValue(option.value);
             context.contextUriInfo.setSystemQueryOption(idOption);
           } else if (option.name.equals("$inlinecount")) {
-            InlineCountOptionImpl inlineCountOption = new InlineCountOptionImpl();
+            CountOptionImpl inlineCountOption = new CountOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
             inlineCountOption.setValue(option.value.equals("true") ? true : false);
@@ -212,7 +212,7 @@ public class Parser {
 
             context.contextUriInfo.setSystemQueryOption(filterOption);
           } else if (option.name.equals("$search")) {
-            // TODO not supported yet
+            // TODO $search is not supported yet
           } else if (option.name.equals("$select")) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
@@ -241,7 +241,7 @@ public class Parser {
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$count")) {
             // todo create CountOption
-            InlineCountOptionImpl inlineCountOption = new InlineCountOptionImpl();
+            CountOptionImpl inlineCountOption = new CountOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
             inlineCountOption.setValue(option.value.equals("true") ? true : false);
@@ -253,7 +253,7 @@ public class Parser {
             if (option.value.equals("max")) {
               inlineCountOption.setMax();
             } else {
-              inlineCountOption.setLevel(Integer.parseInt(option.value));
+              inlineCountOption.setValue(Integer.parseInt(option.value));
             }
 
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
@@ -428,6 +428,8 @@ public class Parser {
   protected void addStage1ErrorListener(final UriParserParser parser) {
     // No error logging to System.out or System.err, only exceptions used (depending on ErrorStrategy)
     parser.removeErrorListeners();
+    parser.addErrorListener(new CheckFullContextListener());
+
   }
 
   protected void addStage2ErrorListener(final UriParserParser parser) {

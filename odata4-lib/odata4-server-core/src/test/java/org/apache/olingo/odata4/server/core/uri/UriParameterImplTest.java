@@ -299,7 +299,6 @@ public class UriParameterImplTest {
         impl.toString(true));
 
     // set entry
-    // TODO remove ???
     impl = new Mock();
     impl.setType(entityType);
     impl.setEntryTypeFilter(entityTypeBaseEntry);
@@ -308,7 +307,6 @@ public class UriParameterImplTest {
     assertEquals("mock/com.sap.odata.test1.ETTwoBaseTwoKeyNav", impl.toString(true));
 
     // set collection
-    // TODO remove ???
     impl = new Mock();
     impl.setType(entityType);
     impl.setCollectionTypeFilter(entityTypeBaseColl);

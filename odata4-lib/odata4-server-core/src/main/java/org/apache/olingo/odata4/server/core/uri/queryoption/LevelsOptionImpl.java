@@ -30,7 +30,7 @@ public class LevelsOptionImpl extends SystemQueryOptionImpl implements LevelsExp
     setKind(SupportedQueryOptions.LEVELS);
   }
 
-  public LevelsOptionImpl setLevel(final int value) {
+  public LevelsOptionImpl setValue(final int value) {
     this.value = value;
     return this;
   }
@@ -47,7 +47,7 @@ public class LevelsOptionImpl extends SystemQueryOptionImpl implements LevelsExp
   }
 
   @Override
-  public int getLevel() {
+  public int getValue() {
     return value;
   }
 

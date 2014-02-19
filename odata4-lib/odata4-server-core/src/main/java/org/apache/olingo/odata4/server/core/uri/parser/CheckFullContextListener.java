@@ -16,90 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.testutil;
+package org.apache.olingo.odata4.server.core.uri.parser;
 
 import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
 
-import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.DiagnosticErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.apache.olingo.odata4.server.core.uri.antlr.UriLexer;
 
-class TestErrorLogger implements ANTLRErrorListener {
-
-  private String prefix;
-  private int logLevel = 0;
-
-  public TestErrorLogger(final String prefix, final int logLevel) {
-    this.prefix = prefix;
-    this.logLevel = logLevel;
-  }
+class CheckFullContextListener extends DiagnosticErrorListener {
 
   @Override
   public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
       final int charPositionInLine,
       final String msg, final RecognitionException e) {
-
-    if (logLevel > 0) {
-      System.out.println("\n" + prefix + " -- SyntaxError");
-      trace(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
-    }
-
+    // System.err.println("syntaxError detected");
   }
 
   @Override
   public void reportAmbiguity(final Parser recognizer, final DFA dfa, final int startIndex, final int stopIndex,
       final boolean exact,
       final BitSet ambigAlts, final ATNConfigSet configs) {
-
+    // System.err.println("reportAmbiguity detected");
   }
 
   @Override
   public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex,
       final BitSet conflictingAlts, final ATNConfigSet configs) {
-
+    // System.err.println("reportAttemptingFullContext detected");
   }
 
   @Override
   public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex, final int prediction,
       final ATNConfigSet configs) {
-
-  }
-
-  private void printStack(final Recognizer<?, ?> recognizer) {
-    List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
-    Collections.reverse(stack);
-    System.out.println(" rule stack: " + stack);
-  }
-
-  public void trace(final Recognizer<?, ?> recognizer, final Object offendingSymbol,
-      final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
-
-    System.out.println("Error message: " + msg);
-
-    printStack(recognizer);
-
-    System.out.println(" line/char :" + line + " / " + charPositionInLine);
-    System.out.println(" sym       :" + offendingSymbol);
-    if (e != null && e.getOffendingToken() != null) {
-
-      String lexerTokenName = "";
-      try {
-        lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
-      } catch (ArrayIndexOutOfBoundsException es) {
-        lexerTokenName = "token error";
-      }
-
-      System.out.println(" tokenname:" + lexerTokenName);
-    }
-
+    // System.err.println("reportContextSensitivity detected");
   }
 
 }

@@ -72,7 +72,7 @@ public class UriValidator implements Validator {
     try {
       // uriInfoTmp = new UriParserImpl(edm).ParseUri(uri);
       uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
-
+      fail("Exception expected");
     } catch (UriParserException e) {
       exception = e;
     }
@@ -81,7 +81,7 @@ public class UriValidator implements Validator {
   }
 
   public UriValidator log(final String uri) {
-    ParserTest parserTest = new ParserTest();
+    ParserWithLogging parserTest = new ParserWithLogging();
     parserTest.setLogLevel(1);
     uriInfo = null;
     try {
@@ -96,12 +96,12 @@ public class UriValidator implements Validator {
   }
 
   // Navigation
-  public UriResourceValidator goPath() {
+  public ResourceValidator goPath() {
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
-    return new UriResourceValidator()
+    return new ResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
         .setUriInfoImplPath(uriInfo);
@@ -122,16 +122,16 @@ public class UriValidator implements Validator {
       fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
-    return new ExpandValidator().setGoUpValidator(this).setExpand(expand);
+    return new ExpandValidator().setUpValidator(this).setExpand(expand);
   }
 
-  public UriResourceValidator goSelectItemPath(final int index) {
+  public ResourceValidator goSelectItemPath(final int index) {
     SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
 
     SelectItem item = select.getSelectItems().get(index);
     UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourceInfo();
 
-    return new UriResourceValidator()
+    return new ResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
         .setUriInfoImplPath(uriInfo1);

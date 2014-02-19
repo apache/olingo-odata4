@@ -29,12 +29,11 @@ import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfo;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedConstants;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCallKind;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSemanticException;
 import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
@@ -43,7 +42,6 @@ import org.apache.olingo.odata4.server.core.uri.parser.Parser;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.BinaryImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ConstantImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.EnumerationImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.MemberImpl;
@@ -64,12 +62,17 @@ public class FilterValidator implements Validator {
   private UriParserException exception;
 
   // --- Setup ---
-  public FilterValidator setUriResourcePathValidator(final UriResourceValidator uriResourcePathValidator) {
+  public FilterValidator setUriResourcePathValidator(final ResourceValidator uriResourcePathValidator) {
     invokedByValidator = uriResourcePathValidator;
     return this;
   }
 
   public FilterValidator setUriValidator(final UriValidator uriValidator) {
+    invokedByValidator = uriValidator;
+    return this;
+  }
+
+  public FilterValidator setValidator(final Validator uriValidator) {
     invokedByValidator = uriValidator;
     return this;
   }
@@ -118,14 +121,17 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException {
-    // TODO change to ESTwoKeyNav
+    String uri = "ESTwoKeyNav?$filter=" + filter.trim();
+    return runUri(uri);
+  }
+
+  public FilterValidator runOnETTwoKeyNavSingle(final String filter) throws UriParserException {
     String uri = "SINav?$filter=" + filter.trim();
     return runUri(uri);
   }
 
   public FilterValidator runOnETTwoKeyNavEx(final String filter) throws UriParserException {
-    // TODO change to ESTwoKeyNav
-    String uri = "SINav?$filter=" + filter.trim();
+    String uri = "ESTwoKeyNav?$filter=" + filter.trim();
     return runUriEx(uri);
   }
 
@@ -249,27 +255,31 @@ public class FilterValidator implements Validator {
 
   // --- Navigation ---
 
-  public Validator goUp() {
-    return invokedByValidator;
+  public ExpandValidator goUpToExpandValidator() {
+    return (ExpandValidator) invokedByValidator;
   }
 
-  public UriResourceValidator goPath() {
+  public ResourceValidator goUpToResourceValidator() {
+    return (ResourceValidator) invokedByValidator;
+  }
+
+  public ResourceValidator goPath() {
     if (!(curExpression instanceof MemberImpl)) {
       fail("Current expression not a member");
     }
 
     MemberImpl member = (MemberImpl) curExpression;
-    UriResourceValidator uriValidator = new UriResourceValidator();
-    uriValidator.setEdm(edm);
-    uriValidator.setUriInfoImplPath((UriInfoImpl) member.getPath());
-    uriValidator.setUpValidator(this);
-    return uriValidator;
+
+    return new ResourceValidator()
+        .setEdm(edm)
+        .setUriInfoImplPath((UriInfoImpl) member.getPath())
+        .setUpValidator(this);
+
   }
 
   public FilterValidator goParameter(final int parameterIndex) {
     if (curExpression instanceof MethodCallImpl) {
       MethodCallImpl methodCall = (MethodCallImpl) curExpression;
-
       curExpression = methodCall.getParameters().get(parameterIndex);
     } else {
       fail("Current expression not a methodCall");
@@ -293,7 +303,7 @@ public class FilterValidator implements Validator {
     try {
       String actualFilterAsText = FilterTreeToText.Serialize((FilterOptionImpl) filter);
       assertEquals(expectedFilterAsString, actualFilterAsText);
-    } catch (ExceptionVisitExpression e) {
+    } catch (ExpressionVisitException e) {
       fail("Exception occured while converting the filterTree into text" + "\n"
           + " Exception: " + e.getMessage());
     } catch (ODataApplicationException e) {
@@ -375,7 +385,7 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isMethod(final SupportedMethodCalls methodKind, final int parameterCount) {
+  public FilterValidator isMethod(final MethodCallKind methodKind, final int parameterCount) {
     if (!(curExpression instanceof MethodCallImpl)) {
       fail("Current expression is not a methodCall");
     }
@@ -388,7 +398,7 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
-      throws ExceptionVisitExpression, ODataApplicationException {
+      throws ExpressionVisitException, ODataApplicationException {
 
     if (!(curExpression instanceof MethodCallImpl)) {
       fail("Current expression is not a method");
@@ -403,7 +413,7 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isBinary(final SupportedBinaryOperators binaryOperator) {
+  public FilterValidator isBinary(final BinaryOperatorKind binaryOperator) {
     if (!(curExpression instanceof BinaryImpl)) {
       fail("Current expression is not a binary operator");
     }
@@ -455,16 +465,6 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isConstant(final SupportedConstants kind) {
-    if (!(curExpression instanceof ConstantImpl)) {
-      fail("Current expression not a constant");
-    }
-
-    assertEquals(kind, ((ConstantImpl) curExpression).getKind());
-
-    return this;
-  }
-
   public FilterValidator isSortOrder(final int index, final boolean descending) {
     assertEquals(descending, orderBy.getOrders().get(index).isDescending());
     return this;
@@ -482,6 +482,36 @@ public class FilterValidator implements Validator {
 
   public FilterValidator isExSemantic(final long errorID) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
+    return this;
+  }
+
+  public FilterValidator isNull() {
+    if (!(curExpression instanceof LiteralImpl)) {
+      fail("Current expression is not a literal");
+    }
+
+    String actualLiteralText = ((LiteralImpl) curExpression).getText();
+    assertEquals("null", actualLiteralText);
+    return this;
+  }
+
+  public FilterValidator isTrue() {
+    if (!(curExpression instanceof LiteralImpl)) {
+      fail("Current expression is not a literal");
+    }
+
+    String actualLiteralText = ((LiteralImpl) curExpression).getText();
+    assertEquals("true", actualLiteralText);
+    return this;
+  }
+
+  public FilterValidator isFalse() {
+    if (!(curExpression instanceof LiteralImpl)) {
+      fail("Current expression is not a literal");
+    }
+
+    String actualLiteralText = ((LiteralImpl) curExpression).getText();
+    assertEquals("false", actualLiteralText);
     return this;
   }
 

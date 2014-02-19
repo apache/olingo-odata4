@@ -16,27 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.core.uri.queryoption;
+package org.apache.olingo.odata4.server.api.uri.queryoption.search;
 
-import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
-import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
+public enum SearchBinaryOperatorKind {
+  // and/or
+  AND("and"), OR("or");
 
-public class InlineCountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
+  private String syntax;
 
-  private boolean count;
-
-  public InlineCountOptionImpl() {
-    setKind(SupportedQueryOptions.INLINECOUNT);
+  private SearchBinaryOperatorKind(final String syntax) {
+    this.syntax = syntax;
   }
 
   @Override
-  public boolean getValue() {
-    return count;
+  public String toString() {
+    return syntax;
   }
 
-  public InlineCountOptionImpl setValue(final boolean count) {
-    this.count = count;
-    return this;
+  public static SearchBinaryOperatorKind get(final String operator) {
+    for (SearchBinaryOperatorKind op : SearchBinaryOperatorKind.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
   }
 
 }

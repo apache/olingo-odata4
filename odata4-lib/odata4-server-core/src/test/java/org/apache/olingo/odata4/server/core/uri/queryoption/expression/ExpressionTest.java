@@ -29,14 +29,12 @@ import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedConstants;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedUnaryOperators;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.BinaryOperatorKind;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
@@ -51,21 +49,18 @@ public class ExpressionTest {
 
   @Test
   public void testSupportedOperators() {
-    assertEquals(SupportedUnaryOperators.MINUS, SupportedUnaryOperators.get("-"));
-    assertEquals(null, SupportedUnaryOperators.get("XXX"));
+    assertEquals(UnaryOperatorKind.MINUS, UnaryOperatorKind.get("-"));
+    assertEquals(null, UnaryOperatorKind.get("XXX"));
 
-    assertEquals(SupportedBinaryOperators.MOD, SupportedBinaryOperators.get("mod"));
-    assertEquals(null, SupportedBinaryOperators.get("XXX"));
+    assertEquals(BinaryOperatorKind.MOD, BinaryOperatorKind.get("mod"));
+    assertEquals(null, BinaryOperatorKind.get("XXX"));
 
-    assertEquals(SupportedMethodCalls.CONCAT, SupportedMethodCalls.get("concat"));
-    assertEquals(null, SupportedMethodCalls.get("XXX"));
-
-    assertEquals(SupportedConstants.TRUE, SupportedConstants.get("true"));
-    assertEquals(null, SupportedConstants.get("XXX"));
+    assertEquals(MethodCallKind.CONCAT, MethodCallKind.get("concat"));
+    assertEquals(null, MethodCallKind.get("XXX"));
   }
 
   @Test
-  public void testAliasExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testAliasExpression() throws ExpressionVisitException, ODataApplicationException {
     AliasImpl expression = new AliasImpl();
 
     expression.setParameter("Test");
@@ -78,7 +73,7 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testBinaryExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testBinaryExpression() throws ExpressionVisitException, ODataApplicationException {
     BinaryImpl expression = new BinaryImpl();
 
     ExpressionImpl expressionLeft = new LiteralImpl().setText("A");
@@ -86,48 +81,18 @@ public class ExpressionTest {
 
     expression.setLeftOperand(expressionLeft);
     expression.setRightOperand(expressionRight);
-    expression.setOperator(SupportedBinaryOperators.SUB);
+    expression.setOperator(BinaryOperatorKind.SUB);
 
     assertEquals(expressionLeft, expression.getLeftOperand());
     assertEquals(expressionRight, expression.getRightOperand());
-    assertEquals(SupportedBinaryOperators.SUB, expression.getOperator());
+    assertEquals(BinaryOperatorKind.SUB, expression.getOperator());
 
     String output = expression.accept(new FilterTreeToText());
     assertEquals("<<A> sub <B>>", output);
   }
 
   @Test
-  public void testConstantExpression() throws ExceptionVisitExpression, ODataApplicationException {
-    ConstantImpl expression = new ConstantImpl();
-    EdmType type = edm.getEntityType(EdmTechProvider.nameETKeyNav);
-    assertNotNull(type);
-    expression.setType(type);
-    assertEquals(type, expression.getType());
-
-    expression.setKind(SupportedConstants.FALSE);
-    assertEquals(SupportedConstants.FALSE, expression.getKind());
-    assertEquals(true, expression.isFalse());
-    assertEquals(false, expression.isTrue());
-    assertEquals(false, expression.isNull());
-    assertEquals("<false>", expression.accept(new FilterTreeToText()));
-
-    expression.setKind(SupportedConstants.TRUE);
-    assertEquals(SupportedConstants.TRUE, expression.getKind());
-    assertEquals(false, expression.isFalse());
-    assertEquals(true, expression.isTrue());
-    assertEquals(false, expression.isNull());
-    assertEquals("<true>", expression.accept(new FilterTreeToText()));
-
-    expression.setKind(SupportedConstants.NULL);
-    assertEquals(SupportedConstants.NULL, expression.getKind());
-    assertEquals(false, expression.isFalse());
-    assertEquals(false, expression.isTrue());
-    assertEquals(true, expression.isNull());
-    assertEquals("<null>", expression.accept(new FilterTreeToText()));
-  }
-
-  @Test
-  public void testEnumerationExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testEnumerationExpression() throws ExpressionVisitException, ODataApplicationException {
     EnumerationImpl expression = new EnumerationImpl();
     EdmEnumType type = (EdmEnumType) edm.getEnumType(EdmTechProvider.nameENString);
     assertNotNull(type);
@@ -143,7 +108,7 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testLambdaRefExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testLambdaRefExpression() throws ExpressionVisitException, ODataApplicationException {
     LambdaRefImpl expression = new LambdaRefImpl();
     expression.setVariableText("A");
     assertEquals("A", expression.getVariableName());
@@ -153,7 +118,7 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testLiteralExpresion() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testLiteralExpresion() throws ExpressionVisitException, ODataApplicationException {
     LiteralImpl expression = new LiteralImpl();
     expression.setText("A");
     assertEquals("A", expression.getText());
@@ -162,11 +127,11 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testMemberExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testMemberExpression() throws ExpressionVisitException, ODataApplicationException {
     MemberImpl expression = new MemberImpl();
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplTyped
     EdmAction action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
     UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
@@ -180,28 +145,28 @@ public class ExpressionTest {
     // UriResourceImplTyped check collection = false case
     assertEquals(false, expression.isCollection());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplTyped check collection = true case
     action = edm.getAction(EdmTechProvider.nameUARTPrimCollParam, null, null);
     expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
     assertEquals(true, expression.isCollection());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplTyped with filter
     action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
     expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
         .asUriInfoResource());
     assertEquals(entityType, expression.getType());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplKeyPred
     EdmFunction function = edm.getFunction(EdmTechProvider.nameUFCRTETKeyNav, null, null, null);
     expression.setPath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function))
         .asUriInfoResource());
     assertEquals(function.getReturnType().getType(), expression.getType());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplKeyPred typeFilter on entry
     EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
@@ -210,7 +175,7 @@ public class ExpressionTest {
         .asUriInfoResource());
     assertEquals(entityBaseType, expression.getType());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // UriResourceImplKeyPred typeFilter on entry
     entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
@@ -219,7 +184,7 @@ public class ExpressionTest {
         .asUriInfoResource());
     assertEquals(entityBaseType, expression.getType());
 
-    new UriInfoImpl().setKind(UriInfoKind.resource);
+    // no typed
     entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
@@ -231,16 +196,16 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testMethodCallExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testMethodCallExpression() throws ExpressionVisitException, ODataApplicationException {
     MethodCallImpl expression = new MethodCallImpl();
-    expression.setMethod(SupportedMethodCalls.CONCAT);
+    expression.setMethod(MethodCallKind.CONCAT);
 
     ExpressionImpl p0 = new LiteralImpl().setText("A");
     ExpressionImpl p1 = new LiteralImpl().setText("B");
     expression.addParameter(p0);
     expression.addParameter(p1);
 
-    assertEquals(SupportedMethodCalls.CONCAT, expression.getMethod());
+    assertEquals(MethodCallKind.CONCAT, expression.getMethod());
     assertEquals("<concat(<A>,<B>)>", expression.accept(new FilterTreeToText()));
 
     assertEquals(p0, expression.getParameters().get(0));
@@ -248,7 +213,7 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testTypeLiteralExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testTypeLiteralExpression() throws ExpressionVisitException, ODataApplicationException {
     TypeLiteralImpl expression = new TypeLiteralImpl();
     EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
     expression.setType(entityBaseType);
@@ -258,14 +223,14 @@ public class ExpressionTest {
   }
 
   @Test
-  public void testUnaryExpression() throws ExceptionVisitExpression, ODataApplicationException {
+  public void testUnaryExpression() throws ExpressionVisitException, ODataApplicationException {
     UnaryImpl expression = new UnaryImpl();
-    expression.setOperator(SupportedUnaryOperators.MINUS);
+    expression.setOperator(UnaryOperatorKind.MINUS);
 
     ExpressionImpl operand = new LiteralImpl().setText("A");
     expression.setOperand(operand);
 
-    assertEquals(SupportedUnaryOperators.MINUS, expression.getOperator());
+    assertEquals(UnaryOperatorKind.MINUS, expression.getOperator());
     assertEquals(operand, expression.getOperand());
 
     assertEquals("<- <A>>", expression.accept(new FilterTreeToText()));

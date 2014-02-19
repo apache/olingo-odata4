@@ -46,12 +46,12 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.server.api.uri.queryoption.TopOption;
+import org.apache.olingo.odata4.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.IdOptionImpl;
-import org.apache.olingo.odata4.server.core.uri.queryoption.InlineCountOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.SearchOptionImpl;
@@ -74,7 +74,7 @@ public class UriInfoImpl implements UriInfo {
   private FilterOptionImpl filterOption;
   private FormatOptionImpl formatOption;
   private IdOption idOption;
-  private InlineCountOptionImpl inlineCountOption;
+  private CountOptionImpl inlineCountOption;
   private OrderByOptionImpl orderByOption;
   private SearchOptionImpl searchOption;
   private SelectOptionImpl selectOption;
@@ -257,7 +257,7 @@ public class UriInfoImpl implements UriInfo {
     } else if (systemOption.getKind() == SupportedQueryOptions.ID) {
       idOption = (IdOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.INLINECOUNT) {
-      inlineCountOption = (InlineCountOptionImpl) systemOption;
+      inlineCountOption = (CountOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.ORDERBY) {
       orderByOption = (OrderByOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.SEARCH) {

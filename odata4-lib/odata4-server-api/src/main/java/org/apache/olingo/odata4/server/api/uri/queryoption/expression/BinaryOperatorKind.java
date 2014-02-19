@@ -16,30 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption.search;
+package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public enum SupportedSearchBinaryOperators {
+
+public enum BinaryOperatorKind {
+
+  // enum
+  HAS("has"),
+  // multiplicative
+  MUL("mul"), DIV("div"), MOD("mod"),
+  // additive
+  ADD("add"), SUB("sub"),
+  // comparism
+  GT("gt"), GE("ge"), LT("lt"), LE("le"),
+  // equality
+  EQ("eq"), NE("ne"),
   // and/or
   AND("and"), OR("or");
 
   private String syntax;
 
-  private SupportedSearchBinaryOperators(final String syntax) {
+  private BinaryOperatorKind(final String syntax) {
     this.syntax = syntax;
   }
 
-  @Override
-  public String toString() {
-    return syntax;
-  }
-
-  public static SupportedSearchBinaryOperators get(final String operator) {
-    for (SupportedSearchBinaryOperators op : SupportedSearchBinaryOperators.values()) {
+  public static BinaryOperatorKind get(final String operator) {
+    for (BinaryOperatorKind op : BinaryOperatorKind.values()) {
       if (op.toString().equals(operator)) {
         return op;
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
   }
 
 }

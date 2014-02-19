@@ -41,6 +41,7 @@ public class TestLexer {
   @Test
   public void test() {
 
+    // test.log(1).run("ESAllPrim?$orderby=PropertyDouble eq 3.5E+38");
   }
 
   // ;------------------------------------------------------------------------------

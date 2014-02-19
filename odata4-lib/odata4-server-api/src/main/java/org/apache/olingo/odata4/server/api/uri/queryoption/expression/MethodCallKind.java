@@ -16,14 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption.search;
+package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public enum SupportedSearchUnaryOperators {
-  NOT("not");
+public enum MethodCallKind {
+  CONTAINS("contains"), STARTSWITH("startswith"), ENDSWITH("endswith"), LENGTH("length"),
+  INDEXOF("indexof"), SUBSTRING("substring"), TOLOWER("tolower"), TOUPPER("toupper"), TRIM("trim"),
+  CONCAT("concat"),
+
+  YEAR("year"), MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"),
+  FRACTIONALSECONDS("fractionalseconds"), TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
+  TOTALOFFSETMINUTES("totaloffsetminutes"), MINDATETIME("mindatetime"), MAXDATETIME("maxdatetime"), NOW("now"),
+
+  ROUND("round"), FLOOR("floor"),
+
+  CEILING("ceiling"), GEODISTANCE("geo.distance"), GEOLENGTH("geo.length"), GEOINTERSECTS("geo.intersects"),
+  CAST("cast"),
+  ISOF("isof");
 
   private String syntax;
 
-  private SupportedSearchUnaryOperators(final String syntax) {
+  private MethodCallKind(final String syntax) {
     this.syntax = syntax;
   }
 
@@ -32,12 +44,15 @@ public enum SupportedSearchUnaryOperators {
     return syntax;
   }
 
-  public static SupportedSearchUnaryOperators get(final String operator) {
-    for (SupportedSearchUnaryOperators op : SupportedSearchUnaryOperators.values()) {
-      if (op.toString().equals(operator)) {
+
+  public static MethodCallKind get(final String method) {
+    for (MethodCallKind op : MethodCallKind.values()) {
+
+      if (op.toString().equals(method)) {
         return op;
       }
     }
     return null;
   }
+
 }

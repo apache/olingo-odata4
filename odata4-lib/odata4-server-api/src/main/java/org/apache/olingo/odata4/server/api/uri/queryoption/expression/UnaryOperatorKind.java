@@ -16,12 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.optiontree;
+package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+public enum UnaryOperatorKind {
+  MINUS("-"), NOT("not");
 
-public interface OptionProperty {
-  EdmNavigationProperty getNavigationProperty();
+  private String syntax;
 
-  OptionNode getOptionNode();
+  private UnaryOperatorKind(final String syntax) {
+    this.syntax = syntax;
+  }
+
+  @Override
+  public String toString() {
+    return syntax;
+  }
+
+  public static UnaryOperatorKind get(final String operator) {
+    for (UnaryOperatorKind op : UnaryOperatorKind.values()) {
+      if (op.toString().equals(operator)) {
+        return op;
+      }
+    }
+    return null;
+  }
+
 }

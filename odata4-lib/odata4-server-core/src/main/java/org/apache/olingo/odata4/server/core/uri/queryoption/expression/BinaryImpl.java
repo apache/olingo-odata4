@@ -20,23 +20,23 @@ package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.ODataApplicationException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.BinaryExpression;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
 
 public class BinaryImpl extends ExpressionImpl implements BinaryExpression {
 
-  private SupportedBinaryOperators operator;
+  private BinaryOperatorKind operator;
   private ExpressionImpl left;
   private ExpressionImpl right;
 
   @Override
-  public SupportedBinaryOperators getOperator() {
+  public BinaryOperatorKind getOperator() {
     return operator;
   }
 
-  public BinaryExpression setOperator(final SupportedBinaryOperators operator) {
+  public BinaryExpression setOperator(final BinaryOperatorKind operator) {
     this.operator = operator;
     return this;
   }
@@ -61,7 +61,7 @@ public class BinaryImpl extends ExpressionImpl implements BinaryExpression {
   }
 
   @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     T left = this.left.accept(visitor);
     T right = this.right.accept(visitor);
     return visitor.visitBinaryOperator(operator, left, right);

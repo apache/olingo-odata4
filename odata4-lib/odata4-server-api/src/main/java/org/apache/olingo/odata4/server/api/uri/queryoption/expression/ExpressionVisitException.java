@@ -18,30 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
 
-public enum SupportedConstants {
+public class ExpressionVisitException extends Exception {
 
-  TRUE("true"),
-  FALSE("false"),
-  NULL("null");
-
-  private String syntax;
-
-  private SupportedConstants(final String syntax) {
-    this.syntax = syntax;
-  }
-
-  public static SupportedConstants get(final String operator) {
-    for (SupportedConstants op : SupportedConstants.values()) {
-      if (op.toString().equals(operator)) {
-        return op;
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public String toString() {
-    return syntax;
-  }
+  private static final long serialVersionUID = 1L;
 
 }

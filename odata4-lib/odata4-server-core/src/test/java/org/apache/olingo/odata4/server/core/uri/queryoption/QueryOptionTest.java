@@ -28,7 +28,6 @@ import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.AliasImpl;
@@ -58,7 +57,7 @@ public class QueryOptionTest {
     // input options
     ExpandOptionImpl expand = new ExpandOptionImpl();
     FilterOptionImpl filter = new FilterOptionImpl();
-    InlineCountOptionImpl inlinecount = new InlineCountOptionImpl();
+    CountOptionImpl inlinecount = new CountOptionImpl();
     OrderByOptionImpl orderby = new OrderByOptionImpl();
     SearchOptionImpl search = new SearchOptionImpl();
     SelectOptionImpl select = new SelectOptionImpl();
@@ -161,7 +160,7 @@ public class QueryOptionTest {
 
   @Test
   public void testInlineCountImpl() {
-    InlineCountOptionImpl option = new InlineCountOptionImpl();
+    CountOptionImpl option = new CountOptionImpl();
     assertEquals(SupportedQueryOptions.INLINECOUNT, option.getKind());
 
     assertEquals(false, option.getValue());
@@ -174,9 +173,9 @@ public class QueryOptionTest {
     LevelsOptionImpl option = new LevelsOptionImpl();
     assertEquals(SupportedQueryOptions.LEVELS, option.getKind());
 
-    assertEquals(0, option.getLevel());
-    option.setLevel(1);
-    assertEquals(1, option.getLevel());
+    assertEquals(0, option.getValue());
+    option.setValue(1);
+    assertEquals(1, option.getValue());
 
     option = new LevelsOptionImpl();
     option.setMax();
@@ -223,14 +222,12 @@ public class QueryOptionTest {
   public void testSearchOptionImpl() {
     SearchOptionImpl option = new SearchOptionImpl();
     assertEquals(SupportedQueryOptions.SEARCH, option.getKind());
-    // TODO $search not supported yet
+    // TODO $search is not supported yet
   }
 
   @Test
   public void testSelectItemImpl() {
     SelectItemImpl option = new SelectItemImpl();
-
-    edm.getEntityType(EdmTechProvider.nameETKeyNav);
 
     // no typed collection else case ( e.g. if not path is added)
     option = new SelectItemImpl();

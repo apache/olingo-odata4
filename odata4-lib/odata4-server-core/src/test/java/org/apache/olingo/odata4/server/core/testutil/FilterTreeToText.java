@@ -29,46 +29,45 @@ import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.odata4.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedBinaryOperators;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedConstants;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedUnaryOperators;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
 
   public static String Serialize(final FilterOption filter)
-      throws ExceptionVisitExpression, ODataApplicationException {
+      throws ExpressionVisitException, ODataApplicationException {
 
     Expression expression = filter.getExpression();
     return expression.accept(new FilterTreeToText());
   }
 
   public static String Serialize(final Expression expression)
-      throws ExceptionVisitExpression, ODataApplicationException {
+      throws ExpressionVisitException, ODataApplicationException {
 
     return expression.accept(new FilterTreeToText());
   }
 
   @Override
-  public String visitBinaryOperator(final SupportedBinaryOperators operator, final String left, final String right)
-      throws ExceptionVisitExpression {
+  public String visitBinaryOperator(final BinaryOperatorKind operator, final String left, final String right)
+      throws ExpressionVisitException {
 
     return "<" + left + " " + operator.toString() + " " + right + ">";
   }
 
   @Override
-  public String visitUnaryOperator(final SupportedUnaryOperators operator, final String operand)
-      throws ExceptionVisitExpression {
+  public String visitUnaryOperator(final UnaryOperatorKind operator, final String operand)
+      throws ExpressionVisitException {
 
     return "<" + operator + " " + operand.toString() + ">";
   }
 
   @Override
-  public String visitMethodCall(final SupportedMethodCalls methodCall, final List<String> parameters)
-      throws ExceptionVisitExpression {
+  public String visitMethodCall(final MethodCallKind methodCall, final List<String> parameters)
+      throws ExpressionVisitException {
 
     String text = "<" + methodCall + "(";
     int i = 0;
@@ -83,12 +82,12 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitLiteral(final String literal) throws ExceptionVisitExpression {
+  public String visitLiteral(final String literal) throws ExpressionVisitException {
     return "<" + literal + ">";
   }
 
   @Override
-  public String visitMember(final UriInfoResource resource) throws ExceptionVisitExpression, ODataApplicationException {
+  public String visitMember(final UriInfoResource resource) throws ExpressionVisitException, ODataApplicationException {
     String ret = "";
 
     UriInfoResource path = resource;
@@ -100,7 +99,6 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
         tmp = visitLambdaExpression("ALL", all.getLamdaVariable(), all.getExpression());
       } else if (item instanceof UriResourceLambdaAny) {
         UriResourceLambdaAny any = (UriResourceLambdaAny) item;
-        // TODO create enum
         tmp = visitLambdaExpression("ANY", any.getLamdaVariable(), any.getExpression());
       } else if (item instanceof UriResourcePartTyped) {
         UriResourcePartTyped typed = (UriResourcePartTyped) item;
@@ -117,13 +115,13 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitAlias(final String referenceName) throws ExceptionVisitExpression {
+  public String visitAlias(final String referenceName) throws ExpressionVisitException {
     return "<" + referenceName + ">";
   }
 
   @Override
   public String visitLambdaExpression(final String functionText, final String string, final Expression expression)
-      throws ExceptionVisitExpression, ODataApplicationException {
+      throws ExpressionVisitException, ODataApplicationException {
 
     return "<" + functionText + ";" + ((expression == null) ? "" : expression.accept(this)) + ">";
   }
@@ -140,7 +138,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
 
   @Override
   public String visitEnum(final EdmEnumType type, final List<String> enumValues)
-      throws ExceptionVisitExpression, ODataApplicationException {
+      throws ExpressionVisitException, ODataApplicationException {
     String tmp = "";
 
     for (String item : enumValues) {
@@ -153,10 +151,4 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
     return "<" + type.getNamespace() + "." + type.getName() + "<" + tmp + ">>";
   }
 
-  @Override
-  public String visitConstant(final SupportedConstants kind)
-      throws ExceptionVisitExpression, ODataApplicationException {
-    // TODO Auto-generated method stub
-    return "<" + kind.toString() + ">";
-  }
 }

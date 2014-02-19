@@ -19,7 +19,8 @@
 package org.apache.olingo.odata4.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.odata4.commons.api.ODataApplicationException;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExceptionVisitExpression;
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableExression;
@@ -27,6 +28,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableE
 public class LiteralImpl extends ExpressionImpl implements Literal, VisitableExression {
 
   private String text;
+  private EdmType type;
 
   @Override
   public String getText() {
@@ -39,7 +41,17 @@ public class LiteralImpl extends ExpressionImpl implements Literal, VisitableExr
   }
 
   @Override
-  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException {
+  public EdmType getType() {
+    return type;
+  }
+
+  public LiteralImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+  }
+
+  @Override
+  public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLiteral(text);
   }
 

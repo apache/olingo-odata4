@@ -16,10 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption.expression;
+package org.apache.olingo.odata4.server.core.uri.queryoption;
 
-public class ExceptionVisitExpression extends Exception {
+import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 
-  private static final long serialVersionUID = 1L;
+public class CountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
+
+  private boolean count;
+
+  public CountOptionImpl() {
+    setKind(SupportedQueryOptions.INLINECOUNT);
+  }
+
+  @Override
+  public boolean getValue() {
+    return count;
+  }
+
+  public CountOptionImpl setValue(final boolean count) {
+    this.count = count;
+    return this;
+  }
 
 }

@@ -18,8 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.core.uri.antlr;
 
-// TODO after adding the external API to the URI processing class this unit test require a mayor rework
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -28,12 +26,12 @@ import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriInfoKind;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.queryoption.expression.SupportedMethodCalls;
+import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCallKind;
 import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.odata4.server.core.testutil.FilterValidator;
-import org.apache.olingo.odata4.server.core.testutil.UriResourceValidator;
+import org.apache.olingo.odata4.server.core.testutil.ResourceValidator;
 import org.apache.olingo.odata4.server.core.testutil.UriValidator;
 import org.apache.olingo.odata4.server.core.uri.UriParserException;
 import org.junit.Test;
@@ -60,13 +58,13 @@ public class TestUriParserImpl {
       + "," + PropertyDateTimeOffset + "," + PropertyDuration + "," + PropertyGuid + "," + PropertyTimeOfDay;
 
   UriValidator testUri = null;
-  UriResourceValidator testRes = null;
+  ResourceValidator testRes = null;
   FilterValidator testFilter = null;
 
   public TestUriParserImpl() {
     edm = new EdmProviderImpl(new EdmTechTestProvider());
     testUri = new UriValidator().setEdm(edm);
-    testRes = new UriResourceValidator().setEdm(edm);
+    testRes = new ResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
   }
 
@@ -204,10 +202,7 @@ public class TestUriParserImpl {
         .isAction("UARTETParam")
         .isType(EdmTechProvider.nameETTwoKeyTwoPrim, false);
 
-    // TODO add error test
-    // testUri.run("AIRTPrimParam/invalidElement").isKind(UriInfoKind.resource).goPath().
-    // isUriPathInfoKind(UriResourceKind.action);
-    // testUri.run("InvalidAction");
+    testUri.runEx("AIRTPrimParam/invalidElement").isExSemantic(0);
   }
 
   @Test
@@ -1008,7 +1003,6 @@ public class TestUriParserImpl {
   @Test
   public void testMemberStartingWithCast() {
     // on EntityType entry
-    // TODO inform OTTO
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
         + "$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
         .goFilter().root().isMember().goPath()
@@ -1036,7 +1030,7 @@ public class TestUriParserImpl {
         .isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
         .at(1).isType(EdmTechProvider.nameString);
 
-// on Complex collection
+    // on Complex collection
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember().goPath()
@@ -1050,9 +1044,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testComplexTypeCastFollowingAsCollection() {
-    // TODO inform OTTO
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/com.sap.odata.test1.CTBase");
-
   }
 
   @Test
@@ -1086,13 +1078,13 @@ public class TestUriParserImpl {
     // TODO sync
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
         .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(SupportedMethodCalls.GEODISTANCE, 2);
+        .isMethod(MethodCallKind.GEODISTANCE, 2);
     testFilter.runOnETAllPrim("geo.length(PropertySByte)")
         .is("<geo.length(<PropertySByte>)>")
-        .isMethod(SupportedMethodCalls.GEOLENGTH, 1);
+        .isMethod(MethodCallKind.GEOLENGTH, 1);
     testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
         .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(SupportedMethodCalls.GEOINTERSECTS, 2);
+        .isMethod(MethodCallKind.GEOINTERSECTS, 2);
   }
 
   @Test

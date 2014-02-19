@@ -37,11 +37,11 @@ public interface VisitableExression {
    * expression node of the expression tree.
    * @return
    * Object of type T which should be passed to the processing algorithm of the parent expression node
-   * @throws ExceptionVisitExpression
+   * @throws ExpressionVisitException
    * Exception occurred the OData library while traversing the tree
    * @throws ODataApplicationException
    * Exception thrown by the application who implemented the visitor
    */
-  <T> T accept(ExpressionVisitor<T> visitor) throws ExceptionVisitExpression, ODataApplicationException;
+  <T> T accept(ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException;
 
 }
