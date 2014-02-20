@@ -26,7 +26,7 @@ public interface UriParameter {
 
   public String getText();
 
-  public Expression getExression();
+  public Expression getExpression();
 
   public String getName();
 

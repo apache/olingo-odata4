@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.uri.antlr;
 
-import org.apache.olingo.odata4.server.core.testutil.ParserValidator;
+import org.apache.olingo.odata4.server.core.uri.testutil.ParserValidator;
 import org.junit.Test;
 
 /**

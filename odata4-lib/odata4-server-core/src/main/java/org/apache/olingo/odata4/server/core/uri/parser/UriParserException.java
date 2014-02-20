@@ -16,22 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri.parser;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+//TODO Check name of this exception when implementing proper error handling
+public class UriParserException extends Exception {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-public interface SelectItem {
+  public UriParserException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-  boolean isStar();
-
-  boolean isAllOperationsInSchema();
-
-  FullQualifiedName getAllOperationsInSchemaNameSpace();
-
-  UriInfoResource getResourcePath();
-
-  EdmType getStartTypeFilter();
+  public UriParserException(final String message) {
+    super(message, null);
+  }
 
 }

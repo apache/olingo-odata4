@@ -16,22 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.server.api.uri.UriResourceCount;
+import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
 
-public interface SelectItem {
+public class UriResourceCountImpl extends UriResourceImpl implements UriResourceCount {
 
-  boolean isStar();
+  public UriResourceCountImpl() {
+    super(UriResourceKind.count);
+  }
 
-  boolean isAllOperationsInSchema();
-
-  FullQualifiedName getAllOperationsInSchemaNameSpace();
-
-  UriInfoResource getResourcePath();
-
-  EdmType getStartTypeFilter();
+  @Override
+  public String toString() {
+    return "$count";
+  }
 
 }

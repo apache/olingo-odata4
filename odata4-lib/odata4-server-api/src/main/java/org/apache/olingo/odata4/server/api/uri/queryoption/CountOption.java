@@ -18,20 +18,8 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+public interface CountOption extends SystemQueryOption {
 
-public interface SelectItem {
-
-  boolean isStar();
-
-  boolean isAllOperationsInSchema();
-
-  FullQualifiedName getAllOperationsInSchemaNameSpace();
-
-  UriInfoResource getResourcePath();
-
-  EdmType getStartTypeFilter();
+  boolean getValue();
 
 }

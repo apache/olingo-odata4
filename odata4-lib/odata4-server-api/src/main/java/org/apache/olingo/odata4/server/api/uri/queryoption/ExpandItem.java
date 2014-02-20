@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.server.api.uri.queryoption;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 
 public interface ExpandItem {
@@ -34,16 +35,19 @@ public interface ExpandItem {
 
   TopOption getTopOption();
 
-  InlineCountOption getInlineCountOption();
+  CountOption getInlineCountOption();
 
   SelectOption getSelectOption();
 
   ExpandOption getExpandOption();
 
-  UriInfoResource getResourceInfo();
+  UriInfoResource getResourcePath();
 
   boolean isStar();
 
   boolean isRef();
 
+  EdmType getStartTypeFilter();
+
+  
 }

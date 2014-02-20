@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.server.core.uri.antlr;
 
 import org.antlr.v4.runtime.Lexer;
-import org.apache.olingo.odata4.server.core.testutil.TokenValidator;
+import org.apache.olingo.odata4.server.core.uri.testutil.TokenValidator;
 import org.junit.Test;
 
 public class TestLexer {

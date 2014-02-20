@@ -29,7 +29,7 @@ import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LiteralImpl;
@@ -109,8 +109,8 @@ public class QueryOptionTest {
 
     option = new ExpandItemImpl();
     UriInfoResource resource = new UriInfoImpl().asUriInfoResource();
-    option.setResourceInfo(resource);
-    assertEquals(resource, option.getResourceInfo());
+    option.setResourcePath(resource);
+    assertEquals(resource, option.getResourcePath());
 
   }
 

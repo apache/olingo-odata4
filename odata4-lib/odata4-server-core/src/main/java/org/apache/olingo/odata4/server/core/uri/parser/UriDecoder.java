@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.olingo.odata4.server.core.uri.UriParserSyntaxException;
 import org.apache.olingo.odata4.server.core.uri.parser.RawUri.QueryOption;
 
 public class UriDecoder {
@@ -39,7 +38,7 @@ public class UriDecoder {
 
     Matcher m = uriPattern.matcher(uri);
     if (m.matches()) {
-      rawUri.sheme = m.group(2);
+      rawUri.scheme = m.group(2);
       rawUri.authority = m.group(4);
       rawUri.path = m.group(5);
       rawUri.queryOptionString = m.group(7);

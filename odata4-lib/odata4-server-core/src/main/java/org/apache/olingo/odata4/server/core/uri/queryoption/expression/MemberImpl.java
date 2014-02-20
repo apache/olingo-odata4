@@ -25,21 +25,22 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.VisitableExression;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriInfoImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
+import org.apache.olingo.odata4.server.core.uri.UriInfoImpl;
+import org.apache.olingo.odata4.server.core.uri.UriResourceImpl;
+import org.apache.olingo.odata4.server.core.uri.UriResourceTypedImpl;
+import org.apache.olingo.odata4.server.core.uri.UriResourceWithKeysImpl;
 
 public class MemberImpl extends ExpressionImpl implements Member, VisitableExression {
 
   private UriInfoResource path;
+  private EdmType startTypeFilter;
 
   @Override
-  public UriInfoResource getPath() {
+  public UriInfoResource getResourcePath() {
     return path;
   }
 
-  public Member setPath(final UriInfoResource pathSegments) {
+  public Member setResourcePath(final UriInfoResource pathSegments) {
     path = pathSegments;
     return this;
   }
@@ -83,6 +84,16 @@ public class MemberImpl extends ExpressionImpl implements Member, VisitableExres
       return lastTyped.isCollection();
     }
     return false;
+  }
+  
+  @Override 
+  public EdmType getStartTypeFilter() {
+    return this.startTypeFilter;
+  }
+
+  public MemberImpl setTypeFilter(EdmType startTypeFilter) {
+     this.startTypeFilter = startTypeFilter;
+     return this;
   }
 
 }
