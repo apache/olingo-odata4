@@ -25,10 +25,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class Uint7 extends SingletonPrimitiveType {
 
-  private static final Uint7 instance = new Uint7();
+  private static final Uint7 INSTANCE = new Uint7();
 
   public static Uint7 getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -48,16 +48,19 @@ public final class Uint7 extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
-    return EdmSByte.getInstance().internalValueOfString(value, isNullable, maxLength, precision, scale, isUnicode,
-        returnType);
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
+    return EdmSByte.getInstance().internalValueOfString(
+            value, isNullable, maxLength, precision, scale, isUnicode, returnType);
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-    return EdmSByte.getInstance().internalValueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    return EdmSByte.getInstance().internalValueToString(
+            value, isNullable, maxLength, precision, scale, isUnicode);
   }
 }

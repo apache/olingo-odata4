@@ -26,14 +26,15 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
  */
 public class EdmBinary extends SingletonPrimitiveType {
 
-  private static final EdmBinary instance = new EdmBinary();
+  private static final EdmBinary INSTANCE = new EdmBinary();
+
   {
     uriPrefix = "binary'";
     uriSuffix = "'";
   }
 
   public static EdmBinary getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -43,31 +44,33 @@ public class EdmBinary extends SingletonPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
-    return value == null ?
-        isNullable == null || isNullable :
-        Base64.isBase64(value) && validateMaxLength(value, maxLength);
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
+
+    return value == null
+           ? isNullable == null || isNullable
+           : Base64.isBase64(value) && validateMaxLength(value, maxLength);
   }
 
   private static boolean validateMaxLength(final String value, final Integer maxLength) {
-    return maxLength == null ? true :
-        // Every three bytes are represented as four base-64 characters.
-        // Additionally, there could be up to two padding "=" characters
-        // if the number of bytes is not a multiple of three.
-        maxLength >= value.length() * 3 / 4 - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
+    return maxLength == null ? true
+           : // Every three bytes are represented as four base-64 characters.
+            // Additionally, there could be up to two padding "=" characters
+            // if the number of bytes is not a multiple of three.
+            maxLength >= value.length() * 3 / 4 - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
   }
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     if (!Base64.isBase64(value)) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
     if (!validateMaxLength(value, maxLength)) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     final byte[] result = Base64.decodeBase64(value);
@@ -75,7 +78,7 @@ public class EdmBinary extends SingletonPrimitiveType {
     if (returnType.isAssignableFrom(byte[].class)) {
       return returnType.cast(result);
     } else if (returnType.isAssignableFrom(Byte[].class)) {
-      Byte[] byteArray = new Byte[result.length];
+      final Byte[] byteArray = new Byte[result.length];
       for (int i = 0; i < result.length; i++) {
         byteArray[i] = result[i];
       }
@@ -87,8 +90,9 @@ public class EdmBinary extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     byte[] byteArrayValue;
     if (value instanceof byte[]) {
       byteArrayValue = (byte[]) value;
@@ -100,12 +104,12 @@ public class EdmBinary extends SingletonPrimitiveType {
       }
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
 
     if (maxLength != null && byteArrayValue.length > maxLength) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     return Base64.encodeBase64URLSafeString(byteArrayValue);

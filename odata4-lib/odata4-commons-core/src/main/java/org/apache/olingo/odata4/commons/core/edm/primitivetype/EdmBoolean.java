@@ -25,10 +25,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class EdmBoolean extends SingletonPrimitiveType {
 
-  private static final EdmBoolean instance = new EdmBoolean();
+  private static final EdmBoolean INSTANCE = new EdmBoolean();
 
   public static EdmBoolean getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -38,8 +38,9 @@ public final class EdmBoolean extends SingletonPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
+
     return value == null ? isNullable == null || isNullable : validateLiteral(value);
   }
 
@@ -49,30 +50,32 @@ public final class EdmBoolean extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     if (validateLiteral(value)) {
       if (returnType.isAssignableFrom(Boolean.class)) {
         return returnType.cast(Boolean.valueOf("true".equals(value)));
       } else {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+                "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
       }
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     if (value instanceof Boolean) {
       return Boolean.toString((Boolean) value);
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 }

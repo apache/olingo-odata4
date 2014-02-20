@@ -46,7 +46,9 @@ import org.junit.Test;
 public class EdmImplCachingTest {
 
   private final FullQualifiedName NAME1 = new FullQualifiedName("testNamespace1", "testName1");
+
   private final FullQualifiedName NAME2 = new FullQualifiedName("testNamespace2", "testName2");
+
   private Edm edm;
 
   @Test
@@ -244,7 +246,8 @@ public class EdmImplCachingTest {
     edm = new LocalEdm();
   }
 
-  private class LocalEdm extends EdmImpl {
+  private class LocalEdm extends AbstractEdmImpl {
+
     @Override
     public EdmEntityContainer createEntityContainer(final FullQualifiedName fqn) {
       if (NAME1.equals(fqn) || fqn == null) {
@@ -307,7 +310,7 @@ public class EdmImplCachingTest {
 
     @Override
     public EdmAction createBoundAction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
-        final Boolean isBindingParameterCollection) {
+            final Boolean isBindingParameterCollection) {
       if (NAME1.equals(fqn)) {
         EdmAction action = mock(EdmAction.class);
         when(action.getNamespace()).thenReturn(fqn.getNamespace());
@@ -324,8 +327,8 @@ public class EdmImplCachingTest {
 
     @Override
     public EdmFunction createBoundFunction(final FullQualifiedName fqn,
-        final FullQualifiedName bindingParameterTypeName,
-        final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
+            final FullQualifiedName bindingParameterTypeName,
+            final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
       if (NAME1.equals(fqn)) {
         EdmFunction function = mock(EdmFunction.class);
         when(function.getNamespace()).thenReturn(fqn.getNamespace());

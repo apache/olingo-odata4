@@ -22,15 +22,19 @@ import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 
 public class ActionMapKey {
+
   private final FullQualifiedName actionName;
+
   private final FullQualifiedName bindingParameterTypeName;
+
   private final Boolean isBindingParameterCollection;
 
   public ActionMapKey(final FullQualifiedName actionName, final FullQualifiedName bindingParameterTypeName,
-      final Boolean isBindingParameterCollection) {
+          final Boolean isBindingParameterCollection) {
+
     if (actionName == null || bindingParameterTypeName == null || isBindingParameterCollection == null) {
-      throw new EdmException(
-          "Action name, binding parameter type and binding parameter collection must not be null for bound actions");
+      throw new EdmException("Action name, binding parameter type and binding parameter collection "
+                             + "must not be null for bound actions");
     }
     this.actionName = actionName;
     this.bindingParameterTypeName = bindingParameterTypeName;
@@ -39,8 +43,9 @@ public class ActionMapKey {
 
   @Override
   public int hashCode() {
-    String forHash =
-        actionName.toString() + bindingParameterTypeName.toString() + isBindingParameterCollection.toString();
+    final String forHash = actionName.toString()
+                           + bindingParameterTypeName.toString()
+                           + isBindingParameterCollection.toString();
     return forHash.hashCode();
   }
 

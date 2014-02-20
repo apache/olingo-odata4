@@ -32,23 +32,24 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 public final class EdmDecimal extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile("(?:\\+|-)?(?:0*(\\p{Digit}+?))(?:\\.(\\p{Digit}+?)0*)?");
-  private static final EdmDecimal instance = new EdmDecimal();
+
+  private static final EdmDecimal INSTANCE = new EdmDecimal();
 
   public static EdmDecimal getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return primitiveType instanceof Uint7
-        || primitiveType instanceof EdmByte
-        || primitiveType instanceof EdmSByte
-        || primitiveType instanceof EdmInt16
-        || primitiveType instanceof EdmInt32
-        || primitiveType instanceof EdmInt64
-        || primitiveType instanceof EdmSingle
-        || primitiveType instanceof EdmDouble
-        || primitiveType instanceof EdmDecimal;
+           || primitiveType instanceof EdmByte
+           || primitiveType instanceof EdmSByte
+           || primitiveType instanceof EdmInt16
+           || primitiveType instanceof EdmInt32
+           || primitiveType instanceof EdmInt64
+           || primitiveType instanceof EdmSingle
+           || primitiveType instanceof EdmDouble
+           || primitiveType instanceof EdmDecimal;
   }
 
   @Override
@@ -58,11 +59,12 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
-    return value == null ?
-        isNullable == null || isNullable :
-        validateLiteral(value) && validatePrecisionAndScale(value, precision, scale);
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
+
+    return value == null
+           ? isNullable == null || isNullable
+           : validateLiteral(value) && validatePrecisionAndScale(value, precision, scale);
   }
 
   private static boolean validateLiteral(final String value) {
@@ -70,50 +72,53 @@ public final class EdmDecimal extends SingletonPrimitiveType {
   }
 
   private static final boolean validatePrecisionAndScale(final String value, final Integer precision,
-      final Integer scale) {
+          final Integer scale) {
+
     final Matcher matcher = PATTERN.matcher(value);
     matcher.matches();
     final int significantIntegerDigits = matcher.group(1).equals("0") ? 0 : matcher.group(1).length();
     final int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
     return (precision == null || precision >= significantIntegerDigits + decimals)
-        && (decimals <= (scale == null ? 0 : scale));
+           && (decimals <= (scale == null ? 0 : scale));
   }
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     if (!validateLiteral(value)) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
     if (!validatePrecisionAndScale(value, precision, scale)) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     try {
       return convertDecimal(new BigDecimal(value), returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+              "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
     }
   }
 
   /**
    * Converts a {@link BigDecimal} value into the requested return type if possible.
+   *
    * @param value the value
    * @param returnType the class of the returned value; it must be one of {@link BigDecimal}, {@link Double},
    * {@link Float}, {@link BigInteger}, {@link Long}, {@link Integer}, {@link Short}, or {@link Byte}
    * @return the converted value
-   * @throws IllegalArgumentException if the conversion is not possible
-   * or would lead to loss of data
+   * @throws IllegalArgumentException if the conversion is not possible or would lead to loss of data
    * @throws ClassCastException if the return type is not allowed
    */
   protected static <T> T convertDecimal(final BigDecimal value, final Class<T> returnType)
-      throws IllegalArgumentException, ClassCastException {
+          throws IllegalArgumentException, ClassCastException {
+
     if (returnType.isAssignableFrom(BigDecimal.class)) {
       return returnType.cast(value);
     } else if (returnType.isAssignableFrom(Double.class)) {
@@ -153,8 +158,9 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     String result;
     if (value instanceof Long || value instanceof Integer || value instanceof Short
         || value instanceof Byte || value instanceof BigInteger) {
@@ -162,31 +168,31 @@ public final class EdmDecimal extends SingletonPrimitiveType {
       final int digits = result.startsWith("-") ? result.length() - 1 : result.length();
       if (precision != null && precision < digits) {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+                "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
 
     } else if (value instanceof Double || value instanceof Float || value instanceof BigDecimal) {
       BigDecimal bigDecimalValue;
       try {
-        bigDecimalValue = value instanceof Double ? BigDecimal.valueOf((Double) value) :
-            value instanceof Float ? BigDecimal.valueOf((Float) value) : (BigDecimal) value;
+        bigDecimalValue = value instanceof Double ? BigDecimal.valueOf((Double) value)
+                          : value instanceof Float ? BigDecimal.valueOf((Float) value) : (BigDecimal) value;
       } catch (final NumberFormatException e) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)", e);
       }
 
-      final int digits = bigDecimalValue.scale() >= 0 ?
-          Math.max(bigDecimalValue.precision(), bigDecimalValue.scale()) :
-          bigDecimalValue.precision() - bigDecimalValue.scale();
+      final int digits = bigDecimalValue.scale() >= 0
+                         ? Math.max(bigDecimalValue.precision(), bigDecimalValue.scale())
+                         : bigDecimalValue.precision() - bigDecimalValue.scale();
       if ((precision == null || precision >= digits) && (bigDecimalValue.scale() <= (scale == null ? 0 : scale))) {
         result = bigDecimalValue.toPlainString();
       } else {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+                "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
 
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
 
     return result;

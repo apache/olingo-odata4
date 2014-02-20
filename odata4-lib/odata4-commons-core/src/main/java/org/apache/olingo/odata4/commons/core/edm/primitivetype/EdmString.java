@@ -28,14 +28,16 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 public final class EdmString extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN_ASCII = Pattern.compile("\\p{ASCII}*");
-  private static final EdmString instance = new EdmString();
+
+  private static final EdmString INSTANCE = new EdmString();
+
   {
     uriPrefix = "'";
     uriSuffix = "'";
   }
 
   public static EdmString getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -45,32 +47,34 @@ public final class EdmString extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     if (isUnicode != null && !isUnicode && !PATTERN_ASCII.matcher(value).matches()
         || maxLength != null && maxLength < value.length()) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     if (returnType.isAssignableFrom(String.class)) {
       return returnType.cast(value);
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     final String result = value instanceof String ? (String) value : String.valueOf(value);
 
     if (isUnicode != null && !isUnicode && !PATTERN_ASCII.matcher(result).matches()
         || maxLength != null && maxLength < result.length()) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     return result;
@@ -84,7 +88,7 @@ public final class EdmString extends SingletonPrimitiveType {
 
     final int length = literal.length();
 
-    StringBuilder uriLiteral = new StringBuilder(length + 2);
+    final StringBuilder uriLiteral = new StringBuilder(length + 2);
     uriLiteral.append(uriPrefix);
     for (int i = 0; i < length; i++) {
       final char c = literal.charAt(i);

@@ -26,10 +26,10 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class EdmNull extends SingletonPrimitiveType {
 
-  private static final EdmNull instance = new EdmNull();
+  private static final EdmNull INSTANCE = new EdmNull();
 
   public static EdmNull getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -49,15 +49,17 @@ public final class EdmNull extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     return null;
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     return null;
   }
 

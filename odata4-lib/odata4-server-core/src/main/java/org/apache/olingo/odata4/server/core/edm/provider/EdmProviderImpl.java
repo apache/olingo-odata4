@@ -35,7 +35,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata4.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.EdmImpl;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmImpl;
 import org.apache.olingo.odata4.server.api.edm.provider.Action;
 import org.apache.olingo.odata4.server.api.edm.provider.AliasInfo;
 import org.apache.olingo.odata4.server.api.edm.provider.ComplexType;
@@ -47,7 +47,7 @@ import org.apache.olingo.odata4.server.api.edm.provider.Function;
 import org.apache.olingo.odata4.server.api.edm.provider.Parameter;
 import org.apache.olingo.odata4.server.api.edm.provider.TypeDefinition;
 
-public class EdmProviderImpl extends EdmImpl {
+public class EdmProviderImpl extends AbstractEdmImpl {
 
   private final EdmProvider provider;
   private final Map<FullQualifiedName, List<Action>> actionsMap = new HashMap<FullQualifiedName, List<Action>>();

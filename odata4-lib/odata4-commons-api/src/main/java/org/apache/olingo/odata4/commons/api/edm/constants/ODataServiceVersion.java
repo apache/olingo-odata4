@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 
 /**
  * This class is a container for the supported ODataServiceVersions.
- *
- *
  */
 public class ODataServiceVersion {
 

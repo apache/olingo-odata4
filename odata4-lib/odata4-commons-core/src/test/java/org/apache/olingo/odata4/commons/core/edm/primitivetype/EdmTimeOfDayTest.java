@@ -69,7 +69,7 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
     assertEquals(dateTime, instance.valueOfString("00:00", null, null, null, null, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("00:00:00", null, null, null, null, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("00:00:00.000000000000", null, null, null, null, null,
-        Calendar.class));
+            Calendar.class));
 
     dateTime.set(Calendar.MILLISECOND, 999);
     assertEquals(dateTime, instance.valueOfString("00:00:00.999", null, null, 3, null, null, Calendar.class));

@@ -28,16 +28,20 @@ import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 public class FunctionMapKey {
 
   private final FullQualifiedName functionName;
+
   private final FullQualifiedName bindingParameterTypeName;
+
   private final Boolean isBindingParameterCollection;
+
   private final List<String> parameterNames;
 
   public FunctionMapKey(final FullQualifiedName functionName, final FullQualifiedName bindingParameterTypeName,
-      final Boolean isBindingParameterCollection, final List<String> parameterNames) {
+          final Boolean isBindingParameterCollection, final List<String> parameterNames) {
+
     this.functionName = functionName;
     if (bindingParameterTypeName != null && isBindingParameterCollection == null) {
       throw new EdmException(
-          "Indicator that the bindingparameter is a collection must not be null if its an bound function.");
+              "Indicator that the bindingparameter is a collection must not be null if its an bound function.");
     }
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
@@ -85,23 +89,23 @@ public class FunctionMapKey {
     }
     final FunctionMapKey other = (FunctionMapKey) obj;
 
-    if (functionName.equals(other.functionName)) {
-      if ((bindingParameterTypeName == null && other.bindingParameterTypeName == null)
-          || (bindingParameterTypeName != null && bindingParameterTypeName.equals(other.bindingParameterTypeName))) {
-        if ((isBindingParameterCollection == null && other.isBindingParameterCollection == null)
-            || (isBindingParameterCollection != null && isBindingParameterCollection
-                .equals(other.isBindingParameterCollection))) {
-          if (parameterNames == null && other.parameterNames == null) {
-            return true;
-          } else if (parameterNames.size() == other.parameterNames.size()) {
-            for (String name : parameterNames) {
-              if (!other.parameterNames.contains(name)) {
-                return false;
-              }
-            }
-            return true;
+    if (functionName.equals(other.functionName)
+            && (bindingParameterTypeName == null && other.bindingParameterTypeName == null)
+            || (bindingParameterTypeName != null && bindingParameterTypeName.equals(other.bindingParameterTypeName))
+            && (isBindingParameterCollection == null
+            && other.isBindingParameterCollection == null)
+            || (isBindingParameterCollection != null
+            && isBindingParameterCollection.equals(other.isBindingParameterCollection))) {
+      
+      if (parameterNames == null && other.parameterNames == null) {
+        return true;
+      } else if (parameterNames.size() == other.parameterNames.size()) {
+        for (String name : parameterNames) {
+          if (!other.parameterNames.contains(name)) {
+            return false;
           }
         }
+        return true;
       }
     }
     return false;

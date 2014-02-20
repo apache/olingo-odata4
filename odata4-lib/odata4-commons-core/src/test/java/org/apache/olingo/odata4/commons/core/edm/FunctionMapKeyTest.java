@@ -30,6 +30,7 @@ import org.junit.Test;
 public class FunctionMapKeyTest {
 
   private final FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
+
   private final FullQualifiedName fqnType = new FullQualifiedName("namespace2", "name2");
 
   @Test

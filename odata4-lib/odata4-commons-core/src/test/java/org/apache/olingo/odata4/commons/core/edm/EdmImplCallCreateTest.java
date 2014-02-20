@@ -46,7 +46,9 @@ import org.junit.Test;
 public class EdmImplCallCreateTest {
 
   private final FullQualifiedName FQN = new FullQualifiedName("testNamespace", "testName");
+
   private final FullQualifiedName WRONG_FQN = new FullQualifiedName("wrong", "wrong");
+
   private Edm edm;
 
   @Test
@@ -148,7 +150,8 @@ public class EdmImplCallCreateTest {
     edm = new LocalEdm();
   }
 
-  private class LocalEdm extends EdmImpl {
+  private class LocalEdm extends AbstractEdmImpl {
+
     @Override
     public EdmEntityContainer createEntityContainer(final FullQualifiedName fqn) {
       if (fqn == null || FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
@@ -206,7 +209,7 @@ public class EdmImplCallCreateTest {
 
     @Override
     public EdmAction createBoundAction(final FullQualifiedName fqn, final FullQualifiedName bindingParameterTypeName,
-        final Boolean isBindingParameterCollection) {
+            final Boolean isBindingParameterCollection) {
       if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
         EdmAction action = mock(EdmAction.class);
         when(action.getNamespace()).thenReturn(fqn.getNamespace());
@@ -218,8 +221,8 @@ public class EdmImplCallCreateTest {
 
     @Override
     public EdmFunction createBoundFunction(final FullQualifiedName fqn,
-        final FullQualifiedName bindingParameterTypeName,
-        final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
+            final FullQualifiedName bindingParameterTypeName,
+            final Boolean isBindingParameterCollection, final List<String> bindingParameterNames) {
       if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
         EdmFunction function = mock(EdmFunction.class);
         when(function.getNamespace()).thenReturn(fqn.getNamespace());

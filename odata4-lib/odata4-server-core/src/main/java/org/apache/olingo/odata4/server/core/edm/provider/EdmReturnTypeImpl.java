@@ -23,17 +23,17 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.EdmImpl;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmImpl;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.odata4.server.api.edm.provider.ReturnType;
 
 public class EdmReturnTypeImpl implements EdmReturnType {
 
-  private final EdmImpl edm;
+  private final AbstractEdmImpl edm;
   private final ReturnType returnType;
   private EdmType typeImpl;
 
-  public EdmReturnTypeImpl(final EdmImpl edm, final ReturnType returnType) {
+  public EdmReturnTypeImpl(final AbstractEdmImpl edm, final ReturnType returnType) {
     this.edm = edm;
     this.returnType = returnType;
   }

@@ -28,9 +28,9 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 public abstract class PrimitiveTypeBaseTest {
 
   private void expectErrorInValueToString(final EdmPrimitiveType instance,
-      final Object value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode,
-      final String messageReferenceString) {
+          final Object value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode,
+          final String messageReferenceString) {
     try {
       instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
       fail("Expected exception not thrown");
@@ -41,7 +41,7 @@ public abstract class PrimitiveTypeBaseTest {
   }
 
   private void expectErrorInValueToString(final EdmPrimitiveType instance, final Object value,
-      final String messageReference) {
+          final String messageReference) {
     expectErrorInValueToString(instance, value, null, null, null, null, null, messageReference);
   }
 
@@ -54,20 +54,22 @@ public abstract class PrimitiveTypeBaseTest {
   }
 
   protected void expectFacetsErrorInValueToString(final EdmPrimitiveType instance, final Object value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
     expectErrorInValueToString(instance, value, isNullable, maxLength, precision, scale, isUnicode,
-        "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED");
+            "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED");
   }
 
   protected void expectNullErrorInValueToString(final EdmPrimitiveType instance) {
     expectErrorInValueToString(instance, null, false, null, null, null, null,
-        "EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");
+            "EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");
   }
 
   private void expectErrorInValueOfString(final EdmPrimitiveType instance,
-      final String value, final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<?> returnType, final String messageReferenceString) {
+          final String value, final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<?> returnType,
+          final String messageReferenceString) {
+
     try {
       instance.valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
       fail("Expected exception not thrown");
@@ -79,30 +81,30 @@ public abstract class PrimitiveTypeBaseTest {
 
   protected void expectTypeErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
     expectErrorInValueOfString(instance, value, null, null, null, null, null, Class.class,
-        "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED");
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED");
   }
 
   protected void expectUnconvertibleErrorInValueOfString(final EdmPrimitiveType instance, final String value,
-      final Class<?> type) {
+          final Class<?> type) {
     expectErrorInValueOfString(instance, value, null, null, null, null, null, type,
-        "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE");
+            "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE");
   }
 
   protected void expectContentErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
     expectErrorInValueOfString(instance, value, null, null, null, null, null, instance.getDefaultType(),
-        "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT");
+            "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT");
   }
 
   protected void expectFacetsErrorInValueOfString(final EdmPrimitiveType instance, final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
     expectErrorInValueOfString(instance, value, isNullable, maxLength, precision, scale, isUnicode,
-        instance.getDefaultType(), "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED");
+            instance.getDefaultType(), "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED");
   }
 
   protected void expectNullErrorInValueOfString(final EdmPrimitiveType instance) {
     expectErrorInValueOfString(instance, null, false, null, null, null, null, instance.getDefaultType(),
-        "EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
+            "EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
   }
 
   protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {

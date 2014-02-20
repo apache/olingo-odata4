@@ -28,10 +28,11 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
 public final class EdmGuid extends SingletonPrimitiveType {
 
   private static final String PATTERN = "\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}";
-  private static final EdmGuid instance = new EdmGuid();
+
+  private static final EdmGuid INSTANCE = new EdmGuid();
 
   public static EdmGuid getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
@@ -41,8 +42,8 @@ public final class EdmGuid extends SingletonPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) {
     return value == null ? isNullable == null || isNullable : validateLiteral(value);
   }
 
@@ -52,34 +53,36 @@ public final class EdmGuid extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode,
-      final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode,
+          final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     UUID result;
     if (validateLiteral(value)) {
       result = UUID.fromString(value);
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
     }
 
     if (returnType.isAssignableFrom(UUID.class)) {
       return returnType.cast(result);
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
     if (value instanceof UUID) {
       return ((UUID) value).toString();
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 }

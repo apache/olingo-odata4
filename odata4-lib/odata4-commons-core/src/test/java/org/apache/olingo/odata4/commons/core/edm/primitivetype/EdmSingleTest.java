@@ -86,23 +86,23 @@ public class EdmSingleTest extends PrimitiveTypeBaseTest {
     assertEquals(Float.valueOf(42.0F), instance.valueOfString("42", null, null, null, null, null, Float.class));
     assertEquals(Float.valueOf(2.2E38F), instance.valueOfString("22E37", null, null, null, null, null, Float.class));
     assertEquals(Float.valueOf(1.23E-38F), instance.valueOfString("12.3E-39", null, null, null, null, null,
-        Float.class));
+            Float.class));
     assertEquals(BigDecimal.TEN, instance.valueOfString("10", null, null, null, null, null, BigDecimal.class));
     assertEquals(Byte.valueOf((byte) 0), instance.valueOfString("0", null, null, null, null, null, Byte.class));
     assertEquals(Short.valueOf((short) 1), instance.valueOfString("1.00", null, null, null, null, null, Short.class));
     assertEquals(Integer.valueOf(42), instance.valueOfString("4.2E1", null, null, null, null, null, Integer.class));
     assertEquals(Long.valueOf(12345678), instance.valueOfString("12345.678E+03", null, null, null, null, null,
-        Long.class));
+            Long.class));
 
     assertEquals(Float.valueOf(Float.NaN), instance.valueOfString("NaN", null, null, null, null, null, Float.class));
     assertEquals(Float.valueOf(Float.NEGATIVE_INFINITY), instance.valueOfString("-INF", null, null, null, null, null,
-        Float.class));
+            Float.class));
     assertEquals(Float.valueOf(Float.POSITIVE_INFINITY), instance.valueOfString("INF", null, null, null, null, null,
-        Float.class));
+            Float.class));
     assertEquals(Double.valueOf(Double.NaN), instance.valueOfString("NaN", null, null, null, null, null,
-        Double.class));
+            Double.class));
     assertEquals(Double.valueOf(Double.NEGATIVE_INFINITY), instance.valueOfString("-INF", null, null, null, null, null,
-        Double.class));
+            Double.class));
 
     expectContentErrorInValueOfString(instance, "0.");
     expectContentErrorInValueOfString(instance, ".0");

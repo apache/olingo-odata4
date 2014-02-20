@@ -28,6 +28,7 @@ import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
   protected String uriPrefix = "";
+
   protected String uriSuffix = "";
 
   @Override
@@ -37,8 +38,9 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode) {
+          final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
+          final Boolean isUnicode) {
+
     try {
       valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, getDefaultType());
       return true;
@@ -49,9 +51,10 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
   @Override
   public final <T> T valueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-      throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+          throws EdmPrimitiveTypeException {
+
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_NULL_NOT_ALLOWED");
@@ -62,13 +65,13 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
   }
 
   protected abstract <T> T internalValueOfString(String value,
-      Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
-      Class<T> returnType) throws EdmPrimitiveTypeException;
+          Boolean isNullable, Integer maxLength, Integer precision, Integer scale, Boolean isUnicode,
+          Class<T> returnType) throws EdmPrimitiveTypeException;
 
   @Override
   public final String valueToString(final Object value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.VALUE_NULL_NOT_ALLOWED");
@@ -79,13 +82,16 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
   }
 
   protected abstract <T> String internalValueToString(T value,
-      Boolean isNullable, Integer maxLength, Integer precision, Integer scale,
-      Boolean isUnicode) throws EdmPrimitiveTypeException;
+          Boolean isNullable, Integer maxLength, Integer precision, Integer scale,
+          Boolean isUnicode) throws EdmPrimitiveTypeException;
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null ? null :
-        uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
+    return literal == null
+           ? null
+           : uriPrefix.isEmpty() && uriSuffix.isEmpty()
+             ? literal
+             : uriPrefix + literal + uriSuffix;
   }
 
   @Override
@@ -95,7 +101,8 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
     } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
       return literal;
     } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-        && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+               && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");

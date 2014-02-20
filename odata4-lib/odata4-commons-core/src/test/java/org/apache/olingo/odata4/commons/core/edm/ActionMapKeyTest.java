@@ -29,6 +29,7 @@ import org.junit.Test;
 public class ActionMapKeyTest {
 
   private final FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
+
   private final FullQualifiedName fqnType = new FullQualifiedName("namespace2", "name2");
 
   @Test
@@ -44,7 +45,7 @@ public class ActionMapKeyTest {
   }
 
   private void createAndCheckForEdmException(final FullQualifiedName fqn, final FullQualifiedName typeName,
-      final Boolean collection) {
+          final Boolean collection) {
     try {
       new ActionMapKey(fqn, typeName, collection);
     } catch (EdmException e) {

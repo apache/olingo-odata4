@@ -28,18 +28,18 @@ import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class EdmInt16 extends SingletonPrimitiveType {
 
-  private static final EdmInt16 instance = new EdmInt16();
+  private static final EdmInt16 INSTANCE = new EdmInt16();
 
   public static EdmInt16 getInstance() {
-    return instance;
+    return INSTANCE;
   }
 
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return primitiveType instanceof Uint7
-        || primitiveType instanceof EdmByte
-        || primitiveType instanceof EdmSByte
-        || primitiveType instanceof EdmInt16;
+           || primitiveType instanceof EdmByte
+           || primitiveType instanceof EdmSByte
+           || primitiveType instanceof EdmInt16;
   }
 
   @Override
@@ -49,31 +49,31 @@ public final class EdmInt16 extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
     Short valueShort;
     try {
       valueShort = Short.parseShort(value);
     } catch (final NumberFormatException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     }
 
     try {
       return EdmInt64.convertNumber(valueShort, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
+              "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
     }
   }
 
   @Override
   protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+          final Boolean isNullable, final Integer maxLength, final Integer precision,
+          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
     if (value instanceof Byte || value instanceof Short) {
       return value.toString();
     } else if (value instanceof Integer || value instanceof Long) {
@@ -82,18 +82,18 @@ public final class EdmInt16 extends SingletonPrimitiveType {
         return value.toString();
       } else {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+                "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
       }
     } else if (value instanceof BigInteger) {
       if (((BigInteger) value).bitLength() < Short.SIZE) {
         return value.toString();
       } else {
         throw new EdmPrimitiveTypeException(
-            "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
+                "EdmPrimitiveTypeException.VALUE_ILLEGAL_CONTENT.addContent(value)");
       }
     } else {
       throw new EdmPrimitiveTypeException(
-          "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
     }
   }
 }
