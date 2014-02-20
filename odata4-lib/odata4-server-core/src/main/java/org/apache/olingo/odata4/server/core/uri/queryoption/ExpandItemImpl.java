@@ -21,11 +21,12 @@ package org.apache.olingo.odata4.server.core.uri.queryoption;
 
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 import org.apache.olingo.odata4.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.odata4.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SearchOption;
@@ -33,6 +34,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.server.api.uri.queryoption.TopOption;
+import org.apache.olingo.odata4.server.core.uri.queryoption.expression.MemberImpl;
 
 public class ExpandItemImpl implements ExpandItem {
   private LevelsExpandOption levelsExpandOption;
@@ -41,7 +43,7 @@ public class ExpandItemImpl implements ExpandItem {
   private OrderByOption orderByOption;
   private SkipOption skipOption;
   private TopOption topOption;
-  private InlineCountOption inlineCountOption;
+  private CountOption inlineCountOption;
   private SelectOption selectOption;
   private ExpandOption expandOption;
 
@@ -50,6 +52,7 @@ public class ExpandItemImpl implements ExpandItem {
   private boolean isStar;
 
   private boolean isRef;
+  private EdmType startTypeFilter;
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
 
@@ -114,7 +117,7 @@ public class ExpandItemImpl implements ExpandItem {
   }
 
   @Override
-  public InlineCountOption getInlineCountOption() {
+  public CountOption getInlineCountOption() {
     return inlineCountOption;
   }
 
@@ -129,13 +132,13 @@ public class ExpandItemImpl implements ExpandItem {
     return expandOption;
   }
 
-  public ExpandItemImpl setResourceInfo(final UriInfoResource resourceInfo) {
+  public ExpandItemImpl setResourcePath(final UriInfoResource resourceInfo) {
     this.resourceInfo = resourceInfo;
     return this;
   }
 
   @Override
-  public UriInfoResource getResourceInfo() {
+  public UriInfoResource getResourcePath() {
 
     return resourceInfo;
   }
@@ -160,4 +163,15 @@ public class ExpandItemImpl implements ExpandItem {
     return this;
   }
 
+  
+  
+  @Override 
+  public EdmType getStartTypeFilter() {
+    return this.startTypeFilter;
+  }
+
+  public ExpandItemImpl setTypeFilter(EdmType startTypeFilter) {
+     this.startTypeFilter = startTypeFilter;
+     return this;
+  }
 }

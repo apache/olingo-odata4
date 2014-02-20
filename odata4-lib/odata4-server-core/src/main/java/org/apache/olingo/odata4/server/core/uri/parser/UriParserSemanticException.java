@@ -16,38 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri.parser;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+//TODO Check name of this exception when implementing proper error handling
+public class UriParserSemanticException extends UriParserException {
 
-public interface ExpandItem {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-  LevelsExpandOption getLevelsOption();
+  public UriParserSemanticException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-  FilterOption getFilterOption();
+  public UriParserSemanticException(final String message) {
+    super(message, null);
+  }
 
-  SearchOption getSearchOption();
-
-  OrderByOption getOrderByOption();
-
-  SkipOption getSkipOption();
-
-  TopOption getTopOption();
-
-  CountOption getInlineCountOption();
-
-  SelectOption getSelectOption();
-
-  ExpandOption getExpandOption();
-
-  UriInfoResource getResourcePath();
-
-  boolean isStar();
-
-  boolean isRef();
-
-  EdmType getStartTypeFilter();
-
-  
 }

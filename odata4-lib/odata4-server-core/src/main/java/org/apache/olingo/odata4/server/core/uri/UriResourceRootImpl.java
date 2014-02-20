@@ -16,38 +16,47 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourceRoot;
 
-public interface ExpandItem {
+public class UriResourceRootImpl extends UriResourceWithKeysImpl implements UriResourceRoot {
 
-  LevelsExpandOption getLevelsOption();
+  private EdmType type;
+  private boolean isCollection;
 
-  FilterOption getFilterOption();
+  public UriResourceRootImpl() {
+    super(UriResourceKind.root);
+  }
 
-  SearchOption getSearchOption();
+  @Override
+  public EdmType getType() {
+    return type;
+  }
 
-  OrderByOption getOrderByOption();
+  public UriResourceRootImpl setType(final EdmType type) {
+    this.type = type;
+    return this;
+  }
 
-  SkipOption getSkipOption();
+  @Override
+  public boolean isCollection() {
+    if (keyPredicates != null) {
+      return false;
+    }
+    return isCollection;
+  }
 
-  TopOption getTopOption();
+  public UriResourceRootImpl setCollection(final boolean isCollection) {
+    this.isCollection = isCollection;
+    return this;
+  }
 
-  CountOption getInlineCountOption();
+  @Override
+  public String toString() {
+    return "$root";
+  }
 
-  SelectOption getSelectOption();
-
-  ExpandOption getExpandOption();
-
-  UriInfoResource getResourcePath();
-
-  boolean isStar();
-
-  boolean isRef();
-
-  EdmType getStartTypeFilter();
-
-  
 }

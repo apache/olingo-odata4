@@ -18,10 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.core.uri.queryoption;
 
-import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 
-public class CountOptionImpl extends SystemQueryOptionImpl implements InlineCountOption {
+public class CountOptionImpl extends SystemQueryOptionImpl implements CountOption {
 
   private boolean count;
 

@@ -347,7 +347,7 @@ odataIdentifier         : ODATAIDENTIFIER;
 primitiveLiteral    : nullrule
                     | booleanNonCase
                     | DECIMAL   //includes double and single literals
-                    | NANINFINITY
+                    | naninfinity
                     | INT       //includes int16/int32 and int64 literals
                     | BINARY  
                     | DATE
@@ -373,6 +373,7 @@ primitiveLiteral    : nullrule
                     | geometryPolygon
                     ;
 
+naninfinity         : NANINFINITY;
 
 nullrule            : NULLVALUE;
 booleanNonCase      : BOOLEAN | TRUE | FALSE;

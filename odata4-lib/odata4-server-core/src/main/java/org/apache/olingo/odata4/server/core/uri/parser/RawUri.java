@@ -22,7 +22,7 @@ import java.util.List;
 
 public class RawUri {
   public String uri;
-  public String sheme;
+  public String scheme;
   public String authority;
   public String path;
   public String queryOptionString;

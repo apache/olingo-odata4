@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.olingo.odata4.server.core.uri.parser.RawUri;
 import org.apache.olingo.odata4.server.core.uri.parser.UriDecoder;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParserSyntaxException;
 import org.junit.Test;
 
 public class RawUriTest {

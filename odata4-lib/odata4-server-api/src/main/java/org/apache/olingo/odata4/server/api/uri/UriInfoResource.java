@@ -25,7 +25,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.IdOption;
-import org.apache.olingo.odata4.server.api.uri.queryoption.InlineCountOption;
+import org.apache.olingo.odata4.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectOption;
@@ -45,7 +45,7 @@ public interface UriInfoResource {
 
   IdOption getIdOption();
 
-  InlineCountOption getInlineCountOption();
+  CountOption getInlineCountOption();
 
   OrderByOption getOrderByOption();
 

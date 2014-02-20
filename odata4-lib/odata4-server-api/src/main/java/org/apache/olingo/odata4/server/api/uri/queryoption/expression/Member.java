@@ -23,10 +23,14 @@ import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
 
 public interface Member extends Expression {
 
-  public UriInfoResource getPath();
+  public UriInfoResource getResourcePath();
 
   public EdmType getType();
+  public EdmType getStartTypeFilter();
 
   public boolean isCollection();
 
+  
+
+  
 }

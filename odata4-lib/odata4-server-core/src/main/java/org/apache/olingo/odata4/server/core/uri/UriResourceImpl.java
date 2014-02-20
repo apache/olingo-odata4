@@ -16,38 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.server.api.uri.UriResource;
+import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
 
-public interface ExpandItem {
+/**
+ * Covers Functionimports and BoundFunction in URI
+ */
+public abstract class UriResourceImpl implements UriResource {
+  protected UriResourceKind kind;
 
-  LevelsExpandOption getLevelsOption();
+  public UriResourceImpl(final UriResourceKind kind) {
+    this.kind = kind;
+  }
 
-  FilterOption getFilterOption();
+  @Override
+  public UriResourceKind getKind() {
+    return kind;
+  }
 
-  SearchOption getSearchOption();
-
-  OrderByOption getOrderByOption();
-
-  SkipOption getSkipOption();
-
-  TopOption getTopOption();
-
-  CountOption getInlineCountOption();
-
-  SelectOption getSelectOption();
-
-  ExpandOption getExpandOption();
-
-  UriInfoResource getResourcePath();
-
-  boolean isStar();
-
-  boolean isRef();
-
-  EdmType getStartTypeFilter();
-
-  
 }

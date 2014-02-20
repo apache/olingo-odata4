@@ -18,36 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.api.uri.queryoption;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+public interface CountOption extends SystemQueryOption {
 
-public interface ExpandItem {
+  boolean getValue();
 
-  LevelsExpandOption getLevelsOption();
-
-  FilterOption getFilterOption();
-
-  SearchOption getSearchOption();
-
-  OrderByOption getOrderByOption();
-
-  SkipOption getSkipOption();
-
-  TopOption getTopOption();
-
-  CountOption getInlineCountOption();
-
-  SelectOption getSelectOption();
-
-  ExpandOption getExpandOption();
-
-  UriInfoResource getResourcePath();
-
-  boolean isStar();
-
-  boolean isRef();
-
-  EdmType getStartTypeFilter();
-
-  
 }

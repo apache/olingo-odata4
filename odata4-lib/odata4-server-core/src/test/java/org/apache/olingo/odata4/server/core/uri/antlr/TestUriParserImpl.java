@@ -30,10 +30,10 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.expression.MethodCall
 import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.odata4.server.core.testutil.FilterValidator;
-import org.apache.olingo.odata4.server.core.testutil.ResourceValidator;
-import org.apache.olingo.odata4.server.core.testutil.UriValidator;
-import org.apache.olingo.odata4.server.core.uri.UriParserException;
+import org.apache.olingo.odata4.server.core.uri.parser.UriParserException;
+import org.apache.olingo.odata4.server.core.uri.testutil.FilterValidator;
+import org.apache.olingo.odata4.server.core.uri.testutil.ResourceValidator;
+import org.apache.olingo.odata4.server.core.uri.testutil.UriValidator;
 import org.junit.Test;
 
 public class TestUriParserImpl {
@@ -1005,40 +1005,44 @@ public class TestUriParserImpl {
     // on EntityType entry
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')?"
         + "$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
-        .goFilter().root().isMember().goPath()
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
-        .at(1).isType(EdmTechProvider.nameDate);
+        .goFilter().root().isMember()
+        .isMemberStartType(EdmTechProvider.nameETBaseTwoKeyNav).goPath()
+        // .at(0)
+        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        // .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        // .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .at(0).isType(EdmTechProvider.nameDate);
 
     // on EntityType collection
     testUri.run("ESTwoKeyNav?$filter=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate")
-        .goFilter().root().isMember().goPath()
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
-        .at(1).isType(EdmTechProvider.nameDate);
+        .goFilter().root().isMember()
+        .isMemberStartType(EdmTechProvider.nameETBaseTwoKeyNav).goPath()
+        // .at(0)
+        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        // .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        // .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .at(0).isType(EdmTechProvider.nameDate);
 
     testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
-        .goFilter().root().isMember().goPath()
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechProvider.nameCTTwoPrim, false)
-        .isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
-        .at(1).isType(EdmTechProvider.nameString);
+        .goFilter().root().isMember()
+        .isMemberStartType(EdmTechProvider.nameCTBase).goPath()
+        //.at(0)
+        //.isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        //.isType(EdmTechProvider.nameCTTwoPrim, false)
+        //.isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
+        .at(0).isType(EdmTechProvider.nameString);
 
     // on Complex collection
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')?"
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
-        .goFilter().root().isMember().goPath()
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isType(EdmTechProvider.nameCTTwoPrim, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameCTBase)
-        .at(1).isType(EdmTechProvider.nameString);
+        .goFilter().root().isMember()
+        .isMemberStartType(EdmTechProvider.nameCTBase).goPath()
+        //.at(0)
+        //.isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        //.isType(EdmTechProvider.nameCTTwoPrim, true)
+        //.isTypeFilterOnCollection(EdmTechProvider.nameCTBase)
+        .at(0).isType(EdmTechProvider.nameString);
 
   }
 
@@ -1116,16 +1120,10 @@ public class TestUriParserImpl {
         .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false);
 
     testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
-        .goSelectItemPath(0)
-        .first()
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isSelectStartType(0,EdmTechProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/PropertyComplexNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
-        .goSelectItemPath(0)
-        .first()
-        .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        .isTypeFilterOnCollection(EdmTechProvider.nameCTTwoBasePrimCompNav);
+        .isSelectStartType(0,EdmTechProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplexNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)

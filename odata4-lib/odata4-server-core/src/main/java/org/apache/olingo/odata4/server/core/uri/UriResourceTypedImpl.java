@@ -16,22 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata4.server.api.uri.queryoption;
+package org.apache.olingo.odata4.server.core.uri;
 
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.server.api.uri.UriInfoResource;
+import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
+import org.apache.olingo.odata4.server.api.uri.UriResourcePartTyped;
 
-public interface SelectItem {
+public abstract class UriResourceTypedImpl extends UriResourceImpl implements UriResourcePartTyped {
 
-  boolean isStar();
+  protected EdmType typeFilter = null;
 
-  boolean isAllOperationsInSchema();
+  public UriResourceTypedImpl(final UriResourceKind kind) {
+    super(kind);
+  }
 
-  FullQualifiedName getAllOperationsInSchemaNameSpace();
+  public EdmType getTypeFilter() {
+    return typeFilter;
+  }
 
-  UriInfoResource getResourcePath();
+  public UriResourceTypedImpl setTypeFilter(final EdmStructuralType typeFilter) {
+    this.typeFilter = typeFilter;
+    return this;
+  }
 
-  EdmType getStartTypeFilter();
+  @Override
+  public String toString(final boolean includeFilters) {
+    if (includeFilters) {
+      if (typeFilter != null) {
+        return toString() + "/" + getFQN(typeFilter).toString();
+      } else {
+        return toString();
+      }
+    }
+    return toString();
+  }
+
+  private FullQualifiedName getFQN(final EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName());
+  }
 
 }

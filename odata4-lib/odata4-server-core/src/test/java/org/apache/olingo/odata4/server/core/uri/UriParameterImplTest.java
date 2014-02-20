@@ -42,25 +42,6 @@ import org.apache.olingo.odata4.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.odata4.server.core.edm.provider.EdmSingletonImpl;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.odata4.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriParameterImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceActionImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceComplexPropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceCountImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceEntitySetImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceFunctionImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceItImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAllImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaAnyImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceLambdaVarImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceNavigationPropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourcePrimitivePropertyImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceRefImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceRootImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceSingletonImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceStartingTypeFilterImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceTypedImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceValueImpl;
-import org.apache.olingo.odata4.server.core.uri.apiimpl.UriResourceWithKeysImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LiteralImpl;
 import org.junit.Test;
@@ -495,6 +476,7 @@ public class UriParameterImplTest {
     assertEquals(true, impl.isCollection());
   }
 
+  /*
   @Test
   public void testUriResourceStartingTypeFilterImpl() {
     UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();
@@ -516,5 +498,5 @@ public class UriParameterImplTest {
     impl.setKeyPredicates(keyPredicates);
     assertEquals(false, impl.isCollection());
 
-  }
+  }*/
 }
