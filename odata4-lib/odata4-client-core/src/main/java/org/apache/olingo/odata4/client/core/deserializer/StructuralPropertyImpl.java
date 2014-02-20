@@ -28,7 +28,9 @@ import org.apache.olingo.odata4.client.api.deserializer.Value;
 public class StructuralPropertyImpl implements StructuralProperty {
 
   private final List<Value> values;
+
   private final String name;
+
   private final boolean containsCollection;
 
   public StructuralPropertyImpl(final String name, final Value value) {
@@ -36,7 +38,7 @@ public class StructuralPropertyImpl implements StructuralProperty {
   }
 
   public StructuralPropertyImpl(final String name, final List<Value> values) {
-    // XXX: ugly -> refactore
+    // XXX: ugly -> refactor
     this(name, true, values.toArray(new Value[0]));
   }
 
@@ -76,6 +78,6 @@ public class StructuralPropertyImpl implements StructuralProperty {
   @Override
   public String toString() {
     return "StructuralPropertyImpl [name=" + name + ", containsCollection=" + containsCollection
-        + ", values=" + values + "]";
+            + ", values=" + values + "]";
   }
 }

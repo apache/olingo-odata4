@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.client.api.deserializer;
 
 public interface Value {
+
   boolean isComplex();
 
   Object getContent();

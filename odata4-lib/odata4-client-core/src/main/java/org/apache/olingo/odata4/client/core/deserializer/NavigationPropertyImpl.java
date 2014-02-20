@@ -23,7 +23,9 @@ import org.apache.olingo.odata4.client.api.deserializer.NavigationProperty;
 public class NavigationPropertyImpl implements NavigationProperty {
 
   private final String name;
+
   private String associationLink;
+
   private String navigationLink;
 
   public NavigationPropertyImpl(final String name) {
@@ -51,8 +53,8 @@ public class NavigationPropertyImpl implements NavigationProperty {
   }
 
   public void updateLink(final String name, final String link) {
-    String regexNavigationLink = ".*@odata.navigationLink$";
-    String regexAssociationLink = ".*@odata.associationLink$";
+    final String regexNavigationLink = ".*@odata.navigationLink$";
+    final String regexAssociationLink = ".*@odata.associationLink$";
     if (name.matches(regexNavigationLink)) {
       navigationLink = link;
     } else if (name.matches(regexAssociationLink)) {
@@ -61,12 +63,12 @@ public class NavigationPropertyImpl implements NavigationProperty {
   }
 
   private String parseName(final String nameToParse) {
-    String[] split = nameToParse.split("@");
+    final String[] split = nameToParse.split("@");
     if (split.length == 2) {
       return split[0];
     } else {
       throw new IllegalArgumentException("Got OData Navigation with unparseable format '"
-          + nameToParse + "'.");
+              + nameToParse + "'.");
     }
   }
 
@@ -82,6 +84,6 @@ public class NavigationPropertyImpl implements NavigationProperty {
   @Override
   public String toString() {
     return "NavigationPropertyImpl [name=" + name + ", associationLink=" + associationLink
-        + ", navigationLink=" + navigationLink + "]";
+            + ", navigationLink=" + navigationLink + "]";
   }
 }

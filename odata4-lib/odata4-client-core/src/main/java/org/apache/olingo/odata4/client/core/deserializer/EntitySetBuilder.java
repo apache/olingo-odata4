@@ -39,27 +39,31 @@ public class EntitySetBuilder {
   }
 
   private EntitySet parseEntitySet(final JsonParser jp) throws JsonParseException, IOException {
-    EntitySetImpl entitySet = new EntitySetImpl();
+    final EntitySetImpl entitySet = new EntitySetImpl();
     boolean arrayStarted = false;
 
     while (jp.nextToken() != null) {
-      JsonToken token = jp.getCurrentToken();
+      final JsonToken token = jp.getCurrentToken();
       switch (token) {
-      case START_ARRAY:
-        PropertyCollectionBuilder builder = new PropertyCollectionBuilder(jp, entitySet);
-        entitySet.setPropertyCollectionBuilder(builder);
-        arrayStarted = true;
-        break;
-      case START_OBJECT:
-        if (arrayStarted) {
-          return entitySet;
-        }
-        break;
-      case VALUE_NUMBER_INT:
-      case VALUE_STRING:
-        entitySet.addAnnotation(jp.getCurrentName(), jp.getValueAsString());
-      default:
-        break;
+        case START_ARRAY:
+          final PropertyCollectionBuilder builder = new PropertyCollectionBuilder(jp, entitySet);
+          entitySet.setPropertyCollectionBuilder(builder);
+          arrayStarted = true;
+          break;
+
+        case START_OBJECT:
+          if (arrayStarted) {
+            return entitySet;
+          }
+          break;
+
+        case VALUE_NUMBER_INT:
+        case VALUE_STRING:
+          entitySet.addAnnotation(jp.getCurrentName(), jp.getValueAsString());
+          break;
+
+        default:
+          break;
       }
     }
 

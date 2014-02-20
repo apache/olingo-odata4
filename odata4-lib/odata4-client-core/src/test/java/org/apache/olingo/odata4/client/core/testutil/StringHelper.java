@@ -26,9 +26,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-/**
- * @author SAP AG
- */
+// TODO: remove this class in favor of StringUtils, IOUtils, ...
 public class StringHelper {
 
   public static String inputStreamToString(final InputStream in, final boolean preserveLineBreaks) throws IOException {
@@ -56,7 +54,7 @@ public class StringHelper {
 
   /**
    * Encapsulate given content in an {@link InputStream} with charset <code>UTF-8</code>.
-   * 
+   *
    * @param content to encapsulate content
    * @return content as stream
    */
@@ -71,20 +69,20 @@ public class StringHelper {
 
   /**
    * Encapsulate given content in an {@link InputStream} with given charset.
-   * 
+   *
    * @param content to encapsulate content
    * @param charset to be used charset
    * @return content as stream
    * @throws UnsupportedEncodingException if charset is not supported
    */
   public static InputStream encapsulate(final String content, final String charset)
-      throws UnsupportedEncodingException {
+          throws UnsupportedEncodingException {
     return new ByteArrayInputStream(content.getBytes(charset));
   }
 
   /**
    * Generate a string with given length containing random upper case characters ([A-Z]).
-   * 
+   *
    * @param len length of to generated string
    * @return random upper case characters ([A-Z]).
    */
@@ -94,17 +92,17 @@ public class StringHelper {
 
   /**
    * Generate a string with given length containing random upper case characters ([A-Z]).
-   * 
+   *
    * @param len length of to generated string
    * @return random upper case characters ([A-Z]).
    */
   public static String generateData(final int len) {
-    StringBuilder b = new StringBuilder(len);
+    final StringBuilder builder = new StringBuilder(len);
     for (int j = 0; j < len; j++) {
-      char c = (char) (Math.random() * 26 + 65);
-      b.append(c);
+      final char c = (char) (Math.random() * 26 + 65);
+      builder.append(c);
     }
-    return b.toString();
+    return builder.toString();
   }
 
 }

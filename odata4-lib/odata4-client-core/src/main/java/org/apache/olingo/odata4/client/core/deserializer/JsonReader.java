@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.olingo.odata4.client.api.deserializer.ConsumerException;
+import org.apache.olingo.odata4.client.api.deserializer.ClientException;
 import org.apache.olingo.odata4.client.api.deserializer.Entity;
 import org.apache.olingo.odata4.client.api.deserializer.EntitySet;
 import org.apache.olingo.odata4.client.api.deserializer.Property;
@@ -36,36 +36,36 @@ import com.fasterxml.jackson.core.JsonParser;
 public class JsonReader implements Reader {
 
   @Override
-  public EntitySet readEntitySet(final InputStream in) throws ConsumerException {
+  public EntitySet readEntitySet(final InputStream in) throws ClientException {
 
-    JsonFactory jsonFactory = new JsonFactory();
+    final JsonFactory jsonFactory = new JsonFactory();
     // or, for data binding, org.codehaus.jackson.mapper.MappingJsonFactory
     try {
       JsonParser jp = jsonFactory.createParser(in);
       EntitySetBuilder entitySet = new EntitySetBuilder(jp);
       return entitySet.buildEntitySet();
     } catch (JsonParseException e) {
-      throw new ConsumerException("JSON Parsing failed.", e);
+      throw new ClientException("JSON Parsing failed.", e);
     } catch (IOException e) {
-      throw new ConsumerException("JSON Parsing failed.", e);
+      throw new ClientException("JSON Parsing failed.", e);
     }
   }
 
   @Override
-  public Entity readEntity(final InputStream in) throws ConsumerException {
+  public Entity readEntity(final InputStream in) throws ClientException {
     Entity entity = null;
 
-    JsonFactory jsonFactory = new JsonFactory();
+    final JsonFactory jsonFactory = new JsonFactory();
     // or, for data binding, org.codehaus.jackson.mapper.MappingJsonFactory
     try {
-      JsonParser jp = jsonFactory.createParser(in);
-      PropertyCollectionBuilder builder = new PropertyCollectionBuilder(jp);
+      final JsonParser jp = jsonFactory.createParser(in);
+      final PropertyCollectionBuilder builder = new PropertyCollectionBuilder(jp);
       builder.parseNext();
       entity = builder.buildEntity();
     } catch (JsonParseException e) {
-      throw new ConsumerException("JSON Parsing failed.", e);
+      throw new ClientException("JSON Parsing failed.", e);
     } catch (IOException e) {
-      throw new ConsumerException("JSON Parsing failed.", e);
+      throw new ClientException("JSON Parsing failed.", e);
     }
 
     return entity;
@@ -77,10 +77,10 @@ public class JsonReader implements Reader {
    * @see org.apache.olingo.core.consumer.Reader#parseProperty(java.io.InputStream)
    */
   @Override
-  public Property readProperty(final InputStream in) throws ConsumerException {
-    Entity entity = readEntity(in);
+  public Property readProperty(final InputStream in) throws ClientException {
+    final Entity entity = readEntity(in);
 
-    Map<String, StructuralProperty> properties = entity.getStructuralProperties();
+    final Map<String, StructuralProperty> properties = entity.getStructuralProperties();
     if (properties.size() == 1) {
       return properties.values().iterator().next();
     }

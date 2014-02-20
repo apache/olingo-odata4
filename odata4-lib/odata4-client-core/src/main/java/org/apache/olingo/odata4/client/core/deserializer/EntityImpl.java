@@ -28,11 +28,13 @@ import org.apache.olingo.odata4.client.api.deserializer.StructuralProperty;
 
 public class EntityImpl extends PropertyCollection implements Entity {
 
-  public EntityImpl() {}
+  public EntityImpl() {
+  }
 
   public EntityImpl(final Map<String, AnnotationProperty> annotationProperties,
-      final Map<String, NavigationProperty> navigationProperties,
-      final Map<String, StructuralProperty> structuralProperties) {
+          final Map<String, NavigationProperty> navigationProperties,
+          final Map<String, StructuralProperty> structuralProperties) {
+
     super(annotationProperties, navigationProperties, structuralProperties);
   }
 
@@ -88,7 +90,7 @@ public class EntityImpl extends PropertyCollection implements Entity {
 
   @Override
   public Object getPropertyContent(final String name) {
-    StructuralProperty property = structuralProperties.get(name);
+    final StructuralProperty property = structuralProperties.get(name);
     if (property != null) {
       return property.getValue().getContent();
     }
@@ -97,28 +99,28 @@ public class EntityImpl extends PropertyCollection implements Entity {
 
   @Override
   public Property getProperty(final String name) {
-    Property p = structuralProperties.get(name);
-    if (p == null) {
-      p = annotationProperties.get(name);
+    Property property = structuralProperties.get(name);
+    if (property == null) {
+      property = annotationProperties.get(name);
     }
-    if (p == null) {
-      p = navigationProperties.get(name);
+    if (property == null) {
+      property = navigationProperties.get(name);
     }
-    return p;
+    return property;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public <T extends Property> T getProperty(final String name, final Class<T> clazz) {
-    Property p = getProperty(name);
-    return (T) p;
+    final Property property = getProperty(name);
+    return (T) property;
   }
 
   private String getAnnotationValue(final String key) {
-    AnnotationProperty prop = annotationProperties.get(key);
-    if (prop == null) {
+    final AnnotationProperty property = annotationProperties.get(key);
+    if (property == null) {
       return null;
     }
-    return prop.getValue();
+    return property.getValue();
   }
 }

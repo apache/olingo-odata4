@@ -16,21 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.deserializer;
+package org.apache.olingo.odata4.client.core;
 
-public class ConsumerException extends Exception {
+import org.apache.olingo.odata4.client.api.ODataClient;
 
-  private static final long serialVersionUID = 1L;
+public class ODataClientImpl extends ODataClient {
 
-  public ConsumerException() {
-    super();
-  }
-
-  public ConsumerException(final String message) {
-    super(message);
-  }
-
-  public ConsumerException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
 }

@@ -29,7 +29,6 @@ import org.apache.olingo.odata4.client.api.deserializer.ComplexValue;
 import org.apache.olingo.odata4.client.api.deserializer.Property;
 import org.apache.olingo.odata4.client.api.deserializer.StructuralProperty;
 import org.apache.olingo.odata4.client.api.deserializer.Value;
-import org.apache.olingo.odata4.client.core.deserializer.JsonReader;
 import org.apache.olingo.odata4.client.core.testutil.StringHelper;
 import org.junit.Test;
 
@@ -55,7 +54,6 @@ public class JsonReaderPerformance {
 //    long duration = endTime - startTime;
 //    System.out.println("Duration: " + duration + " ms");
 //    System.out.println("Duration per run: " + (duration / (float) runs) + " ms");
-
     testComplexProperty(complex);
   }
 

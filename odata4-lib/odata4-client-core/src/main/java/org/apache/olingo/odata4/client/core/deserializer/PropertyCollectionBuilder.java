@@ -36,14 +36,19 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class PropertyCollectionBuilder extends PropertyCollection {
+
   private JsonParser parser;
+
   private EntitySetImpl enclosingEntitySet;
+
+  private PropertyCollectionBuilder next = null;
 
   public PropertyCollectionBuilder(final JsonParser parser) {
     this.parser = parser;
   }
 
-  private PropertyCollectionBuilder() {};
+  private PropertyCollectionBuilder() {
+  }
 
   public PropertyCollectionBuilder(final JsonParser jp, final EntitySetImpl entitySet) {
     this(jp);
@@ -51,15 +56,15 @@ public class PropertyCollectionBuilder extends PropertyCollection {
   }
 
   public Entity buildEntity() {
-    Entity v = new EntityImpl(annotationProperties, navigationProperties, structuralProperties);
+    final Entity entity = new EntityImpl(annotationProperties, navigationProperties, structuralProperties);
     resetProperties();
-    return v;
+    return entity;
   }
 
   public ComplexValue buildComplexValue() {
-    ComplexValue v = new ComplexValueImpl(annotationProperties, navigationProperties, structuralProperties);
+    final ComplexValue value = new ComplexValueImpl(annotationProperties, navigationProperties, structuralProperties);
     resetProperties();
-    return v;
+    return value;
   }
 
   private void resetProperties() {
@@ -67,8 +72,6 @@ public class PropertyCollectionBuilder extends PropertyCollection {
     navigationProperties = new HashMap<String, NavigationProperty>();
     structuralProperties = new HashMap<String, StructuralProperty>();
   }
-
-  private PropertyCollectionBuilder next = null;
 
   public boolean hasNext() throws JsonParseException, IOException {
     if (parser.isClosed()) {
@@ -92,6 +95,7 @@ public class PropertyCollectionBuilder extends PropertyCollection {
         return true;
       }
     } catch (JsonParseException e) {
+      // TODO: SLF4J Logging!
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
@@ -101,7 +105,7 @@ public class PropertyCollectionBuilder extends PropertyCollection {
   }
 
   /**
-   * 
+   *
    * @param jp
    * @param builder
    * @return
@@ -109,7 +113,8 @@ public class PropertyCollectionBuilder extends PropertyCollection {
    * @throws JsonParseException
    */
   private PropertyCollectionBuilder parseNextObject(final JsonParser jp, final PropertyCollectionBuilder builder)
-      throws JsonParseException, IOException {
+          throws JsonParseException, IOException {
+
     boolean endReached = readToStartObjectOrEnd(jp);
     if (endReached) {
       return null;
@@ -120,55 +125,55 @@ public class PropertyCollectionBuilder extends PropertyCollection {
     List<Value> values = null;
 
     while (jp.nextToken() != null) {
-      JsonToken token = jp.getCurrentToken();
+      final JsonToken token = jp.getCurrentToken();
       switch (token) {
-      case START_OBJECT:
-        if (currentFieldName != null) {
-          ComplexValue cvp = parseNextObject(jp, new PropertyCollectionBuilder()).buildComplexValue();
-          if (values == null) {
-            builder.addProperty(new StructuralPropertyImpl(currentFieldName, cvp));
-          } else {
-            values.add(cvp);
+        case START_OBJECT:
+          if (currentFieldName != null) {
+            final ComplexValue cvp = parseNextObject(jp, new PropertyCollectionBuilder()).buildComplexValue();
+            if (values == null) {
+              builder.addProperty(new StructuralPropertyImpl(currentFieldName, cvp));
+            } else {
+              values.add(cvp);
+            }
           }
-        }
-        break;
-      case END_OBJECT:
-        return builder;
-      case START_ARRAY:
-        values = new ArrayList<Value>();
-        break;
-      case END_ARRAY:
-        if (values != null) {
-          builder.addProperty(new StructuralPropertyImpl(currentFieldName, values));
-          values = null;
-        }
-        break;
-      case FIELD_NAME:
-        currentFieldName = jp.getCurrentName();
-        break;
-      case NOT_AVAILABLE:
-        break;
-      case VALUE_EMBEDDED_OBJECT:
-        break;
-      case VALUE_NULL:
-        Property nullProperty = createProperty(jp.getCurrentName(), null);
-        builder.addProperty(nullProperty);
-        break;
-      case VALUE_FALSE:
-      case VALUE_NUMBER_FLOAT:
-      case VALUE_NUMBER_INT:
-      case VALUE_STRING:
-      case VALUE_TRUE:
-        if (values == null) {
-          Property property = createProperty(jp.getCurrentName(), jp.getValueAsString());
-          builder.addProperty(property);
-        } else {
-          PrimitiveValue value = new PrimitiveValue(jp.getValueAsString());
-          values.add(value);
-        }
-        break;
-      default:
-        break;
+          break;
+        case END_OBJECT:
+          return builder;
+        case START_ARRAY:
+          values = new ArrayList<Value>();
+          break;
+        case END_ARRAY:
+          if (values != null) {
+            builder.addProperty(new StructuralPropertyImpl(currentFieldName, values));
+            values = null;
+          }
+          break;
+        case FIELD_NAME:
+          currentFieldName = jp.getCurrentName();
+          break;
+        case NOT_AVAILABLE:
+          break;
+        case VALUE_EMBEDDED_OBJECT:
+          break;
+        case VALUE_NULL:
+          Property nullProperty = createProperty(jp.getCurrentName(), null);
+          builder.addProperty(nullProperty);
+          break;
+        case VALUE_FALSE:
+        case VALUE_NUMBER_FLOAT:
+        case VALUE_NUMBER_INT:
+        case VALUE_STRING:
+        case VALUE_TRUE:
+          if (values == null) {
+            Property property = createProperty(jp.getCurrentName(), jp.getValueAsString());
+            builder.addProperty(property);
+          } else {
+            PrimitiveValue value = new PrimitiveValue(jp.getValueAsString());
+            values.add(value);
+          }
+          break;
+        default:
+          break;
       }
     }
 
@@ -176,20 +181,21 @@ public class PropertyCollectionBuilder extends PropertyCollection {
   }
 
   private boolean readToStartObjectOrEnd(final JsonParser jp) throws IOException, JsonParseException {
-    JsonToken endToken = JsonToken.START_OBJECT;
+    final JsonToken endToken = JsonToken.START_OBJECT;
     JsonToken token = jp.getCurrentToken() == null ? jp.nextToken() : jp.getCurrentToken();
     while (token != null && token != endToken) {
       if (enclosingEntitySet != null) {
         switch (token) {
-        case VALUE_FALSE:
-        case VALUE_NUMBER_FLOAT:
-        case VALUE_NUMBER_INT:
-        case VALUE_TRUE:
-        case VALUE_STRING:
-          enclosingEntitySet.addAnnotation(jp.getCurrentName(), jp.getValueAsString());
-          break;
-        default:
-          break;
+          case VALUE_FALSE:
+          case VALUE_NUMBER_FLOAT:
+          case VALUE_NUMBER_INT:
+          case VALUE_TRUE:
+          case VALUE_STRING:
+            enclosingEntitySet.addAnnotation(jp.getCurrentName(), jp.getValueAsString());
+            break;
+            
+          default:
+            break;
         }
       }
       //

@@ -29,17 +29,19 @@ import org.apache.olingo.odata4.client.api.deserializer.Value;
 
 public class ComplexValueImpl extends PropertyCollection implements ComplexValue {
 
-  public ComplexValueImpl() {}
+  public ComplexValueImpl() {
+  }
 
   public ComplexValueImpl(final Map<String, AnnotationProperty> annotationProperties,
-      final Map<String, NavigationProperty> navigationProperties,
-      final Map<String, StructuralProperty> structuralProperties) {
+          final Map<String, NavigationProperty> navigationProperties,
+          final Map<String, StructuralProperty> structuralProperties) {
+
     super(annotationProperties, navigationProperties, structuralProperties);
   }
 
   @Override
   public Value getValue(final String name) {
-    StructuralProperty property = structuralProperties.get(name);
+    final StructuralProperty property = structuralProperties.get(name);
     if (property == null) {
       return null;
     }
@@ -75,6 +77,6 @@ public class ComplexValueImpl extends PropertyCollection implements ComplexValue
   @Override
   public String toString() {
     return "ComplexValueImpl [annotations=" + annotationProperties + ", navigationProperties=" + navigationProperties
-        + ", properties=" + structuralProperties + "]";
+            + ", properties=" + structuralProperties + "]";
   }
 }

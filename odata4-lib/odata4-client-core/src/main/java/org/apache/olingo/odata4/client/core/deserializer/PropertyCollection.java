@@ -30,24 +30,29 @@ import org.apache.olingo.odata4.client.api.deserializer.Property;
 import org.apache.olingo.odata4.client.api.deserializer.StructuralProperty;
 
 abstract class PropertyCollection {
+
   protected Map<String, AnnotationProperty> annotationProperties = new HashMap<String, AnnotationProperty>();
+
   protected Map<String, NavigationProperty> navigationProperties = new HashMap<String, NavigationProperty>();
+
   protected Map<String, StructuralProperty> structuralProperties = new HashMap<String, StructuralProperty>();
 
-  public PropertyCollection() {}
+  public PropertyCollection() {
+  }
 
   protected PropertyCollection(final Map<String, AnnotationProperty> annotationProperties,
-      final Map<String, NavigationProperty> navigationProperties,
-      final Map<String, StructuralProperty> structuralProperties) {
+          final Map<String, NavigationProperty> navigationProperties,
+          final Map<String, StructuralProperty> structuralProperties) {
+
     this.annotationProperties = annotationProperties;
     this.navigationProperties = navigationProperties;
     this.structuralProperties = structuralProperties;
   }
 
   public List<Property> getProperties() {
-    int initialCapacity = annotationProperties.size() + navigationProperties.size() + structuralProperties.size();
+    final int initialCapacity = annotationProperties.size() + navigationProperties.size() + structuralProperties.size();
 
-    List<Property> properties = new ArrayList<Property>(initialCapacity);
+    final List<Property> properties = new ArrayList<Property>(initialCapacity);
     properties.addAll(annotationProperties.values());
     properties.addAll(navigationProperties.values());
     properties.addAll(structuralProperties.values());
@@ -73,11 +78,11 @@ abstract class PropertyCollection {
     }
 
     if (property instanceof NavigationPropertyImpl) {
-      NavigationPropertyImpl navProperty = (NavigationPropertyImpl) navigationProperties.get(property.getName());
+      final NavigationPropertyImpl navProperty = (NavigationPropertyImpl) navigationProperties.get(property.getName());
       if (navProperty == null) {
         navigationProperties.put(property.getName(), (NavigationPropertyImpl) property);
       } else {
-        NavigationProperty temp = (NavigationProperty) property;
+        final NavigationProperty temp = (NavigationProperty) property;
         navProperty.updateLink(temp);
       }
     } else if (property instanceof AnnotationPropertyImpl) {

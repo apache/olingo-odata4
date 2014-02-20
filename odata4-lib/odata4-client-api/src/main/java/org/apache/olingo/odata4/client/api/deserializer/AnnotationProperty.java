@@ -19,5 +19,6 @@
 package org.apache.olingo.odata4.client.api.deserializer;
 
 public interface AnnotationProperty extends Property {
+
   String getValue();
 }

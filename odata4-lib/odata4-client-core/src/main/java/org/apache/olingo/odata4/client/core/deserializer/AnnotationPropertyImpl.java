@@ -23,6 +23,7 @@ import org.apache.olingo.odata4.client.api.deserializer.AnnotationProperty;
 public class AnnotationPropertyImpl implements AnnotationProperty {
 
   private final String name;
+
   private final String value;
 
   public AnnotationPropertyImpl(final String name, final String value) {

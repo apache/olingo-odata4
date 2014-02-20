@@ -16,10 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api;
 
-import org.apache.olingo.odata4.client.api.ODataConsumer;
+//TODO: Exceptionhandling
+public abstract class ODataClient {
 
-public class ODataConsumerImpl extends ODataConsumer {
+  private static final String IMPLEMENTATION = "org.apache.olingo.odata4.client.core.ODataClientImpl";
 
+  public static ODataClient create() {
+    ODataClient instance;
+
+    try {
+      final Class<?> clazz = Class.forName(ODataClient.IMPLEMENTATION);
+
+      /*
+       * We explicitly do not use the singleton pattern to keep the server state free
+       * and avoid class loading issues also during hot deployment.
+       */
+      final Object object = clazz.newInstance();
+      instance = (ODataClient) object;
+
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+    return instance;
+  }
 }

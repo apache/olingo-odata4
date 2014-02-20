@@ -29,8 +29,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.olingo.odata4.client.api.deserializer.ComplexValue;
 import org.apache.olingo.odata4.client.api.deserializer.Entity;
 import org.apache.olingo.odata4.client.api.deserializer.EntitySet;
@@ -38,7 +36,6 @@ import org.apache.olingo.odata4.client.api.deserializer.Property;
 import org.apache.olingo.odata4.client.api.deserializer.Reader;
 import org.apache.olingo.odata4.client.api.deserializer.StructuralProperty;
 import org.apache.olingo.odata4.client.api.deserializer.Value;
-import org.apache.olingo.odata4.client.core.deserializer.JsonReader;
 import org.junit.Test;
 
 public class JsonReaderTest {
@@ -48,7 +45,7 @@ public class JsonReaderTest {
     Reader consumer = new JsonReader();
 
     EntitySet entitySet = consumer.readEntitySet(
-        JsonReaderTest.class.getResourceAsStream("/fullEntitySet.json"));
+            JsonReaderTest.class.getResourceAsStream("/fullEntitySet.json"));
 
     List<Entity> entities = entitySet.getEntities();
     validateEntitySet(entitySet);
@@ -243,8 +240,8 @@ public class JsonReaderTest {
 
     InputStream content = JsonReaderTest.class.getResourceAsStream("/setOfComplexProperties.json");
     Property property = consumer.readProperty(content);
-    Assert.assertEquals("PhoneNumbers", property.getName());
-    Assert.assertTrue(property instanceof StructuralProperty);
+    assertEquals("PhoneNumbers", property.getName());
+    assertTrue(property instanceof StructuralProperty);
 
     StructuralProperty structuralProperty = (StructuralProperty) property;
     assertTrue(structuralProperty.containsCollection());
@@ -262,7 +259,7 @@ public class JsonReaderTest {
     assertEquals("Cell", phoneNumberTwo.getValue("Type").getContent());
     assertEquals("Sprint", phoneNumberTwo.getValue("Carrier").getContent());
     assertEquals("#Model.CellPhoneNumber",
-        phoneNumberTwo.getAnnotationProperties().get("odata.type").getValue());
+            phoneNumberTwo.getAnnotationProperties().get("odata.type").getValue());
 
     // ComplexValue complex = consumer.parseComplexValue(content);
     //
@@ -283,12 +280,12 @@ public class JsonReaderTest {
     assertNotNull(entity.getNavigationProperties());
     assertTrue(entity.getNavigationProperties().containsKey("Orders"));
     assertEquals("Customers('ALFKI')/Orders",
-        entity.getNavigationProperties().get("Orders").getNavigationLink());
+            entity.getNavigationProperties().get("Orders").getNavigationLink());
 
     assertNotNull(entity.getNavigationProperties());
     assertTrue(entity.getNavigationProperties().containsKey("Orders"));
     assertEquals("Customers('ALFKI')/Orders/$ref",
-        entity.getNavigationProperties().get("Orders").getAssociationLink());
+            entity.getNavigationProperties().get("Orders").getAssociationLink());
 
     assertNotNull(entity.getPropertyContent("ID"));
     assertEquals("ALFKI", entity.getPropertyContent("ID"));
@@ -314,7 +311,7 @@ public class JsonReaderTest {
     assertNotNull(entity.getNavigationProperties());
     assertTrue(entity.getNavigationProperties().containsKey("Orders"));
     assertEquals("Customers('MUSKI')/Orders/$ref",
-        entity.getNavigationProperties().get("Orders").getAssociationLink());
+            entity.getNavigationProperties().get("Orders").getAssociationLink());
 
     assertNotNull(entity.getPropertyContent("ID"));
     assertEquals("MUSKI", entity.getPropertyContent("ID"));
@@ -345,12 +342,12 @@ public class JsonReaderTest {
     assertNotNull(complex.getNavigationProperties());
     assertTrue(complex.getNavigationProperties().containsKey("Country"));
     assertEquals("Customers('ALFKI')/Address/Country",
-        complex.getNavigationProperties().get("Country").getNavigationLink());
+            complex.getNavigationProperties().get("Country").getNavigationLink());
 
     assertNotNull(complex.getNavigationProperties());
     assertTrue(complex.getNavigationProperties().containsKey("Country"));
     assertEquals("Customers('ALFKI')/Address/Country/$ref",
-        complex.getNavigationProperties().get("Country").getAssociationLink());
+            complex.getNavigationProperties().get("Country").getAssociationLink());
   }
 
   private void validateEntitySet(final EntitySet entitySet) {

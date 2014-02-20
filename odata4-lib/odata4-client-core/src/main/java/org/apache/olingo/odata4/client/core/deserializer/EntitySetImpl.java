@@ -31,9 +31,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 public class EntitySetImpl implements EntitySet, Iterator<Entity> {
 
   private String odataContext;
+
   private Long odataCount;
+
   private String odataNextLink;
+
   private String odataDeltaLink;
+
   private List<Entity> entities = null;
 
   private PropertyCollectionBuilder propertyCollectionsBuilder;
@@ -91,7 +95,9 @@ public class EntitySetImpl implements EntitySet, Iterator<Entity> {
   public boolean hasNext() {
     try {
       return propertyCollectionsBuilder.hasNext();
-    } catch (JsonParseException e) {} catch (IOException e) {}
+    } catch (JsonParseException e) {
+    } catch (IOException e) {
+    }
     return false;
   }
 
@@ -104,7 +110,8 @@ public class EntitySetImpl implements EntitySet, Iterator<Entity> {
   }
 
   @Override
-  public void remove() {}
+  public void remove() {
+  }
 
   @Override
   public Iterator<Entity> iterator() {

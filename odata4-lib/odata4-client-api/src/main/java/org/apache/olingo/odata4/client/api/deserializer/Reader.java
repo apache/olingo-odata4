@@ -22,9 +22,9 @@ import java.io.InputStream;
 
 public interface Reader {
 
-  public abstract EntitySet readEntitySet(InputStream in) throws ConsumerException;
+  EntitySet readEntitySet(InputStream in) throws ClientException;
 
-  public abstract Entity readEntity(InputStream in) throws ConsumerException;
+  Entity readEntity(InputStream in) throws ClientException;
 
-  public abstract Property readProperty(InputStream in) throws ConsumerException;
+  Property readProperty(InputStream in) throws ClientException;
 }

@@ -16,18 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.deserializer;
 
-import static org.junit.Assert.assertNotNull;
+public class ClientException extends Exception {
 
-import org.apache.olingo.odata4.client.api.ODataConsumer;
-import org.junit.Test;
+  private static final long serialVersionUID = 5148670827051750921L;
 
-public class ODataConsumerTest {
+  public ClientException() {
+    super();
+  }
 
-  @Test
-  public void before() {
-    ODataConsumer consumer = ODataConsumer.create();
-    assertNotNull(consumer);
+  public ClientException(final String message) {
+    super(message);
+  }
+
+  public ClientException(final String message, final Throwable cause) {
+    super(message, cause);
   }
 }
