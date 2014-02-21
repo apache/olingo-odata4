@@ -81,14 +81,12 @@ value               : VALUE;
 //; 2. Query Options
 //;------------------------------------------------------------------------------
 
-queryOptions        : vlQO+=queryOption ( AMP vlQO+=queryOption )*;
+queryOptions        : vlQO+=queryOption ( AMP vlQO+=queryOption )*;//TODO can this be removed
 
-queryOption         : systemQueryOption
-                    | AT_Q aliasAndValue;
+queryOption         : systemQueryOption; 
 
 systemQueryOption   : expand
                     | filter 
-                    | format 
                     | inlinecount 
                     | orderBy
                     | search
@@ -148,7 +146,7 @@ orderByItem         : vC=commonExpr ( WSP ( vA=ASC | vD=DESC ) )?;
 
 skip                : SKIP EQ INT;
 top                 : TOP EQ INT;
-format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
+//format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS ( SLASH PCHARS)?);
 
 inlinecount         : COUNT EQ booleanNonCase;
 

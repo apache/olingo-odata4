@@ -256,7 +256,7 @@ public class UriInfoImpl implements UriInfo {
       formatOption = (FormatOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.ID) {
       idOption = (IdOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.INLINECOUNT) {
+    } else if (systemOption.getKind() == SupportedQueryOptions.COUNT) {
       inlineCountOption = (CountOptionImpl) systemOption;
     } else if (systemOption.getKind() == SupportedQueryOptions.ORDERBY) {
       orderByOption = (OrderByOptionImpl) systemOption;

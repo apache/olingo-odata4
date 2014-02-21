@@ -195,12 +195,6 @@ public class Parser {
             idOption.setText(option.value);
             idOption.setValue(option.value);
             context.contextUriInfo.setSystemQueryOption(idOption);
-          } else if (option.name.equals("$inlinecount")) {
-            CountOptionImpl inlineCountOption = new CountOptionImpl();
-            inlineCountOption.setName(option.name);
-            inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(option.value.equals("true") ? true : false);
-            context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$orderby")) {
             OrderByEOFContext ctxFilterExpression =
                 (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
@@ -244,19 +238,7 @@ public class Parser {
             inlineCountOption.setText(option.value);
             inlineCountOption.setValue(option.value.equals("true") ? true : false);
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
-          } else if (option.name.equals("$level")) {
-            LevelsOptionImpl inlineCountOption = new LevelsOptionImpl();
-            inlineCountOption.setName(option.name);
-            inlineCountOption.setText(option.value);
-            if (option.value.equals("max")) {
-              inlineCountOption.setMax();
-            } else {
-              inlineCountOption.setValue(Integer.parseInt(option.value));
-            }
-
-            context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           }
-
         }
       }
 

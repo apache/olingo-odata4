@@ -18,12 +18,8 @@
  */
 package org.apache.olingo.odata4.server.core.uri.parser;
 
-//TODO Check name of this exception when implementing proper error handling
 public class UriParserSemanticException extends UriParserException {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
 
   public UriParserSemanticException(final String message, final Throwable cause) {

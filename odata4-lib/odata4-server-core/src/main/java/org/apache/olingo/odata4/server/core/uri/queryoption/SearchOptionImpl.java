@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SupportedQueryOptions;
 import org.apache.olingo.odata4.server.api.uri.queryoption.search.SearchExpression;
 
-// TODO $search is not supported yet
+// TODO planned: support $search 
 public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOption {
 
   public SearchOptionImpl() {
@@ -31,7 +31,6 @@ public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOpt
 
   @Override
   public SearchExpression getSearchExpression() {
-    // TODO $search is not supported yet
     return null;
   }
 

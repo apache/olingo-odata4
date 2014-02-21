@@ -46,7 +46,7 @@ import org.apache.olingo.odata4.server.core.uri.queryoption.expression.Expressio
 import org.apache.olingo.odata4.server.core.uri.queryoption.expression.LiteralImpl;
 import org.junit.Test;
 
-public class UriParameterImplTest {
+public class UriResourceImplTest {
   Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
 
   @Test
@@ -200,10 +200,12 @@ public class UriParameterImplTest {
         .getFunction(new ArrayList<String>());
     assertNotNull(function);
     impl.setFunction(function);
+    
 
     assertEquals(function, impl.getFunction());
     assertEquals("UFNRTInt16", impl.toString());
     assertEquals(function.getReturnType().getType(), impl.getType());
+    assertEquals(false,impl.isParameterListFilled());
 
     // function import
     impl = new UriResourceFunctionImpl();
@@ -226,6 +228,7 @@ public class UriParameterImplTest {
     assertEquals(false, impl.isCollection());
 
     assertEquals(parameter, impl.getParameters().get(0));
+    assertEquals(true,impl.isParameterListFilled());
   }
 
   @Test
@@ -476,7 +479,7 @@ public class UriParameterImplTest {
     assertEquals(true, impl.isCollection());
   }
 
-  /*
+  
   @Test
   public void testUriResourceStartingTypeFilterImpl() {
     UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();
@@ -498,5 +501,5 @@ public class UriParameterImplTest {
     impl.setKeyPredicates(keyPredicates);
     assertEquals(false, impl.isCollection());
 
-  }*/
+  }
 }

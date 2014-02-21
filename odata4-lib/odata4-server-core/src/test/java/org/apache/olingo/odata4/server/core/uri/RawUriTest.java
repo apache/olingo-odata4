@@ -124,16 +124,17 @@ public class RawUriTest {
     checkPath(rawUri, "nonServiceSegment/entitySet", Arrays.asList("entitySet"));
   }
 
-  /*
-   * @Test
-   * public void testSplitt() {
-   * UriRawParser.splitt("", '/');
-   * UriRawParser.splitt("a", '/');
-   * UriRawParser.splitt("a/", '/');
-   * UriRawParser.splitt("/a", '/');
-   * UriRawParser.splitt("a/a", '/');
-   * }
-   */
+  
+    @Test
+    public void testSplitt() {
+    UriDecoder.splitt("", '/');
+    UriDecoder.splitt("/", '/');
+    UriDecoder.splitt("a", '/');
+    UriDecoder.splitt("a/", '/');
+    UriDecoder.splitt("/a", '/');
+    UriDecoder.splitt("a/a", '/');
+    }
+   
 
   private void checkPath(final RawUri rawUri, final String path, final List<String> list) {
     assertEquals(path, rawUri.path);
