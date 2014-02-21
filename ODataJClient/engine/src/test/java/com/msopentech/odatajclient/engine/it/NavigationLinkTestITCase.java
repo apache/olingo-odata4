@@ -33,10 +33,9 @@ import com.msopentech.odatajclient.engine.data.ODataEntitySet;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
 
 public class NavigationLinkTestITCase extends AbstractTestITCase {
-    //collection of navigation links
 
     private void getListNavigationLinks(String acceptFormat) {
-        URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendNavigationLinkSegment("Customer").appendKeySegment(-10).appendLinksSegment("Orders");
         ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
         req.setAccept(acceptFormat);
@@ -50,20 +49,17 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
             assertNotNull(entity.get(i).getProperties().get(0).getValue());
         }
     }
-    //invalid query
 
     private void getListNavigationLinksInvalidSegment(String acceptFormat) {
-        URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendNavigationLinkSegment("Customer").appendKeySegment(-10).appendLinksSegment("Address");
         ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
         req.setAccept(acceptFormat);
-        ODataRetrieveResponse<ODataEntitySet> res = req.execute();
-        assertEquals(415, res.getStatusCode());
+        req.execute();
     }
-    //Reference navigation link
 
     private void getSingleNavigationLinks(String acceptFormat) {
-        URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendNavigationLinkSegment("Customer").appendKeySegment(-10).appendLinksSegment("Orders").
                 appendKeySegment(-10);
         ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -73,10 +69,9 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
         ODataEntity entity = res.getBody();
         assertNotNull(entity.getProperties().get(0).getValue());
     }
-    // reference navigation link
 
     private void getReferenceNavigationLinks(String acceptFormat) {
-        URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendNavigationLinkSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins").
                 appendKeySegment(-1);
         ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -96,14 +91,12 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
             }
         }
     }
-    // json header test
 
     @Test
     public void withJSON() {
         getListNavigationLinks("application/json");
         getSingleNavigationLinks("application/json");
     }
-    // atom header test
 
     @Test(expected = ODataClientErrorException.class)
     public void withATOM() {
@@ -111,7 +104,6 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
         getSingleNavigationLinks("application/atom+xml");
         getReferenceNavigationLinks("application/atom+xml");
     }
-    // unable to deserialize. xml is an invalid accept header for collection reference link
 
     @Test(expected = IllegalArgumentException.class)
     public void withXML() {
@@ -119,7 +111,6 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
         getSingleNavigationLinks("application/xml");
         getReferenceNavigationLinks("application/xml");
     }
-    //with no accept header test
 
     @Test
     public void withNull() {
@@ -127,7 +118,6 @@ public class NavigationLinkTestITCase extends AbstractTestITCase {
         getSingleNavigationLinks(null);
         getReferenceNavigationLinks(null);
     }
-    // with an invalid navigation segment which does not exists. 404 error is returned
 
     @Test(expected = ODataClientErrorException.class)
     public void withInvalidSegment() {

@@ -1,0 +1,6 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#ProductPhoto/@Element",
+  "ProductId": -2,
+  "PhotoId": -2,
+  "Photo": ""
+}

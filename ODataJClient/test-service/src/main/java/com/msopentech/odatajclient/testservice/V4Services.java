@@ -18,32 +18,18 @@
  */
 package com.msopentech.odatajclient.testservice;
 
-import java.io.File;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import org.apache.cxf.helpers.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.vfs2.FileSystemException;
 
 @Path("/V4/Static.svc")
-public class V4Services {
+public class V4Services extends AbstractServices {
 
-    /**
-     * Logger.
-     */
-    protected static final Logger LOG = LoggerFactory.getLogger(V4Services.class);
+    public V4Services() throws FileSystemException {
+        super();
+    }
 
-    @GET
-    @Path("/$metadata")
-    @Produces("application/xml")
-    public String getMetadata() {
-        try {
-            final String src = File.separatorChar + "v4" + File.separatorChar + "metadata.xml";
-            return IOUtils.toString(getClass().getResourceAsStream(src), "UTF-8");
-        } catch (Exception e) {
-            LOG.error("Failure retrieving metadata information", e);
-            return "";
-        }
+    @Override
+    protected ODataVersion getVersion() {
+        return ODataVersion.v4;
     }
 }

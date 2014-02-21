@@ -80,7 +80,7 @@ public enum ODataFormat {
         }
 
         if (result == null) {
-            final String candidate = _format.toString();
+            final String candidate = _format.toString().replaceAll(" ", "");
             for (ODataFormat value : values()) {
                 if (candidate.equals(value.toString())) {
                     result = value;

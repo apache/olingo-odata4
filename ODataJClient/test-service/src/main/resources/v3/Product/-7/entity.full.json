@@ -1,0 +1,51 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Product/@Element",
+  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-7)",
+  "odata.etag": "W/\"'%E3%81%B3%E3%83%9E%E6%AD%B9%E3%82%BE%E3%83%9C%E3%81%BE%EF%BE%9D%E3%81%BA%E3%82%92%E3%82%BC%E3%82%A1%E3%82%BC%E3%81%9F%E3%83%90%E3%81%B9%E3%83%80%EF%BD%A6%E3%83%9F%E3%82%BD%E4%BA%9C%E3%82%A1%E3%83%9E%E3%82%BC%E3%83%81%E3%82%BC%E3%81%82%EF%BE%88%E3%81%BE%E3%81%B2%E3%83%9C%E3%81%81%D1%91%EF%BE%9D%E3%83%80%E3%82%BC%EF%BD%9A%E3%81%B2%D1%8F%E3%82%A1%E3%81%B4%E3%81%B9%E7%B8%B7%E3%81%9C%E3%82%92%E3%81%B2%E3%82%92%E4%BA%9C%E3%81%BE%E3%82%BD%E3%81%BD%E3%81%B9%E3%81%B2%E3%83%9F%E3%81%9E%E3%81%BE%E3%82%BE%E3%81%BE%E3%81%BE%E3%81%82%E3%83%81%E3%82%93'\"",
+          "odata.editLink": "Product(-7)",
+  "RelatedProducts@odata.navigationLinkUrl": "Product(-7)/RelatedProducts",
+  "Detail@odata.navigationLinkUrl": "Product(-7)/Detail",
+  "Reviews@odata.navigationLinkUrl": "Product(-7)/Reviews",
+  "Photos@odata.navigationLinkUrl": "Product(-7)/Photos",
+  "#DefaultContainer.ChangeProductDimensions":
+          {
+            "title": "ChangeProductDimensions",
+            "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-7)/ChangeProductDimensions"
+          },
+  "Picture@odata.mediaEditLink": "Product(-7)/Picture",
+  "ProductId": -7,
+  "Description": null,
+  "Dimensions":
+          {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+            "Width@odata.type": "Edm.Decimal",
+            "Width": "-73118289035663600000000000000",
+            "Height@odata.type": "Edm.Decimal",
+            "Height": "25.9581087054375",
+            "Depth@odata.type": "Edm.Decimal",
+            "Depth": "-71.7711704670702"
+          },
+  "BaseConcurrency": "びマ歹ゾボまﾝぺをゼァゼたバべダｦミソ亜ァマゼチゼあﾈまひボぁёﾝダゼｚひяァぴべ縷ぜをひを亜まソぽべひミぞまゾままあチん",
+  "ComplexConcurrency":
+          {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+            "Token": "nbdgygcmjnihofqvxjxfvcxqxytvlujyvxuiuxct",
+            "QueriedDateTime@odata.type": "Edm.DateTime",
+            "QueriedDateTime": "2013-09-18T00:44:43.6196168"
+          },
+  "NestedComplexConcurrency":
+          {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+            "ModifiedDate@odata.type": "Edm.DateTime",
+            "ModifiedDate": "7866-11-16T22:25:52.747755+01:00",
+            "ModifiedBy": "ngfqlßphequuncuprßuiydjalaamdrrbmyhvunjdbinctagtiabuegodssfolßiohssssqsxgxopzzutbdlsdjclmoutiylkssd",
+            "Concurrency":
+                    {
+                      "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                      "Token": "ボ畚九ぴあチひソァタ九яポ弌マポ裹黑ソ暦ソｚ九ゾァポポボ匚歹チ黑ゾあぁゼポёゼ",
+                      "QueriedDateTime@odata.type": "Edm.DateTime",
+                      "QueriedDateTime": "2003-06-08T07:40:25.2199237"
+                    }
+          }
+}

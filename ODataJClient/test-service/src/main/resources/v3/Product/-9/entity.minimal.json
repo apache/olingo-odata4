@@ -1,0 +1,36 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Product/@Element",
+  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+  "ProductId": -9,
+  "Description": "kdcuklu",
+  "Dimensions":
+          {
+            "Width": "-25802798699776200000000000000",
+            "Height": "38.543408267225",
+            "Depth": "-8459.21552673786"
+          },
+  "BaseConcurrency": "яァそ珱ｚそ縷ミёボぜЯ歹ミバほポほゼｦ畚クほﾈゼま裹びぴべ歹あダグソびёёんポそミマほソｚ裹ぼん珱べゼ歹ミｚポぜぞソポぺミダ欲弌яソソぽソべバ黑九珱ぞポЯダソゼ",
+  "ComplexConcurrency":
+          {
+            "Token": "vkvezqrkjuykjmkßyqpliyvß",
+            "QueriedDateTime": null
+          },
+  "NestedComplexConcurrency":
+          {
+            "ModifiedDate": "2012-11-20T10:27:48.8528105",
+            "ModifiedBy": "gtpakgdzcfjyumozyqzrhxuypuzfqhvmzeepvjllfncsjuumjzdxvlhjprgphzfvjxzsklilojgtqhktpj",
+            "Concurrency":
+                    {
+                      "Token": "ボボﾝひё縷そァぽゼんダ珱ゼぁｚ畚亜亜ゼひバ亜ほべハﾝﾈたポ九ゾべダぞ畚タｚゾぼァЯダをあ",
+                      "QueriedDateTime": "2005-10-12T22:26:24.9396883"
+                    }
+          },
+  "Discontinued": "2005-07-28T13:09:56.9997833",
+  "ReplacementProductId": null,
+  "DiscontinuedPhone":
+          {
+            "PhoneNumber": "縷たべハボ欲ァんぽぴソａぽゾあたぁソびぼポ九バほ畚ゼまａぼそЯ亜ﾈぁグぴ暦ｚポほボボﾈぴ",
+            "Extension": "bozhmrtomzrcmheuuqybovfiuypathsafmriopuccbqubhqbmuauxvnftvnpisgobryzqya"
+          },
+  "ChildConcurrencyToken": "裹ぺゾ縷ゼほゼソｚゼｚぜソﾝゼをまぁダびタ珱タバゾゾミチボ暦ソァべ裹ポぜをｦびゼマをゼミぽボソﾈぽポミゾａタソぁマ裹グａタ歹歹たｚバ縷チんをЯん畚たゾべソ欲ァ縷яミをｦせｦゼマソボゼゼチぼ畚珱"
+}

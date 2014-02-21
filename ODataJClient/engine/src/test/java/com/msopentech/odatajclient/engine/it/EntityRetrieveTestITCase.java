@@ -47,7 +47,7 @@ import org.junit.Test;
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     protected String getServiceRoot() {
-        return testDefaultServiceRootURL;
+        return testStaticServiceRootURL;
     }
 
     private void withInlineEntry(final ODataPubFormat format) {

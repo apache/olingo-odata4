@@ -1,0 +1,452 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Product",
+  "value":
+          [
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-10)",
+              "odata.etag": "W/\"'New%20BaseConcurrency(1391427673066)'\"",
+              "odata.editLink": "Product(-10)",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-10)/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-10)/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-10)/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-10)/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-10)/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-10)/Picture",
+              "ProductId": -10,
+              "Description": "New Description(1391427672964)",
+              "Dimensions": null,
+              "BaseConcurrency": "New BaseConcurrency(1391427673066)",
+              "ComplexConcurrency": null,
+              "NestedComplexConcurrency": null
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-9)",
+              "odata.etag": "W/\"'%D1%8F%E3%82%A1%E3%81%9D%E7%8F%B1%EF%BD%9A%E3%81%9D%E7%B8%B7%E3%83%9F%D1%91%E3%83%9C%E3%81%9C%D0%AF%E6%AD%B9%E3%83%9F%E3%83%90%E3%81%BB%E3%83%9D%E3%81%BB%E3%82%BC%EF%BD%A6%E7%95%9A%E3%82%AF%E3%81%BB%EF%BE%88%E3%82%BC%E3%81%BE%E8%A3%B9%E3%81%B3%E3%81%B4%E3%81%B9%E6%AD%B9%E3%81%82%E3%83%80%E3%82%B0%E3%82%BD%E3%81%B3%D1%91%D1%91%E3%82%93%E3%83%9D%E3%81%9D%E3%83%9F%E3%83%9E%E3%81%BB%E3%82%BD%EF%BD%9A%E8%A3%B9%E3%81%BC%E3%82%93%E7%8F%B1%E3%81%B9%E3%82%BC%E6%AD%B9%E3%83%9F%EF%BD%9A%E3%83%9D%E3%81%9C%E3%81%9E%E3%82%BD%E3%83%9D%E3%81%BA%E3%83%9F%E3%83%80%E6%AC%B2%E5%BC%8C%D1%8F%E3%82%BD%E3%82%BD%E3%81%BD%E3%82%BD%E3%81%B9%E3%83%90%E9%BB%91%E4%B9%9D%E7%8F%B1%E3%81%9E%E3%83%9D%D0%AF%E3%83%80%E3%82%BD%E3%82%BC', '%E8%A3%B9%E3%81%BA%E3%82%BE%E7%B8%B7%E3%82%BC%E3%81%BB%E3%82%BC%E3%82%BD%EF%BD%9A%E3%82%BC%EF%BD%9A%E3%81%9C%E3%82%BD%EF%BE%9D%E3%82%BC%E3%82%92%E3%81%BE%E3%81%81%E3%83%80%E3%81%B3%E3%82%BF%E7%8F%B1%E3%82%BF%E3%83%90%E3%82%BE%E3%82%BE%E3%83%9F%E3%83%81%E3%83%9C%E6%9A%A6%E3%82%BD%E3%82%A1%E3%81%B9%E8%A3%B9%E3%83%9D%E3%81%9C%E3%82%92%EF%BD%A6%E3%81%B3%E3%82%BC%E3%83%9E%E3%82%92%E3%82%BC%E3%83%9F%E3%81%BD%E3%83%9C%E3%82%BD%EF%BE%88%E3%81%BD%E3%83%9D%E3%83%9F%E3%82%BE%EF%BD%81%E3%82%BF%E3%82%BD%E3%81%81%E3%83%9E%E8%A3%B9%E3%82%B0%EF%BD%81%E3%82%BF%E6%AD%B9%E6%AD%B9%E3%81%9F%EF%BD%9A%E3%83%90%E7%B8%B7%E3%83%81%E3%82%93%E3%82%92%D0%AF%E3%82%93%E7%95%9A%E3%81%9F%E3%82%BE%E3%81%B9%E3%82%BD%E6%AC%B2%E3%82%A1%E7%B8%B7%D1%8F%E3%83%9F%E3%82%92%EF%BD%A6%E3%81%9B%EF%BD%A6%E3%82%BC%E3%83%9E%E3%82%BD%E3%83%9C%E3%82%BC%E3%82%BC%E3%83%81%E3%81%BC%E7%95%9A%E7%8F%B1'\"",
+              "odata.editLink": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture",
+              "ProductId": -9,
+              "Description": "kdcuklu",
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "-1.12",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "-1.12",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "-1.12"
+                      },
+              "BaseConcurrency": "яァそ珱ｚそ縷ミёボぜЯ歹ミバほポほゼｦ畚クほﾈゼま裹びぴべ歹あダグソびёёんポそミマほソｚ裹ぼん珱べゼ歹ミｚポぜぞソポぺミダ欲弌яソソぽソべバ黑九珱ぞポЯダソゼ",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "vkvezqrkjuykjmkßyqpliyvß",
+                        "QueriedDateTime": null
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "2012-11-20T10:27:48.8528105",
+                        "ModifiedBy": "gtpakgdzcfjyumozyqzrhxuypuzfqhvmzeepvjllfncsjuumjzdxvlhjprgphzfvjxzsklilojgtqhktpj",
+                        "Concurrency":
+                                {
+                                  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                                  "Token": "ボボﾝひё縷そァぽゼんダ珱ゼぁｚ畚亜亜ゼひバ亜ほべハﾝﾈたポ九ゾべダぞ畚タｚゾぼァЯダをあ",
+                                  "QueriedDateTime@odata.type": "Edm.DateTime",
+                                  "QueriedDateTime": "2005-10-12T22:26:24.9396883"
+                                }
+                      },
+              "Discontinued@odata.type": "Edm.DateTime",
+              "Discontinued": "2005-07-28T13:09:56.9997833",
+              "ReplacementProductId": null,
+              "DiscontinuedPhone":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+                        "PhoneNumber": "縷たべハボ欲ァんぽぴソａぽゾあたぁソびぼポ九バほ畚ゼまａぼそЯ亜ﾈぁグぴ暦ｚポほボボﾈぴ",
+                        "Extension": "bozhmrtomzrcmheuuqybovfiuypathsafmriopuccbqubhqbmuauxvnftvnpisgobryzqya"
+                      },
+              "ChildConcurrencyToken": "裹ぺゾ縷ゼほゼソｚゼｚぜソﾝゼをまぁダびタ珱タバゾゾミチボ暦ソァべ裹ポぜをｦびゼマをゼミぽボソﾈぽポミゾａタソぁマ裹グａタ歹歹たｚバ縷チんをЯん畚たゾべソ欲ァ縷яミをｦせｦゼマソボゼゼチぼ畚珱"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-8)",
+              "odata.etag": "W/\"'asme', 'hhsbjscessmdunkssmvqmqyzuahm'\"",
+              "odata.editLink": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture",
+              "ProductId": -8,
+              "Description": "kelßebrrbesshcnkmhsxokyßetgscprtmiptxyiqnxrohjßuyfegßßmlnejcsmkemgjfrxpqfeffuuqrubvznftmniuulxz",
+              "Dimensions": null,
+              "BaseConcurrency": "asme",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": null,
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "2012-10-11T05:04:16.3627949"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "5431-05-27T11:53:49.8454872+02:00",
+                        "ModifiedBy": "xsnquujocxuumpeqsbodtugghfrghfuihjiyxgvcntkflpxohuyfgytigbdl",
+                        "Concurrency":
+                                {
+                                  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                                  "Token": "solisgfvqa",
+                                  "QueriedDateTime@odata.type": "Edm.DateTime",
+                                  "QueriedDateTime": "9363-12-30T16:34:30.1866623"
+                                }
+                      },
+              "Discontinued@odata.type": "Edm.DateTime",
+              "Discontinued": "2012-08-22T13:41:42.8011658",
+              "ReplacementProductId": 62,
+              "DiscontinuedPhone":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+                        "PhoneNumber": "ulemcjvsndemzkctrfhkiuiblmhdkkledze",
+                        "Extension": "グ黑ポЯポソ欲タぴぺ畚をほまバぽﾝゼ歹ぁポёハをぜ九ЯまЯソぜ暦ｚダяチゼ欲ソミマぁべぁハぴを匚ポミあ九ぞミぞァァク裹ａソタタ亜そあクマぽё珱ひﾈぜクボ欲ダミ黑"
+                      },
+              "ChildConcurrencyToken": "hhsbjscessmdunkssmvqmqyzuahm"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-7)",
+              "odata.etag": "W/\"'%E3%81%B3%E3%83%9E%E6%AD%B9%E3%82%BE%E3%83%9C%E3%81%BE%EF%BE%9D%E3%81%BA%E3%82%92%E3%82%BC%E3%82%A1%E3%82%BC%E3%81%9F%E3%83%90%E3%81%B9%E3%83%80%EF%BD%A6%E3%83%9F%E3%82%BD%E4%BA%9C%E3%82%A1%E3%83%9E%E3%82%BC%E3%83%81%E3%82%BC%E3%81%82%EF%BE%88%E3%81%BE%E3%81%B2%E3%83%9C%E3%81%81%D1%91%EF%BE%9D%E3%83%80%E3%82%BC%EF%BD%9A%E3%81%B2%D1%8F%E3%82%A1%E3%81%B4%E3%81%B9%E7%B8%B7%E3%81%9C%E3%82%92%E3%81%B2%E3%82%92%E4%BA%9C%E3%81%BE%E3%82%BD%E3%81%BD%E3%81%B9%E3%81%B2%E3%83%9F%E3%81%9E%E3%81%BE%E3%82%BE%E3%81%BE%E3%81%BE%E3%81%82%E3%83%81%E3%82%93'\"",
+              "odata.editLink": "Product(-7)",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-7)/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-7)/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-7)/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-7)/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-7)/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-7)/Picture",
+              "ProductId": -7,
+              "Description": null,
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "-73118289035663600000000000000",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "25.9581087054375",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "-71.7711704670702"
+                      },
+              "BaseConcurrency": "びマ歹ゾボまﾝぺをゼァゼたバべダｦミソ亜ァマゼチゼあﾈまひボぁёﾝダゼｚひяァぴべ縷ぜをひを亜まソぽべひミぞまゾままあチん",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "nbdgygcmjnihofqvxjxfvcxqxytvlujyvxuiuxct",
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "2013-09-18T00:44:43.6196168"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "7866-11-16T22:25:52.747755+01:00",
+                        "ModifiedBy": "ngfqlßphequuncuprßuiydjalaamdrrbmyhvunjdbinctagtiabuegodssfolßiohssssqsxgxopzzutbdlsdjclmoutiylkssd",
+                        "Concurrency":
+                                {
+                                  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                                  "Token": "ボ畚九ぴあチひソァタ九яポ弌マポ裹黑ソ暦ソｚ九ゾァポポボ匚歹チ黑ゾあぁゼポёゼ",
+                                  "QueriedDateTime@odata.type": "Edm.DateTime",
+                                  "QueriedDateTime": "2003-06-08T07:40:25.2199237"
+                                }
+                      }
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-6)",
+              "odata.etag": "W/\"'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'\"",
+              "odata.editLink": "Product(-6)",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-6)/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-6)/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-6)/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-6)/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-6)/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-6)/Picture",
+              "ProductId": -6,
+              "Description": "expdybhclurfobuyvzmhkgrnrajhamqmkhqpmiypittnp",
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "-49157206180150400000000000000",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "-79228162514264337593543950335",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "38.8793813628938"
+                      },
+              "BaseConcurrency": "uacssmuxummhtezdsnoßssrlbsßloxjsslnnayinxiksspjsssvumgduaapcfvnsseeßgpaxuaabosemßiemtufplo",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "まﾝ裹ぁゼｦぼ歹ポぜボたゾひたソﾝタボたぺを欲弌ミソゾべ弌ダァぺべソ裹ひ暦ﾝそя欲ぺ歹ボタひせァﾝんゾﾝァポクﾝひぜ",
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "0001-01-01T00:00:00"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "0001-01-01T00:00:00",
+                        "ModifiedBy": null,
+                        "Concurrency":
+                                {
+                                  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                                  "Token": "zqzhnfajucmhubkegvlixzrqum",
+                                  "QueriedDateTime@odata.type": "Edm.DateTime",
+                                  "QueriedDateTime": "9363-08-11T05:17:31.4918312"
+                                }
+                      }
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-5)",
+              "odata.etag": "W/\"'inxlfdfruoalzluabvubrgahsg', 'ixxletiyfrigooaltaqikqcnkpepfufyffmuouknjzyelardpyudoachqdejrjnuhueunugyli'\"",
+              "odata.editLink": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture",
+              "ProductId": -5,
+              "Description": "uuudqysoiozagpcpumnydpupopsvd",
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "7337.75206762393",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "-4.63644378890358",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "-79228162514264337593543950335"
+                      },
+              "BaseConcurrency": "inxlfdfruoalzluabvubrgahsg",
+              "ComplexConcurrency": null,
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "9999-12-31T23:59:59.9999999",
+                        "ModifiedBy": "mlsbmanrhvygvakricoomrnksyutxxdrbizpdzdunzzukgkeaibnuufvxcjputulmcutevhiyflnsjahjistqrlasor",
+                        "Concurrency": null
+                      },
+              "Discontinued@odata.type": "Edm.DateTime",
+              "Discontinued": "2012-06-17T07:49:33.4591089",
+              "ReplacementProductId": -2147483648,
+              "DiscontinuedPhone":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+                        "PhoneNumber": "びマ",
+                        "Extension": "九ぜゾべぁびミёё歹珱九ぞあａぞクダまァミソん歹欲べ亜ぜチぜチぁボゼﾝяほ珱ゾゾぼ匚ぜハミソぁボぜぁァチクタ黑を匚ボグ珱ゼボソｚ"
+                      },
+              "ChildConcurrencyToken": "ixxletiyfrigooaltaqikqcnkpepfufyffmuouknjzyelardpyudoachqdejrjnuhueunugyli"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-4)",
+              "odata.etag": "W/\"'%E3%81%BD%E3%83%9C%EF%BE%9D%E3%81%82%E3%81%B3'\"",
+              "odata.editLink": "Product(-4)",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-4)/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-4)/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-4)/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-4)/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-4)/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-4)/Picture",
+              "ProductId": -4,
+              "Description": "rgdhvcueuidboerbhyvsvjg",
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "0",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "-62044452036508000000000000000",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "0"
+                      },
+              "BaseConcurrency": "ぽボﾝあび",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "uyu",
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "2012-11-20T10:27:48.8842825"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+                        "ModifiedDate@odata.type": "Edm.DateTime",
+                        "ModifiedDate": "1428-10-05T04:52:59.8885925+02:00",
+                        "ModifiedBy": "ダチせあｚミソぽЯゼチゼ縷マ縷裹ﾈ匚暦チя匚ぁミ弌ハ弌ソゾ弌ぽんぴゼボま縷ゼボソハ裹黑九ポ黑マあゼソをぺタぺボ亜タァまクａﾝ亜ぺひぽぺ",
+                        "Concurrency":
+                                {
+                                  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                                  "Token": "gßoyfeyzsaelevßu",
+                                  "QueriedDateTime@odata.type": "Edm.DateTime",
+                                  "QueriedDateTime": "2013-02-28T13:47:36.6053928"
+                                }
+                      }
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-3)",
+              "odata.etag": "W/\"'fvrnsbiu%C3%9Fevuqssnuidjbhtluhcydhhjihyasecdnumhdpfxtij%C3%9Flvfqngmulfvjqqtvussyix%C3%9Fykxhbnehob%C3%9Fjssfickhmevci', '%E3%81%9D%E6%AD%B9%E3%82%BD%E3%83%9C%E3%83%9C%E3%82%92%E3%82%B0%E8%A3%B9%E3%81%B4%E3%83%9D%EF%BD%A6%E3%83%81'\"",
+              "odata.editLink": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture",
+              "ProductId": -3,
+              "Description": "ißuhmxavnmlsssssjssagmqjpchjußtkcoaldeyyduarovnxspzsskufxxfltußtxfhgjlksrn",
+              "Dimensions": null,
+              "BaseConcurrency": "fvrnsbiußevuqssnuidjbhtluhcydhhjihyasecdnumhdpfxtijßlvfqngmulfvjqqtvussyixßykxhbnehobßjssfickhmevci",
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "bdokxvtboyiiuphcrjrlklntbqksnlrldfzqdjgbkcbmyredrlyjunfrrfdcganncntvprydekacdauln",
+                        "QueriedDateTime": null
+                      },
+              "NestedComplexConcurrency": null,
+              "Discontinued@odata.type": "Edm.DateTime",
+              "Discontinued": "0001-01-01T00:00:00",
+              "ReplacementProductId": -1002345821,
+              "DiscontinuedPhone": null,
+              "ChildConcurrencyToken": "そ歹ソボボをグ裹ぴポｦチ"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-2)",
+              "odata.etag": "W/\"null, 'yljmhbcacfnothqirhaouhoraoruscpptgzmoch'\"",
+              "odata.editLink": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture",
+              "ProductId": -2,
+              "Description": null,
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "-79228162514264337593543950335",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "44733559606978800000000000000",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "-3913.60110028978"
+                      },
+              "BaseConcurrency": null,
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "mgmjxrußcs",
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "9018-08-19T03:09:32.9990625+02:00"
+                      },
+              "NestedComplexConcurrency": null,
+              "Discontinued@odata.type": "Edm.DateTime",
+              "Discontinued": "9999-12-31T23:59:59.9999999",
+              "ReplacementProductId": -566261304,
+              "DiscontinuedPhone":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+                        "PhoneNumber": "nmaktpqeyimclgtimdspkbavivoclmvfcdeuysxemttzsckamkhukl",
+                        "Extension": null
+                      },
+              "ChildConcurrencyToken": "yljmhbcacfnothqirhaouhoraoruscpptgzmoch"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+              "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-1)",
+              "odata.etag": "W/\"null\"",
+              "odata.editLink": "Product(-1)",
+              "RelatedProducts@odata.navigationLinkUrl": "Product(-1)/RelatedProducts",
+              "Detail@odata.navigationLinkUrl": "Product(-1)/Detail",
+              "Reviews@odata.navigationLinkUrl": "Product(-1)/Reviews",
+              "Photos@odata.navigationLinkUrl": "Product(-1)/Photos",
+              "#DefaultContainer.ChangeProductDimensions":
+                      {
+                        "title": "ChangeProductDimensions",
+                        "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-1)/ChangeProductDimensions"
+                      },
+              "Picture@odata.mediaEditLink": "Product(-1)/Picture",
+              "ProductId": -1,
+              "Description": "vjsmflmaltcrnxiztidnalnrbhyaqzmxgkqesxnmodm",
+              "Dimensions":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions",
+                        "Width@odata.type": "Edm.Decimal",
+                        "Width": "0.123283309629675",
+                        "Height@odata.type": "Edm.Decimal",
+                        "Height": "-9264.03359778997",
+                        "Depth@odata.type": "Edm.Decimal",
+                        "Depth": "-0.409268660025419"
+                      },
+              "BaseConcurrency": null,
+              "ComplexConcurrency":
+                      {
+                        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+                        "Token": "dggicadyltktsssssmißjgblhyifbsnssspssahrgcspiznverhzgyvq",
+                        "QueriedDateTime@odata.type": "Edm.DateTime",
+                        "QueriedDateTime": "9999-12-31T23:59:59.9999999"
+                      },
+              "NestedComplexConcurrency": null
+            }
+          ]
+}

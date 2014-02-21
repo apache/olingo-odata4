@@ -1,0 +1,238 @@
+{
+  "value":
+          [
+            {
+              "ProductId": -10,
+              "Description": "New Description(1391427672964)",
+              "Dimensions": null,
+              "BaseConcurrency": "New BaseConcurrency(1391427673066)",
+              "ComplexConcurrency": null,
+              "NestedComplexConcurrency": null
+            },
+            {
+              "ProductId": -9,
+              "Description": "kdcuklu",
+              "Dimensions":
+                      {
+                        "Width": "-1.12",
+                        "Height": "-1.12",
+                        "Depth": "-1.12"
+                      },
+              "BaseConcurrency": "яァそ珱ｚそ縷ミёボぜЯ歹ミバほポほゼｦ畚クほﾈゼま裹びぴべ歹あダグソびёёんポそミマほソｚ裹ぼん珱べゼ歹ミｚポぜぞソポぺミダ欲弌яソソぽソべバ黑九珱ぞポЯダソゼ",
+              "ComplexConcurrency":
+                      {
+                        "Token": "vkvezqrkjuykjmkßyqpliyvß",
+                        "QueriedDateTime": null
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "2012-11-20T10:27:48.8528105",
+                        "ModifiedBy": "gtpakgdzcfjyumozyqzrhxuypuzfqhvmzeepvjllfncsjuumjzdxvlhjprgphzfvjxzsklilojgtqhktpj",
+                        "Concurrency":
+                                {
+                                  "Token": "ボボﾝひё縷そァぽゼんダ珱ゼぁｚ畚亜亜ゼひバ亜ほべハﾝﾈたポ九ゾべダぞ畚タｚゾぼァЯダをあ",
+                                  "QueriedDateTime": "2005-10-12T22:26:24.9396883"
+                                }
+                      },
+              "Discontinued": "2005-07-28T13:09:56.9997833",
+              "ReplacementProductId": null,
+              "DiscontinuedPhone":
+                      {
+                        "PhoneNumber": "縷たべハボ欲ァんぽぴソａぽゾあたぁソびぼポ九バほ畚ゼまａぼそЯ亜ﾈぁグぴ暦ｚポほボボﾈぴ",
+                        "Extension": "bozhmrtomzrcmheuuqybovfiuypathsafmriopuccbqubhqbmuauxvnftvnpisgobryzqya"
+                      },
+              "ChildConcurrencyToken": "裹ぺゾ縷ゼほゼソｚゼｚぜソﾝゼをまぁダびタ珱タバゾゾミチボ暦ソァべ裹ポぜをｦびゼマをゼミぽボソﾈぽポミゾａタソぁマ裹グａタ歹歹たｚバ縷チんをЯん畚たゾべソ欲ァ縷яミをｦせｦゼマソボゼゼチぼ畚珱"
+            },
+            {
+              "ProductId": -8,
+              "Description": "kelßebrrbesshcnkmhsxokyßetgscprtmiptxyiqnxrohjßuyfegßßmlnejcsmkemgjfrxpqfeffuuqrubvznftmniuulxz",
+              "Dimensions": null,
+              "BaseConcurrency": "asme",
+              "ComplexConcurrency":
+                      {
+                        "Token": null,
+                        "QueriedDateTime": "2012-10-11T05:04:16.3627949"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "5431-05-27T11:53:49.8454872+02:00",
+                        "ModifiedBy": "xsnquujocxuumpeqsbodtugghfrghfuihjiyxgvcntkflpxohuyfgytigbdl",
+                        "Concurrency":
+                                {
+                                  "Token": "solisgfvqa",
+                                  "QueriedDateTime": "9363-12-30T16:34:30.1866623"
+                                }
+                      },
+              "Discontinued": "2012-08-22T13:41:42.8011658",
+              "ReplacementProductId": 62,
+              "DiscontinuedPhone":
+                      {
+                        "PhoneNumber": "ulemcjvsndemzkctrfhkiuiblmhdkkledze",
+                        "Extension": "グ黑ポЯポソ欲タぴぺ畚をほまバぽﾝゼ歹ぁポёハをぜ九ЯまЯソぜ暦ｚダяチゼ欲ソミマぁべぁハぴを匚ポミあ九ぞミぞァァク裹ａソタタ亜そあクマぽё珱ひﾈぜクボ欲ダミ黑"
+                      },
+              "ChildConcurrencyToken": "hhsbjscessmdunkssmvqmqyzuahm"
+            },
+            {
+              "ProductId": -7,
+              "Description": null,
+              "Dimensions":
+                      {
+                        "Width": "-73118289035663600000000000000",
+                        "Height": "25.9581087054375",
+                        "Depth": "-71.7711704670702"
+                      },
+              "BaseConcurrency": "びマ歹ゾボまﾝぺをゼァゼたバべダｦミソ亜ァマゼチゼあﾈまひボぁёﾝダゼｚひяァぴべ縷ぜをひを亜まソぽべひミぞまゾままあチん",
+              "ComplexConcurrency":
+                      {
+                        "Token": "nbdgygcmjnihofqvxjxfvcxqxytvlujyvxuiuxct",
+                        "QueriedDateTime": "2013-09-18T00:44:43.6196168"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "7866-11-16T22:25:52.747755+01:00",
+                        "ModifiedBy": "ngfqlßphequuncuprßuiydjalaamdrrbmyhvunjdbinctagtiabuegodssfolßiohssssqsxgxopzzutbdlsdjclmoutiylkssd",
+                        "Concurrency":
+                                {
+                                  "Token": "ボ畚九ぴあチひソァタ九яポ弌マポ裹黑ソ暦ソｚ九ゾァポポボ匚歹チ黑ゾあぁゼポёゼ",
+                                  "QueriedDateTime": "2003-06-08T07:40:25.2199237"
+                                }
+                      }
+            },
+            {
+              "ProductId": -6,
+              "Description": "expdybhclurfobuyvzmhkgrnrajhamqmkhqpmiypittnp",
+              "Dimensions":
+                      {
+                        "Width": "-49157206180150400000000000000",
+                        "Height": "-79228162514264337593543950335",
+                        "Depth": "38.8793813628938"
+                      },
+              "BaseConcurrency": "uacssmuxummhtezdsnoßssrlbsßloxjsslnnayinxiksspjsssvumgduaapcfvnsseeßgpaxuaabosemßiemtufplo",
+              "ComplexConcurrency":
+                      {
+                        "Token": "まﾝ裹ぁゼｦぼ歹ポぜボたゾひたソﾝタボたぺを欲弌ミソゾべ弌ダァぺべソ裹ひ暦ﾝそя欲ぺ歹ボタひせァﾝんゾﾝァポクﾝひぜ",
+                        "QueriedDateTime": "0001-01-01T00:00:00"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "0001-01-01T00:00:00",
+                        "ModifiedBy": null,
+                        "Concurrency":
+                                {
+                                  "Token": "zqzhnfajucmhubkegvlixzrqum",
+                                  "QueriedDateTime": "9363-08-11T05:17:31.4918312"
+                                }
+                      }
+            },
+            {
+              "ProductId": -5,
+              "Description": "uuudqysoiozagpcpumnydpupopsvd",
+              "Dimensions":
+                      {
+                        "Width": "7337.75206762393",
+                        "Height": "-4.63644378890358",
+                        "Depth": "-79228162514264337593543950335"
+                      },
+              "BaseConcurrency": "inxlfdfruoalzluabvubrgahsg",
+              "ComplexConcurrency": null,
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "9999-12-31T23:59:59.9999999",
+                        "ModifiedBy": "mlsbmanrhvygvakricoomrnksyutxxdrbizpdzdunzzukgkeaibnuufvxcjputulmcutevhiyflnsjahjistqrlasor",
+                        "Concurrency": null
+                      },
+              "Discontinued": "2012-06-17T07:49:33.4591089",
+              "ReplacementProductId": -2147483648,
+              "DiscontinuedPhone":
+                      {
+                        "PhoneNumber": "びマ",
+                        "Extension": "九ぜゾべぁびミёё歹珱九ぞあａぞクダまァミソん歹欲べ亜ぜチぜチぁボゼﾝяほ珱ゾゾぼ匚ぜハミソぁボぜぁァチクタ黑を匚ボグ珱ゼボソｚ"
+                      },
+              "ChildConcurrencyToken": "ixxletiyfrigooaltaqikqcnkpepfufyffmuouknjzyelardpyudoachqdejrjnuhueunugyli"
+            },
+            {
+              "ProductId": -4,
+              "Description": "rgdhvcueuidboerbhyvsvjg",
+              "Dimensions":
+                      {
+                        "Width": "0",
+                        "Height": "-62044452036508000000000000000",
+                        "Depth": "0"
+                      },
+              "BaseConcurrency": "ぽボﾝあび",
+              "ComplexConcurrency":
+                      {
+                        "Token": "uyu",
+                        "QueriedDateTime": "2012-11-20T10:27:48.8842825"
+                      },
+              "NestedComplexConcurrency":
+                      {
+                        "ModifiedDate": "1428-10-05T04:52:59.8885925+02:00",
+                        "ModifiedBy": "ダチせあｚミソぽЯゼチゼ縷マ縷裹ﾈ匚暦チя匚ぁミ弌ハ弌ソゾ弌ぽんぴゼボま縷ゼボソハ裹黑九ポ黑マあゼソをぺタぺボ亜タァまクａﾝ亜ぺひぽぺ",
+                        "Concurrency":
+                                {
+                                  "Token": "gßoyfeyzsaelevßu",
+                                  "QueriedDateTime": "2013-02-28T13:47:36.6053928"
+                                }
+                      }
+            },
+            {
+              "ProductId": -3,
+              "Description": "ißuhmxavnmlsssssjssagmqjpchjußtkcoaldeyyduarovnxspzsskufxxfltußtxfhgjlksrn",
+              "Dimensions": null,
+              "BaseConcurrency": "fvrnsbiußevuqssnuidjbhtluhcydhhjihyasecdnumhdpfxtijßlvfqngmulfvjqqtvussyixßykxhbnehobßjssfickhmevci",
+              "ComplexConcurrency":
+                      {
+                        "Token": "bdokxvtboyiiuphcrjrlklntbqksnlrldfzqdjgbkcbmyredrlyjunfrrfdcganncntvprydekacdauln",
+                        "QueriedDateTime": null
+                      },
+              "NestedComplexConcurrency": null,
+              "Discontinued": "0001-01-01T00:00:00",
+              "ReplacementProductId": -1002345821,
+              "DiscontinuedPhone": null,
+              "ChildConcurrencyToken": "そ歹ソボボをグ裹ぴポｦチ"
+            },
+            {
+              "ProductId": -2,
+              "Description": null,
+              "Dimensions":
+                      {
+                        "Width": "-79228162514264337593543950335",
+                        "Height": "44733559606978800000000000000",
+                        "Depth": "-3913.60110028978"
+                      },
+              "BaseConcurrency": null,
+              "ComplexConcurrency":
+                      {
+                        "Token": "mgmjxrußcs",
+                        "QueriedDateTime": "9018-08-19T03:09:32.9990625+02:00"
+                      },
+              "NestedComplexConcurrency": null,
+              "Discontinued": "9999-12-31T23:59:59.9999999",
+              "ReplacementProductId": -566261304,
+              "DiscontinuedPhone":
+                      {
+                        "PhoneNumber": "nmaktpqeyimclgtimdspkbavivoclmvfcdeuysxemttzsckamkhukl",
+                        "Extension": null
+                      },
+              "ChildConcurrencyToken": "yljmhbcacfnothqirhaouhoraoruscpptgzmoch"
+            },
+            {
+              "ProductId": -1,
+              "Description": "vjsmflmaltcrnxiztidnalnrbhyaqzmxgkqesxnmodm",
+              "Dimensions":
+                      {
+                        "Width": "0.123283309629675",
+                        "Height": "-9264.03359778997",
+                        "Depth": "-0.409268660025419"
+                      },
+              "BaseConcurrency": null,
+              "ComplexConcurrency":
+                      {
+                        "Token": "dggicadyltktsssssmißjgblhyifbsnssspssahrgcspiznverhzgyvq",
+                        "QueriedDateTime": "9999-12-31T23:59:59.9999999"
+                      },
+              "NestedComplexConcurrency": null
+            }
+          ]
+}

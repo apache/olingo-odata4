@@ -1,0 +1,23 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Product/@Element",
+  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-10)",
+  "odata.etag": "W/\"'New%20BaseConcurrency(1392649542502)'\"",
+  "odata.editLink": "Product(-10)",
+  "RelatedProducts@odata.navigationLinkUrl": "Product(-10)/RelatedProducts",
+  "Detail@odata.navigationLinkUrl": "Product(-10)/Detail",
+  "Reviews@odata.navigationLinkUrl": "Product(-10)/Reviews",
+  "Photos@odata.navigationLinkUrl": "Product(-10)/Photos",
+  "#DefaultContainer.ChangeProductDimensions":
+          {
+            "title": "ChangeProductDimensions",
+            "target": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-10)/ChangeProductDimensions"
+          },
+  "Picture@odata.mediaEditLink": "Product(-10)/Picture",
+  "ProductId": -10,
+  "Description": "New Description(1391427672964)",
+  "Dimensions": null,
+  "BaseConcurrency": "New BaseConcurrency(1391427673066)",
+  "ComplexConcurrency": null,
+  "NestedComplexConcurrency": null
+}

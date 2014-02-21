@@ -25,10 +25,9 @@ import com.msopentech.odatajclient.engine.data.ODataEntitySet;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
 
 public class FilterTestITCase extends AbstractTestITCase {
-    // filter test
 
     private void filterQueryTest(final String entity, final String filter, final int expected) {
-        final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntitySetSegment(entity).filter(filter);
         final ODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
                 execute().getBody();
@@ -40,7 +39,6 @@ public class FilterTestITCase extends AbstractTestITCase {
     public void withId() {
         filterQueryTest("Customer", "CustomerId eq -10", 1);
     }
-    //logical operations
 
     @Test
     public void logical() {
@@ -49,7 +47,6 @@ public class FilterTestITCase extends AbstractTestITCase {
         filterQueryTest("Customer", "not endswith(Name,'Chandan')", 2);
         filterQueryTest("Car", "VIN le 18 and VIN gt 12", 6);
     }
-    //arithmetic operations
 
     @Test
     public void arithmetic() {
@@ -58,7 +55,6 @@ public class FilterTestITCase extends AbstractTestITCase {
         filterQueryTest("Car", "VIN mul 2 le 30", 5);
         filterQueryTest("Person", "PersonId sub 2 lt -10", 2);
     }
-    //string operations
 
     @Test
     public void stringOperations() {
@@ -69,9 +65,8 @@ public class FilterTestITCase extends AbstractTestITCase {
         filterQueryTest("Product", "startswith(Description, 'k') eq true", 2);
         filterQueryTest("Product", "indexof(Description, 'k') eq 0", 2);
         filterQueryTest("Product", "toupper(Description) eq 'KDCUKLU'", 1);
-        filterQueryTest("Product", "concat(Description, ', newname') eq 'kdcuklu, newname' ", 1);
+        filterQueryTest("Product", "concat(Description, ', newname') eq 'kdcuklu, newname'", 1);
     }
-    //math operations
 
     @Test
     public void math() {
@@ -80,18 +75,16 @@ public class FilterTestITCase extends AbstractTestITCase {
         filterQueryTest("Product", "floor(Dimensions/Width) eq 7337", 1);
         filterQueryTest("Product", "ceiling(Dimensions/Width) eq 7338", 1);
     }
-    //date operations
 
     @Test
     public void date() {
-        filterQueryTest("ComputerDetail", "day(PurchaseDate) eq 15", 0);
-        filterQueryTest("ComputerDetail", "month(PurchaseDate) eq 12", 1);
-        filterQueryTest("ComputerDetail", "hour(PurchaseDate) eq 1", 0);
-        filterQueryTest("ComputerDetail", "minute(PurchaseDate) eq 33", 0);
-        filterQueryTest("ComputerDetail", "second(PurchaseDate) eq 35", 0);
-        filterQueryTest("ComputerDetail", "year(PurchaseDate) eq 2020", 0);
+        filterQueryTest("ComputerDetail", "day(PurchaseDate) eq 15", 1);
+        filterQueryTest("ComputerDetail", "month(PurchaseDate) eq 12", 2);
+        filterQueryTest("ComputerDetail", "hour(PurchaseDate) eq 1", 1);
+        filterQueryTest("ComputerDetail", "minute(PurchaseDate) eq 33", 1);
+        filterQueryTest("ComputerDetail", "second(PurchaseDate) eq 35", 1);
+        filterQueryTest("ComputerDetail", "year(PurchaseDate) eq 2020", 1);
     }
-    //isOf test
 
     @Test
     public void isOfTest() {

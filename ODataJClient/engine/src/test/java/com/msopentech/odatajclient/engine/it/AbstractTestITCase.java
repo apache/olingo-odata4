@@ -90,6 +90,8 @@ public abstract class AbstractTestITCase {
 
     protected static String testDefaultServiceRootURL;
 
+    protected static String testStaticServiceRootURL;
+
     protected static String testActionOverloadingServiceRootURL;
 
     protected static String testKeyAsSegmentServiceRootURL;
@@ -125,12 +127,13 @@ public abstract class AbstractTestITCase {
         assertNotNull("Check value for the 'test.base.url' property", testBaseURL);
 
         testDefaultServiceRootURL = testBaseURL + "/DefaultService.svc";
+        testStaticServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc";
         testActionOverloadingServiceRootURL = testBaseURL + "/ActionOverloadingService.svc";
         testKeyAsSegmentServiceRootURL = testBaseURL + "/KeyAsSegmentService.svc";
         testODataWriterDefaultServiceRootURL = testBaseURL + "/ODataWriterDefaultService.svc";
         testOpenTypeServiceRootURL = testBaseURL + "/OpenTypeService.svc";
-        testPrimitiveKeysServiceRootURL = testBaseURL + "/PrimitiveKeys.svc";
-        testLargeModelServiceRootURL = testBaseURL + "/LargeModelService.svc";
+        testPrimitiveKeysServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc";
+        testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc/large";
         testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
     }
 
@@ -264,7 +267,7 @@ public abstract class AbstractTestITCase {
 
         entity.addProperty(client.getObjectFactory().newPrimitiveProperty("Information",
                 client.getPrimitiveValueBuilder().setText(sampleinfo).setType(
-                        EdmSimpleType.String).build()));
+                EdmSimpleType.String).build()));
 
         return entity;
     }
@@ -278,12 +281,12 @@ public abstract class AbstractTestITCase {
         // add name attribute
         entity.addProperty(client.getObjectFactory().newPrimitiveProperty("Name",
                 client.getPrimitiveValueBuilder().setText(sampleName).setType(
-                        EdmSimpleType.String).build()));
+                EdmSimpleType.String).build()));
 
         // add key attribute
         entity.addProperty(client.getObjectFactory().newPrimitiveProperty("CustomerId",
                 client.getPrimitiveValueBuilder().setText(String.valueOf(id)).setType(
-                        EdmSimpleType.Int32).build()));
+                EdmSimpleType.Int32).build()));
 
         // add BackupContactInfo attribute (collection)
         final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(

@@ -1,0 +1,102 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata",
+  "value":
+          [
+            {
+              "name": "AllGeoTypesSet",
+              "url": "AllGeoTypesSet"
+            },
+            {
+              "name": "AllGeoCollectionTypesSet",
+              "url": "AllGeoCollectionTypesSet"
+            },
+            {
+              "name": "Customer",
+              "url": "Customer"
+            },
+            {
+              "name": "Login",
+              "url": "Login"
+            },
+            {
+              "name": "RSAToken",
+              "url": "RSAToken"
+            },
+            {
+              "name": "PageView",
+              "url": "PageView"
+            },
+            {
+              "name": "LastLogin",
+              "url": "LastLogin"
+            },
+            {
+              "name": "Message",
+              "url": "Message"
+            },
+            {
+              "name": "MessageAttachment",
+              "url": "MessageAttachment"
+            },
+            {
+              "name": "Order",
+              "url": "Order"
+            },
+            {
+              "name": "OrderLine",
+              "url": "OrderLine"
+            },
+            {
+              "name": "Product",
+              "url": "Product"
+            },
+            {
+              "name": "ProductDetail",
+              "url": "ProductDetail"
+            },
+            {
+              "name": "ProductReview",
+              "url": "ProductReview"
+            },
+            {
+              "name": "ProductPhoto",
+              "url": "ProductPhoto"
+            },
+            {
+              "name": "CustomerInfo",
+              "url": "CustomerInfo"
+            },
+            {
+              "name": "Computer",
+              "url": "Computer"
+            },
+            {
+              "name": "ComputerDetail",
+              "url": "ComputerDetail"
+            },
+            {
+              "name": "Driver",
+              "url": "Driver"
+            },
+            {
+              "name": "License",
+              "url": "License"
+            },
+            {
+              "name": "MappedEntityType",
+              "url": "MappedEntityType"
+            },
+            {
+              "name": "Car",
+              "url": "Car"
+            },
+            {
+              "name": "Person",
+              "url": "Person"
+            },
+            {
+              "name": "PersonMetadata",
+              "url": "PersonMetadata"
+            }
+          ]
+}
