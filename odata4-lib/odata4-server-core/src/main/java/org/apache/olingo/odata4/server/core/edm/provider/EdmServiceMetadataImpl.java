@@ -55,7 +55,7 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   @Override
   public String getDataServiceVersion() {
-    return ODataServiceVersion.V40;
+    return ODataServiceVersion.V40.toString();
   }
 
   @Override

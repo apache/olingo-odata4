@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,10 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.edm.v3;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.odata4.client.core.edm.AbstractAnnotations;
 
-public class ODataClientImpl extends ODataClient {
+@JsonDeserialize(using = AnnotationsDeserializer.class)
+public class AnnotationsImpl extends AbstractAnnotations {
+
+  private static final long serialVersionUID = 3877353656301805410L;
+
+  private final List<TypeAnnotationImpl> typeAnnotations = new ArrayList<TypeAnnotationImpl>();
+
+  private final List<ValueAnnotationImpl> valueAnnotations = new ArrayList<ValueAnnotationImpl>();
+
+  public List<TypeAnnotationImpl> getTypeAnnotations() {
+    return typeAnnotations;
+  }
+
+  public List<ValueAnnotationImpl> getValueAnnotations() {
+    return valueAnnotations;
+  }
 
 }

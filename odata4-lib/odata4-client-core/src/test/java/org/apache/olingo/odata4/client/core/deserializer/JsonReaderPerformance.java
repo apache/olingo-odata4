@@ -24,15 +24,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 
 import org.apache.olingo.odata4.client.api.deserializer.ComplexValue;
 import org.apache.olingo.odata4.client.api.deserializer.Property;
 import org.apache.olingo.odata4.client.api.deserializer.StructuralProperty;
 import org.apache.olingo.odata4.client.api.deserializer.Value;
-import org.apache.olingo.odata4.client.core.testutil.StringHelper;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonReaderPerformance {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JsonReaderPerformance.class);
 
   @Test
   public void testComplexPropertyPerformance() throws Exception {
@@ -40,20 +44,20 @@ public class JsonReaderPerformance {
     int runs = 1000; // * 100;
 
     InputStream in = JsonReaderPerformance.class.getResourceAsStream("/complexProperty.json");
-    String content = StringHelper.inputStreamToString(in);
+    String content = IOUtils.toString(in);
 
-//    System.out.println("Started...");
+    LOG.debug("Started...");
     ComplexValue complex = null;
-//    long startTime = System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     for (int i = 0; i < runs; i++) {
-      Property property = consumer.readProperty(StringHelper.encapsulate(content));
+      Property property = consumer.readProperty(IOUtils.toInputStream(content));
       complex = (ComplexValue) ((StructuralProperty) property).getValue();
     }
-//    long endTime = System.currentTimeMillis();
+    long endTime = System.currentTimeMillis();
 
-//    long duration = endTime - startTime;
-//    System.out.println("Duration: " + duration + " ms");
-//    System.out.println("Duration per run: " + (duration / (float) runs) + " ms");
+    long duration = endTime - startTime;
+    LOG.debug("Duration: " + duration + " ms");
+    LOG.debug("Duration per run: " + (duration / (float) runs) + " ms");
     testComplexProperty(complex);
   }
 

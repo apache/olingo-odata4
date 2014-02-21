@@ -19,15 +19,22 @@
 package org.apache.olingo.odata4.client.core;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata4.client.api.ODataClient;
+import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
 
 public class ODataClientTest {
 
   @Test
   public void before() {
-    ODataClient client = ODataClient.create();
+    ODataClient client = ODataClientFactory.getV3();
     assertNotNull(client);
+    assertEquals(ODataServiceVersion.V30, client.getServiceVersion());
+
+    client = ODataClientFactory.getV4();
+    assertNotNull(client);
+    assertEquals(ODataServiceVersion.V40, client.getServiceVersion());
   }
 }

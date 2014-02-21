@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,27 +18,41 @@
  */
 package org.apache.olingo.odata4.client.api;
 
-//TODO: Exceptionhandling
-public abstract class ODataClient {
+import org.apache.olingo.odata4.client.api.data.ODataDeserializer;
+import org.apache.olingo.odata4.client.api.data.ODataReader;
+import org.apache.olingo.odata4.client.api.data.ODataSerializer;
+import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
-  private static final String IMPLEMENTATION = "org.apache.olingo.odata4.client.core.ODataClientImpl";
+public interface ODataClient {
 
-  public static ODataClient create() {
-    ODataClient instance;
+  ODataServiceVersion getServiceVersion();
 
-    try {
-      final Class<?> clazz = Class.forName(ODataClient.IMPLEMENTATION);
+  //ODataHeaders getVersionHeaders();
+  Configuration getConfiguration();
 
-      /*
-       * We explicitly do not use the singleton pattern to keep the server state free
-       * and avoid class loading issues also during hot deployment.
-       */
-      final Object object = clazz.newInstance();
-      instance = (ODataClient) object;
+//  URIBuilder getURIBuilder(String serviceRoot);
+//
+//  FilterFactory getFilterFactory();
+//
+  ODataSerializer getSerializer();
+//
+  ODataDeserializer getDeserializer();
 
-    } catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
-    return instance;
-  }
+  ODataReader getReader();
+
+//  ODataWriter getWriter();
+//
+//  ODataBinder getBinder();
+//
+//  ODataObjectFactory getObjectFactory();
+//
+//  RetrieveRequestFactory getRetrieveRequestFactory();
+//
+//  CUDRequestFactory getCUDRequestFactory();
+//
+//  StreamedRequestFactory getStreamedRequestFactory();
+//
+//  InvokeRequestFactory<?, ?, ?, ?, ?, ?, ?, ?> getInvokeRequestFactory();
+//
+//  BatchRequestFactory getBatchRequestFactory();
 }

@@ -34,8 +34,12 @@ import org.apache.olingo.odata4.client.api.deserializer.Value;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertyCollectionBuilder extends PropertyCollection {
+
+  private static final Logger LOG = LoggerFactory.getLogger(PropertyCollectionBuilder.class);
 
   private JsonParser parser;
 
@@ -95,10 +99,9 @@ public class PropertyCollectionBuilder extends PropertyCollection {
         return true;
       }
     } catch (JsonParseException e) {
-      // TODO: SLF4J Logging!
-      e.printStackTrace();
+      LOG.error("While parsing", e);
     } catch (IOException e) {
-      e.printStackTrace();
+      LOG.error("While parsing", e);
     }
     return false;
 
@@ -193,7 +196,7 @@ public class PropertyCollectionBuilder extends PropertyCollection {
           case VALUE_STRING:
             enclosingEntitySet.addAnnotation(jp.getCurrentName(), jp.getValueAsString());
             break;
-            
+
           default:
             break;
         }
