@@ -26,7 +26,7 @@ public class CountOptionImpl extends SystemQueryOptionImpl implements CountOptio
   private boolean count;
 
   public CountOptionImpl() {
-    setKind(SupportedQueryOptions.INLINECOUNT);
+    setKind(SupportedQueryOptions.COUNT);
   }
 
   @Override

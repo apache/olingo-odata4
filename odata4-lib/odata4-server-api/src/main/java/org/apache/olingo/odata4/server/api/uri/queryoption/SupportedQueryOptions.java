@@ -23,7 +23,7 @@ public enum SupportedQueryOptions {
   FORMAT("$format"),
   EXPAND("$expand"),
   ID("$id"),
-  INLINECOUNT("$inlinecount"),
+  COUNT("$count"),
   ORDERBY("$orderby"),
   SEARCH("$search"),
   SELECT("$select"),

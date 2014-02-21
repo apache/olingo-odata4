@@ -104,69 +104,57 @@ public class TestUriParserImpl {
     testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTString()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(true)
+        .isType(EdmTechProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameString)
-        .isCollection(false);
+        .isType(EdmTechProvider.nameString, false);
 
     // returning collection of primitive
     testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollString()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(true)
+        .isType(EdmTechProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameString)
-        .isCollection(true);
+        .isType(EdmTechProvider.nameString, true);
 
     // returning single complex
     testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(true)
+        .isType(EdmTechProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isCollection(false);
+        .isType(EdmTechProvider.nameCTTwoPrim, false);
 
     // returning collection of complex
     testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(true)
+        .isType(EdmTechProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isCollection(true);
+        .isType(EdmTechProvider.nameCTTwoPrim, true);
 
     // returning single entity
     testRes.run(
         esTwoKeyNav + "/com.sap.odata.test1.ETBaseTwoKeyNav/com.sap.odata.test1.BFCETBaseTwoKeyNavRTETTwoKeyNav()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EdmTechProvider.nameETTwoKeyNav, false)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
-        .isCollection(false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(false);
+        .isType(EdmTechProvider.nameETTwoKeyNav, false);
 
     // returning collection of entity (aka entitySet)
     testRes.run(esTwoKeyNav + "/com.sap.odata.test1.BFCSINavRTESTwoKeyNav()")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(false)
+        .isType(EdmTechProvider.nameETTwoKeyNav, false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isCollection(true);
+        .isType(EdmTechProvider.nameETTwoKeyNav, true);
   }
 
   @Test
@@ -212,8 +200,7 @@ public class TestUriParserImpl {
     testRes.run("ESAllPrim/$count")
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETAllPrim)
-        .isCollection(true)
+        .isType(EdmTechProvider.nameETAllPrim,true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.count);
 
@@ -517,10 +504,9 @@ public class TestUriParserImpl {
     testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase")
         .at(0)
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EdmTechProvider.nameETTwoPrim,true)
         .isTypeFilterOnCollection(EdmTechProvider.nameETBase)
-        .isTypeFilterOnEntry(null)
-        .isCollection(true);
+        .isTypeFilterOnEntry(null);
 
     // filter before key predicate
     testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)")
@@ -531,10 +517,9 @@ public class TestUriParserImpl {
         .isTypeFilterOnCollection(EdmTechProvider.nameETBase)
         .isTypeFilterOnEntry(null)
         .at(0)
-        .isType(EdmTechProvider.nameETTwoPrim)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isCollection(false);
-
+        .isType(EdmTechProvider.nameETTwoPrim,false)
+        .isKeyPredicate(0, "PropertyInt16", "1");
+        
     // filter before key predicate; property of sub type
     testRes.run("ESTwoPrim/com.sap.odata.test1.ETBase(PropertyInt16=1)/AdditionalPropertyString_5")
         .at(0)
@@ -553,11 +538,10 @@ public class TestUriParserImpl {
         .at(0)
         .isEntitySet("ESTwoPrim")
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EdmTechProvider.nameETTwoPrim,false)
         .isTypeFilterOnCollection(null)
         .isTypeFilterOnEntry(EdmTechProvider.nameETBase)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isCollection(false);
+        .isKeyPredicate(0, "PropertyInt16", "1");
 
     // filter after key predicate; property of sub type
     testRes.run("ESTwoPrim(PropertyInt16=1)/com.sap.odata.test1.ETBase/AdditionalPropertyString_5")
@@ -1027,10 +1011,10 @@ public class TestUriParserImpl {
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(EdmTechProvider.nameCTBase).goPath()
-        //.at(0)
-        //.isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        //.isType(EdmTechProvider.nameCTTwoPrim, false)
-        //.isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
+        // .at(0)
+        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        // .isType(EdmTechProvider.nameCTTwoPrim, false)
+        // .isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
         .at(0).isType(EdmTechProvider.nameString);
 
     // on Complex collection
@@ -1038,10 +1022,10 @@ public class TestUriParserImpl {
         + "$filter=com.sap.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(EdmTechProvider.nameCTBase).goPath()
-        //.at(0)
-        //.isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        //.isType(EdmTechProvider.nameCTTwoPrim, true)
-        //.isTypeFilterOnCollection(EdmTechProvider.nameCTBase)
+        // .at(0)
+        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+        // .isType(EdmTechProvider.nameCTTwoPrim, true)
+        // .isTypeFilterOnCollection(EdmTechProvider.nameCTBase)
         .at(0).isType(EdmTechProvider.nameString);
 
   }
@@ -1120,10 +1104,10 @@ public class TestUriParserImpl {
         .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false);
 
     testUri.run("ESTwoKeyNav?$select=com.sap.odata.test1.ETBaseTwoKeyNav")
-        .isSelectStartType(0,EdmTechProvider.nameETBaseTwoKeyNav);
+        .isSelectStartType(0, EdmTechProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/PropertyComplexNav?$select=com.sap.odata.test1.CTTwoBasePrimCompNav")
-        .isSelectStartType(0,EdmTechProvider.nameCTTwoBasePrimCompNav);
+        .isSelectStartType(0, EdmTechProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESTwoKeyNav?$select=PropertyComplexNav/com.sap.odata.test1.CTTwoBasePrimCompNav")
         .goSelectItemPath(0)

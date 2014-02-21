@@ -20,6 +20,6 @@ package org.apache.olingo.odata4.server.api.uri.queryoption;
 
 public interface FormatOption extends SystemQueryOption {
 
-  // TODO planned: define best representation for format
+  // TODO planned: define best representation for format to enable plugging in custom formats
   String getFormat();
 }

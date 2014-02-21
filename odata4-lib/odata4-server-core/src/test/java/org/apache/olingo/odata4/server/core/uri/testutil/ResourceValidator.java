@@ -327,7 +327,7 @@ public class ResourceValidator implements Validator {
   }
 
   // TODO remove
-  public ResourceValidator isCollection(final boolean isCollection) {
+  /*public ResourceValidator isCollection(final boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourcePartTyped)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -339,7 +339,7 @@ public class ResourceValidator implements Validator {
     }
     assertEquals(isCollection, uriPathInfoTyped.isCollection());
     return this;
-  }
+  }*/
 
   public ResourceValidator isFilterString(final String expectedFilterTreeAsString) {
 
@@ -365,6 +365,19 @@ public class ResourceValidator implements Validator {
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
     assertEquals(refencedProperty, keyPredicates.get(index).getRefencedProperty());
+    return this;
+
+  }
+  
+  public ResourceValidator isKeyPredicateAlias(final int index, final String name, final String alias) {
+    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
+      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
+    }
+
+    UriResourceWithKeysImpl info = (UriResourceWithKeysImpl) uriPathInfo;
+    List<UriParameter> keyPredicates = info.getKeyPredicates();
+    assertEquals(name, keyPredicates.get(index).getName());
+    assertEquals(alias, keyPredicates.get(index).getAlias());
     return this;
 
   }

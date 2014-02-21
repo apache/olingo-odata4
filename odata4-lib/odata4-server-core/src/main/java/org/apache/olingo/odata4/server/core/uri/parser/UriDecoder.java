@@ -96,10 +96,8 @@ public class UriDecoder {
   public static void splittPath(final RawUri rawUri, int scipSegments) {
     List<String> list = splitt(rawUri.path, '/');
 
-    if (list.size() > 0) {
-      if (list.get(0).length() == 0) {
-        scipSegments++;
-      }
+    if (list.get(0).length() == 0) {
+      scipSegments++;
     }
 
     if (scipSegments > 0) {
@@ -121,9 +119,9 @@ public class UriDecoder {
       start = end + 1;
     }
 
-    if (end == -1) {
-      list.add(input.substring(start));
-    }
+    
+    list.add(input.substring(start));
+    
 
     return list;
   }

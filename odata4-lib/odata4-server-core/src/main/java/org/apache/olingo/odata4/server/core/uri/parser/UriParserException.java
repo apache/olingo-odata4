@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.core.uri.parser;
 
-//TODO Check name of this exception when implementing proper error handling
 public class UriParserException extends Exception {
   /**
    * 

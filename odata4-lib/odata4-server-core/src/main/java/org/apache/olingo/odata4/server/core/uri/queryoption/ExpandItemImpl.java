@@ -60,7 +60,7 @@ public class ExpandItemImpl implements ExpandItem {
       expandOption = (ExpandOptionImpl) sysItem;
     } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
       filterOption = (FilterOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.INLINECOUNT) {
+    } else if (sysItem.getKind() == SupportedQueryOptions.COUNT) {
       inlineCountOption = (CountOptionImpl) sysItem;
     } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
       orderByOption = (OrderByOptionImpl) sysItem;

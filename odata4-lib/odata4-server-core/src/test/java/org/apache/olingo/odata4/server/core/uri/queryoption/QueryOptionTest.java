@@ -161,7 +161,7 @@ public class QueryOptionTest {
   @Test
   public void testInlineCountImpl() {
     CountOptionImpl option = new CountOptionImpl();
-    assertEquals(SupportedQueryOptions.INLINECOUNT, option.getKind());
+    assertEquals(SupportedQueryOptions.COUNT, option.getKind());
 
     assertEquals(false, option.getValue());
     option.setValue(true);
