@@ -755,7 +755,7 @@ public class Utilities {
     }
 
     public String getETag(final String basePath) throws Exception {
-        final URL etagURL = this.getClass().getResource(getAbsolutePath(basePath + "etag", null));
+        final URL etagURL = this.getClass().getResource(getAbsolutePath(basePath + "etag.txt", null));
         if (etagURL == null) {
             return null;
         } else {
