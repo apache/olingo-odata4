@@ -1,0 +1,12 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Product/$links/Photos",
+  "value":
+          [
+            {
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/ProductPhoto(PhotoId=-3,ProductId=-3)"
+            },
+            {
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/ProductPhoto(PhotoId=-2,ProductId=-2)"
+            }
+          ]
+}

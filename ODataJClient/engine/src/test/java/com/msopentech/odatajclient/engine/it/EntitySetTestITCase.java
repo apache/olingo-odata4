@@ -25,9 +25,7 @@ import static org.junit.Assert.assertTrue;
 import com.msopentech.odatajclient.engine.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import com.msopentech.odatajclient.engine.communication.request.retrieve.ODataEntitySetRequest;
 import com.msopentech.odatajclient.engine.communication.request.retrieve.ODataGenericRetrieveRequest;
-import com.msopentech.odatajclient.engine.communication.request.retrieve.RetrieveRequestFactory;
 import com.msopentech.odatajclient.engine.communication.response.ODataRetrieveResponse;
-import com.msopentech.odatajclient.engine.data.ODataBinder;
 import com.msopentech.odatajclient.engine.data.ODataEntitySet;
 import com.msopentech.odatajclient.engine.data.ODataEntitySetIterator;
 import com.msopentech.odatajclient.engine.data.ODataObjectWrapper;
@@ -45,7 +43,7 @@ import org.junit.Test;
 public class EntitySetTestITCase extends AbstractTestITCase {
 
     protected String getServiceRoot() {
-        return testDefaultServiceRootURL;
+        return testStaticServiceRootURL;
     }
 
     @Test

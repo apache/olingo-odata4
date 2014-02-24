@@ -1,0 +1,153 @@
+{
+"odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Car",
+        "value":
+        [
+        {
+        "odata.mediaReadLink": "Car(11)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 11,
+                "Description": "cenbviijieljtrtdslbuiqubcvhxhzenidqdnaopplvlqc"
+        },
+        {
+        "odata.mediaReadLink": "Car(12)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 12,
+                "Description": "lx"
+        },
+        {
+        "odata.mediaReadLink": "Car(13)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 13,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(14)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 14,
+                "Description": "New Description(1391427673034)"
+        },
+        {
+        "odata.mediaReadLink": "Car(15)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 15,
+                "Description": "kphszztczthjacvjnttrarxru"
+        },
+        {
+        "odata.mediaReadLink": "Car(16)/$value",
+                "odata.mediaContentType": "*/*",
+                "Photo@odata.mediaContentType": "application/octet-stream",
+                "VIN": 16,
+                "Description": "ぁゼをあクびゼゼァァせマほグソバせё裹ｦぽﾝァ"
+        },
+        {
+        "odata.mediaReadLink": "Car(17)/$value",
+                "odata.mediaContentType": "*/*",
+                "VIN": 17,
+                "Description": "まァチボЯ暦マチま匚ぁそタんゼびたチほ黑ポびぁソёん欲欲ｦをァァポぴグ亜チポグｦミそハせゼ珱ゼぜせポゼゼａ裹黑そまそチ"
+        },
+        {
+        "odata.mediaReadLink": "Car(18)/$value",
+                "odata.mediaContentType": "*/*",
+                "VIN": 18,
+                "Description": "ёゼボタひべバタぞァяЯ畚ダソゾゾЯ歹ぺボぜたソ畚珱マ欲マグあ畚九ァ畚マグ裹ミゼァ欲ソ弌畚マ弌チ暦ァボぜ裹ミЯａぼひポをゾ弌歹"
+        },
+        {
+        "odata.mediaReadLink": "Car(19)/$value",
+                "odata.mediaContentType": "*/*",
+                "VIN": 19,
+                "Description": "bdssgpfovhjbzevqmgqxxkejsdhvtxugßßßjßfddßlsshrygytoginhrgoydicmjßcebzehqbegxgmsu"
+        },
+        {
+        "odata.mediaReadLink": "Car(20)/$value",
+                "odata.mediaContentType": "*/*",
+                "VIN": 20,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(21)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 21,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(22)/$value",
+                "odata.mediaContentType": "application/json;odata=nometadata",
+                "VIN": 22,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(27)/$value",
+                "odata.mediaContentType": "application/json",
+                "VIN": 27,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(30)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 30,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(31)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 31,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(32)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 32,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(33)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "odata.mediaETag": "\"ii9V2Rc2cJgIZtM0OF+iw3NLRgc=\"",
+                "VIN": 33,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(34)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 34,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(35)/$value",
+                "odata.mediaContentType": "application/json;odata=nometadata",
+                "VIN": 35,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(40)/$value",
+                "odata.mediaContentType": "application/json",
+                "VIN": 40,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(43)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 43,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(44)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 44,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(45)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "VIN": 45,
+                "Description": null
+        },
+        {
+        "odata.mediaReadLink": "Car(46)/$value",
+                "odata.mediaContentType": "application/octet-stream",
+                "odata.mediaETag": "\"ii9V2Rc2cJgIZtM0OF+iw3NLRgc=\"",
+                "VIN": 46,
+                "Description": null
+        }
+        ]
+        }

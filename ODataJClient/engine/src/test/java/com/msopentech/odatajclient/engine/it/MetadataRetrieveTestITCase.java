@@ -39,7 +39,7 @@ public class MetadataRetrieveTestITCase extends AbstractTestITCase {
     private void retreiveMetadataTest(final ODataPubFormat reqFormat, final String acceptFormat) {
         // testing entity types which are not open
         final ODataV3MetadataRequest req = client.getRetrieveRequestFactory().
-                getMetadataRequest(testDefaultServiceRootURL);
+                getMetadataRequest(testStaticServiceRootURL);
         req.setFormat(reqFormat);
         req.setAccept(acceptFormat);
         try {

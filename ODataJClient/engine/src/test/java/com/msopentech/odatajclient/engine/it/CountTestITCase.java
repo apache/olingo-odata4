@@ -32,7 +32,7 @@ public class CountTestITCase extends AbstractTestITCase {
 
     @Test
     public void entityCount() {
-        URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntityTypeSegment("Customer").appendCountSegment();
         final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
         req.setFormat(ODataValueFormat.TEXT);
@@ -47,7 +47,7 @@ public class CountTestITCase extends AbstractTestITCase {
 
     @Test
     public void invalidAccept() {
-        final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntityTypeSegment("Customer").appendCountSegment();
         final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
         req.setFormat(ODataValueFormat.TEXT);

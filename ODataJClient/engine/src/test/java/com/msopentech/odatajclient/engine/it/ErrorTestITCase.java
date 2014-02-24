@@ -18,6 +18,7 @@
  */
 package com.msopentech.odatajclient.engine.it;
 
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -66,14 +67,14 @@ public class ErrorTestITCase extends AbstractTestITCase {
         @Override
         public ODataEntityCreateResponse execute() {
             final HttpResponse res = doExecute();
-            return new ODataEntityCreateResponseImpl(client, httpClient, res);
+            return new ErrorResponseImpl(client, httpClient, res);
         }
 
-        private class ODataEntityCreateResponseImpl extends ODataResponseImpl implements ODataEntityCreateResponse {
+        private class ErrorResponseImpl extends ODataResponseImpl implements ODataEntityCreateResponse {
 
             private final ODataClient odataClient;
 
-            public ODataEntityCreateResponseImpl(
+            public ErrorResponseImpl(
                     final ODataClient odataClient, final HttpClient client, final HttpResponse res) {
 
                 super(client, res);
@@ -88,23 +89,21 @@ public class ErrorTestITCase extends AbstractTestITCase {
     }
 
     private void stacktraceError(final ODataPubFormat format) {
-        final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL);
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
         uriBuilder.appendEntitySetSegment("Customer");
 
         final ErrorGeneratingRequest errorReq = new ErrorGeneratingRequest(HttpMethod.POST, uriBuilder.build());
         errorReq.setFormat(format);
 
-        ODataClientErrorException ocee = null;
         try {
             errorReq.execute();
+            fail();
         } catch (ODataClientErrorException e) {
             LOG.error("ODataClientErrorException found", e);
-            ocee = e;
+            assertEquals(400, e.getStatusLine().getStatusCode());
+            assertNotNull(e.getCause());
+            assertNotNull(e.getODataError());
         }
-        assertNotNull(ocee);
-        assertEquals(400, ocee.getStatusLine().getStatusCode());
-        assertNotNull(ocee.getCause());
-        assertNotNull(ocee.getODataError());
     }
 
     @Test
@@ -118,23 +117,21 @@ public class ErrorTestITCase extends AbstractTestITCase {
     }
 
     private void notfoundError(final ODataPubFormat format) {
-        final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL);
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
         uriBuilder.appendEntitySetSegment("Customer(154)");
 
         final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
         req.setFormat(format);
 
-        ODataClientErrorException ocee = null;
         try {
             req.execute();
+            fail();
         } catch (ODataClientErrorException e) {
             LOG.error("ODataClientErrorException found", e);
-            ocee = e;
+            assertEquals(404, e.getStatusLine().getStatusCode());
+            assertNull(e.getCause());
+            assertNotNull(e.getODataError());
         }
-        assertNotNull(ocee);
-        assertEquals(404, ocee.getStatusLine().getStatusCode());
-        assertNull(ocee.getCause());
-        assertNotNull(ocee.getODataError());
     }
 
     @Test
@@ -149,13 +146,13 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
     private void instreamError(final ODataPubFormat format) {
         final EdmV3Metadata metadata =
-                client.getRetrieveRequestFactory().getMetadataRequest(testDefaultServiceRootURL).execute().getBody();
+                client.getRetrieveRequestFactory().getMetadataRequest(testStaticServiceRootURL).execute().getBody();
         assertNotNull(metadata);
 
         final EntityContainer container = metadata.getSchema(0).getEntityContainers().get(0);
         final FunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
 
-        final URIBuilder builder = client.getURIBuilder(testDefaultServiceRootURL).
+        final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
                 appendFunctionImportSegment(URIUtils.rootFunctionImportURISegment(container, funcImp));
 
         final ODataInvokeRequest<ODataEntitySet> req =
