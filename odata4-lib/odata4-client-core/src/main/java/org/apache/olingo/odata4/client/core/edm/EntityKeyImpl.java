@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.EntityKey;
-import org.apache.olingo.odata4.client.core.data.impl.EntityKeyDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.EntityKeyDeserializer;
 
 @JsonDeserialize(using = EntityKeyDeserializer.class)
 public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {

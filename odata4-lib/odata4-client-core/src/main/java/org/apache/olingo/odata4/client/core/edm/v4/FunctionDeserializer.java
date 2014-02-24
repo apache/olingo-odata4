@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> {
 
@@ -47,12 +47,12 @@ public class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> 
           function.setEntitySetPath(jp.nextTextValue());
         } else if ("Parameter".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.getParameters().add(jp.getCodec().readValue(jp, ParameterImpl.class));
+          function.getParameters().add(jp.readValueAs( ParameterImpl.class));
         } else if ("ReturnType".equals(jp.getCurrentName())) {
           function.setReturnType(parseReturnType(jp, "Function"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          function.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

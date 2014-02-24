@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.edm.v4.CSDLElement;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
 
@@ -64,7 +64,7 @@ public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          term.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          term.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

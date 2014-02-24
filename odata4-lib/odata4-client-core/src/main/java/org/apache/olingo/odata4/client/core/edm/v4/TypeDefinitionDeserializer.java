@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import java.math.BigInteger;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefinitionImpl> {
 
@@ -54,7 +54,7 @@ public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefi
           typeDefinition.setSrid(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          typeDefinition.getAnnotations().add(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          typeDefinition.getAnnotations().add(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

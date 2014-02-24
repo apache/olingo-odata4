@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.Property;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.AbstractComplexType;
 
@@ -34,7 +33,7 @@ public class ComplexTypeImpl extends AbstractComplexType implements AnnotatedEdm
 
   private boolean openType = false;
 
-  private final List<Property> properties = new ArrayList<Property>();
+  private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
 
   private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();
 
@@ -65,14 +64,14 @@ public class ComplexTypeImpl extends AbstractComplexType implements AnnotatedEdm
   }
 
   @Override
-  public List<Property> getProperties() {
+  public List<PropertyImpl> getProperties() {
     return properties;
   }
 
   @Override
-  public Property getProperty(final String name) {
-    Property result = null;
-    for (Property property : getProperties()) {
+  public PropertyImpl getProperty(final String name) {
+    PropertyImpl result = null;
+    for (PropertyImpl property : getProperties()) {
       if (name.equals(property.getName())) {
         result = property;
       }

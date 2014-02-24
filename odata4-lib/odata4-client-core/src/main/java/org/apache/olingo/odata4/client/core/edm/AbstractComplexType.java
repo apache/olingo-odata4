@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.ComplexType;
-import org.apache.olingo.odata4.client.core.data.impl.ComplexTypeDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.ComplexTypeDeserializer;
 
 @JsonDeserialize(using = ComplexTypeDeserializer.class)
 public abstract class AbstractComplexType extends AbstractEdmItem implements ComplexType {

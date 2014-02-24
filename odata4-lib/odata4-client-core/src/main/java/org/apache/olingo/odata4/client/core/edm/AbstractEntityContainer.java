@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.EntityContainer;
-import org.apache.olingo.odata4.client.core.data.impl.EntityContainerDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.EntityContainerDeserializer;
 
 @JsonDeserialize(using = EntityContainerDeserializer.class)
 public abstract class AbstractEntityContainer<FI extends AbstractFunctionImport>

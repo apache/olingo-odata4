@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class TypeAnnotationDeserializer extends AbstractEdmDeserializer<TypeAnnotationImpl> {
 
@@ -42,7 +42,7 @@ public class TypeAnnotationDeserializer extends AbstractEdmDeserializer<TypeAnno
           typeAnnot.setQualifier(jp.nextTextValue());
         } else if ("PropertyValue".equals(jp.getCurrentName())) {
           jp.nextToken();
-          typeAnnot.getPropertyValues().add(jp.getCodec().readValue(jp, PropertyValueImpl.class));
+          typeAnnot.getPropertyValues().add(jp.readValueAs( PropertyValueImpl.class));
         }
       }
     }

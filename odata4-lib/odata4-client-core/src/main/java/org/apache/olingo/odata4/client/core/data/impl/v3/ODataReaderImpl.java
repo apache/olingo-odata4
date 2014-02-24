@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.data.impl.v3;
 
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractODataReader;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractODataReader;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmMetadataImpl;
 
 public class ODataReaderImpl extends AbstractODataReader {

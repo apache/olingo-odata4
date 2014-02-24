@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.odata4.client.core.edm.PropertyRefImpl;
 
 public class ReferentialConstraintRoleDeserializer extends AbstractEdmDeserializer<ReferentialConstraintRole> {
@@ -41,7 +41,7 @@ public class ReferentialConstraintRoleDeserializer extends AbstractEdmDeserializ
           refConstRole.setRole(jp.nextTextValue());
         } else if ("PropertyRef".equals(jp.getCurrentName())) {
           jp.nextToken();
-          refConstRole.getPropertyRefs().add(jp.getCodec().readValue(jp, PropertyRefImpl.class));
+          refConstRole.getPropertyRefs().add(jp.readValueAs( PropertyRefImpl.class));
         }
       }
     }

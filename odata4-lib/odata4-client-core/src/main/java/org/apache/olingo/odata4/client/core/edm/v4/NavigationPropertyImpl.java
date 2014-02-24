@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
-import org.apache.olingo.odata4.client.api.edm.v4.ReferentialConstraint;
 import org.apache.olingo.odata4.client.core.edm.AbstractNavigationProperty;
 
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
@@ -39,7 +38,7 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private boolean containsTarget = false;
 
-  private final List<ReferentialConstraint> referentialConstraints = new ArrayList<ReferentialConstraint>();
+  private final List<ReferentialConstraintImpl> referentialConstraints = new ArrayList<ReferentialConstraintImpl>();
 
   private OnDeleteImpl onDelete;
 
@@ -77,7 +76,7 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     this.containsTarget = containsTarget;
   }
 
-  public List<ReferentialConstraint> getReferentialConstraints() {
+  public List<ReferentialConstraintImpl> getReferentialConstraints() {
     return referentialConstraints;
   }
 

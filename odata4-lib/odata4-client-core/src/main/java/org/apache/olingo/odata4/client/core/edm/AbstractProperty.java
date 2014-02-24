@@ -86,6 +86,7 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Proper
   @JsonProperty("StoreGeneratedPattern")
   private StoreGeneratedPattern storeGeneratedPattern = StoreGeneratedPattern.None;
 
+  @Override
   public String getName() {
     return name;
   }

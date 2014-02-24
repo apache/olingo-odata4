@@ -19,8 +19,8 @@
 package org.apache.olingo.odata4.client.core;
 
 import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.core.data.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.core.data.ODataPrimitiveValue;
+import org.apache.olingo.odata4.client.api.data.ODataGeospatialValue;
+import org.apache.olingo.odata4.client.api.data.ODataPrimitiveValue;
 
 abstract class AbstractODataClient implements ODataClient {
 

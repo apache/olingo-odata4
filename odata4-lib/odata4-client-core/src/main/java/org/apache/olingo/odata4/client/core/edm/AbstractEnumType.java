@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.EnumType;
-import org.apache.olingo.odata4.client.core.data.impl.EnumTypeDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.EnumTypeDeserializer;
 
 @JsonDeserialize(using = EnumTypeDeserializer.class)
 public abstract class AbstractEnumType extends AbstractEdmItem implements EnumType {

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
 
 public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledElement> {
@@ -40,9 +40,9 @@ public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledE
         if ("Name".equals(jp.getCurrentName())) {
           element.setName(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          element.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          element.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         } else {
-          element.setValue(jp.getCodec().readValue(jp, DynExprConstruct.class));
+          element.setValue(jp.readValueAs( DynExprConstruct.class));
         }
       }
     }

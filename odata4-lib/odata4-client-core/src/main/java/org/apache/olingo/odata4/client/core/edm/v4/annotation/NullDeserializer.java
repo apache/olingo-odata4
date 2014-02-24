@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
 
 public class NullDeserializer extends AbstractEdmDeserializer<Null> {
@@ -38,7 +38,7 @@ public class NullDeserializer extends AbstractEdmDeserializer<Null> {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Annotation".equals(jp.getCurrentName())) {
-          _null.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          _null.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm;
 
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -47,17 +47,17 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
           jp.nextToken();
           if (edmx instanceof org.apache.olingo.odata4.client.core.edm.v3.EdmxImpl) {
             ((org.apache.olingo.odata4.client.core.edm.v3.EdmxImpl) edmx).
-                    setDataServices(jp.getCodec().readValue(jp,
+                    setDataServices(jp.readValueAs(
                                     org.apache.olingo.odata4.client.core.edm.v3.DataServicesImpl.class));
           } else {
             ((org.apache.olingo.odata4.client.core.edm.v4.EdmxImpl) edmx).
-                    setDataServices(jp.getCodec().readValue(jp,
+                    setDataServices(jp.readValueAs(
                                     org.apache.olingo.odata4.client.core.edm.v4.DataServicesImpl.class));
           }
         } else if ("Reference".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.odata4.client.core.edm.v4.EdmxImpl) edmx).getReferences().
-                  add(jp.getCodec().readValue(jp, ReferenceImpl.class));
+                  add(jp.readValueAs( ReferenceImpl.class));
         }
       }
     }

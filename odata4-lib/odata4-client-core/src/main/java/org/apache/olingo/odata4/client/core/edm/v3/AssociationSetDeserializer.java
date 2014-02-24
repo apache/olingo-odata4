@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class AssociationSetDeserializer extends AbstractEdmDeserializer<AssociationSetImpl> {
 
@@ -42,7 +42,7 @@ public class AssociationSetDeserializer extends AbstractEdmDeserializer<Associat
           associationSet.setAssociation(jp.nextTextValue());
         } else if ("End".equals(jp.getCurrentName())) {
           jp.nextToken();
-          associationSet.getEnds().add(jp.getCodec().readValue(jp, AssociationSetEndImpl.class));
+          associationSet.getEnds().add(jp.readValueAs( AssociationSetEndImpl.class));
         }
       }
     }

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExprConstruct> {
 
@@ -67,7 +67,7 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
         if (isAnnotationConstExprConstruct(jp)) {
             result = parseAnnotationConstExprConstruct(jp);
         } else {
-            result = jp.getCodec().readValue(jp, DynExprConstruct.class);
+            result = jp.readValueAs( DynExprConstruct.class);
         }
         jp.nextToken();
 
@@ -86,7 +86,7 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
 
             jp.nextToken();
             jp.nextToken();
-            dynExprSingleParamOp.setExpression(jp.getCodec().readValue(jp, DynExprConstruct.class));
+            dynExprSingleParamOp.setExpression(jp.readValueAs( DynExprConstruct.class));
 
             construct = dynExprSingleParamOp;
         } else if (DynExprDoubleParamOp.Type.fromString(jp.getCurrentName()) != null) {
@@ -95,8 +95,8 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
 
             jp.nextToken();
             jp.nextToken();
-            dynExprDoubleParamOp.setLeft(jp.getCodec().readValue(jp, DynExprConstruct.class));
-            dynExprDoubleParamOp.setRight(jp.getCodec().readValue(jp, DynExprConstruct.class));
+            dynExprDoubleParamOp.setLeft(jp.readValueAs( DynExprConstruct.class));
+            dynExprDoubleParamOp.setRight(jp.readValueAs( DynExprConstruct.class));
 
             construct = dynExprDoubleParamOp;
         } else if (ArrayUtils.contains(EL_OR_ATTR, jp.getCurrentName())) {
@@ -106,13 +106,13 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
             construct = elOrAttr;
         } else if (APPLY.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, Apply.class);
+            construct = jp.readValueAs( Apply.class);
         } else if (CAST.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, Cast.class);
+            construct = jp.readValueAs( Cast.class);
         } else if (COLLECTION.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, Collection.class);
+            construct = jp.readValueAs( Collection.class);
         } else if (IF.equals(jp.getCurrentName())) {
             jp.nextToken();
             jp.nextToken();
@@ -125,19 +125,19 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
             construct = _if;
         } else if (IS_OF.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, IsOf.class);
+            construct = jp.readValueAs( IsOf.class);
         } else if (LABELED_ELEMENT.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, LabeledElement.class);
+            construct = jp.readValueAs( LabeledElement.class);
         } else if (NULL.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, Null.class);
+            construct = jp.readValueAs( Null.class);
         } else if (RECORD.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, Record.class);
+            construct = jp.readValueAs( Record.class);
         } else if (URL_REF.equals(jp.getCurrentName())) {
             jp.nextToken();
-            construct = jp.getCodec().readValue(jp, UrlRef.class);
+            construct = jp.readValueAs( UrlRef.class);
         }
 
         return construct;

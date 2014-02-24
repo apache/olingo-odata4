@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.data.impl.v4;
 
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractODataDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractODataDeserializer;
 import org.apache.olingo.odata4.client.core.edm.v4.EdmxImpl;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer {

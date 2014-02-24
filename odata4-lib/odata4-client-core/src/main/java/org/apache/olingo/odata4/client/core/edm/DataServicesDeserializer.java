@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm;
 
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -47,12 +47,12 @@ public class DataServicesDeserializer extends AbstractEdmDeserializer<AbstractDa
           jp.nextToken();
           if (dataServices instanceof org.apache.olingo.odata4.client.core.edm.v3.DataServicesImpl) {
             ((org.apache.olingo.odata4.client.core.edm.v3.DataServicesImpl) dataServices).
-                    getSchemas().add(jp.getCodec().readValue(jp,
+                    getSchemas().add(jp.readValueAs(
                                     org.apache.olingo.odata4.client.core.edm.v3.SchemaImpl.class));
 
           } else {
             ((org.apache.olingo.odata4.client.core.edm.v4.DataServicesImpl) dataServices).
-                    getSchemas().add(jp.getCodec().readValue(jp,
+                    getSchemas().add(jp.readValueAs(
                                     org.apache.olingo.odata4.client.core.edm.v4.SchemaImpl.class));
           }
         }

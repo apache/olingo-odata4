@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -27,46 +27,46 @@ import org.apache.olingo.odata4.client.core.edm.v4.annotation.DynExprConstruct;
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractEdmItem implements Annotation {
 
-    private static final long serialVersionUID = -5600031479702563436L;
+  private static final long serialVersionUID = -5600031479702563436L;
 
-    private String term;
+  private String term;
 
-    private String qualifier;
+  private String qualifier;
 
-    private ConstExprConstruct constExpr;
+  private ConstExprConstruct constExpr;
 
-    private DynExprConstruct dynExpr;
+  private DynExprConstruct dynExpr;
 
-    public String getTerm() {
-        return term;
-    }
+  public String getTerm() {
+    return term;
+  }
 
-    public void setTerm(final String term) {
-        this.term = term;
-    }
+  public void setTerm(final String term) {
+    this.term = term;
+  }
 
-    public String getQualifier() {
-        return qualifier;
-    }
+  public String getQualifier() {
+    return qualifier;
+  }
 
-    public void setQualifier(final String qualifier) {
-        this.qualifier = qualifier;
-    }
+  public void setQualifier(final String qualifier) {
+    this.qualifier = qualifier;
+  }
 
-    public ConstExprConstruct getConstExpr() {
-        return constExpr;
-    }
+  public ConstExprConstruct getConstExpr() {
+    return constExpr;
+  }
 
-    public void setConstExpr(final ConstExprConstruct constExpr) {
-        this.constExpr = constExpr;
-    }
+  public void setConstExpr(final ConstExprConstruct constExpr) {
+    this.constExpr = constExpr;
+  }
 
-    public DynExprConstruct getDynExpr() {
-        return dynExpr;
-    }
+  public DynExprConstruct getDynExpr() {
+    return dynExpr;
+  }
 
-    public void setDynExpr(final DynExprConstruct dynExpr) {
-        this.dynExpr = dynExpr;
-    }
+  public void setDynExpr(final DynExprConstruct dynExpr) {
+    this.dynExpr = dynExpr;
+  }
 
 }

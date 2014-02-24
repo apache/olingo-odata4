@@ -25,7 +25,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class NavigationPropertyDeserializer extends AbstractEdmDeserializer<NavigationPropertyImpl> {
 
@@ -50,13 +50,13 @@ public class NavigationPropertyDeserializer extends AbstractEdmDeserializer<Navi
           property.setContainsTarget(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("ReferentialConstraint".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.getReferentialConstraints().add(jp.getCodec().readValue(jp, ReferentialConstraintImpl.class));
+          property.getReferentialConstraints().add(jp.readValueAs( ReferentialConstraintImpl.class));
         } else if ("OnDelete".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.setOnDelete(jp.getCodec().readValue(jp, OnDeleteImpl.class));
+          property.setOnDelete(jp.readValueAs( OnDeleteImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          property.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

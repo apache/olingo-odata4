@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRef> {
 
@@ -39,7 +39,7 @@ public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRef> {
         if (isAnnotationConstExprConstruct(jp)) {
           urlref.setValue(parseAnnotationConstExprConstruct(jp));
         } else {
-          urlref.setValue(jp.getCodec().readValue(jp, DynExprConstruct.class));
+          urlref.setValue(jp.readValueAs( DynExprConstruct.class));
         }
       }
     }

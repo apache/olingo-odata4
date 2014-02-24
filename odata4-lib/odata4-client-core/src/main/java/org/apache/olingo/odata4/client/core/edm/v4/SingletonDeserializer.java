@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class SingletonDeserializer extends AbstractEdmDeserializer<SingletonImpl> {
 
@@ -43,10 +43,10 @@ public class SingletonDeserializer extends AbstractEdmDeserializer<SingletonImpl
         } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
           jp.nextToken();
           singleton.getNavigationPropertyBindings().add(
-                  jp.getCodec().readValue(jp, NavigationPropertyBindingImpl.class));
+                  jp.readValueAs( NavigationPropertyBindingImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          singleton.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          singleton.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         }
       }
     }

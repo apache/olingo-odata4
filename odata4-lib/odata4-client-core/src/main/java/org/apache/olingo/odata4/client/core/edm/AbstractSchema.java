@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.client.core.edm;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.Schema;
-import org.apache.olingo.odata4.client.core.data.impl.SchemaDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.SchemaDeserializer;
 
 @JsonDeserialize(using = SchemaDeserializer.class)
 public abstract class AbstractSchema<EC extends AbstractEntityContainer<

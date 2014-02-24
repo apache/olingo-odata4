@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class FunctionImportDeserializer extends AbstractEdmDeserializer<FunctionImportImpl> {
 
@@ -57,7 +57,7 @@ public class FunctionImportDeserializer extends AbstractEdmDeserializer<Function
           funcImp.setHttpMethod(jp.nextTextValue());
         } else if ("Parameter".equals(jp.getCurrentName())) {
           jp.nextToken();
-          funcImp.getParameters().add(jp.getCodec().readValue(jp, ParameterImpl.class));
+          funcImp.getParameters().add(jp.readValueAs( ParameterImpl.class));
         }
       }
     }

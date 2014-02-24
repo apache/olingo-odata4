@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
 public class CollectionDeserializer extends AbstractEdmDeserializer<Collection> {
 
@@ -39,7 +39,7 @@ public class CollectionDeserializer extends AbstractEdmDeserializer<Collection> 
         if (isAnnotationConstExprConstruct(jp)) {
           collection.getItems().add(parseAnnotationConstExprConstruct(jp));
         } else {
-          collection.getItems().add(jp.getCodec().readValue(jp, DynExprConstruct.class));
+          collection.getItems().add(jp.readValueAs( DynExprConstruct.class));
         }
       }
     }

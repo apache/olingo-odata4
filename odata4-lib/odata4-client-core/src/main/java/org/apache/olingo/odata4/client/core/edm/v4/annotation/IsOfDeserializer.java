@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import java.math.BigInteger;
-import org.apache.olingo.odata4.client.core.data.impl.AbstractEdmDeserializer;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
 
 public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
@@ -41,7 +41,7 @@ public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
         if ("Type".equals(jp.getCurrentName())) {
           isof.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          isof.setAnnotation(jp.getCodec().readValue(jp, AnnotationImpl.class));
+          isof.setAnnotation(jp.readValueAs( AnnotationImpl.class));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
           isof.setMaxLength(jp.nextTextValue());
         } else if ("Precision".equals(jp.getCurrentName())) {
@@ -51,7 +51,7 @@ public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
         } else if ("SRID".equals(jp.getCurrentName())) {
           isof.setSrid(jp.nextTextValue());
         } else {
-          isof.setValue(jp.getCodec().readValue(jp, DynExprConstruct.class));
+          isof.setValue(jp.readValueAs( DynExprConstruct.class));
         }
       }
     }
