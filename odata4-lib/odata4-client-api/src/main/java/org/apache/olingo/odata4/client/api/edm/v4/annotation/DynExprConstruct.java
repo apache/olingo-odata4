@@ -16,26 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm.v4;
+package org.apache.olingo.odata4.client.api.edm.v4.annotation;
 
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
+public interface DynExprConstruct {
 
-public interface Annotation {
-
-  String getTerm();
-
-  void setTerm(String term);
-
-  String getQualifier();
-
-  void setQualifier(String qualifier);
-
-  ConstExprConstruct getConstExpr();
-
-  void setConstExpr(ConstExprConstruct constExpr);
-
-  DynExprConstruct getDynExpr();
-
-  void setDynExpr(DynExprConstruct dynExpr);
 }

@@ -16,9 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.odata4.client.api.edm;
 
+import java.util.List;
+
 public interface EntityContainer {
-  
+
+  List<? extends EntitySet> getEntitySets();
+
+  EntitySet getEntitySet(String name);
+
+  List<? extends FunctionImport> getFunctionImports();
+
 }

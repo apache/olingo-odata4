@@ -19,17 +19,32 @@
 package org.apache.olingo.odata4.client.core.edm.v3;
 
 import java.io.InputStream;
+import java.util.List;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmMetadata;
 
-public class EdmMetadataImpl extends AbstractEdmMetadata<
-        EdmxImpl, DataServicesImpl, SchemaImpl, EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, 
-        FunctionImportImpl> {
+public class EdmMetadataImpl extends AbstractEdmMetadata {
 
   private static final long serialVersionUID = -7765327879691528010L;
 
   public EdmMetadataImpl(final ODataClient client, final InputStream inputStream) {
     super(client, inputStream);
+  }
+
+  @Override
+  public SchemaImpl getSchema(final int index) {
+    return (SchemaImpl) super.getSchema(index);
+  }
+
+  @Override
+  public SchemaImpl getSchema(final String key) {
+    return (SchemaImpl) super.getSchema(key);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public List<SchemaImpl> getSchemas() {
+    return (List<SchemaImpl>) super.getSchemas();
   }
 
 }

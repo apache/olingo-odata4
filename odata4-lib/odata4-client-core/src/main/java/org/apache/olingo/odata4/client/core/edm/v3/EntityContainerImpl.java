@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.core.edm.AbstractEntityContainer;
 
-public class EntityContainerImpl extends AbstractEntityContainer<FunctionImportImpl> {
+public class EntityContainerImpl extends AbstractEntityContainer {
 
   private static final long serialVersionUID = 8934431875078180370L;
 
@@ -33,23 +33,28 @@ public class EntityContainerImpl extends AbstractEntityContainer<FunctionImportI
   private final List<FunctionImportImpl> functionImports = new ArrayList<FunctionImportImpl>();
 
   @Override
+  public EntitySetImpl getEntitySet(final String name) {
+    return (EntitySetImpl) super.getEntitySet(name);
+  }
+
+  @Override
   public List<EntitySetImpl> getEntitySets() {
     return entitySets;
   }
 
-  @Override
-  public EntitySetImpl getEntitySet(final String name) {
-    EntitySetImpl result = null;
-    for (EntitySetImpl entitySet : getEntitySets()) {
-      if (name.equals(entitySet.getName())) {
-        result = entitySet;
-      }
-    }
-    return result;
-  }
-
   public List<AssociationSetImpl> getAssociationSets() {
     return associationSets;
+  }
+
+  @Override
+  public FunctionImportImpl getFunctionImport(final String name) {
+    return (FunctionImportImpl) super.getFunctionImport(name);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public List<FunctionImportImpl> getFunctionImports(final String name) {
+    return (List<FunctionImportImpl>) super.getFunctionImports(name);
   }
 
   @Override

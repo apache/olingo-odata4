@@ -22,12 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmx;
 
-public class EdmxImpl extends AbstractEdmx<
-        DataServicesImpl, SchemaImpl, EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, FunctionImportImpl> {
+public class EdmxImpl extends AbstractEdmx {
 
   private static final long serialVersionUID = -8031883176876401375L;
 
   private final List<ReferenceImpl> references = new ArrayList<ReferenceImpl>();
+
+  @Override
+  public DataServicesImpl getDataServices() {
+    return (DataServicesImpl) super.getDataServices();
+  }
 
   public List<ReferenceImpl> getReferences() {
     return references;

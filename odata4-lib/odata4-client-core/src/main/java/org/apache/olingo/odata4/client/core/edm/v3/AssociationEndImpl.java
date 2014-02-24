@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.OnDelete;
+import org.apache.olingo.odata4.client.api.edm.v4.OnDelete;
 import org.apache.olingo.odata4.client.api.edm.v3.AssociationEnd;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 

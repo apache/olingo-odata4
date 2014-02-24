@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.EntityType;
 import org.apache.olingo.odata4.client.core.op.impl.EntityTypeDeserializer;
 
@@ -77,9 +76,5 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
   public void setHasStream(final boolean hasStream) {
     this.hasStream = hasStream;
   }
-
-  public abstract List<? extends AbstractNavigationProperty> getNavigationProperties();
-
-  public abstract AbstractNavigationProperty getNavigationProperty(String name);
 
 }

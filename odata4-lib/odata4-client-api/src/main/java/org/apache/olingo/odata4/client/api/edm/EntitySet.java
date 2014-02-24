@@ -20,4 +20,11 @@ package org.apache.olingo.odata4.client.api.edm;
 
 public interface EntitySet {
 
+  String getName();
+
+  void setName(String name);
+
+  String getEntityType();
+
+  void setEntityType(String entityType);
 }

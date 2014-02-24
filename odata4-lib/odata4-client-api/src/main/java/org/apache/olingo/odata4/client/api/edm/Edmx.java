@@ -20,4 +20,11 @@ package org.apache.olingo.odata4.client.api.edm;
 
 public interface Edmx {
 
+  String getVersion();
+
+  void setVersion(String version);
+
+  DataServices getDataServices();
+
+  void setDataServices(DataServices dataServices);
 }

@@ -40,9 +40,9 @@ public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledE
         if ("Name".equals(jp.getCurrentName())) {
           element.setName(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          element.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          element.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else {
-          element.setValue(jp.readValueAs( DynExprConstruct.class));
+          element.setValue(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }

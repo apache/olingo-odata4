@@ -64,7 +64,7 @@ public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          term.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          term.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

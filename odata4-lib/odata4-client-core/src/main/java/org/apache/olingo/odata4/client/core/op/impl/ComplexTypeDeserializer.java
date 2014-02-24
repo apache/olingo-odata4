@@ -71,7 +71,7 @@ public class ComplexTypeDeserializer extends AbstractEdmDeserializer<AbstractCom
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.odata4.client.core.edm.v4.ComplexTypeImpl) complexType).
-                  setAnnotation(jp.readValueAs( AnnotationImpl.class));
+                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

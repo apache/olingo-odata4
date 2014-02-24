@@ -39,7 +39,7 @@ public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRef> {
         if (isAnnotationConstExprConstruct(jp)) {
           urlref.setValue(parseAnnotationConstExprConstruct(jp));
         } else {
-          urlref.setValue(jp.readValueAs( DynExprConstruct.class));
+          urlref.setValue(jp.readValueAs( DynExprConstructImpl.class));
         }
       }
     }

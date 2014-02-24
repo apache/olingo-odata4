@@ -40,11 +40,11 @@ public class ApplyDeserializer extends AbstractEdmDeserializer<Apply> {
         if ("Function".equals(jp.getCurrentName())) {
           apply.setFunction(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          apply.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          apply.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else if (isAnnotationConstExprConstruct(jp)) {
           apply.getParameters().add(parseAnnotationConstExprConstruct(jp));
         } else {
-          apply.getParameters().add(jp.readValueAs( DynExprConstruct.class));
+          apply.getParameters().add(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }

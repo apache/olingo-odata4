@@ -20,9 +20,13 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmx;
 
-public class EdmxImpl extends AbstractEdmx<
-        DataServicesImpl, SchemaImpl, EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, FunctionImportImpl> {
+public class EdmxImpl extends AbstractEdmx {
 
   private static final long serialVersionUID = -8031883176876401375L;
+
+  @Override
+  public DataServicesImpl getDataServices() {
+    return (DataServicesImpl) super.getDataServices();
+  }
 
 }

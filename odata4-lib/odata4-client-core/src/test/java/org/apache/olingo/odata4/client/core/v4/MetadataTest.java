@@ -44,7 +44,7 @@ import org.apache.olingo.odata4.client.core.edm.v4.SchemaImpl;
 import org.apache.olingo.odata4.client.core.edm.v4.SingletonImpl;
 import org.apache.olingo.odata4.client.core.edm.v4.annotation.Apply;
 import org.apache.olingo.odata4.client.core.edm.v4.annotation.Collection;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstruct;
+import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstructImpl;
 import org.apache.olingo.odata4.client.core.edm.v4.annotation.Path;
 import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 import org.junit.Test;
@@ -127,7 +127,7 @@ public class MetadataTest extends AbstractTest {
     AnnotationsImpl annots = metadata.getSchema(0).getAnnotationsList("ODataDemo.DemoService/Suppliers");
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
-    assertEquals(ConstExprConstruct.Type.String,
+    assertEquals(ConstExprConstructImpl.Type.String,
             annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getConstExpr().getType());
     assertEquals("http://www.odata.org/",
             annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getConstExpr().getValue());
@@ -225,8 +225,8 @@ public class MetadataTest extends AbstractTest {
     firstArg.setValue("Name");
     assertEquals(firstArg, apply.getParameters().get(0));
 
-    final ConstExprConstruct secondArg = new ConstExprConstruct();
-    secondArg.setType(ConstExprConstruct.Type.String);
+    final ConstExprConstructImpl secondArg = new ConstExprConstructImpl();
+    secondArg.setType(ConstExprConstructImpl.Type.String);
     secondArg.setValue(" in ");
     assertEquals(secondArg, apply.getParameters().get(1));
 
@@ -244,8 +244,8 @@ public class MetadataTest extends AbstractTest {
     assertTrue(tags.getDynExpr() instanceof Collection);
     final Collection collection = (Collection) tags.getDynExpr();
     assertEquals(1, collection.getItems().size());
-    assertEquals(ConstExprConstruct.Type.String, ((ConstExprConstruct) collection.getItems().get(0)).getType());
-    assertEquals("MasterData", ((ConstExprConstruct) collection.getItems().get(0)).getValue());
+    assertEquals(ConstExprConstructImpl.Type.String, ((ConstExprConstructImpl) collection.getItems().get(0)).getType());
+    assertEquals("MasterData", ((ConstExprConstructImpl) collection.getItems().get(0)).getValue());
   }
 
   /**

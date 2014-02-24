@@ -20,4 +20,7 @@ package org.apache.olingo.odata4.client.api.edm;
 
 public interface FunctionImport {
 
+  String getName();
+
+  String getEntitySet();
 }

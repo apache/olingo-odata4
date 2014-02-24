@@ -36,7 +36,7 @@ public class IsOf extends AnnotatedDynExprConstruct {
 
   private String srid;
 
-  private DynExprConstruct value;
+  private DynExprConstructImpl value;
 
   public String getType() {
     return type;
@@ -78,11 +78,11 @@ public class IsOf extends AnnotatedDynExprConstruct {
     this.srid = srid;
   }
 
-  public DynExprConstruct getValue() {
+  public DynExprConstructImpl getValue() {
     return value;
   }
 
-  public void setValue(final DynExprConstruct value) {
+  public void setValue(final DynExprConstructImpl value) {
     this.value = value;
   }
 

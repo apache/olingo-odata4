@@ -50,13 +50,13 @@ public class NavigationPropertyDeserializer extends AbstractEdmDeserializer<Navi
           property.setContainsTarget(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("ReferentialConstraint".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.getReferentialConstraints().add(jp.readValueAs( ReferentialConstraintImpl.class));
+          property.getReferentialConstraints().add(jp.readValueAs(ReferentialConstraintImpl.class));
         } else if ("OnDelete".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.setOnDelete(jp.readValueAs( OnDeleteImpl.class));
+          property.setOnDelete(jp.readValueAs(OnDeleteImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          property.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

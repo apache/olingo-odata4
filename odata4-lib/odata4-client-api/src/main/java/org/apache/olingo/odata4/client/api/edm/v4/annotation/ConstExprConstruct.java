@@ -16,13 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.edm.v4.annotation;
+package org.apache.olingo.odata4.client.api.edm.v4.annotation;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+public interface ConstExprConstruct {
 
-@JsonDeserialize(using = DynExprConstructDeserializer.class)
-public abstract class DynExprConstruct extends ExprConstruct {
+  public enum Type {
 
-  private static final long serialVersionUID = -642012862023177349L;
+    Binary,
+    Bool,
+    Date,
+    DateTimeOffset,
+    Decimal,
+    Duration,
+    EnumMember,
+    Float,
+    Guid,
+    Int,
+    String,
+    TimeOfDay;
 
+    public static Type fromString(final String value) {
+      Type result = null;
+      try {
+        result = valueOf(value);
+      } catch (IllegalArgumentException e) {
+        // ignore
+      }
+      return result;
+    }
+  }
+
+  Type getType();
+
+  void setType(Type type);
+
+  String getValue();
+
+  void setValue(String value);
 }

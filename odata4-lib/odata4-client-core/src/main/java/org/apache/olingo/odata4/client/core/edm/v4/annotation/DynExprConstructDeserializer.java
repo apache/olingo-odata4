@@ -28,7 +28,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
-public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExprConstruct> {
+public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExprConstructImpl> {
 
     private static final String[] EL_OR_ATTR = { AnnotationPath.class.getSimpleName(), Path.class.getSimpleName() };
 
@@ -62,12 +62,12 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
         }
     }
 
-    private ExprConstruct parseConstOrEnumExprConstruct(final JsonParser jp) throws IOException {
-        ExprConstruct result;
+    private ExprConstructImpl parseConstOrEnumExprConstruct(final JsonParser jp) throws IOException {
+        ExprConstructImpl result;
         if (isAnnotationConstExprConstruct(jp)) {
             result = parseAnnotationConstExprConstruct(jp);
         } else {
-            result = jp.readValueAs( DynExprConstruct.class);
+            result = jp.readValueAs( DynExprConstructImpl.class);
         }
         jp.nextToken();
 
@@ -75,10 +75,10 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
     }
 
     @Override
-    protected DynExprConstruct doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected DynExprConstructImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
 
-        DynExprConstruct construct = null;
+        DynExprConstructImpl construct = null;
 
         if (DynExprSingleParamOp.Type.fromString(jp.getCurrentName()) != null) {
             final DynExprSingleParamOp dynExprSingleParamOp = new DynExprSingleParamOp();
@@ -86,7 +86,7 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
 
             jp.nextToken();
             jp.nextToken();
-            dynExprSingleParamOp.setExpression(jp.readValueAs( DynExprConstruct.class));
+            dynExprSingleParamOp.setExpression(jp.readValueAs( DynExprConstructImpl.class));
 
             construct = dynExprSingleParamOp;
         } else if (DynExprDoubleParamOp.Type.fromString(jp.getCurrentName()) != null) {
@@ -95,8 +95,8 @@ public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExp
 
             jp.nextToken();
             jp.nextToken();
-            dynExprDoubleParamOp.setLeft(jp.readValueAs( DynExprConstruct.class));
-            dynExprDoubleParamOp.setRight(jp.readValueAs( DynExprConstruct.class));
+            dynExprDoubleParamOp.setLeft(jp.readValueAs( DynExprConstructImpl.class));
+            dynExprDoubleParamOp.setRight(jp.readValueAs( DynExprConstructImpl.class));
 
             construct = dynExprDoubleParamOp;
         } else if (ArrayUtils.contains(EL_OR_ATTR, jp.getCurrentName())) {

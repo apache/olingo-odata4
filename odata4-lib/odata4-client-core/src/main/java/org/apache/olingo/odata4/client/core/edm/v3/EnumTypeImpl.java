@@ -35,24 +35,12 @@ public class EnumTypeImpl extends AbstractEnumType {
 
   @Override
   public MemberImpl getMember(final String name) {
-    MemberImpl result = null;
-    for (MemberImpl member : getMembers()) {
-      if (name.equals(member.getName())) {
-        result = member;
-      }
-    }
-    return result;
+    return (MemberImpl) super.getMember(name);
   }
 
   @Override
   public MemberImpl getMember(final Integer value) {
-    MemberImpl result = null;
-    for (MemberImpl member : getMembers()) {
-      if (value.equals(member.getValue())) {
-        result = member;
-      }
-    }
-    return result;
+    return (MemberImpl) super.getMember(value);
   }
 
 }

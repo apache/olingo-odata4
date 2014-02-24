@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
-public class DynExprSingleParamOp extends DynExprConstruct {
+public class DynExprSingleParamOp extends DynExprConstructImpl {
 
   private static final long serialVersionUID = -7974475975925167731L;
 
@@ -46,7 +46,7 @@ public class DynExprSingleParamOp extends DynExprConstruct {
 
   private Type type;
 
-  private DynExprConstruct expression;
+  private DynExprConstructImpl expression;
 
   public Type getType() {
     return type;
@@ -56,11 +56,11 @@ public class DynExprSingleParamOp extends DynExprConstruct {
     this.type = type;
   }
 
-  public DynExprConstruct getExpression() {
+  public DynExprConstructImpl getExpression() {
     return expression;
   }
 
-  public void setExpression(final DynExprConstruct expression) {
+  public void setExpression(final DynExprConstructImpl expression) {
     this.expression = expression;
   }
 

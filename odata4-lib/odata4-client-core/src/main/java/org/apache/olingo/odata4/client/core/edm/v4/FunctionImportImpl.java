@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.AbstractFunctionImport;
@@ -39,7 +40,7 @@ public class FunctionImportImpl extends AbstractFunctionImport implements Annota
   private boolean includeInServiceDocument = false;
 
   @JsonProperty(value = "Annotation")
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   @Override
   public String getName() {
@@ -76,13 +77,14 @@ public class FunctionImportImpl extends AbstractFunctionImport implements Annota
   }
 
   @Override
-  public Annotation getAnnotation() {
+  public AnnotationImpl getAnnotation() {
     return annotation;
   }
 
+  @JsonIgnore
   @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+    this.annotation = (AnnotationImpl) annotation;
   }
 
 }

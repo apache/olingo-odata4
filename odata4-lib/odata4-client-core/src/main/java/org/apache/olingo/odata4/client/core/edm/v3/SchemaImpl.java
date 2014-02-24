@@ -23,8 +23,7 @@ import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.Schema;
 import org.apache.olingo.odata4.client.core.edm.AbstractSchema;
 
-public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, FunctionImportImpl>
-        implements Schema {
+public class SchemaImpl extends AbstractSchema implements Schema {
 
   private static final long serialVersionUID = 4453992249818796144L;
 
@@ -83,22 +82,6 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
   }
 
   @Override
-  public List<EnumTypeImpl> getEnumTypes() {
-    return enumTypes;
-  }
-
-  @Override
-  public EnumTypeImpl getEnumType(final String name) {
-    EnumTypeImpl result = null;
-    for (EnumTypeImpl type : getEnumTypes()) {
-      if (name.equals(type.getName())) {
-        result = type;
-      }
-    }
-    return result;
-  }
-
-  @Override
   public List<EntityContainerImpl> getEntityContainers() {
     return entityContainers;
   }
@@ -126,13 +109,33 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
   }
 
   @Override
-  public List<EntityTypeImpl> getEntityTypes() {
-    return entityTypes;
+  public EnumTypeImpl getEnumType(final String name) {
+    return (EnumTypeImpl) super.getEnumType(name);
+  }
+
+  @Override
+  public List<EnumTypeImpl> getEnumTypes() {
+    return enumTypes;
+  }
+
+  @Override
+  public ComplexTypeImpl getComplexType(final String name) {
+    return (ComplexTypeImpl) super.getComplexType(name);
   }
 
   @Override
   public List<ComplexTypeImpl> getComplexTypes() {
     return complexTypes;
+  }
+
+  @Override
+  public EntityTypeImpl getEntityType(final String name) {
+    return (EntityTypeImpl) super.getEntityType(name);
+  }
+
+  @Override
+  public List<EntityTypeImpl> getEntityTypes() {
+    return entityTypes;
   }
 
 }

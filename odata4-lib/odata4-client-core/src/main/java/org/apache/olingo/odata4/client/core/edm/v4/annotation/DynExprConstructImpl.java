@@ -18,54 +18,12 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
-public class ConstExprConstruct extends ExprConstruct {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
 
-  private static final long serialVersionUID = 2250072064504668969L;
+@JsonDeserialize(using = DynExprConstructDeserializer.class)
+public abstract class DynExprConstructImpl extends ExprConstructImpl implements DynExprConstruct {
 
-  public enum Type {
-
-    Binary,
-    Bool,
-    Date,
-    DateTimeOffset,
-    Decimal,
-    Duration,
-    EnumMember,
-    Float,
-    Guid,
-    Int,
-    String,
-    TimeOfDay;
-
-    public static Type fromString(final String value) {
-      Type result = null;
-      try {
-        result = valueOf(value);
-      } catch (IllegalArgumentException e) {
-        // ignore
-      }
-      return result;
-    }
-  }
-
-  private Type type;
-
-  private String value;
-
-  public Type getType() {
-    return type;
-  }
-
-  public void setType(final Type type) {
-    this.type = type;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(final String value) {
-    this.value = value;
-  }
+  private static final long serialVersionUID = -642012862023177349L;
 
 }

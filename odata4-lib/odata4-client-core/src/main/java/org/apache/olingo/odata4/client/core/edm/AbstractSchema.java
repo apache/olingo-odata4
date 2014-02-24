@@ -19,110 +19,71 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.EntityType;
+import org.apache.olingo.odata4.client.api.edm.EnumType;
 import org.apache.olingo.odata4.client.api.edm.Schema;
 import org.apache.olingo.odata4.client.core.op.impl.SchemaDeserializer;
 
 @JsonDeserialize(using = SchemaDeserializer.class)
-public abstract class AbstractSchema<EC extends AbstractEntityContainer<
-        FI>, E extends AbstractEntityType, C extends AbstractComplexType, FI extends AbstractFunctionImport>
-        extends AbstractEdmItem implements Schema {
+public abstract class AbstractSchema extends AbstractEdmItem implements Schema {
 
-    private static final long serialVersionUID = -1356392748971378455L;
+  private static final long serialVersionUID = -1356392748971378455L;
 
-    private String namespace;
+  private String namespace;
 
-    private String alias;
+  private String alias;
 
-    @Override
-    public String getNamespace() {
-        return namespace;
+  @Override
+  public String getNamespace() {
+    return namespace;
+  }
+
+  @Override
+  public void setNamespace(final String namespace) {
+    this.namespace = namespace;
+  }
+
+  @Override
+  public String getAlias() {
+    return alias;
+  }
+
+  @Override
+  public void setAlias(final String alias) {
+    this.alias = alias;
+  }
+
+  @Override
+  public EnumType getEnumType(final String name) {
+    EnumType result = null;
+    for (EnumType type : getEnumTypes()) {
+      if (name.equals(type.getName())) {
+        result = type;
+      }
     }
+    return result;
+  }
 
-    @Override
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
+  @Override
+  public ComplexType getComplexType(final String name) {
+    ComplexType result = null;
+    for (ComplexType type : getComplexTypes()) {
+      if (name.equals(type.getName())) {
+        result = type;
+      }
     }
+    return result;
+  }
 
-    @Override
-    public String getAlias() {
-        return alias;
+  @Override
+  public EntityType getEntityType(final String name) {
+    EntityType result = null;
+    for (EntityType type : getEntityTypes()) {
+      if (name.equals(type.getName())) {
+        result = type;
+      }
     }
-
-    @Override
-    public void setAlias(final String alias) {
-        this.alias = alias;
-    }
-
-    @Override
-    public abstract List<E> getEntityTypes();
-
-    @Override
-    public abstract List<? extends AbstractEnumType> getEnumTypes();
-
-    @Override
-    public abstract AbstractEnumType getEnumType(String name);
-
-    @Override
-    public abstract List<? extends AbstractAnnotations> getAnnotationsList();
-
-    @Override
-    public abstract AbstractAnnotations getAnnotationsList(String target);
-
-    @Override
-    public abstract List<C> getComplexTypes();
-
-    @Override
-    public abstract List<EC> getEntityContainers();
-
-    /**
-     * Gets default entity container.
-     *
-     * @return default entity container.
-     */
-    @Override
-    public abstract EC getDefaultEntityContainer();
-
-    /**
-     * Gets entity container with the given name.
-     *
-     * @param name name.
-     * @return entity container.
-     */
-    @Override
-    public abstract EC getEntityContainer(String name);
-
-    /**
-     * Gets entity type with the given name.
-     *
-     * @param name name.
-     * @return entity type.
-     */
-    @Override
-    public E getEntityType(final String name) {
-        E result = null;
-        for (E type : getEntityTypes()) {
-            if (name.equals(type.getName())) {
-                result = type;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Gets complex type with the given name.
-     *
-     * @param name name.
-     * @return complex type.
-     */
-    @Override
-    public C getComplexType(final String name) {
-        C result = null;
-        for (C type : getComplexTypes()) {
-            if (name.equals(type.getName())) {
-                result = type;
-            }
-        }
-        return result;
-    }
+    return result;
+  }
 }

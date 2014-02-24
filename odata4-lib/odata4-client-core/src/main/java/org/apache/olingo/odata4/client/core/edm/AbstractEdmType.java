@@ -20,17 +20,18 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.data.EdmSimpleType;
+import org.apache.olingo.odata4.client.api.edm.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
 import org.apache.olingo.odata4.client.api.edm.EdmType;
 import org.apache.olingo.odata4.client.api.edm.EdmTypeNotFoundException;
+import org.apache.olingo.odata4.client.api.edm.EntityType;
+import org.apache.olingo.odata4.client.api.edm.EnumType;
+import org.apache.olingo.odata4.client.api.edm.Schema;
 
 /**
  * Parse type information from metadata into semantic data.
  */
-public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
-        EDMX, DS, S, EC, E, C, FI>, EDMX extends AbstractEdmx<DS, S, EC, E, C, FI>, DS extends AbstractDataServices<
-        S, EC, E, C, FI>, S extends AbstractSchema<EC, E, C, FI>, EC extends AbstractEntityContainer<
-        FI>, E extends AbstractEntityType, C extends AbstractComplexType, FI extends AbstractFunctionImport>
-        implements EdmType {
+public abstract class AbstractEdmType implements EdmType {
 
   private final String typeExpression;
 
@@ -42,11 +43,11 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
 
   private EdmSimpleType simpleType;
 
-  private AbstractEnumType enumType;
+  private EnumType enumType;
 
-  private C complexType;
+  private ComplexType complexType;
 
-  private E entityType;
+  private EntityType entityType;
 
   /**
    * Constructor.
@@ -63,7 +64,7 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
    * @param metadata metadata.
    * @param typeExpression type expression.
    */
-  public AbstractEdmType(final META metadata, final String typeExpression) {
+  public AbstractEdmType(final EdmMetadata metadata, final String typeExpression) {
     this.typeExpression = typeExpression;
 
     final int collectionStartIdx = typeExpression.indexOf("Collection(");
@@ -95,21 +96,21 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
       if (!metadata.isNsOrAlias(namespaceOrAlias)) {
         throw new IllegalArgumentException("Illegal namespace or alias: " + namespaceOrAlias);
       }
-      final S schema = metadata.getSchema(namespaceOrAlias);
+      final Schema schema = metadata.getSchema(namespaceOrAlias);
 
-      for (AbstractEnumType type : schema.getEnumTypes()) {
+      for (EnumType type : schema.getEnumTypes()) {
         if (typeName.equals(type.getName())) {
           this.enumType = type;
         }
       }
       if (this.enumType == null) {
-        for (C type : schema.getComplexTypes()) {
+        for (ComplexType type : schema.getComplexTypes()) {
           if (typeName.equals(type.getName())) {
             this.complexType = type;
           }
         }
         if (this.complexType == null) {
-          for (E type : schema.getEntityTypes()) {
+          for (EntityType type : schema.getEntityTypes()) {
             if (typeName.equals(type.getName())) {
               this.entityType = type;
             }
@@ -173,7 +174,7 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
    * @return enum type. An <tt>EdmTypeNotFoundException</tt> will be raised if it is not an enum type.
    */
   @Override
-  public final AbstractEnumType getEnumType() {
+  public EnumType getEnumType() {
     if (!isEnumType()) {
       throw new EdmTypeNotFoundException(AbstractEnumType.class, this.typeExpression);
     }
@@ -197,7 +198,7 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
    * @return complex type. An <tt>EdmTypeNotFoundException</tt> will be raised if it is not a complex type.
    */
   @Override
-  public final C getComplexType() {
+  public ComplexType getComplexType() {
     if (!isComplexType()) {
       throw new EdmTypeNotFoundException(AbstractComplexType.class, this.typeExpression);
     }
@@ -221,7 +222,7 @@ public abstract class AbstractEdmType<META extends AbstractEdmMetadata<
    * @return entity type. An <tt>EdmTypeNotFoundException</tt> will be raised if it is not an entity type.
    */
   @Override
-  public final E getEntityType() {
+  public EntityType getEntityType() {
     if (!isEntityType()) {
       throw new EdmTypeNotFoundException(AbstractEntityType.class, this.typeExpression);
     }

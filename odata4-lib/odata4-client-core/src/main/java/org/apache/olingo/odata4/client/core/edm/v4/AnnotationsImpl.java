@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotations;
 import org.apache.olingo.odata4.client.core.edm.AbstractAnnotations;
 

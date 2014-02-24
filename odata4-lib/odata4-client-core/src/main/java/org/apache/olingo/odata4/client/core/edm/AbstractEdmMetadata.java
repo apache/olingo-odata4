@@ -25,21 +25,19 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
+import org.apache.olingo.odata4.client.api.edm.Edmx;
+import org.apache.olingo.odata4.client.api.edm.Schema;
 
 /**
  * Entry point for access information about EDM metadata.
  */
-public abstract class AbstractEdmMetadata<
-        EDMX extends AbstractEdmx<DS, S, EC, E, C, FI>, DS extends AbstractDataServices<
-        S, EC, E, C, FI>, S extends AbstractSchema<EC, E, C, FI>, EC extends AbstractEntityContainer<
-        FI>, E extends AbstractEntityType, C extends AbstractComplexType, FI extends AbstractFunctionImport>
-        extends AbstractEdmItem implements EdmMetadata {
+public abstract class AbstractEdmMetadata extends AbstractEdmItem implements EdmMetadata {
 
   private static final long serialVersionUID = -1214173426671503187L;
 
-  protected final EDMX edmx;
+  protected final Edmx edmx;
 
-  protected final Map<String, S> schemaByNsOrAlias;
+  protected final Map<String, Schema> schemaByNsOrAlias;
 
   /**
    * Constructor.
@@ -49,10 +47,10 @@ public abstract class AbstractEdmMetadata<
    */
   @SuppressWarnings("unchecked")
   public AbstractEdmMetadata(final ODataClient client, final InputStream inputStream) {
-    edmx = (EDMX) client.getDeserializer().toMetadata(inputStream);
+    edmx = client.getDeserializer().toMetadata(inputStream);
 
-    this.schemaByNsOrAlias = new HashMap<String, S>();
-    for (S schema : edmx.getDataServices().getSchemas()) {
+    this.schemaByNsOrAlias = new HashMap<String, Schema>();
+    for (Schema schema : edmx.getDataServices().getSchemas()) {
       this.schemaByNsOrAlias.put(schema.getNamespace(), schema);
       if (StringUtils.isNotBlank(schema.getAlias())) {
         this.schemaByNsOrAlias.put(schema.getAlias(), schema);
@@ -78,7 +76,7 @@ public abstract class AbstractEdmMetadata<
    * @return the Schema at the specified position in the EdM metadata document
    */
   @Override
-  public S getSchema(final int index) {
+  public Schema getSchema(final int index) {
     return this.edmx.getDataServices().getSchemas().get(index);
   }
 
@@ -89,7 +87,7 @@ public abstract class AbstractEdmMetadata<
    * @return the Schema with the specified key in the EdM metadata document
    */
   @Override
-  public S getSchema(final String key) {
+  public Schema getSchema(final String key) {
     return this.schemaByNsOrAlias.get(key);
   }
 
@@ -99,7 +97,7 @@ public abstract class AbstractEdmMetadata<
    * @return all Schema objects defined in the EdM metadata document
    */
   @Override
-  public List<S> getSchemas() {
+  public List<? extends Schema> getSchemas() {
     return this.edmx.getDataServices().getSchemas();
   }
 

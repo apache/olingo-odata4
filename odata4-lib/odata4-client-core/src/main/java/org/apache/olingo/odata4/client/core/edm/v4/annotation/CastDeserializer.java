@@ -41,7 +41,7 @@ public class CastDeserializer extends AbstractEdmDeserializer<Cast> {
         if ("Type".equals(jp.getCurrentName())) {
           cast.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          cast.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          cast.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
           cast.setMaxLength(jp.nextTextValue());
         } else if ("Precision".equals(jp.getCurrentName())) {
@@ -51,7 +51,7 @@ public class CastDeserializer extends AbstractEdmDeserializer<Cast> {
         } else if ("SRID".equals(jp.getCurrentName())) {
           cast.setSrid(jp.nextTextValue());
         } else {
-          cast.setValue(jp.readValueAs( DynExprConstruct.class));
+          cast.setValue(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }

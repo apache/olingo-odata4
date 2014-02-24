@@ -40,9 +40,9 @@ public class RecordDeserializer extends AbstractEdmDeserializer<Record> {
         if ("Tyoe".equals(jp.getCurrentName())) {
           record.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          record.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          record.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else {
-          record.getPropertyValues().add(jp.readValueAs( PropertyValue.class));
+          record.getPropertyValues().add(jp.readValueAs(PropertyValue.class));
         }
       }
     }

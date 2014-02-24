@@ -22,33 +22,33 @@ public class If extends AnnotatedDynExprConstruct {
 
   private static final long serialVersionUID = 6752952406406218936L;
 
-  private ExprConstruct guard;
+  private ExprConstructImpl guard;
 
-  private ExprConstruct _then;
+  private ExprConstructImpl _then;
 
-  private ExprConstruct _else;
+  private ExprConstructImpl _else;
 
-  public ExprConstruct getGuard() {
+  public ExprConstructImpl getGuard() {
     return guard;
   }
 
-  public void setGuard(final ExprConstruct guard) {
+  public void setGuard(final ExprConstructImpl guard) {
     this.guard = guard;
   }
 
-  public ExprConstruct getThen() {
+  public ExprConstructImpl getThen() {
     return _then;
   }
 
-  public void setThen(final ExprConstruct _then) {
+  public void setThen(final ExprConstructImpl _then) {
     this._then = _then;
   }
 
-  public ExprConstruct getElse() {
+  public ExprConstructImpl getElse() {
     return _else;
   }
 
-  public void setElse(final ExprConstruct _else) {
+  public void setElse(final ExprConstructImpl _else) {
     this._else = _else;
   }
 

@@ -22,7 +22,7 @@ import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 
 public interface AnnotatedEdmItem {
 
-  Annotation getAnnotation();
+  AnnotationImpl getAnnotation();
 
   void setAnnotation(Annotation annotation);
 }

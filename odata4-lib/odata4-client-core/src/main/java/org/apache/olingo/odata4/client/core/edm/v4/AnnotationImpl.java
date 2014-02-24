@@ -20,9 +20,11 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.DynExprConstruct;
+import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstructImpl;
+import org.apache.olingo.odata4.client.core.edm.v4.annotation.DynExprConstructImpl;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractEdmItem implements Annotation {
@@ -33,40 +35,48 @@ public class AnnotationImpl extends AbstractEdmItem implements Annotation {
 
   private String qualifier;
 
-  private ConstExprConstruct constExpr;
+  private ConstExprConstructImpl constExpr;
 
-  private DynExprConstruct dynExpr;
+  private DynExprConstructImpl dynExpr;
 
+  @Override
   public String getTerm() {
     return term;
   }
 
+  @Override
   public void setTerm(final String term) {
     this.term = term;
   }
 
+  @Override
   public String getQualifier() {
     return qualifier;
   }
 
+  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
 
-  public ConstExprConstruct getConstExpr() {
+  @Override
+  public ConstExprConstructImpl getConstExpr() {
     return constExpr;
   }
 
+  @Override
   public void setConstExpr(final ConstExprConstruct constExpr) {
-    this.constExpr = constExpr;
+    this.constExpr = (ConstExprConstructImpl) constExpr;
   }
 
-  public DynExprConstruct getDynExpr() {
+  @Override
+  public DynExprConstructImpl getDynExpr() {
     return dynExpr;
   }
 
+  @Override
   public void setDynExpr(final DynExprConstruct dynExpr) {
-    this.dynExpr = dynExpr;
+    this.dynExpr = (DynExprConstructImpl) dynExpr;
   }
 
 }

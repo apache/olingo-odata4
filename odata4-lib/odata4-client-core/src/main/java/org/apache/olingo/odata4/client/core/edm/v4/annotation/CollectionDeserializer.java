@@ -39,7 +39,7 @@ public class CollectionDeserializer extends AbstractEdmDeserializer<Collection> 
         if (isAnnotationConstExprConstruct(jp)) {
           collection.getItems().add(parseAnnotationConstExprConstruct(jp));
         } else {
-          collection.getItems().add(jp.readValueAs( DynExprConstruct.class));
+          collection.getItems().add(jp.readValueAs( DynExprConstructImpl.class));
         }
       }
     }

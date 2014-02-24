@@ -16,8 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm;
+package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
-public interface OnDelete {
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
+
+public class ConstExprConstructImpl extends ExprConstructImpl implements ConstExprConstruct {
+
+  private static final long serialVersionUID = 2250072064504668969L;
+
+  private Type type;
+
+  private String value;
+
+  @Override
+  public Type getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(final Type type) {
+    this.type = type;
+  }
+
+  @Override
+  public String getValue() {
+    return value;
+  }
+
+  @Override
+  public void setValue(final String value) {
+    this.value = value;
+  }
 
 }

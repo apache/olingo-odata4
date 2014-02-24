@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
-public interface EntityType {
+import java.util.List;
 
+public interface EntityType extends ComplexType {
+
+  List<? extends NavigationProperty> getNavigationProperties();
+
+  NavigationProperty getNavigationProperty(String name);
 }

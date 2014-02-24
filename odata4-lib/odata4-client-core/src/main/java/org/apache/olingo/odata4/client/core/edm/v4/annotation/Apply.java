@@ -35,7 +35,7 @@ public class Apply extends AnnotatedDynExprConstruct {
 
   private String function;
 
-  private final List<ExprConstruct> parameters = new ArrayList<ExprConstruct>();
+  private final List<ExprConstructImpl> parameters = new ArrayList<ExprConstructImpl>();
 
   public String getFunction() {
     return function;
@@ -45,7 +45,7 @@ public class Apply extends AnnotatedDynExprConstruct {
     this.function = function;
   }
 
-  public List<ExprConstruct> getParameters() {
+  public List<ExprConstructImpl> getParameters() {
     return parameters;
   }
 

@@ -19,12 +19,10 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.DataServices;
 
 @JsonDeserialize(using = DataServicesDeserializer.class)
-public abstract class AbstractDataServices<S extends AbstractSchema<EC, E, C, FI>, EC extends AbstractEntityContainer<
-        FI>, E extends AbstractEntityType, C extends AbstractComplexType, FI extends AbstractFunctionImport>
-        extends AbstractEdmItem {
+public abstract class AbstractDataServices extends AbstractEdmItem implements DataServices {
 
   private static final long serialVersionUID = -9126377222393876166L;
 
@@ -32,21 +30,23 @@ public abstract class AbstractDataServices<S extends AbstractSchema<EC, E, C, FI
 
   private String maxDataServiceVersion;
 
+  @Override
   public String getDataServiceVersion() {
     return dataServiceVersion;
   }
 
+  @Override
   public void setDataServiceVersion(final String dataServiceVersion) {
     this.dataServiceVersion = dataServiceVersion;
   }
 
+  @Override
   public String getMaxDataServiceVersion() {
     return maxDataServiceVersion;
   }
 
+  @Override
   public void setMaxDataServiceVersion(final String maxDataServiceVersion) {
     this.maxDataServiceVersion = maxDataServiceVersion;
   }
-
-  public abstract List<S> getSchemas();
 }

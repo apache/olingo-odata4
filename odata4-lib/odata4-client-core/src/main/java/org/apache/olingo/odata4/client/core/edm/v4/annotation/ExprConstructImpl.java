@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
-public abstract class ExprConstruct extends AbstractEdmItem {
+public abstract class ExprConstructImpl extends AbstractEdmItem {
 
   private static final long serialVersionUID = 7108626008005050492L;
 

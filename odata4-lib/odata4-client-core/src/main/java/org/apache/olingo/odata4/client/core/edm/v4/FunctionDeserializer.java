@@ -47,12 +47,12 @@ public class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> 
           function.setEntitySetPath(jp.nextTextValue());
         } else if ("Parameter".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.getParameters().add(jp.readValueAs( ParameterImpl.class));
+          function.getParameters().add(jp.readValueAs(ParameterImpl.class));
         } else if ("ReturnType".equals(jp.getCurrentName())) {
           function.setReturnType(parseReturnType(jp, "Function"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          function.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

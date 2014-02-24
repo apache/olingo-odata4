@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.core.edm.AbstractDataServices;
 
-public class DataServicesImpl extends AbstractDataServices<        
-        SchemaImpl, EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, FunctionImportImpl> {
+public class DataServicesImpl extends AbstractDataServices {
 
   private static final long serialVersionUID = -7954360771258897632L;
 

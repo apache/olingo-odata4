@@ -50,8 +50,8 @@ public class MetadataTest extends AbstractTest {
             readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
-    final EdmTypeImpl orderCollection
-            = new EdmTypeImpl(metadata, "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Order)");
+    final EdmTypeImpl orderCollection = new EdmTypeImpl(metadata,
+            "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Order)");
     assertNotNull(orderCollection);
     assertTrue(orderCollection.isCollection());
     assertFalse(orderCollection.isSimpleType());
@@ -71,8 +71,8 @@ public class MetadataTest extends AbstractTest {
     assertFalse(stream.isComplexType());
     assertFalse(stream.isEntityType());
 
-    final List<FunctionImportImpl> functionImports
-            = metadata.getSchemas().get(0).getDefaultEntityContainer().getFunctionImports();
+    final List<FunctionImportImpl> functionImports = metadata.getSchemas().get(0).
+            getDefaultEntityContainer().getFunctionImports();
     int legacyGetters = 0;
     int legacyPosters = 0;
     int actions = 0;

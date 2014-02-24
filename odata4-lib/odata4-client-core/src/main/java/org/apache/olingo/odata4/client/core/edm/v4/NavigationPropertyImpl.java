@@ -42,7 +42,7 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private OnDeleteImpl onDelete;
 
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   public String getType() {
     return type;
@@ -89,13 +89,13 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
   }
 
   @Override
-  public Annotation getAnnotation() {
+  public AnnotationImpl getAnnotation() {
     return annotation;
   }
 
   @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+    this.annotation = (AnnotationImpl) annotation;
   }
 
 }

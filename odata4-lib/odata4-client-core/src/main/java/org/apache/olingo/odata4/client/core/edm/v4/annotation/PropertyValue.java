@@ -27,7 +27,7 @@ public class PropertyValue extends AnnotatedDynExprConstruct {
 
   private String property;
 
-  private ExprConstruct value;
+  private ExprConstructImpl value;
 
   public String getProperty() {
     return property;
@@ -37,11 +37,11 @@ public class PropertyValue extends AnnotatedDynExprConstruct {
     this.property = property;
   }
 
-  public ExprConstruct getValue() {
+  public ExprConstructImpl getValue() {
     return value;
   }
 
-  public void setValue(final ExprConstruct value) {
+  public void setValue(final ExprConstructImpl value) {
     this.value = value;
   }
 

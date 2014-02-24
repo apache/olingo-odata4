@@ -45,12 +45,12 @@ public class ActionDeserializer extends AbstractEdmDeserializer<ActionImpl> {
           action.setEntitySetPath(jp.nextTextValue());
         } else if ("Parameter".equals(jp.getCurrentName())) {
           jp.nextToken();
-          action.getParameters().add(jp.readValueAs( ParameterImpl.class));
+          action.getParameters().add(jp.readValueAs(ParameterImpl.class));
         } else if ("ReturnType".equals(jp.getCurrentName())) {
           action.setReturnType(parseReturnType(jp, "Action"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          action.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          action.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

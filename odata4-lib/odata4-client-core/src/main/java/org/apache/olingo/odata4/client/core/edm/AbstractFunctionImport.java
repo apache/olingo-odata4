@@ -24,7 +24,4 @@ public abstract class AbstractFunctionImport extends AbstractEdmItem implements 
 
   private static final long serialVersionUID = 4154308065211315663L;
 
-  public abstract String getName();
-
-  public abstract String getEntitySet();
 }

@@ -20,9 +20,7 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmType;
 
-public class EdmTypeImpl extends AbstractEdmType<
-        EdmMetadataImpl, EdmxImpl, DataServicesImpl, SchemaImpl, EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, 
-        FunctionImportImpl> {
+public class EdmTypeImpl extends AbstractEdmType {
 
   public EdmTypeImpl(final String typeExpression) {
     super(typeExpression);
@@ -30,6 +28,21 @@ public class EdmTypeImpl extends AbstractEdmType<
 
   public EdmTypeImpl(final EdmMetadataImpl metadata, final String typeExpression) {
     super(metadata, typeExpression);
+  }
+
+  @Override
+  public EnumTypeImpl getEnumType() {
+    return (EnumTypeImpl) super.getEnumType();
+  }
+
+  @Override
+  public ComplexTypeImpl getComplexType() {
+    return (ComplexTypeImpl) super.getComplexType();
+  }
+
+  @Override
+  public EntityTypeImpl getEntityType() {
+    return (EntityTypeImpl) super.getEntityType();
   }
 
 }

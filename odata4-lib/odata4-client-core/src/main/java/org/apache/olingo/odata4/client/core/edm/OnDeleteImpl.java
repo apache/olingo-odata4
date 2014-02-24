@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import org.apache.olingo.odata4.client.api.edm.v4.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.OnDelete;
+import org.apache.olingo.odata4.client.api.edm.v4.OnDelete;
 
 public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
 
@@ -29,10 +29,12 @@ public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
   @JsonProperty(value = "Action", required = true)
   private OnDeleteAction action = OnDeleteAction.None;
 
+  @Override
   public OnDeleteAction getAction() {
     return action;
   }
 
+  @Override
   public void setAction(final OnDeleteAction action) {
     this.action = action;
   }

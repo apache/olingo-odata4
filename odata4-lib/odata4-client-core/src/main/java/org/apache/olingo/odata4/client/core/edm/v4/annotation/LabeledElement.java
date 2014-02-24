@@ -27,7 +27,7 @@ public class LabeledElement extends AnnotatedDynExprConstruct {
 
   private String name;
 
-  private DynExprConstruct value;
+  private DynExprConstructImpl value;
 
   public String getName() {
     return name;
@@ -37,11 +37,11 @@ public class LabeledElement extends AnnotatedDynExprConstruct {
     this.name = name;
   }
 
-  public DynExprConstruct getValue() {
+  public DynExprConstructImpl getValue() {
     return value;
   }
 
-  public void setValue(final DynExprConstruct value) {
+  public void setValue(final DynExprConstructImpl value) {
     this.value = value;
   }
 

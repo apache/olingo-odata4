@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
@@ -27,16 +28,17 @@ public abstract class AbstractAnnotatedEdmItem extends AbstractEdmItem implement
   private static final long serialVersionUID = -8859729466090997718L;
 
   @JsonProperty("Annotation")
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   @Override
-  public Annotation getAnnotation() {
+  public AnnotationImpl getAnnotation() {
     return annotation;
   }
 
+  @JsonIgnore
   @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+    this.annotation = (AnnotationImpl) annotation;
   }
 
 }

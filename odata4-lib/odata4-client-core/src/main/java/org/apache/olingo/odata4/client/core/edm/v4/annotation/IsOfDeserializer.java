@@ -41,7 +41,7 @@ public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
         if ("Type".equals(jp.getCurrentName())) {
           isof.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          isof.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          isof.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
           isof.setMaxLength(jp.nextTextValue());
         } else if ("Precision".equals(jp.getCurrentName())) {
@@ -51,7 +51,7 @@ public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
         } else if ("SRID".equals(jp.getCurrentName())) {
           isof.setSrid(jp.nextTextValue());
         } else {
-          isof.setValue(jp.readValueAs( DynExprConstruct.class));
+          isof.setValue(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }

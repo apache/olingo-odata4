@@ -20,6 +20,7 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.EnumType;
+import org.apache.olingo.odata4.client.api.edm.Member;
 import org.apache.olingo.odata4.client.core.op.impl.EnumTypeDeserializer;
 
 @JsonDeserialize(using = EnumTypeDeserializer.class)
@@ -61,5 +62,27 @@ public abstract class AbstractEnumType extends AbstractEdmItem implements EnumTy
   @Override
   public void setFlags(final boolean flags) {
     this.flags = flags;
+  }
+
+  @Override
+  public Member getMember(final String name) {
+    Member result = null;
+    for (Member member : getMembers()) {
+      if (name.equals(member.getName())) {
+        result = member;
+      }
+    }
+    return result;
+  }
+
+  @Override
+  public Member getMember(final Integer value) {
+    Member result = null;
+    for (Member member : getMembers()) {
+      if (value.equals(member.getValue())) {
+        result = member;
+      }
+    }
+    return result;
   }
 }

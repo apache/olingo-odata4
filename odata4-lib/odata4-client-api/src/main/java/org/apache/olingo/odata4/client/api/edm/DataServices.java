@@ -16,26 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm.v4;
+package org.apache.olingo.odata4.client.api.edm;
 
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
+import java.util.List;
 
-public interface Annotation {
+public interface DataServices {
 
-  String getTerm();
+  String getDataServiceVersion();
 
-  void setTerm(String term);
+  void setDataServiceVersion(String dataServiceVersion);
 
-  String getQualifier();
+  String getMaxDataServiceVersion();
 
-  void setQualifier(String qualifier);
+  void setMaxDataServiceVersion(String maxDataServiceVersion);
 
-  ConstExprConstruct getConstExpr();
-
-  void setConstExpr(ConstExprConstruct constExpr);
-
-  DynExprConstruct getDynExpr();
-
-  void setDynExpr(DynExprConstruct dynExpr);
+  List<? extends Schema> getSchemas();
 }

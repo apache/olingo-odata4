@@ -26,19 +26,19 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import java.io.IOException;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.core.edm.v4.ReturnTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstruct;
+import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstructImpl;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
 
   protected ODataClient client;
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
-    return ConstExprConstruct.Type.fromString(jp.getCurrentName()) != null;
+    return ConstExprConstructImpl.Type.fromString(jp.getCurrentName()) != null;
   }
 
-  protected ConstExprConstruct parseAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
-    final ConstExprConstruct constExpr = new ConstExprConstruct();
-    constExpr.setType(ConstExprConstruct.Type.fromString(jp.getCurrentName()));
+  protected ConstExprConstructImpl parseAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
+    final ConstExprConstructImpl constExpr = new ConstExprConstructImpl();
+    constExpr.setType(ConstExprConstructImpl.Type.fromString(jp.getCurrentName()));
     constExpr.setValue(jp.nextTextValue());
     return constExpr;
   }

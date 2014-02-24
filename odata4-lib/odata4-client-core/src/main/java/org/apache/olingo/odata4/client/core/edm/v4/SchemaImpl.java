@@ -25,8 +25,7 @@ import org.apache.olingo.odata4.client.api.edm.Schema;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.AbstractSchema;
 
-public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeImpl, ComplexTypeImpl, FunctionImportImpl>
-        implements Schema, AnnotatedEdmItem {
+public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmItem {
 
   private static final long serialVersionUID = 4453992249818796144L;
 
@@ -50,7 +49,7 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
 
   private final List<TypeDefinitionImpl> typeDefinitions = new ArrayList<TypeDefinitionImpl>();
 
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   public List<ActionImpl> getActions() {
     return actions;
@@ -84,22 +83,6 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
 
   public List<AnnotationImpl> getAnnotations() {
     return annotations;
-  }
-
-  @Override
-  public List<EnumTypeImpl> getEnumTypes() {
-    return enumTypes;
-  }
-
-  @Override
-  public EnumTypeImpl getEnumType(final String name) {
-    EnumTypeImpl result = null;
-    for (EnumTypeImpl type : getEnumTypes()) {
-      if (name.equals(type.getName())) {
-        result = type;
-      }
-    }
-    return result;
   }
 
   public List<FunctionImpl> getFunctions() {
@@ -152,8 +135,28 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
   }
 
   @Override
-  public List<EntityTypeImpl> getEntityTypes() {
-    return entityTypes;
+  public AnnotationImpl getAnnotation() {
+    return annotation;
+  }
+
+  @Override
+  public void setAnnotation(final Annotation annotation) {
+    this.annotation = (AnnotationImpl) annotation;
+  }
+
+  @Override
+  public EnumTypeImpl getEnumType(final String name) {
+    return (EnumTypeImpl) super.getEnumType(name);
+  }
+
+  @Override
+  public List<EnumTypeImpl> getEnumTypes() {
+    return enumTypes;
+  }
+
+  @Override
+  public ComplexTypeImpl getComplexType(final String name) {
+    return (ComplexTypeImpl) super.getComplexType(name);
   }
 
   @Override
@@ -162,12 +165,12 @@ public class SchemaImpl extends AbstractSchema<EntityContainerImpl, EntityTypeIm
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
+  public EntityTypeImpl getEntityType(final String name) {
+    return (EntityTypeImpl) super.getEntityType(name);
   }
 
   @Override
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<EntityTypeImpl> getEntityTypes() {
+    return entityTypes;
   }
 }

@@ -27,7 +27,7 @@ public class EnumTypeImpl extends AbstractEnumType implements AnnotatedEdmItem {
 
   private static final long serialVersionUID = -3329664331877556957L;
 
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   private final List<MemberImpl> members = new ArrayList<MemberImpl>();
 
@@ -38,34 +38,22 @@ public class EnumTypeImpl extends AbstractEnumType implements AnnotatedEdmItem {
 
   @Override
   public MemberImpl getMember(final String name) {
-    MemberImpl result = null;
-    for (MemberImpl member : getMembers()) {
-      if (name.equals(member.getName())) {
-        result = member;
-      }
-    }
-    return result;
+    return (MemberImpl) super.getMember(name);
   }
 
   @Override
   public MemberImpl getMember(final Integer value) {
-    MemberImpl result = null;
-    for (MemberImpl member : getMembers()) {
-      if (value.equals(member.getValue())) {
-        result = member;
-      }
-    }
-    return result;
+    return (MemberImpl) super.getMember(value);
   }
 
   @Override
-  public Annotation getAnnotation() {
+  public AnnotationImpl getAnnotation() {
     return annotation;
   }
 
   @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+    this.annotation = (AnnotationImpl) annotation;
   }
 
 }

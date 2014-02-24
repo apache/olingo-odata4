@@ -19,33 +19,35 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.edm.DataServices;
 import org.apache.olingo.odata4.client.api.edm.Edmx;
 
 @JsonDeserialize(using = EdmxDeserializer.class)
-public abstract class AbstractEdmx<DS extends AbstractDataServices<S, EC, E, C, FI>, S extends AbstractSchema<
-        EC, E, C, FI>, EC extends AbstractEntityContainer<
-        FI>, E extends AbstractEntityType, C extends AbstractComplexType, FI extends AbstractFunctionImport>
-        extends AbstractEdmItem implements Edmx {
+public abstract class AbstractEdmx extends AbstractEdmItem implements Edmx {
 
-    private static final long serialVersionUID = -5480835122183091469L;
+  private static final long serialVersionUID = -5480835122183091469L;
 
-    private String version;
+  private String version;
 
-    private DS dataServices;
+  private DataServices dataServices;
 
-    public String getVersion() {
-        return version;
-    }
+  @Override
+  public String getVersion() {
+    return version;
+  }
 
-    public void setVersion(final String version) {
-        this.version = version;
-    }
+  @Override
+  public void setVersion(final String version) {
+    this.version = version;
+  }
 
-    public DS getDataServices() {
-        return dataServices;
-    }
+  @Override
+  public DataServices getDataServices() {
+    return dataServices;
+  }
 
-    public void setDataServices(final DS dataServices) {
-        this.dataServices = dataServices;
-    }
+  @Override
+  public void setDataServices(final DataServices dataServices) {
+    this.dataServices = dataServices;
+  }
 }

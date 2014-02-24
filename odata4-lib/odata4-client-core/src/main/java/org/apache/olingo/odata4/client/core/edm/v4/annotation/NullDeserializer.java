@@ -38,7 +38,7 @@ public class NullDeserializer extends AbstractEdmDeserializer<Null> {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Annotation".equals(jp.getCurrentName())) {
-          _null.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          _null.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

@@ -22,11 +22,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.EntitySet;
+import org.apache.olingo.odata4.client.api.edm.FunctionImport;
 import org.apache.olingo.odata4.client.core.op.impl.EntityContainerDeserializer;
 
 @JsonDeserialize(using = EntityContainerDeserializer.class)
-public abstract class AbstractEntityContainer<FI extends AbstractFunctionImport>
-        extends AbstractEdmItem implements EntityContainer {
+public abstract class AbstractEntityContainer extends AbstractEdmItem implements EntityContainer {
 
   private static final long serialVersionUID = 4121974387552855032L;
 
@@ -70,9 +71,16 @@ public abstract class AbstractEntityContainer<FI extends AbstractFunctionImport>
     this.defaultEntityContainer = defaultEntityContainer;
   }
 
-  public abstract List<? extends AbstractEntitySet> getEntitySets();
-
-  public abstract AbstractEntitySet getEntitySet(String name);
+  @Override
+  public EntitySet getEntitySet(final String name) {
+    EntitySet result = null;
+    for (EntitySet entitySet : getEntitySets()) {
+      if (name.equals(entitySet.getName())) {
+        result = entitySet;
+      }
+    }
+    return result;
+  }
 
   /**
    * Gets the first function import with given name.
@@ -80,8 +88,8 @@ public abstract class AbstractEntityContainer<FI extends AbstractFunctionImport>
    * @param name name.
    * @return function import.
    */
-  public FI getFunctionImport(final String name) {
-    final List<FI> funcImps = getFunctionImports(name);
+  public FunctionImport getFunctionImport(final String name) {
+    final List<? extends FunctionImport> funcImps = getFunctionImports(name);
     return funcImps.isEmpty()
             ? null
             : funcImps.get(0);
@@ -93,15 +101,13 @@ public abstract class AbstractEntityContainer<FI extends AbstractFunctionImport>
    * @param name name.
    * @return function imports.
    */
-  public List<FI> getFunctionImports(final String name) {
-    final List<FI> result = new ArrayList<FI>();
-    for (FI functionImport : getFunctionImports()) {
+  public List<? extends FunctionImport> getFunctionImports(final String name) {
+    final List<FunctionImport> result = new ArrayList<FunctionImport>();
+    for (FunctionImport functionImport : getFunctionImports()) {
       if (name.equals(functionImport.getName())) {
         result.add(functionImport);
       }
     }
     return result;
   }
-
-  public abstract List<FI> getFunctionImports();
 }

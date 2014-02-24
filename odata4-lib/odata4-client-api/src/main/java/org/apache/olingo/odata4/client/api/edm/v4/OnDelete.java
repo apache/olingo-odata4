@@ -18,24 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
+public interface OnDelete {
 
-public interface Annotation {
+  OnDeleteAction getAction();
 
-  String getTerm();
-
-  void setTerm(String term);
-
-  String getQualifier();
-
-  void setQualifier(String qualifier);
-
-  ConstExprConstruct getConstExpr();
-
-  void setConstExpr(ConstExprConstruct constExpr);
-
-  DynExprConstruct getDynExpr();
-
-  void setDynExpr(DynExprConstruct dynExpr);
+  void setAction(OnDeleteAction action);
 }

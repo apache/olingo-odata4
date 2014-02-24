@@ -30,7 +30,7 @@ public class EntitySetImpl extends AbstractEntitySet implements AnnotatedEdmItem
 
   private boolean includeInServiceDocument = true;
 
-  private Annotation annotation;
+  private AnnotationImpl annotation;
 
   private final List<NavigationPropertyBinding> navigationPropertyBindings
           = new ArrayList<NavigationPropertyBinding>();
@@ -48,13 +48,13 @@ public class EntitySetImpl extends AbstractEntitySet implements AnnotatedEdmItem
   }
 
   @Override
-  public Annotation getAnnotation() {
+  public AnnotationImpl getAnnotation() {
     return annotation;
   }
 
   @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+    this.annotation = (AnnotationImpl) annotation;
   }
 
 }

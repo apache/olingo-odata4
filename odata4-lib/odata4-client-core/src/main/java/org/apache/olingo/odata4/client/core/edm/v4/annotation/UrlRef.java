@@ -21,17 +21,17 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = UrlRefDeserializer.class)
-public class UrlRef extends DynExprConstruct {
+public class UrlRef extends DynExprConstructImpl {
 
   private static final long serialVersionUID = 3755101394647430897L;
 
-  private ExprConstruct value;
+  private ExprConstructImpl value;
 
-  public ExprConstruct getValue() {
+  public ExprConstructImpl getValue() {
     return value;
   }
 
-  public void setValue(final ExprConstruct value) {
+  public void setValue(final ExprConstructImpl value) {
     this.value = value;
   }
 

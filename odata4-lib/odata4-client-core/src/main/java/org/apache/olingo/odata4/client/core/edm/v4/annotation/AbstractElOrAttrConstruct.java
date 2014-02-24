@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 /**
  * Groups dynamic expressions that may be provided using element notation or attribute notation.
  */
-abstract class AbstractElOrAttrConstruct extends DynExprConstruct {
+abstract class AbstractElOrAttrConstruct extends DynExprConstructImpl {
 
   private static final long serialVersionUID = 5503275111425750339L;
 

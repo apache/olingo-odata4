@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonDeserialize(using = CollectionDeserializer.class)
-public class Collection extends DynExprConstruct {
+public class Collection extends DynExprConstructImpl {
 
   private static final long serialVersionUID = -4975881520695477686L;
 
-  private final List<ExprConstruct> items = new ArrayList<ExprConstruct>();
+  private final List<ExprConstructImpl> items = new ArrayList<ExprConstructImpl>();
 
-  public List<ExprConstruct> getItems() {
+  public List<ExprConstructImpl> getItems() {
     return items;
   }
 

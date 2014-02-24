@@ -40,11 +40,11 @@ public class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyV
         if ("Property".equals(jp.getCurrentName())) {
           propValue.setProperty(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          propValue.setAnnotation(jp.readValueAs( AnnotationImpl.class));
+          propValue.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         } else if (isAnnotationConstExprConstruct(jp)) {
           propValue.setValue(parseAnnotationConstExprConstruct(jp));
         } else {
-          propValue.setValue(jp.readValueAs( DynExprConstruct.class));
+          propValue.setValue(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }
