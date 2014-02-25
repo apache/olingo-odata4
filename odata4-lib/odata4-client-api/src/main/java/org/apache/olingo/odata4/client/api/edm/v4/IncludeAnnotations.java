@@ -20,4 +20,15 @@ package org.apache.olingo.odata4.client.api.edm.v4;
 
 public interface IncludeAnnotations {
 
+  String getQualifier();
+
+  String getTargeyNamespace();
+
+  String getTermNamespace();
+
+  void setQualifier(String qualifier);
+
+  void setTargeyNamespace(String targeyNamespace);
+
+  void setTermNamespace(String termNamespace);
 }

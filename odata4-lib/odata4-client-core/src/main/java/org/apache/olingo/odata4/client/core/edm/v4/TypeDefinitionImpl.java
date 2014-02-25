@@ -21,7 +21,6 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
@@ -43,65 +42,80 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
 
   private String srid;
 
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
+  private final List<AnnotationImpl> annotations = new ArrayList<AnnotationImpl>();
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getUnderlyingType() {
     return underlyingType;
   }
 
+  @Override
   public void setUnderlyingType(final String underlyingType) {
     this.underlyingType = underlyingType;
   }
 
+  @Override
   public String getMaxLength() {
     return maxLength;
   }
 
+  @Override
   public void setMaxLength(final String maxLength) {
     this.maxLength = maxLength;
   }
 
+  @Override
   public BigInteger getPrecision() {
     return precision;
   }
 
+  @Override
   public void setPrecision(final BigInteger precision) {
     this.precision = precision;
   }
 
+  @Override
   public BigInteger getScale() {
     return scale;
   }
 
+  @Override
   public void setScale(final BigInteger scale) {
     this.scale = scale;
   }
 
+  @Override
   public boolean isUnicode() {
     return unicode;
   }
 
+  @Override
   public void setUnicode(final boolean unicode) {
     this.unicode = unicode;
   }
 
+  @Override
   public String getSrid() {
     return srid;
   }
 
+  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }
 
-  public List<Annotation> getAnnotations() {
+  @Override
+  public List<AnnotationImpl> getAnnotations() {
     return annotations;
   }
 

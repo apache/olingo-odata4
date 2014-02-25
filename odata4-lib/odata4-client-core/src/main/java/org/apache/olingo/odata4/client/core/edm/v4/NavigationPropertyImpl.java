@@ -23,10 +23,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.NavigationProperty;
+import org.apache.olingo.odata4.client.api.edm.OnDelete;
 import org.apache.olingo.odata4.client.core.edm.AbstractNavigationProperty;
 
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
-public class NavigationPropertyImpl extends AbstractNavigationProperty implements AnnotatedEdmItem {
+public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {
 
   private static final long serialVersionUID = -2889417442815563307L;
 
@@ -44,48 +46,59 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private AnnotationImpl annotation;
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public boolean isNullable() {
     return nullable;
   }
 
+  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
+  @Override
   public String getPartner() {
     return partner;
   }
 
+  @Override
   public void setPartner(final String partner) {
     this.partner = partner;
   }
 
+  @Override
   public boolean isContainsTarget() {
     return containsTarget;
   }
 
+  @Override
   public void setContainsTarget(final boolean containsTarget) {
     this.containsTarget = containsTarget;
   }
 
+  @Override
   public List<ReferentialConstraintImpl> getReferentialConstraints() {
     return referentialConstraints;
   }
 
+  @Override
   public OnDeleteImpl getOnDelete() {
     return onDelete;
   }
 
-  public void setOnDelete(final OnDeleteImpl onDelete) {
-    this.onDelete = onDelete;
+  @Override
+  public void setOnDelete(final OnDelete onDelete) {
+    this.onDelete = (OnDeleteImpl) onDelete;
   }
 
   @Override

@@ -39,22 +39,27 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
+  @Override
   public URI getUri() {
     return uri;
   }
 
+  @Override
   public void setUri(final URI uri) {
     this.uri = uri;
   }
 
+  @Override
   public List<IncludeImpl> getIncludes() {
     return includes;
   }
 
+  @Override
   public List<IncludeAnnotationsImpl> getIncludeAnnotations() {
     return includeAnnotations;
   }
 
+  @Override
   public List<Annotation> getAnnotations() {
     return annotations;
   }

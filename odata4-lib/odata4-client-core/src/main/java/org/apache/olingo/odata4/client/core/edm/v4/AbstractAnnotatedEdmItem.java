@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import org.apache.olingo.odata4.client.api.edm.v4.AnnotatedEdmItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;

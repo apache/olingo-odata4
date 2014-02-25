@@ -18,6 +18,43 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface Term {
+import java.math.BigInteger;
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
 
+public interface Term extends Named {
+
+  List<CSDLElement> getAppliesTo();
+
+  String getBaseTerm();
+
+  String getDefaultValue();
+
+  String getMaxLength();
+
+  BigInteger getPrecision();
+
+  BigInteger getScale();
+
+  String getSrid();
+
+  String getType();
+
+  boolean isNullable();
+
+  void setBaseTerm(String baseTerm);
+
+  void setDefaultValue(String defaultValue);
+
+  void setMaxLength(String maxLength);
+
+  void setNullable(boolean nullable);
+
+  void setPrecision(BigInteger precision);
+
+  void setScale(BigInteger scale);
+
+  void setSrid(String srid);
+
+  void setType(String type);
 }

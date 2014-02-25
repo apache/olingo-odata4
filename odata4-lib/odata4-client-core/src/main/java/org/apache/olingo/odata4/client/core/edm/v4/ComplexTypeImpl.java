@@ -21,9 +21,10 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.ComplexType;
 import org.apache.olingo.odata4.client.core.edm.AbstractComplexType;
 
-public class ComplexTypeImpl extends AbstractComplexType implements AnnotatedEdmItem {
+public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
 
   private static final long serialVersionUID = -1251230308269425962L;
 
@@ -39,28 +40,39 @@ public class ComplexTypeImpl extends AbstractComplexType implements AnnotatedEdm
 
   private AnnotationImpl annotation;
 
+  @Override
   public boolean isAbstractEntityType() {
     return abstractEntityType;
   }
 
+  @Override
   public void setAbstractEntityType(final boolean abstractEntityType) {
     this.abstractEntityType = abstractEntityType;
   }
 
+  @Override
   public String getBaseType() {
     return baseType;
   }
 
+  @Override
   public void setBaseType(final String baseType) {
     this.baseType = baseType;
   }
 
+  @Override
   public boolean isOpenType() {
     return openType;
   }
 
+  @Override
   public void setOpenType(final boolean openType) {
     this.openType = openType;
+  }
+
+  @Override
+  public PropertyImpl getProperty(final String name) {
+    return (PropertyImpl) super.getProperty(name);
   }
 
   @Override
@@ -69,28 +81,13 @@ public class ComplexTypeImpl extends AbstractComplexType implements AnnotatedEdm
   }
 
   @Override
-  public PropertyImpl getProperty(final String name) {
-    PropertyImpl result = null;
-    for (PropertyImpl property : getProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
+  public NavigationPropertyImpl getNavigationProperty(String name) {
+    return (NavigationPropertyImpl) super.getNavigationProperty(name);
   }
 
+  @Override
   public List<NavigationPropertyImpl> getNavigationProperties() {
     return navigationProperties;
-  }
-
-  public NavigationPropertyImpl getNavigationProperty(final String name) {
-    NavigationPropertyImpl result = null;
-    for (NavigationPropertyImpl property : getNavigationProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
   }
 
   @Override

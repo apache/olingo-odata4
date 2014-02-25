@@ -19,19 +19,21 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.NavigationProperty;
+import org.apache.olingo.odata4.client.api.edm.CommonNavigationProperty;
 
-public class AbstractNavigationProperty extends AbstractEdmItem implements NavigationProperty {
+public class AbstractNavigationProperty extends AbstractEdmItem implements CommonNavigationProperty {
 
   private static final long serialVersionUID = 3112463683071069594L;
 
   @JsonProperty(value = "Name", required = true)
   private String name;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }

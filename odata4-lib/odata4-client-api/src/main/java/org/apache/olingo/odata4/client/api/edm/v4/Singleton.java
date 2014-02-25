@@ -18,6 +18,15 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface Singleton {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
+
+public interface Singleton extends Named {
+
+  String getType();
+
+  void setType(String type);
+
+  List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
 
 }

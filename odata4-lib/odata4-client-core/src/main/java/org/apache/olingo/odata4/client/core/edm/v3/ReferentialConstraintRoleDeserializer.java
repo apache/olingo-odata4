@@ -26,13 +26,13 @@ import java.io.IOException;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.odata4.client.core.edm.PropertyRefImpl;
 
-public class ReferentialConstraintRoleDeserializer extends AbstractEdmDeserializer<ReferentialConstraintRole> {
+public class ReferentialConstraintRoleDeserializer extends AbstractEdmDeserializer<ReferentialConstraintRoleImpl> {
 
   @Override
-  protected ReferentialConstraintRole doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected ReferentialConstraintRoleImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final ReferentialConstraintRole refConstRole = new ReferentialConstraintRole();
+    final ReferentialConstraintRoleImpl refConstRole = new ReferentialConstraintRoleImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();

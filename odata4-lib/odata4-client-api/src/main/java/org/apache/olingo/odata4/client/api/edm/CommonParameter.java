@@ -18,6 +18,28 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
-public interface Parameter {
+import java.math.BigInteger;
+
+public interface CommonParameter extends Named {
+
+  String getType();
+
+  void setType(String type);
+
+  boolean isNullable();
+
+  void setNullable(boolean nullable);
+
+  String getMaxLength();
+
+  void setMaxLength(String maxLength);
+
+  BigInteger getPrecision();
+
+  void setPrecision(BigInteger precision);
+
+  BigInteger getScale();
+
+  void setScale(BigInteger scale);
 
 }

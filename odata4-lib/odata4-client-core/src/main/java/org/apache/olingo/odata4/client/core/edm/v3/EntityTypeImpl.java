@@ -31,35 +31,23 @@ public class EntityTypeImpl extends AbstractEntityType {
   private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();
 
   @Override
+  public PropertyImpl getProperty(final String name) {
+    return (PropertyImpl) super.getProperty(name);
+  }
+
+  @Override
   public List<PropertyImpl> getProperties() {
     return properties;
   }
 
   @Override
-  public PropertyImpl getProperty(final String name) {
-    PropertyImpl result = null;
-    for (PropertyImpl property : getProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
+  public NavigationPropertyImpl getNavigationProperty(final String name) {
+    return (NavigationPropertyImpl) super.getNavigationProperty(name);
   }
 
   @Override
   public List<NavigationPropertyImpl> getNavigationProperties() {
     return navigationProperties;
-  }
-
-  @Override
-  public NavigationPropertyImpl getNavigationProperty(final String name) {
-    NavigationPropertyImpl result = null;
-    for (NavigationPropertyImpl property : getNavigationProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
   }
 
 }

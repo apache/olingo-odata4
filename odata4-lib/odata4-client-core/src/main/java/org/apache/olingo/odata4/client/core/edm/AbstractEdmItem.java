@@ -18,12 +18,31 @@
  */
 package org.apache.olingo.odata4.client.core.edm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.odata4.client.api.edm.Named;
 
 public abstract class AbstractEdmItem {
+
+  protected <T extends Named> T getOneByName(final String name, final Collection<T> items) {
+    final List<T> result = getAllByName(name, items);
+    return result.isEmpty() ? null : result.get(0);
+  }
+
+  protected <T extends Named> List<T> getAllByName(final String name, final Collection<T> items) {
+    final List<T> result = new ArrayList<T>();
+    for (T type : items) {
+      if (name.equals(type.getName())) {
+        result.add(type);
+      }
+    }
+    return result;
+  }
 
   @Override
   public boolean equals(final Object obj) {

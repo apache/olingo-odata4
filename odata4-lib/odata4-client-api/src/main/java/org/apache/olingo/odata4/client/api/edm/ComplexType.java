@@ -20,13 +20,13 @@ package org.apache.olingo.odata4.client.api.edm;
 
 import java.util.List;
 
-public interface ComplexType {
+public interface ComplexType extends Named {
 
-  String getName();
+  CommonProperty getProperty(String name);
 
-  void setName(String name);
+  List<? extends CommonProperty> getProperties();
 
-  public abstract List<? extends Property> getProperties();
+  CommonNavigationProperty getNavigationProperty(String name);
 
-  public abstract Property getProperty(String name);
+  List<? extends CommonNavigationProperty> getNavigationProperties();
 }

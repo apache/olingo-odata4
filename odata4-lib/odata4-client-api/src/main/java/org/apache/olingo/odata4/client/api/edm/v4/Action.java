@@ -18,6 +18,26 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface Action {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
+import org.apache.olingo.odata4.client.api.edm.CommonParameter;
+
+public interface Action extends Named {
+
+  boolean isBound();
+
+  void setBound(boolean bound);
+
+  String getEntitySetPath();
+
+  void setEntitySetPath(String entitySetPath);
+
+  List<? extends CommonParameter> getParameters();
+
+  CommonParameter getParameter(String name);
+
+  ReturnType getReturnType();
+
+  void setReturnType(ReturnType returnType);
 
 }

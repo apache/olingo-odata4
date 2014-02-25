@@ -32,18 +32,22 @@ public class ValueTermImpl extends AbstractEdmItem implements ValueTerm {
   @JsonProperty(value = "Type", required = true)
   private String type;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }

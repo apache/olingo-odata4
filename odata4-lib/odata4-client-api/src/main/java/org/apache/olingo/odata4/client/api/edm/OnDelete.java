@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.edm.v4;
+package org.apache.olingo.odata4.client.api.edm;
 
-import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.OnDeleteAction;
 
-public interface AnnotatedEdmItem {
+public interface OnDelete {
 
-  AnnotationImpl getAnnotation();
+  OnDeleteAction getAction();
 
-  void setAnnotation(Annotation annotation);
+  void setAction(OnDeleteAction action);
 }

@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import org.apache.olingo.odata4.client.api.edm.v4.AnnotatedEdmItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.Member;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.AbstractMember;
 
-public class MemberImpl extends AbstractMember implements Member, AnnotatedEdmItem {
+public class MemberImpl extends AbstractMember implements AnnotatedEdmItem {
 
   private static final long serialVersionUID = -344920557183058824L;
 

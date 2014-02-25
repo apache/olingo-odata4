@@ -20,4 +20,11 @@ package org.apache.olingo.odata4.client.api.edm.v3;
 
 public interface ReferentialConstraint {
 
+  ReferentialConstraintRole getPrincipal();
+
+  void setPrincipal(ReferentialConstraintRole principal);
+
+  ReferentialConstraintRole getDependent();
+
+  void setDependent(ReferentialConstraintRole dependent);
 }

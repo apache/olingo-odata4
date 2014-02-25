@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface OnDelete {
+import java.util.List;
 
-  OnDeleteAction getAction();
+public interface Edmx extends org.apache.olingo.odata4.client.api.edm.Edmx {
 
-  void setAction(OnDeleteAction action);
+  List<? extends Reference> getReferences();
 }

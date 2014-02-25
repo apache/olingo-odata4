@@ -36,8 +36,8 @@ public abstract class AbstractDataServices extends AbstractEdmItem implements Da
   }
 
   @Override
-  public void setDataServiceVersion(final String dataServiceVersion) {
-    this.dataServiceVersion = dataServiceVersion;
+  public void setDataServiceVersion(final String version) {
+    this.dataServiceVersion = version;
   }
 
   @Override
@@ -46,7 +46,7 @@ public abstract class AbstractDataServices extends AbstractEdmItem implements Da
   }
 
   @Override
-  public void setMaxDataServiceVersion(final String maxDataServiceVersion) {
-    this.maxDataServiceVersion = maxDataServiceVersion;
+  public void setMaxDataServiceVersion(final String version) {
+    this.maxDataServiceVersion = version;
   }
 }

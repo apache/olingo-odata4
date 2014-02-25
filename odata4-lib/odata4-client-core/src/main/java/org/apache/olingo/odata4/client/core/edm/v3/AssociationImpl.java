@@ -21,11 +21,12 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v3.Association;
 import org.apache.olingo.odata4.client.api.edm.v3.ReferentialConstraint;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
 @JsonDeserialize(using = AssociationDeserializer.class)
-public class AssociationImpl extends AbstractEdmItem {
+public class AssociationImpl extends AbstractEdmItem implements Association {
 
   private static final long serialVersionUID = 73763231919532482L;
 
@@ -35,27 +36,28 @@ public class AssociationImpl extends AbstractEdmItem {
 
   private List<AssociationEndImpl> ends = new ArrayList<AssociationEndImpl>();
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public ReferentialConstraint getReferentialConstraint() {
     return referentialConstraint;
   }
 
+  @Override
   public void setReferentialConstraint(final ReferentialConstraint referentialConstraint) {
     this.referentialConstraint = referentialConstraint;
   }
 
+  @Override
   public List<AssociationEndImpl> getEnds() {
     return ends;
-  }
-
-  public void setEnds(final List<AssociationEndImpl> ends) {
-    this.ends = ends;
   }
 }

@@ -18,6 +18,15 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface Association {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
+
+public interface Association extends Named {
+
+  ReferentialConstraint getReferentialConstraint();
+
+  void setReferentialConstraint(ReferentialConstraint referentialConstraint);
+
+  List<? extends AssociationEnd> getEnds();
 
 }

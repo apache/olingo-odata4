@@ -31,18 +31,22 @@ public class PropertyRefImpl extends AbstractEdmItem implements PropertyRef {
   @JsonProperty(value = "Alias")
   private String alias;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getAlias() {
     return alias;
   }
 
+  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

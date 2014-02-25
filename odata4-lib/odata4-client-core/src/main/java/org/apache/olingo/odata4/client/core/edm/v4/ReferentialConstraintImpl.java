@@ -31,18 +31,22 @@ public class ReferentialConstraintImpl extends AbstractAnnotatedEdmItem implemen
   @JsonProperty(value = "ReferencedProperty", required = true)
   private String referencedProperty;
 
+  @Override
   public String getProperty() {
     return property;
   }
 
+  @Override
   public void setProperty(final String property) {
     this.property = property;
   }
 
+  @Override
   public String getReferencedProperty() {
     return referencedProperty;
   }
 
+  @Override
   public void setReferencedProperty(final String referencedProperty) {
     this.referencedProperty = referencedProperty;
   }

@@ -50,78 +50,97 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
 
   private final List<CSDLElement> appliesTo = new ArrayList<CSDLElement>();
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public String getBaseTerm() {
     return baseTerm;
   }
 
+  @Override
   public void setBaseTerm(final String baseTerm) {
     this.baseTerm = baseTerm;
   }
 
+  @Override
   public String getDefaultValue() {
     return defaultValue;
   }
 
+  @Override
   public void setDefaultValue(final String defaultValue) {
     this.defaultValue = defaultValue;
   }
 
+  @Override
   public boolean isNullable() {
     return nullable;
   }
 
+  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
+  @Override
   public String getMaxLength() {
     return maxLength;
   }
 
+  @Override
   public void setMaxLength(final String maxLength) {
     this.maxLength = maxLength;
   }
 
+  @Override
   public BigInteger getPrecision() {
     return precision;
   }
 
+  @Override
   public void setPrecision(final BigInteger precision) {
     this.precision = precision;
   }
 
+  @Override
   public BigInteger getScale() {
     return scale;
   }
 
+  @Override
   public void setScale(final BigInteger scale) {
     this.scale = scale;
   }
 
+  @Override
   public String getSrid() {
     return srid;
   }
 
+  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }
 
+  @Override
   public List<CSDLElement> getAppliesTo() {
     return appliesTo;
   }

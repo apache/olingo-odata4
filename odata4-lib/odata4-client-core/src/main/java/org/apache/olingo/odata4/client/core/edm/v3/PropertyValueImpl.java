@@ -53,66 +53,82 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
   @JsonProperty("DateTime")
   private Date dateTime;
 
+  @Override
   public String getProperty() {
     return property;
   }
 
+  @Override
   public void setProperty(final String property) {
     this.property = property;
   }
 
+  @Override
   public String getPath() {
     return path;
   }
 
+  @Override
   public void setPath(final String path) {
     this.path = path;
   }
 
+  @Override
   public String getString() {
     return string;
   }
 
+  @Override
   public void setString(final String string) {
     this.string = string;
   }
 
+  @Override
   public BigInteger getInt() {
     return _int;
   }
 
+  @Override
   public void setInt(final BigInteger _int) {
     this._int = _int;
   }
 
+  @Override
   public Double getFloat() {
     return _float;
   }
 
+  @Override
   public void setFloat(final Double _float) {
     this._float = _float;
   }
 
+  @Override
   public BigDecimal getDecimal() {
     return decimal;
   }
 
+  @Override
   public void setDecimal(final BigDecimal decimal) {
     this.decimal = decimal;
   }
 
+  @Override
   public Boolean getBool() {
     return bool;
   }
 
+  @Override
   public void setBool(final Boolean bool) {
     this.bool = bool;
   }
 
+  @Override
   public Date getDateTime() {
     return dateTime;
   }
 
+  @Override
   public void setDateTime(final Date dateTime) {
     this.dateTime = dateTime;
   }

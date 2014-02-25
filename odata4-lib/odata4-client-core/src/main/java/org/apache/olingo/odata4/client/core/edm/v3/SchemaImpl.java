@@ -44,13 +44,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   private final List<ValueTermImpl> valueTerms = new ArrayList<ValueTermImpl>();
 
   public AssociationImpl getAssociation(final String name) {
-    AssociationImpl result = null;
-    for (AssociationImpl association : getAssociations()) {
-      if (name.equals(association.getName())) {
-        result = association;
-      }
-    }
-    return result;
+    return getOneByName(name, getAssociations());
   }
 
   @Override
@@ -99,13 +93,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
 
   @Override
   public EntityContainerImpl getEntityContainer(final String name) {
-    EntityContainerImpl result = null;
-    for (EntityContainerImpl container : getEntityContainers()) {
-      if (name.equals(container.getName())) {
-        result = container;
-      }
-    }
-    return result;
+    return getOneByName(name, getEntityContainers());
   }
 
   @Override

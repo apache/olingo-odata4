@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.odata4.client.api.ODataError;
 import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
 
 /**
@@ -88,7 +87,6 @@ public interface ODataReader extends Serializable {
    * @return OData error.
    */
 //  ODataError readError(InputStream inputStream, boolean isXML);
-
   /**
    * Parses a stream into the object type specified by the given reference.
    *

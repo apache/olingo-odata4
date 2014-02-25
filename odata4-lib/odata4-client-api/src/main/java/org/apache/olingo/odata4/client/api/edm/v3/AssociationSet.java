@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface AssociationSet {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
 
+public interface AssociationSet extends Named {
+
+  String getAssociation();
+
+  void setAssociation(String association);
+
+  List<? extends AssociationSetEnd> getEnds();
 }

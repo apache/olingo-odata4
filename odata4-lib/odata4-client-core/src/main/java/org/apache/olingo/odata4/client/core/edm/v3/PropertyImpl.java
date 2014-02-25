@@ -18,10 +18,79 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v3;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.olingo.odata4.client.api.edm.v3.Property;
 import org.apache.olingo.odata4.client.core.edm.AbstractProperty;
+import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
 
-public class PropertyImpl extends AbstractProperty {
+public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = 6224524803474652100L;
+
+  @JsonProperty("FC_SourcePath")
+  private String fcSourcePath;
+
+  @JsonProperty("FC_TargetPath")
+  private String fcTargetPath;
+
+  @JsonProperty("FC_ContentKind")
+  private EdmContentKind fcContentKind = EdmContentKind.text;
+
+  @JsonProperty("FC_NsPrefix")
+  private String fcNSPrefix;
+
+  @JsonProperty("FC_NsUri")
+  private String fcNSURI;
+
+  @JsonProperty("FC_KeepInContent")
+  private boolean fcKeepInContent = true;
+
+  public String getFcSourcePath() {
+    return fcSourcePath;
+  }
+
+  public void setFcSourcePath(final String fcSourcePath) {
+    this.fcSourcePath = fcSourcePath;
+  }
+
+  public String getFcTargetPath() {
+    return fcTargetPath;
+  }
+
+  public void setFcTargetPath(final String fcTargetPath) {
+    this.fcTargetPath = fcTargetPath;
+  }
+
+  public EdmContentKind getFcContentKind() {
+    return fcContentKind;
+  }
+
+  public void setFcContentKind(final EdmContentKind fcContentKind) {
+    this.fcContentKind = fcContentKind;
+  }
+
+  public String getFcNSPrefix() {
+    return fcNSPrefix;
+  }
+
+  public void setFcNSPrefix(final String fcNSPrefix) {
+    this.fcNSPrefix = fcNSPrefix;
+  }
+
+  public String getFcNSURI() {
+    return fcNSURI;
+  }
+
+  public void setFcNSURI(final String fcNSURI) {
+    this.fcNSURI = fcNSURI;
+  }
+
+  public boolean isFcKeepInContent() {
+    return fcKeepInContent;
+  }
+
+  public void setFcKeepInContent(final boolean fcKeepInContent) {
+    this.fcKeepInContent = fcKeepInContent;
+  }
 
 }

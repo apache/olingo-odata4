@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface Annotations {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.AbstractAnnotations;
 
+public interface Annotations extends AbstractAnnotations {
+
+  List<? extends Annotation> getAnnotations();
+
+  Annotation getAnnotation(String term);
 }

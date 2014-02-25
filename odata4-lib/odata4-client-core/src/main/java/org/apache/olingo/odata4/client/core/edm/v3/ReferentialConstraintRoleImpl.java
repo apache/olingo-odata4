@@ -21,31 +21,30 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.PropertyRef;
+import org.apache.olingo.odata4.client.api.edm.v3.ReferentialConstraintRole;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
+import org.apache.olingo.odata4.client.core.edm.PropertyRefImpl;
 
 @JsonDeserialize(using = ReferentialConstraintRoleDeserializer.class)
-public class ReferentialConstraintRole extends AbstractEdmItem {
+public class ReferentialConstraintRoleImpl extends AbstractEdmItem implements ReferentialConstraintRole {
 
   private static final long serialVersionUID = -3712887115248634164L;
 
   private String role;
 
-  private List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
+  private List<PropertyRefImpl> propertyRefs = new ArrayList<PropertyRefImpl>();
 
+  @Override
   public String getRole() {
     return role;
   }
 
+  @Override
   public void setRole(final String role) {
     this.role = role;
   }
 
-  public List<PropertyRef> getPropertyRefs() {
+  public List<PropertyRefImpl> getPropertyRefs() {
     return propertyRefs;
-  }
-
-  public void setPropertyRefs(final List<PropertyRef> propertyRefs) {
-    this.propertyRefs = propertyRefs;
   }
 }

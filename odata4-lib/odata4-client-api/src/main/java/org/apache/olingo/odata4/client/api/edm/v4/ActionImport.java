@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface ActionImport {
+public interface ActionImport extends OperationImport {
 
+  String getAction();
+
+  void setAction(String action);
 }

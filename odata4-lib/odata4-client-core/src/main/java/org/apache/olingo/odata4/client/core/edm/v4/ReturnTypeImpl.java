@@ -45,50 +45,62 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
   @JsonProperty(value = "SRID")
   private String srid;
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public boolean isNullable() {
     return nullable;
   }
 
+  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
+  @Override
   public String getMaxLength() {
     return maxLength;
   }
 
+  @Override
   public void setMaxLength(final String maxLength) {
     this.maxLength = maxLength;
   }
 
+  @Override
   public BigInteger getPrecision() {
     return precision;
   }
 
+  @Override
   public void setPrecision(final BigInteger precision) {
     this.precision = precision;
   }
 
+  @Override
   public BigInteger getScale() {
     return scale;
   }
 
+  @Override
   public void setScale(final BigInteger scale) {
     this.scale = scale;
   }
 
+  @Override
   public String getSrid() {
     return srid;
   }
 
+  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }

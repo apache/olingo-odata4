@@ -18,10 +18,9 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v3;
 
-import org.apache.olingo.odata4.client.api.edm.Member;
 import org.apache.olingo.odata4.client.core.edm.AbstractMember;
 
-public class MemberImpl extends AbstractMember implements Member {
+public class MemberImpl extends AbstractMember {
 
   private static final long serialVersionUID = 6605381518349837929L;
 

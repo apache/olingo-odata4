@@ -18,6 +18,31 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
+import java.math.BigInteger;
+
 public interface ReturnType {
 
+  String getMaxLength();
+
+  BigInteger getPrecision();
+
+  BigInteger getScale();
+
+  String getSrid();
+
+  String getType();
+
+  boolean isNullable();
+
+  void setMaxLength(String maxLength);
+
+  void setNullable(boolean nullable);
+
+  void setPrecision(BigInteger precision);
+
+  void setScale(BigInteger scale);
+
+  void setSrid(String srid);
+
+  void setType(String type);
 }

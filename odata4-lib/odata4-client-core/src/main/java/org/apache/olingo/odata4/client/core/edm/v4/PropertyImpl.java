@@ -21,9 +21,10 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.Property;
 import org.apache.olingo.odata4.client.core.edm.AbstractProperty;
 
-public class PropertyImpl extends AbstractProperty implements AnnotatedEdmItem {
+public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = -5541908235094985412L;
 

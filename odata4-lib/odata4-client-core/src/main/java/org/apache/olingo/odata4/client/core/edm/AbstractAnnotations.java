@@ -19,9 +19,9 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.v3.Annotations;
 
-public abstract class AbstractAnnotations extends AbstractEdmItem implements Annotations {
+public abstract class AbstractAnnotations extends AbstractEdmItem
+        implements org.apache.olingo.odata4.client.api.edm.AbstractAnnotations {
 
   private static final long serialVersionUID = 4926640428016042620L;
 
@@ -31,18 +31,22 @@ public abstract class AbstractAnnotations extends AbstractEdmItem implements Ann
   @JsonProperty("Qualifier")
   private String qualifier;
 
+  @Override
   public String getTarget() {
     return target;
   }
 
+  @Override
   public void setTarget(final String target) {
     this.target = target;
   }
 
+  @Override
   public String getQualifier() {
     return qualifier;
   }
 
+  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }

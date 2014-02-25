@@ -20,9 +20,10 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v4.Edmx;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmx;
 
-public class EdmxImpl extends AbstractEdmx {
+public class EdmxImpl extends AbstractEdmx implements Edmx {
 
   private static final long serialVersionUID = -8031883176876401375L;
 
@@ -33,6 +34,7 @@ public class EdmxImpl extends AbstractEdmx {
     return (DataServicesImpl) super.getDataServices();
   }
 
+  @Override
   public List<ReferenceImpl> getReferences() {
     return references;
   }

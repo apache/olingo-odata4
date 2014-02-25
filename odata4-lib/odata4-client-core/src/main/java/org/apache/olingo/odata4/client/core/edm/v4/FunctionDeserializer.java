@@ -32,31 +32,31 @@ public class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> 
   protected FunctionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final FunctionImpl function = new FunctionImpl();
+    final FunctionImpl functionImpl = new FunctionImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Name".equals(jp.getCurrentName())) {
-          function.setName(jp.nextTextValue());
+          functionImpl.setName(jp.nextTextValue());
         } else if ("IsBound".equals(jp.getCurrentName())) {
-          function.setBound(BooleanUtils.toBoolean(jp.nextTextValue()));
+          functionImpl.setBound(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("IsComposable".equals(jp.getCurrentName())) {
-          function.setComposable(BooleanUtils.toBoolean(jp.nextTextValue()));
+          functionImpl.setComposable(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("EntitySetPath".equals(jp.getCurrentName())) {
-          function.setEntitySetPath(jp.nextTextValue());
+          functionImpl.setEntitySetPath(jp.nextTextValue());
         } else if ("Parameter".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.getParameters().add(jp.readValueAs(ParameterImpl.class));
+          functionImpl.getParameters().add(jp.readValueAs(ParameterImpl.class));
         } else if ("ReturnType".equals(jp.getCurrentName())) {
-          function.setReturnType(parseReturnType(jp, "Function"));
+          functionImpl.setReturnType(parseReturnType(jp, "Function"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          function.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          functionImpl.setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }
 
-    return function;
+    return functionImpl;
   }
 }

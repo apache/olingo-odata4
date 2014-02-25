@@ -20,11 +20,11 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.NavigationPropertyBinding;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.EntitySet;
 import org.apache.olingo.odata4.client.core.edm.AbstractEntitySet;
 
-public class EntitySetImpl extends AbstractEntitySet implements AnnotatedEdmItem {
+public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 
   private static final long serialVersionUID = 5570833733884884012L;
 
@@ -32,18 +32,21 @@ public class EntitySetImpl extends AbstractEntitySet implements AnnotatedEdmItem
 
   private AnnotationImpl annotation;
 
-  private final List<NavigationPropertyBinding> navigationPropertyBindings
-          = new ArrayList<NavigationPropertyBinding>();
+  private final List<NavigationPropertyBindingImpl> navigationPropertyBindings
+          = new ArrayList<NavigationPropertyBindingImpl>();
 
+  @Override
   public boolean isIncludeInServiceDocument() {
     return includeInServiceDocument;
   }
 
+  @Override
   public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
   }
 
-  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
+  @Override
+  public List<NavigationPropertyBindingImpl> getNavigationPropertyBindings() {
     return navigationPropertyBindings;
   }
 

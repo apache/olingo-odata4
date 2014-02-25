@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.edm.EntityKey;
 import org.apache.olingo.odata4.client.api.edm.EntityType;
 import org.apache.olingo.odata4.client.core.op.impl.EntityTypeDeserializer;
 
@@ -37,42 +38,51 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
 
   private EntityKeyImpl key;
 
+  @Override
   public boolean isAbstractEntityType() {
     return abstractEntityType;
   }
 
+  @Override
   public void setAbstractEntityType(final boolean abstractEntityType) {
     this.abstractEntityType = abstractEntityType;
   }
 
+  @Override
   public String getBaseType() {
     return baseType;
   }
 
+  @Override
   public void setBaseType(final String baseType) {
     this.baseType = baseType;
   }
 
+  @Override
   public boolean isOpenType() {
     return openType;
   }
 
+  @Override
   public void setOpenType(final boolean openType) {
     this.openType = openType;
   }
 
+  @Override
   public EntityKeyImpl getKey() {
     return key;
   }
 
-  public void setKey(final EntityKeyImpl key) {
-    this.key = key;
+  public void setKey(final EntityKey key) {
+    this.key = (EntityKeyImpl) key;
   }
 
+  @Override
   public boolean isHasStream() {
     return hasStream;
   }
 
+  @Override
   public void setHasStream(final boolean hasStream) {
     this.hasStream = hasStream;
   }

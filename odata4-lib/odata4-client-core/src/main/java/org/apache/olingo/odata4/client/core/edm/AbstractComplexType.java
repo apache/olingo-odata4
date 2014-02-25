@@ -20,6 +20,8 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.CommonNavigationProperty;
+import org.apache.olingo.odata4.client.api.edm.CommonProperty;
 import org.apache.olingo.odata4.client.core.op.impl.ComplexTypeDeserializer;
 
 @JsonDeserialize(using = ComplexTypeDeserializer.class)
@@ -37,5 +39,15 @@ public abstract class AbstractComplexType extends AbstractEdmItem implements Com
   @Override
   public void setName(final String name) {
     this.name = name;
+  }
+
+  @Override
+  public CommonProperty getProperty(final String name) {
+    return getOneByName(name, getProperties());
+  }
+
+  @Override
+  public CommonNavigationProperty getNavigationProperty(final String name) {
+    return getOneByName(name, getNavigationProperties());
   }
 }

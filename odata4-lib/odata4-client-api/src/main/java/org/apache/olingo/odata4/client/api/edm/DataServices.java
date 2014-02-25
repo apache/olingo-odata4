@@ -24,11 +24,11 @@ public interface DataServices {
 
   String getDataServiceVersion();
 
-  void setDataServiceVersion(String dataServiceVersion);
+  void setDataServiceVersion(String version);
 
   String getMaxDataServiceVersion();
 
-  void setMaxDataServiceVersion(String maxDataServiceVersion);
+  void setMaxDataServiceVersion(String version);
 
   List<? extends Schema> getSchemas();
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import org.apache.olingo.odata4.client.api.edm.v4.AnnotatedEdmItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,13 +57,7 @@ public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmIt
   }
 
   public List<ActionImpl> getActions(final String name) {
-    final List<ActionImpl> result = new ArrayList<ActionImpl>();
-    for (ActionImpl action : getActions()) {
-      if (name.equals(action.getName())) {
-        result.add(action);
-      }
-    }
-    return result;
+    return getAllByName(name, getActions());
   }
 
   @Override
@@ -90,13 +85,7 @@ public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmIt
   }
 
   public List<FunctionImpl> getFunctions(final String name) {
-    final List<FunctionImpl> result = new ArrayList<FunctionImpl>();
-    for (FunctionImpl function : getFunctions()) {
-      if (name.equals(function.getName())) {
-        result.add(function);
-      }
-    }
-    return result;
+    return getAllByName(name, getFunctions());
   }
 
   public List<TermImpl> getTerms() {

@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
+import org.apache.olingo.odata4.client.api.edm.v4.AnnotatedEdmItem;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.EntityContainer;
 import org.apache.olingo.odata4.client.core.edm.AbstractEntityContainer;
 
-public class EntityContainerImpl extends AbstractEntityContainer implements AnnotatedEdmItem {
+public class EntityContainerImpl extends AbstractEntityContainer implements AnnotatedEdmItem, EntityContainer {
 
   private static final long serialVersionUID = 2526002525927260320L;
 
@@ -62,13 +64,7 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
   }
 
   public SingletonImpl getSingleton(final String name) {
-    SingletonImpl result = null;
-    for (SingletonImpl singleton : getSingletons()) {
-      if (name.equals(singleton.getName())) {
-        result = singleton;
-      }
-    }
-    return result;
+    return getOneByName(name, getSingletons());
   }
 
   @Override
@@ -88,11 +84,9 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
    * @param name name.
    * @return action import.
    */
+  @Override
   public ActionImportImpl getActionImport(final String name) {
-    final List<ActionImportImpl> actImps = getActionImports(name);
-    return actImps.isEmpty()
-            ? null
-            : actImps.get(0);
+    return getOneByName(name, getActionImports());
   }
 
   /**
@@ -101,16 +95,12 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
    * @param name name.
    * @return action imports.
    */
+  @Override
   public List<ActionImportImpl> getActionImports(final String name) {
-    final List<ActionImportImpl> result = new ArrayList<ActionImportImpl>();
-    for (ActionImportImpl actionImport : getActionImports()) {
-      if (name.equals(actionImport.getName())) {
-        result.add(actionImport);
-      }
-    }
-    return result;
+    return getAllByName(name, getActionImports());
   }
 
+  @Override
   public List<ActionImportImpl> getActionImports() {
     return actionImports;
   }

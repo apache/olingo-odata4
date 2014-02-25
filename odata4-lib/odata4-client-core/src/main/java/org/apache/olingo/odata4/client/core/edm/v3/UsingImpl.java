@@ -32,18 +32,22 @@ public class UsingImpl extends AbstractEdmItem implements Using {
   @JsonProperty("Alias")
   private String alias;
 
+  @Override
   public String getNamespace() {
     return namespace;
   }
 
+  @Override
   public void setNamespace(final String namespace) {
     this.namespace = namespace;
   }
 
+  @Override
   public String getAlias() {
     return alias;
   }
 
+  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

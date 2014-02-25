@@ -35,26 +35,32 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
   @JsonProperty(value = "TargetNamespace")
   private String targeyNamespace;
 
+  @Override
   public String getTermNamespace() {
     return termNamespace;
   }
 
+  @Override
   public void setTermNamespace(final String termNamespace) {
     this.termNamespace = termNamespace;
   }
 
+  @Override
   public String getQualifier() {
     return qualifier;
   }
 
+  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
 
+  @Override
   public String getTargeyNamespace() {
     return targeyNamespace;
   }
 
+  @Override
   public void setTargeyNamespace(final String targeyNamespace) {
     this.targeyNamespace = targeyNamespace;
   }

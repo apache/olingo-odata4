@@ -20,11 +20,7 @@ package org.apache.olingo.odata4.client.api.edm;
 
 import java.util.List;
 
-public interface EnumType {
-
-  String getName();
-
-  void setName(String name);
+public interface EnumType extends Named {
 
   String getUnderlyingType();
 

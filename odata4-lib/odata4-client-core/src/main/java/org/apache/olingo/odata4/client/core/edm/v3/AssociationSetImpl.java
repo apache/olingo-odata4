@@ -35,22 +35,27 @@ public class AssociationSetImpl extends AbstractEdmItem implements AssociationSe
 
   private List<AssociationSetEndImpl> ends = new ArrayList<AssociationSetEndImpl>();
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getAssociation() {
     return association;
   }
 
+  @Override
   public void setAssociation(final String association) {
     this.association = association;
   }
 
+  @Override
   public List<AssociationSetEndImpl> getEnds() {
     return ends;
   }

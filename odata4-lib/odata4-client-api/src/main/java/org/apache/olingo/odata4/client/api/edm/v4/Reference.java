@@ -18,6 +18,18 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
+import java.net.URI;
+import java.util.List;
+
 public interface Reference {
 
+  URI getUri();
+
+  void setUri(URI uri);
+
+  List<? extends Include> getIncludes();
+
+  List<? extends IncludeAnnotations> getIncludeAnnotations();
+
+  List<? extends Annotation> getAnnotations();
 }

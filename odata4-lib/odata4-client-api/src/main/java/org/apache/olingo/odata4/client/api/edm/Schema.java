@@ -37,9 +37,9 @@ public interface Schema {
 
   EnumType getEnumType(String name);
 
-  List<? extends Annotations> getAnnotationsList();
+  List<? extends AbstractAnnotations> getAnnotationsList();
 
-  Annotations getAnnotationsList(String target);
+  AbstractAnnotations getAnnotationsList(String target);
 
   List<? extends ComplexType> getComplexTypes();
 

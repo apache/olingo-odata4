@@ -20,4 +20,11 @@ package org.apache.olingo.odata4.client.api.edm.v3;
 
 public interface AssociationSetEnd {
 
+  String getRole();
+
+  void setRole(String role);
+
+  String getEntitySet();
+
+  void setEntitySet(String entitySet);
 }

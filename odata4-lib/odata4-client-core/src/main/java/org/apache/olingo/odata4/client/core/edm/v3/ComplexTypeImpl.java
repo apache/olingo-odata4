@@ -21,28 +21,34 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.ComplexType;
-import org.apache.olingo.odata4.client.api.edm.Property;
 import org.apache.olingo.odata4.client.core.edm.AbstractComplexType;
 
 public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
 
   private static final long serialVersionUID = -1251230308269425962L;
 
-  private final List<Property> properties = new ArrayList<Property>();
+  private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
+
+  private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();
 
   @Override
-  public List<Property> getProperties() {
+  public PropertyImpl getProperty(final String name) {
+    return (PropertyImpl) super.getProperty(name);
+  }
+
+  @Override
+  public List<PropertyImpl> getProperties() {
     return properties;
   }
 
   @Override
-  public Property getProperty(final String name) {
-    Property result = null;
-    for (Property property : getProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
+  public NavigationPropertyImpl getNavigationProperty(String name) {
+    return (NavigationPropertyImpl) super.getNavigationProperty(name);
   }
+
+  @Override
+  public List<NavigationPropertyImpl> getNavigationProperties() {
+    return navigationProperties;
+  }
+
 }

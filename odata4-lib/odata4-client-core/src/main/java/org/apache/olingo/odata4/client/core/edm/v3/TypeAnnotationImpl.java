@@ -27,32 +27,37 @@ import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 @JsonDeserialize(using = TypeAnnotationDeserializer.class)
 public class TypeAnnotationImpl extends AbstractEdmItem implements TypeAnnotation {
 
-    private static final long serialVersionUID = -7585489230017331877L;
+  private static final long serialVersionUID = -7585489230017331877L;
 
-    private String term;
+  private String term;
 
-    private String qualifier;
+  private String qualifier;
 
-    private List<PropertyValueImpl> propertyValues = new ArrayList<PropertyValueImpl>();
+  private List<PropertyValueImpl> propertyValues = new ArrayList<PropertyValueImpl>();
 
-    public String getTerm() {
-        return term;
-    }
+  @Override
+  public String getTerm() {
+    return term;
+  }
 
-    public void setTerm(final String term) {
-        this.term = term;
-    }
+  @Override
+  public void setTerm(final String term) {
+    this.term = term;
+  }
 
-    public String getQualifier() {
-        return qualifier;
-    }
+  @Override
+  public String getQualifier() {
+    return qualifier;
+  }
 
-    public void setQualifier(final String qualifier) {
-        this.qualifier = qualifier;
-    }
+  @Override
+  public void setQualifier(final String qualifier) {
+    this.qualifier = qualifier;
+  }
 
-    public List<PropertyValueImpl> getPropertyValues() {
-        return propertyValues;
-    }
+  @Override
+  public List<PropertyValueImpl> getPropertyValues() {
+    return propertyValues;
+  }
 
 }

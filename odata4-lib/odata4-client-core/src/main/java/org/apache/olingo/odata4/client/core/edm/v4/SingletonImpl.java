@@ -35,22 +35,27 @@ public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton
   private final List<NavigationPropertyBindingImpl> navigationPropertyBindings
           = new ArrayList<NavigationPropertyBindingImpl>();
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public List<NavigationPropertyBindingImpl> getNavigationPropertyBindings() {
     return navigationPropertyBindings;
   }

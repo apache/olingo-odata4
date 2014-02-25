@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
-public interface EntitySet {
-
-  String getName();
-
-  void setName(String name);
+public interface EntitySet extends Named {
 
   String getEntityType();
 

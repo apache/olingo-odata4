@@ -21,10 +21,10 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.core.edm.AbstractFunctionImport;
+import org.apache.olingo.odata4.client.api.edm.v3.FunctionImport;
 
 @JsonDeserialize(using = FunctionImportDeserializer.class)
-public class FunctionImportImpl extends AbstractFunctionImport {
+public class FunctionImportImpl implements FunctionImport {
 
   private static final long serialVersionUID = -6214472528425935461L;
 
@@ -53,14 +53,17 @@ public class FunctionImportImpl extends AbstractFunctionImport {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getReturnType() {
     return returnType;
   }
 
+  @Override
   public void setReturnType(final String returnType) {
     this.returnType = returnType;
   }
@@ -70,58 +73,72 @@ public class FunctionImportImpl extends AbstractFunctionImport {
     return entitySet;
   }
 
+  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }
 
+  @Override
   public String getEntitySetPath() {
     return entitySetPath;
   }
 
+  @Override
   public void setEntitySetPath(final String entitySetPath) {
     this.entitySetPath = entitySetPath;
   }
 
+  @Override
   public boolean isComposable() {
     return composable;
   }
 
+  @Override
   public void setComposable(final boolean composable) {
     this.composable = composable;
   }
 
+  @Override
   public boolean isSideEffecting() {
     return sideEffecting;
   }
 
+  @Override
   public void setSideEffecting(final boolean sideEffecting) {
     this.sideEffecting = sideEffecting;
   }
 
+  @Override
   public boolean isBindable() {
     return bindable;
   }
 
+  @Override
   public void setBindable(final boolean bindable) {
     this.bindable = bindable;
   }
 
+  @Override
   public boolean isAlwaysBindable() {
     return alwaysBindable;
   }
 
+  @Override
   public void setAlwaysBindable(final boolean alwaysBindable) {
     this.alwaysBindable = alwaysBindable;
   }
 
+  @Override
   public String getHttpMethod() {
     return httpMethod;
   }
 
+  @Override
   public void setHttpMethod(final String httpMethod) {
     this.httpMethod = httpMethod;
   }
 
+  @Override
   public List<ParameterImpl> getParameters() {
     return parameters;
   }

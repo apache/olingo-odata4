@@ -56,34 +56,16 @@ public abstract class AbstractSchema extends AbstractEdmItem implements Schema {
 
   @Override
   public EnumType getEnumType(final String name) {
-    EnumType result = null;
-    for (EnumType type : getEnumTypes()) {
-      if (name.equals(type.getName())) {
-        result = type;
-      }
-    }
-    return result;
+    return getOneByName(name, getEnumTypes());
   }
 
   @Override
   public ComplexType getComplexType(final String name) {
-    ComplexType result = null;
-    for (ComplexType type : getComplexTypes()) {
-      if (name.equals(type.getName())) {
-        result = type;
-      }
-    }
-    return result;
+    return getOneByName(name, getComplexTypes());
   }
 
   @Override
   public EntityType getEntityType(final String name) {
-    EntityType result = null;
-    for (EntityType type : getEntityTypes()) {
-      if (name.equals(type.getName())) {
-        result = type;
-      }
-    }
-    return result;
+    return getOneByName(name, getEntityTypes());
   }
 }

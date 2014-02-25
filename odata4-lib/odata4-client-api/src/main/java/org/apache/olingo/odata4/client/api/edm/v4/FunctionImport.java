@@ -16,9 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm;
+package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface Property {
+import org.apache.olingo.odata4.client.api.edm.CommonFunctionImport;
 
-  String getName();
+public interface FunctionImport extends OperationImport, CommonFunctionImport {
+
+  String getFunction();
+
+  void setFunction(String function);
+
+  boolean isIncludeInServiceDocument();
+
+  void setIncludeInServiceDocument(boolean includeInServiceDocument);
 }

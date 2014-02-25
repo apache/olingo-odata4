@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
-public interface PropertyRef {
+public interface PropertyRef extends Named {
 
+  String getAlias();
+
+  void setAlias(String alias);
 }

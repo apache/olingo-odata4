@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v3;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v3.ReferentialConstraint;
+import org.apache.olingo.odata4.client.api.edm.v3.ReferentialConstraintRole;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
 public class ReferentialConstraintImpl extends AbstractEdmItem implements ReferentialConstraint {
@@ -27,24 +29,30 @@ public class ReferentialConstraintImpl extends AbstractEdmItem implements Refere
   private static final long serialVersionUID = 9067893732765127269L;
 
   @JsonProperty(value = "Principal", required = true)
-  private ReferentialConstraintRole principal;
+  private ReferentialConstraintRoleImpl principal;
 
   @JsonProperty(value = "Dependent", required = true)
-  private ReferentialConstraintRole dependent;
+  private ReferentialConstraintRoleImpl dependent;
 
-  public ReferentialConstraintRole getPrincipal() {
+  @Override
+  public ReferentialConstraintRoleImpl getPrincipal() {
     return principal;
   }
 
+  @JsonIgnore
+  @Override
   public void setPrincipal(final ReferentialConstraintRole principal) {
-    this.principal = principal;
+    this.principal = (ReferentialConstraintRoleImpl) principal;
   }
 
-  public ReferentialConstraintRole getDependent() {
+  @Override
+  public ReferentialConstraintRoleImpl getDependent() {
     return dependent;
   }
 
+  @JsonIgnore
+  @Override
   public void setDependent(final ReferentialConstraintRole dependent) {
-    this.dependent = dependent;
+    this.dependent = (ReferentialConstraintRoleImpl) dependent;
   }
 }

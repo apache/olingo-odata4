@@ -32,18 +32,22 @@ public class AssociationSetEndImpl extends AbstractEdmItem implements Associatio
   @JsonProperty(value = "EntitySet", required = true)
   private String entitySet;
 
+  @Override
   public String getRole() {
     return role;
   }
 
+  @Override
   public void setRole(final String role) {
     this.role = role;
   }
 
+  @Override
   public String getEntitySet() {
     return entitySet;
   }
 
+  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }

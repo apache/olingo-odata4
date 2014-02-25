@@ -29,13 +29,10 @@ public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {
 
   private static final long serialVersionUID = 2586047015894794685L;
 
-  private List<PropertyRefImpl> propertyRefs = new ArrayList<PropertyRefImpl>();
+  private final List<PropertyRefImpl> propertyRefs = new ArrayList<PropertyRefImpl>();
 
+  @Override
   public List<PropertyRefImpl> getPropertyRefs() {
     return propertyRefs;
-  }
-
-  public void setPropertyRefs(final List<PropertyRefImpl> propertyRefs) {
-    this.propertyRefs = propertyRefs;
   }
 }

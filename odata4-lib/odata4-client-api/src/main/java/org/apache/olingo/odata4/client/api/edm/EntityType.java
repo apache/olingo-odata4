@@ -18,11 +18,25 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
-import java.util.List;
-
 public interface EntityType extends ComplexType {
 
-  List<? extends NavigationProperty> getNavigationProperties();
+  boolean isAbstractEntityType();
 
-  NavigationProperty getNavigationProperty(String name);
+  void setAbstractEntityType(boolean abstractEntityType);
+
+  String getBaseType();
+
+  void setBaseType(String baseType);
+
+  boolean isOpenType();
+
+  void setOpenType(boolean openType);
+
+  EntityKey getKey();
+
+  void setKey(EntityKey key);
+
+  boolean isHasStream();
+
+  void setHasStream(boolean hasStream);
 }

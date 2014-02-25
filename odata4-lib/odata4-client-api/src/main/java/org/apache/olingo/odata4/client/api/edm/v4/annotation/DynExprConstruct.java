@@ -18,6 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4.annotation;
 
-public interface DynExprConstruct {
+public interface DynExprConstruct extends ExprConstruct {
 
 }

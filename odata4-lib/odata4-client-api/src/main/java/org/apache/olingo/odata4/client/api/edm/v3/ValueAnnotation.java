@@ -18,6 +18,46 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+
 public interface ValueAnnotation {
+
+  Boolean getBool();
+
+  Date getDateTime();
+
+  BigDecimal getDecimal();
+
+  Double getFloat();
+
+  BigInteger getInt();
+
+  String getPath();
+
+  String getQualifier();
+
+  String getString();
+
+  String getTerm();
+
+  void setBool(Boolean bool);
+
+  void setDateTime(Date dateTime);
+
+  void setDecimal(BigDecimal decimal);
+
+  void setFloat(Double _float);
+
+  void setInt(BigInteger _int);
+
+  void setPath(String path);
+
+  void setQualifier(String qualifier);
+
+  void setString(String string);
+
+  void setTerm(String term);
 
 }

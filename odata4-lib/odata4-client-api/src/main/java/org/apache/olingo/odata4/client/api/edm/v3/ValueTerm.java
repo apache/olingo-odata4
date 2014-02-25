@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface ValueTerm {
+import org.apache.olingo.odata4.client.api.edm.Named;
 
+public interface ValueTerm extends Named {
+
+  String getType();
+
+  void setType(String type);
 }

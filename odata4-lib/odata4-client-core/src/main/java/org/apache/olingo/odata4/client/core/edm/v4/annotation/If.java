@@ -18,37 +18,39 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
+
 public class If extends AnnotatedDynExprConstruct {
 
   private static final long serialVersionUID = 6752952406406218936L;
 
-  private ExprConstructImpl guard;
+  private ExprConstruct guard;
 
-  private ExprConstructImpl _then;
+  private ExprConstruct _then;
 
-  private ExprConstructImpl _else;
+  private ExprConstruct _else;
 
-  public ExprConstructImpl getGuard() {
+  public ExprConstruct getGuard() {
     return guard;
   }
 
-  public void setGuard(final ExprConstructImpl guard) {
+  public void setGuard(final ExprConstruct guard) {
     this.guard = guard;
   }
 
-  public ExprConstructImpl getThen() {
+  public ExprConstruct getThen() {
     return _then;
   }
 
-  public void setThen(final ExprConstructImpl _then) {
+  public void setThen(final ExprConstruct _then) {
     this._then = _then;
   }
 
-  public ExprConstructImpl getElse() {
+  public ExprConstruct getElse() {
     return _else;
   }
 
-  public void setElse(final ExprConstructImpl _else) {
+  public void setElse(final ExprConstruct _else) {
     this._else = _else;
   }
 

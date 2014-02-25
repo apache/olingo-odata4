@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
 
 @JsonDeserialize(using = ApplyDeserializer.class)
 public class Apply extends AnnotatedDynExprConstruct {
@@ -35,7 +36,7 @@ public class Apply extends AnnotatedDynExprConstruct {
 
   private String function;
 
-  private final List<ExprConstructImpl> parameters = new ArrayList<ExprConstructImpl>();
+  private final List<ExprConstruct> parameters = new ArrayList<ExprConstruct>();
 
   public String getFunction() {
     return function;
@@ -45,7 +46,7 @@ public class Apply extends AnnotatedDynExprConstruct {
     this.function = function;
   }
 
-  public List<ExprConstructImpl> getParameters() {
+  public List<ExprConstruct> getParameters() {
     return parameters;
   }
 

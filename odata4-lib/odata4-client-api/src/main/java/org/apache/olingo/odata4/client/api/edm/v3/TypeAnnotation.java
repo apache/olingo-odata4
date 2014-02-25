@@ -18,6 +18,18 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
+import java.util.List;
+
 public interface TypeAnnotation {
+
+  String getTerm();
+
+  void setTerm(String term);
+
+  String getQualifier();
+
+  void setQualifier(String qualifier);
+
+  List<? extends PropertyValue> getPropertyValues();
 
 }

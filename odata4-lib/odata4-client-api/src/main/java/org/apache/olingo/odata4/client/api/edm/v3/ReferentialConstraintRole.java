@@ -16,8 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm;
+package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface NavigationPropertyBinding {
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.PropertyRef;
+
+public interface ReferentialConstraintRole {
+
+  String getRole();
+
+  void setRole(final String role);
+
+  List<? extends PropertyRef> getPropertyRefs();
 
 }

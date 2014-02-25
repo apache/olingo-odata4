@@ -20,19 +20,22 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 
 import org.apache.olingo.odata4.client.api.edm.v3.ParameterMode;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.olingo.odata4.client.api.edm.v3.Parameter;
 import org.apache.olingo.odata4.client.core.edm.AbstractParameter;
 
-public class ParameterImpl extends AbstractParameter {
+public class ParameterImpl extends AbstractParameter implements Parameter {
 
   private static final long serialVersionUID = 7596724999614891358L;
 
   @JsonProperty("Mode")
   private ParameterMode mode;
 
+  @Override
   public ParameterMode getMode() {
     return mode;
   }
 
+  @Override
   public void setMode(final ParameterMode mode) {
     this.mode = mode;
   }

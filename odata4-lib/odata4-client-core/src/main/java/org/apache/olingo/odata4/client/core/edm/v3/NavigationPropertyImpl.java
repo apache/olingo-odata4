@@ -19,9 +19,10 @@
 package org.apache.olingo.odata4.client.core.edm.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.olingo.odata4.client.api.edm.v3.NavigationProperty;
 import org.apache.olingo.odata4.client.core.edm.AbstractNavigationProperty;
 
-public class NavigationPropertyImpl extends AbstractNavigationProperty {
+public class NavigationPropertyImpl extends AbstractNavigationProperty implements NavigationProperty {
 
   private static final long serialVersionUID = -2889417442815563307L;
 
@@ -34,26 +35,32 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty {
   @JsonProperty(value = "FromRole", required = true)
   private String fromRole;
 
+  @Override
   public String getRelationship() {
     return relationship;
   }
 
+  @Override
   public void setRelationship(final String relationship) {
     this.relationship = relationship;
   }
 
+  @Override
   public String getToRole() {
     return toRole;
   }
 
+  @Override
   public void setToRole(final String toRole) {
     this.toRole = toRole;
   }
 
+  @Override
   public String getFromRole() {
     return fromRole;
   }
 
+  @Override
   public void setFromRole(final String fromRole) {
     this.fromRole = fromRole;
   }

@@ -18,6 +18,35 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v4;
 
-public interface TypeDefinition {
+import java.math.BigInteger;
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.Named;
 
+public interface TypeDefinition extends Named {
+
+  List<? extends Annotation> getAnnotations();
+
+  String getMaxLength();
+
+  BigInteger getPrecision();
+
+  BigInteger getScale();
+
+  String getSrid();
+
+  String getUnderlyingType();
+
+  boolean isUnicode();
+
+  void setMaxLength(String maxLength);
+
+  void setPrecision(BigInteger precision);
+
+  void setScale(BigInteger scale);
+
+  void setSrid(String srid);
+
+  void setUnderlyingType(String underlyingType);
+
+  void setUnicode(boolean unicode);
 }

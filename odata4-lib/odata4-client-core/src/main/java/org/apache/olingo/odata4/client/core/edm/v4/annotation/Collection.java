@@ -21,15 +21,16 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
 
 @JsonDeserialize(using = CollectionDeserializer.class)
 public class Collection extends DynExprConstructImpl {
 
   private static final long serialVersionUID = -4975881520695477686L;
 
-  private final List<ExprConstructImpl> items = new ArrayList<ExprConstructImpl>();
+  private final List<ExprConstruct> items = new ArrayList<ExprConstruct>();
 
-  public List<ExprConstructImpl> getItems() {
+  public List<ExprConstruct> getItems() {
     return items;
   }
 

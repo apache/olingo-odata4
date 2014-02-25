@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
 
 @JsonDeserialize(using = PropertyValueDeserializer.class)
 public class PropertyValue extends AnnotatedDynExprConstruct {
@@ -27,7 +28,7 @@ public class PropertyValue extends AnnotatedDynExprConstruct {
 
   private String property;
 
-  private ExprConstructImpl value;
+  private ExprConstruct value;
 
   public String getProperty() {
     return property;
@@ -37,11 +38,11 @@ public class PropertyValue extends AnnotatedDynExprConstruct {
     this.property = property;
   }
 
-  public ExprConstructImpl getValue() {
+  public ExprConstruct getValue() {
     return value;
   }
 
-  public void setValue(final ExprConstructImpl value) {
+  public void setValue(final ExprConstruct value) {
     this.value = value;
   }
 

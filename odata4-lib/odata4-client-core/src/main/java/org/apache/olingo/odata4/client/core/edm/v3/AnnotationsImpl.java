@@ -21,10 +21,11 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.v3.Annotations;
 import org.apache.olingo.odata4.client.core.edm.AbstractAnnotations;
 
 @JsonDeserialize(using = AnnotationsDeserializer.class)
-public class AnnotationsImpl extends AbstractAnnotations {
+public class AnnotationsImpl extends AbstractAnnotations implements Annotations {
 
   private static final long serialVersionUID = 3877353656301805410L;
 
@@ -32,10 +33,12 @@ public class AnnotationsImpl extends AbstractAnnotations {
 
   private final List<ValueAnnotationImpl> valueAnnotations = new ArrayList<ValueAnnotationImpl>();
 
+  @Override
   public List<TypeAnnotationImpl> getTypeAnnotations() {
     return typeAnnotations;
   }
 
+  @Override
   public List<ValueAnnotationImpl> getValueAnnotations() {
     return valueAnnotations;
   }

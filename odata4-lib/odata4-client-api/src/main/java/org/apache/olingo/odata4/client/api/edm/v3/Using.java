@@ -20,4 +20,12 @@ package org.apache.olingo.odata4.client.api.edm.v3;
 
 public interface Using {
 
+  String getNamespace();
+
+  void setNamespace(String namespace);
+
+  String getAlias();
+
+  void setAlias(String alias);
+
 }

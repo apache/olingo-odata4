@@ -19,8 +19,9 @@
 package org.apache.olingo.odata4.client.core.edm.v4;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.olingo.odata4.client.api.edm.v4.ActionImport;
 
-public class ActionImportImpl extends AbstractAnnotatedEdmItem {
+public class ActionImportImpl extends AbstractAnnotatedEdmItem implements ActionImport {
 
   private static final long serialVersionUID = -866422101558426421L;
 
@@ -33,26 +34,32 @@ public class ActionImportImpl extends AbstractAnnotatedEdmItem {
   @JsonProperty(value = "EntitySet")
   private String entitySet;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getAction() {
     return action;
   }
 
+  @Override
   public void setAction(final String action) {
     this.action = action;
   }
 
+  @Override
   public String getEntitySet() {
     return entitySet;
   }
 
+  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }

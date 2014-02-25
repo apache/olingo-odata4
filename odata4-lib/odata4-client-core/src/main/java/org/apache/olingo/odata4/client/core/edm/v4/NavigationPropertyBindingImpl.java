@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v4;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.NavigationPropertyBinding;
+import org.apache.olingo.odata4.client.api.edm.v4.NavigationPropertyBinding;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
 public class NavigationPropertyBindingImpl extends AbstractEdmItem implements NavigationPropertyBinding {
@@ -32,18 +32,22 @@ public class NavigationPropertyBindingImpl extends AbstractEdmItem implements Na
   @JsonProperty(value = "Target", required = true)
   private String target;
 
+  @Override
   public String getPath() {
     return path;
   }
 
+  @Override
   public void setPath(final String path) {
     this.path = path;
   }
 
+  @Override
   public String getTarget() {
     return target;
   }
 
+  @Override
   public void setTarget(final String target) {
     this.target = target;
   }

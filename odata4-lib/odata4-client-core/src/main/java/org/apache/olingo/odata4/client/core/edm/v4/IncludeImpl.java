@@ -32,18 +32,22 @@ public class IncludeImpl extends AbstractEdmItem implements Include {
   @JsonProperty(value = "Alias")
   private String alias;
 
+  @Override
   public String getNamespace() {
     return namespace;
   }
 
+  @Override
   public void setNamespace(final String namespace) {
     this.namespace = namespace;
   }
 
+  @Override
   public String getAlias() {
     return alias;
   }
 
+  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

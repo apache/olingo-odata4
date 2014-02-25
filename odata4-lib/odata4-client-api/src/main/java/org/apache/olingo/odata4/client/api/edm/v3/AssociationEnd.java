@@ -18,6 +18,23 @@
  */
 package org.apache.olingo.odata4.client.api.edm.v3;
 
+import org.apache.olingo.odata4.client.api.edm.OnDelete;
+
 public interface AssociationEnd {
 
+  String getType();
+
+  void setType(String type);
+
+  String getRole();
+
+  void setRole(String role);
+
+  String getMultiplicity();
+
+  void setMultiplicity(String multiplicity);
+
+  OnDelete getOnDelete();
+
+  void setOnDelete(OnDelete onDelete);
 }

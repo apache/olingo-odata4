@@ -16,9 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface Annotations {
-  
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.AbstractAnnotations;
+
+public interface Annotations extends AbstractAnnotations {
+
+  List<? extends TypeAnnotation> getTypeAnnotations();
+
+  List<? extends ValueAnnotation> getValueAnnotations();
 }

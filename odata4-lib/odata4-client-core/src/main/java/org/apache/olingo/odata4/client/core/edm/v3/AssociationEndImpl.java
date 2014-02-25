@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.odata4.client.api.edm.v4.OnDelete;
+import org.apache.olingo.odata4.client.api.edm.OnDelete;
 import org.apache.olingo.odata4.client.api.edm.v3.AssociationEnd;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
 
@@ -39,34 +39,42 @@ public class AssociationEndImpl extends AbstractEdmItem implements AssociationEn
   @JsonProperty(value = "OnDelete")
   private OnDelete onDelete;
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public String getRole() {
     return role;
   }
 
+  @Override
   public void setRole(final String role) {
     this.role = role;
   }
 
+  @Override
   public String getMultiplicity() {
     return multiplicity;
   }
 
+  @Override
   public void setMultiplicity(final String multiplicity) {
     this.multiplicity = multiplicity;
   }
 
+  @Override
   public OnDelete getOnDelete() {
     return onDelete;
   }
 
+  @Override
   public void setOnDelete(final OnDelete onDelete) {
     this.onDelete = onDelete;
   }

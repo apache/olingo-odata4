@@ -20,12 +20,11 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigInteger;
-import org.apache.olingo.odata4.client.api.edm.Property;
+import org.apache.olingo.odata4.client.api.edm.CommonProperty;
 import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 
-public abstract class AbstractProperty extends AbstractEdmItem implements Property {
+public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {
 
   private static final long serialVersionUID = -6004492361142315153L;
 
@@ -65,24 +64,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Proper
   @JsonProperty(value = "ConcurrencyMode")
   private ConcurrencyMode concurrencyMode;
 
-  @JsonProperty("FC_SourcePath")
-  private String fcSourcePath;
-
-  @JsonProperty("FC_TargetPath")
-  private String fcTargetPath;
-
-  @JsonProperty("FC_ContentKind")
-  private EdmContentKind fcContentKind = EdmContentKind.text;
-
-  @JsonProperty("FC_NsPrefix")
-  private String fcNSPrefix;
-
-  @JsonProperty("FC_NsUri")
-  private String fcNSURI;
-
-  @JsonProperty("FC_KeepInContent")
-  private boolean fcKeepInContent = true;
-
   @JsonProperty("StoreGeneratedPattern")
   private StoreGeneratedPattern storeGeneratedPattern = StoreGeneratedPattern.None;
 
@@ -91,144 +72,119 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Proper
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public boolean isNullable() {
     return nullable;
   }
 
+  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
+  @Override
   public String getDefaultValue() {
     return defaultValue;
   }
 
+  @Override
   public void setDefaultValue(final String defaultValue) {
     this.defaultValue = defaultValue;
   }
 
+  @Override
   public String getMaxLength() {
     return maxLength;
   }
 
+  @Override
   public void setMaxLength(final String maxLength) {
     this.maxLength = maxLength;
   }
 
+  @Override
   public boolean isFixedLength() {
     return fixedLength;
   }
 
+  @Override
   public void setFixedLength(final boolean fixedLength) {
     this.fixedLength = fixedLength;
   }
 
+  @Override
   public BigInteger getPrecision() {
     return precision;
   }
 
+  @Override
   public void setPrecision(final BigInteger precision) {
     this.precision = precision;
   }
 
+  @Override
   public BigInteger getScale() {
     return scale;
   }
 
+  @Override
   public void setScale(final BigInteger scale) {
     this.scale = scale;
   }
 
+  @Override
   public boolean isUnicode() {
     return unicode;
   }
 
+  @Override
   public void setUnicode(final boolean unicode) {
     this.unicode = unicode;
   }
 
+  @Override
   public String getCollation() {
     return collation;
   }
 
+  @Override
   public void setCollation(final String collation) {
     this.collation = collation;
   }
 
+  @Override
   public String getSrid() {
     return srid;
   }
 
+  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }
 
+  @Override
   public ConcurrencyMode getConcurrencyMode() {
     return concurrencyMode;
   }
 
+  @Override
   public void setConcurrencyMode(final ConcurrencyMode concurrencyMode) {
     this.concurrencyMode = concurrencyMode;
-  }
-
-  public String getFcSourcePath() {
-    return fcSourcePath;
-  }
-
-  public void setFcSourcePath(final String fcSourcePath) {
-    this.fcSourcePath = fcSourcePath;
-  }
-
-  public String getFcTargetPath() {
-    return fcTargetPath;
-  }
-
-  public void setFcTargetPath(final String fcTargetPath) {
-    this.fcTargetPath = fcTargetPath;
-  }
-
-  public EdmContentKind getFcContentKind() {
-    return fcContentKind;
-  }
-
-  public void setFcContentKind(final EdmContentKind fcContentKind) {
-    this.fcContentKind = fcContentKind;
-  }
-
-  public String getFcNSPrefix() {
-    return fcNSPrefix;
-  }
-
-  public void setFcNSPrefix(final String fcNSPrefix) {
-    this.fcNSPrefix = fcNSPrefix;
-  }
-
-  public String getFcNSURI() {
-    return fcNSURI;
-  }
-
-  public void setFcNSURI(final String fcNSURI) {
-    this.fcNSURI = fcNSURI;
-  }
-
-  public boolean isFcKeepInContent() {
-    return fcKeepInContent;
-  }
-
-  public void setFcKeepInContent(final boolean fcKeepInContent) {
-    this.fcKeepInContent = fcKeepInContent;
   }
 
   public StoreGeneratedPattern getStoreGeneratedPattern() {

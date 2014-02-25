@@ -20,9 +20,9 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigInteger;
-import org.apache.olingo.odata4.client.api.edm.Parameter;
+import org.apache.olingo.odata4.client.api.edm.CommonParameter;
 
-public abstract class AbstractParameter extends AbstractEdmItem implements Parameter {
+public abstract class AbstractParameter extends AbstractEdmItem implements CommonParameter {
 
   private static final long serialVersionUID = -4305016554930334342L;
 
@@ -44,50 +44,62 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Param
   @JsonProperty("Scale")
   private BigInteger scale;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getType() {
     return type;
   }
 
+  @Override
   public void setType(final String type) {
     this.type = type;
   }
 
+  @Override
   public boolean isNullable() {
     return nullable;
   }
 
+  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
+  @Override
   public String getMaxLength() {
     return maxLength;
   }
 
+  @Override
   public void setMaxLength(final String maxLength) {
     this.maxLength = maxLength;
   }
 
+  @Override
   public BigInteger getPrecision() {
     return precision;
   }
 
+  @Override
   public void setPrecision(final BigInteger precision) {
     this.precision = precision;
   }
 
+  @Override
   public BigInteger getScale() {
     return scale;
   }
 
+  @Override
   public void setScale(final BigInteger scale) {
     this.scale = scale;
   }

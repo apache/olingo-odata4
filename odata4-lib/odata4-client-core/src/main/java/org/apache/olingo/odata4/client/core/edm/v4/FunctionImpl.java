@@ -19,20 +19,23 @@
 package org.apache.olingo.odata4.client.core.edm.v4;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.edm.v4.Function;
 
 @JsonDeserialize(using = FunctionDeserializer.class)
-public class FunctionImpl extends ActionImpl {
+public class FunctionImpl extends ActionImpl implements Function {
 
-    private static final long serialVersionUID = -5888231162358116515L;
+  private static final long serialVersionUID = -5888231162358116515L;
 
-    private boolean composable = false;
+  private boolean composable = false;
 
-    public boolean isComposable() {
-        return composable;
-    }
+  @Override
+  public boolean isComposable() {
+    return composable;
+  }
 
-    public void setComposable(final boolean composable) {
-        this.composable = composable;
-    }
+  @Override
+  public void setComposable(final boolean composable) {
+    this.composable = composable;
+  }
 
 }

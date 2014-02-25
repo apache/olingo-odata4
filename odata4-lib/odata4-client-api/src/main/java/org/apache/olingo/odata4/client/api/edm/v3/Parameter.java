@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm;
+package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface FunctionImport {
+public interface Parameter extends org.apache.olingo.odata4.client.api.edm.CommonParameter {
 
-  String getName();
+  ParameterMode getMode();
 
-  String getEntitySet();
+  void setMode(ParameterMode mode);
 }

@@ -21,9 +21,10 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.v4.EntityType;
 import org.apache.olingo.odata4.client.core.edm.AbstractEntityType;
 
-public class EntityTypeImpl extends AbstractEntityType implements AnnotatedEdmItem {
+public class EntityTypeImpl extends AbstractEntityType implements EntityType {
 
   private static final long serialVersionUID = 8727765036150269547L;
 
@@ -34,35 +35,23 @@ public class EntityTypeImpl extends AbstractEntityType implements AnnotatedEdmIt
   private AnnotationImpl annotation;
 
   @Override
+  public PropertyImpl getProperty(final String name) {
+    return (PropertyImpl) super.getProperty(name);
+  }
+
+  @Override
   public List<PropertyImpl> getProperties() {
     return properties;
   }
 
   @Override
-  public PropertyImpl getProperty(final String name) {
-    PropertyImpl result = null;
-    for (PropertyImpl property : getProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
+  public NavigationPropertyImpl getNavigationProperty(final String name) {
+    return (NavigationPropertyImpl) super.getNavigationProperty(name);
   }
 
   @Override
   public List<NavigationPropertyImpl> getNavigationProperties() {
     return navigationProperties;
-  }
-
-  @Override
-  public NavigationPropertyImpl getNavigationProperty(final String name) {
-    NavigationPropertyImpl result = null;
-    for (NavigationPropertyImpl property : getNavigationProperties()) {
-      if (name.equals(property.getName())) {
-        result = property;
-      }
-    }
-    return result;
   }
 
   @Override

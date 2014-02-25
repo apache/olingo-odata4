@@ -16,12 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.edm;
+package org.apache.olingo.odata4.client.api.edm.v4;
 
-import org.apache.olingo.odata4.client.api.edm.FunctionImport;
+import java.util.List;
 
-public abstract class AbstractFunctionImport extends AbstractEdmItem implements FunctionImport {
+public interface EntityContainer extends org.apache.olingo.odata4.client.api.edm.EntityContainer {
 
-  private static final long serialVersionUID = 4154308065211315663L;
+  /**
+   * Gets the first action import with given name.
+   *
+   * @param name name.
+   * @return action import.
+   */
+  ActionImport getActionImport(String name);
+
+  /**
+   * Gets all action imports with given name.
+   *
+   * @param name name.
+   * @return action imports.
+   */
+  List<? extends ActionImport> getActionImports(String name);
+
+  List<? extends ActionImport> getActionImports();
 
 }

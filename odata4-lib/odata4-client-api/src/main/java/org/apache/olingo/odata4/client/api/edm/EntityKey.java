@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm;
 
+import java.util.List;
+
 public interface EntityKey {
 
+  List<? extends PropertyRef> getPropertyRefs();
 }

@@ -16,8 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm;
+package org.apache.olingo.odata4.client.api.edm.v3;
 
-public interface NavigationProperty {
+import org.apache.olingo.odata4.client.api.edm.CommonProperty;
+import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
+
+public interface Property extends CommonProperty {
+
+  String getFcSourcePath();
+
+  void setFcSourcePath(String fcSourcePath);
+
+  String getFcTargetPath();
+
+  void setFcTargetPath(String fcTargetPath);
+
+  EdmContentKind getFcContentKind();
+
+  void setFcContentKind(EdmContentKind fcContentKind);
+
+  String getFcNSPrefix();
+
+  void setFcNSPrefix(String fcNSPrefix);
+
+  String getFcNSURI();
+
+  void setFcNSURI(String fcNSURI);
+
+  boolean isFcKeepInContent();
+
+  void setFcKeepInContent(boolean fcKeepInContent);
 
 }

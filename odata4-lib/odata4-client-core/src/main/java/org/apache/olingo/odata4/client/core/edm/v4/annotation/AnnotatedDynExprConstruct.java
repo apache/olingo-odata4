@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
-import org.apache.olingo.odata4.client.core.edm.v4.AnnotatedEdmItem;
+import org.apache.olingo.odata4.client.api.edm.v4.AnnotatedEdmItem;
 import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
 
 abstract class AnnotatedDynExprConstruct extends DynExprConstructImpl implements AnnotatedEdmItem {

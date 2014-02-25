@@ -20,4 +20,12 @@ package org.apache.olingo.odata4.client.api.edm.v4;
 
 public interface ReferentialConstraint {
 
+  String getProperty();
+
+  void setProperty(String property);
+
+  String getReferencedProperty();
+
+  void setReferencedProperty(String referencedProperty);
+
 }

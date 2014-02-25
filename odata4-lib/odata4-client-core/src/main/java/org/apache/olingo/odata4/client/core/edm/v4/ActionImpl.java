@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.v4.Action;
+import org.apache.olingo.odata4.client.api.edm.v4.ReturnType;
 
 @JsonDeserialize(using = ActionDeserializer.class)
 public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
@@ -38,50 +39,54 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
 
   private ReturnTypeImpl returnType;
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public boolean isBound() {
     return bound;
   }
 
+  @Override
   public void setBound(final boolean bound) {
     this.bound = bound;
   }
 
+  @Override
   public String getEntitySetPath() {
     return entitySetPath;
   }
 
+  @Override
   public void setEntitySetPath(final String entitySetPath) {
     this.entitySetPath = entitySetPath;
   }
 
+  @Override
+  public ParameterImpl getParameter(final String name) {
+    return getOneByName(name, getParameters());
+  }
+
+  @Override
   public List<ParameterImpl> getParameters() {
     return parameters;
   }
 
-  public ParameterImpl getParameter(final String name) {
-    ParameterImpl result = null;
-    for (ParameterImpl parameter : getParameters()) {
-      if (name.equals(parameter.getName())) {
-        result = parameter;
-      }
-    }
-    return result;
-  }
-
+  @Override
   public ReturnTypeImpl getReturnType() {
     return returnType;
   }
 
-  public void setReturnType(final ReturnTypeImpl returnType) {
-    this.returnType = returnType;
+  @Override
+  public void setReturnType(final ReturnType returnType) {
+    this.returnType = (ReturnTypeImpl) returnType;
   }
 
 }

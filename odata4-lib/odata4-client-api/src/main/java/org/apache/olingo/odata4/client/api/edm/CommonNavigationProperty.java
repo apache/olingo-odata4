@@ -16,10 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.edm;
+package org.apache.olingo.odata4.client.api.edm;
 
-public class EntitySetImpl extends AbstractEntitySet {
-
-  private static final long serialVersionUID = 5570833733884884012L;
-
+public interface CommonNavigationProperty extends Named {
 }

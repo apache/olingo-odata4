@@ -21,9 +21,9 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.v4.Annotation;
-import org.apache.olingo.odata4.client.core.edm.AbstractFunctionImport;
+import org.apache.olingo.odata4.client.api.edm.v4.FunctionImport;
 
-public class FunctionImportImpl extends AbstractFunctionImport implements AnnotatedEdmItem {
+public class FunctionImportImpl implements FunctionImport {
 
   private static final long serialVersionUID = 3023813358471000019L;
 
@@ -47,14 +47,17 @@ public class FunctionImportImpl extends AbstractFunctionImport implements Annota
     return name;
   }
 
+  @Override
   public void setName(final String name) {
     this.name = name;
   }
 
+  @Override
   public String getFunction() {
     return function;
   }
 
+  @Override
   public void setFunction(final String function) {
     this.function = function;
   }
@@ -64,14 +67,17 @@ public class FunctionImportImpl extends AbstractFunctionImport implements Annota
     return entitySet;
   }
 
+  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }
 
+  @Override
   public boolean isIncludeInServiceDocument() {
     return includeInServiceDocument;
   }
 
+  @Override
   public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
   }
