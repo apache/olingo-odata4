@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.odata4.client.core;
 
-import org.apache.olingo.odata4.client.core.data.impl.v3.ODataDeserializerImpl;
-import org.apache.olingo.odata4.client.core.data.impl.v3.ODataReaderImpl;
-import org.apache.olingo.odata4.client.core.data.impl.v3.ODataSerializerImpl;
+import org.apache.olingo.odata4.client.core.op.impl.v3.ODataDeserializerImpl;
+import org.apache.olingo.odata4.client.core.op.impl.v3.ODataReaderImpl;
+import org.apache.olingo.odata4.client.core.op.impl.v3.ODataSerializerImpl;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataV3Client extends AbstractODataClient {

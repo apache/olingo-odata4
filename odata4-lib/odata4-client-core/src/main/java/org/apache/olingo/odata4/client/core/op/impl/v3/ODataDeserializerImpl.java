@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.data.impl.v3;
+package org.apache.olingo.odata4.client.core.op.impl.v3;
 
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.ODataClient;
@@ -25,20 +25,20 @@ import org.apache.olingo.odata4.client.core.edm.v3.EdmxImpl;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer {
 
-    private static final long serialVersionUID = -8221085862548914611L;
+  private static final long serialVersionUID = -8221085862548914611L;
 
-    public ODataDeserializerImpl(final ODataClient client) {
-        super(client);
-    }
+  public ODataDeserializerImpl(final ODataClient client) {
+    super(client);
+  }
 
-    @Override
-    public EdmxImpl toMetadata(final InputStream input) {
-        try {
-            return getXmlMapper().readValue(input, EdmxImpl.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Could not parse as Edmx document", e);
-        }
+  @Override
+  public EdmxImpl toMetadata(final InputStream input) {
+    try {
+      return getXmlMapper().readValue(input, EdmxImpl.class);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Could not parse as Edmx document", e);
     }
+  }
 
 //    @Override
 //    public AbstractServiceDocument toServiceDocument(final InputStream input, final ODataFormat format) {
@@ -59,5 +59,4 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer {
 //            throw new IllegalArgumentException("While deserializing JSON entry", e);
 //        }
 //    }
-
 }

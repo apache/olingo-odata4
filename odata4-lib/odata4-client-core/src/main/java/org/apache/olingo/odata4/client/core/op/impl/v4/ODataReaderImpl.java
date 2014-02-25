@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.data.impl.v4;
+package org.apache.olingo.odata4.client.core.op.impl.v4;
 
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.core.ODataV4Client;

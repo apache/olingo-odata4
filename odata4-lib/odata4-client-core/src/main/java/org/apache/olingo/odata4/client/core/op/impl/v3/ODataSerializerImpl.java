@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.data.impl.v3;
+package org.apache.olingo.odata4.client.core.op.impl.v3;
 
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataSerializer;
