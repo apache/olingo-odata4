@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ConstExprConstruct;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.ConstExprConstruct;
 
 public class ConstExprConstructImpl extends ExprConstructImpl implements ConstExprConstruct {
 

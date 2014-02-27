@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
-import org.apache.olingo.odata4.client.core.edm.AbstractEdmItem;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.ExprConstruct;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
 public abstract class ExprConstructImpl extends AbstractEdmItem implements ExprConstruct {
 

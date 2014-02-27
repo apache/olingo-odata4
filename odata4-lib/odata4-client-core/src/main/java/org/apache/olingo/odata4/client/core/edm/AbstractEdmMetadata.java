@@ -25,8 +25,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
-import org.apache.olingo.odata4.client.api.edm.Edmx;
-import org.apache.olingo.odata4.client.api.edm.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.Edmx;
+import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
 /**
  * Entry point for access information about EDM metadata.

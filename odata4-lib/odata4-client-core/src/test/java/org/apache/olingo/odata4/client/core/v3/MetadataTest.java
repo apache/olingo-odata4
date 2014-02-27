@@ -28,13 +28,13 @@ import org.apache.olingo.odata4.client.api.edm.EdmType;
 import org.apache.olingo.odata4.client.api.http.HttpMethod;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.edm.v3.ComplexTypeImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.ComplexTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.EntityTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.FunctionImportImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.SchemaImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityTypeImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.FunctionImportImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.SchemaImpl;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {

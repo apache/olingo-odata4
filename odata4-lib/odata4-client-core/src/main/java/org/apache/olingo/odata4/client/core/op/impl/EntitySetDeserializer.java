@@ -24,9 +24,9 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.edm.AbstractEntitySet;
-import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.NavigationPropertyBindingImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntitySet;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.NavigationPropertyBindingImpl;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
 public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntitySet> {
@@ -36,8 +36,8 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntit
           throws IOException, JsonProcessingException {
 
     final AbstractEntitySet entitySet = ODataServiceVersion.V30 == client.getServiceVersion()
-            ? new org.apache.olingo.odata4.client.core.edm.v3.EntitySetImpl()
-            : new org.apache.olingo.odata4.client.core.edm.v4.EntitySetImpl();
+            ? new org.apache.olingo.odata4.client.core.edm.xml.v3.EntitySetImpl()
+            : new org.apache.olingo.odata4.client.core.edm.xml.v4.EntitySetImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -47,16 +47,16 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntit
         } else if ("EntityType".equals(jp.getCurrentName())) {
           entitySet.setEntityType(jp.nextTextValue());
         } else if ("IncludeInServiceDocument".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntitySetImpl) entitySet).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntitySetImpl) entitySet).
                   setIncludeInServiceDocument(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntitySetImpl) entitySet).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntitySetImpl) entitySet).
                   getNavigationPropertyBindings().add(
                           jp.readValueAs(NavigationPropertyBindingImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntitySetImpl) entitySet).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntitySetImpl) entitySet).
                   setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }

@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.ExprConstruct;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.ExprConstruct;
 
 @JsonDeserialize(using = CollectionDeserializer.class)
 public class Collection extends DynExprConstructImpl {

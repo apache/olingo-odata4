@@ -24,11 +24,11 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.odata4.client.core.edm.AbstractEntityContainer;
-import org.apache.olingo.odata4.client.core.edm.v3.AssociationSetImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.ActionImportImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.SingletonImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntityContainer;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.AssociationSetImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.ActionImportImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.SingletonImpl;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
 @SuppressWarnings("rawtypes")
@@ -39,8 +39,8 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<Abstrac
           throws IOException, JsonProcessingException {
 
     final AbstractEntityContainer entityContainer = ODataServiceVersion.V30 == client.getServiceVersion()
-            ? new org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl()
-            : new org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl();
+            ? new org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl()
+            : new org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -55,41 +55,41 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<Abstrac
           entityContainer.setDefaultEntityContainer(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("EntitySet".equals(jp.getCurrentName())) {
           jp.nextToken();
-          if (entityContainer instanceof org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl) {
-            ((org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl) entityContainer).
+          if (entityContainer instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl) entityContainer).
                     getEntitySets().add(jp.readValueAs(
-                                    org.apache.olingo.odata4.client.core.edm.v3.EntitySetImpl.class));
+                                    org.apache.olingo.odata4.client.core.edm.xml.v3.EntitySetImpl.class));
           } else {
-            ((org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl) entityContainer).
+            ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
                     getEntitySets().add(jp.readValueAs(
-                                    org.apache.olingo.odata4.client.core.edm.v4.EntitySetImpl.class));
+                                    org.apache.olingo.odata4.client.core.edm.xml.v4.EntitySetImpl.class));
           }
         } else if ("AssociationSet".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl) entityContainer).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl) entityContainer).
                   getAssociationSets().add(jp.readValueAs(AssociationSetImpl.class));
         } else if ("Singleton".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl) entityContainer).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
                   getSingletons().add(jp.readValueAs(SingletonImpl.class));
         } else if ("ActionImport".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl) entityContainer).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
                   getActionImports().add(jp.readValueAs(ActionImportImpl.class));
         } else if ("FunctionImport".equals(jp.getCurrentName())) {
           jp.nextToken();
-          if (entityContainer instanceof org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl) {
-            ((org.apache.olingo.odata4.client.core.edm.v3.EntityContainerImpl) entityContainer).
+          if (entityContainer instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl) entityContainer).
                     getFunctionImports().add(jp.readValueAs(
-                                    org.apache.olingo.odata4.client.core.edm.v3.FunctionImportImpl.class));
+                                    org.apache.olingo.odata4.client.core.edm.xml.v3.FunctionImportImpl.class));
           } else {
-            ((org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl) entityContainer).
+            ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
                     getFunctionImports().add(jp.readValueAs(
-                                    org.apache.olingo.odata4.client.core.edm.v4.FunctionImportImpl.class));
+                                    org.apache.olingo.odata4.client.core.edm.xml.v4.FunctionImportImpl.class));
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.odata4.client.core.edm.v4.EntityContainerImpl) entityContainer).
+          ((org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
                   setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }

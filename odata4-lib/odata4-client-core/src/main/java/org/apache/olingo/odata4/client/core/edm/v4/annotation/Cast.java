@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigInteger;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.DynExprConstruct;
 
 @JsonDeserialize(using = CastDeserializer.class)
 public class Cast extends AnnotatedDynExprConstruct {

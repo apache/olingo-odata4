@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import java.io.IOException;
 import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.core.edm.v4.ReturnTypeImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.ReturnTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstructImpl;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {

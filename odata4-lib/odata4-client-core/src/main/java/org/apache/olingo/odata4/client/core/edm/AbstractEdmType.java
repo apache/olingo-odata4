@@ -20,13 +20,16 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.data.EdmSimpleType;
-import org.apache.olingo.odata4.client.api.edm.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
 import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
 import org.apache.olingo.odata4.client.api.edm.EdmType;
 import org.apache.olingo.odata4.client.api.edm.EdmTypeNotFoundException;
-import org.apache.olingo.odata4.client.api.edm.EntityType;
-import org.apache.olingo.odata4.client.api.edm.EnumType;
-import org.apache.olingo.odata4.client.api.edm.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
+import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractComplexType;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntityType;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEnumType;
 
 /**
  * Parse type information from metadata into semantic data.

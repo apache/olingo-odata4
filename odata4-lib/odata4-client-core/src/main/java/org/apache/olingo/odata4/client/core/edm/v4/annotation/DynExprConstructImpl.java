@@ -19,7 +19,7 @@
 package org.apache.olingo.odata4.client.core.edm.v4.annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.odata4.client.api.edm.v4.annotation.DynExprConstruct;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.DynExprConstruct;
 
 @JsonDeserialize(using = DynExprConstructDeserializer.class)
 public abstract class DynExprConstructImpl extends ExprConstructImpl implements DynExprConstruct {

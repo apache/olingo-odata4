@@ -23,8 +23,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import org.apache.olingo.odata4.client.core.edm.EntityKeyImpl;
-import org.apache.olingo.odata4.client.core.edm.PropertyRefImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.EntityKeyImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.PropertyRefImpl;
 
 public class EntityKeyDeserializer extends AbstractEdmDeserializer<EntityKeyImpl> {
 

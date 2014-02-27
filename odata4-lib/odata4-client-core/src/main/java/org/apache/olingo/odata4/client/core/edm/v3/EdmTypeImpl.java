@@ -19,6 +19,9 @@
 package org.apache.olingo.odata4.client.core.edm.v3;
 
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmType;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.ComplexTypeImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityTypeImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.EnumTypeImpl;
 
 public class EdmTypeImpl extends AbstractEdmType {
 

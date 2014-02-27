@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.client.api.edm;
 
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.Schema;
 
 /**
  * Entry point for access information about EDM metadata.

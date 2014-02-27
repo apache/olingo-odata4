@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmMetadata;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.EdmxImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.ReferenceImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.SchemaImpl;
 
 public class EdmMetadataImpl extends AbstractEdmMetadata {
 

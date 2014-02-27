@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import java.math.BigInteger;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
-import org.apache.olingo.odata4.client.core.edm.v4.AnnotationImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
 
 public class CastDeserializer extends AbstractEdmDeserializer<Cast> {
 

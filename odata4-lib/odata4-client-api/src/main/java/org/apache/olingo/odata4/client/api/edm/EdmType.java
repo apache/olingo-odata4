@@ -19,6 +19,9 @@
 package org.apache.olingo.odata4.client.api.edm;
 
 import org.apache.olingo.odata4.client.api.data.EdmSimpleType;
+import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 
 public interface EdmType {
 

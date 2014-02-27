@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.odata4.client.api.edm.Edmx;
+import org.apache.olingo.odata4.client.api.edm.xml.Edmx;
 import org.w3c.dom.Element;
 
 /**
