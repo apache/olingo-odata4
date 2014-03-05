@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV4Client;
-import org.apache.olingo.odata4.client.core.edm.v4.EdmTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationsImpl;
@@ -177,10 +176,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Products", product.getNavigationProperty("Supplier").getPartner());
 
     final EntityTypeImpl category = metadata.getSchema(0).getEntityType("Category");
-    final EdmTypeImpl type = new EdmTypeImpl(metadata, category.getNavigationProperty("Products").getType());
-    assertNotNull(type);
-    assertTrue(type.isCollection());
-    assertFalse(type.isSimpleType());
+    assertNotNull(category);
 
     final ComplexTypeImpl address = metadata.getSchema(0).getComplexType("Address");
     assertFalse(address.getNavigationProperty("Country").getReferentialConstraints().isEmpty());

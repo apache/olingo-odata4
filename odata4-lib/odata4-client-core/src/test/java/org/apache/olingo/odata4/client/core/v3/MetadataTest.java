@@ -21,15 +21,12 @@ package org.apache.olingo.odata4.client.core.v3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.EdmType;
 import org.apache.olingo.odata4.client.api.http.HttpMethod;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.ComplexTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.EdmTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.FunctionImportImpl;
@@ -50,26 +47,9 @@ public class MetadataTest extends AbstractTest {
             toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
-    final EdmTypeImpl orderCollection = new EdmTypeImpl(metadata,
-            "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Order)");
-    assertNotNull(orderCollection);
-    assertTrue(orderCollection.isCollection());
-    assertFalse(orderCollection.isSimpleType());
-    assertFalse(orderCollection.isEnumType());
-    assertFalse(orderCollection.isComplexType());
-    assertTrue(orderCollection.isEntityType());
-
-    final EntityTypeImpl order = orderCollection.getEntityType();
+    final EntityTypeImpl order = metadata.getSchemas().get(0).getEntityType("Order");
     assertNotNull(order);
     assertEquals("Order", order.getName());
-
-    final EdmType stream = new EdmTypeImpl(metadata, "Edm.Stream");
-    assertNotNull(stream);
-    assertFalse(stream.isCollection());
-    assertTrue(stream.isSimpleType());
-    assertFalse(stream.isEnumType());
-    assertFalse(stream.isComplexType());
-    assertFalse(stream.isEntityType());
 
     final List<FunctionImportImpl> functionImports = metadata.getSchemas().get(0).
             getDefaultEntityContainer().getFunctionImports();
