@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.olingo.odata4.client.api.edm.xml.PropertyRef;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;

@@ -29,17 +29,17 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.ActionImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.FunctionImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.ParameterImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.SchemaImpl;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
@@ -136,11 +136,9 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmEntityType result = null;
 
     final Schema schema = xmlMetadata.getSchema(entityTypeName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final EntityType xmlEntityType = ((SchemaImpl) schema).getEntityType(entityTypeName.getName());
-      if (xmlEntityType != null) {
-        result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlEntityType);
-      }
+    final EntityType xmlEntityType = schema.getEntityType(entityTypeName.getName());
+    if (xmlEntityType != null) {
+      result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlEntityType);
     }
 
     return result;
@@ -193,7 +191,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         final FunctionImpl function = itor.next();
         if (!function.isBound()) {
           final Set<String> functionParamNames = new HashSet<String>();
-          for (ParameterImpl param : function.getParameters()) {
+          for (CommonParameter param : function.getParameters()) {
             functionParamNames.add(param.getName());
           }
           found = parameterNames == null
@@ -253,7 +251,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
                   && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
 
             final Set<String> functionParamNames = new HashSet<String>();
-            for (ParameterImpl param : function.getParameters()) {
+            for (CommonParameter param : function.getParameters()) {
               functionParamNames.add(param.getName());
             }
             found = parameterNames == null

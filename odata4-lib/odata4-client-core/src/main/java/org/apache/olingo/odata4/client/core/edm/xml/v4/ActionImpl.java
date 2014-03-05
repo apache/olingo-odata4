@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Action;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ReturnType;
 
@@ -35,7 +36,7 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
 
   private String entitySetPath;
 
-  private final List<ParameterImpl> parameters = new ArrayList<ParameterImpl>();
+  private final List<CommonParameter> parameters = new ArrayList<CommonParameter>();
 
   private ReturnTypeImpl returnType;
 
@@ -70,12 +71,12 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
   }
 
   @Override
-  public ParameterImpl getParameter(final String name) {
+  public CommonParameter getParameter(final String name) {
     return getOneByName(name, getParameters());
   }
 
   @Override
-  public List<ParameterImpl> getParameters() {
+  public List<CommonParameter> getParameters() {
     return parameters;
   }
 

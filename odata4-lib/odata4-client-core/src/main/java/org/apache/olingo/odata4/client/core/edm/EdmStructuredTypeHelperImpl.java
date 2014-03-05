@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonNavigationProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonProperty;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
