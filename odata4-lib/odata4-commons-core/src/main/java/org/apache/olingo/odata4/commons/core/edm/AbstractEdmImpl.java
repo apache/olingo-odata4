@@ -65,7 +65,7 @@ public abstract class AbstractEdmImpl implements Edm {
   private EdmServiceMetadata serviceMetadata;
 
   private Map<String, String> aliasToNamespaceInfo;
-
+  
   @Override
   public EdmEntityContainer getEntityContainer(final FullQualifiedName namespaceOrAliasFQN) {
     final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);

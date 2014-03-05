@@ -79,4 +79,20 @@ public enum EdmPrimitiveTypeKind {
         throw new RuntimeException("Wrong type:" + this);
     }
   }
+
+  /**
+   * Gets <tt>EdmPrimitiveTypeKind</tt> from a full string (e.g. 'Edm.Int32').
+   *
+   * @param value string value type.
+   * @return <tt>EdmPrimitiveTypeKind</tt> object.
+   */
+  public static EdmPrimitiveTypeKind fromString(final String value) {
+    final String noNsValue = value.substring(4);
+    for (EdmPrimitiveTypeKind edmSimpleType : EdmPrimitiveTypeKind.values()) {
+      if (edmSimpleType.name().equals(noNsValue)) {
+        return edmSimpleType;
+      }
+    }
+    throw new IllegalArgumentException(value);
+  }
 }

@@ -18,15 +18,13 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import java.math.BigInteger;
-
 public interface ReturnType {
 
-  String getMaxLength();
+  Integer getMaxLength();
 
-  BigInteger getPrecision();
+  Integer getPrecision();
 
-  BigInteger getScale();
+  Integer getScale();
 
   String getSrid();
 
@@ -34,13 +32,13 @@ public interface ReturnType {
 
   boolean isNullable();
 
-  void setMaxLength(String maxLength);
+  void setMaxLength(Integer maxLength);
 
   void setNullable(boolean nullable);
 
-  void setPrecision(BigInteger precision);
+  void setPrecision(Integer precision);
 
-  void setScale(BigInteger scale);
+  void setScale(Integer scale);
 
   void setSrid(String srid);
 

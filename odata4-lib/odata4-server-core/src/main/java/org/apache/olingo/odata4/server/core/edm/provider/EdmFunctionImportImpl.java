@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.server.core.edm.provider;
 
 import java.util.List;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
@@ -29,9 +30,10 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
 
   private final FunctionImport functionImport;
 
-  public EdmFunctionImportImpl(final EdmProviderImpl edm, final String name, final EdmEntityContainer container,
-      final FunctionImport functionImport) {
-    super(edm, name, container, functionImport);
+  public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
+          final FunctionImport functionImport) {
+
+    super(edm, container, name, functionImport);
     this.functionImport = functionImport;
   }
 

@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.server.core.edm.provider;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmNamed;
+import org.apache.olingo.odata4.commons.core.edm.EdmNamedImpl;
 import org.junit.Test;
 
 public class EdmNamedImplTest {

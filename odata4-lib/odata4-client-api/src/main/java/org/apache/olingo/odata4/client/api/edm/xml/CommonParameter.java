@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-import java.math.BigInteger;
-
 public interface CommonParameter extends Named {
 
   String getType();
@@ -30,16 +28,16 @@ public interface CommonParameter extends Named {
 
   void setNullable(boolean nullable);
 
-  String getMaxLength();
+  Integer getMaxLength();
 
-  void setMaxLength(String maxLength);
+  void setMaxLength(Integer maxLength);
 
-  BigInteger getPrecision();
+  Integer getPrecision();
 
-  void setPrecision(BigInteger precision);
+  void setPrecision(Integer precision);
 
-  BigInteger getScale();
+  Integer getScale();
 
-  void setScale(BigInteger scale);
+  void setScale(Integer scale);
 
 }

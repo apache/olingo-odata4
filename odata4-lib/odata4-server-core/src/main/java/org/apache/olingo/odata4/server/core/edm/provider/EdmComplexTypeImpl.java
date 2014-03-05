@@ -18,34 +18,41 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import java.util.Map;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmComplexType;
+import org.apache.olingo.odata4.commons.core.edm.EdmStructuredTypeHelper;
 import org.apache.olingo.odata4.server.api.edm.provider.ComplexType;
 
-public class EdmComplexTypeImpl extends EdmStructuralTypeImpl implements EdmComplexType {
+public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 
-  public EdmComplexTypeImpl(final EdmProviderImpl edm, final FullQualifiedName name, final ComplexType complexType) {
-    super(edm, name, complexType, EdmTypeKind.COMPLEX);
+  private final EdmStructuredTypeHelper helper;
+
+  public static EdmComplexTypeImpl getInstance(
+          final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+
+    final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, name, complexType);
+    instance.baseType = instance.buildBaseType(complexType.getBaseType());
+
+    return instance;
+  }
+
+  private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+    super(edm, name, complexType.getBaseType());
+    this.helper = new EdmStructuredTypeHelperImpl(edm, complexType);
   }
 
   @Override
-  public EdmComplexType getBaseType() {
-    return (EdmComplexType) baseType;
+  protected Map<String, EdmProperty> getProperties() {
+    return helper.getProperties();
   }
 
   @Override
-  protected EdmStructuralType buildBaseType(final FullQualifiedName baseTypeName) {
-    EdmComplexType baseType = null;
-    if (baseTypeName != null) {
-      baseType = edm.getComplexType(baseTypeName);
-      if (baseType == null) {
-        throw new EdmException("Can't find base type with name: " + baseTypeName + " for complex type: " + getName());
-      }
-    }
-    return baseType;
+  protected Map<String, EdmNavigationProperty> getNavigationProperties() {
+    return helper.getNavigationProperties();
   }
 
 }

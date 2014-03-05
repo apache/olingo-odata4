@@ -23,12 +23,7 @@ import java.net.URI;
 /**
  * Objects of this class contain information about one function import inside the EntityDataModel.
  */
-public interface EdmFunctionImportInfo {
-
-  /**
-   * @return the entity container name which contains this function import.
-   */
-  String getEntityContainerName();
+public interface EdmFunctionImportInfo extends EdmOperationImportInfo {
 
   /**
    * @return the function import name

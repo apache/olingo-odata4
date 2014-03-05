@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.EdmTypeImpl;
 import org.junit.Test;
 
 public class EdmTypeImplTest {

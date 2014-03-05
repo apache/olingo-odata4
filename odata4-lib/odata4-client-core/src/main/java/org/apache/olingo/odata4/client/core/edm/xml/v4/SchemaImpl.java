@@ -92,6 +92,10 @@ public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmIt
     return terms;
   }
 
+  public TypeDefinitionImpl getTypeDefinition(final String name) {
+    return getOneByName(name, getTypeDefinitions());
+  }
+
   public List<TypeDefinitionImpl> getTypeDefinitions() {
     return typeDefinitions;
   }

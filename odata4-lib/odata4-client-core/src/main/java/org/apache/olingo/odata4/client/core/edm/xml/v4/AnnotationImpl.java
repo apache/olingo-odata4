@@ -23,8 +23,8 @@ import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.ConstExprConstruct;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.DynExprConstruct;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.ConstExprConstructImpl;
-import org.apache.olingo.odata4.client.core.edm.v4.annotation.DynExprConstructImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.DynExprConstructImpl;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractEdmItem implements Annotation {

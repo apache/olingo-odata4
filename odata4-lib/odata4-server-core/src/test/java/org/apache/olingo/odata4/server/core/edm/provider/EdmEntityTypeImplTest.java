@@ -72,7 +72,7 @@ public class EdmEntityTypeImplTest {
     baseType.setNavigationProperties(navigationProperties);
     when(provider.getEntityType(baseName)).thenReturn(baseType);
 
-    this.baseType = new EdmEntityTypeImpl(edm, baseName, baseType);
+    this.baseType = EdmEntityTypeImpl.getInstance(edm, baseName, baseType);
 
     FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
     EntityType type = new EntityType();
@@ -87,7 +87,7 @@ public class EdmEntityTypeImplTest {
     type.setNavigationProperties(typeNavigationProperties);
     when(provider.getEntityType(typeName)).thenReturn(type);
 
-    typeWithBaseType = new EdmEntityTypeImpl(edm, typeName, type);
+    typeWithBaseType = EdmEntityTypeImpl.getInstance(edm, typeName, type);
 
     FullQualifiedName typeWithComplexKeyName = new FullQualifiedName("namespace", "typeName");
     EntityType typeWithComplexKeyProvider = new EntityType();
@@ -112,7 +112,7 @@ public class EdmEntityTypeImplTest {
     typeWithComplexKeyProvider.setKey(keyForTypeWithComplexKey);
     when(provider.getEntityType(typeWithComplexKeyName)).thenReturn(typeWithComplexKeyProvider);
 
-    typeWithComplexKey = new EdmEntityTypeImpl(edm, typeWithComplexKeyName, typeWithComplexKeyProvider);
+    typeWithComplexKey = EdmEntityTypeImpl.getInstance(edm, typeWithComplexKeyName, typeWithComplexKeyProvider);
   }
 
   @Test
@@ -246,21 +246,21 @@ public class EdmEntityTypeImplTest {
   public void noKeyOnTypeWithoutBaseTypeMustResultInException() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     EntityType entityType = new EntityType().setName("n");
-    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
   @Test
   public void abstractTypeDoesNotNeedKey() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     EntityType entityType = new EntityType().setName("n").setAbstract(true);
-    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
   @Test(expected = EdmException.class)
   public void invalidBaseType() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     EntityType entityType = new EntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
-    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
   @Test
@@ -270,7 +270,7 @@ public class EdmEntityTypeImplTest {
     FullQualifiedName baseName = new FullQualifiedName("n", "base");
     when(provider.getEntityType(baseName)).thenReturn(new EntityType().setName("base").setAbstract(true));
     EntityType entityType = new EntityType().setName("n").setAbstract(true).setBaseType(baseName);
-    new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
+    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
 }

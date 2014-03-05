@@ -26,11 +26,11 @@ public interface TypeDefinition extends Named {
 
   List<? extends Annotation> getAnnotations();
 
-  String getMaxLength();
+  Integer getMaxLength();
 
-  BigInteger getPrecision();
+  Integer getPrecision();
 
-  BigInteger getScale();
+  Integer getScale();
 
   String getSrid();
 
@@ -38,11 +38,11 @@ public interface TypeDefinition extends Named {
 
   boolean isUnicode();
 
-  void setMaxLength(String maxLength);
+  void setMaxLength(Integer maxLength);
 
-  void setPrecision(BigInteger precision);
+  void setPrecision(Integer precision);
 
-  void setScale(BigInteger scale);
+  void setScale(Integer scale);
 
   void setSrid(String srid);
 

@@ -18,31 +18,25 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.math.BigInteger;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 
+@JsonDeserialize(using = ParameterDeserializer.class)
 public abstract class AbstractParameter extends AbstractEdmItem implements CommonParameter {
 
   private static final long serialVersionUID = -4305016554930334342L;
 
-  @JsonProperty(value = "Name", required = true)
   private String name;
 
-  @JsonProperty(value = "Type", required = true)
   private String type;
 
-  @JsonProperty(value = "Nullable")
   private boolean nullable = true;
 
-  @JsonProperty("MaxLength")
-  private String maxLength;
+  private Integer maxLength;
 
-  @JsonProperty("Precision")
-  private BigInteger precision;
+  private Integer precision;
 
-  @JsonProperty("Scale")
-  private BigInteger scale;
+  private Integer scale;
 
   @Override
   public String getName() {
@@ -75,32 +69,32 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
   }
 
   @Override
-  public String getMaxLength() {
+  public Integer getMaxLength() {
     return maxLength;
   }
 
   @Override
-  public void setMaxLength(final String maxLength) {
+  public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
 
   @Override
-  public BigInteger getPrecision() {
+  public Integer getPrecision() {
     return precision;
   }
 
   @Override
-  public void setPrecision(final BigInteger precision) {
+  public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
 
   @Override
-  public BigInteger getScale() {
+  public Integer getScale() {
     return scale;
   }
 
   @Override
-  public void setScale(final BigInteger scale) {
+  public void setScale(final Integer scale) {
     this.scale = scale;
   }
 }

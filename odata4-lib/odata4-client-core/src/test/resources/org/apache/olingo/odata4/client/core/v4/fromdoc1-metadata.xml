@@ -28,6 +28,16 @@
   </edmx:Reference>
   <edmx:DataServices>
     <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="ODataDemo">
+      <TypeDefinition Name="Length" UnderlyingType="Edm.Int32">
+        <Annotation Term="Org.OData.Measures.V1.Unit" String="Centimeters"/>
+      </TypeDefinition>
+      <TypeDefinition Name="Weight" UnderlyingType="Edm.Int32">
+        <Annotation Term="Org.OData.Measures.V1.Unit" String="Kilograms"/>
+      </TypeDefinition>
+      <ComplexType Name="Size">
+        <Property Name="Height" Type="Self.Length" />
+        <Property Name="Weight" Type="Self.Weight" />
+      </ComplexType>
       <EntityType Name="Product" HasStream="true">
         <Key>
           <PropertyRef Name="ID"/>

@@ -19,101 +19,69 @@
 package org.apache.olingo.odata4.server.core.edm.provider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmEntityType;
+import org.apache.olingo.odata4.commons.core.edm.EdmStructuredTypeHelper;
 import org.apache.olingo.odata4.server.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.server.api.edm.provider.PropertyRef;
 
-public class EdmEntityTypeImpl extends EdmStructuralTypeImpl implements EdmEntityType {
+public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
-  private EntityType entityType;
-  private final List<String> keyPredicateNames = new ArrayList<String>();
-  private final HashMap<String, EdmKeyPropertyRef> keyPropertyRefs = new HashMap<String, EdmKeyPropertyRef>();
-  private final EdmEntityType entityBaseType;
-  private ArrayList<EdmKeyPropertyRef> keyPropertyRefsList;
+  private final EdmStructuredTypeHelper helper;
 
-  public EdmEntityTypeImpl(final EdmProviderImpl edm, final FullQualifiedName name, final EntityType entityType) {
-    super(edm, name, entityType, EdmTypeKind.ENTITY);
-    this.entityType = entityType;
-    if (baseType == null) {
-      entityBaseType = null;
-      List<PropertyRef> key = entityType.getKey();
+  private final EntityType entityType;
+
+  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
+          final EntityType entityType) {
+
+    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
+    instance.baseType = instance.buildBaseType(entityType.getBaseType());
+
+    if (instance.baseType == null) {
+      instance.entityBaseType = null;
+      
+      final List<PropertyRef> key = entityType.getKey();
       if (key == null && !entityType.isAbstract()) {
         throw new EdmException("Non-Abstract entity types must define a key.");
       }
       if (key != null) {
+        final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
         for (PropertyRef ref : key) {
-          EdmKeyPropertyRef edmKeyRef = new EdmKeyPropertyRefImpl(this, ref);
-          if (ref.getAlias() != null) {
-            keyPredicateNames.add(ref.getAlias());
-            keyPropertyRefs.put(ref.getAlias(), edmKeyRef);
-          } else {
-            keyPredicateNames.add(ref.getPropertyName());
-            keyPropertyRefs.put(ref.getPropertyName(), edmKeyRef);
-          }
+          edmKey.add(new EdmKeyPropertyRefImpl(instance, ref));
         }
+        instance.setEdmKeyPropertyRef(edmKey);
       }
     } else {
-      entityBaseType = (EdmEntityType) baseType;
+      instance.entityBaseType = (EdmEntityType) instance.baseType;
     }
 
+    return instance;
+  }
+
+  private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
+    super(edm, name, entityType.getBaseType(), entityType.hasStream());
+
+    this.helper = new EdmStructuredTypeHelperImpl(edm, entityType);
+    this.entityType = entityType;
   }
 
   @Override
-  public boolean hasStream() {
-    return entityType.hasStream();
+  protected Map<String, EdmProperty> getProperties() {
+    return helper.getProperties();
   }
 
   @Override
-  public EdmEntityType getBaseType() {
-    return entityBaseType;
-  }
-
-  @Override
-  public List<String> getKeyPredicateNames() {
-    if (keyPredicateNames.isEmpty() && baseType != null) {
-      return entityBaseType.getKeyPredicateNames();
-    }
-    return keyPredicateNames;
-  }
-
-  @Override
-  public List<EdmKeyPropertyRef> getKeyPropertyRefs() {
-    if (keyPropertyRefsList == null) {
-      keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
-    }
-    if (keyPropertyRefsList.isEmpty() && entityBaseType != null) {
-      return entityBaseType.getKeyPropertyRefs();
-    }
-    return keyPropertyRefsList;
-  }
-
-  @Override
-  public EdmKeyPropertyRef getKeyPropertyRef(final String keyPredicateName) {
-    EdmKeyPropertyRef edmKeyPropertyRef = keyPropertyRefs.get(keyPredicateName);
-    if (edmKeyPropertyRef == null && entityBaseType != null) {
-      return entityBaseType.getKeyPropertyRef(keyPredicateName);
-    }
-    return edmKeyPropertyRef;
-  }
-
-  @Override
-  protected EdmStructuralType buildBaseType(final FullQualifiedName baseTypeName) {
-    EdmEntityType baseType = null;
-    if (baseTypeName != null) {
-      baseType = edm.getEntityType(baseTypeName);
-      if (baseType == null) {
-        throw new EdmException("Cannot find base type with name: " + baseTypeName + " for entity type: " + getName());
-      }
-    }
-    return baseType;
+  protected Map<String, EdmNavigationProperty> getNavigationProperties() {
+    return helper.getNavigationProperties();
   }
 
 }

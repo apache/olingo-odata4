@@ -22,5 +22,5 @@ public interface Member {
 
   String getName();
 
-  Integer getValue();
+  String getValue();
 }

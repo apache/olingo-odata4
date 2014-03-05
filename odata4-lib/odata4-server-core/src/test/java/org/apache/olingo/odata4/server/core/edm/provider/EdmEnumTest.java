@@ -51,11 +51,11 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
             EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
 
     FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
-    instance = new EdmEnumImpl(mock(EdmProviderImpl.class), enumName, enumType);
+    instance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName, enumType);
 
     EnumType enumType2 = new EnumType().setName("name").setMembers(memberList).setFlags(false).setUnderlyingType(
         EdmPrimitiveTypeKind.SByte.getFullQualifiedName());
-    nonFlagsInstance = new EdmEnumImpl(mock(EdmProviderImpl.class), enumName, enumType2);
+    nonFlagsInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName, enumType2);
 
 //    EdmMember member1 = mock(EdmMember.class);
 //    when(member1.getName()).thenReturn("first");

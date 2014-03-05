@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.odata4.client.api.edm.EdmMetadata;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 
 /**
  * OData reader.
@@ -37,7 +37,7 @@ public interface ODataReader extends Serializable {
    * @param input stream to de-serialize.
    * @return metadata representation.
    */
-  EdmMetadata readMetadata(InputStream input);
+  Edm readMetadata(InputStream input);
 
   /**
    * Parses an OData service document.

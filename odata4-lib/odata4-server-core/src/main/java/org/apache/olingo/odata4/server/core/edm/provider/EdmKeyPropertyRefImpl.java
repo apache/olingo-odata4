@@ -19,20 +19,15 @@
 package org.apache.olingo.odata4.server.core.edm.provider;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmKeyPropertyRef;
 import org.apache.olingo.odata4.server.api.edm.provider.PropertyRef;
 
-public class EdmKeyPropertyRefImpl implements EdmKeyPropertyRef {
+public class EdmKeyPropertyRefImpl extends AbstractEdmKeyPropertyRef {
 
-  private PropertyRef ref;
-  private EdmEntityType edmEntityType;
-  private EdmProperty property;
+  private final PropertyRef ref;
 
   public EdmKeyPropertyRefImpl(final EdmEntityType edmEntityType, final PropertyRef ref) {
-    this.edmEntityType = edmEntityType;
+    super(edmEntityType);
     this.ref = ref;
   }
 
@@ -50,40 +45,4 @@ public class EdmKeyPropertyRefImpl implements EdmKeyPropertyRef {
   public String getPath() {
     return ref.getPath();
   }
-
-  @Override
-  public EdmProperty getProperty() {
-    if (property == null) {
-      if (ref.getAlias() == null) {
-        property = (EdmProperty) edmEntityType.getProperty(ref.getPropertyName());
-        if (property == null) {
-          throw new EdmException("Invalid key property ref specified. Can´t find property with name: "
-              + ref.getPropertyName());
-        }
-      } else {
-        if (ref.getPath() == null || ref.getPath().isEmpty()) {
-          throw new EdmException("Alias but no path specified for propertyRef");
-        }
-        String[] splitPath = ref.getPath().split("/");
-        EdmStructuralType structType = edmEntityType;
-        for (int i = 0; i < splitPath.length - 1; i++) {
-          EdmProperty property = (EdmProperty) structType.getProperty(splitPath[i]);
-          if (property == null) {
-            throw new EdmException("Invalid property ref specified. Can´t find property with name: "
-                + splitPath[i] + " at type: " + structType.getNamespace() + "." + structType.getName());
-          }
-          structType = (EdmStructuralType) property.getType();
-        }
-        property = (EdmProperty) structType.getProperty(splitPath[splitPath.length - 1]);
-        if (property == null) {
-          throw new EdmException("Invalid property ref specified. Can´t find property with name: "
-              + splitPath[splitPath.length - 1] + " at type: " + structType.getNamespace() + "."
-              + structType.getName());
-        }
-      }
-    }
-
-    return property;
-  }
-
 }

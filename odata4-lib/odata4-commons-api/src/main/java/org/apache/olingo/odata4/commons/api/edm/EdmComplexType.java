@@ -24,7 +24,7 @@ package org.apache.olingo.odata4.commons.api.edm;
  * EdmComplexType holds a set of related information like {@link EdmPrimitiveType} properties and EdmComplexType
  * properties.
  */
-public interface EdmComplexType extends EdmStructuralType {
+public interface EdmComplexType extends EdmStructuredType {
 
   @Override
   EdmComplexType getBaseType();

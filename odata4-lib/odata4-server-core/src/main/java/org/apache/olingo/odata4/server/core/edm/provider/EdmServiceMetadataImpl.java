@@ -23,12 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.ODataException;
+import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.odata4.commons.core.edm.EdmSingletonInfoImpl;
+import org.apache.olingo.odata4.commons.core.edm.EdmActionImportInfoImpl;
+import org.apache.olingo.odata4.commons.core.edm.EdmFunctionImportInfoImpl;
+import org.apache.olingo.odata4.commons.core.edm.EdmEntitySetInfoImpl;
+import org.apache.olingo.odata4.server.api.edm.provider.ActionImport;
 import org.apache.olingo.odata4.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata4.server.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata4.server.api.edm.provider.EntitySet;
@@ -39,10 +45,16 @@ import org.apache.olingo.odata4.server.api.edm.provider.Singleton;
 public class EdmServiceMetadataImpl implements EdmServiceMetadata {
 
   private EdmProvider provider;
-  private ArrayList<EdmEntitySetInfo> entitySetInfos;
-  private ArrayList<EdmFunctionImportInfo> functionImportInfos;
-  private ArrayList<EdmSingletonInfo> singletonInfos;
+
   private List<Schema> schemas;
+
+  private List<EdmEntitySetInfo> entitySetInfos;
+
+  private List<EdmSingletonInfo> singletonInfos;
+
+  private List<EdmActionImportInfo> actionImportInfos;
+
+  private List<EdmFunctionImportInfo> functionImportInfos;
 
   public EdmServiceMetadataImpl(final EdmProvider provider) {
     this.provider = provider;
@@ -70,12 +82,12 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
           }
         }
         for (Schema schema : schemas) {
-          EntityContainer entityContainer = schema.getEntityContainer();
+          final EntityContainer entityContainer = schema.getEntityContainer();
           if (entityContainer != null) {
-            List<EntitySet> entitySets = entityContainer.getEntitySets();
+            final List<EntitySet> entitySets = entityContainer.getEntitySets();
             if (entitySets != null) {
               for (EntitySet set : entitySets) {
-                entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer, set));
+                entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer.getName(), set.getName()));
               }
             }
           }
@@ -99,12 +111,12 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
           }
         }
         for (Schema schema : schemas) {
-          EntityContainer entityContainer = schema.getEntityContainer();
+          final EntityContainer entityContainer = schema.getEntityContainer();
           if (entityContainer != null) {
-            List<Singleton> singletons = entityContainer.getSingletons();
+            final List<Singleton> singletons = entityContainer.getSingletons();
             if (singletons != null) {
               for (Singleton singleton : singletons) {
-                singletonInfos.add(new EdmSingletonInfoImpl(entityContainer, singleton));
+                singletonInfos.add(new EdmSingletonInfoImpl(entityContainer.getName(), singleton.getName()));
               }
             }
           }
@@ -114,6 +126,35 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
       }
     }
     return singletonInfos;
+  }
+
+  @Override
+  public List<EdmActionImportInfo> getActionImportInfos() {
+    if (actionImportInfos == null) {
+      try {
+        actionImportInfos = new ArrayList<EdmActionImportInfo>();
+        if (schemas == null) {
+          schemas = provider.getSchemas();
+          if (schemas == null) {
+            throw new EdmException("Provider doe not define any schemas.");
+          }
+        }
+        for (Schema schema : schemas) {
+          final EntityContainer entityContainer = schema.getEntityContainer();
+          if (entityContainer != null) {
+            final List<ActionImport> actionImports = entityContainer.getActionImports();
+            if (actionImports != null) {
+              for (ActionImport actionImport : actionImports) {
+                actionImportInfos.add(new EdmActionImportInfoImpl(entityContainer.getName(), actionImport.getName()));
+              }
+            }
+          }
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+    return actionImportInfos;
   }
 
   @Override
@@ -128,12 +169,13 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
           }
         }
         for (Schema schema : schemas) {
-          EntityContainer entityContainer = schema.getEntityContainer();
+          final EntityContainer entityContainer = schema.getEntityContainer();
           if (entityContainer != null) {
-            List<FunctionImport> functionImports = entityContainer.getFunctionImports();
+            final List<FunctionImport> functionImports = entityContainer.getFunctionImports();
             if (functionImports != null) {
               for (FunctionImport functionImport : functionImports) {
-                functionImportInfos.add(new EdmFunctionImportInfoImpl(entityContainer, functionImport));
+                functionImportInfos.add(
+                        new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
               }
             }
           }

@@ -18,15 +18,8 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.Named;
 
-public interface Singleton extends Named {
-
-  String getType();
-
-  void setType(String type);
-
-  List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
+public interface Singleton extends Named, BindingTarget {
 
 }

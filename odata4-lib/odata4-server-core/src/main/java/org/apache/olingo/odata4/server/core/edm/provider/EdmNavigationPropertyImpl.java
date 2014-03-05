@@ -20,35 +20,24 @@ package org.apache.olingo.odata4.server.core.edm.provider;
 
 import java.util.List;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmElement;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmNavigationProperty;
 import org.apache.olingo.odata4.server.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata4.server.api.edm.provider.ReferentialConstraint;
 
-public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavigationProperty {
+public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   private final NavigationProperty navigationProperty;
-  private EdmEntityType typeImpl;
-  private EdmNavigationProperty partnerNavigationProperty;
 
-  public EdmNavigationPropertyImpl(final EdmProviderImpl edm, final NavigationProperty navigationProperty) {
+  public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
     super(edm, navigationProperty.getName());
     this.navigationProperty = navigationProperty;
   }
 
   @Override
-  public EdmType getType() {
-    if (typeImpl == null) {
-      typeImpl = edm.getEntityType(navigationProperty.getType());
-      if (typeImpl == null) {
-        throw new EdmException("Cannot find type with name: " + navigationProperty.getType());
-      }
-    }
-    return typeImpl;
+  protected FullQualifiedName getTypeFQN() {
+    return navigationProperty.getType();
   }
 
   @Override
@@ -62,29 +51,13 @@ public class EdmNavigationPropertyImpl extends EdmElementImpl implements EdmNavi
   }
 
   @Override
-  public EdmNavigationProperty getPartner() {
-    if (partnerNavigationProperty == null) {
-      String partner = navigationProperty.getPartner();
-      if (partner != null) {
-        EdmStructuralType type = (EdmStructuralType) getType();
-        EdmElement property = null;
-        String[] split = partner.split("/");
-        for (String element : split) {
-          property = type.getProperty(element);
-          if (property == null) {
-            throw new EdmException("Cannot find property with name: " + element + " at type " + type.getName());
-          }
-          type = (EdmStructuralType) property.getType();
-        }
-        partnerNavigationProperty = (EdmNavigationProperty) property;
-      }
-    }
-    return partnerNavigationProperty;
+  protected String internatGetPartner() {
+    return navigationProperty.getPartner();
   }
 
   @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
-    List<ReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
+    final List<ReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
     if (referentialConstraints != null) {
       for (ReferentialConstraint constraint : referentialConstraints) {
         if (constraint.getReferencedProperty().equals(referencedPropertyName)) {

@@ -28,7 +28,7 @@ import java.util.List;
 public interface Edm {
 
   /**
-   * Get entity container by full qualified name
+   * Get entity container by full qualified name.
    * <br/>
    * See {@link EdmEntityContainer} for more information.
    *
@@ -38,7 +38,7 @@ public interface Edm {
   EdmEntityContainer getEntityContainer(FullQualifiedName name);
 
   /**
-   * Get enum type by full qualified name
+   * Get enum type by full qualified name.
    * <br/>
    * See {@link EdmEnumType} for more information
    *
@@ -48,7 +48,7 @@ public interface Edm {
   EdmEnumType getEnumType(FullQualifiedName name);
 
   /**
-   * Get a type definition by full qualified name
+   * Get a type definition by full qualified name.
    * <br/>
    * See {@link EdmTypeDefinition} for more information
    *
@@ -58,7 +58,7 @@ public interface Edm {
   EdmTypeDefinition getTypeDefinition(FullQualifiedName name);
 
   /**
-   * Get entity type by full qualified name
+   * Get entity type by full qualified name.
    * <br/>
    * See {@link EdmEntityType} for more information.
    *
@@ -68,7 +68,7 @@ public interface Edm {
   EdmEntityType getEntityType(FullQualifiedName name);
 
   /**
-   * Get complex type by full qualified name.
+   * Get complex type by full qualified name..
    * <br/>
    * See {@link EdmComplexType} for more information.
    *
@@ -101,7 +101,7 @@ public interface Edm {
           Boolean isBindingParameterCollection, List<String> parameterNames);
 
   /**
-   * Get service metadata
+   * Get service metadata.
    * <br/>
    * See {@link EdmServiceMetadata} for more information.
    *

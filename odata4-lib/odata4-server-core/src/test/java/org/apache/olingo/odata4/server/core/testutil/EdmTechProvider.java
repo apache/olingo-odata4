@@ -45,7 +45,7 @@ import org.apache.olingo.odata4.server.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata4.server.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.odata4.server.api.edm.provider.ReturnType;
 import org.apache.olingo.odata4.server.api.edm.provider.Singleton;
-import org.apache.olingo.odata4.server.api.edm.provider.Target;
+import org.apache.olingo.odata4.commons.api.edm.Target;
 
 public class EdmTechProvider extends EdmProvider {
 

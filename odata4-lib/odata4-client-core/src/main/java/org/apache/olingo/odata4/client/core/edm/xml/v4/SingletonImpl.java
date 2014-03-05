@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
 
 @JsonDeserialize(using = SingletonDeserializer.class)
@@ -30,10 +31,9 @@ public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton
 
   private String name;
 
-  private String type;
+  private String entityType;
 
-  private final List<NavigationPropertyBindingImpl> navigationPropertyBindings
-          = new ArrayList<NavigationPropertyBindingImpl>();
+  private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
 
   @Override
   public String getName() {
@@ -46,17 +46,17 @@ public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton
   }
 
   @Override
-  public String getType() {
-    return type;
+  public String getEntityType() {
+    return entityType;
   }
 
   @Override
-  public void setType(final String type) {
-    this.type = type;
+  public void setEntityType(final String entityType) {
+    this.entityType = entityType;
   }
 
   @Override
-  public List<NavigationPropertyBindingImpl> getNavigationPropertyBindings() {
+  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
     return navigationPropertyBindings;
   }
 

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A CSDL EntityType element.
  */
-public interface EdmEntityType extends EdmStructuralType {
+public interface EdmEntityType extends EdmStructuredType {
 
   /**
    * Gets all key predicate names. In case an alias is defined for a key predicate this will be returned.

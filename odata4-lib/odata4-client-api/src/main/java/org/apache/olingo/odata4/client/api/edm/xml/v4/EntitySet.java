@@ -18,13 +18,9 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import java.util.List;
-
-public interface EntitySet extends org.apache.olingo.odata4.client.api.edm.xml.EntitySet, AnnotatedEdmItem {
+public interface EntitySet extends org.apache.olingo.odata4.client.api.edm.xml.EntitySet, BindingTarget {
 
   boolean isIncludeInServiceDocument();
 
   void setIncludeInServiceDocument(boolean includeInServiceDocument);
-
-  List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
 }

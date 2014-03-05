@@ -18,9 +18,12 @@
  */
 package org.apache.olingo.odata4.server.api.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Target;
+
 public abstract class OperationImport {
 
   protected String name;
+
   protected Target entitySet;
 
   // Annotations?

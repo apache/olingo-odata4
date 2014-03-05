@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntitySet;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntitySet;
 
 public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
@@ -32,8 +33,7 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 
   private AnnotationImpl annotation;
 
-  private final List<NavigationPropertyBindingImpl> navigationPropertyBindings
-          = new ArrayList<NavigationPropertyBindingImpl>();
+  private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
 
   @Override
   public boolean isIncludeInServiceDocument() {
@@ -46,7 +46,7 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
   }
 
   @Override
-  public List<NavigationPropertyBindingImpl> getNavigationPropertyBindings() {
+  public List<NavigationPropertyBinding> getNavigationPropertyBindings() {
     return navigationPropertyBindings;
   }
 

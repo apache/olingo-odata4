@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
@@ -25,7 +26,11 @@ import org.apache.olingo.odata4.server.api.edm.provider.Action;
 
 public class EdmActionImpl extends EdmOperationImpl implements EdmAction {
 
-  public EdmActionImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Action action) {
+  public static EdmActionImpl getInstance(final Edm edm, final FullQualifiedName name, final Action action) {
+    return EdmOperationImpl.getInstance(new EdmActionImpl(edm, name, action));
+  }
+
+  private EdmActionImpl(final Edm edm, final FullQualifiedName name, final Action action) {
     super(edm, name, action, EdmTypeKind.ACTION);
   }
 }

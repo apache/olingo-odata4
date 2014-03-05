@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
-import java.math.BigInteger;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
 
@@ -43,18 +42,18 @@ public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefi
         } else if ("UnderlyingType".equals(jp.getCurrentName())) {
           typeDefinition.setUnderlyingType(jp.nextTextValue());
         } else if ("MaxLength".equals(jp.getCurrentName())) {
-          typeDefinition.setMaxLength(jp.nextTextValue());
+          typeDefinition.setMaxLength(jp.nextIntValue(0));
         } else if ("Unicode".equals(jp.getCurrentName())) {
           typeDefinition.setUnicode(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Precision".equals(jp.getCurrentName())) {
-          typeDefinition.setPrecision(BigInteger.valueOf(jp.nextLongValue(0L)));
+          typeDefinition.setPrecision(jp.nextIntValue(0));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          typeDefinition.setScale(BigInteger.valueOf(jp.nextLongValue(0L)));
+          typeDefinition.setScale(jp.nextIntValue(0));
         } else if ("SRID".equals(jp.getCurrentName())) {
           typeDefinition.setSrid(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          typeDefinition.getAnnotations().add(jp.readValueAs( AnnotationImpl.class));
+          typeDefinition.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

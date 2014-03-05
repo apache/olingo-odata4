@@ -18,53 +18,40 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.math.BigInteger;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
 import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 
+@JsonDeserialize(using = PropertyDeserializer.class)
 public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {
 
   private static final long serialVersionUID = -6004492361142315153L;
 
-  @JsonProperty(value = "Name", required = true)
   private String name;
 
-  @JsonProperty(value = "Type", required = true)
   private String type;
 
-  @JsonProperty(value = "Nullable")
   private boolean nullable = true;
 
-  @JsonProperty(value = "DefaultValue")
   private String defaultValue;
 
-  @JsonProperty(value = "MaxLength")
-  private String maxLength;
+  private Integer maxLength;
 
-  @JsonProperty(value = "FixedLength")
   private boolean fixedLength;
 
-  @JsonProperty(value = "Precision")
-  private BigInteger precision;
+  private Integer precision;
 
-  @JsonProperty(value = "Scale")
-  private BigInteger scale;
+  private Integer scale;
 
-  @JsonProperty(value = "Unicode")
   private boolean unicode = true;
 
-  @JsonProperty(value = "Collation")
   private String collation;
 
-  @JsonProperty(value = "SRID")
   private String srid;
 
-  @JsonProperty(value = "ConcurrencyMode")
   private ConcurrencyMode concurrencyMode;
 
-  @JsonProperty("StoreGeneratedPattern")
   private StoreGeneratedPattern storeGeneratedPattern = StoreGeneratedPattern.None;
 
   @Override
@@ -108,12 +95,12 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
   }
 
   @Override
-  public String getMaxLength() {
+  public Integer getMaxLength() {
     return maxLength;
   }
 
   @Override
-  public void setMaxLength(final String maxLength) {
+  public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
 
@@ -128,22 +115,22 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
   }
 
   @Override
-  public BigInteger getPrecision() {
+  public Integer getPrecision() {
     return precision;
   }
 
   @Override
-  public void setPrecision(final BigInteger precision) {
+  public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
 
   @Override
-  public BigInteger getScale() {
+  public Integer getScale() {
     return scale;
   }
 
   @Override
-  public void setScale(final BigInteger scale) {
+  public void setScale(final Integer scale) {
     this.scale = scale;
   }
 

@@ -18,51 +18,55 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmBindingTarget;
 import org.apache.olingo.odata4.server.api.edm.provider.BindingTarget;
 import org.apache.olingo.odata4.server.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.odata4.server.api.edm.provider.Target;
+import org.apache.olingo.odata4.commons.api.edm.Target;
 
-public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBindingTarget {
+public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
 
-  private BindingTarget target;
-  private EdmEntityContainer container;
+  private final BindingTarget target;
 
-  public EdmBindingTargetImpl(final EdmProviderImpl edm, final EdmEntityContainer container,
-      final BindingTarget target) {
-    super(edm, target.getName());
-    this.container = container;
+  public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
+    super(edm, container, target.getName(), target.getType());
     this.target = target;
   }
 
   @Override
   public EdmBindingTarget getRelatedBindingTarget(final String path) {
     EdmBindingTarget bindingTarget = null;
-    List<NavigationPropertyBinding> navigationPropertyBindings = target.getNavigationPropertyBindings();
+
+    final List<NavigationPropertyBinding> navigationPropertyBindings = target.getNavigationPropertyBindings();
     if (navigationPropertyBindings != null) {
-      for (NavigationPropertyBinding binding : navigationPropertyBindings) {
+      boolean found = false;
+      for (final Iterator<NavigationPropertyBinding> itor = navigationPropertyBindings.iterator();
+              itor.hasNext() && !found;) {
+
+        final NavigationPropertyBinding binding = itor.next();
         if (binding.getPath().equals(path)) {
-          Target providerTarget = binding.getTarget();
-          EdmEntityContainer entityContainer = edm.getEntityContainer(providerTarget.getEntityContainer());
+          final Target providerTarget = binding.getTarget();
+          final EdmEntityContainer entityContainer = edm.getEntityContainer(providerTarget.getEntityContainer());
           if (entityContainer == null) {
             throw new EdmException("Cant find entity container with name: " + providerTarget.getEntityContainer());
           }
-          String targetName = providerTarget.getTargetName();
+          final String targetName = providerTarget.getTargetName();
           bindingTarget = entityContainer.getEntitySet(targetName);
           if (bindingTarget == null) {
             bindingTarget = entityContainer.getSingleton(targetName);
-            if (bindingTarget != null) {
-              break;
-            } else {
+            if (bindingTarget == null) {
               throw new EdmException("Cant find target with name: " + targetName);
             }
+
+            found = true;
           } else {
-            break;
+            found = true;
           }
         }
       }
@@ -70,19 +74,4 @@ public abstract class EdmBindingTargetImpl extends EdmNamedImpl implements EdmBi
 
     return bindingTarget;
   }
-
-  @Override
-  public EdmEntityContainer getEntityContainer() {
-    return container;
-  }
-
-  @Override
-  public EdmEntityType getEntityType() {
-    EdmEntityType type = edm.getEntityType(target.getType());
-    if (type == null) {
-      throw new EdmException("Can´t find entity type : " + target.getType() + "for entity set: " + target.getName());
-    }
-    return type;
-  }
-
 }

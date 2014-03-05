@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.uri;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
@@ -36,7 +36,7 @@ public abstract class UriResourceTypedImpl extends UriResourceImpl implements Ur
     return typeFilter;
   }
 
-  public UriResourceTypedImpl setTypeFilter(final EdmStructuralType typeFilter) {
+  public UriResourceTypedImpl setTypeFilter(final EdmStructuredType typeFilter) {
     this.typeFilter = typeFilter;
     return this;
   }

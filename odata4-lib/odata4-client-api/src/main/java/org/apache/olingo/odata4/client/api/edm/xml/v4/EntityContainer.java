@@ -22,6 +22,10 @@ import java.util.List;
 
 public interface EntityContainer extends org.apache.olingo.odata4.client.api.edm.xml.EntityContainer {
 
+  List<? extends Singleton> getSingletons();
+
+  Singleton getSingleton(String name);
+
   /**
    * Gets the first action import with given name.
    *

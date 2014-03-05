@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v3.Annotations;
 import java.util.List;
 
 public interface Schema {

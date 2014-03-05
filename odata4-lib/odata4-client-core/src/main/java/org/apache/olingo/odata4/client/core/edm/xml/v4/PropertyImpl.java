@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Property;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractProperty;
@@ -28,7 +27,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = -5541908235094985412L;
 
-  @JsonProperty("Annotation")
   private AnnotationImpl annotation;
 
   @Override

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
@@ -27,9 +28,13 @@ import org.apache.olingo.odata4.server.api.edm.provider.Function;
 
 public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
 
-  private Function function;
+  private final Function function;
 
-  public EdmFunctionImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Function function) {
+  public static EdmFunctionImpl getInstance(final Edm edm, final FullQualifiedName name, final Function function) {
+    return EdmOperationImpl.getInstance(new EdmFunctionImpl(edm, name, function));
+  }
+
+  private EdmFunctionImpl(final Edm edm, final FullQualifiedName name, final Function function) {
     super(edm, name, function, EdmTypeKind.FUNCTION);
     this.function = function;
   }
@@ -41,7 +46,7 @@ public class EdmFunctionImpl extends EdmOperationImpl implements EdmFunction {
 
   @Override
   public EdmReturnType getReturnType() {
-    EdmReturnType returnType = super.getReturnType();
+    final EdmReturnType returnType = super.getReturnType();
     if (returnType == null) {
       throw new EdmException("ReturnType for a function must not be null");
     }

@@ -29,12 +29,12 @@ import org.apache.olingo.odata4.client.api.http.HttpMethod;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.ComplexTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.v3.EdmMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.FunctionImportImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.SchemaImpl;
+import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -46,8 +46,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void parse() {
-    final EdmMetadataImpl metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final XMLMetadataImpl metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
     final EdmTypeImpl orderCollection = new EdmTypeImpl(metadata,
@@ -98,8 +98,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void multipleSchemas() {
-    final EdmMetadataImpl metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
+    final XMLMetadataImpl metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
     final SchemaImpl first = metadata.getSchema("NorthwindModel");
@@ -115,8 +115,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void entityType() {
-    final EdmMetadataImpl metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final XMLMetadataImpl metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
     final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);
@@ -133,8 +133,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void complexType() {
-    final EdmMetadataImpl metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final XMLMetadataImpl metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
     final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);
@@ -148,8 +148,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void functionImport() {
-    final EdmMetadataImpl metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final XMLMetadataImpl metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
     final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);

@@ -38,7 +38,7 @@ import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
-import org.apache.olingo.odata4.commons.api.edm.EdmStructuralType;
+import org.apache.olingo.odata4.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
@@ -387,12 +387,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         return null;
       }
 
-      if (!(source.type instanceof EdmStructuralType)) {
+      if (!(source.type instanceof EdmStructuredType)) {
         throw wrap(new UriParserSemanticException("Can not parse'" + odi
             + "'Previous path segment not a structural type."));
       }
 
-      EdmStructuralType structType = (EdmStructuralType) source.type;
+      EdmStructuredType structType = (EdmStructuredType) source.type;
 
       EdmElement property = structType.getProperty(odi);
       if (property == null) {
@@ -1815,11 +1815,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
       }
 
-      if (!(prevType instanceof EdmStructuralType)) {
+      if (!(prevType instanceof EdmStructuredType)) {
         throw wrap(new UriParserSemanticException("Previous select item is not a structural type"));
       }
 
-      EdmStructuralType structType = (EdmStructuralType) prevType;
+      EdmStructuredType structType = (EdmStructuredType) prevType;
       EdmElement element = structType.getProperty(odi);
       if (element == null) {
         throw wrap(new UriParserSemanticException("Previous select item has not property: " + odi));
@@ -1888,7 +1888,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
-            if ((ct.compatibleTo((EdmStructuralType) prevType))) {
+            if ((ct.compatibleTo((EdmStructuredType) prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
 
@@ -1907,7 +1907,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         } else if (prevType instanceof EdmEntityType) {
           EdmEntityType et = edm.getEntityType(fullName);
           if (et != null) {
-            if ((et.compatibleTo((EdmStructuralType) prevType))) {
+            if ((et.compatibleTo((EdmStructuredType) prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(et);
 
@@ -1938,7 +1938,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         if (prevType instanceof EdmComplexType) {
           EdmComplexType ct = edm.getComplexType(fullName);
           if (ct != null) {
-            if ((ct.compatibleTo((EdmStructuralType) prevType))) {
+            if ((ct.compatibleTo((EdmStructuredType) prevType))) {
               UriResourceStartingTypeFilterImpl resourcePart = new UriResourceStartingTypeFilterImpl();
               resourcePart.setCollectionTypeFilter(ct);
 

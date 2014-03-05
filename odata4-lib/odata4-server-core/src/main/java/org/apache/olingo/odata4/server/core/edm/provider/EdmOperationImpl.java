@@ -19,92 +19,49 @@
 package org.apache.olingo.odata4.server.core.edm.provider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmOperation;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmParameter;
-import org.apache.olingo.odata4.commons.api.edm.EdmReturnType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmOperation;
 import org.apache.olingo.odata4.server.api.edm.provider.EntitySetPath;
 import org.apache.olingo.odata4.server.api.edm.provider.Operation;
 import org.apache.olingo.odata4.server.api.edm.provider.Parameter;
 
-public class EdmOperationImpl extends EdmTypeImpl implements EdmOperation {
+public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
-  private final Map<String, EdmParameter> parameters = new HashMap<String, EdmParameter>();
-  private final Operation operation;
-  private EdmReturnType returnType;
-  private List<String> parameterNames;
+  protected final Operation operation;
 
-  public EdmOperationImpl(final EdmProviderImpl edm, final FullQualifiedName name, final Operation operation,
-      final EdmTypeKind kind) {
+  protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
+    final List<Parameter> providerParameters = instance.operation.getParameters();
+    if (providerParameters != null) {
+      final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(providerParameters.size());
+      for (Parameter parameter : providerParameters) {
+        _parameters.add(new EdmParameterImpl(instance.edm, parameter));
+      }
+      instance.setParameters(_parameters);
+    }
+
+    final EntitySetPath entitySetPath = instance.operation.getEntitySetPath();
+    if (entitySetPath != null && entitySetPath.getPath() != null) {
+      instance.setEntitySetPath(entitySetPath.getPath());
+    }
+
+    instance.setIsBound(instance.operation.isBound());
+
+    if (instance.operation.getReturnType() != null) {
+      instance.setReturnType(new EdmReturnTypeImpl(instance.edm, instance.operation.getReturnType()));
+    }
+
+    return instance;
+  }
+
+  protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Operation operation,
+          final EdmTypeKind kind) {
+
     super(edm, name, kind);
     this.operation = operation;
-    List<Parameter> providerParameters = operation.getParameters();
-    if (providerParameters != null) {
-      for (Parameter parameter : providerParameters) {
-        parameters.put(parameter.getName(), new EdmParameterImpl(edm, parameter));
-      }
-    }
   }
-
-  @Override
-  public EdmParameter getParameter(final String name) {
-    return parameters.get(name);
-  }
-
-  @Override
-  public List<String> getParameterNames() {
-    if (parameterNames == null) {
-      parameterNames = new ArrayList<String>();
-      List<Parameter> providerParameters = operation.getParameters();
-      if (providerParameters != null) {
-        for (Parameter parameter : providerParameters) {
-          parameterNames.add(parameter.getName());
-        }
-      }
-    }
-    return parameterNames;
-  }
-
-  @Override
-  public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
-    EntitySetPath entitySetPath = operation.getEntitySetPath();
-    EdmEntitySet returnedEntitySet = null;
-    if (bindingParameterEntitySet != null && entitySetPath != null && entitySetPath.getBindingParameter() != null
-        && entitySetPath.getPath() != null) {
-      EdmBindingTarget relatedBindingTarget =
-          bindingParameterEntitySet.getRelatedBindingTarget(entitySetPath.getPath());
-      if (relatedBindingTarget == null) {
-        throw new EdmException("Cannot find entity set with path: " + entitySetPath.getPath());
-      }
-      if (relatedBindingTarget instanceof EdmEntitySet) {
-        returnedEntitySet = (EdmEntitySet) relatedBindingTarget;
-      } else {
-        throw new EdmException("BindingTarget with name: " + relatedBindingTarget.getName() + " must be an entity set");
-      }
-
-    }
-    return returnedEntitySet;
-  }
-
-  @Override
-  public EdmReturnType getReturnType() {
-    if (returnType == null && operation.getReturnType() != null) {
-      returnType = new EdmReturnTypeImpl(edm, operation.getReturnType());
-    }
-    return returnType;
-  }
-
-  @Override
-  public boolean isBound() {
-    return operation.isBound();
-  }
-
 }

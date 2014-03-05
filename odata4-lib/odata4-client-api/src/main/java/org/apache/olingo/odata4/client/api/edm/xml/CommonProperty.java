@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-import java.math.BigInteger;
 import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
 import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 
@@ -36,21 +35,21 @@ public interface CommonProperty extends Named {
 
   void setDefaultValue(String defaultValue);
 
-  String getMaxLength();
+  Integer getMaxLength();
 
-  void setMaxLength(String maxLength);
+  void setMaxLength(Integer maxLength);
 
   boolean isFixedLength();
 
   void setFixedLength(boolean fixedLength);
 
-  BigInteger getPrecision();
+  Integer getPrecision();
 
-  void setPrecision(BigInteger precision);
+  void setPrecision(Integer precision);
 
-  BigInteger getScale();
+  Integer getScale();
 
-  void setScale(BigInteger scale);
+  void setScale(Integer scale);
 
   boolean isUnicode();
 

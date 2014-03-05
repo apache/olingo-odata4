@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 import org.apache.olingo.odata4.server.api.edm.provider.Singleton;
 
 public class EdmSingletonImpl extends EdmBindingTargetImpl implements EdmSingleton {
 
-  public EdmSingletonImpl(final EdmProviderImpl edm, final EdmEntityContainer container, final Singleton singleton) {
+  public EdmSingletonImpl(final Edm edm, final EdmEntityContainer container, final Singleton singleton) {
     super(edm, container, singleton);
   }
 }

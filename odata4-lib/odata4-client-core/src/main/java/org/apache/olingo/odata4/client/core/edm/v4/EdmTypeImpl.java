@@ -18,7 +18,8 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v4;
 
-import org.apache.olingo.odata4.client.core.edm.AbstractEdmType;
+import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmType;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.ComplexTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.EntityTypeImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.EnumTypeImpl;
@@ -29,7 +30,7 @@ public class EdmTypeImpl extends AbstractEdmType {
     super(typeExpression);
   }
 
-  public EdmTypeImpl(final EdmMetadataImpl metadata, final String typeExpression) {
+  public EdmTypeImpl(final XMLMetadata metadata, final String typeExpression) {
     super(metadata, typeExpression);
   }
 

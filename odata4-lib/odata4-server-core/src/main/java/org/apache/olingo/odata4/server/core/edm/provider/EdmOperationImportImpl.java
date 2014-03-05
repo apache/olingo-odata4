@@ -18,45 +18,16 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
-import org.apache.olingo.odata4.commons.api.edm.EdmOperationImport;
 import org.apache.olingo.odata4.server.api.edm.provider.OperationImport;
-import org.apache.olingo.odata4.server.api.edm.provider.Target;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmOperationImport;
 
-public abstract class EdmOperationImportImpl extends EdmNamedImpl implements EdmOperationImport {
+public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
 
-  private final OperationImport operationImport;
-  private final EdmEntityContainer container;
-  private EdmEntitySet returnedEntitySet;
+  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
+          final OperationImport operationImport) {
 
-  public EdmOperationImportImpl(final EdmProviderImpl edm, final String name, final EdmEntityContainer container,
-      final OperationImport operationImport) {
-    super(edm, name);
-    this.container = container;
-    this.operationImport = operationImport;
+    super(edm, container, name, operationImport.getEntitySet());
   }
-
-  @Override
-  public EdmEntitySet getReturnedEntitySet() {
-    Target target = operationImport.getEntitySet();
-    if (target != null && returnedEntitySet == null) {
-      EdmEntityContainer entityContainer = edm.getEntityContainer(target.getEntityContainer());
-      if (entityContainer == null) {
-        throw new EdmException("Can´t find entity container with name: " + target.getEntityContainer());
-      }
-      returnedEntitySet = entityContainer.getEntitySet(target.getTargetName());
-      if (returnedEntitySet == null) {
-        throw new EdmException("Can´t find entity set with name: " + target.getTargetName());
-      }
-    }
-    return returnedEntitySet;
-  }
-
-  @Override
-  public EdmEntityContainer getEntityContainer() {
-    return container;
-  }
-
 }

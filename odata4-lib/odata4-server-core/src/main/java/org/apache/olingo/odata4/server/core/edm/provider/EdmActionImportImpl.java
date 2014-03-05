@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
@@ -27,9 +28,10 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
 
   private final ActionImport actionImport;
 
-  public EdmActionImportImpl(final EdmProviderImpl edm, final String name, final EdmEntityContainer container,
-      final ActionImport actionImport) {
-    super(edm, name, container, actionImport);
+  public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
+          final ActionImport actionImport) {
+
+    super(edm, container, name, actionImport);
     this.actionImport = actionImport;
   }
 

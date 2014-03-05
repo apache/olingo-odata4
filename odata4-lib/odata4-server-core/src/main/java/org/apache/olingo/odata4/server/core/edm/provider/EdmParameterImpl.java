@@ -18,52 +18,18 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmMapping;
-import org.apache.olingo.odata4.commons.api.edm.EdmParameter;
-import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
-import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmParameter;
 import org.apache.olingo.odata4.server.api.edm.provider.Parameter;
 
-public class EdmParameterImpl extends EdmElementImpl implements EdmParameter {
+public class EdmParameterImpl extends AbstractEdmParameter {
 
   private final Parameter parameter;
-  private EdmType typeImpl;
 
-  public EdmParameterImpl(final EdmProviderImpl edm, final Parameter parameter) {
-    super(edm, parameter.getName());
+  public EdmParameterImpl(final Edm edm, final Parameter parameter) {
+    super(edm, parameter.getName(), parameter.getType());
     this.parameter = parameter;
-  }
-
-  @Override
-  public EdmType getType() {
-    if (typeImpl == null) {
-      FullQualifiedName typeName = parameter.getType();
-      if (EdmPrimitiveType.EDM_NAMESPACE.equals(typeName.getNamespace())) {
-        try {
-          typeImpl = EdmPrimitiveTypeKind.valueOf(typeName.getName()).getEdmPrimitiveTypeInstance();
-        } catch (IllegalArgumentException e) {
-          throw new EdmException("Cannot find type with name: " + typeName, e);
-        }
-      } else {
-        typeImpl = edm.getComplexType(typeName);
-        if (typeImpl == null) {
-          typeImpl = edm.getEntityType(typeName);
-          if (typeImpl == null) {
-            typeImpl = edm.getEnumType(typeName);
-            if (typeImpl == null) {
-              typeImpl = edm.getTypeDefinition(typeName);
-              if (typeImpl == null) {
-                throw new EdmException("Cannot find type with name: " + typeName);
-              }
-            }
-          }
-        }
-      }
-    }
-    return typeImpl;
   }
 
   @Override

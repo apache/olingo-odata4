@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
+import org.apache.olingo.odata4.commons.core.edm.EdmMemberImpl;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -29,7 +30,7 @@ public class EdmMemberImplTest {
   @Test
   public void enumMember() {
     EnumMember member = new EnumMember().setName("name").setValue("value");
-    EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), member);
+    EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), member.getName(), member.getValue());
 
     assertEquals("name", memberImpl.getName());
     assertEquals("value", memberImpl.getValue());

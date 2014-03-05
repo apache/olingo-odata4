@@ -59,10 +59,12 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
     return entitySets;
   }
 
+  @Override
   public List<SingletonImpl> getSingletons() {
     return singletons;
   }
 
+  @Override
   public SingletonImpl getSingleton(final String name) {
     return getOneByName(name, getSingletons());
   }

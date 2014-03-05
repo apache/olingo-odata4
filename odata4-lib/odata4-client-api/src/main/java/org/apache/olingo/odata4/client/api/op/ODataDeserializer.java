@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.odata4.client.api.edm.xml.Edmx;
+import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
 import org.w3c.dom.Element;
 
 /**
@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
  */
 public interface ODataDeserializer extends Serializable {
 
-  Edmx toMetadata(InputStream input);
+  XMLMetadata toMetadata(InputStream input);
 
   /**
    * Gets the ServiceDocumentResource object represented by the given InputStream.

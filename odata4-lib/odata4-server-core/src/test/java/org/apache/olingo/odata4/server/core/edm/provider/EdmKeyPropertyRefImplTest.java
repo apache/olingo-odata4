@@ -41,7 +41,7 @@ public class EdmKeyPropertyRefImplTest {
     PropertyRef providerRef = new PropertyRef().setPropertyName("Id");
     EdmEntityType etMock = mock(EdmEntityType.class);
     EdmProperty keyPropertyMock = mock(EdmProperty.class);
-    when(etMock.getProperty("Id")).thenReturn(keyPropertyMock);
+    when(etMock.getStructuralProperty("Id")).thenReturn(keyPropertyMock);
     EdmKeyPropertyRef ref = new EdmKeyPropertyRefImpl(etMock, providerRef);
     assertEquals("Id", ref.getKeyPropertyName());
     assertNull(ref.getAlias());
@@ -58,11 +58,11 @@ public class EdmKeyPropertyRefImplTest {
     PropertyRef providerRef = new PropertyRef().setPropertyName("Id").setAlias("alias").setPath("comp/Id");
     EdmEntityType etMock = mock(EdmEntityType.class);
     EdmProperty keyPropertyMock = mock(EdmProperty.class);
-    EdmElement compMock = mock(EdmProperty.class);
+    EdmProperty compMock = mock(EdmProperty.class);
     EdmComplexType compTypeMock = mock(EdmComplexType.class);
-    when(compTypeMock.getProperty("Id")).thenReturn(keyPropertyMock);
+    when(compTypeMock.getStructuralProperty("Id")).thenReturn(keyPropertyMock);
     when(compMock.getType()).thenReturn(compTypeMock);
-    when(etMock.getProperty("comp")).thenReturn(compMock);
+    when(etMock.getStructuralProperty("comp")).thenReturn(compMock);
     EdmKeyPropertyRef ref = new EdmKeyPropertyRefImpl(etMock, providerRef);
     assertEquals("alias", ref.getAlias());
     assertEquals("comp/Id", ref.getPath());
@@ -103,15 +103,15 @@ public class EdmKeyPropertyRefImplTest {
     PropertyRef providerRef = new PropertyRef().setPropertyName("Id").setAlias("alias").setPath("comp/comp2/Id");
     EdmEntityType etMock = mock(EdmEntityType.class);
     EdmProperty keyPropertyMock = mock(EdmProperty.class);
-    EdmElement compMock = mock(EdmProperty.class);
+    EdmProperty compMock = mock(EdmProperty.class);
     EdmComplexType compTypeMock = mock(EdmComplexType.class);
-    EdmElement comp2Mock = mock(EdmProperty.class);
+    EdmProperty comp2Mock = mock(EdmProperty.class);
     EdmComplexType comp2TypeMock = mock(EdmComplexType.class);
-    when(comp2TypeMock.getProperty("Id")).thenReturn(keyPropertyMock);
+    when(comp2TypeMock.getStructuralProperty("Id")).thenReturn(keyPropertyMock);
     when(comp2Mock.getType()).thenReturn(comp2TypeMock);
-    when(compTypeMock.getProperty("comp2")).thenReturn(comp2Mock);
+    when(compTypeMock.getStructuralProperty("comp2")).thenReturn(comp2Mock);
     when(compMock.getType()).thenReturn(compTypeMock);
-    when(etMock.getProperty("comp")).thenReturn(compMock);
+    when(etMock.getStructuralProperty("comp")).thenReturn(compMock);
     EdmKeyPropertyRef ref = new EdmKeyPropertyRefImpl(etMock, providerRef);
 
     EdmProperty property = ref.getProperty();

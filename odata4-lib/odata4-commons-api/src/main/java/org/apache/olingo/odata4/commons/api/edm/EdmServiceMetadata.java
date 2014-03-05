@@ -48,6 +48,11 @@ public interface EdmServiceMetadata {
   List<EdmSingletonInfo> getSingletonInfos();
 
   /**
+   * @return a list of {@link EdmActionImportInfo} objects inside the data model
+   */
+  List<EdmActionImportInfo> getActionImportInfos();
+
+  /**
    * @return a list of {@link EdmFunctionImportInfo} objects inside the data model
    */
   List<EdmFunctionImportInfo> getFunctionImportInfos();

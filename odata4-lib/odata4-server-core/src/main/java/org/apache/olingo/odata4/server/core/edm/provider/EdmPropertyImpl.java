@@ -18,52 +18,25 @@
  */
 package org.apache.olingo.odata4.server.core.edm.provider;
 
-import org.apache.olingo.odata4.commons.api.edm.EdmException;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmMapping;
-import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
-import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.odata4.commons.core.edm.AbstractEdmProperty;
 import org.apache.olingo.odata4.server.api.edm.provider.Property;
 
-public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
+public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty {
 
   private final Property property;
-  private final boolean isPrimitive;
-  private EdmType propertyType;
 
-  public EdmPropertyImpl(final EdmProviderImpl edm, final Property property) {
+  public EdmPropertyImpl(final Edm edm, final Property property) {
     super(edm, property.getName());
     this.property = property;
-    isPrimitive = EdmPrimitiveType.EDM_NAMESPACE.equals(property.getType().getNamespace());
   }
 
   @Override
-  public EdmType getType() {
-    if (propertyType == null) {
-      FullQualifiedName typeName = property.getType();
-      if (isPrimitive) {
-        try {
-          propertyType = EdmPrimitiveTypeKind.valueOf(typeName.getName()).getEdmPrimitiveTypeInstance();
-        } catch (IllegalArgumentException e) {
-          throw new EdmException("Cannot find type with name: " + typeName, e);
-        }
-      } else {
-        propertyType = edm.getComplexType(typeName);
-        if (propertyType == null) {
-          propertyType = edm.getEnumType(typeName);
-          if (propertyType == null) {
-            propertyType = edm.getTypeDefinition(typeName);
-            if (propertyType == null) {
-              throw new EdmException("Cannot find type with name: " + typeName);
-            }
-          }
-        }
-      }
-    }
-
-    return propertyType;
+  protected FullQualifiedName getTypeFQN() {
+    return property.getType();
   }
 
   @Override
@@ -79,11 +52,6 @@ public class EdmPropertyImpl extends EdmElementImpl implements EdmProperty {
   @Override
   public String getMimeType() {
     return property.getMimeType();
-  }
-
-  @Override
-  public boolean isPrimitive() {
-    return isPrimitive;
   }
 
   @Override

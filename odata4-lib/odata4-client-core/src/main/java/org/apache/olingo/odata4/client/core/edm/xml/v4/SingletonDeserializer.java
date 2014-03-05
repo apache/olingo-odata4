@@ -39,7 +39,7 @@ public class SingletonDeserializer extends AbstractEdmDeserializer<SingletonImpl
         if ("Name".equals(jp.getCurrentName())) {
           singleton.setName(jp.nextTextValue());
         } else if ("Type".equals(jp.getCurrentName())) {
-          singleton.setType(jp.nextTextValue());
+          singleton.setEntityType(jp.nextTextValue());
         } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
           jp.nextToken();
           singleton.getNavigationPropertyBindings().add(

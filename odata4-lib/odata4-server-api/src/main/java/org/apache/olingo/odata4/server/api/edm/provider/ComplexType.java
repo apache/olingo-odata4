@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 
-public class ComplexType extends StructuralType {
+public class ComplexType extends StructuredType {
 
   @Override
   public ComplexType setName(final String name) {

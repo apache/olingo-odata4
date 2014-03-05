@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractParameter;
 
@@ -26,7 +25,6 @@ public class ParameterImpl extends AbstractParameter implements Parameter {
 
   private static final long serialVersionUID = -1067642515116697747L;
 
-  @JsonProperty(value = "SRID")
   private String srid;
 
   @Override

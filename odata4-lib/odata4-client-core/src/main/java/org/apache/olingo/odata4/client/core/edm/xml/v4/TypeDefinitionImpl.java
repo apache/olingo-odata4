@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
-import java.math.BigInteger;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
+@JsonDeserialize(using = TypeDefinitionDeserializer.class)
 public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinition {
 
   private static final long serialVersionUID = -5888231162358116515L;
@@ -32,11 +33,11 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
 
   private String underlyingType;
 
-  private String maxLength;
+  private Integer maxLength;
 
-  private BigInteger precision;
+  private Integer precision;
 
-  private BigInteger scale;
+  private Integer scale;
 
   private boolean unicode = true;
 
@@ -65,32 +66,32 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
   }
 
   @Override
-  public String getMaxLength() {
+  public Integer getMaxLength() {
     return maxLength;
   }
 
   @Override
-  public void setMaxLength(final String maxLength) {
+  public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
 
   @Override
-  public BigInteger getPrecision() {
+  public Integer getPrecision() {
     return precision;
   }
 
   @Override
-  public void setPrecision(final BigInteger precision) {
+  public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
 
   @Override
-  public BigInteger getScale() {
+  public Integer getScale() {
     return scale;
   }
 
   @Override
-  public void setScale(final BigInteger scale) {
+  public void setScale(final Integer scale) {
     this.scale = scale;
   }
 

@@ -29,7 +29,7 @@ public abstract class AbstractMember extends AbstractEdmItem implements Member {
   private String name;
 
   @JsonProperty("Value")
-  private Integer value;
+  private String value;
 
   @Override
   public String getName() {
@@ -41,11 +41,11 @@ public abstract class AbstractMember extends AbstractEdmItem implements Member {
   }
 
   @Override
-  public Integer getValue() {
+  public String getValue() {
     return value;
   }
 
-  public void setValue(final Integer value) {
+  public void setValue(final String value) {
     this.value = value;
   }
 }

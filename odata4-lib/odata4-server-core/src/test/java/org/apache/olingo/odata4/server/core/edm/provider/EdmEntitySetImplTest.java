@@ -36,7 +36,7 @@ import org.apache.olingo.odata4.server.api.edm.provider.EntitySet;
 import org.apache.olingo.odata4.server.api.edm.provider.EntityType;
 import org.apache.olingo.odata4.server.api.edm.provider.NavigationPropertyBinding;
 import org.apache.olingo.odata4.server.api.edm.provider.PropertyRef;
-import org.apache.olingo.odata4.server.api.edm.provider.Target;
+import org.apache.olingo.odata4.commons.api.edm.Target;
 import org.junit.Test;
 
 public class EdmEntitySetImplTest {
