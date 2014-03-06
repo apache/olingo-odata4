@@ -64,7 +64,7 @@
   <properties>
     <commons.codec.version>1.9</commons.codec.version>
     <commons.io.version>2.4</commons.io.version>
-    <commons.lang3.version>3.2.1</commons.lang3.version>
+    <commons.lang3.version>3.3</commons.lang3.version>
 
     <hc.client.version>4.2.6</hc.client.version>
     <jackson.version>2.3.2</jackson.version>
