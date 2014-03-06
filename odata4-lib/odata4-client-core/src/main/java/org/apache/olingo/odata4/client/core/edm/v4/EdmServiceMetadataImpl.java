@@ -20,6 +20,7 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
@@ -27,9 +28,11 @@ import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmServiceMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.odata4.commons.core.edm.EdmActionImportInfoImpl;
+import org.apache.olingo.odata4.commons.core.edm.EdmFunctionImportInfoImpl;
 import org.apache.olingo.odata4.commons.core.edm.EdmSingletonInfoImpl;
 
 public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
@@ -63,6 +66,24 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
       }
       return singletonInfos;
     }
+  }
+
+  @Override
+  public List<EdmFunctionImportInfo> getFunctionImportInfos() {
+    synchronized (this) {
+      if (functionImportInfos == null) {
+        functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
+        for (Schema schema : xmlMetadata.getSchemas()) {
+          for (org.apache.olingo.odata4.client.api.edm.xml.EntityContainer entityContainer : schema.getEntityContainers()) {
+            for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
+              functionImportInfos.add(
+                      new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
+            }
+          }
+        }
+      }
+    }
+    return functionImportInfos;
   }
 
   @Override

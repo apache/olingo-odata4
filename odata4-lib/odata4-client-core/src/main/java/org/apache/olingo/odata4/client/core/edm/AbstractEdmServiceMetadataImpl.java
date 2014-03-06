@@ -25,16 +25,15 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.EntitySet;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata4.commons.core.edm.EdmEntitySetInfoImpl;
-import org.apache.olingo.odata4.commons.core.edm.EdmFunctionImportInfoImpl;
 
 public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetadata {
 
@@ -42,7 +41,9 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
 
   private List<EdmEntitySetInfo> entitySetInfos;
 
-  private List<EdmFunctionImportInfo> functionImportInfos;
+  protected List<EdmFunctionImportInfo> functionImportInfos;
+
+  protected List<EdmActionImportInfo> actionImportInfos;
 
   public static EdmServiceMetadata getInstance(final XMLMetadata xmlMetadata) {
     return xmlMetadata instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl
@@ -78,24 +79,6 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
       }
       return entitySetInfos;
     }
-  }
-
-  @Override
-  public List<EdmFunctionImportInfo> getFunctionImportInfos() {
-    synchronized (this) {
-      if (functionImportInfos == null) {
-        functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
-          for (EntityContainer entityContainer : schema.getEntityContainers()) {
-            for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
-              functionImportInfos.add(
-                      new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
-            }
-          }
-        }
-      }
-    }
-    return functionImportInfos;
   }
 
   @Override

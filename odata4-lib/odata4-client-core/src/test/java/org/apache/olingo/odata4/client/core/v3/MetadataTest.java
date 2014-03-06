@@ -19,6 +19,7 @@
 package org.apache.olingo.odata4.client.core.v3;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
@@ -37,11 +39,13 @@ import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
+import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.junit.Test;
@@ -138,6 +142,31 @@ public class MetadataTest extends AbstractTest {
     final Edm metadata = getClient().getReader().
             readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
+
+    final Set<String> actionImports = new HashSet<String>();
+    for (EdmActionImportInfo info : metadata.getServiceMetadata().getActionImportInfos()) {
+      actionImports.add(info.getActionImportName());
+    }
+    final Set<String> expectedAI = new HashSet<String>(Arrays.asList(new String[]{
+      "ResetDataSource",
+      "IncreaseSalaries",
+      "Sack",
+      "GetComputer",
+      "ChangeProductDimensions",
+      "ResetComputerDetailsSpecifications"}));
+    assertEquals(expectedAI, actionImports);
+    final Set<String> functionImports = new HashSet<String>();
+    for (EdmFunctionImportInfo info : metadata.getServiceMetadata().getFunctionImportInfos()) {
+      functionImports.add(info.getFunctionImportName());
+    }
+    final Set<String> expectedFI = new HashSet<String>(Arrays.asList(new String[]{
+      "GetPrimitiveString",
+      "GetSpecificCustomer",
+      "GetCustomerCount",
+      "GetArgumentPlusOne",
+      "EntityProjectionReturnsCollectionOfComplexTypes",
+      "InStreamErrorGetCustomer"}));
+    assertEquals(expectedFI, functionImports);
 
     final EdmEntityContainer container = metadata.getEntityContainer(
             new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));

@@ -18,13 +18,21 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v3;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmServiceMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingletonInfo;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.odata4.commons.core.edm.EdmActionImportInfoImpl;
+import org.apache.olingo.odata4.commons.core.edm.EdmFunctionImportInfoImpl;
 
 public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 
@@ -45,8 +53,45 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
   }
 
   @Override
+  public List<EdmFunctionImportInfo> getFunctionImportInfos() {
+    synchronized (this) {
+      if (functionImportInfos == null) {
+        functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
+        for (Schema schema : xmlMetadata.getSchemas()) {
+          for (EntityContainer entityContainer : schema.getEntityContainers()) {
+            for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
+              final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
+              if (V3FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
+                functionImportInfos.add(
+                        new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
+              }
+            }
+          }
+        }
+      }
+      return functionImportInfos;
+    }
+  }
+
+  @Override
   public List<EdmActionImportInfo> getActionImportInfos() {
-    throw new UnsupportedInV3Exception();
+    synchronized (this) {
+      if (actionImportInfos == null) {
+        actionImportInfos = new ArrayList<EdmActionImportInfo>();
+        for (Schema schema : xmlMetadata.getSchemas()) {
+          for (EntityContainer entityContainer : schema.getEntityContainers()) {
+            for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
+              final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
+              if (!V3FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
+                actionImportInfos.add(
+                        new EdmActionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
+              }
+            }
+          }
+        }
+      }
+      return actionImportInfos;
+    }
   }
 
 }
