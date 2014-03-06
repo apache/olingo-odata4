@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import java.math.BigInteger;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.Named;
 

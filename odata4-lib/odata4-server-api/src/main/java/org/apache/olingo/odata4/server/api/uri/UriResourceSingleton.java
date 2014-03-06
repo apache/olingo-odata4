@@ -21,12 +21,26 @@ package org.apache.olingo.odata4.server.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmSingleton;
 
+/**
+ * Used to describe an entity set used within an resource path
+ * For example: http://.../serviceroot/singleton
+ */
 public interface UriResourceSingleton extends UriResourcePartTyped {
 
+  /**
+   * @return Singleton used in the resource path
+   */
   EdmSingleton getSingleton();
 
+  /**
+   * @return Type of the Singleton
+   */
   EdmEntityType getEntityType();
 
+  
+  /**
+   * @return Type filter
+   */
   EdmEntityType getEntityTypeFilter();
 
 }

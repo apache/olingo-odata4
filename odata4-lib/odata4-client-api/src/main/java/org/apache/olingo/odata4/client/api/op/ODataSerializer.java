@@ -21,8 +21,6 @@ package org.apache.olingo.odata4.client.api.op;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import org.apache.olingo.odata4.client.api.format.ODataFormat;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**

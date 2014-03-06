@@ -62,7 +62,7 @@ public class UriResourceImplTest {
     assertEquals("Text", impl.getText());
     assertEquals("A", impl.getName());
     assertEquals("@A", impl.getAlias());
-    assertEquals(expression, impl.getExpression());
+    assertEquals(expression, impl.getExression());
   }
 
   @Test
@@ -99,7 +99,7 @@ public class UriResourceImplTest {
 
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
-    assertEquals("A", impl.getLamdaVariable());
+    assertEquals("A", impl.getLambdaVariable());
     assertEquals(EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance(), impl.getType());
     assertEquals("all", impl.toString());
   }
@@ -473,7 +473,7 @@ public class UriResourceImplTest {
 
     assertEquals("A", impl.toString());
     assertEquals(entityType, impl.getType());
-    assertEquals("A", impl.getVariableText());
+    assertEquals("A", impl.getVariableName());
     assertEquals(false, impl.isCollection());
     impl.setCollection(true);
     assertEquals(true, impl.isCollection());
@@ -483,7 +483,6 @@ public class UriResourceImplTest {
   @Test
   public void testUriResourceStartingTypeFilterImpl() {
     UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();
-    assertEquals(UriResourceKind.startingTypeFilter, impl.getKind());
 
     EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETTwoKeyNav);
 

@@ -20,9 +20,9 @@ package org.apache.olingo.odata4.server.core.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 import org.apache.olingo.odata4.server.api.uri.UriResourceKind;
-import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaRef;
+import org.apache.olingo.odata4.server.api.uri.UriResourceLambdaVariable;
 
-public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaRef {
+public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaVariable {
 
   private EdmType type;
   private boolean isCollection;
@@ -33,7 +33,7 @@ public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements Ur
   }
 
   @Override
-  public String getVariableText() {
+  public String getVariableName() {
     return variableText;
   }
 

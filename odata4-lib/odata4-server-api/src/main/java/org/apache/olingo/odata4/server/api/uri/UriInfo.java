@@ -18,9 +18,17 @@
  */
 package org.apache.olingo.odata4.server.api.uri;
 
+
+/**
+ * Object acting as general access to URI information extracted from the request URI. Depending on
+ * the URI info kind different interfaces are used to provide access to that information. </p>
+ * Use method {@link #getKind()} to obtain URI info kind information and to perform an appropriate cast.
+ */
 public interface UriInfo extends
     UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
     UriInfoEntityId, UriInfoMetadata, UriInfoResource {
+  
+  public UriInfoKind getKind();
 
   public UriInfoService asUriInfoService();
 
@@ -36,5 +44,5 @@ public interface UriInfo extends
 
   public UriInfoResource asUriInfoResource();
 
-  public UriInfoKind getKind();
+  
 }

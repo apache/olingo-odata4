@@ -18,8 +18,16 @@
  */
 package org.apache.olingo.odata4.server.api.uri;
 
-public interface UriResourceLambdaRef extends UriResourcePartTyped {
+/**
+ * Used to describe an lambda variable used within an resource path
+ * For example: http://.../serviceroot/entityset/listofstring/any(d: 'string' eq d)
+ */
+public interface UriResourceLambdaVariable extends UriResourcePartTyped {
 
-  public String getVariableText();
+  
+  /**
+   * @return Name of the lambda variable
+   */
+  public String getVariableName();
 
 }

@@ -60,7 +60,7 @@ public class UriParameterImpl implements UriParameter {
   }
 
   @Override
-  public Expression getExpression() {
+  public Expression getExression() {
     return expression;
   }
 

@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.odata4.server.api.uri;
 
+/**
+ * Used for URI info kind {@link UriInfoKind#batch} to describe URIs like
+ * http://.../serviceroot/$batch
+ */
 public interface UriInfoBatch {
 
 }

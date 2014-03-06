@@ -28,20 +28,41 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SelectOption;
 
 /**
- * Indicates a URL access to an single Entity
+ * Used for URI info kind {@link UriInfoKind#entityId} to describe URIs like
+ * http://.../serviceroot/$entity...
  */
 public interface UriInfoEntityId {
 
+  /**
+   * @return List of custom query options used in the URI
+   */
   public List<CustomQueryOption> getCustomQueryOptions();
 
+  /**
+   * Behind $entity a optional type cast can be used in the URI.
+   * For example: http://.../serviceroot/$entity/namespace.entitytype
+   * @return Type cast if found, otherwise null
+   */
   public EdmEntityType getEntityTypeCast();
 
+  /**
+   * @return Object containing information of the $expand option
+   */
   public ExpandOption getExpandOption();
 
+  /**
+   * @return Object containing information of the $format option
+   */
   public FormatOption getFormatOption();
 
+  /**
+   * @return Object containing information of the $id option
+   */
   public IdOption getIdOption();
 
+  /**
+   * @return Object containing information of the $select option
+   */
   public SelectOption getSelectOption();
 
 }

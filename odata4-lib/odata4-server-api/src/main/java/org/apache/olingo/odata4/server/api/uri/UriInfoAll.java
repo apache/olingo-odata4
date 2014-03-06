@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.odata4.server.api.uri;
 
+
+/**
+ * Used for URI info kind {@link UriInfoKind#all} to describe URIs like 
+ * http://.../serviceroot/$all
+ */
 public interface UriInfoAll {
 
 }

@@ -33,32 +33,86 @@ import org.apache.olingo.odata4.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.odata4.server.api.uri.queryoption.TopOption;
 
+/**
+ * Used for URI info kind {@link UriInfoKind#resource} to describe URIs like
+ * E.g. http://.../serviceroot/entitySet
+ */
 public interface UriInfoResource {
 
+  /**
+   * @return List of custom query options used in the URI
+   */
   List<CustomQueryOption> getCustomQueryOptions();
 
+  /**
+   * @return Object containing information of the $expand option
+   */
   ExpandOption getExpandOption();
 
+  /**
+   * @return Object containing information of the $filter option
+   */
   FilterOption getFilterOption();
 
+  /**
+   * @return Object containing information of the $format option
+   */
   FormatOption getFormatOption();
-
+  
+  /**
+   * @return Object containing information of the $id option
+   */
   IdOption getIdOption();
 
-  CountOption getInlineCountOption();
+  /**
+   * @return Object containing information of the $count option
+   */
+  CountOption getCountOption();
 
+  /**
+   * @return Object containing information of the $orderby option
+   */
   OrderByOption getOrderByOption();
 
+  /**
+   * @return Object containing information of the $search option
+   */
   SearchOption getSearchOption();
 
+  /**
+   * @return Object containing information of the $select option
+   */
   SelectOption getSelectOption();
 
+  /**
+   * @return Object containing information of the $skip option
+   */
   SkipOption getSkipOption();
 
+  /**
+   * @return Object containing information of the $skiptoken option
+   */
   SkipTokenOption getSkipTokenOption();
 
+  /**
+   * @return Object containing information of the $top option
+   */
   TopOption getTopOption();
-
+  
+  /**
+   * The path segments behind the service root define which resources are  
+   * requested by that URI. This may be entities/functions/actions and more.
+   * Each segments information (name, key predicates, function parameters, ...) is 
+   * stored within an resource object dedicated for that segment type.</p>
+   * For example: the URI http://.../serviceroot/entitySet(1)/Adresse will 
+   * have 2 ResourceParts:<br> 
+   * - The first one of type {@link UriResourceEntitySet} 
+   * containing the name of the entity set and also the key predicate information.<br> 
+   * - The second one of type {@link UriResourceComplexProperty} containing the name of
+   * the accessed complex property
+   * 
+   * @return List of resource parts. 
+   */
   List<UriResource> getUriResourceParts();
 
 }

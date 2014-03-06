@@ -24,8 +24,15 @@ import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
+/**
+ * Used to describe an function import or bound function used within an resource path
+ * For example: http://.../serviceroot/functionImport(P1=1,P2='A')
+ */
 public interface UriResourceFunction extends UriResourcePartTyped {
 
+  /**
+   * @return Function used in the resource path
+   */
   EdmFunction getFunction();
 
   /**
@@ -35,12 +42,25 @@ public interface UriResourceFunction extends UriResourcePartTyped {
    */
   EdmFunctionImport getFunctionImport();
 
+  /**
+   * @return Key predicates if used, otherwise null
+   */
   List<UriParameter> getKeyPredicates();
 
+  
+  /**
+   * @return List of function parameters
+   */
   List<UriParameter> getParameters();
 
+  /**
+   * @return Type filter before key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnCollection();
 
+  /**
+   * @return Type filter behind key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnEntry();
 
 }

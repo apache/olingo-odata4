@@ -23,14 +23,29 @@ import java.util.List;
 import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
+/**
+ * Used to describe an navigation property used within an resource path
+ * For example: http://.../serviceroot/entityset(1)/navProperty
+ */
 public interface UriResourceNavigation extends UriResourcePartTyped {
-
-  List<UriParameter> getKeyPredicates();
-
+  
+  /**
+   * @return Navigation property
+   */
   EdmNavigationProperty getProperty();
 
+  /**
+   * @return Key predicates if used, otherwise null
+   */
+  List<UriParameter> getKeyPredicates();
+
+  /**
+   * @return Type filter before key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnCollection();
 
+  /**
+   * @return Type filter behind key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnEntry();
-
 }

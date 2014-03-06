@@ -181,7 +181,7 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public CountOption getInlineCountOption() {
+  public CountOption getCountOption() {
     return inlineCountOption;
   }
 

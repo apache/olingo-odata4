@@ -169,7 +169,7 @@ public class UriInfoImplTest {
     assertEquals(filter, uriInfo.getFilterOption());
     assertEquals(format, uriInfo.getFormatOption());
     assertEquals(id, uriInfo.getIdOption());
-    assertEquals(inlinecount, uriInfo.getInlineCountOption());
+    assertEquals(inlinecount, uriInfo.getCountOption());
     assertEquals(orderby, uriInfo.getOrderByOption());
     assertEquals(search, uriInfo.getSearchOption());
     assertEquals(select, uriInfo.getSelectOption());

@@ -20,10 +20,22 @@ package org.apache.olingo.odata4.server.api.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 
+/**
+ * Used to describe an complex property used within an resource path
+ * E.g. http://.../serviceroot/entityset(1)/complexproperty
+ */
 public interface UriResourceComplexProperty extends UriResourceProperty {
 
+  /**
+   * @return Complex property used in the resource path
+   */
   EdmComplexType getComplexType();
 
+  /**
+   * Behind a complex property may be a type filter
+   * E.g. http://.../serviceroot/entityset(1)/complexproperty/namespace.complextype
+   * @return Type filter if found, otherwise null 
+   */
   EdmComplexType getComplexTypeFilter();
 
 }
