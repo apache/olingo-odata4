@@ -20,10 +20,20 @@ package org.apache.olingo.odata4.server.api.uri;
 
 import org.apache.olingo.odata4.server.api.uri.queryoption.expression.Expression;
 
+/**
+ * Used to describe an all lambda expression used within an resource path
+ * For example: http://.../serviceroot/entityset/all(...)
+ */
 public interface UriResourceLambdaAll extends UriResourcePartTyped {
 
-  public String getLamdaVariable();
+  /**
+   * @return Name of the lambda variable
+   */
+  public String getLambdaVariable();
 
+  /**
+   * @return Lambda expression
+   */
   public Expression getExpression();
 
 }

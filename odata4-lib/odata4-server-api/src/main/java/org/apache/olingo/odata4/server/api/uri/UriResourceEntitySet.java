@@ -24,16 +24,35 @@ import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
+/**
+ * Used to describe an entity set used within an resource path
+ * For example: http://.../serviceroot/entityset(1)
+ */
 public interface UriResourceEntitySet extends UriResourcePartTyped {
-
+  
+  /**
+   * @return Entity set used in the resource path
+   */
   EdmEntitySet getEntitySet();
 
+  /**
+   * @return Type of the entity set
+   */
   EdmEntityType getEntityType();
 
+  /**
+   * @return Key predicates if used, otherwise null
+   */
   List<UriParameter> getKeyPredicates();
 
+  /**
+   * @return Type filter before key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnCollection();
 
+  /**
+   * @return Type filter behind key predicates if used, otherwise null
+   */
   EdmType getTypeFilterOnEntry();
 
 }

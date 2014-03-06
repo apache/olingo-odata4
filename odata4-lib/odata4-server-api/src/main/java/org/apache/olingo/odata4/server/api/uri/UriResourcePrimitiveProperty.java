@@ -18,6 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.api.uri;
 
+/**
+ * Used to describe an primitive property used within an resource path
+ * For example: http://.../serviceroot/entityset(1)/property
+ */
 public interface UriResourcePrimitiveProperty extends UriResourceProperty {
 
 }

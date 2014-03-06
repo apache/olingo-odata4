@@ -20,8 +20,14 @@ package org.apache.olingo.odata4.server.api.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
 
+/**
+ * Used to describe an resource part which is an property (super interface)
+ */
 public interface UriResourceProperty extends UriResourcePartTyped {
 
+  /**
+   * @return Property used in the resource path
+   */
   EdmProperty getProperty();
 
 }

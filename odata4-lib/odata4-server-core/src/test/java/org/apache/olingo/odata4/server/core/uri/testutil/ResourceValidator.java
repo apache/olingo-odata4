@@ -213,7 +213,7 @@ public class ResourceValidator implements Validator {
   public ResourceValidator isLambdaVar(final String var) {
     String actualVar = null;
     if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
-      actualVar = ((UriResourceLambdaAllImpl) uriPathInfo).getLamdaVariable();
+      actualVar = ((UriResourceLambdaAllImpl) uriPathInfo).getLambdaVariable();
     } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
       actualVar = ((UriResourceLambdaAnyImpl) uriPathInfo).getLamdaVariable();
     } else {
@@ -227,8 +227,7 @@ public class ResourceValidator implements Validator {
   public ResourceValidator isTypeFilter(final FullQualifiedName expectedType) {
 
     if (uriPathInfo.getKind() != UriResourceKind.complexProperty &&
-        uriPathInfo.getKind() != UriResourceKind.singleton &&
-        uriPathInfo.getKind() != UriResourceKind.startingTypeFilter) {
+        uriPathInfo.getKind() != UriResourceKind.singleton) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
 
@@ -552,7 +551,7 @@ public class ResourceValidator implements Validator {
   }
 
   public ResourceValidator isInlineCountText(final String inlineCountText) {
-    assertEquals(inlineCountText, uriInfo.getInlineCountOption().getText());
+    assertEquals(inlineCountText, uriInfo.getCountOption().getText());
     return this;
   }
 

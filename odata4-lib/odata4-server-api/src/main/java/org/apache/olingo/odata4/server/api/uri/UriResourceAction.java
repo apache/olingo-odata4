@@ -21,8 +21,15 @@ package org.apache.olingo.odata4.server.api.uri;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
 
+/**
+ * Used to describe an action used within an resource path
+ * For example: http://.../serviceroot/action()
+ */
 public interface UriResourceAction extends UriResourcePartTyped {
 
+  /**
+   * @return Action used in the resource path
+   */
   EdmAction getAction();
 
   /**

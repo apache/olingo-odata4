@@ -21,8 +21,15 @@ package org.apache.olingo.odata4.server.api.uri;
 
 import java.util.List;
 
+/**
+ * Used for URI info kind {@link UriInfoKind#crossjoin} to describe URIs like
+ * http://.../serviceroot/$crossjoin(...)
+ */
 public interface UriInfoCrossjoin {
 
+  /**
+   * @return List of entity set names
+   */
   List<String> getEntitySetNames();
 
 }

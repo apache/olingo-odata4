@@ -28,7 +28,7 @@ import org.apache.olingo.odata4.server.core.uri.queryoption.expression.Expressio
 
 public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements UriResourceLambdaAny {
   protected EdmProperty property;
-  private String lamdaVariable;
+  private String lambdaVariable;
   private ExpressionImpl expression;
 
   public UriResourceLambdaAnyImpl() {
@@ -47,11 +47,11 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
 
   @Override
   public String getLamdaVariable() {
-    return lamdaVariable;
+    return lambdaVariable;
   }
 
-  public UriResourceLambdaAnyImpl setLamdaVariable(final String lamdaVariable) {
-    this.lamdaVariable = lamdaVariable;
+  public UriResourceLambdaAnyImpl setLamdaVariable(final String lambdaVariable) {
+    this.lambdaVariable = lambdaVariable;
     return this;
   };
 

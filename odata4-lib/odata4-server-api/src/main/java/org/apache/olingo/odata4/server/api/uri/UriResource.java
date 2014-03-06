@@ -18,8 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata4.server.api.uri;
 
+/**
+ * Super interface for all objects representing resource parts. 
+ * See {@link UriInfoResource} for details. 
+ */
 public interface UriResource {
 
+  /**
+   * @return Kind of the resource part 
+   */
   UriResourceKind getKind();
 
   @Override

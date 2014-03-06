@@ -21,12 +21,24 @@ package org.apache.olingo.odata4.server.api.uri;
 
 import org.apache.olingo.odata4.commons.api.edm.EdmType;
 
+/**
+ * Used to describe an typed resource part (super interface)
+ */
 public interface UriResourcePartTyped extends UriResource {
 
+  /**
+   * @return Type of the resource part
+   */
   EdmType getType();
 
+  /**
+   * @return True if the resource part is a collection, otherwise false
+   */
   boolean isCollection();
 
+  /**
+   * @return String representation of the type
+   */
   String toString(boolean includeFilters);
 
 }

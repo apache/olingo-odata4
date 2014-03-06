@@ -29,7 +29,7 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
   private boolean isCollection;
 
   public UriResourceStartingTypeFilterImpl() {
-    super(UriResourceKind.startingTypeFilter);
+    super(null);
   }
 
   @Override
