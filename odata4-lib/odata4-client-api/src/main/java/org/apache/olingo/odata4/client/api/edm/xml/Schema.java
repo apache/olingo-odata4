@@ -24,21 +24,17 @@ public interface Schema {
 
   String getNamespace();
 
-  void setNamespace(String namespace);
-
   String getAlias();
-
-  void setAlias(String alias);
 
   List<? extends EntityType> getEntityTypes();
 
-  List<? extends EnumType> getEnumTypes();
+  List<EnumType> getEnumTypes();
 
   EnumType getEnumType(String name);
 
-  List<? extends AbstractAnnotations> getAnnotationsList();
+  List<? extends CommonAnnotations> getAnnotationsList();
 
-  AbstractAnnotations getAnnotationsList(String target);
+  CommonAnnotations getAnnotationsList(String target);
 
   List<? extends ComplexType> getComplexTypes();
 

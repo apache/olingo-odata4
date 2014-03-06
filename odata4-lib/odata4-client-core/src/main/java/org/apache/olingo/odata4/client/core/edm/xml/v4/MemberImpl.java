@@ -29,17 +29,16 @@ public class MemberImpl extends AbstractMember implements AnnotatedEdmItem {
   private static final long serialVersionUID = -344920557183058824L;
 
   @JsonProperty("Annotation")
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
   @JsonIgnore
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

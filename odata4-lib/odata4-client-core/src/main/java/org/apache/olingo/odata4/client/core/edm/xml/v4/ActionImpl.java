@@ -21,8 +21,8 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Action;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ReturnType;
 
 @JsonDeserialize(using = ActionDeserializer.class)
@@ -36,16 +36,15 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
 
   private String entitySetPath;
 
-  private final List<CommonParameter> parameters = new ArrayList<CommonParameter>();
+  private final List<Parameter> parameters = new ArrayList<Parameter>();
 
-  private ReturnTypeImpl returnType;
+  private ReturnType returnType;
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -55,7 +54,6 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
     return bound;
   }
 
-  @Override
   public void setBound(final boolean bound) {
     this.bound = bound;
   }
@@ -65,29 +63,27 @@ public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
     return entitySetPath;
   }
 
-  @Override
   public void setEntitySetPath(final String entitySetPath) {
     this.entitySetPath = entitySetPath;
   }
 
   @Override
-  public CommonParameter getParameter(final String name) {
+  public Parameter getParameter(final String name) {
     return getOneByName(name, getParameters());
   }
 
   @Override
-  public List<CommonParameter> getParameters() {
+  public List<Parameter> getParameters() {
     return parameters;
   }
 
   @Override
-  public ReturnTypeImpl getReturnType() {
+  public ReturnType getReturnType() {
     return returnType;
   }
 
-  @Override
   public void setReturnType(final ReturnType returnType) {
-    this.returnType = (ReturnTypeImpl) returnType;
+    this.returnType = returnType;
   }
 
 }

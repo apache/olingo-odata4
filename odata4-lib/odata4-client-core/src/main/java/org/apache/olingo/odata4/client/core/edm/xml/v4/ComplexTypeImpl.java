@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or >ied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationProperty;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Property;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractComplexType;
 
 public class ComplexTypeImpl extends AbstractComplexType implements ComplexType {
@@ -34,18 +36,17 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
 
   private boolean openType = false;
 
-  private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
+  private final List<Property> properties = new ArrayList<Property>();
 
-  private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();
+  private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
   public boolean isAbstractEntityType() {
     return abstractEntityType;
   }
 
-  @Override
   public void setAbstractEntityType(final boolean abstractEntityType) {
     this.abstractEntityType = abstractEntityType;
   }
@@ -55,7 +56,6 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
     return baseType;
   }
 
-  @Override
   public void setBaseType(final String baseType) {
     this.baseType = baseType;
   }
@@ -65,39 +65,37 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
     return openType;
   }
 
-  @Override
   public void setOpenType(final boolean openType) {
     this.openType = openType;
   }
 
   @Override
-  public PropertyImpl getProperty(final String name) {
-    return (PropertyImpl) super.getProperty(name);
+  public Property getProperty(final String name) {
+    return (Property) super.getProperty(name);
   }
 
   @Override
-  public List<PropertyImpl> getProperties() {
+  public List<Property> getProperties() {
     return properties;
   }
 
   @Override
-  public NavigationPropertyImpl getNavigationProperty(String name) {
-    return (NavigationPropertyImpl) super.getNavigationProperty(name);
+  public NavigationProperty getNavigationProperty(final String name) {
+    return (NavigationProperty) super.getNavigationProperty(name);
   }
 
   @Override
-  public List<NavigationPropertyImpl> getNavigationProperties() {
+  public List<NavigationProperty> getNavigationProperties() {
     return navigationProperties;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

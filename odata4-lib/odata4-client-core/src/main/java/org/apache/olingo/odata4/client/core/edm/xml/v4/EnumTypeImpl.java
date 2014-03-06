@@ -19,8 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
 import org.apache.olingo.odata4.client.api.edm.xml.v4.AnnotatedEdmItem;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEnumType;
 
@@ -28,33 +26,15 @@ public class EnumTypeImpl extends AbstractEnumType implements AnnotatedEdmItem {
 
   private static final long serialVersionUID = -3329664331877556957L;
 
-  private AnnotationImpl annotation;
-
-  private final List<MemberImpl> members = new ArrayList<MemberImpl>();
+  private Annotation annotation;
 
   @Override
-  public List<MemberImpl> getMembers() {
-    return members;
-  }
-
-  @Override
-  public MemberImpl getMember(final String name) {
-    return (MemberImpl) super.getMember(name);
-  }
-
-  @Override
-  public MemberImpl getMember(final Integer value) {
-    return (MemberImpl) super.getMember(value);
-  }
-
-  @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

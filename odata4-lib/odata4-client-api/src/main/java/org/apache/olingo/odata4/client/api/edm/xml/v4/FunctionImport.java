@@ -24,9 +24,5 @@ public interface FunctionImport extends OperationImport, CommonFunctionImport {
 
   String getFunction();
 
-  void setFunction(String function);
-
   boolean isIncludeInServiceDocument();
-
-  void setIncludeInServiceDocument(boolean includeInServiceDocument);
 }

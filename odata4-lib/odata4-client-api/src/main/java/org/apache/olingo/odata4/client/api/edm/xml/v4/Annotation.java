@@ -25,17 +25,9 @@ public interface Annotation {
 
   String getTerm();
 
-  void setTerm(String term);
-
   String getQualifier();
-
-  void setQualifier(String qualifier);
 
   ConstExprConstruct getConstExpr();
 
-  void setConstExpr(ConstExprConstruct constExpr);
-
   DynExprConstruct getDynExpr();
-
-  void setDynExpr(DynExprConstruct dynExpr);
 }

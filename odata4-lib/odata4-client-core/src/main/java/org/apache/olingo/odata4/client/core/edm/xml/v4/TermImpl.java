@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.CSDLElement;
@@ -40,11 +39,11 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
 
   private boolean nullable = true;
 
-  private String maxLength;
+  private Integer maxLength;
 
-  private BigInteger precision;
+  private Integer precision;
 
-  private BigInteger scale;
+  private Integer scale;
 
   private String srid;
 
@@ -55,7 +54,6 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -65,7 +63,6 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -75,7 +72,6 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return baseTerm;
   }
 
-  @Override
   public void setBaseTerm(final String baseTerm) {
     this.baseTerm = baseTerm;
   }
@@ -85,7 +81,6 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return defaultValue;
   }
 
-  @Override
   public void setDefaultValue(final String defaultValue) {
     this.defaultValue = defaultValue;
   }
@@ -95,38 +90,34 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return nullable;
   }
 
-  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
 
   @Override
-  public String getMaxLength() {
+  public Integer getMaxLength() {
     return maxLength;
   }
 
-  @Override
-  public void setMaxLength(final String maxLength) {
+  public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
 
   @Override
-  public BigInteger getPrecision() {
+  public Integer getPrecision() {
     return precision;
   }
 
-  @Override
-  public void setPrecision(final BigInteger precision) {
+  public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
 
   @Override
-  public BigInteger getScale() {
+  public Integer getScale() {
     return scale;
   }
 
-  @Override
-  public void setScale(final BigInteger scale) {
+  public void setScale(final Integer scale) {
     this.scale = scale;
   }
 
@@ -135,7 +126,6 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
     return srid;
   }
 
-  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }

@@ -26,24 +26,14 @@ public interface NavigationProperty
 
   String getType();
 
-  void setType(String type);
-
   boolean isNullable();
-
-  void setNullable(boolean nullable);
 
   String getPartner();
 
-  void setPartner(String partner);
-
   boolean isContainsTarget();
 
-  void setContainsTarget(boolean containsTarget);
-
-  List<? extends ReferentialConstraint> getReferentialConstraints();
+  List<ReferentialConstraint> getReferentialConstraints();
 
   OnDelete getOnDelete();
-
-  void setOnDelete(OnDelete onDelete);
 
 }

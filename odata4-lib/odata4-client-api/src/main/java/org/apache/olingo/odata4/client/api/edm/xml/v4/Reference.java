@@ -25,11 +25,9 @@ public interface Reference {
 
   URI getUri();
 
-  void setUri(URI uri);
+  List<Include> getIncludes();
 
-  List<? extends Include> getIncludes();
+  List<IncludeAnnotations> getIncludeAnnotations();
 
-  List<? extends IncludeAnnotations> getIncludeAnnotations();
-
-  List<? extends Annotation> getAnnotations();
+  List<Annotation> getAnnotations();
 }

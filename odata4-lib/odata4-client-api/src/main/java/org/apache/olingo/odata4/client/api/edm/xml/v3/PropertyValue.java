@@ -26,34 +26,18 @@ public interface PropertyValue {
 
   String getProperty();
 
-  void setProperty(String property);
-
   String getPath();
-
-  void setPath(String path);
 
   String getString();
 
-  void setString(String string);
-
   BigInteger getInt();
-
-  void setInt(BigInteger _int);
 
   Double getFloat();
 
-  void setFloat(Double _float);
-
   BigDecimal getDecimal();
-
-  void setDecimal(BigDecimal decimal);
 
   Boolean getBool();
 
-  void setBool(Boolean bool);
-
   Date getDateTime();
-
-  void setDateTime(Date dateTime);
 
 }

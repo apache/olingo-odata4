@@ -36,7 +36,6 @@ public abstract class AbstractEdmx extends AbstractEdmItem implements Edmx {
     return version;
   }
 
-  @Override
   public void setVersion(final String version) {
     this.version = version;
   }
@@ -46,7 +45,6 @@ public abstract class AbstractEdmx extends AbstractEdmItem implements Edmx {
     return dataServices;
   }
 
-  @Override
   public void setDataServices(final DataServices dataServices) {
     this.dataServices = dataServices;
   }

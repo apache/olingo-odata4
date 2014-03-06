@@ -22,9 +22,5 @@ public interface ReferentialConstraint {
 
   ReferentialConstraintRole getPrincipal();
 
-  void setPrincipal(ReferentialConstraintRole principal);
-
   ReferentialConstraintRole getDependent();
-
-  void setDependent(ReferentialConstraintRole dependent);
 }

@@ -33,7 +33,6 @@ public class AbstractNavigationProperty extends AbstractEdmItem implements Commo
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }

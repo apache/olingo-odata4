@@ -44,7 +44,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -54,7 +53,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return nullable;
   }
 
-  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
@@ -64,7 +62,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return maxLength;
   }
 
-  @Override
   public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
@@ -74,7 +71,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return precision;
   }
 
-  @Override
   public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
@@ -84,7 +80,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return scale;
   }
 
-  @Override
   public void setScale(final Integer scale) {
     this.scale = scale;
   }
@@ -94,7 +89,6 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
     return srid;
   }
 
-  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }

@@ -40,7 +40,6 @@ public class ReferentialConstraintImpl extends AbstractEdmItem implements Refere
   }
 
   @JsonIgnore
-  @Override
   public void setPrincipal(final ReferentialConstraintRole principal) {
     this.principal = (ReferentialConstraintRoleImpl) principal;
   }
@@ -51,7 +50,6 @@ public class ReferentialConstraintImpl extends AbstractEdmItem implements Refere
   }
 
   @JsonIgnore
-  @Override
   public void setDependent(final ReferentialConstraintRole dependent) {
     this.dependent = (ReferentialConstraintRoleImpl) dependent;
   }

@@ -44,7 +44,6 @@ public class AssociationEndImpl extends AbstractEdmItem implements AssociationEn
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -54,7 +53,6 @@ public class AssociationEndImpl extends AbstractEdmItem implements AssociationEn
     return role;
   }
 
-  @Override
   public void setRole(final String role) {
     this.role = role;
   }
@@ -64,7 +62,6 @@ public class AssociationEndImpl extends AbstractEdmItem implements AssociationEn
     return multiplicity;
   }
 
-  @Override
   public void setMultiplicity(final String multiplicity) {
     this.multiplicity = multiplicity;
   }
@@ -74,7 +71,6 @@ public class AssociationEndImpl extends AbstractEdmItem implements AssociationEn
     return onDelete;
   }
 
-  @Override
   public void setOnDelete(final OnDelete onDelete) {
     this.onDelete = onDelete;
   }

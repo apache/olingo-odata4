@@ -37,7 +37,6 @@ public class NavigationPropertyBindingImpl extends AbstractEdmItem implements Na
     return path;
   }
 
-  @Override
   public void setPath(final String path) {
     this.path = path;
   }
@@ -47,7 +46,6 @@ public class NavigationPropertyBindingImpl extends AbstractEdmItem implements Na
     return target;
   }
 
-  @Override
   public void setTarget(final String target) {
     this.target = target;
   }

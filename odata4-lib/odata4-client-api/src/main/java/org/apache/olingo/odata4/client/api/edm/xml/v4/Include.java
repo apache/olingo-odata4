@@ -23,8 +23,4 @@ public interface Include {
   String getAlias();
 
   String getNamespace();
-
-  void setAlias(final String alias);
-
-  void setNamespace(final String namespace);
 }

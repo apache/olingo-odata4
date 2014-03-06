@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.xml.v3;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.PropertyValue;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.TypeAnnotation;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
@@ -33,14 +34,13 @@ public class TypeAnnotationImpl extends AbstractEdmItem implements TypeAnnotatio
 
   private String qualifier;
 
-  private List<PropertyValueImpl> propertyValues = new ArrayList<PropertyValueImpl>();
+  private List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
 
   @Override
   public String getTerm() {
     return term;
   }
 
-  @Override
   public void setTerm(final String term) {
     this.term = term;
   }
@@ -50,13 +50,12 @@ public class TypeAnnotationImpl extends AbstractEdmItem implements TypeAnnotatio
     return qualifier;
   }
 
-  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
 
   @Override
-  public List<PropertyValueImpl> getPropertyValues() {
+  public List<PropertyValue> getPropertyValues() {
     return propertyValues;
   }
 

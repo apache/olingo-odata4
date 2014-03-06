@@ -20,21 +20,19 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4.annotation;
 
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.AnnotatedEdmItem;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
 
 abstract class AnnotatedDynExprConstruct extends DynExprConstructImpl implements AnnotatedEdmItem {
 
   private static final long serialVersionUID = -8117155475397749038L;
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 }

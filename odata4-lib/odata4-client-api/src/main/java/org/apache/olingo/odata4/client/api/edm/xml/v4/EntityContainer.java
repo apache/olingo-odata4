@@ -22,26 +22,23 @@ import java.util.List;
 
 public interface EntityContainer extends org.apache.olingo.odata4.client.api.edm.xml.EntityContainer {
 
-  List<? extends Singleton> getSingletons();
+  EntitySet getEntitySet(String name);
+
+  List<EntitySet> getEntitySets();
+
+  List<Singleton> getSingletons();
 
   Singleton getSingleton(String name);
 
-  /**
-   * Gets the first action import with given name.
-   *
-   * @param name name.
-   * @return action import.
-   */
   ActionImport getActionImport(String name);
 
-  /**
-   * Gets all action imports with given name.
-   *
-   * @param name name.
-   * @return action imports.
-   */
-  List<? extends ActionImport> getActionImports(String name);
+  List<ActionImport> getActionImports(String name);
 
-  List<? extends ActionImport> getActionImports();
+  List<ActionImport> getActionImports();
 
+  FunctionImport getFunctionImport(String name);
+
+  List<FunctionImport> getFunctionImports(String name);
+
+  List<FunctionImport> getFunctionImports();
 }

@@ -21,6 +21,4 @@ package org.apache.olingo.odata4.client.api.edm.xml.v3;
 public interface Parameter extends org.apache.olingo.odata4.client.api.edm.xml.CommonParameter {
 
   ParameterMode getMode();
-
-  void setMode(ParameterMode mode);
 }

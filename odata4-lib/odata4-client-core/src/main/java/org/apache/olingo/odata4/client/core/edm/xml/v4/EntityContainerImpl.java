@@ -21,23 +21,27 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.AnnotatedEdmItem;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.EntitySet;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.FunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntityContainer;
 
 public class EntityContainerImpl extends AbstractEntityContainer implements AnnotatedEdmItem, EntityContainer {
 
   private static final long serialVersionUID = 2526002525927260320L;
 
-  private final List<EntitySetImpl> entitySets = new ArrayList<EntitySetImpl>();
+  private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
 
-  private final List<SingletonImpl> singletons = new ArrayList<SingletonImpl>();
+  private final List<Singleton> singletons = new ArrayList<Singleton>();
 
-  private final List<ActionImportImpl> actionImports = new ArrayList<ActionImportImpl>();
+  private final List<ActionImport> actionImports = new ArrayList<ActionImport>();
 
-  private final List<FunctionImportImpl> functionImports = new ArrayList<FunctionImportImpl>();
+  private final List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
   public void setDefaultEntityContainer(final boolean defaultEntityContainer) {
@@ -50,34 +54,34 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
   }
 
   @Override
-  public EntitySetImpl getEntitySet(final String name) {
-    return (EntitySetImpl) super.getEntitySet(name);
+  public EntitySet getEntitySet(final String name) {
+    return (EntitySet) super.getEntitySet(name);
   }
 
   @Override
-  public List<EntitySetImpl> getEntitySets() {
+  public List<EntitySet> getEntitySets() {
     return entitySets;
   }
 
   @Override
-  public List<SingletonImpl> getSingletons() {
+  public List<Singleton> getSingletons() {
     return singletons;
   }
 
   @Override
-  public SingletonImpl getSingleton(final String name) {
+  public Singleton getSingleton(final String name) {
     return getOneByName(name, getSingletons());
   }
 
   @Override
-  public FunctionImportImpl getFunctionImport(final String name) {
-    return (FunctionImportImpl) super.getFunctionImport(name);
+  public FunctionImport getFunctionImport(final String name) {
+    return (FunctionImport) super.getFunctionImport(name);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public List<FunctionImportImpl> getFunctionImports(final String name) {
-    return (List<FunctionImportImpl>) super.getFunctionImports(name);
+  public List<FunctionImport> getFunctionImports(final String name) {
+    return (List<FunctionImport>) super.getFunctionImports(name);
   }
 
   /**
@@ -87,7 +91,7 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
    * @return action import.
    */
   @Override
-  public ActionImportImpl getActionImport(final String name) {
+  public ActionImport getActionImport(final String name) {
     return getOneByName(name, getActionImports());
   }
 
@@ -98,28 +102,27 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
    * @return action imports.
    */
   @Override
-  public List<ActionImportImpl> getActionImports(final String name) {
+  public List<ActionImport> getActionImports(final String name) {
     return getAllByName(name, getActionImports());
   }
 
   @Override
-  public List<ActionImportImpl> getActionImports() {
+  public List<ActionImport> getActionImports() {
     return actionImports;
   }
 
   @Override
-  public List<FunctionImportImpl> getFunctionImports() {
+  public List<FunctionImport> getFunctionImports() {
     return functionImports;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

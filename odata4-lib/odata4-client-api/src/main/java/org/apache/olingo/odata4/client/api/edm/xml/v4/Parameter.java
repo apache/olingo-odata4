@@ -21,6 +21,4 @@ package org.apache.olingo.odata4.client.api.edm.xml.v4;
 public interface Parameter extends org.apache.olingo.odata4.client.api.edm.xml.CommonParameter {
 
   String getSrid();
-
-  void setSrid(final String srid);
 }

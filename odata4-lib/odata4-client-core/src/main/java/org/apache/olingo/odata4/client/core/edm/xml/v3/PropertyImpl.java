@@ -43,7 +43,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcSourcePath;
   }
 
-  @Override
   public void setFcSourcePath(final String fcSourcePath) {
     this.fcSourcePath = fcSourcePath;
   }
@@ -53,7 +52,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcTargetPath;
   }
 
-  @Override
   public void setFcTargetPath(final String fcTargetPath) {
     this.fcTargetPath = fcTargetPath;
   }
@@ -63,7 +61,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcContentKind;
   }
 
-  @Override
   public void setFcContentKind(final EdmContentKind fcContentKind) {
     this.fcContentKind = fcContentKind;
   }
@@ -73,7 +70,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcNSPrefix;
   }
 
-  @Override
   public void setFcNSPrefix(final String fcNSPrefix) {
     this.fcNSPrefix = fcNSPrefix;
   }
@@ -83,7 +79,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcNSURI;
   }
 
-  @Override
   public void setFcNSURI(final String fcNSURI) {
     this.fcNSURI = fcNSURI;
   }
@@ -93,7 +88,6 @@ public class PropertyImpl extends AbstractProperty implements Property {
     return fcKeepInContent;
   }
 
-  @Override
   public void setFcKeepInContent(final boolean fcKeepInContent) {
     this.fcKeepInContent = fcKeepInContent;
   }

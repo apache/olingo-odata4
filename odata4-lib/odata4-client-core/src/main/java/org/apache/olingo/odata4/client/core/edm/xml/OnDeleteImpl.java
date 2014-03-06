@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v4.OnDeleteAction;
+import org.apache.olingo.odata4.client.api.edm.xml.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.OnDelete;
 
@@ -34,7 +34,6 @@ public class OnDeleteImpl extends AbstractEdmItem implements OnDelete {
     return action;
   }
 
-  @Override
   public void setAction(final OnDeleteAction action) {
     this.action = action;
   }

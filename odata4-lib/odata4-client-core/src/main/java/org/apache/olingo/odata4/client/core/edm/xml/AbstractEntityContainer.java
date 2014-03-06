@@ -20,9 +20,9 @@ package org.apache.olingo.odata4.client.core.edm.xml;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.EntitySet;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.core.op.impl.EntityContainerDeserializer;
 
 @JsonDeserialize(using = EntityContainerDeserializer.class)
@@ -43,7 +43,6 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -53,7 +52,6 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
     return _extends;
   }
 
-  @Override
   public void setExtends(final String _extends) {
     this._extends = _extends;
   }
@@ -63,7 +61,6 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
     return lazyLoadingEnabled;
   }
 
-  @Override
   public void setLazyLoadingEnabled(final boolean lazyLoadingEnabled) {
     this.lazyLoadingEnabled = lazyLoadingEnabled;
   }
@@ -73,7 +70,6 @@ public abstract class AbstractEntityContainer extends AbstractEdmItem implements
     return defaultEntityContainer;
   }
 
-  @Override
   public void setDefaultEntityContainer(final boolean defaultEntityContainer) {
     this.defaultEntityContainer = defaultEntityContainer;
   }

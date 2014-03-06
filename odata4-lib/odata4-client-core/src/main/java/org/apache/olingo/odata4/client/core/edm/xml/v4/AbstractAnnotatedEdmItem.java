@@ -37,7 +37,6 @@ public abstract class AbstractAnnotatedEdmItem extends AbstractEdmItem implement
   }
 
   @JsonIgnore
-  @Override
   public void setAnnotation(final Annotation annotation) {
     this.annotation = (AnnotationImpl) annotation;
   }

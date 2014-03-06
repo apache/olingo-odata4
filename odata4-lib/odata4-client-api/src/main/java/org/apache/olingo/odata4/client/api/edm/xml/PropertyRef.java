@@ -22,5 +22,4 @@ public interface PropertyRef extends Named {
 
   String getAlias();
 
-  void setAlias(String alias);
 }

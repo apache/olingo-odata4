@@ -22,10 +22,6 @@ public interface NavigationPropertyBinding {
 
   String getPath();
 
-  void setPath(String path);
-
   String getTarget();
-
-  void setTarget(String target);
 
 }

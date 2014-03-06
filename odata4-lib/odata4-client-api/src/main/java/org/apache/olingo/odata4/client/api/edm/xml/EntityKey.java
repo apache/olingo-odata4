@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface EntityKey {
 
-  List<? extends PropertyRef> getPropertyRefs();
+  List<PropertyRef> getPropertyRefs();
 }

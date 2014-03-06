@@ -22,46 +22,47 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationProperty;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Property;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntityType;
 
 public class EntityTypeImpl extends AbstractEntityType implements EntityType {
 
   private static final long serialVersionUID = 8727765036150269547L;
 
-  private final List<PropertyImpl> properties = new ArrayList<PropertyImpl>();
+  private final List<Property> properties = new ArrayList<Property>();
 
-  private final List<NavigationPropertyImpl> navigationProperties = new ArrayList<NavigationPropertyImpl>();
+  private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
-  public PropertyImpl getProperty(final String name) {
-    return (PropertyImpl) super.getProperty(name);
+  public Property getProperty(final String name) {
+    return (Property) super.getProperty(name);
   }
 
   @Override
-  public List<PropertyImpl> getProperties() {
+  public List<Property> getProperties() {
     return properties;
   }
 
   @Override
-  public NavigationPropertyImpl getNavigationProperty(final String name) {
-    return (NavigationPropertyImpl) super.getNavigationProperty(name);
+  public NavigationProperty getNavigationProperty(final String name) {
+    return (NavigationProperty) super.getNavigationProperty(name);
   }
 
   @Override
-  public List<NavigationPropertyImpl> getNavigationProperties() {
+  public List<NavigationProperty> getNavigationProperties() {
     return navigationProperties;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

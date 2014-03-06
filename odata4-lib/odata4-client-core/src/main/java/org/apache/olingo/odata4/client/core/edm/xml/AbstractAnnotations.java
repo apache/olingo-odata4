@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.xml;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class AbstractAnnotations extends AbstractEdmItem
-        implements org.apache.olingo.odata4.client.api.edm.xml.AbstractAnnotations {
+        implements org.apache.olingo.odata4.client.api.edm.xml.CommonAnnotations {
 
   private static final long serialVersionUID = 4926640428016042620L;
 
@@ -36,7 +36,6 @@ public abstract class AbstractAnnotations extends AbstractEdmItem
     return target;
   }
 
-  @Override
   public void setTarget(final String target) {
     this.target = target;
   }
@@ -46,7 +45,6 @@ public abstract class AbstractAnnotations extends AbstractEdmItem
     return qualifier;
   }
 
-  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }

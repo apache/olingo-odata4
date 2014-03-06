@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityKey;
+import org.apache.olingo.odata4.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.odata4.client.core.op.impl.EntityKeyDeserializer;
 
 @JsonDeserialize(using = EntityKeyDeserializer.class)
@@ -29,10 +30,10 @@ public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {
 
   private static final long serialVersionUID = 2586047015894794685L;
 
-  private final List<PropertyRefImpl> propertyRefs = new ArrayList<PropertyRefImpl>();
+  private final List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
 
   @Override
-  public List<PropertyRefImpl> getPropertyRefs() {
+  public List<PropertyRef> getPropertyRefs() {
     return propertyRefs;
   }
 }

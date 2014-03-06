@@ -20,27 +20,18 @@ package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.Member;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEnumType;
 
 public class EnumTypeImpl extends AbstractEnumType {
 
   private static final long serialVersionUID = 8967396195669128419L;
 
-  private final List<MemberImpl> members = new ArrayList<MemberImpl>();
+  private final List<Member> members = new ArrayList<Member>();
 
   @Override
-  public List<MemberImpl> getMembers() {
+  public List<Member> getMembers() {
     return members;
-  }
-
-  @Override
-  public MemberImpl getMember(final String name) {
-    return (MemberImpl) super.getMember(name);
-  }
-
-  @Override
-  public MemberImpl getMember(final Integer value) {
-    return (MemberImpl) super.getMember(value);
   }
 
 }

@@ -33,15 +33,12 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   protected final Action operation;
 
   protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
-
     final List<? extends CommonParameter> parameters = instance.operation.getParameters();
-    if (parameters != null) {
-      final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(parameters.size());
-      for (CommonParameter parameter : parameters) {
-        _parameters.add(EdmParameterImpl.getInstance(instance.edm, parameter));
-      }
-      instance.setParameters(_parameters);
+    final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(parameters.size());
+    for (CommonParameter parameter : parameters) {
+      _parameters.add(EdmParameterImpl.getInstance(instance.edm, parameter));
     }
+    instance.setParameters(_parameters);
 
     instance.setEntitySetPath(instance.operation.getEntitySetPath());
 

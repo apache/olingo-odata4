@@ -23,6 +23,4 @@ import org.apache.olingo.odata4.client.api.edm.xml.Named;
 public interface ValueTerm extends Named {
 
   String getType();
-
-  void setType(String type);
 }

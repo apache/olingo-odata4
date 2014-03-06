@@ -43,7 +43,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -53,7 +52,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -63,7 +61,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return nullable;
   }
 
-  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
@@ -73,7 +70,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return maxLength;
   }
 
-  @Override
   public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
@@ -83,7 +79,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return precision;
   }
 
-  @Override
   public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
@@ -93,7 +88,6 @@ public abstract class AbstractParameter extends AbstractEdmItem implements Commo
     return scale;
   }
 
-  @Override
   public void setScale(final Integer scale) {
     this.scale = scale;
   }

@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v4.OnDeleteAction;
-
 public interface OnDelete {
 
   OnDeleteAction getAction();
-
-  void setAction(OnDeleteAction action);
 }

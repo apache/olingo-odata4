@@ -21,6 +21,4 @@ package org.apache.olingo.odata4.client.api.edm.xml.v4;
 public interface Function extends Action {
 
   boolean isComposable();
-
-  void setComposable(boolean composable);
 }

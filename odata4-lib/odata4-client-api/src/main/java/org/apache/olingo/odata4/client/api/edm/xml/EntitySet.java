@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-public interface EntitySet extends Named {
+public interface EntitySet extends BindingTarget {
 
-  String getEntityType();
-
-  void setEntityType(String entityType);
 }

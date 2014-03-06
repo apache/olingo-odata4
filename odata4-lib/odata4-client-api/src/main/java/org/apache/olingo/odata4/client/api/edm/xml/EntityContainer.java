@@ -24,34 +24,16 @@ public interface EntityContainer extends Named {
 
   String getExtends();
 
-  void setExtends(String _extends);
-
   boolean isLazyLoadingEnabled();
 
-  void setLazyLoadingEnabled(boolean lazyLoadingEnabled);
-
   boolean isDefaultEntityContainer();
-
-  void setDefaultEntityContainer(boolean defaultEntityContainer);
 
   EntitySet getEntitySet(String name);
 
   List<? extends EntitySet> getEntitySets();
 
-  /**
-   * Gets the first function import with given name.
-   *
-   * @param name name.
-   * @return function import.
-   */
   CommonFunctionImport getFunctionImport(String name);
 
-  /**
-   * Gets all function imports with given name.
-   *
-   * @param name name.
-   * @return function imports.
-   */
   List<? extends CommonFunctionImport> getFunctionImports(String name);
 
   List<? extends CommonFunctionImport> getFunctionImports();

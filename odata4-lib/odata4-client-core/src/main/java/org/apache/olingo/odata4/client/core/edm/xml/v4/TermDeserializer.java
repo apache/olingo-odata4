@@ -51,11 +51,12 @@ public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
         } else if ("Nullable".equals(jp.getCurrentName())) {
           term.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
-          term.setMaxLength(jp.nextTextValue());
+          final String maxLenght = jp.nextTextValue();
+          term.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
         } else if ("Precision".equals(jp.getCurrentName())) {
-          term.setPrecision(BigInteger.valueOf(jp.nextLongValue(0L)));
+          term.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          term.setScale(BigInteger.valueOf(jp.nextLongValue(0L)));
+          term.setScale(Integer.valueOf(jp.nextTextValue()));
         } else if ("SRID".equals(jp.getCurrentName())) {
           term.setSrid(jp.nextTextValue());
         } else if ("AppliesTo".equals(jp.getCurrentName())) {

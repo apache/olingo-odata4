@@ -33,7 +33,6 @@ public class ParameterImpl extends AbstractParameter implements Parameter {
     return mode;
   }
 
-  @Override
   public void setMode(final ParameterMode mode) {
     this.mode = mode;
   }

@@ -23,8 +23,6 @@ import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.ConstExprConstruct;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.annotation.DynExprConstruct;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.DynExprConstructImpl;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
 public class AnnotationImpl extends AbstractEdmItem implements Annotation {
@@ -35,16 +33,15 @@ public class AnnotationImpl extends AbstractEdmItem implements Annotation {
 
   private String qualifier;
 
-  private ConstExprConstructImpl constExpr;
+  private ConstExprConstruct constExpr;
 
-  private DynExprConstructImpl dynExpr;
+  private DynExprConstruct dynExpr;
 
   @Override
   public String getTerm() {
     return term;
   }
 
-  @Override
   public void setTerm(final String term) {
     this.term = term;
   }
@@ -54,29 +51,26 @@ public class AnnotationImpl extends AbstractEdmItem implements Annotation {
     return qualifier;
   }
 
-  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
 
   @Override
-  public ConstExprConstructImpl getConstExpr() {
+  public ConstExprConstruct getConstExpr() {
     return constExpr;
   }
 
-  @Override
   public void setConstExpr(final ConstExprConstruct constExpr) {
-    this.constExpr = (ConstExprConstructImpl) constExpr;
+    this.constExpr = constExpr;
   }
 
   @Override
-  public DynExprConstructImpl getDynExpr() {
+  public DynExprConstruct getDynExpr() {
     return dynExpr;
   }
 
-  @Override
   public void setDynExpr(final DynExprConstruct dynExpr) {
-    this.dynExpr = (DynExprConstructImpl) dynExpr;
+    this.dynExpr = dynExpr;
   }
 
 }

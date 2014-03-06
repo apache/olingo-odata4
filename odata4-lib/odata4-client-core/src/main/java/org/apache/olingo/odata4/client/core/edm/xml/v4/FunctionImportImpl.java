@@ -40,14 +40,13 @@ public class FunctionImportImpl implements FunctionImport {
   private boolean includeInServiceDocument = false;
 
   @JsonProperty(value = "Annotation")
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -57,7 +56,6 @@ public class FunctionImportImpl implements FunctionImport {
     return function;
   }
 
-  @Override
   public void setFunction(final String function) {
     this.function = function;
   }
@@ -77,20 +75,18 @@ public class FunctionImportImpl implements FunctionImport {
     return includeInServiceDocument;
   }
 
-  @Override
   public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
   @JsonIgnore
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

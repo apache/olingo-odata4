@@ -37,7 +37,6 @@ public class IncludeImpl extends AbstractEdmItem implements Include {
     return namespace;
   }
 
-  @Override
   public void setNamespace(final String namespace) {
     this.namespace = namespace;
   }
@@ -47,7 +46,6 @@ public class IncludeImpl extends AbstractEdmItem implements Include {
     return alias;
   }
 
-  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

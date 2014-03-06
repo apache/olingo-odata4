@@ -36,7 +36,6 @@ public class PropertyRefImpl extends AbstractEdmItem implements PropertyRef {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -46,7 +45,6 @@ public class PropertyRefImpl extends AbstractEdmItem implements PropertyRef {
     return alias;
   }
 
-  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

@@ -22,22 +22,12 @@ public interface CommonParameter extends Named {
 
   String getType();
 
-  void setType(String type);
-
   boolean isNullable();
-
-  void setNullable(boolean nullable);
 
   Integer getMaxLength();
 
-  void setMaxLength(Integer maxLength);
-
   Integer getPrecision();
 
-  void setPrecision(Integer precision);
-
   Integer getScale();
-
-  void setScale(Integer scale);
 
 }

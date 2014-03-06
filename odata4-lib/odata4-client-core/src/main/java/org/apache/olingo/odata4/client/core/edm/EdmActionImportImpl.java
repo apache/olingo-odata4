@@ -32,7 +32,7 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
   public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
           final ActionImport actionImport) {
 
-    super(edm, container, name, actionImport);
+    super(edm, container, name, actionImport.getEntitySet());
     this.actionImport = actionImport;
   }
 

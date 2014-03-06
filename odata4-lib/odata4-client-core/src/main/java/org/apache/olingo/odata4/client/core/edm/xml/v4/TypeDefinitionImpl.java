@@ -21,6 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
@@ -43,14 +44,13 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
 
   private String srid;
 
-  private final List<AnnotationImpl> annotations = new ArrayList<AnnotationImpl>();
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -60,7 +60,6 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return underlyingType;
   }
 
-  @Override
   public void setUnderlyingType(final String underlyingType) {
     this.underlyingType = underlyingType;
   }
@@ -70,7 +69,6 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return maxLength;
   }
 
-  @Override
   public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
@@ -80,7 +78,6 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return precision;
   }
 
-  @Override
   public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
@@ -90,7 +87,6 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return scale;
   }
 
-  @Override
   public void setScale(final Integer scale) {
     this.scale = scale;
   }
@@ -100,7 +96,6 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return unicode;
   }
 
-  @Override
   public void setUnicode(final boolean unicode) {
     this.unicode = unicode;
   }
@@ -110,13 +105,12 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
     return srid;
   }
 
-  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }
 
   @Override
-  public List<AnnotationImpl> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     return annotations;
   }
 

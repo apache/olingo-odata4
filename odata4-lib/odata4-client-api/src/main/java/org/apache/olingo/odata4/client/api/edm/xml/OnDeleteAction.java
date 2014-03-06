@@ -18,13 +18,11 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-public abstract interface AbstractAnnotations {
+public enum OnDeleteAction {
 
-  String getTarget();
+  Cascade,
+  None,
+  SetNull,
+  SetDefault;
 
-  void setTarget(String target);
-
-  String getQualifier();
-
-  void setQualifier(String qualifier);
 }

@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
-import org.apache.olingo.odata4.client.core.edm.xml.OnDeleteImpl;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.OnDelete;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.ReferentialConstraint;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractNavigationProperty;
 
 @JsonDeserialize(using = NavigationPropertyDeserializer.class)
@@ -40,18 +40,17 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private boolean containsTarget = false;
 
-  private final List<ReferentialConstraintImpl> referentialConstraints = new ArrayList<ReferentialConstraintImpl>();
+  private final List<ReferentialConstraint> referentialConstraints = new ArrayList<ReferentialConstraint>();
 
-  private OnDeleteImpl onDelete;
+  private OnDelete onDelete;
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
   public String getType() {
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -61,7 +60,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return nullable;
   }
 
-  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
@@ -71,7 +69,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return partner;
   }
 
-  @Override
   public void setPartner(final String partner) {
     this.partner = partner;
   }
@@ -81,34 +78,31 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return containsTarget;
   }
 
-  @Override
   public void setContainsTarget(final boolean containsTarget) {
     this.containsTarget = containsTarget;
   }
 
   @Override
-  public List<ReferentialConstraintImpl> getReferentialConstraints() {
+  public List<ReferentialConstraint> getReferentialConstraints() {
     return referentialConstraints;
   }
 
   @Override
-  public OnDeleteImpl getOnDelete() {
+  public OnDelete getOnDelete() {
     return onDelete;
   }
 
-  @Override
   public void setOnDelete(final OnDelete onDelete) {
-    this.onDelete = (OnDeleteImpl) onDelete;
+    this.onDelete = onDelete;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

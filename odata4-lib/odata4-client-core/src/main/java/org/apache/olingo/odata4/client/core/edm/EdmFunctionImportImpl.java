@@ -33,7 +33,7 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
           final FunctionImport functionImport) {
 
-    super(edm, container, name, functionImport);
+    super(edm, container, name, functionImport.getEntitySet());
     this.functionImport = functionImport;
   }
 

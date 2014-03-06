@@ -32,7 +32,6 @@ public class ParameterImpl extends AbstractParameter implements Parameter {
     return srid;
   }
 
-  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }

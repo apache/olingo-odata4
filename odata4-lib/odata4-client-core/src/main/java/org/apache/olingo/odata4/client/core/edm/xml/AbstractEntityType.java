@@ -43,7 +43,6 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
     return abstractEntityType;
   }
 
-  @Override
   public void setAbstractEntityType(final boolean abstractEntityType) {
     this.abstractEntityType = abstractEntityType;
   }
@@ -53,7 +52,6 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
     return baseType;
   }
 
-  @Override
   public void setBaseType(final String baseType) {
     this.baseType = baseType;
   }
@@ -63,7 +61,6 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
     return openType;
   }
 
-  @Override
   public void setOpenType(final boolean openType) {
     this.openType = openType;
   }
@@ -82,7 +79,6 @@ public abstract class AbstractEntityType extends AbstractComplexType implements 
     return hasStream;
   }
 
-  @Override
   public void setHasStream(final boolean hasStream) {
     this.hasStream = hasStream;
   }

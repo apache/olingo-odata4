@@ -22,10 +22,6 @@ public interface Using {
 
   String getNamespace();
 
-  void setNamespace(String namespace);
-
   String getAlias();
-
-  void setAlias(String alias);
 
 }

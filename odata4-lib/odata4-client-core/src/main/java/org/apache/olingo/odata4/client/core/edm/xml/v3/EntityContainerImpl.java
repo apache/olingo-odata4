@@ -20,17 +20,20 @@ package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.EntitySet;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.AssociationSet;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntityContainer;
 
 public class EntityContainerImpl extends AbstractEntityContainer {
 
   private static final long serialVersionUID = 8934431875078180370L;
 
-  private final List<EntitySetImpl> entitySets = new ArrayList<EntitySetImpl>();
+  private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
 
-  private final List<AssociationSetImpl> associationSets = new ArrayList<AssociationSetImpl>();
+  private final List<AssociationSet> associationSets = new ArrayList<AssociationSet>();
 
-  private final List<FunctionImportImpl> functionImports = new ArrayList<FunctionImportImpl>();
+  private final List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
 
   @Override
   public EntitySetImpl getEntitySet(final String name) {
@@ -38,11 +41,11 @@ public class EntityContainerImpl extends AbstractEntityContainer {
   }
 
   @Override
-  public List<EntitySetImpl> getEntitySets() {
+  public List<EntitySet> getEntitySets() {
     return entitySets;
   }
 
-  public List<AssociationSetImpl> getAssociationSets() {
+  public List<AssociationSet> getAssociationSets() {
     return associationSets;
   }
 
@@ -53,12 +56,12 @@ public class EntityContainerImpl extends AbstractEntityContainer {
 
   @Override
   @SuppressWarnings("unchecked")
-  public List<FunctionImportImpl> getFunctionImports(final String name) {
-    return (List<FunctionImportImpl>) super.getFunctionImports(name);
+  public List<FunctionImport> getFunctionImports(final String name) {
+    return (List<FunctionImport>) super.getFunctionImports(name);
   }
 
   @Override
-  public List<FunctionImportImpl> getFunctionImports() {
+  public List<FunctionImport> getFunctionImports() {
     return functionImports;
   }
 

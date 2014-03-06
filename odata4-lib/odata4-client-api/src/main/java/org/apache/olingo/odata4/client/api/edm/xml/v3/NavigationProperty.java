@@ -22,13 +22,8 @@ public interface NavigationProperty extends org.apache.olingo.odata4.client.api.
 
   String getRelationship();
 
-  void setRelationship(String relationship);
-
   String getToRole();
-
-  void setToRole(String toRole);
 
   String getFromRole();
 
-  void setFromRole(String fromRole);
 }

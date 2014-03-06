@@ -19,13 +19,46 @@
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.Named;
 
-public interface BindingTarget extends Named, AnnotatedEdmItem {
+public interface Schema extends org.apache.olingo.odata4.client.api.edm.xml.Schema, AnnotatedEdmItem {
 
-  String getEntityType();
+  @Override
+  List<EntityContainer> getEntityContainers();
 
-  void setEntityType(String entityType);
+  EntityContainer getEntityContainer();
 
-  List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
+  @Override
+  ComplexType getComplexType(String name);
+
+  @Override
+  List<ComplexType> getComplexTypes();
+
+  @Override
+  EntityType getEntityType(String name);
+
+  @Override
+  List<EntityType> getEntityTypes();
+
+  List<Action> getActions();
+
+  List<Action> getActions(String name);
+
+  List<Annotation> getAnnotations();
+
+  List<Function> getFunctions();
+
+  List<Function> getFunctions(String name);
+
+  List<Term> getTerms();
+
+  TypeDefinition getTypeDefinition(String name);
+
+  List<TypeDefinition> getTypeDefinitions();
+
+  @Override
+  List<Annotations> getAnnotationsList();
+
+  @Override
+  Annotations getAnnotationsList(String target);
+
 }

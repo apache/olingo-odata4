@@ -22,21 +22,11 @@ public interface EntityType extends ComplexType {
 
   boolean isAbstractEntityType();
 
-  void setAbstractEntityType(boolean abstractEntityType);
-
   String getBaseType();
-
-  void setBaseType(String baseType);
 
   boolean isOpenType();
 
-  void setOpenType(boolean openType);
-
   EntityKey getKey();
 
-  void setKey(EntityKey key);
-
   boolean isHasStream();
-
-  void setHasStream(boolean hasStream);
 }

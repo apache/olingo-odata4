@@ -23,18 +23,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotations;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Function;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.FunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV4Client;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.XMLMetadataImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationsImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.ComplexTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.EntityContainerImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.EntityTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.FunctionImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.FunctionImportImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.SchemaImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.SingletonImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.Apply;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.Collection;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
@@ -128,7 +128,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(metadata);
 
     assertFalse(metadata.getSchema(0).getAnnotationsList().isEmpty());
-    final AnnotationsImpl annots = metadata.getSchema(0).getAnnotationsList("ODataDemo.DemoService/Suppliers");
+    final Annotations annots = metadata.getSchema(0).getAnnotationsList("ODataDemo.DemoService/Suppliers");
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
     assertEquals(ConstExprConstructImpl.Type.String,
@@ -143,16 +143,16 @@ public class MetadataTest extends AbstractTest {
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
-    final SchemaImpl first = metadata.getSchema("NorthwindModel");
+    final Schema first = metadata.getSchema("NorthwindModel");
     assertNotNull(first);
 
-    final SchemaImpl second = metadata.getSchema("ODataWebExperimental.Northwind.Model");
+    final Schema second = metadata.getSchema("ODataWebExperimental.Northwind.Model");
     assertNotNull(second);
 
     assertEquals(StoreGeneratedPattern.Identity,
             first.getEntityType("Category").getProperty("CategoryID").getStoreGeneratedPattern());
 
-    final EntityContainerImpl entityContainer = second.getDefaultEntityContainer();
+    final EntityContainer entityContainer = second.getEntityContainer();
     assertNotNull(entityContainer);
     assertEquals("NorthwindEntities", entityContainer.getName());
     assertTrue(entityContainer.isLazyLoadingEnabled());
@@ -170,30 +170,30 @@ public class MetadataTest extends AbstractTest {
     assertFalse(metadata.getReferences().isEmpty());
     assertEquals("Org.OData.Measures.V1", metadata.getReferences().get(1).getIncludes().get(0).getNamespace());
 
-    final EntityTypeImpl product = metadata.getSchema(0).getEntityType("Product");
+    final EntityType product = metadata.getSchema(0).getEntityType("Product");
     assertTrue(product.isHasStream());
     assertEquals("UoM.ISOCurrency", product.getProperty("Price").getAnnotation().getTerm());
     assertEquals("Products", product.getNavigationProperty("Supplier").getPartner());
 
-    final EntityTypeImpl category = metadata.getSchema(0).getEntityType("Category");
+    final EntityType category = metadata.getSchema(0).getEntityType("Category");
     assertNotNull(category);
 
-    final ComplexTypeImpl address = metadata.getSchema(0).getComplexType("Address");
+    final ComplexType address = metadata.getSchema(0).getComplexType("Address");
     assertFalse(address.getNavigationProperty("Country").getReferentialConstraints().isEmpty());
     assertEquals("Name",
             address.getNavigationProperty("Country").getReferentialConstraints().get(0).getReferencedProperty());
 
-    final FunctionImpl productsByRating = metadata.getSchema(0).getFunctions("ProductsByRating").get(0);
+    final Function productsByRating = metadata.getSchema(0).getFunctions("ProductsByRating").get(0);
     assertNotNull(productsByRating.getParameter("Rating"));
     assertEquals("Edm.Int32", productsByRating.getParameter("Rating").getType());
     assertEquals("Collection(ODataDemo.Product)", productsByRating.getReturnType().getType());
 
-    final SingletonImpl contoso = metadata.getSchema(0).getEntityContainer().getSingleton("Contoso");
+    final Singleton contoso = metadata.getSchema(0).getEntityContainer().getSingleton("Contoso");
     assertNotNull(contoso);
     assertFalse(contoso.getNavigationPropertyBindings().isEmpty());
     assertEquals("Products", contoso.getNavigationPropertyBindings().get(0).getPath());
 
-    final FunctionImportImpl functionImport = metadata.getSchema(0).getEntityContainer().
+    final FunctionImport functionImport = metadata.getSchema(0).getEntityContainer().
             getFunctionImport("ProductsByRating");
     assertNotNull(functionImport);
     assertEquals(metadata.getSchema(0).getNamespace() + "." + productsByRating.getName(),
@@ -235,7 +235,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(metadata);
 
     // Check displayName
-    final AnnotationImpl displayName = metadata.getSchema(0).getAnnotationsList("ODataDemo.Supplier").
+    final Annotation displayName = metadata.getSchema(0).getAnnotationsList("ODataDemo.Supplier").
             getAnnotation("Vocabulary1.DisplayName");
     assertNotNull(displayName);
     assertNull(displayName.getConstExpr());
@@ -260,7 +260,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals(thirdArg, apply.getParameters().get(2));
 
     // Check Tags
-    final AnnotationImpl tags = metadata.getSchema(0).getAnnotationsList("ODataDemo.Product").
+    final Annotation tags = metadata.getSchema(0).getAnnotationsList("ODataDemo.Product").
             getAnnotation("Vocabulary1.Tags");
     assertNotNull(tags);
     assertNull(tags.getConstExpr());

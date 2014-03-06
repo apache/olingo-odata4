@@ -18,18 +18,26 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
+import java.util.List;
+
 public interface ComplexType extends org.apache.olingo.odata4.client.api.edm.xml.ComplexType, AnnotatedEdmItem {
 
   boolean isAbstractEntityType();
 
-  void setAbstractEntityType(boolean abstractEntityType);
-
   String getBaseType();
-
-  void setBaseType(String baseType);
 
   boolean isOpenType();
 
-  void setOpenType(boolean openType);
+  @Override
+  Property getProperty(String name);
+
+  @Override
+  List<Property> getProperties();
+
+  @Override
+  NavigationProperty getNavigationProperty(String name);
+
+  @Override
+  List<NavigationProperty> getNavigationProperties();
 
 }

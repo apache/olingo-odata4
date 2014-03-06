@@ -25,49 +25,25 @@ public interface CommonProperty extends Named {
 
   String getType();
 
-  void setType(String type);
-
   boolean isNullable();
-
-  void setNullable(boolean nullable);
 
   String getDefaultValue();
 
-  void setDefaultValue(String defaultValue);
-
   Integer getMaxLength();
-
-  void setMaxLength(Integer maxLength);
 
   boolean isFixedLength();
 
-  void setFixedLength(boolean fixedLength);
-
   Integer getPrecision();
-
-  void setPrecision(Integer precision);
 
   Integer getScale();
 
-  void setScale(Integer scale);
-
   boolean isUnicode();
-
-  void setUnicode(boolean unicode);
 
   String getCollation();
 
-  void setCollation(String collation);
-
   String getSrid();
-
-  void setSrid(String srid);
 
   ConcurrencyMode getConcurrencyMode();
 
-  void setConcurrencyMode(ConcurrencyMode concurrencyMode);
-
   StoreGeneratedPattern getStoreGeneratedPattern();
-
-  void setStoreGeneratedPattern(StoreGeneratedPattern storeGeneratedPattern);
 }

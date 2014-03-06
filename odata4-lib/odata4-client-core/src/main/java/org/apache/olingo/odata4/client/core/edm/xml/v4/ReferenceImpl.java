@@ -23,6 +23,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Include;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.IncludeAnnotations;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
@@ -33,9 +35,9 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
 
   private URI uri;
 
-  private final List<IncludeImpl> includes = new ArrayList<IncludeImpl>();
+  private final List<Include> includes = new ArrayList<Include>();
 
-  private final List<IncludeAnnotationsImpl> includeAnnotations = new ArrayList<IncludeAnnotationsImpl>();
+  private final List<IncludeAnnotations> includeAnnotations = new ArrayList<IncludeAnnotations>();
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -44,18 +46,17 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
     return uri;
   }
 
-  @Override
   public void setUri(final URI uri) {
     this.uri = uri;
   }
 
   @Override
-  public List<IncludeImpl> getIncludes() {
+  public List<Include> getIncludes() {
     return includes;
   }
 
   @Override
-  public List<IncludeAnnotationsImpl> getIncludeAnnotations() {
+  public List<IncludeAnnotations> getIncludeAnnotations() {
     return includeAnnotations;
   }
 

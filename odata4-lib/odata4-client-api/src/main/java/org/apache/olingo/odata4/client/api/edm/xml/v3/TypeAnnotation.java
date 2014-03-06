@@ -24,12 +24,8 @@ public interface TypeAnnotation {
 
   String getTerm();
 
-  void setTerm(String term);
-
   String getQualifier();
 
-  void setQualifier(String qualifier);
-
-  List<? extends PropertyValue> getPropertyValues();
+  List<PropertyValue> getPropertyValues();
 
 }

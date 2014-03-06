@@ -22,9 +22,5 @@ public interface AssociationSetEnd {
 
   String getRole();
 
-  void setRole(String role);
-
   String getEntitySet();
-
-  void setEntitySet(String entitySet);
 }

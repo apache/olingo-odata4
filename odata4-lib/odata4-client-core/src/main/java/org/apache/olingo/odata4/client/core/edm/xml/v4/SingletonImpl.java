@@ -40,7 +40,6 @@ public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -50,7 +49,6 @@ public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton
     return entityType;
   }
 
-  @Override
   public void setEntityType(final String entityType) {
     this.entityType = entityType;
   }

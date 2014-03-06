@@ -25,7 +25,5 @@ public interface AssociationSet extends Named {
 
   String getAssociation();
 
-  void setAssociation(String association);
-
-  List<? extends AssociationSetEnd> getEnds();
+  List<AssociationSetEnd> getEnds();
 }

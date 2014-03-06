@@ -59,7 +59,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -69,7 +68,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }
@@ -79,7 +77,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return nullable;
   }
 
-  @Override
   public void setNullable(final boolean nullable) {
     this.nullable = nullable;
   }
@@ -89,7 +86,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return defaultValue;
   }
 
-  @Override
   public void setDefaultValue(final String defaultValue) {
     this.defaultValue = defaultValue;
   }
@@ -99,7 +95,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return maxLength;
   }
 
-  @Override
   public void setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
   }
@@ -109,7 +104,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return fixedLength;
   }
 
-  @Override
   public void setFixedLength(final boolean fixedLength) {
     this.fixedLength = fixedLength;
   }
@@ -119,7 +113,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return precision;
   }
 
-  @Override
   public void setPrecision(final Integer precision) {
     this.precision = precision;
   }
@@ -129,7 +122,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return scale;
   }
 
-  @Override
   public void setScale(final Integer scale) {
     this.scale = scale;
   }
@@ -139,7 +131,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return unicode;
   }
 
-  @Override
   public void setUnicode(final boolean unicode) {
     this.unicode = unicode;
   }
@@ -149,7 +140,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return collation;
   }
 
-  @Override
   public void setCollation(final String collation) {
     this.collation = collation;
   }
@@ -159,7 +149,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return srid;
   }
 
-  @Override
   public void setSrid(final String srid) {
     this.srid = srid;
   }
@@ -169,11 +158,11 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
     return concurrencyMode;
   }
 
-  @Override
   public void setConcurrencyMode(final ConcurrencyMode concurrencyMode) {
     this.concurrencyMode = concurrencyMode;
   }
 
+  @Override
   public StoreGeneratedPattern getStoreGeneratedPattern() {
     return storeGeneratedPattern;
   }

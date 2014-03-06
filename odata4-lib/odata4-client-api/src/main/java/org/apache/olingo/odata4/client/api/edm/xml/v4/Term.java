@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import java.math.BigInteger;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.Named;
 
@@ -30,31 +29,15 @@ public interface Term extends Named {
 
   String getDefaultValue();
 
-  String getMaxLength();
+  Integer getMaxLength();
 
-  BigInteger getPrecision();
+  Integer getPrecision();
 
-  BigInteger getScale();
+  Integer getScale();
 
   String getSrid();
 
   String getType();
 
   boolean isNullable();
-
-  void setBaseTerm(String baseTerm);
-
-  void setDefaultValue(String defaultValue);
-
-  void setMaxLength(String maxLength);
-
-  void setNullable(boolean nullable);
-
-  void setPrecision(BigInteger precision);
-
-  void setScale(BigInteger scale);
-
-  void setSrid(String srid);
-
-  void setType(String type);
 }

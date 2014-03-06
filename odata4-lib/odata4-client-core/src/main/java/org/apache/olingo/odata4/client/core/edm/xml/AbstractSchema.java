@@ -39,7 +39,6 @@ public abstract class AbstractSchema extends AbstractEdmItem implements Schema {
     return namespace;
   }
 
-  @Override
   public void setNamespace(final String namespace) {
     this.namespace = namespace;
   }
@@ -49,7 +48,6 @@ public abstract class AbstractSchema extends AbstractEdmItem implements Schema {
     return alias;
   }
 
-  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

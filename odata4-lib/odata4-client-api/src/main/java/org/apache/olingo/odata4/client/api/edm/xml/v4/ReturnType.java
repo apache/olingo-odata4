@@ -31,16 +31,4 @@ public interface ReturnType {
   String getType();
 
   boolean isNullable();
-
-  void setMaxLength(Integer maxLength);
-
-  void setNullable(boolean nullable);
-
-  void setPrecision(Integer precision);
-
-  void setScale(Integer scale);
-
-  void setSrid(String srid);
-
-  void setType(String type);
 }

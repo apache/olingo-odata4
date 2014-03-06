@@ -37,7 +37,6 @@ public class AssociationSetEndImpl extends AbstractEdmItem implements Associatio
     return role;
   }
 
-  @Override
   public void setRole(final String role) {
     this.role = role;
   }
@@ -47,7 +46,6 @@ public class AssociationSetEndImpl extends AbstractEdmItem implements Associatio
     return entitySet;
   }
 
-  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }

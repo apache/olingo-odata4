@@ -25,8 +25,6 @@ public interface Association extends Named {
 
   ReferentialConstraint getReferentialConstraint();
 
-  void setReferentialConstraint(ReferentialConstraint referentialConstraint);
-
-  List<? extends AssociationEnd> getEnds();
+  List<AssociationEnd> getEnds();
 
 }

@@ -27,16 +27,15 @@ public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = -5541908235094985412L;
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
   @JsonIgnore
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 }

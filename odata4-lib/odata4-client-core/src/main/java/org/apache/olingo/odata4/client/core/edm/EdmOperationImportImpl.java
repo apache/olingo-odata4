@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.core.edm;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v4.OperationImport;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.Target;
@@ -27,9 +26,9 @@ import org.apache.olingo.odata4.commons.core.edm.AbstractEdmOperationImport;
 public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
 
   protected EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
-          final OperationImport operationImport) {
+          final String entitySet) {
 
-    super(edm, container, name, new Target.Builder(operationImport.getEntitySet(), container).build());
+    super(edm, container, name, entitySet == null ? null : new Target.Builder(entitySet, container).build());
   }
 
 }

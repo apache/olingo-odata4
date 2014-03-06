@@ -58,7 +58,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return property;
   }
 
-  @Override
   public void setProperty(final String property) {
     this.property = property;
   }
@@ -68,7 +67,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return path;
   }
 
-  @Override
   public void setPath(final String path) {
     this.path = path;
   }
@@ -78,7 +76,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return string;
   }
 
-  @Override
   public void setString(final String string) {
     this.string = string;
   }
@@ -88,7 +85,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return _int;
   }
 
-  @Override
   public void setInt(final BigInteger _int) {
     this._int = _int;
   }
@@ -98,7 +94,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return _float;
   }
 
-  @Override
   public void setFloat(final Double _float) {
     this._float = _float;
   }
@@ -108,7 +103,6 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return decimal;
   }
 
-  @Override
   public void setDecimal(final BigDecimal decimal) {
     this.decimal = decimal;
   }
@@ -118,18 +112,16 @@ public class PropertyValueImpl extends AbstractEdmItem implements PropertyValue 
     return bool;
   }
 
-  @Override
   public void setBool(final Boolean bool) {
     this.bool = bool;
   }
 
   @Override
   public Date getDateTime() {
-    return dateTime;
+    return dateTime == null ? null : new Date(dateTime.getTime());
   }
 
-  @Override
   public void setDateTime(final Date dateTime) {
-    this.dateTime = dateTime;
+    this.dateTime = dateTime == null ? null : new Date(dateTime.getTime());
   }
 }

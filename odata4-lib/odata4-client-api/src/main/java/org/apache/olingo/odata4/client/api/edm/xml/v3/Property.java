@@ -25,26 +25,14 @@ public interface Property extends CommonProperty {
 
   String getFcSourcePath();
 
-  void setFcSourcePath(String fcSourcePath);
-
   String getFcTargetPath();
-
-  void setFcTargetPath(String fcTargetPath);
 
   EdmContentKind getFcContentKind();
 
-  void setFcContentKind(EdmContentKind fcContentKind);
-
   String getFcNSPrefix();
-
-  void setFcNSPrefix(String fcNSPrefix);
 
   String getFcNSURI();
 
-  void setFcNSURI(String fcNSURI);
-
   boolean isFcKeepInContent();
-
-  void setFcKeepInContent(boolean fcKeepInContent);
 
 }

@@ -20,16 +20,17 @@ package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractDataServices;
 
 public class DataServicesImpl extends AbstractDataServices {
 
   private static final long serialVersionUID = -7954360771258897632L;
 
-  private final List<SchemaImpl> schemas = new ArrayList<SchemaImpl>();
+  private final List<Schema> schemas = new ArrayList<Schema>();
 
   @Override
-  public List<SchemaImpl> getSchemas() {
+  public List<Schema> getSchemas() {
     return schemas;
   }
 

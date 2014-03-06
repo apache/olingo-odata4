@@ -33,14 +33,18 @@ import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.ActionImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.FunctionImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.SchemaImpl;
+import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Action;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Function;
+import org.apache.olingo.odata4.client.api.http.HttpMethod;
+import org.apache.olingo.odata4.client.core.edm.v3.EdmActionProxy;
+import org.apache.olingo.odata4.client.core.edm.v3.EdmFunctionProxy;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
@@ -121,11 +125,14 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmTypeDefinition result = null;
 
     final Schema schema = xmlMetadata.getSchema(typeDefinitionName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final TypeDefinition xmlTypeDefinition = ((SchemaImpl) schema).getTypeDefinition(typeDefinitionName.getName());
+    if (schema instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) {
+      final TypeDefinition xmlTypeDefinition = ((org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) schema).
+              getTypeDefinition(typeDefinitionName.getName());
       if (xmlTypeDefinition != null) {
         result = new EdmTypeDefinitionImpl(this, typeDefinitionName, xmlTypeDefinition);
       }
+    } else {
+      throw new UnsupportedInV3Exception();
     }
 
     return result;
@@ -149,14 +156,18 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmComplexType result = null;
 
     final Schema schema = xmlMetadata.getSchema(complexTypeName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final ComplexType xmlComplexType = ((SchemaImpl) schema).getComplexType(complexTypeName.getName());
-      if (xmlComplexType != null) {
-        result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlComplexType);
-      }
+    final ComplexType xmlComplexType = schema.getComplexType(complexTypeName.getName());
+    if (xmlComplexType != null) {
+      result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlComplexType);
     }
 
     return result;
+  }
+
+  private boolean canProxyFunction(final FunctionImport functionImport) {
+    return functionImport.getHttpMethod() == null
+            ? !functionImport.isSideEffecting()
+            : HttpMethod.GET.name().equals(functionImport.getHttpMethod());
   }
 
   @Override
@@ -164,14 +175,29 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmAction result = null;
 
     final Schema schema = xmlMetadata.getSchema(actionName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final List<ActionImpl> actions = ((SchemaImpl) schema).getActions(actionName.getName());
+    if (schema instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) {
+      final List<Action> actions = ((org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) schema).
+              getActions(actionName.getName());
       boolean found = false;
-      for (Iterator<ActionImpl> itor = actions.iterator(); itor.hasNext() && !found;) {
-        final ActionImpl action = itor.next();
+      for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
+        final Action action = itor.next();
         if (!action.isBound()) {
           found = true;
           result = EdmActionImpl.getInstance(this, actionName, action);
+        }
+      }
+    } else {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
+                getFunctionImports(actionName.getName());
+        boolean found = false;
+        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
+          final FunctionImport functionImport = itor.next();
+          if (!canProxyFunction(functionImport) && !functionImport.isBindable()) {
+            found = functionImport.getParameters().isEmpty();
+            result = EdmActionProxy.getInstance(this, actionName, functionImport);
+          }
         }
       }
     }
@@ -184,11 +210,12 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmFunction result = null;
 
     final Schema schema = xmlMetadata.getSchema(functionName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final List<FunctionImpl> functions = ((SchemaImpl) schema).getFunctions(functionName.getName());
+    if (schema instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) {
+      final List<Function> functions = ((org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) schema).
+              getFunctions(functionName.getName());
       boolean found = false;
-      for (Iterator<FunctionImpl> itor = functions.iterator(); itor.hasNext() && !found;) {
-        final FunctionImpl function = itor.next();
+      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
+        final Function function = itor.next();
         if (!function.isBound()) {
           final Set<String> functionParamNames = new HashSet<String>();
           for (CommonParameter param : function.getParameters()) {
@@ -198,6 +225,26 @@ public class EdmClientImpl extends AbstractEdmImpl {
                   ? functionParamNames.isEmpty()
                   : functionParamNames.containsAll(parameterNames);
           result = EdmFunctionImpl.getInstance(this, functionName, function);
+        }
+      }
+    } else {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
+                getFunctionImports(functionName.getName());
+        boolean found = false;
+        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
+          final FunctionImport functionImport = itor.next();
+          if (canProxyFunction(functionImport) && !functionImport.isBindable()) {
+            final Set<String> functionParamNames = new HashSet<String>();
+            for (CommonParameter param : functionImport.getParameters()) {
+              functionParamNames.add(param.getName());
+            }
+            found = parameterNames == null
+                    ? functionParamNames.isEmpty()
+                    : functionParamNames.containsAll(parameterNames);
+            result = EdmFunctionProxy.getInstance(this, functionName, functionImport);
+          }
         }
       }
     }
@@ -212,11 +259,12 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmAction result = null;
 
     final Schema schema = xmlMetadata.getSchema(actionName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final List<ActionImpl> actions = ((SchemaImpl) schema).getActions(actionName.getName());
+    if (schema instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) {
+      final List<Action> actions = ((org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) schema).
+              getActions(actionName.getName());
       boolean found = false;
-      for (Iterator<ActionImpl> itor = actions.iterator(); itor.hasNext() && !found;) {
-        final ActionImpl action = itor.next();
+      for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
+        final Action action = itor.next();
         if (action.isBound()) {
           final EdmTypeInfo boundParam = new EdmTypeInfo(action.getParameters().get(0).getType());
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
@@ -224,6 +272,25 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
             found = true;
             result = EdmActionImpl.getInstance(this, actionName, action);
+          }
+        }
+      }
+    } else {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
+                getFunctionImports(actionName.getName());
+        boolean found = false;
+        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
+          final FunctionImport functionImport = itor.next();
+          if (!canProxyFunction(functionImport) && functionImport.isBindable()) {
+            final EdmTypeInfo boundParam = new EdmTypeInfo(functionImport.getParameters().get(0).getType());
+            if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
+                    && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+
+              found = true;
+              result = EdmActionProxy.getInstance(this, actionName, functionImport);
+            }
           }
         }
       }
@@ -240,11 +307,12 @@ public class EdmClientImpl extends AbstractEdmImpl {
     EdmFunction result = null;
 
     final Schema schema = xmlMetadata.getSchema(functionName.getNamespace());
-    if (schema instanceof SchemaImpl) {
-      final List<FunctionImpl> functions = ((SchemaImpl) schema).getFunctions(functionName.getName());
+    if (schema instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) {
+      final List<Function> functions = ((org.apache.olingo.odata4.client.api.edm.xml.v4.Schema) schema).
+              getFunctions(functionName.getName());
       boolean found = false;
-      for (Iterator<FunctionImpl> itor = functions.iterator(); itor.hasNext() && !found;) {
-        final FunctionImpl function = itor.next();
+      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
+        final Function function = itor.next();
         if (function.isBound()) {
           final EdmTypeInfo boundParam = new EdmTypeInfo(function.getParameters().get(0).getType());
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
@@ -258,6 +326,31 @@ public class EdmClientImpl extends AbstractEdmImpl {
                     ? functionParamNames.isEmpty()
                     : functionParamNames.containsAll(parameterNames);
             result = EdmFunctionImpl.getInstance(this, functionName, function);
+          }
+        }
+      }
+    } else {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
+                getFunctionImports(functionName.getName());
+        boolean found = false;
+        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
+          final FunctionImport functionImport = itor.next();
+          if (!canProxyFunction(functionImport) && functionImport.isBindable()) {
+            final EdmTypeInfo boundParam = new EdmTypeInfo(functionImport.getParameters().get(0).getType());
+            if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
+                    && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+
+              final Set<String> functionParamNames = new HashSet<String>();
+              for (CommonParameter param : functionImport.getParameters()) {
+                functionParamNames.add(param.getName());
+              }
+              found = parameterNames == null
+                      ? functionParamNames.isEmpty()
+                      : functionParamNames.containsAll(parameterNames);
+              result = EdmFunctionProxy.getInstance(this, functionName, functionImport);
+            }
           }
         }
       }

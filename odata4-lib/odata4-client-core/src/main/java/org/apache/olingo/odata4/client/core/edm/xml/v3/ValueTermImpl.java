@@ -37,7 +37,6 @@ public class ValueTermImpl extends AbstractEdmItem implements ValueTerm {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -47,7 +46,6 @@ public class ValueTermImpl extends AbstractEdmItem implements ValueTerm {
     return type;
   }
 
-  @Override
   public void setType(final String type) {
     this.type = type;
   }

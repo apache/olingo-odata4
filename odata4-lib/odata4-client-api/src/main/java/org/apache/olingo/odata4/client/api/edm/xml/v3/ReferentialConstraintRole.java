@@ -25,8 +25,6 @@ public interface ReferentialConstraintRole {
 
   String getRole();
 
-  void setRole(final String role);
-
-  List<? extends PropertyRef> getPropertyRefs();
+  List<PropertyRef> getPropertyRefs();
 
 }

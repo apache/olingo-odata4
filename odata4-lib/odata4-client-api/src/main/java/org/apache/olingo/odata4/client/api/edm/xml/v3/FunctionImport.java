@@ -19,42 +19,25 @@
 package org.apache.olingo.odata4.client.api.edm.xml.v3;
 
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
 
 public interface FunctionImport extends org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport {
 
   String getReturnType();
 
-  void setReturnType(String returnType);
-
   String getEntitySet();
-
-  void setEntitySet(String entitySet);
 
   String getEntitySetPath();
 
-  void setEntitySetPath(String entitySetPath);
-
   boolean isComposable();
-
-  void setComposable(boolean composable);
 
   boolean isSideEffecting();
 
-  void setSideEffecting(boolean sideEffecting);
-
   boolean isBindable();
-
-  void setBindable(boolean bindable);
 
   boolean isAlwaysBindable();
 
-  void setAlwaysBindable(boolean alwaysBindable);
-
   String getHttpMethod();
 
-  void setHttpMethod(String httpMethod);
-
-  List<? extends CommonParameter> getParameters();
+  List<Parameter> getParameters();
 
 }

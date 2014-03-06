@@ -37,7 +37,6 @@ public class UsingImpl extends AbstractEdmItem implements Using {
     return namespace;
   }
 
-  @Override
   public void setNamespace(final String namespace) {
     this.namespace = namespace;
   }
@@ -47,7 +46,6 @@ public class UsingImpl extends AbstractEdmItem implements Using {
     return alias;
   }
 
-  @Override
   public void setAlias(final String alias) {
     this.alias = alias;
   }

@@ -19,6 +19,8 @@
 package org.apache.olingo.odata4.client.core.edm.xml;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 import org.apache.olingo.odata4.client.api.edm.xml.Member;
 import org.apache.olingo.odata4.client.core.op.impl.EnumTypeDeserializer;
@@ -34,12 +36,13 @@ public abstract class AbstractEnumType extends AbstractEdmItem implements EnumTy
 
   private boolean flags;
 
+  private final List<Member> members = new ArrayList<Member>();
+
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -49,7 +52,6 @@ public abstract class AbstractEnumType extends AbstractEdmItem implements EnumTy
     return underlyingType;
   }
 
-  @Override
   public void setUnderlyingType(final String underlyingType) {
     this.underlyingType = underlyingType;
   }
@@ -59,7 +61,6 @@ public abstract class AbstractEnumType extends AbstractEdmItem implements EnumTy
     return flags;
   }
 
-  @Override
   public void setFlags(final boolean flags) {
     this.flags = flags;
   }
@@ -85,4 +86,10 @@ public abstract class AbstractEnumType extends AbstractEdmItem implements EnumTy
     }
     return result;
   }
+
+  @Override
+  public List<Member> getMembers() {
+    return members;
+  }
+
 }

@@ -33,7 +33,6 @@ public class FunctionImpl extends ActionImpl implements Function {
     return composable;
   }
 
-  @Override
   public void setComposable(final boolean composable) {
     this.composable = composable;
   }

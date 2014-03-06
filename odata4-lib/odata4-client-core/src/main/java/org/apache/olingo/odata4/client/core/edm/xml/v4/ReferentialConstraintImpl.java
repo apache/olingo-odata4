@@ -36,7 +36,6 @@ public class ReferentialConstraintImpl extends AbstractAnnotatedEdmItem implemen
     return property;
   }
 
-  @Override
   public void setProperty(final String property) {
     this.property = property;
   }
@@ -46,7 +45,6 @@ public class ReferentialConstraintImpl extends AbstractAnnotatedEdmItem implemen
     return referencedProperty;
   }
 
-  @Override
   public void setReferencedProperty(final String referencedProperty) {
     this.referencedProperty = referencedProperty;
   }

@@ -61,7 +61,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return term;
   }
 
-  @Override
   public void setTerm(final String term) {
     this.term = term;
   }
@@ -71,7 +70,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return qualifier;
   }
 
-  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
@@ -81,7 +79,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return path;
   }
 
-  @Override
   public void setPath(final String path) {
     this.path = path;
   }
@@ -91,7 +88,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return string;
   }
 
-  @Override
   public void setString(final String string) {
     this.string = string;
   }
@@ -101,7 +97,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return _int;
   }
 
-  @Override
   public void setInt(final BigInteger _int) {
     this._int = _int;
   }
@@ -111,7 +106,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return _float;
   }
 
-  @Override
   public void setFloat(final Double _float) {
     this._float = _float;
   }
@@ -121,7 +115,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return decimal;
   }
 
-  @Override
   public void setDecimal(final BigDecimal decimal) {
     this.decimal = decimal;
   }
@@ -131,7 +124,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return bool;
   }
 
-  @Override
   public void setBool(final Boolean bool) {
     this.bool = bool;
   }
@@ -141,7 +133,6 @@ public class ValueAnnotationImpl extends AbstractEdmItem implements ValueAnnotat
     return dateTime == null ? null : new Date(dateTime.getTime());
   }
 
-  @Override
   public void setDateTime(final Date dateTime) {
     this.dateTime = dateTime == null ? null : new Date(dateTime.getTime());
   }

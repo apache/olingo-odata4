@@ -19,11 +19,11 @@
 package org.apache.olingo.odata4.client.api.edm.xml.v3;
 
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.AbstractAnnotations;
+import org.apache.olingo.odata4.client.api.edm.xml.CommonAnnotations;
 
-public interface Annotations extends AbstractAnnotations {
+public interface Annotations extends CommonAnnotations {
 
-  List<? extends TypeAnnotation> getTypeAnnotations();
+  List<TypeAnnotation> getTypeAnnotations();
 
-  List<? extends ValueAnnotation> getValueAnnotations();
+  List<ValueAnnotation> getValueAnnotations();
 }

@@ -39,7 +39,6 @@ public class ActionImportImpl extends AbstractAnnotatedEdmItem implements Action
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -49,7 +48,6 @@ public class ActionImportImpl extends AbstractAnnotatedEdmItem implements Action
     return action;
   }
 
-  @Override
   public void setAction(final String action) {
     this.action = action;
   }

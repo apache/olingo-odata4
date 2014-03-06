@@ -18,57 +18,67 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v4;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v4.AnnotatedEdmItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Action;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotations;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Function;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Term;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractSchema;
 
-public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmItem {
+public class SchemaImpl extends AbstractSchema implements Schema {
 
   private static final long serialVersionUID = 4453992249818796144L;
 
-  private final List<ActionImpl> actions = new ArrayList<ActionImpl>();
+  private final List<Action> actions = new ArrayList<Action>();
 
-  private final List<AnnotationsImpl> annotationsList = new ArrayList<AnnotationsImpl>();
+  private final List<Annotations> annotationsList = new ArrayList<Annotations>();
 
-  private final List<AnnotationImpl> annotations = new ArrayList<AnnotationImpl>();
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
-  private final List<ComplexTypeImpl> complexTypes = new ArrayList<ComplexTypeImpl>();
+  private final List<ComplexType> complexTypes = new ArrayList<ComplexType>();
 
-  private EntityContainerImpl entityContainer;
+  private EntityContainer entityContainer;
 
-  private final List<EnumTypeImpl> enumTypes = new ArrayList<EnumTypeImpl>();
+  private final List<EnumType> enumTypes = new ArrayList<EnumType>();
 
-  private final List<EntityTypeImpl> entityTypes = new ArrayList<EntityTypeImpl>();
+  private final List<EntityType> entityTypes = new ArrayList<EntityType>();
 
-  private final List<FunctionImpl> functions = new ArrayList<FunctionImpl>();
+  private final List<Function> functions = new ArrayList<Function>();
 
-  private final List<TermImpl> terms = new ArrayList<TermImpl>();
+  private final List<Term> terms = new ArrayList<Term>();
 
-  private final List<TypeDefinitionImpl> typeDefinitions = new ArrayList<TypeDefinitionImpl>();
+  private final List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
-  public List<ActionImpl> getActions() {
+  @Override
+  public List<Action> getActions() {
     return actions;
   }
 
-  public List<ActionImpl> getActions(final String name) {
+  @Override
+  public List<Action> getActions(final String name) {
     return getAllByName(name, getActions());
   }
 
   @Override
-  public List<AnnotationsImpl> getAnnotationsList() {
+  public List<Annotations> getAnnotationsList() {
     return annotationsList;
   }
 
   @Override
-  public AnnotationsImpl getAnnotationsList(final String target) {
-    AnnotationsImpl result = null;
-    for (AnnotationsImpl annots : getAnnotationsList()) {
+  public Annotations getAnnotationsList(final String target) {
+    Annotations result = null;
+    for (Annotations annots : getAnnotationsList()) {
       if (target.equals(annots.getTarget())) {
         result = annots;
       }
@@ -76,31 +86,38 @@ public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmIt
     return result;
   }
 
-  public List<AnnotationImpl> getAnnotations() {
+  @Override
+  public List<Annotation> getAnnotations() {
     return annotations;
   }
 
-  public List<FunctionImpl> getFunctions() {
+  @Override
+  public List<Function> getFunctions() {
     return functions;
   }
 
-  public List<FunctionImpl> getFunctions(final String name) {
+  @Override
+  public List<Function> getFunctions(final String name) {
     return getAllByName(name, getFunctions());
   }
 
-  public List<TermImpl> getTerms() {
+  @Override
+  public List<Term> getTerms() {
     return terms;
   }
 
-  public TypeDefinitionImpl getTypeDefinition(final String name) {
+  @Override
+  public TypeDefinition getTypeDefinition(final String name) {
     return getOneByName(name, getTypeDefinitions());
   }
 
-  public List<TypeDefinitionImpl> getTypeDefinitions() {
+  @Override
+  public List<TypeDefinition> getTypeDefinitions() {
     return typeDefinitions;
   }
 
-  public EntityContainerImpl getEntityContainer() {
+  @Override
+  public EntityContainer getEntityContainer() {
     return entityContainer;
   }
 
@@ -109,61 +126,55 @@ public class SchemaImpl extends AbstractSchema implements Schema, AnnotatedEdmIt
   }
 
   @Override
-  public List<EntityContainerImpl> getEntityContainers() {
+  public List<EntityContainer> getEntityContainers() {
     return entityContainer == null
-            ? Collections.<EntityContainerImpl>emptyList() : Collections.singletonList(entityContainer);
+            ? Collections.<EntityContainer>emptyList() : Collections.singletonList(entityContainer);
   }
 
   @Override
-  public EntityContainerImpl getDefaultEntityContainer() {
+  public EntityContainer getDefaultEntityContainer() {
     return entityContainer;
   }
 
   @Override
-  public EntityContainerImpl getEntityContainer(final String name) {
+  public EntityContainer getEntityContainer(final String name) {
     if (entityContainer != null && name.equals(entityContainer.getName())) {
       return entityContainer;
     }
-    throw new IllegalArgumentException("No EntityContainer found with name " + name);
+    return null;
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
   @Override
-  public EnumTypeImpl getEnumType(final String name) {
-    return (EnumTypeImpl) super.getEnumType(name);
-  }
-
-  @Override
-  public List<EnumTypeImpl> getEnumTypes() {
+  public List<EnumType> getEnumTypes() {
     return enumTypes;
   }
 
   @Override
-  public ComplexTypeImpl getComplexType(final String name) {
-    return (ComplexTypeImpl) super.getComplexType(name);
+  public ComplexType getComplexType(final String name) {
+    return (ComplexType) super.getComplexType(name);
   }
 
   @Override
-  public List<ComplexTypeImpl> getComplexTypes() {
+  public List<ComplexType> getComplexTypes() {
     return complexTypes;
   }
 
   @Override
-  public EntityTypeImpl getEntityType(final String name) {
-    return (EntityTypeImpl) super.getEntityType(name);
+  public EntityType getEntityType(final String name) {
+    return (EntityType) super.getEntityType(name);
   }
 
   @Override
-  public List<EntityTypeImpl> getEntityTypes() {
+  public List<EntityType> getEntityTypes() {
     return entityTypes;
   }
 }

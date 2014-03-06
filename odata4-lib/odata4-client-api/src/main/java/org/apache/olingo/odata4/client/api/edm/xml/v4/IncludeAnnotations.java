@@ -25,10 +25,4 @@ public interface IncludeAnnotations {
   String getTargeyNamespace();
 
   String getTermNamespace();
-
-  void setQualifier(String qualifier);
-
-  void setTargeyNamespace(String targeyNamespace);
-
-  void setTermNamespace(String termNamespace);
 }

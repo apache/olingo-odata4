@@ -31,7 +31,7 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
 
   private boolean includeInServiceDocument = true;
 
-  private AnnotationImpl annotation;
+  private Annotation annotation;
 
   private final List<NavigationPropertyBinding> navigationPropertyBindings = new ArrayList<NavigationPropertyBinding>();
 
@@ -40,7 +40,6 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
     return includeInServiceDocument;
   }
 
-  @Override
   public void setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
   }
@@ -51,13 +50,12 @@ public class EntitySetImpl extends AbstractEntitySet implements EntitySet {
   }
 
   @Override
-  public AnnotationImpl getAnnotation() {
+  public Annotation getAnnotation() {
     return annotation;
   }
 
-  @Override
   public void setAnnotation(final Annotation annotation) {
-    this.annotation = (AnnotationImpl) annotation;
+    this.annotation = annotation;
   }
 
 }

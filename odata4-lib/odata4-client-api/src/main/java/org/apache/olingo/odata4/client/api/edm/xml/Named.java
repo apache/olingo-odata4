@@ -21,6 +21,4 @@ package org.apache.olingo.odata4.client.api.edm.xml;
 public interface Named {
 
   String getName();
-
-  void setName(String name);
 }

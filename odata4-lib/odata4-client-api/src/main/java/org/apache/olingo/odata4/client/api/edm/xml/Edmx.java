@@ -22,9 +22,5 @@ public interface Edmx {
 
   String getVersion();
 
-  void setVersion(String version);
-
   DataServices getDataServices();
-
-  void setDataServices(DataServices dataServices);
 }

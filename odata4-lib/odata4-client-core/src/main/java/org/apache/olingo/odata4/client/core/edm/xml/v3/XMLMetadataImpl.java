@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
-import java.util.List;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractXMLMetadata;
 
 public class XMLMetadataImpl extends AbstractXMLMetadata {
@@ -27,22 +26,6 @@ public class XMLMetadataImpl extends AbstractXMLMetadata {
 
   public XMLMetadataImpl(final EdmxImpl edmx) {
     super(edmx);
-  }
-
-  @Override
-  public SchemaImpl getSchema(final int index) {
-    return (SchemaImpl) super.getSchema(index);
-  }
-
-  @Override
-  public SchemaImpl getSchema(final String key) {
-    return (SchemaImpl) super.getSchema(key);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public List<SchemaImpl> getSchemas() {
-    return (List<SchemaImpl>) super.getSchemas();
   }
 
 }

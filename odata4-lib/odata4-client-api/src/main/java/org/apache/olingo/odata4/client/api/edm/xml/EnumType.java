@@ -24,13 +24,9 @@ public interface EnumType extends Named {
 
   String getUnderlyingType();
 
-  void setUnderlyingType(String underlyingType);
-
   boolean isFlags();
 
-  void setFlags(boolean flags);
-
-  List<? extends Member> getMembers();
+  List<Member> getMembers();
 
   Member getMember(String name);
 

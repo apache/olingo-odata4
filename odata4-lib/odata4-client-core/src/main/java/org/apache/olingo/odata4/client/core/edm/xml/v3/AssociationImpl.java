@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.Association;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.AssociationEnd;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.ReferentialConstraint;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
@@ -34,14 +35,13 @@ public class AssociationImpl extends AbstractEdmItem implements Association {
 
   private ReferentialConstraint referentialConstraint;
 
-  private List<AssociationEndImpl> ends = new ArrayList<AssociationEndImpl>();
+  private List<AssociationEnd> ends = new ArrayList<AssociationEnd>();
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -51,13 +51,12 @@ public class AssociationImpl extends AbstractEdmItem implements Association {
     return referentialConstraint;
   }
 
-  @Override
   public void setReferentialConstraint(final ReferentialConstraint referentialConstraint) {
     this.referentialConstraint = referentialConstraint;
   }
 
   @Override
-  public List<AssociationEndImpl> getEnds() {
+  public List<AssociationEnd> getEnds() {
     return ends;
   }
 }

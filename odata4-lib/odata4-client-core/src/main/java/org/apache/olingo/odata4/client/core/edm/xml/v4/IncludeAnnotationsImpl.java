@@ -40,7 +40,6 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
     return termNamespace;
   }
 
-  @Override
   public void setTermNamespace(final String termNamespace) {
     this.termNamespace = termNamespace;
   }
@@ -50,7 +49,6 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
     return qualifier;
   }
 
-  @Override
   public void setQualifier(final String qualifier) {
     this.qualifier = qualifier;
   }
@@ -60,7 +58,6 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
     return targeyNamespace;
   }
 
-  @Override
   public void setTargeyNamespace(final String targeyNamespace) {
     this.targeyNamespace = targeyNamespace;
   }

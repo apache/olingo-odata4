@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import java.util.Iterator;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.BindingTarget;
+import org.apache.olingo.odata4.client.api.edm.xml.BindingTarget;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmBindingTarget;

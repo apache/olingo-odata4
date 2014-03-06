@@ -18,20 +18,32 @@
  */
 package org.apache.olingo.odata4.client.core.v3;
 
+import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.odata4.client.api.http.HttpMethod;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.ComplexTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityContainerImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.EntityTypeImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.FunctionImportImpl;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.SchemaImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
+import org.apache.olingo.odata4.commons.api.edm.Edm;
+import org.apache.olingo.odata4.commons.api.edm.EdmAction;
+import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
+import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
+import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -47,17 +59,18 @@ public class MetadataTest extends AbstractTest {
             toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
-    final EntityTypeImpl order = metadata.getSchemas().get(0).getEntityType("Order");
+    final EntityType order = metadata.getSchemas().get(0).getEntityType("Order");
     assertNotNull(order);
     assertEquals("Order", order.getName());
 
-    final List<FunctionImportImpl> functionImports = metadata.getSchemas().get(0).
+    @SuppressWarnings("unchecked")
+    final List<FunctionImport> functionImports = (List<FunctionImport>) metadata.<FunctionImport>getSchemas().get(0).
             getDefaultEntityContainer().getFunctionImports();
     int legacyGetters = 0;
     int legacyPosters = 0;
     int actions = 0;
     int functions = 0;
-    for (FunctionImportImpl functionImport : functionImports) {
+    for (FunctionImport functionImport : functionImports) {
       if (HttpMethod.GET.name().equals(functionImport.getHttpMethod())) {
         legacyGetters++;
       } else if (HttpMethod.POST.name().equals(functionImport.getHttpMethod())) {
@@ -82,61 +95,77 @@ public class MetadataTest extends AbstractTest {
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
-    final SchemaImpl first = metadata.getSchema("NorthwindModel");
+    final Schema first = metadata.getSchema("NorthwindModel");
     assertNotNull(first);
 
-    final SchemaImpl second = metadata.getSchema("ODataWebV3.Northwind.Model");
+    final Schema second = metadata.getSchema("ODataWebV3.Northwind.Model");
     assertNotNull(second);
 
-    final EntityContainerImpl entityContainer = second.getDefaultEntityContainer();
+    final EntityContainer entityContainer = second.getDefaultEntityContainer();
     assertNotNull(entityContainer);
     assertEquals("NorthwindEntities", entityContainer.getName());
   }
 
   @Test
-  public void entityType() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
-            toMetadata(getClass().getResourceAsStream("metadata.xml"));
+  public void complexAndEntityType() {
+    final Edm metadata = getClient().getReader().
+            readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
-    final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);
+    final EdmEntityContainer container = metadata.getEntityContainer(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));
     assertNotNull(container);
-    final EntityTypeImpl type = metadata.getSchema(0).getEntityType("ProductReview");
-    assertNotNull(type);
 
-    assertFalse(type.getProperties().isEmpty());
-    assertNotNull(type.getProperties().get(0));
+    final EdmComplexType complex = metadata.getComplexType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "ContactDetails"));
+    assertNotNull(complex);
+    assertFalse(complex.getPropertyNames().isEmpty());
+    assertTrue(complex.getProperty("EmailBag").isCollection());
 
-    assertFalse(type.getKey().getPropertyRefs().isEmpty());
-    assertNotNull(type.getKey().getPropertyRefs().get(0));
-  }
+    final EdmEntityType entity = metadata.getEntityType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "ProductReview"));
+    assertNotNull(entity);
+    assertFalse(entity.getPropertyNames().isEmpty());
+    assertEquals(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance(),
+            entity.getProperty("ProductId").getType());
 
-  @Test
-  public void complexType() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
-            toMetadata(getClass().getResourceAsStream("metadata.xml"));
-    assertNotNull(metadata);
-
-    final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);
-    assertNotNull(container);
-    final ComplexTypeImpl type = metadata.getSchema(0).getComplexType("ContactDetails");
-    assertNotNull(type);
-
-    assertFalse(type.getProperties().isEmpty());
-    assertNotNull(type.getProperties().get(0));
+    assertFalse(entity.getKeyPropertyRefs().isEmpty());
+    assertNotNull("ProductId", entity.getKeyPropertyRef("ProductId").getKeyPropertyName());
   }
 
   @Test
   public void functionImport() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
-            toMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final Edm metadata = getClient().getReader().
+            readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
-    final EntityContainerImpl container = metadata.getSchema(0).getEntityContainers().get(0);
+    final EdmEntityContainer container = metadata.getEntityContainer(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));
     assertNotNull(container);
-    final FunctionImportImpl funcImp = container.getFunctionImport("GetArgumentPlusOne");
-    assertNotNull(funcImp);
 
-    assertNotNull(funcImp.getParameters().get(0));
+    final EdmFunctionImport getArgumentPlusOne = container.getFunctionImport("GetArgumentPlusOne");
+    assertNotNull(getArgumentPlusOne);
+    assertEquals(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance(),
+            getArgumentPlusOne.getFunction(null).getReturnType().getType());
+
+    final EdmActionImport resetDataSource = container.getActionImport("ResetDataSource");
+    assertNotNull(resetDataSource);
+    assertTrue(resetDataSource.getAction().getParameterNames().isEmpty());
+    assertNull(resetDataSource.getAction().getReturnType());
+
+    final EdmEntityType computer = metadata.getEntityType(new FullQualifiedName(container.getNamespace(), "Computer"));
+    assertNotNull(computer);
+
+    final EdmFunction getComputer = metadata.getFunction(
+            new FullQualifiedName(container.getNamespace(), "GetComputer"),
+            new FullQualifiedName(container.getNamespace(), computer.getName()),
+            Boolean.FALSE, Arrays.asList(new String[]{"computer"}));
+    assertNotNull(getComputer);
+    assertEquals(computer, getComputer.getParameter("computer").getType());
+    assertEquals(computer, getComputer.getReturnType().getType());
+
+    final EdmAction resetDataSource2 = metadata.getAction(
+            new FullQualifiedName(container.getNamespace(), "ResetDataSource"), null, Boolean.FALSE);
+    assertNotNull(resetDataSource2);
   }
 }

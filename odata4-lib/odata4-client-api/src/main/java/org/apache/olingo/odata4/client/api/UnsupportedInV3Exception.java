@@ -16,13 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm.xml.v4;
+package org.apache.olingo.odata4.client.api;
 
-public enum OnDeleteAction {
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 
-  Cascade,
-  None,
-  SetNull,
-  SetDefault;
+public class UnsupportedInV3Exception extends EdmException {
+
+  private static final long serialVersionUID = 4773734640262424651L;
+
+  public UnsupportedInV3Exception() {
+    super("Not supported in OData 3.0");
+  }
 
 }

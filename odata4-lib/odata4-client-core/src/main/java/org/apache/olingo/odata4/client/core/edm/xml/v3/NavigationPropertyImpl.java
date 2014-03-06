@@ -40,7 +40,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return relationship;
   }
 
-  @Override
   public void setRelationship(final String relationship) {
     this.relationship = relationship;
   }
@@ -50,7 +49,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return toRole;
   }
 
-  @Override
   public void setToRole(final String toRole) {
     this.toRole = toRole;
   }
@@ -60,7 +58,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
     return fromRole;
   }
 
-  @Override
   public void setFromRole(final String fromRole) {
     this.fromRole = fromRole;
   }

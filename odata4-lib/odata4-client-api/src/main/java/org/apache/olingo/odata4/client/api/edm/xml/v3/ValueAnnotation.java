@@ -42,22 +42,4 @@ public interface ValueAnnotation {
 
   String getTerm();
 
-  void setBool(Boolean bool);
-
-  void setDateTime(Date dateTime);
-
-  void setDecimal(BigDecimal decimal);
-
-  void setFloat(Double _float);
-
-  void setInt(BigInteger _int);
-
-  void setPath(String path);
-
-  void setQualifier(String qualifier);
-
-  void setString(String string);
-
-  void setTerm(String term);
-
 }

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core.edm;
 
-import org.apache.olingo.odata4.client.api.edm.xml.v4.EntitySet;
+import org.apache.olingo.odata4.client.api.edm.xml.EntitySet;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;

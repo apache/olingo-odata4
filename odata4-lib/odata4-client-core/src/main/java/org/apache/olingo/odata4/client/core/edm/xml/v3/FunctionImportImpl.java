@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.Parameter;
 
 @JsonDeserialize(using = FunctionImportDeserializer.class)
 public class FunctionImportImpl implements FunctionImport {
@@ -46,14 +47,13 @@ public class FunctionImportImpl implements FunctionImport {
 
   private String httpMethod;
 
-  private final List<ParameterImpl> parameters = new ArrayList<ParameterImpl>();
+  private final List<Parameter> parameters = new ArrayList<Parameter>();
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -63,7 +63,6 @@ public class FunctionImportImpl implements FunctionImport {
     return returnType;
   }
 
-  @Override
   public void setReturnType(final String returnType) {
     this.returnType = returnType;
   }
@@ -73,7 +72,6 @@ public class FunctionImportImpl implements FunctionImport {
     return entitySet;
   }
 
-  @Override
   public void setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
   }
@@ -83,7 +81,6 @@ public class FunctionImportImpl implements FunctionImport {
     return entitySetPath;
   }
 
-  @Override
   public void setEntitySetPath(final String entitySetPath) {
     this.entitySetPath = entitySetPath;
   }
@@ -93,7 +90,6 @@ public class FunctionImportImpl implements FunctionImport {
     return composable;
   }
 
-  @Override
   public void setComposable(final boolean composable) {
     this.composable = composable;
   }
@@ -103,7 +99,6 @@ public class FunctionImportImpl implements FunctionImport {
     return sideEffecting;
   }
 
-  @Override
   public void setSideEffecting(final boolean sideEffecting) {
     this.sideEffecting = sideEffecting;
   }
@@ -113,7 +108,6 @@ public class FunctionImportImpl implements FunctionImport {
     return bindable;
   }
 
-  @Override
   public void setBindable(final boolean bindable) {
     this.bindable = bindable;
   }
@@ -123,7 +117,6 @@ public class FunctionImportImpl implements FunctionImport {
     return alwaysBindable;
   }
 
-  @Override
   public void setAlwaysBindable(final boolean alwaysBindable) {
     this.alwaysBindable = alwaysBindable;
   }
@@ -133,13 +126,12 @@ public class FunctionImportImpl implements FunctionImport {
     return httpMethod;
   }
 
-  @Override
   public void setHttpMethod(final String httpMethod) {
     this.httpMethod = httpMethod;
   }
 
   @Override
-  public List<ParameterImpl> getParameters() {
+  public List<Parameter> getParameters() {
     return parameters;
   }
 

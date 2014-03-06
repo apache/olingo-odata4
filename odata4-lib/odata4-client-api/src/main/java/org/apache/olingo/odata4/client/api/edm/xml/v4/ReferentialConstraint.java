@@ -22,10 +22,6 @@ public interface ReferentialConstraint {
 
   String getProperty();
 
-  void setProperty(String property);
-
   String getReferencedProperty();
-
-  void setReferencedProperty(String referencedProperty);
 
 }

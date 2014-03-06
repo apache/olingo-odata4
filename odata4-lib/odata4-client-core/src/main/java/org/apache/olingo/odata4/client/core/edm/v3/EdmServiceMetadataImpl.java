@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.odata4.client.core.edm.v3;
 
-import java.util.Collections;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
 import org.apache.olingo.odata4.client.core.edm.AbstractEdmServiceMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
@@ -41,12 +41,12 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 
   @Override
   public List<EdmSingletonInfo> getSingletonInfos() {
-    return Collections.<EdmSingletonInfo>emptyList();
+    throw new UnsupportedInV3Exception();
   }
 
   @Override
   public List<EdmActionImportInfo> getActionImportInfos() {
-    return Collections.<EdmActionImportInfo>emptyList();
+    throw new UnsupportedInV3Exception();
   }
 
 }

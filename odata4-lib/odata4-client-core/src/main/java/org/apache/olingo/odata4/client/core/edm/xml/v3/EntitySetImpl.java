@@ -18,10 +18,18 @@
  */
 package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
+import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationPropertyBinding;
+import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEntitySet;
 
 public class EntitySetImpl extends AbstractEntitySet {
 
   private static final long serialVersionUID = 5570833733884884012L;
+
+  @Override
+  public List<? extends NavigationPropertyBinding> getNavigationPropertyBindings() {
+    throw new UnsupportedInV3Exception();
+  }
 
 }

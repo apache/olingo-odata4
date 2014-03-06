@@ -23,7 +23,7 @@ import org.apache.olingo.odata4.client.api.edm.xml.Named;
 
 public interface TypeDefinition extends Named {
 
-  List<? extends Annotation> getAnnotations();
+  List<Annotation> getAnnotations();
 
   Integer getMaxLength();
 
@@ -36,16 +36,4 @@ public interface TypeDefinition extends Named {
   String getUnderlyingType();
 
   boolean isUnicode();
-
-  void setMaxLength(Integer maxLength);
-
-  void setPrecision(Integer precision);
-
-  void setScale(Integer scale);
-
-  void setSrid(String srid);
-
-  void setUnderlyingType(String underlyingType);
-
-  void setUnicode(boolean unicode);
 }

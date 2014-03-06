@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.AssociationSet;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.AssociationSetEnd;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractEdmItem;
 
 @JsonDeserialize(using = AssociationSetDeserializer.class)
@@ -33,14 +34,13 @@ public class AssociationSetImpl extends AbstractEdmItem implements AssociationSe
 
   private String association;
 
-  private List<AssociationSetEndImpl> ends = new ArrayList<AssociationSetEndImpl>();
+  private List<AssociationSetEnd> ends = new ArrayList<AssociationSetEnd>();
 
   @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public void setName(final String name) {
     this.name = name;
   }
@@ -50,13 +50,12 @@ public class AssociationSetImpl extends AbstractEdmItem implements AssociationSe
     return association;
   }
 
-  @Override
   public void setAssociation(final String association) {
     this.association = association;
   }
 
   @Override
-  public List<AssociationSetEndImpl> getEnds() {
+  public List<AssociationSetEnd> getEnds() {
     return ends;
   }
 }

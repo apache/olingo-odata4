@@ -20,42 +20,50 @@ package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
+import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.Annotations;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.Association;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.Using;
+import org.apache.olingo.odata4.client.api.edm.xml.v3.ValueTerm;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractSchema;
 
 public class SchemaImpl extends AbstractSchema implements Schema {
 
   private static final long serialVersionUID = 4453992249818796144L;
 
-  private final List<AnnotationsImpl> annotationList = new ArrayList<AnnotationsImpl>();
+  private final List<Annotations> annotationList = new ArrayList<Annotations>();
 
-  private final List<AssociationImpl> associations = new ArrayList<AssociationImpl>();
+  private final List<Association> associations = new ArrayList<Association>();
 
-  private final List<ComplexTypeImpl> complexTypes = new ArrayList<ComplexTypeImpl>();
+  private final List<ComplexType> complexTypes = new ArrayList<ComplexType>();
 
-  private final List<EntityContainerImpl> entityContainers = new ArrayList<EntityContainerImpl>();
+  private final List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
 
-  private final List<EntityTypeImpl> entityTypes = new ArrayList<EntityTypeImpl>();
+  private final List<EntityType> entityTypes = new ArrayList<EntityType>();
 
-  private final List<EnumTypeImpl> enumTypes = new ArrayList<EnumTypeImpl>();
+  private final List<EnumType> enumTypes = new ArrayList<EnumType>();
 
-  private final List<UsingImpl> usings = new ArrayList<UsingImpl>();
+  private final List<Using> usings = new ArrayList<Using>();
 
-  private final List<ValueTermImpl> valueTerms = new ArrayList<ValueTermImpl>();
+  private final List<ValueTerm> valueTerms = new ArrayList<ValueTerm>();
 
-  public AssociationImpl getAssociation(final String name) {
+  public Association getAssociation(final String name) {
     return getOneByName(name, getAssociations());
   }
 
   @Override
-  public List<AnnotationsImpl> getAnnotationsList() {
+  public List<Annotations> getAnnotationsList() {
     return annotationList;
   }
 
   @Override
-  public AnnotationsImpl getAnnotationsList(final String target) {
-    AnnotationsImpl result = null;
-    for (AnnotationsImpl annots : getAnnotationsList()) {
+  public Annotations getAnnotationsList(final String target) {
+    Annotations result = null;
+    for (Annotations annots : getAnnotationsList()) {
       if (target.equals(annots.getTarget())) {
         result = annots;
       }
@@ -63,27 +71,27 @@ public class SchemaImpl extends AbstractSchema implements Schema {
     return result;
   }
 
-  public List<AssociationImpl> getAssociations() {
+  public List<Association> getAssociations() {
     return associations;
   }
 
-  public List<UsingImpl> getUsings() {
+  public List<Using> getUsings() {
     return usings;
   }
 
-  public List<ValueTermImpl> getValueTerms() {
+  public List<ValueTerm> getValueTerms() {
     return valueTerms;
   }
 
   @Override
-  public List<EntityContainerImpl> getEntityContainers() {
+  public List<EntityContainer> getEntityContainers() {
     return entityContainers;
   }
 
   @Override
-  public EntityContainerImpl getDefaultEntityContainer() {
-    EntityContainerImpl result = null;
-    for (EntityContainerImpl container : getEntityContainers()) {
+  public EntityContainer getDefaultEntityContainer() {
+    EntityContainer result = null;
+    for (EntityContainer container : getEntityContainers()) {
       if (container.isDefaultEntityContainer()) {
         result = container;
       }
@@ -92,7 +100,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public EntityContainerImpl getEntityContainer(final String name) {
+  public EntityContainer getEntityContainer(final String name) {
     return getOneByName(name, getEntityContainers());
   }
 
@@ -102,7 +110,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public List<EnumTypeImpl> getEnumTypes() {
+  public List<EnumType> getEnumTypes() {
     return enumTypes;
   }
 
@@ -112,7 +120,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public List<ComplexTypeImpl> getComplexTypes() {
+  public List<ComplexType> getComplexTypes() {
     return complexTypes;
   }
 
@@ -122,7 +130,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public List<EntityTypeImpl> getEntityTypes() {
+  public List<EntityType> getEntityTypes() {
     return entityTypes;
   }
 

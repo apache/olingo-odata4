@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface Edmx extends org.apache.olingo.odata4.client.api.edm.xml.Edmx {
 
-  List<? extends Reference> getReferences();
+  List<Reference> getReferences();
 }
