@@ -22,6 +22,8 @@ import org.apache.olingo.odata4.client.core.op.impl.v3.ODataBinderImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v3.ODataDeserializerImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v3.ODataReaderImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v3.ODataSerializerImpl;
+import org.apache.olingo.odata4.client.core.uri.V3URIBuilder;
+import org.apache.olingo.odata4.client.core.uri.filter.V3FilterFactory;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataV3Client extends AbstractODataClient {
@@ -30,7 +32,8 @@ public class ODataV3Client extends AbstractODataClient {
 
   private final V3Configuration configuration = new V3Configuration();
 
-//  private final V3FilterFactory filterFactory = new V3FilterFactory();
+  private final V3FilterFactory filterFactory = new V3FilterFactory();
+
   private final ODataDeserializerImpl deserializer = new ODataDeserializerImpl(this);
 
   private final ODataSerializerImpl serializer = new ODataSerializerImpl(this);
@@ -69,16 +72,16 @@ public class ODataV3Client extends AbstractODataClient {
     return configuration;
   }
 
-//  @Override
-//  public V3URIBuilder getURIBuilder(final String serviceRoot) {
-//    return new V3URIBuilder(configuration, serviceRoot);
-//  }
-//
-//  @Override
-//  public V3FilterFactory getFilterFactory() {
-//    return filterFactory;
-//  }
-//
+  @Override
+  public V3URIBuilder getURIBuilder(final String serviceRoot) {
+    return new V3URIBuilder(configuration, serviceRoot);
+  }
+
+  @Override
+  public V3FilterFactory getFilterFactory() {
+    return filterFactory;
+  }
+
   @Override
   public ODataDeserializerImpl getDeserializer() {
     return deserializer;

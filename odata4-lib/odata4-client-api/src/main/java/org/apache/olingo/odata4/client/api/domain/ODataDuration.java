@@ -28,7 +28,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Helper class for handling time (as duration) primitive values.
  *
- * @see com.msopentech.odatajclient.engine.data.metadata.edm.EdmSimpleType#TIME
  * @see Duration
  */
 public final class ODataDuration implements Serializable {
