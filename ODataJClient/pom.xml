@@ -84,7 +84,6 @@
     <commons.io.version>2.4</commons.io.version>
     <commons.lang3.version>3.2.1</commons.lang3.version>
     <commons.beanutils.version>1.8.3</commons.beanutils.version>
-    <xstream.version>1.4.6</xstream.version>
 
     <sl4j.version>1.7.5</sl4j.version>
     
@@ -113,17 +112,6 @@
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils-core</artifactId>
         <version>${commons.beanutils.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <version>${xstream.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>xmlpull</groupId>
-            <artifactId>xmlpull</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>

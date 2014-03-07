@@ -1,8 +1,0 @@
-{
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Car/@Element",
-  "odata.mediaReadLink": "Car(16)/$value",
-  "odata.mediaContentType": "*/*",
-  "Photo@odata.mediaContentType": "application/octet-stream",
-  "VIN": 16,
-  "Description": "ぁゼをあクびゼゼァァせマほグソバせё裹ｦぽﾝァ"
-}

@@ -18,13 +18,13 @@
  */
 package com.msopentech.odatajclient.testservice;
 
+import com.msopentech.odatajclient.testservice.utils.ODataVersion;
 import javax.ws.rs.Path;
-import org.apache.commons.vfs2.FileSystemException;
 
 @Path("/V3/Static.svc")
 public class V3Services extends AbstractServices {
 
-    public V3Services() throws FileSystemException {
+    public V3Services() throws Exception {
         super();
     }
 

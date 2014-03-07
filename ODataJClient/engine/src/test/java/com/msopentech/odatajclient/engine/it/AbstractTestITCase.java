@@ -68,6 +68,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
@@ -96,7 +97,7 @@ public abstract class AbstractTestITCase {
 
     protected static String testKeyAsSegmentServiceRootURL;
 
-    protected static String testODataWriterDefaultServiceRootURL;
+//    protected static String testODataWriterDefaultServiceRootURL;
 
     protected static String testOpenTypeServiceRootURL;
 
@@ -130,7 +131,7 @@ public abstract class AbstractTestITCase {
         testStaticServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc";
         testActionOverloadingServiceRootURL = testBaseURL + "/ActionOverloadingService.svc";
         testKeyAsSegmentServiceRootURL = testBaseURL + "/KeyAsSegmentService.svc";
-        testODataWriterDefaultServiceRootURL = testBaseURL + "/ODataWriterDefaultService.svc";
+//        testODataWriterDefaultServiceRootURL = testBaseURL + "/ODataWriterDefaultService.svc";
         testOpenTypeServiceRootURL = testBaseURL + "/OpenTypeService.svc";
         testPrimitiveKeysServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc";
         testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V3/Static.svc/large";
@@ -460,7 +461,7 @@ public abstract class AbstractTestITCase {
 
         final ODataRetrieveResponse<ODataEntity> res = req.execute();
         assertEquals(200, res.getStatusCode());
-
+        
         final ODataEntity actual = res.getBody();
         assertNotNull(actual);
 

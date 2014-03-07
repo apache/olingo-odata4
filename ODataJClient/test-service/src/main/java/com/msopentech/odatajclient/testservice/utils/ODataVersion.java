@@ -16,20 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.msopentech.odatajclient.testservice;
+package com.msopentech.odatajclient.testservice.utils;
 
-import com.msopentech.odatajclient.testservice.utils.ODataVersion;
-import javax.ws.rs.Path;
+public enum ODataVersion {
 
-@Path("/V4/Static.svc")
-public class V4Services extends AbstractServices {
+    v3,
+    v4;
 
-    public V4Services() throws Exception {
-        super();
-    }
-
-    @Override
-    protected ODataVersion getVersion() {
-        return ODataVersion.v4;
-    }
-}
+};
