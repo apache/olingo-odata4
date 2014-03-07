@@ -19,6 +19,8 @@
 package org.apache.olingo.odata4.client.core.op.impl.v4;
 
 import java.io.InputStream;
+import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
+import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.apache.olingo.odata4.client.core.ODataV4Client;
 import org.apache.olingo.odata4.client.core.edm.EdmClientImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataReader;
@@ -37,9 +39,9 @@ public class ODataReaderImpl extends AbstractODataReader {
     return new EdmClientImpl(client.getDeserializer().toMetadata(input));
   }
 
-//    @Override
-//    public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
-//        return ((ODataV4Client) client).getBinder().getODataServiceDocument(
-//                ((ODataV4Client) client).getDeserializer().toServiceDocument(input, format));
-//    }
+  @Override
+  public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
+    return ((ODataV4Client) client).getBinder().getODataServiceDocument(
+            ((ODataV4Client) client).getDeserializer().toServiceDocument(input, format));
+  }
 }

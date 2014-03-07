@@ -20,7 +20,9 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import org.apache.olingo.odata4.client.api.data.ServiceDocument;
 import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.w3c.dom.Element;
 
 /**
@@ -37,7 +39,8 @@ public interface ODataDeserializer extends Serializable {
    * @param format OData service document format.
    * @return ServiceDocumentResource object.
    */
-//    ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
+  ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
+
   /**
    * Gets a feed object from the given InputStream.
    *

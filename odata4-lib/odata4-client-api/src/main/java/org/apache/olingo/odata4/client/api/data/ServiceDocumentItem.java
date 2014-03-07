@@ -16,22 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+package org.apache.olingo.odata4.client.api.data;
 
-abstract class AbstractODataClient implements ODataClient {
+public interface ServiceDocumentItem {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+  String getHref();
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
-  }
+  String getName();
 
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
-  }
-
+  String getTitle();
+    
 }

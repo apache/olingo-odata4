@@ -20,6 +20,8 @@ package org.apache.olingo.odata4.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
+import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 
 /**
@@ -46,7 +48,8 @@ public interface ODataReader extends Serializable {
    * @param format de-serialize as XML or JSON
    * @return List of URIs.
    */
-  //ODataServiceDocument readServiceDocument(InputStream input, ODataFormat format);
+  ODataServiceDocument readServiceDocument(InputStream input, ODataFormat format);
+
   /**
    * De-Serializes a stream into an OData entity set.
    *

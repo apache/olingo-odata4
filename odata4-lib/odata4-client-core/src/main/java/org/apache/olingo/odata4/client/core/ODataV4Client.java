@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.core;
 
+import org.apache.olingo.odata4.client.core.op.impl.v4.ODataBinderImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v4.ODataDeserializerImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v4.ODataReaderImpl;
 import org.apache.olingo.odata4.client.core.op.impl.v4.ODataSerializerImpl;
@@ -30,18 +31,15 @@ public class ODataV4Client extends AbstractODataClient {
   private final V4Configuration configuration = new V4Configuration();
 
 //    private final V4FilterFactory filterFactory = new V4FilterFactory();
-//
   private final ODataDeserializerImpl deserializer = new ODataDeserializerImpl(this);
-//
 
   private final ODataSerializerImpl serializer = new ODataSerializerImpl(this);
 
   private final ODataReaderImpl reader = new ODataReaderImpl(this);
 
 //    private final ODataWriterImpl writer = new ODataWriterImpl(this);
-//
-//    private final ODataBinderImpl binder = new ODataBinderImpl(this);
-//
+  private final ODataBinderImpl binder = new ODataBinderImpl(this);
+
 //    private final ODataObjectFactoryImpl objectFactory = new ODataObjectFactoryImpl(this);
 //
 //    private final V4RetrieveRequestFactory retrieveReqFact = new V4RetrieveRequestFactory(this);
@@ -99,12 +97,11 @@ public class ODataV4Client extends AbstractODataClient {
 //    public ODataWriterImpl getWriter() {
 //        return writer;
 //    }
-//
-//    @Override
-//    public ODataBinderImpl getBinder() {
-//        return binder;
-//    }
-//
+  @Override
+  public ODataBinderImpl getBinder() {
+    return binder;
+  }
+
 //    @Override
 //    public ODataObjectFactoryImpl getObjectFactory() {
 //        return objectFactory;

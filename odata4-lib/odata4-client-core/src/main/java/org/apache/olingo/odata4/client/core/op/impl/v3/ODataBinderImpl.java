@@ -16,22 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.op.impl.v3;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.odata4.client.core.ODataV3Client;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractODataBinder;
 
-abstract class AbstractODataClient implements ODataClient {
+public class ODataBinderImpl extends AbstractODataBinder {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+    private static final long serialVersionUID = 8970843539708952308L;
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
-  }
+    public ODataBinderImpl(final ODataV3Client client) {
+        super(client);
+    }
 
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
-  }
+//    @Override
+//    protected EdmType newEdmType(final String expression) {
+//        return new EdmV3Type(expression);
+//    }
 
 }

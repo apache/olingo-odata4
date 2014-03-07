@@ -16,22 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.data.v4;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.odata4.client.core.data.JSONServiceDocumentDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.net.URI;
+import org.apache.olingo.odata4.client.api.data.ServiceDocument;
+import org.apache.olingo.odata4.client.api.uri.SegmentType;
 
-abstract class AbstractODataClient implements ODataClient {
+@JsonDeserialize(using = JSONServiceDocumentDeserializer.class)
+public class JSONServiceDocumentImpl extends AbstractServiceDocument implements ServiceDocument {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+  @Override
+  public URI getBaseURI() {
+    URI baseURI = null;
+    if (getMetadataContext() != null) {
+      final String metadataURI = getMetadataContext();
+      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(SegmentType.METADATA.getValue())));
+    }
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
-  }
-
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
+    return baseURI;
   }
 
 }

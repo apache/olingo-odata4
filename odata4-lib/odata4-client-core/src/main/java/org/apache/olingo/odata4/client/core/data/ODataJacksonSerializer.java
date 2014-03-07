@@ -16,22 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.data;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
 import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
 
-abstract class AbstractODataClient implements ODataClient {
+abstract class ODataJacksonSerializer<T> extends JsonSerializer<T> {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+  protected ODataClient client;
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
-  }
+  protected abstract void doSerialize(T value, JsonGenerator jgen, SerializerProvider provider)
+          throws IOException, JsonProcessingException;
 
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
+  @Override
+  public void serialize(final T value, final JsonGenerator jgen, final SerializerProvider provider)
+          throws IOException, JsonProcessingException {
+
+    client = (ODataClient) provider.getAttribute(ODataClient.class);
+    doSerialize(value, jgen, provider);
   }
 
 }

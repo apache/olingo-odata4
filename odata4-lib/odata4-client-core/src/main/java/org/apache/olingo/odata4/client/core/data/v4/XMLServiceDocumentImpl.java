@@ -16,22 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.data.v4;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.odata4.client.api.data.ServiceDocument;
+import org.apache.olingo.odata4.client.core.data.XMLServiceDocumentDeserializer;
 
-abstract class AbstractODataClient implements ODataClient {
-
-  private static final long serialVersionUID = 7269096702397630265L;
-
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
-  }
-
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
-  }
+@JsonDeserialize(using = XMLServiceDocumentDeserializer.class)
+public class XMLServiceDocumentImpl extends AbstractServiceDocument implements ServiceDocument {
 
 }

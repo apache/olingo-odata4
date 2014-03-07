@@ -16,22 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.uri;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+import org.apache.commons.lang3.StringUtils;
 
-abstract class AbstractODataClient implements ODataClient {
+/**
+ * URI Segment types.
+ */
+public enum SegmentType {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+  ENTITYSET,
+  ENTITYTYPE,
+  KEY,
+  KEY_AS_SEGMENT,
+  NAVIGATION,
+  STRUCTURAL,
+  VALUE("$value"),
+  FUNCTIONIMPORT,
+  METADATA("$metadata"),
+  BATCH("$batch"),
+  LINKS("$links"),
+  COUNT("$count"),
+  SERVICEROOT;
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
+  private String value;
+
+  private SegmentType() {
+    this.value = StringUtils.EMPTY;
   }
 
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
+  private SegmentType(final String value) {
+    this.value = value;
   }
 
+  public String getValue() {
+    return value;
+  }
 }

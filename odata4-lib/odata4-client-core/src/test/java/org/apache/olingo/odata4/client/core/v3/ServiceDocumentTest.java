@@ -16,32 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v3;
+package org.apache.olingo.odata4.client.core.v3;
 
-import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
+import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.edm.EdmClientImpl;
-import org.apache.olingo.odata4.client.core.op.impl.AbstractODataReader;
-import org.apache.olingo.odata4.commons.api.edm.Edm;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class ODataReaderImpl extends AbstractODataReader {
+import org.junit.Test;
 
-  private static final long serialVersionUID = -2481293269536406956L;
-
-  public ODataReaderImpl(final ODataV3Client client) {
-    super(client);
-  }
+public class ServiceDocumentTest extends AbstractTest {
 
   @Override
-  public Edm readMetadata(final InputStream input) {
-    return new EdmClientImpl(client.getDeserializer().toMetadata(input));
+  protected ODataV3Client getClient() {
+    return v3Client;
   }
 
-  @Override
-  public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
-    return ((ODataV3Client) client).getBinder().getODataServiceDocument(
-            ((ODataV3Client) client).getDeserializer().toServiceDocument(input, format));
+  private String getFileExtension(final ODataFormat format) {
+    return format == ODataFormat.XML ? "xml" : "json";
+  }
+
+  private void parse(final ODataFormat format) {
+    final ODataServiceDocument serviceDocument = getClient().getReader().readServiceDocument(
+            getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)), format);
+    assertNotNull(serviceDocument);
+    assertTrue(serviceDocument.getEntitySetTitles().contains("Persons"));
+  }
+
+  @Test
+  public void json() {
+    parse(ODataFormat.JSON);
+  }
+
+  @Test
+  public void xml() {
+    parse(ODataFormat.XML);
   }
 }

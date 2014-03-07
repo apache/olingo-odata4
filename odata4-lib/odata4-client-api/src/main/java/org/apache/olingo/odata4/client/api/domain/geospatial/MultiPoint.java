@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.domain.geospatial;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.odata4.client.api.domain.ODataPrimitiveValue;
+import java.util.List;
+import org.apache.olingo.odata4.client.api.domain.EdmSimpleType;
 
-abstract class AbstractODataClient implements ODataClient {
+public class MultiPoint extends ComposedGeospatial<Point> {
 
-  private static final long serialVersionUID = 7269096702397630265L;
+  private static final long serialVersionUID = 4951011255142116129L;
 
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
+  public MultiPoint(final Dimension dimension, final List<Point> points) {
+    super(dimension, Type.MULTIPOINT, points);
   }
 
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
+  @Override
+  public EdmSimpleType getEdmSimpleType() {
+    return dimension == Dimension.GEOGRAPHY
+            ? EdmSimpleType.GeographyMultiPoint
+            : EdmSimpleType.GeometryMultiPoint;
   }
-
 }

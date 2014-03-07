@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.odata4.client.api;
 
+import org.apache.olingo.odata4.client.api.op.ODataBinder;
 import org.apache.olingo.odata4.client.api.op.ODataDeserializer;
 import org.apache.olingo.odata4.client.api.op.ODataReader;
 import org.apache.olingo.odata4.client.api.op.ODataSerializer;
@@ -31,28 +32,21 @@ public interface ODataClient {
   Configuration getConfiguration();
 
 //  URIBuilder getURIBuilder(String serviceRoot);
-//
 //  FilterFactory getFilterFactory();
-//
   ODataSerializer getSerializer();
 //
+
   ODataDeserializer getDeserializer();
 
   ODataReader getReader();
 
 //  ODataWriter getWriter();
-//
-//  ODataBinder getBinder();
-//
+  ODataBinder getBinder();
+
 //  ODataObjectFactory getObjectFactory();
-//
 //  RetrieveRequestFactory getRetrieveRequestFactory();
-//
 //  CUDRequestFactory getCUDRequestFactory();
-//
 //  StreamedRequestFactory getStreamedRequestFactory();
-//
 //  InvokeRequestFactory<?, ?, ?, ?, ?, ?, ?, ?> getInvokeRequestFactory();
-//
 //  BatchRequestFactory getBatchRequestFactory();
 }

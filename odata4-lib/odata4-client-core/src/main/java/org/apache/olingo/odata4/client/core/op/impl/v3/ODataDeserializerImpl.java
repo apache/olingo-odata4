@@ -18,8 +18,13 @@
  */
 package org.apache.olingo.odata4.client.core.op.impl.v3;
 
+import java.io.IOException;
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.ODataClient;
+import org.apache.olingo.odata4.client.api.data.ServiceDocument;
+import org.apache.olingo.odata4.client.api.format.ODataFormat;
+import org.apache.olingo.odata4.client.core.data.v3.JSONServiceDocumentImpl;
+import org.apache.olingo.odata4.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataDeserializer;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EdmxImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
@@ -41,17 +46,17 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer {
     }
   }
 
-//    @Override
-//    public AbstractServiceDocument toServiceDocument(final InputStream input, final ODataFormat format) {
-//        try {
-//            return format == ODataFormat.XML
-//                    ? getXmlMapper().readValue(input, XMLServiceDocument.class)
-//                    : getObjectMapper().readValue(input, JSONServiceDocument.class);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("Could not parse Service Document", e);
-//        }
-//    }
-//
+  @Override
+  public ServiceDocument toServiceDocument(final InputStream input, final ODataFormat format) {
+    try {
+      return format == ODataFormat.XML
+              ? getXmlMapper().readValue(input, XMLServiceDocumentImpl.class)
+              : getObjectMapper().readValue(input, JSONServiceDocumentImpl.class);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Could not parse Service Document", e);
+    }
+  }
+
 //    @Override
 //    protected JSONEntry toJSONEntry(final InputStream input) {
 //        try {
