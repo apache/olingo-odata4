@@ -22,6 +22,8 @@ import org.apache.olingo.odata4.client.api.op.ODataBinder;
 import org.apache.olingo.odata4.client.api.op.ODataDeserializer;
 import org.apache.olingo.odata4.client.api.op.ODataReader;
 import org.apache.olingo.odata4.client.api.op.ODataSerializer;
+import org.apache.olingo.odata4.client.api.uri.URIBuilder;
+import org.apache.olingo.odata4.client.api.uri.filter.FilterFactory;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
 public interface ODataClient {
@@ -31,10 +33,11 @@ public interface ODataClient {
   //ODataHeaders getVersionHeaders();
   Configuration getConfiguration();
 
-//  URIBuilder getURIBuilder(String serviceRoot);
-//  FilterFactory getFilterFactory();
+  URIBuilder getURIBuilder(String serviceRoot);
+
+  FilterFactory getFilterFactory();
+
   ODataSerializer getSerializer();
-//
 
   ODataDeserializer getDeserializer();
 

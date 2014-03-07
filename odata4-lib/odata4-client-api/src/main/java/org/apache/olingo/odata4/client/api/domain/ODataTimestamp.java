@@ -28,114 +28,111 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Helper class for handling datetime and datetime-offset primitive values.
- *
- * @see com.msopentech.odatajclient.engine.data.metadata.edm.EdmSimpleType#DATE_TIME
- * @see com.msopentech.odatajclient.engine.data.metadata.edm.EdmSimpleType#DATE_TIME_OFFSET
  */
 public final class ODataTimestamp implements Serializable {
 
-    private static final long serialVersionUID = 4053990618660356004L;
+  private static final long serialVersionUID = 4053990618660356004L;
 
-    private final SimpleDateFormat sdf;
+  private final SimpleDateFormat sdf;
 
-    private final Timestamp timestamp;
+  private final Timestamp timestamp;
 
-    private String timezone;
+  private String timezone;
 
-    private final boolean offset;
+  private final boolean offset;
 
-    public static ODataTimestamp getInstance(final EdmSimpleType type, final Timestamp timestamp) {
-        return new ODataTimestamp(new SimpleDateFormat(type.pattern()),
-                new Date(timestamp.getTime()), timestamp.getNanos(), type == EdmSimpleType.DateTimeOffset);
-    }
+  public static ODataTimestamp getInstance(final EdmSimpleType type, final Timestamp timestamp) {
+    return new ODataTimestamp(new SimpleDateFormat(type.pattern()),
+            new Date(timestamp.getTime()), timestamp.getNanos(), type == EdmSimpleType.DateTimeOffset);
+  }
 
-    public static ODataTimestamp parse(final EdmSimpleType type, final String input) {
-        final ODataTimestamp instance;
+  public static ODataTimestamp parse(final EdmSimpleType type, final String input) {
+    final ODataTimestamp instance;
 
-        final String[] dateParts = input.split("\\.");
-        final SimpleDateFormat sdf = new SimpleDateFormat(type.pattern());
-        final boolean isOffset = type == EdmSimpleType.DateTimeOffset;
+    final String[] dateParts = input.split("\\.");
+    final SimpleDateFormat sdf = new SimpleDateFormat(type.pattern());
+    final boolean isOffset = type == EdmSimpleType.DateTimeOffset;
 
-        try {
-            final Date date = sdf.parse(dateParts[0]);
-            if (dateParts.length > 1) {
-                int idx = dateParts[1].indexOf('+');
-                if (idx == -1) {
-                    idx = dateParts[1].indexOf('-');
-                }
-                if (idx == -1) {
-                    instance = new ODataTimestamp(sdf, date, Integer.parseInt(dateParts[1]), isOffset);
-                } else {
-                    instance = new ODataTimestamp(sdf, date,
-                            Integer.parseInt(dateParts[1].substring(0, idx)), dateParts[1].substring(idx), isOffset);
-                }
-            } else {
-                instance = new ODataTimestamp(sdf, date, isOffset);
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cannot parse " + type.pattern(), e);
+    try {
+      final Date date = sdf.parse(dateParts[0]);
+      if (dateParts.length > 1) {
+        int idx = dateParts[1].indexOf('+');
+        if (idx == -1) {
+          idx = dateParts[1].indexOf('-');
         }
-
-        return instance;
-    }
-
-    private ODataTimestamp(final SimpleDateFormat sdf, final Date date, final boolean offset) {
-        this.sdf = sdf;
-        this.timestamp = new Timestamp(date.getTime());
-        this.offset = offset;
-    }
-
-    private ODataTimestamp(final SimpleDateFormat sdf, final Date date, final int nanos, final boolean offset) {
-        this(sdf, date, offset);
-        this.timestamp.setNanos(nanos);
-    }
-
-    private ODataTimestamp(
-            final SimpleDateFormat sdf, final Date date, final int nanos, final String timezone, final boolean offset) {
-        this(sdf, date, nanos, offset);
-        this.timezone = timezone;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public boolean isOffset() {
-        return offset;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, "sdf");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "sdf");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String toString() {
-        final StringBuilder formatted = new StringBuilder().append(sdf.format(timestamp));
-        if (timestamp.getNanos() > 0) {
-            formatted.append('.').append(String.valueOf(timestamp.getNanos()));
+        if (idx == -1) {
+          instance = new ODataTimestamp(sdf, date, Integer.parseInt(dateParts[1]), isOffset);
+        } else {
+          instance = new ODataTimestamp(sdf, date,
+                  Integer.parseInt(dateParts[1].substring(0, idx)), dateParts[1].substring(idx), isOffset);
         }
-        if (StringUtils.isNotBlank(timezone)) {
-            formatted.append(timezone);
-        }
-        return formatted.toString();
+      } else {
+        instance = new ODataTimestamp(sdf, date, isOffset);
+      }
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Cannot parse " + type.pattern(), e);
     }
+
+    return instance;
+  }
+
+  private ODataTimestamp(final SimpleDateFormat sdf, final Date date, final boolean offset) {
+    this.sdf = sdf;
+    this.timestamp = new Timestamp(date.getTime());
+    this.offset = offset;
+  }
+
+  private ODataTimestamp(final SimpleDateFormat sdf, final Date date, final int nanos, final boolean offset) {
+    this(sdf, date, offset);
+    this.timestamp.setNanos(nanos);
+  }
+
+  private ODataTimestamp(
+          final SimpleDateFormat sdf, final Date date, final int nanos, final String timezone, final boolean offset) {
+    this(sdf, date, nanos, offset);
+    this.timezone = timezone;
+  }
+
+  public Timestamp getTimestamp() {
+    return timestamp;
+  }
+
+  public String getTimezone() {
+    return timezone;
+  }
+
+  public boolean isOffset() {
+    return offset;
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj, "sdf");
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this, "sdf");
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public String toString() {
+    final StringBuilder formatted = new StringBuilder().append(sdf.format(timestamp));
+    if (timestamp.getNanos() > 0) {
+      formatted.append('.').append(String.valueOf(timestamp.getNanos()));
+    }
+    if (StringUtils.isNotBlank(timezone)) {
+      formatted.append(timezone);
+    }
+    return formatted.toString();
+  }
 }
