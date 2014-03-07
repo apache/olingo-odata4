@@ -21,7 +21,7 @@ package org.apache.olingo.odata4.client.core.edm.v4;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonFunctionImport;
-import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
@@ -57,7 +57,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (singletonInfos == null) {
         singletonInfos = new ArrayList<EdmSingletonInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
+        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
           final EntityContainer entityContainer = (EntityContainer) schema.getDefaultEntityContainer();
           for (Singleton singleton : entityContainer.getSingletons()) {
             singletonInfos.add(new EdmSingletonInfoImpl(entityContainer.getName(), singleton.getName()));
@@ -73,8 +73,8 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (functionImportInfos == null) {
         functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
-          for (org.apache.olingo.odata4.client.api.edm.xml.EntityContainer entityContainer : schema.getEntityContainers()) {
+        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
+          for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
               functionImportInfos.add(
                       new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
@@ -91,7 +91,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (actionImportInfos == null) {
         actionImportInfos = new ArrayList<EdmActionImportInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
+        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
           final EntityContainer entityContainer = (EntityContainer) schema.getDefaultEntityContainer();
           for (ActionImport actionImport : entityContainer.getActionImports()) {
             actionImportInfos.add(new EdmActionImportInfoImpl(entityContainer.getName(), actionImport.getName()));

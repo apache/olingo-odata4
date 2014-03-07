@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import org.apache.olingo.odata4.client.api.edm.xml.BindingTarget;
+import org.apache.olingo.odata4.client.api.edm.xml.EntitySet;
 
-public interface Singleton extends BindingTarget, AnnotatedEdmItem {
+public interface Singleton extends EntitySet, BindingTarget {
 
 }

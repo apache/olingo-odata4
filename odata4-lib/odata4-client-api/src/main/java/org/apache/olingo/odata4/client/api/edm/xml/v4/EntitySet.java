@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-public interface EntitySet extends org.apache.olingo.odata4.client.api.edm.xml.EntitySet, AnnotatedEdmItem {
+public interface EntitySet extends org.apache.olingo.odata4.client.api.edm.xml.EntitySet, BindingTarget {
 
   boolean isIncludeInServiceDocument();
 }

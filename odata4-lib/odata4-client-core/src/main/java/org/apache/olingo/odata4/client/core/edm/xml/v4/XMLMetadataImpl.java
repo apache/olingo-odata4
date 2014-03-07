@@ -33,6 +33,12 @@ public class XMLMetadataImpl extends AbstractXMLMetadata {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
+  public List<Schema> getSchemas() {
+    return (List<Schema>) super.getSchemas();
+  }
+
+  @Override
   public Schema getSchema(final int index) {
     return (Schema) super.getSchema(index);
   }

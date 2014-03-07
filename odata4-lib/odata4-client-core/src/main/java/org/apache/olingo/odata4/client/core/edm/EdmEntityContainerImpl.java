@@ -25,8 +25,10 @@ import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmActionImportProxy;
+import org.apache.olingo.odata4.client.core.edm.v3.EdmEntitySetProxy;
 import org.apache.olingo.odata4.client.core.edm.v3.EdmFunctionImportProxy;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
@@ -41,11 +43,15 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   private final EntityContainer xmlEntityContainer;
 
+  private final XMLMetadata xmlMetadata;
+
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
-          final EntityContainer xmlEntityContainer) {
+          final EntityContainer xmlEntityContainer, final XMLMetadata xmlMetadata) {
 
     super(edm, entityContainerName);
+
     this.xmlEntityContainer = xmlEntityContainer;
+    this.xmlMetadata = xmlMetadata;
   }
 
   @Override
@@ -70,9 +76,16 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     if (entitySet == null) {
       throw new EdmException("EntitySet named '" + entitySetName + "' not found in " + entityContainerName);
     }
-    return new EdmEntitySetImpl(edm, this, entitySetName,
-            new EdmTypeInfo(entitySet.getEntityType(), entityContainerName.getNamespace()).getFullQualifiedName(),
-            entitySet);
+
+    if (entitySet instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.EntitySet) {
+      return new EdmEntitySetImpl(edm, this, entitySetName,
+              new EdmTypeInfo(entitySet.getEntityType(), entityContainerName.getNamespace()).getFullQualifiedName(),
+              (org.apache.olingo.odata4.client.api.edm.xml.v4.EntitySet) entitySet);
+    } else {
+      return new EdmEntitySetProxy(edm, this, entitySetName,
+              new EdmTypeInfo(entitySet.getEntityType(), entityContainerName.getNamespace()).getFullQualifiedName(),
+              xmlMetadata);
+    }
   }
 
   @Override
@@ -90,7 +103,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       if (functionImport == null) {
         throw new EdmException("FunctionImport named '" + actionImportName + "' not found in " + entityContainerName);
       }
-      return new EdmActionImportProxy(edm, this, actionImportName, (FunctionImport) functionImport);
+      return new EdmActionImportProxy(edm, this, actionImportName, functionImport);
     }
   }
 
@@ -105,7 +118,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       return new EdmFunctionImportImpl(edm, this, functionImportName,
               (org.apache.olingo.odata4.client.api.edm.xml.v4.FunctionImport) functionImport);
     } else {
-      return new EdmFunctionImportProxy(edm, this, functionImportName, 
+      return new EdmFunctionImportProxy(edm, this, functionImportName,
               (org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport) functionImport);
     }
   }

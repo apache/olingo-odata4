@@ -96,9 +96,9 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
     final Schema schema = xmlMetadata.getSchema(containerName.getNamespace());
     if (schema != null) {
-      final EntityContainer xmlEntityContainer = (EntityContainer) schema.getDefaultEntityContainer();
+      final EntityContainer xmlEntityContainer = schema.getDefaultEntityContainer();
       if (xmlEntityContainer != null) {
-        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer);
+        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer, xmlMetadata);
       }
     }
 

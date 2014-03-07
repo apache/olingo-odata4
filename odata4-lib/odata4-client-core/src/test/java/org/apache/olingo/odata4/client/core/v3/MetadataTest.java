@@ -40,8 +40,10 @@ import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImportInfo;
+import org.apache.olingo.odata4.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.odata4.commons.api.edm.EdmComplexType;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata4.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunction;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
@@ -196,5 +198,26 @@ public class MetadataTest extends AbstractTest {
     final EdmAction resetDataSource2 = metadata.getAction(
             new FullQualifiedName(container.getNamespace(), "ResetDataSource"), null, Boolean.FALSE);
     assertNotNull(resetDataSource2);
+  }
+
+  @Test
+  public void navigation() {
+    final Edm metadata = getClient().getReader().
+            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    assertNotNull(metadata);
+
+    final EdmEntityContainer container = metadata.getEntityContainer(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));
+    assertNotNull(container);
+
+    final EdmEntitySet customer = container.getEntitySet("Customer");
+    assertNotNull(customer);
+
+    final EdmBindingTarget order = customer.getRelatedBindingTarget("Orders");
+    assertNotNull(order);
+    assertTrue(order instanceof EdmEntitySet);
+
+    final EdmBindingTarget customerBindingTarget = ((EdmEntitySet) order).getRelatedBindingTarget("Customer");
+    assertEquals(customer.getEntityType().getName(), customerBindingTarget.getEntityType().getName());
   }
 }

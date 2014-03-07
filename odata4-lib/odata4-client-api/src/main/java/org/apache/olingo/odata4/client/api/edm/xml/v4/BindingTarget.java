@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.api.edm.xml;
+package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
 import java.util.List;
-import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationPropertyBinding;
+import org.apache.olingo.odata4.client.api.edm.xml.Named;
 
-public interface BindingTarget extends Named {
-
-  String getEntityType();
+public interface BindingTarget extends Named, AnnotatedEdmItem {
 
   List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
 }
