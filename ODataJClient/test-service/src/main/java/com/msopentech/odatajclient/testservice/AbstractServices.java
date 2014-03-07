@@ -26,6 +26,7 @@ import com.msopentech.odatajclient.testservice.utils.ODataVersion;
 import com.msopentech.odatajclient.testservice.utils.FSManager;
 
 import static com.msopentech.odatajclient.testservice.utils.Constants.*;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -122,14 +124,42 @@ public abstract class AbstractServices {
         }
     }
 
-    /**
-     * Sample failing entity POST.
-     *
-     * @param accept Accept header.
-     * @param format format query option.
-     * @param entitySetName entity set name.
-     * @return fault response.
-     */
+    @PUT
+    @Path("/{entitySetName}({entityId})")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    public Response putNewEntity(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            final String entity) {
+        try {
+
+            final Accept acceptType = Accept.parse(accept, getVersion());
+
+            if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
+                throw new UnsupportedMediaTypeException("Unsupported media type");
+            }
+
+            final InputStream res;
+            if (acceptType == Accept.ATOM) {
+                res = atom.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+            } else {
+                res = json.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+            }
+
+            res.close();
+
+            final Response response = atom.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+            response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return atom.createFaultResponse(accept, e);
+        }
+    }
+
     @POST
     @Path("/{entitySetName}")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
@@ -150,11 +180,9 @@ public abstract class AbstractServices {
 
             final InputStream res;
             if (acceptType == Accept.ATOM) {
-                res = atom.createEntity(
-                        null, null, ENTITY, IOUtils.toInputStream(entity), entitySetName, acceptType);
+                res = atom.createEntity(entitySetName, IOUtils.toInputStream(entity));
             } else {
-                res = json.createEntity(
-                        null, null, ENTITY, IOUtils.toInputStream(entity), entitySetName, acceptType);
+                res = json.createEntity(entitySetName, IOUtils.toInputStream(entity));
             }
 
             if (prefer.equalsIgnoreCase("return-no-content")) {

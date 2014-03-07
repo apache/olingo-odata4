@@ -146,13 +146,51 @@ public abstract class AbstractUtilities {
             final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
             throws Exception;
 
+    public InputStream saveSingleEntity(
+            final String key,
+            final String entitySetName,
+            final InputStream is) throws Exception {
+        return saveSingleEntity(key, entitySetName, is, null);
+    }
+
+    public InputStream saveSingleEntity(
+            final String key,
+            final String entitySetName,
+            final InputStream is,
+            final NavigationLinks links) throws Exception {
+
+        // -----------------------------------------
+        // 0. Get the path
+        // -----------------------------------------
+        final String path =
+                entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar + ENTITY;
+        // -----------------------------------------
+
+        // -----------------------------------------
+        // 1. Normalize navigation info; edit link; ...
+        // -----------------------------------------
+        final InputStream normalized = normalizeLinks(entitySetName, key, is, links);
+        // -----------------------------------------
+
+        // -----------------------------------------
+        // 2. save the entity
+        // -----------------------------------------
+        final FileObject fo = fsManager.putInMemory(normalized, fsManager.getAbsolutePath(path, getDefaultFormat()));
+        // -----------------------------------------
+
+        return fo.getContent().getInputStream();
+    }
+
+    public InputStream createEntity(
+            final String entitySetName, final InputStream is) throws Exception {
+        return createEntity(null, entitySetName, is);
+    }
+
     public InputStream createEntity(
             final String key,
-            final String basePath,
-            final String relativePath,
-            final InputStream is,
             final String entitySetName,
-            final Accept accept) throws Exception {
+            final InputStream is) throws Exception {
+
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtils.copy(is, bos);
@@ -162,9 +200,9 @@ public abstract class AbstractUtilities {
         // 0. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
         // -----------------------------------------
         final String entityKey = key == null ? getDefaultEntryKey(
-                entitySetName, new ByteArrayInputStream(bos.toByteArray()), accept) : key;
-        final String path = StringUtils.isBlank(basePath)
-                ? entitySetName + File.separatorChar + Commons.getEntityKey(entityKey) + File.separatorChar : basePath;
+                entitySetName, new ByteArrayInputStream(bos.toByteArray()), getDefaultFormat()) : key;
+
+        final String path = entitySetName + File.separatorChar + Commons.getEntityKey(entityKey) + File.separatorChar;
         // -----------------------------------------
 
         // -----------------------------------------
@@ -175,21 +213,21 @@ public abstract class AbstractUtilities {
         // -----------------------------------------
 
         // -----------------------------------------
-        // 2. Retrieve navigation info
+        // 2. Normalize navigation info; edit link; ... and save entity ....
         // -----------------------------------------
-        final InputStream normalized =
-                normalizeLinks(entitySetName, entityKey, new ByteArrayInputStream(bos.toByteArray()), links);
+        final InputStream createdEntity =
+                saveSingleEntity(entityKey, entitySetName, new ByteArrayInputStream(bos.toByteArray()), links);
         // -----------------------------------------
 
         bos.reset();
-        IOUtils.copy(normalized, bos);
+        IOUtils.copy(createdEntity, bos);
 
         // -----------------------------------------
-        // 2. save the entity
+        // 3. save the entity
         // -----------------------------------------
         final FileObject fo = fsManager.putInMemory(
                 new ByteArrayInputStream(bos.toByteArray()),
-                fsManager.getAbsolutePath(path + relativePath, accept));
+                fsManager.getAbsolutePath(path + ENTITY, getDefaultFormat()));
         IOUtils.closeQuietly(bos);
         // -----------------------------------------
 
@@ -211,15 +249,12 @@ public abstract class AbstractUtilities {
                 IOUtils.closeQuietly(stream);
 
                 final String inlineEntryKey = getDefaultEntryKey(
-                        inlineEntitySetName, new ByteArrayInputStream(inlineBos.toByteArray()), accept);
+                        inlineEntitySetName, new ByteArrayInputStream(inlineBos.toByteArray()), getDefaultFormat());
 
                 createEntity(
                         inlineEntryKey,
-                        null,
-                        ENTITY,
-                        new ByteArrayInputStream(inlineBos.toByteArray()),
                         inlineEntitySetName,
-                        accept);
+                        new ByteArrayInputStream(inlineBos.toByteArray()));
 
                 hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
             }
@@ -492,4 +527,6 @@ public abstract class AbstractUtilities {
             final InputStream toBeChanged, final String linkName, final InputStream replacement) throws Exception;
 
     public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames) throws Exception;
+
+    protected abstract Accept getDefaultFormat();
 }

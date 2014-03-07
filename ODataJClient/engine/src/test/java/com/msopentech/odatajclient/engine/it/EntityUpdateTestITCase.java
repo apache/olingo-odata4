@@ -44,6 +44,10 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     protected String getServiceRoot() {
         return testDefaultServiceRootURL;
     }
+    
+    protected String getStaticServiceRoot() {
+        return testStaticServiceRootURL;
+    }
 
     @Test
     public void mergeAsAtom() {
@@ -92,7 +96,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void replaceAsAtom() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
-        final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+        final ODataEntity changes = read(format, client.getURIBuilder(getStaticServiceRoot()).
                 appendEntityTypeSegment("Car").appendKeySegment(14).build());
         updateEntityDescription(format, changes, UpdateType.REPLACE);
     }
@@ -100,7 +104,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void replaceAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+        final ODataEntity changes = read(format, client.getURIBuilder(getStaticServiceRoot()).
                 appendEntityTypeSegment("Car").appendKeySegment(14).build());
         updateEntityDescription(format, changes, UpdateType.REPLACE);
     }

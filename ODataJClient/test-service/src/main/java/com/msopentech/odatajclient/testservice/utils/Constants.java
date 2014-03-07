@@ -84,4 +84,6 @@ public class Constants {
 
     public final static String JSON_EDITLINK_NAME = "odata.editLink";
 
+    public final static String XHTTP_HEADER_NAME = "X-HTTP-METHOD";
+
 }

@@ -16,23 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.msopentech.odatajclient.testservice;
+package com.msopentech.odatajclient.testservice.utils;
 
-import com.msopentech.odatajclient.testservice.utils.ODataVersion;
-import com.msopentech.odatajclient.testservice.utils.XHTTPMethodInterceptor;
-import javax.ws.rs.Path;
-import org.apache.cxf.interceptor.InInterceptors;
+import java.util.List;
+import java.util.Map;
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
 
-@Path("/V4/Static.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
-public class V4Services extends AbstractServices {
+public class XHTTPMethodInterceptor extends AbstractPhaseInterceptor<Message> {
 
-    public V4Services() throws Exception {
-        super();
+    public XHTTPMethodInterceptor() {
+        super(Phase.PRE_PROTOCOL);
     }
 
     @Override
-    protected ODataVersion getVersion() {
-        return ODataVersion.v4;
+    public void handleMessage(final Message message) throws Fault {
+        @SuppressWarnings("unchecked")
+        final Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
+
+        if (headers.containsKey(Constants.XHTTP_HEADER_NAME)) {
+            message.put(Message.HTTP_REQUEST_METHOD, headers.get(Constants.XHTTP_HEADER_NAME).iterator().next());
+        }
     }
 }

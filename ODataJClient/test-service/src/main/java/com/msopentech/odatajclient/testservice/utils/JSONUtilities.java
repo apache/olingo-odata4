@@ -45,6 +45,11 @@ public class JSONUtilities extends AbstractUtilities {
         super(version);
     }
 
+    @Override
+    protected Accept getDefaultFormat() {
+        return Accept.JSON_FULLMETA;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -94,26 +99,28 @@ public class JSONUtilities extends AbstractUtilities {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
-        for (String linkTitle : links.getLinkNames()) {
-            // normalize link
-            srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
-            srcNode.set(
-                    linkTitle + JSON_NAVIGATION_SUFFIX,
-                    new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
-        }
+        if (links != null) {
+            for (String linkTitle : links.getLinkNames()) {
+                // normalize link
+                srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
+                srcNode.set(
+                        linkTitle + JSON_NAVIGATION_SUFFIX,
+                        new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
+            }
 
-        for (String linkTitle : links.getInlineNames()) {
-            // normalize link if exist; declare a new one if missing
-            srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
-            srcNode.set(
-                    linkTitle + JSON_NAVIGATION_SUFFIX,
-                    new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
+            for (String linkTitle : links.getInlineNames()) {
+                // normalize link if exist; declare a new one if missing
+                srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
+                srcNode.set(
+                        linkTitle + JSON_NAVIGATION_SUFFIX,
+                        new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
 
-            // remove inline
-            srcNode.remove(linkTitle);
+                // remove inline
+                srcNode.remove(linkTitle);
 
-            // remove from links
-            links.removeLink(linkTitle);
+                // remove from links
+                links.removeLink(linkTitle);
+            }
         }
 
         srcNode.set(

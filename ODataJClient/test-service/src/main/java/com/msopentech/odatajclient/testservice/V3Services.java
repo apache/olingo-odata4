@@ -19,9 +19,12 @@
 package com.msopentech.odatajclient.testservice;
 
 import com.msopentech.odatajclient.testservice.utils.ODataVersion;
+import com.msopentech.odatajclient.testservice.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
+import org.apache.cxf.interceptor.InInterceptors;
 
 @Path("/V3/Static.svc")
+@InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V3Services extends AbstractServices {
 
     public V3Services() throws Exception {

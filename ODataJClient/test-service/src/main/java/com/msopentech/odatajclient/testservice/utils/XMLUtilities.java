@@ -60,6 +60,11 @@ public class XMLUtilities extends AbstractUtilities {
         super(version);
     }
 
+    @Override
+    protected Accept getDefaultFormat() {
+        return Accept.ATOM;
+    }
+
     protected static XMLEventReader getEventReader(final InputStream is) throws XMLStreamException {
         if (factory == null) {
             factory = XMLInputFactory.newInstance();
