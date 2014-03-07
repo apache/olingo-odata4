@@ -70,7 +70,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Order", order.getName());
 
     @SuppressWarnings("unchecked")
-    final List<FunctionImport> functionImports = (List<FunctionImport>) metadata.<FunctionImport>getSchemas().get(0).
+    final List<FunctionImport> functionImports = (List<FunctionImport>) metadata.getSchemas().get(0).
             getDefaultEntityContainer().getFunctionImports();
     int legacyGetters = 0;
     int legacyPosters = 0;
