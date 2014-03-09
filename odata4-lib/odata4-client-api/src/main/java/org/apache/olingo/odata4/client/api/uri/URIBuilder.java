@@ -19,231 +19,200 @@
 package org.apache.olingo.odata4.client.api.uri;
 
 import org.apache.olingo.odata4.client.api.uri.filter.URIFilter;
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
 /**
  * OData URI builder.
  */
-public interface URIBuilder extends Serializable {
-
-  public static class Segment {
-
-    private final SegmentType type;
-
-    private final String value;
-
-    public Segment(final SegmentType type, final String value) {
-      this.type = type;
-      this.value = value;
-    }
-
-    public SegmentType getType() {
-      return type;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-  }
+public interface URIBuilder<UB extends URIBuilder<?>> {
 
   /**
    * Adds the specified query option to the URI.
    *
    * @param option query option.
    * @param value query option value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder addQueryOption(QueryOption option, String value);
+  UB addQueryOption(QueryOption option, String value);
 
   /**
    * Adds the specified (custom) query option to the URI.
    *
    * @param option query option.
    * @param value query option value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder addQueryOption(String option, String value);
+  UB addQueryOption(String option, String value);
 
   /**
-   * Append EntitySet segment to the URI.
+   * Appends EntitySet segment to the URI.
    *
    * @param segmentValue segment value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendEntitySetSegment(String segmentValue);
+  UB appendEntitySetSegment(String segmentValue);
 
   /**
-   * Append EntityType segment to the URI.
-   *
-   * @param segmentValue segment value.
-   * @return current ODataURIBuilder object.
-   */
-  URIBuilder appendEntityTypeSegment(String segmentValue);
-
-  /**
-   * Append key segment to the URI.
+   * Appends key segment to the URI.
    *
    * @param val segment value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendKeySegment(Object val);
+  UB appendKeySegment(Object val);
 
   /**
-   * Append key segment to the URI, for multiple keys.
+   * Appends key segment to the URI, for multiple keys.
    *
    * @param segmentValues segment values.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendKeySegment(Map<String, Object> segmentValues);
+  UB appendKeySegment(Map<String, Object> segmentValues);
 
   /**
-   * Append navigation link segment to the URI.
+   * Appends property segment to the URI.
    *
    * @param segmentValue segment value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendNavigationLinkSegment(String segmentValue);
+  UB appendPropertySegment(String segmentValue);
 
   /**
-   * Append structural segment to the URI.
+   * Appends navigation segment to the URI.
    *
    * @param segmentValue segment value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendStructuralSegment(String segmentValue);
-
-  URIBuilder appendLinksSegment(String segmentValue);
+  UB appendNavigationSegment(String segmentValue);
 
   /**
-   * Append value segment to the URI.
-   *
-   * @return current ODataURIBuilder object.
-   */
-  URIBuilder appendValueSegment();
-
-  /**
-   * Append count segment to the URI.
-   *
-   * @return current ODataURIBuilder object.
-   */
-  URIBuilder appendCountSegment();
-
-  /**
-   * Append function import segment to the URI.
+   * Appends derived entity type segment to the URI.
    *
    * @param segmentValue segment value.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendFunctionImportSegment(String segmentValue);
+  UB appendDerivedEntityTypeSegment(String segmentValue);
 
   /**
-   * Append metadata segment to the URI.
+   * Appends value segment to the URI.
    *
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    */
-  URIBuilder appendMetadataSegment();
+  UB appendValueSegment();
 
   /**
-   * Append batch segment to the URI.
+   * Appends operation (action or function) segment to the URI.
    *
-   * @return current ODataURIBuilder object.
+   * @param operation Operation (action or function) name
+   * @param arguments Operation arguments
+   * @return current URIBuilder instance
    */
-  URIBuilder appendBatchSegment();
+  UB appendOperationCallSegment(String operation, Map<String, Object> arguments);
+
+  /**
+   * Appends metadata segment to the URI.
+   *
+   * @return current URIBuilder instance
+   */
+  UB appendMetadataSegment();
+
+  /**
+   * Appends batch segment to the URI.
+   *
+   * @return current URIBuilder instance
+   */
+  UB appendBatchSegment();
+
+  /**
+   * Adds count query option.
+   *
+   * @return current URIBuilder instance
+   */
+  UB count();
 
   /**
    * Adds expand query option.
    *
-   * @param entityName entity object to be in-line expanded.
-   * @return current ODataURIBuilder object.
+   * @param expandItems items to be expanded in-line
+   * @return current URIBuilder instance
    * @see QueryOption#EXPAND
    */
-  URIBuilder expand(String entityName);
+  UB expand(String... expandItems);
 
   /**
    * Adds format query option.
    *
    * @param format media type acceptable in a response.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#FORMAT
    */
-  URIBuilder format(String format);
+  UB format(String format);
 
   /**
    * Adds filter for filter query option.
    *
    * @param filter filter instance (to be obtained via <tt>ODataFilterFactory</tt>): note that <tt>build()</tt> method
    * will be immediately invoked.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#FILTER
-   * @see ODataFilter
-   * @see FilterFactory
+   * @see URIFilter
+   * @see org.apache.olingo.odata4.client.api.uri.filter.FilterFactory
    */
-  URIBuilder filter(URIFilter filter);
+  UB filter(URIFilter filter);
 
   /**
    * Adds filter query option.
    *
    * @param filter filter string.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#FILTER
    */
-  URIBuilder filter(String filter);
+  UB filter(String filter);
 
   /**
    * Adds select query option.
    *
-   * @param select select query option value.
-   * @return current ODataURIBuilder object.
+   * @param selectItems select items
+   * @return current URIBuilder instance
    * @see QueryOption#SELECT
    */
-  URIBuilder select(String select);
+  UB select(String... selectItems);
 
   /**
    * Adds orderby query option.
    *
    * @param order order string.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#ORDERBY
    */
-  URIBuilder orderBy(String order);
+  UB orderBy(String order);
 
   /**
    * Adds top query option.
    *
    * @param top maximum number of entities to be returned.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#TOP
    */
-  URIBuilder top(int top);
+  UB top(int top);
 
   /**
    * Adds skip query option.
    *
    * @param skip number of entities to be skipped into the response.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#SKIP
    */
-  URIBuilder skip(int skip);
+  UB skip(int skip);
 
   /**
    * Adds skiptoken query option.
    *
    * @param skipToken opaque token.
-   * @return current ODataURIBuilder object.
+   * @return current URIBuilder instance
    * @see QueryOption#SKIPTOKEN
    */
-  URIBuilder skipToken(String skipToken);
-
-  /**
-   * Adds inlinecount query option.
-   *
-   * @return current ODataURIBuilder object.
-   * @see QueryOption#INLINECOUNT
-   */
-  URIBuilder inlineCount();
+  UB skipToken(String skipToken);
 
   /**
    * Build OData URI.
@@ -251,11 +220,5 @@ public interface URIBuilder extends Serializable {
    * @return OData URI.
    */
   URI build();
-
-  /**
-   * ${@inheritDoc }
-   */
-  @Override
-  String toString();
 
 }

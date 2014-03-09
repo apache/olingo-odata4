@@ -18,32 +18,40 @@
  */
 package org.apache.olingo.odata4.client.core;
 
-import org.apache.olingo.odata4.client.core.op.impl.v4.ODataBinderImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v4.ODataDeserializerImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v4.ODataReaderImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v4.ODataSerializerImpl;
-import org.apache.olingo.odata4.client.core.uri.V4URIBuilder;
-import org.apache.olingo.odata4.client.core.uri.filter.V4FilterFactory;
+import org.apache.olingo.odata4.client.api.ODataV4Client;
+import org.apache.olingo.odata4.client.api.V4Configuration;
+import org.apache.olingo.odata4.client.api.op.ODataBinder;
+import org.apache.olingo.odata4.client.api.op.ODataReader;
+import org.apache.olingo.odata4.client.api.op.ODataSerializer;
+import org.apache.olingo.odata4.client.api.op.ODataV4Deserializer;
+import org.apache.olingo.odata4.client.api.uri.V4URIBuilder;
+import org.apache.olingo.odata4.client.api.uri.filter.V4FilterFactory;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV4BinderImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV4DeserializerImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV4ReaderImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV4SerializerImpl;
+import org.apache.olingo.odata4.client.core.uri.V4URIBuilderImpl;
+import org.apache.olingo.odata4.client.core.uri.filter.V4FilterFactoryImpl;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
-public class ODataV4Client extends AbstractODataClient {
+public class ODataV4ClientImpl extends AbstractODataClient implements ODataV4Client {
 
   private static final long serialVersionUID = -6653176125573631964L;
 
-  private final V4Configuration configuration = new V4Configuration();
+  private final V4Configuration configuration = new V4ConfigurationImpl();
 
-  private final V4FilterFactory filterFactory = new V4FilterFactory();
+  private final V4FilterFactory filterFactory = new V4FilterFactoryImpl();
 
-  private final ODataDeserializerImpl deserializer = new ODataDeserializerImpl(this);
+  private final ODataV4Deserializer deserializer = new ODataV4DeserializerImpl(this);
 
-  private final ODataSerializerImpl serializer = new ODataSerializerImpl(this);
+  private final ODataSerializer serializer = new ODataV4SerializerImpl(this);
 
-  private final ODataReaderImpl reader = new ODataReaderImpl(this);
+  private final ODataReader reader = new ODataV4ReaderImpl(this);
 
-//    private final ODataWriterImpl writer = new ODataWriterImpl(this);
-  private final ODataBinderImpl binder = new ODataBinderImpl(this);
+//    private final ODataWriter writer = new ODataWriterImpl(this);
+  private final ODataBinder binder = new ODataV4BinderImpl(this);
 
-//    private final ODataObjectFactoryImpl objectFactory = new ODataObjectFactoryImpl(this);
+//    private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
 //
 //    private final V4RetrieveRequestFactory retrieveReqFact = new V4RetrieveRequestFactory(this);
 //
@@ -74,7 +82,7 @@ public class ODataV4Client extends AbstractODataClient {
 
   @Override
   public V4URIBuilder getURIBuilder(final String serviceRoot) {
-    return new V4URIBuilder(configuration, serviceRoot);
+    return new V4URIBuilderImpl(serviceRoot);
   }
 
   @Override
@@ -83,17 +91,17 @@ public class ODataV4Client extends AbstractODataClient {
   }
 
   @Override
-  public ODataDeserializerImpl getDeserializer() {
+  public ODataV4Deserializer getDeserializer() {
     return deserializer;
   }
 
   @Override
-  public ODataSerializerImpl getSerializer() {
+  public ODataSerializer getSerializer() {
     return serializer;
   }
 
   @Override
-  public ODataReaderImpl getReader() {
+  public ODataReader getReader() {
     return reader;
   }
 
@@ -102,7 +110,7 @@ public class ODataV4Client extends AbstractODataClient {
 //        return writer;
 //    }
   @Override
-  public ODataBinderImpl getBinder() {
+  public ODataBinder getBinder() {
     return binder;
   }
 

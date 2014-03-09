@@ -16,21 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v3;
+package org.apache.olingo.odata4.client.core.op.impl;
 
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
-import org.apache.olingo.odata4.client.core.ODataV3Client;
+import org.apache.olingo.odata4.client.core.ODataV4ClientImpl;
 import org.apache.olingo.odata4.client.core.edm.EdmClientImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataReader;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 
-public class ODataReaderImpl extends AbstractODataReader {
+public class ODataV4ReaderImpl extends AbstractODataReader {
 
   private static final long serialVersionUID = -2481293269536406956L;
 
-  public ODataReaderImpl(final ODataV3Client client) {
+  public ODataV4ReaderImpl(final ODataV4ClientImpl client) {
     super(client);
   }
 
@@ -41,7 +41,7 @@ public class ODataReaderImpl extends AbstractODataReader {
 
   @Override
   public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
-    return ((ODataV3Client) client).getBinder().getODataServiceDocument(
-            ((ODataV3Client) client).getDeserializer().toServiceDocument(input, format));
+    return ((ODataV4ClientImpl) client).getBinder().getODataServiceDocument(
+            ((ODataV4ClientImpl) client).getDeserializer().toServiceDocument(input, format));
   }
 }

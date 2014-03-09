@@ -16,19 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.uri.filter;
 
-public final class ODataClientFactory {
+public interface V3FilterArgFactory extends FilterArgFactory {
 
-    public static ODataV3ClientImpl getV3() {
-        return new ODataV3ClientImpl();
-    }
+  FilterArg substringof(FilterArg first, FilterArg second);
 
-    public static ODataV4ClientImpl getV4() {
-        return new ODataV4ClientImpl();
-    }
-
-    private ODataClientFactory() {
-        // empty constructory for static utility class
-    }
 }

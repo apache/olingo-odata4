@@ -16,19 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.uri;
 
-public final class ODataClientFactory {
+public interface V3URIBuilder extends URIBuilder<V3URIBuilder> {
 
-    public static ODataV3ClientImpl getV3() {
-        return new ODataV3ClientImpl();
-    }
+  public enum InlineCount {
 
-    public static ODataV4ClientImpl getV4() {
-        return new ODataV4ClientImpl();
-    }
+    allpages,
+    none
 
-    private ODataClientFactory() {
-        // empty constructory for static utility class
-    }
+  }
+
+  /**
+   * Appends links segment to the URI.
+   *
+   * @param segmentValue segment value
+   * @return current URIBuilder instance
+   */
+  V3URIBuilder appendLinksSegment(String segmentValue);
+
+  /**
+   * Adds inlinecount query option.
+   *
+   * @param inlineCount value
+   * @return current URIBuilder instance
+   * @see QueryOption#INLINECOUNT
+   */
+  V3URIBuilder inlineCount(InlineCount inlineCount);
+
 }

@@ -21,10 +21,10 @@ package org.apache.olingo.odata4.client.core.uri;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import org.apache.olingo.odata4.client.api.Configuration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.odata4.client.api.uri.QueryOption;
 import org.apache.olingo.odata4.client.api.uri.SegmentType;
 import org.apache.olingo.odata4.client.api.uri.URIBuilder;
@@ -32,7 +32,7 @@ import org.apache.olingo.odata4.client.api.uri.filter.URIFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractURIBuilder implements URIBuilder {
+public abstract class AbstractURIBuilder<UB extends URIBuilder<?>> implements URIBuilder<UB> {
 
   private static final long serialVersionUID = -3267515371720408124L;
 
@@ -41,12 +41,33 @@ public abstract class AbstractURIBuilder implements URIBuilder {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(URIBuilder.class);
 
-  protected final List<URIBuilder.Segment> segments;
+  protected static class Segment {
+
+    private final SegmentType type;
+
+    private final String value;
+
+    public Segment(final SegmentType type, final String value) {
+      this.type = type;
+      this.value = value;
+    }
+
+    public SegmentType getType() {
+      return type;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+  }
+
+  protected final List<Segment> segments = new ArrayList<Segment>();
 
   /**
-   * Case-insensitive map of query options.
+   * Insertion-order map of query options.
    */
-  protected final Map<String, String> queryOptions = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+  protected final Map<String, String> queryOptions = new LinkedHashMap<String, String>();
 
   /**
    * Constructor.
@@ -55,48 +76,43 @@ public abstract class AbstractURIBuilder implements URIBuilder {
    * service.
    */
   protected AbstractURIBuilder(final String serviceRoot) {
-    segments = new ArrayList<URIBuilder.Segment>();
-    segments.add(new URIBuilder.Segment(SegmentType.SERVICEROOT, serviceRoot));
+    segments.add(new Segment(SegmentType.SERVICEROOT, serviceRoot));
   }
 
-  protected abstract Configuration getConfiguration();
+  protected abstract UB getThis();
 
   @Override
-  public URIBuilder addQueryOption(final QueryOption option, final String value) {
+  public UB addQueryOption(final QueryOption option, final String value) {
     return addQueryOption(option.toString(), value);
   }
 
   @Override
-  public URIBuilder addQueryOption(final String option, final String value) {
+  public UB addQueryOption(final String option, final String value) {
     queryOptions.put(option, value);
-    return this;
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendEntitySetSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.ENTITYSET, segmentValue));
-    return this;
+  public UB appendEntitySetSegment(final String segmentValue) {
+    segments.add(new Segment(SegmentType.ENTITYSET, segmentValue));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendEntityTypeSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.ENTITYTYPE, segmentValue));
-    return this;
-  }
-
-  @Override
-  public URIBuilder appendKeySegment(final Object val) {
+  public UB appendKeySegment(final Object val) {
     final String segValue = URIUtils.escape(val);
 
-    segments.add(getConfiguration().isKeyAsSegment()
-            ? new URIBuilder.Segment(SegmentType.KEY_AS_SEGMENT, segValue)
-            : new URIBuilder.Segment(SegmentType.KEY, "(" + segValue + ")"));
-    return this;
+    segments.add(new Segment(SegmentType.KEY, "(" + segValue + ")"));
+    return getThis();
   }
 
+  protected abstract String noKeysWrapper();
+
   @Override
-  public URIBuilder appendKeySegment(final Map<String, Object> segmentValues) {
-    if (!getConfiguration().isKeyAsSegment()) {
+  public UB appendKeySegment(final Map<String, Object> segmentValues) {
+    if (segmentValues == null || segmentValues.isEmpty()) {
+      segments.add(new Segment(SegmentType.KEY, noKeysWrapper()));
+    } else {
       final StringBuilder keyBuilder = new StringBuilder().append('(');
       for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
         keyBuilder.append(entry.getKey()).append('=').append(URIUtils.escape(entry.getValue()));
@@ -104,125 +120,140 @@ public abstract class AbstractURIBuilder implements URIBuilder {
       }
       keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');
 
-      segments.add(new URIBuilder.Segment(SegmentType.KEY, keyBuilder.toString()));
+      segments.add(new Segment(SegmentType.KEY, keyBuilder.toString()));
     }
 
-    return this;
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendNavigationLinkSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.NAVIGATION, segmentValue));
-    return this;
+  public UB appendPropertySegment(final String segmentValue) {
+    segments.add(new Segment(SegmentType.PROPERTY, segmentValue));
+    return getThis();
+
   }
 
   @Override
-  public URIBuilder appendStructuralSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.STRUCTURAL, segmentValue));
-    return this;
+  public UB appendNavigationSegment(final String segmentValue) {
+    segments.add(new Segment(SegmentType.NAVIGATION, segmentValue));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendLinksSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.LINKS, SegmentType.LINKS.getValue()));
-    segments.add(new URIBuilder.Segment(SegmentType.ENTITYTYPE, segmentValue));
-    return this;
+  public UB appendDerivedEntityTypeSegment(final String segmentValue) {
+    segments.add(new Segment(SegmentType.DERIVED_ENTITY_TYPE, segmentValue));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendValueSegment() {
-    segments.add(new URIBuilder.Segment(SegmentType.VALUE, SegmentType.VALUE.getValue()));
-    return this;
+  public UB appendValueSegment() {
+    segments.add(new Segment(SegmentType.VALUE, SegmentType.VALUE.getValue()));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendCountSegment() {
-    segments.add(new URIBuilder.Segment(SegmentType.COUNT, SegmentType.COUNT.getValue()));
-    return this;
+  public UB appendOperationCallSegment(final String operation, final Map<String, Object> arguments) {
+    segments.add(new Segment(
+            segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
+    return appendKeySegment(arguments);
   }
 
   @Override
-  public URIBuilder appendFunctionImportSegment(final String segmentValue) {
-    segments.add(new URIBuilder.Segment(SegmentType.FUNCTIONIMPORT, segmentValue));
-    return this;
+  public UB appendMetadataSegment() {
+    segments.add(new Segment(SegmentType.METADATA, SegmentType.METADATA.getValue()));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendMetadataSegment() {
-    segments.add(new URIBuilder.Segment(SegmentType.METADATA, SegmentType.METADATA.getValue()));
-    return this;
+  public UB appendBatchSegment() {
+    segments.add(new Segment(SegmentType.BATCH, SegmentType.BATCH.getValue()));
+    return getThis();
   }
 
   @Override
-  public URIBuilder appendBatchSegment() {
-    segments.add(new URIBuilder.Segment(SegmentType.BATCH, SegmentType.BATCH.getValue()));
-    return this;
+  public UB count() {
+    segments.add(new Segment(SegmentType.ROOT_QUERY_OPTION, "$" + QueryOption.COUNT.toString()));
+    return getThis();
   }
 
   @Override
-  public URIBuilder expand(final String entityName) {
-    return addQueryOption(QueryOption.EXPAND, entityName);
+  public UB expand(final String... expandItems) {
+    return addQueryOption(QueryOption.EXPAND, StringUtils.join(expandItems, ","));
   }
 
   @Override
-  public URIBuilder format(final String format) {
+  public UB format(final String format) {
     return addQueryOption(QueryOption.FORMAT, format);
   }
 
   @Override
-  public URIBuilder filter(final URIFilter filter) {
+  public UB filter(final URIFilter filter) {
     return addQueryOption(QueryOption.FILTER, filter.build());
   }
 
   @Override
-  public URIBuilder filter(final String filter) {
+  public UB filter(final String filter) {
     return addQueryOption(QueryOption.FILTER, filter);
   }
 
   @Override
-  public URIBuilder select(final String select) {
-    return addQueryOption(QueryOption.SELECT, select);
+  public UB select(final String... selectItems) {
+    return addQueryOption(QueryOption.SELECT, StringUtils.join(selectItems, ","));
   }
 
   @Override
-  public URIBuilder orderBy(final String order) {
+  public UB orderBy(final String order) {
     return addQueryOption(QueryOption.ORDERBY, order);
   }
 
   @Override
-  public URIBuilder top(final int top) {
+  public UB top(final int top) {
     return addQueryOption(QueryOption.TOP, String.valueOf(top));
   }
 
   @Override
-  public URIBuilder skip(final int skip) {
+  public UB skip(final int skip) {
     return addQueryOption(QueryOption.SKIP, String.valueOf(skip));
   }
 
   @Override
-  public URIBuilder skipToken(final String skipToken) {
+  public UB skipToken(final String skipToken) {
     return addQueryOption(QueryOption.SKIPTOKEN, skipToken);
   }
 
-  @Override
-  public URIBuilder inlineCount() {
-    return addQueryOption(QueryOption.INLINECOUNT, "allpages");
-  }
+  protected abstract char getBoundOperationSeparator();
+
+  protected abstract char getDerivedEntityTypeSeparator();
 
   @Override
   public URI build() {
     final StringBuilder segmentsBuilder = new StringBuilder();
-    for (URIBuilder.Segment seg : segments) {
+    for (Segment seg : segments) {
       if (segmentsBuilder.length() > 0 && seg.getType() != SegmentType.KEY) {
-        segmentsBuilder.append('/');
+        switch (seg.getType()) {
+          case BOUND_OPERATION:
+            segmentsBuilder.append(getBoundOperationSeparator());
+            break;
+
+          case DERIVED_ENTITY_TYPE:
+            segmentsBuilder.append(getDerivedEntityTypeSeparator());
+            break;
+
+          default:
+            segmentsBuilder.append('/');
+        }
       }
 
-      segmentsBuilder.append(seg.getValue());
+      if (seg.getType() == SegmentType.ENTITY) {
+        segmentsBuilder.append(seg.getType().getValue());
+      } else {
+        segmentsBuilder.append(seg.getValue());
+      }
     }
 
     try {
-      final org.apache.http.client.utils.URIBuilder builder
-              = new org.apache.http.client.utils.URIBuilder(segmentsBuilder.toString());
+      final org.apache.http.client.utils.URIBuilder builder =
+              new org.apache.http.client.utils.URIBuilder(segmentsBuilder.toString());
 
       for (Map.Entry<String, String> option : queryOptions.entrySet()) {
         builder.addParameter("$" + option.getKey(), option.getValue());

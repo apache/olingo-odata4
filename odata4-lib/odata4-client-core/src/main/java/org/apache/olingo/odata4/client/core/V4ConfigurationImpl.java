@@ -18,17 +18,14 @@
  */
 package org.apache.olingo.odata4.client.core;
 
-public final class ODataClientFactory {
+import org.apache.olingo.odata4.client.api.V4Configuration;
 
-    public static ODataV3ClientImpl getV3() {
-        return new ODataV3ClientImpl();
-    }
+public class V4ConfigurationImpl extends AbstractConfiguration implements V4Configuration {
 
-    public static ODataV4ClientImpl getV4() {
-        return new ODataV4ClientImpl();
-    }
+  private static final long serialVersionUID = -1134213707190176857L;
 
-    private ODataClientFactory() {
-        // empty constructory for static utility class
-    }
+  protected V4ConfigurationImpl() {
+    super();
+  }
+
 }

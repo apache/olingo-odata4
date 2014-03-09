@@ -28,14 +28,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.olingo.odata4.client.api.ODataV3Client;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.edm.xml.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.odata4.client.api.http.HttpMethod;
 import org.apache.olingo.odata4.client.core.AbstractTest;
-import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmAction;
 import org.apache.olingo.odata4.commons.api.edm.EdmActionImport;
@@ -61,7 +61,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void parse() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
 
@@ -97,7 +97,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void multipleSchemas() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 

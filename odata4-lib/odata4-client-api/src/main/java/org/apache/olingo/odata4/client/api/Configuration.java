@@ -137,24 +137,6 @@ public interface Configuration extends Serializable {
   void setUseXHTTPMethod(boolean value);
 
   /**
-   * Checks whether URIs contain entity key between parentheses (standard) or instead as additional segment. Example:
-   * http://services.odata.org/V4/OData/OData.svc/Products(0) or http://services.odata.org/V4/OData/OData.svc/Products/0
-   *
-   * @return whether URIs shall be built with entity key between parentheses (standard) or instead as additional
-   * segment.
-   */
-  boolean isKeyAsSegment();
-
-  /**
-   * Sets whether URIs shall be built with entity key between parentheses (standard) or instead as additional segment.
-   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
-   * http://services.odata.org/V4/OData/OData.svc/Products/0
-   * 
-   * @param value 'TRUE' to use this feature.
-   */
-  void setKeyAsSegment(boolean value);
-
-  /**
    * Checks whether Gzip compression (e.g. support for <tt>Accept-Encoding: gzip</tt> and
    * <tt>Content-Encoding: gzip</tt> HTTP headers) is enabled.
    *

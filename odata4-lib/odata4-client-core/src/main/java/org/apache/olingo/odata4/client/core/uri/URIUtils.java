@@ -167,7 +167,7 @@ public final class URIUtils {
               ? "'" + URLEncoder.encode((String) obj, ODataConstants.UTF8) + "'"
               : obj.toString();
     } catch (Exception e) {
-      LOG.warn("While generating key segment for '{}', using toString()", obj, e);
+      LOG.warn("While escaping '{}', using toString()", obj, e);
       value = obj.toString();
     }
 

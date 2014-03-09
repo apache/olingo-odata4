@@ -23,10 +23,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import org.apache.olingo.odata4.client.api.ODataV4Client;
 import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.apache.olingo.odata4.client.core.AbstractTest;
-import org.apache.olingo.odata4.client.core.ODataV4Client;
 import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {

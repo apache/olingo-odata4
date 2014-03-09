@@ -16,20 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v4;
+package org.apache.olingo.odata4.client.core.op.impl;
 
 import org.apache.olingo.odata4.client.api.data.ServiceDocument;
 import org.apache.olingo.odata4.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
-import org.apache.olingo.odata4.client.core.ODataV4Client;
+import org.apache.olingo.odata4.client.core.ODataV4ClientImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataBinder;
 import org.apache.olingo.odata4.client.core.uri.URIUtils;
 
-public class ODataBinderImpl extends AbstractODataBinder {
+public class ODataV4BinderImpl extends AbstractODataBinder {
 
   private static final long serialVersionUID = -6371110655960799393L;
 
-  public ODataBinderImpl(final ODataV4Client client) {
+  public ODataV4BinderImpl(final ODataV4ClientImpl client) {
     super(client);
   }
 

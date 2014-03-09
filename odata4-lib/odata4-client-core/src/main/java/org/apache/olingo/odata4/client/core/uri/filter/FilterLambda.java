@@ -19,30 +19,28 @@
 package org.apache.olingo.odata4.client.core.uri.filter;
 
 import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.odata4.client.api.uri.filter.URIFilter;
 
-public class FilterFunction implements FilterArg {
+public class FilterLambda implements FilterArg {
 
-  private final String function;
+  private final FilterArg collection;
 
-  private final FilterArg[] params;
+  private final String operator;
 
-  FilterFunction(final String function, final FilterArg... params) {
-    this.function = function;
-    this.params = params;
+  private final URIFilter expression;
+
+  FilterLambda(final FilterArg collection, final String operator, final URIFilter expression) {
+    this.collection = collection;
+    this.operator = operator;
+    this.expression = expression;
   }
 
   @Override
   public String build() {
-    final String[] strParams = params == null || params.length == 0 ? new String[0] : new String[params.length];
-    for (int i = 0; i < strParams.length; i++) {
-      strParams[i] = params[i].build();
-    }
-
-    return new StringBuilder(function).
-            append('(').
-            append(strParams.length == 0 ? StringUtils.EMPTY : StringUtils.join(strParams, ',')).
-            append(')').
+    return new StringBuilder(collection.build()).
+            append('/').
+            append(operator).
+            append(expression.build()).
             toString();
   }
 }

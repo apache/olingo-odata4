@@ -16,19 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.op.impl;
 
-public final class ODataClientFactory {
+import org.apache.olingo.odata4.client.api.ODataClient;
+import org.apache.olingo.odata4.client.core.op.impl.AbstractODataSerializer;
 
-    public static ODataV3ClientImpl getV3() {
-        return new ODataV3ClientImpl();
-    }
+public class ODataV3SerializerImpl extends AbstractODataSerializer {
 
-    public static ODataV4ClientImpl getV4() {
-        return new ODataV4ClientImpl();
-    }
+  private static final long serialVersionUID = -8861908250297989806L;
 
-    private ODataClientFactory() {
-        // empty constructory for static utility class
-    }
+  public ODataV3SerializerImpl(final ODataClient client) {
+    super(client);
+  }
+
 }

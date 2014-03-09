@@ -16,29 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v4;
+package org.apache.olingo.odata4.client.core.op.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.api.data.ServiceDocument;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
+import org.apache.olingo.odata4.client.api.op.ODataV4Deserializer;
 import org.apache.olingo.odata4.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.odata4.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataDeserializer;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.XMLMetadataImpl;
 
-public class ODataDeserializerImpl extends AbstractODataDeserializer {
+public class ODataV4DeserializerImpl extends AbstractODataDeserializer implements ODataV4Deserializer {
 
   private static final long serialVersionUID = 8593081342440470415L;
 
-  public ODataDeserializerImpl(final ODataClient client) {
+  public ODataV4DeserializerImpl(final ODataClient client) {
     super(client);
   }
 
   @Override
-  public XMLMetadataImpl toMetadata(final InputStream input) {
+  public XMLMetadata toMetadata(final InputStream input) {
     try {
       return new XMLMetadataImpl(getXmlMapper().readValue(input, EdmxImpl.class));
     } catch (Exception e) {

@@ -18,32 +18,40 @@
  */
 package org.apache.olingo.odata4.client.core;
 
-import org.apache.olingo.odata4.client.core.op.impl.v3.ODataBinderImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v3.ODataDeserializerImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v3.ODataReaderImpl;
-import org.apache.olingo.odata4.client.core.op.impl.v3.ODataSerializerImpl;
-import org.apache.olingo.odata4.client.core.uri.V3URIBuilder;
-import org.apache.olingo.odata4.client.core.uri.filter.V3FilterFactory;
+import org.apache.olingo.odata4.client.api.ODataV3Client;
+import org.apache.olingo.odata4.client.api.V3Configuration;
+import org.apache.olingo.odata4.client.api.op.ODataBinder;
+import org.apache.olingo.odata4.client.api.op.ODataReader;
+import org.apache.olingo.odata4.client.api.op.ODataSerializer;
+import org.apache.olingo.odata4.client.api.op.ODataV3Deserializer;
+import org.apache.olingo.odata4.client.api.uri.V3URIBuilder;
+import org.apache.olingo.odata4.client.api.uri.filter.V3FilterFactory;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV3BinderImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV3DeserializerImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV3ReaderImpl;
+import org.apache.olingo.odata4.client.core.op.impl.ODataV3SerializerImpl;
+import org.apache.olingo.odata4.client.core.uri.V3URIBuilderImpl;
+import org.apache.olingo.odata4.client.core.uri.filter.V3FilterFactoryImpl;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
 
-public class ODataV3Client extends AbstractODataClient {
+public class ODataV3ClientImpl extends AbstractODataClient implements ODataV3Client {
 
   private static final long serialVersionUID = -1655712193243609209L;
 
-  private final V3Configuration configuration = new V3Configuration();
+  private final V3Configuration configuration = new V3ConfigurationImpl();
 
-  private final V3FilterFactory filterFactory = new V3FilterFactory();
+  private final V3FilterFactory filterFactory = new V3FilterFactoryImpl();
 
-  private final ODataDeserializerImpl deserializer = new ODataDeserializerImpl(this);
+  private final ODataV3Deserializer deserializer = new ODataV3DeserializerImpl(this);
 
-  private final ODataSerializerImpl serializer = new ODataSerializerImpl(this);
+  private final ODataSerializer serializer = new ODataV3SerializerImpl(this);
 
-  private final ODataReaderImpl reader = new ODataReaderImpl(this);
+  private final ODataReader reader = new ODataV3ReaderImpl(this);
 
 //  private final ODataWriterImpl writer = new ODataWriterImpl(this);
-  private final ODataBinderImpl binder = new ODataBinderImpl(this);
+  private final ODataBinder binder = new ODataV3BinderImpl(this);
 
-//  private final ODataObjectFactoryImpl objectFactory = new ODataObjectFactoryImpl(this);
+//  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
 //
 //  private final V3RetrieveRequestFactory retrieveReqFact = new V3RetrieveRequestFactory(this);
 //
@@ -74,7 +82,7 @@ public class ODataV3Client extends AbstractODataClient {
 
   @Override
   public V3URIBuilder getURIBuilder(final String serviceRoot) {
-    return new V3URIBuilder(configuration, serviceRoot);
+    return new V3URIBuilderImpl(configuration, serviceRoot);
   }
 
   @Override
@@ -83,17 +91,17 @@ public class ODataV3Client extends AbstractODataClient {
   }
 
   @Override
-  public ODataDeserializerImpl getDeserializer() {
+  public ODataV3Deserializer getDeserializer() {
     return deserializer;
   }
 
   @Override
-  public ODataSerializerImpl getSerializer() {
+  public ODataSerializer getSerializer() {
     return serializer;
   }
 
   @Override
-  public ODataReaderImpl getReader() {
+  public ODataReader getReader() {
     return reader;
   }
 
@@ -102,7 +110,7 @@ public class ODataV3Client extends AbstractODataClient {
 //    return writer;
 //  }
   @Override
-  public ODataBinderImpl getBinder() {
+  public ODataBinder getBinder() {
     return binder;
   }
 

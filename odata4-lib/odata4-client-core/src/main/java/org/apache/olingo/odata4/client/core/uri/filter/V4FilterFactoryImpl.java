@@ -19,30 +19,28 @@
 package org.apache.olingo.odata4.client.core.uri.filter;
 
 import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.odata4.client.api.uri.filter.URIFilter;
+import org.apache.olingo.odata4.client.api.uri.filter.V4FilterArgFactory;
+import org.apache.olingo.odata4.client.api.uri.filter.V4FilterFactory;
+import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 
-public class FilterFunction implements FilterArg {
+public class V4FilterFactoryImpl extends AbstractFilterFactory implements V4FilterFactory {
 
-  private final String function;
+  private static final long serialVersionUID = -5358934829490623191L;
 
-  private final FilterArg[] params;
-
-  FilterFunction(final String function, final FilterArg... params) {
-    this.function = function;
-    this.params = params;
+  @Override
+  public V4FilterArgFactory getArgFactory() {
+    return new V4FilterArgFactoryImpl();
   }
 
   @Override
-  public String build() {
-    final String[] strParams = params == null || params.length == 0 ? new String[0] : new String[params.length];
-    for (int i = 0; i < strParams.length; i++) {
-      strParams[i] = params[i].build();
-    }
-
-    return new StringBuilder(function).
-            append('(').
-            append(strParams.length == 0 ? StringUtils.EMPTY : StringUtils.join(strParams, ',')).
-            append(')').
-            toString();
+  public URIFilter has(final String key, final EdmEnumType enumType, final String memberName) {
+    return has(getArgFactory().property(key), enumType, memberName);
   }
+
+  @Override
+  public URIFilter has(final FilterArg left, final EdmEnumType enumType, final String memberName) {
+    return new HasFilter(left, new FilterProperty(enumType.toUriLiteral(memberName)));
+  }
+
 }

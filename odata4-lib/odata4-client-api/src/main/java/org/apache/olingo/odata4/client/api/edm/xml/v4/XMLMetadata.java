@@ -16,17 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v4;
+package org.apache.olingo.odata4.client.api.edm.xml.v4;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.core.op.impl.AbstractODataSerializer;
+import java.util.List;
 
-public class ODataSerializerImpl extends AbstractODataSerializer {
+public interface XMLMetadata extends org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata {
 
-  private static final long serialVersionUID = 7587265188399685309L;
+  @Override
+  List<Schema> getSchemas();
 
-  public ODataSerializerImpl(final ODataClient client) {
-    super(client);
-  }
+  @Override
+  Schema getSchema(int index);
+
+  @Override
+  Schema getSchema(String key);
+
+  List<Reference> getReferences();
 
 }

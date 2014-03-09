@@ -20,12 +20,11 @@ package org.apache.olingo.odata4.client.api.data;
 
 import java.net.URI;
 import java.util.List;
-import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
 
 /**
  * REST resource for an <tt>ODataServiceDocument</tt>.
  *
- * @see ODataServiceDocument
+ * @see org.apache.olingo.odata4.client.api.domain.ODataServiceDocument
  */
 public interface ServiceDocument {
 

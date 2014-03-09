@@ -16,24 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.uri;
+package org.apache.olingo.odata4.client.api.uri.filter;
 
-import org.apache.olingo.odata4.client.core.V3Configuration;
-
-public class V3URIBuilder extends AbstractURIBuilder {
-
-  private static final long serialVersionUID = -3506851722447870532L;
-
-  private final V3Configuration configuration;
-
-  public V3URIBuilder(final V3Configuration configuration, final String serviceRoot) {
-    super(serviceRoot);
-    this.configuration = configuration;
-  }
+public interface V3FilterFactory extends FilterFactory {
 
   @Override
-  protected V3Configuration getConfiguration() {
-    return configuration;
-  }
+  V3FilterArgFactory getArgFactory();
 
 }

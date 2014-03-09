@@ -33,7 +33,7 @@ public interface ODataClient {
   //ODataHeaders getVersionHeaders();
   Configuration getConfiguration();
 
-  URIBuilder getURIBuilder(String serviceRoot);
+  URIBuilder<?> getURIBuilder(String serviceRoot);
 
   FilterFactory getFilterFactory();
 

@@ -22,11 +22,9 @@ import org.apache.olingo.odata4.client.api.uri.filter.URIFilter;
 import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
 import org.apache.olingo.odata4.client.api.uri.filter.FilterFactory;
 
-public abstract class AbstractFilterFactory implements FilterFactory {
+abstract class AbstractFilterFactory implements FilterFactory {
 
   private static final long serialVersionUID = -6141317149802621836L;
-
-  protected static final String NULL = "null";
 
   @Override
   public URIFilter match(final FilterArg arg) {
@@ -35,7 +33,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter eq(final String key, final Object value) {
-    return new EqFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new EqFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override
@@ -45,7 +43,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter ne(final String key, final Object value) {
-    return new NeFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new NeFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override
@@ -55,7 +53,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter gt(final String key, final Object value) {
-    return new GtFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new GtFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override
@@ -65,7 +63,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter ge(final String key, final Object value) {
-    return new GeFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new GeFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override
@@ -75,7 +73,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter lt(final String key, final Object value) {
-    return new LtFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new LtFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override
@@ -85,7 +83,7 @@ public abstract class AbstractFilterFactory implements FilterFactory {
 
   @Override
   public URIFilter le(final String key, final Object value) {
-    return new LeFilter(FilterArgFactory.property(key), FilterArgFactory.literal(value));
+    return new LeFilter(getArgFactory().property(key), getArgFactory().literal(value));
   }
 
   @Override

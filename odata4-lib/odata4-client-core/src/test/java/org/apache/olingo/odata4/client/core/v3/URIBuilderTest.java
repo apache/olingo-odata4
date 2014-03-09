@@ -22,68 +22,109 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.api.uri.URIBuilder;
+import org.apache.olingo.odata4.client.api.ODataV3Client;
+import org.apache.olingo.odata4.client.api.uri.V3URIBuilder;
 import org.apache.olingo.odata4.client.core.AbstractTest;
 import org.junit.Test;
 
 public class URIBuilderTest extends AbstractTest {
 
-  private static final String BASE_URI = "http://host/service";
+  private static final String SERVICE_ROOT = "http://host/service";
 
   @Override
-  protected ODataClient getClient() {
+  protected ODataV3Client getClient() {
     return v3Client;
   }
 
   @Test
   public void metadata() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(BASE_URI).appendMetadataSegment().build();
+    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendMetadataSegment().build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(BASE_URI + "/$metadata").build(), uri);
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/$metadata").build(), uri);
   }
 
   @Test
   public void entity() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(BASE_URI).appendEntitySetSegment("AnEntitySet").
+    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
             appendKeySegment(11).build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(BASE_URI + "/AnEntitySet(11)").build(), uri);
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet(11)").build(), uri);
 
     final Map<String, Object> multiKey = new HashMap<String, Object>();
     multiKey.put("OrderId", -10);
     multiKey.put("ProductId", -10);
-    URIBuilder uriBuilder = getClient().getURIBuilder(BASE_URI).
-            appendEntityTypeSegment("OrderLine").appendKeySegment(multiKey).
-            appendStructuralSegment("Quantity").
-            appendValueSegment();
+    V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendEntitySetSegment("OrderLine").appendKeySegment(multiKey).
+            appendPropertySegment("Quantity").appendValueSegment();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
-            BASE_URI + "/OrderLine(OrderId=-10,ProductId=-10)/Quantity/$value").build(), uriBuilder.build());
+            SERVICE_ROOT + "/OrderLine(OrderId=-10,ProductId=-10)/Quantity/$value").build(), uriBuilder.build());
 
-    uriBuilder = getClient().getURIBuilder(BASE_URI).
-            appendEntityTypeSegment("Customer").appendKeySegment(-10).select("CustomerId,Name,Orders").expand("Orders");
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
-            BASE_URI + "/Customer(-10)").addParameter("$expand", "Orders").
-            addParameter("$select", "CustomerId,Name,Orders").build(),
+    uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendEntitySetSegment("Customer").appendKeySegment(-10).
+            select("CustomerId", "Name", "Orders").expand("Orders");
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)").
+            addParameter("$select", "CustomerId,Name,Orders").addParameter("$expand", "Orders").build(),
             uriBuilder.build());
 
-    uriBuilder = getClient().getURIBuilder(BASE_URI).
-            appendNavigationLinkSegment("Customer").appendKeySegment(-10).appendLinksSegment("Orders");
-    assertEquals(new org.apache.http.client.utils.URIBuilder(BASE_URI + "/Customer(-10)/$links/Orders").build(),
+    uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Orders");
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)/$links/Orders").build(),
             uriBuilder.build());
   }
 
   @Test
+  public void count() throws URISyntaxException {
+    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
+
+    uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").
+            inlineCount(V3URIBuilder.InlineCount.allpages).build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
+            addParameter("$inlinecount", "allpages").build(), uri);
+  }
+
+  @Test
   public void filter() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(BASE_URI).appendEntitySetSegment("AnEntitySet").
+    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
             filter(getClient().getFilterFactory().lt("VIN", 16));
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(BASE_URI + "/AnEntitySet").
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet").
             addParameter("$filter", "(VIN lt 16)").build(),
             uriBuilder.build());
   }
 
+  @Test
+  public void unboundAction() throws URISyntaxException {
+    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendOperationCallSegment("ProductsByCategoryId",
+                    Collections.<String, Object>singletonMap("categoryId", 2));
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(
+            SERVICE_ROOT + "/ProductsByCategoryId(categoryId=2)").build(), uriBuilder.build());
+  }
+
+  @Test
+  public void boundAction() throws URISyntaxException {
+    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendEntitySetSegment("Products").appendOperationCallSegment("MostExpensive", null);
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(
+            SERVICE_ROOT + "/Products/MostExpensive").build(), uriBuilder.build());
+  }
+
+  @Test
+  public void derived() throws URISyntaxException {
+    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+            appendEntitySetSegment("Customers").appendNavigationSegment("Model").
+            appendDerivedEntityTypeSegment("Namespace.VipCustomer").appendKeySegment(1);
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(
+            SERVICE_ROOT + "/Customers/Model/Namespace.VipCustomer(1)").build(), uriBuilder.build());
+  }
 }

@@ -18,8 +18,17 @@
  */
 package org.apache.olingo.odata4.client.core.uri.filter;
 
-public class V3FilterFactory extends AbstractFilterFactory {
+import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
 
-  private static final long serialVersionUID = 1092594961118334631L;
+public class HasFilter extends AbstractComparingFilter {
+
+  HasFilter(final FilterArg left, final FilterArg right) {
+    super(left, right);
+  }
+
+  @Override
+  protected String getOp() {
+    return "has";
+  }
 
 }

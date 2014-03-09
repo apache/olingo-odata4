@@ -20,6 +20,8 @@ package org.apache.olingo.odata4.client.core;
 
 import java.util.Locale;
 import org.apache.olingo.odata4.client.api.ODataClient;
+import org.apache.olingo.odata4.client.api.ODataV3Client;
+import org.apache.olingo.odata4.client.api.ODataV4Client;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.apache.olingo.odata4.client.api.format.ODataPubFormat;
 import org.junit.BeforeClass;

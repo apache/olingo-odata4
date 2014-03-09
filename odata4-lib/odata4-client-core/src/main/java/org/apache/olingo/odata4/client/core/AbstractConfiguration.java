@@ -46,8 +46,6 @@ public abstract class AbstractConfiguration implements Configuration {
 
   private static final String USE_XHTTP_METHOD = "useHTTPMethod";
 
-  private static final String KEY_AS_SEGMENT = "keyAsSegment";
-
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
   private static final String CHUNKING = "chunking";
@@ -63,7 +61,7 @@ public abstract class AbstractConfiguration implements Configuration {
    * @param defaultValue default value to be used in case of the given key doesn't exist.
    * @return property value if exists; default value if does not exist.
    */
-  private Object getProperty(final String key, final Object defaultValue) {
+  protected Object getProperty(final String key, final Object defaultValue) {
     return CONF.containsKey(key) ? CONF.get(key) : defaultValue;
   }
 
@@ -74,7 +72,7 @@ public abstract class AbstractConfiguration implements Configuration {
    * @param value configuration property value.
    * @return given value.
    */
-  private Object setProperty(final String key, final Object value) {
+  protected Object setProperty(final String key, final Object value) {
     return CONF.put(key, value);
   }
 
@@ -164,16 +162,6 @@ public abstract class AbstractConfiguration implements Configuration {
   @Override
   public void setUseXHTTPMethod(final boolean value) {
     setProperty(USE_XHTTP_METHOD, value);
-  }
-
-  @Override
-  public boolean isKeyAsSegment() {
-    return (Boolean) getProperty(KEY_AS_SEGMENT, false);
-  }
-
-  @Override
-  public void setKeyAsSegment(final boolean value) {
-    setProperty(KEY_AS_SEGMENT, value);
   }
 
   @Override

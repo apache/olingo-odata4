@@ -16,22 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v3;
 
-import org.apache.olingo.odata4.client.core.ODataV3Client;
-import org.apache.olingo.odata4.client.core.op.impl.AbstractODataBinder;
+package org.apache.olingo.odata4.client.api;
 
-public class ODataBinderImpl extends AbstractODataBinder {
-
-    private static final long serialVersionUID = 8970843539708952308L;
-
-    public ODataBinderImpl(final ODataV3Client client) {
-        super(client);
-    }
-
-//    @Override
-//    protected EdmType newEdmType(final String expression) {
-//        return new EdmV3Type(expression);
-//    }
-
+public interface V4Configuration extends Configuration {
+  
 }

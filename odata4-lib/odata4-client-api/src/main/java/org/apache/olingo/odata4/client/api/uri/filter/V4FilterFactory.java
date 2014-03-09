@@ -16,10 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.uri.filter;
+package org.apache.olingo.odata4.client.api.uri.filter;
 
-public class V4FilterFactory extends AbstractFilterFactory {
+import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
 
-  private static final long serialVersionUID = -5358934829490623191L;
+public interface V4FilterFactory extends FilterFactory {
+
+  @Override
+  V4FilterArgFactory getArgFactory();
+
+  URIFilter has(String key, EdmEnumType enumType, String memberName);
+
+  URIFilter has(FilterArg left, EdmEnumType enumType, String memberName);
 
 }

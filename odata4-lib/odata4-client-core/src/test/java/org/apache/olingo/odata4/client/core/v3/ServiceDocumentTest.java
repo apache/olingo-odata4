@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.odata4.client.core.v3;
 
+import org.apache.olingo.odata4.client.api.ODataV3Client;
 import org.apache.olingo.odata4.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
 import org.apache.olingo.odata4.client.core.AbstractTest;
-import org.apache.olingo.odata4.client.core.ODataV3Client;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

@@ -16,24 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v3;
+package org.apache.olingo.odata4.client.core.op.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.olingo.odata4.client.api.ODataClient;
 import org.apache.olingo.odata4.client.api.data.ServiceDocument;
 import org.apache.olingo.odata4.client.api.format.ODataFormat;
+import org.apache.olingo.odata4.client.api.op.ODataV3Deserializer;
 import org.apache.olingo.odata4.client.core.data.v3.JSONServiceDocumentImpl;
 import org.apache.olingo.odata4.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractODataDeserializer;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.EdmxImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v3.XMLMetadataImpl;
 
-public class ODataDeserializerImpl extends AbstractODataDeserializer {
+public class ODataV3DeserializerImpl extends AbstractODataDeserializer implements ODataV3Deserializer {
 
   private static final long serialVersionUID = -8221085862548914611L;
 
-  public ODataDeserializerImpl(final ODataClient client) {
+  public ODataV3DeserializerImpl(final ODataClient client) {
     super(client);
   }
 

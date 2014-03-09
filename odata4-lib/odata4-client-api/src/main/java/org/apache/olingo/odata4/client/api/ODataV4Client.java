@@ -16,17 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.op.impl.v3;
+package org.apache.olingo.odata4.client.api;
 
-import org.apache.olingo.odata4.client.api.ODataClient;
-import org.apache.olingo.odata4.client.core.op.impl.AbstractODataSerializer;
+import org.apache.olingo.odata4.client.api.op.ODataV4Deserializer;
+import org.apache.olingo.odata4.client.api.uri.V4URIBuilder;
+import org.apache.olingo.odata4.client.api.uri.filter.V4FilterFactory;
 
-public class ODataSerializerImpl extends AbstractODataSerializer {
+public interface ODataV4Client extends ODataClient {
 
-  private static final long serialVersionUID = -8861908250297989806L;
+  @Override
+  V4Configuration getConfiguration();
 
-  public ODataSerializerImpl(final ODataClient client) {
-    super(client);
-  }
+  @Override
+  V4URIBuilder getURIBuilder(String serviceRoot);
+
+  @Override
+  V4FilterFactory getFilterFactory();
+
+  @Override
+  ODataV4Deserializer getDeserializer();
 
 }

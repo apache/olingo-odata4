@@ -18,31 +18,16 @@
  */
 package org.apache.olingo.odata4.client.core.uri.filter;
 
-import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.odata4.client.api.uri.filter.V3FilterArgFactory;
+import org.apache.olingo.odata4.client.api.uri.filter.V3FilterFactory;
 
-public class FilterFunction implements FilterArg {
+public class V3FilterFactoryImpl extends AbstractFilterFactory implements V3FilterFactory {
 
-  private final String function;
-
-  private final FilterArg[] params;
-
-  FilterFunction(final String function, final FilterArg... params) {
-    this.function = function;
-    this.params = params;
-  }
+  private static final long serialVersionUID = 1092594961118334631L;
 
   @Override
-  public String build() {
-    final String[] strParams = params == null || params.length == 0 ? new String[0] : new String[params.length];
-    for (int i = 0; i < strParams.length; i++) {
-      strParams[i] = params[i].build();
-    }
-
-    return new StringBuilder(function).
-            append('(').
-            append(strParams.length == 0 ? StringUtils.EMPTY : StringUtils.join(strParams, ',')).
-            append(')').
-            toString();
+  public V3FilterArgFactory getArgFactory() {
+    return new V3FilterArgFactoryImpl();
   }
+
 }

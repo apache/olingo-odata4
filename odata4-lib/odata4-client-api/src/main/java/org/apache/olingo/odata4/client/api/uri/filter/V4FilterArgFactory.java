@@ -18,44 +18,38 @@
  */
 package org.apache.olingo.odata4.client.api.uri.filter;
 
-import java.io.Serializable;
+public interface V4FilterArgFactory extends FilterArgFactory {
 
-/**
- * OData filter factory.
- */
-public interface FilterFactory extends Serializable {
+  FilterArg contains(FilterArg first, FilterArg second);
 
-  FilterArgFactory getArgFactory();
+  FilterArg fractionalseconds(FilterArg param);
 
-  URIFilter match(FilterArg arg);
+  FilterArg date(FilterArg param);
 
-  URIFilter eq(String key, Object value);
+  FilterArg time(FilterArg param);
 
-  URIFilter eq(FilterArg left, FilterArg right);
+  FilterArg totaloffsetminutes(FilterArg param);
 
-  URIFilter ne(String key, Object value);
+  FilterArg now();
 
-  URIFilter ne(FilterArg left, FilterArg right);
+  FilterArg mindatetime();
 
-  URIFilter gt(String key, Object value);
+  FilterArg maxdatetime();
 
-  URIFilter gt(FilterArg left, FilterArg right);
+  FilterArg totalseconds(FilterArg param);
 
-  URIFilter ge(String key, Object value);
+  FilterArg cast(FilterArg type);
 
-  URIFilter ge(FilterArg left, FilterArg right);
+  FilterArg cast(FilterArg expression, FilterArg type);
 
-  URIFilter lt(String key, Object value);
+  FilterArg geoDistance(FilterArg first, FilterArg second);
 
-  URIFilter lt(FilterArg left, FilterArg right);
+  FilterArg geoIntersects(FilterArg first, FilterArg second);
 
-  URIFilter le(String key, Object value);
+  FilterArg geoLength(FilterArg first, FilterArg second);
 
-  URIFilter le(FilterArg left, FilterArg right);
+  FilterArg any(FilterArg collection, URIFilter expression);
 
-  URIFilter and(URIFilter left, URIFilter right);
+  FilterArg all(FilterArg collection, URIFilter expression);
 
-  URIFilter or(URIFilter left, URIFilter right);
-
-  URIFilter not(URIFilter filter);
 }

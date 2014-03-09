@@ -16,14 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.core.uri.filter;
 
-public class V3Configuration extends AbstractConfiguration {
+import org.apache.olingo.odata4.client.api.uri.filter.FilterArg;
+import org.apache.olingo.odata4.client.api.uri.filter.FilterArgFactory;
 
-  private static final long serialVersionUID = -8719958537946884777L;
+/**
+ * Filter property path; obtain instances via <tt>FilterArgFactory</tt>.
+ *
+ * @see FilterArgFactory
+ */
+public class FilterConst implements FilterArg {
 
-  protected V3Configuration() {
-    super();
+  private final String value;
+
+  FilterConst(final String value) {
+    this.value = value;
   }
 
+  @Override
+  public String build() {
+    return value;
+  }
 }

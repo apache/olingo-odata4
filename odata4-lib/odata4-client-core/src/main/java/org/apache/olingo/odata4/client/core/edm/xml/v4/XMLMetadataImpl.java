@@ -22,9 +22,10 @@ import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Edmx;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractXMLMetadata;
 
-public class XMLMetadataImpl extends AbstractXMLMetadata {
+public class XMLMetadataImpl extends AbstractXMLMetadata implements XMLMetadata {
 
   private static final long serialVersionUID = -7765327879691528010L;
 

@@ -20,9 +20,11 @@ package org.apache.olingo.odata4.client.core.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.olingo.odata4.client.api.ODataV4Client;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType;
@@ -32,9 +34,8 @@ import org.apache.olingo.odata4.client.api.edm.xml.v4.Function;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.FunctionImport;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.Singleton;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.odata4.client.core.AbstractTest;
-import org.apache.olingo.odata4.client.core.ODataV4Client;
-import org.apache.olingo.odata4.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.Apply;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.Collection;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
@@ -53,7 +54,6 @@ import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -123,7 +123,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void demo() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
     assertNotNull(metadata);
 
@@ -139,7 +139,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void multipleSchemas() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
     assertNotNull(metadata);
 
@@ -163,7 +163,7 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc1() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
     assertNotNull(metadata);
 
@@ -230,7 +230,7 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc2() {
-    final XMLMetadataImpl metadata = getClient().getDeserializer().
+    final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("fromdoc2-metadata.xml"));
     assertNotNull(metadata);
 

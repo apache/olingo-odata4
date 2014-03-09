@@ -16,14 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core;
+package org.apache.olingo.odata4.client.api.op;
 
-public class V4Configuration extends AbstractConfiguration {
-
-  private static final long serialVersionUID = -1134213707190176857L;
-
-  protected V4Configuration() {
-    super();
-  }
+public interface ODataV3Deserializer extends ODataDeserializer {
 
 }

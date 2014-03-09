@@ -25,21 +25,32 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum SegmentType {
 
+  ENTITY("$entity"),
   ENTITYSET,
-  ENTITYTYPE,
+  SINGLETON,
   KEY,
   KEY_AS_SEGMENT,
+  PROPERTY,
   NAVIGATION,
-  STRUCTURAL,
+  DERIVED_ENTITY_TYPE,
   VALUE("$value"),
-  FUNCTIONIMPORT,
+  BOUND_OPERATION,
+  UNBOUND_OPERATION,
   METADATA("$metadata"),
   BATCH("$batch"),
   LINKS("$links"),
-  COUNT("$count"),
+  REF("$ref"),
+  CROSS_JOIN("$crossjoin"),
+  ALL("$all"),
+  /**
+   * For query options like as $count that needs to stay in their own segment, right after service root.
+   *
+   * @see QueryOption#COUNT
+   */
+  ROOT_QUERY_OPTION,
   SERVICEROOT;
 
-  private String value;
+  private final String value;
 
   private SegmentType() {
     this.value = StringUtils.EMPTY;

@@ -16,24 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.odata4.client.core.uri;
+package org.apache.olingo.odata4.client.api.op;
 
-import org.apache.olingo.odata4.client.core.V4Configuration;
+import java.io.InputStream;
+import org.apache.olingo.odata4.client.api.edm.xml.v4.XMLMetadata;
 
-public class V4URIBuilder extends AbstractURIBuilder {
-
-  private static final long serialVersionUID = -3506851722447870532L;
-
-  private final V4Configuration configuration;
-
-  public V4URIBuilder(final V4Configuration configuration, final String serviceRoot) {
-    super(serviceRoot);
-    this.configuration = configuration;
-  }
+public interface ODataV4Deserializer extends ODataDeserializer {
 
   @Override
-  protected V4Configuration getConfiguration() {
-    return configuration;
-  }
+  XMLMetadata toMetadata(InputStream input);
 
 }
