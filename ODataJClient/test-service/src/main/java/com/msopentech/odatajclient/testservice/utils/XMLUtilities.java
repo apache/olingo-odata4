@@ -24,12 +24,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -247,7 +250,7 @@ public class XMLUtilities extends AbstractUtilities {
             final XMLEventReader reader,
             final XMLEventWriter discarded,
             final String name,
-            final List<Map.Entry<String, String>> filterAttrs)
+            final Collection<Map.Entry<String, String>> filterAttrs)
             throws Exception {
         return getAtomElement(reader, discarded, name, filterAttrs, 0, -1, -1, false).getValue();
     }
@@ -256,7 +259,7 @@ public class XMLUtilities extends AbstractUtilities {
             final XMLEventReader reader,
             final XMLEventWriter discarded,
             final String name,
-            final List<Map.Entry<String, String>> filterAttrs,
+            final Collection<Map.Entry<String, String>> filterAttrs,
             final int initialDepth,
             final int minDepth,
             final int maxDepth,
@@ -272,7 +275,7 @@ public class XMLUtilities extends AbstractUtilities {
             if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {
                 depth++;
 
-                if (name.trim().equals(event.asStartElement().getName().getLocalPart())
+                if ((StringUtils.isBlank(name) || name.trim().equals(event.asStartElement().getName().getLocalPart()))
                         && (minDepth < 0 || minDepth <= depth) && (maxDepth < 0 || maxDepth >= depth)) {
 
                     boolean match = filterAttrs == null || filterAttrs.isEmpty() || !filterInOr;
@@ -310,8 +313,7 @@ public class XMLUtilities extends AbstractUtilities {
             throw new Exception(String.format("Could not find an element named '%s'", name));
         }
 
-        return new AbstractMap.SimpleEntry<Integer, XmlElement>(
-                Integer.valueOf(depth - 1), getAtomElement(start, reader));
+        return new SimpleEntry<Integer, XmlElement>(Integer.valueOf(depth - 1), getAtomElement(start, reader));
     }
 
     public static XmlElement getAtomElement(
@@ -789,7 +791,8 @@ public class XMLUtilities extends AbstractUtilities {
     }
 
     @Override
-    public InputStream readEntities(final List<String> links, final String linkName, final String next)
+    public InputStream readEntities(
+            final List<String> links, final String linkName, final String next, final boolean forceFeed)
             throws Exception {
 
         if (links.isEmpty()) {
@@ -798,7 +801,7 @@ public class XMLUtilities extends AbstractUtilities {
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        if (links.size() > 1) {
+        if (forceFeed || links.size() > 1) {
             // build a feed
             bos.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>".getBytes());
 
@@ -824,7 +827,7 @@ public class XMLUtilities extends AbstractUtilities {
             IOUtils.copy(entry.toStream(), bos);
         }
 
-        if (links.size() > 1) {
+        if (forceFeed || links.size() > 1) {
 
             if (StringUtils.isNotBlank(next)) {
                 bos.write(String.format("<link rel=\"next\" href=\"%s\" />", next).getBytes());
@@ -832,6 +835,161 @@ public class XMLUtilities extends AbstractUtilities {
 
             bos.write("</feed>".getBytes());
         }
+
+        return new ByteArrayInputStream(bos.toByteArray());
+    }
+
+    @Override
+    public Map<String, InputStream> getChanges(final InputStream src) throws Exception {
+        final Map<String, InputStream> res = new HashMap<String, InputStream>();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOUtils.copy(src, bos);
+        IOUtils.closeQuietly(src);
+
+        // retrieve properties ...
+        XMLEventReader reader = getEventReader(new ByteArrayInputStream(bos.toByteArray()));
+
+        final Map.Entry<Integer, XmlElement> propertyElement =
+                getAtomElement(reader, null, PROPERTIES, null, 0, 2, 3, false);
+        reader.close();
+
+        reader = propertyElement.getValue().getContentReader();
+
+        try {
+            while (true) {
+                final XmlElement property = getAtomElement(reader, null, null);
+                res.put(property.getStart().getName().getLocalPart(), property.toStream());
+            }
+        } catch (Exception ignore) {
+            // end
+        }
+
+        reader.close();
+
+        // retrieve links ...
+        reader = getEventReader(new ByteArrayInputStream(bos.toByteArray()));
+
+        try {
+            int pos = 0;
+            while (true) {
+                final Map.Entry<Integer, XmlElement> linkElement =
+                        getAtomElement(reader, null, LINK, null, pos, 2, 2, false);
+
+                res.put("[LINK]" + linkElement.getValue().getStart().getAttributeByName(new QName("title")).getValue(),
+                        linkElement.getValue().toStream());
+
+                pos = linkElement.getKey();
+            }
+        } catch (Exception ignore) {
+            // end
+        }
+
+        return res;
+    }
+
+    @Override
+    public InputStream setChanges(
+            final InputStream toBeChanged,
+            final Map<String, InputStream> properties)
+            throws Exception {
+
+        XMLEventReader reader = getEventReader(toBeChanged);
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final XMLOutputFactory xof = XMLOutputFactory.newInstance();
+        XMLEventWriter writer = xof.createXMLEventWriter(bos);
+
+        // ---------------------------------
+        // add property changes
+        // ---------------------------------
+        Map.Entry<Integer, XmlElement> propertyElement =
+                getAtomElement(reader, writer, PROPERTIES, null, 0, 2, 3, false);
+
+        writer.flush();
+
+        ByteArrayOutputStream pbos = new ByteArrayOutputStream();
+        OutputStreamWriter pwriter = new OutputStreamWriter(pbos);
+
+        final XMLEventReader propertyReader = propertyElement.getValue().getContentReader();
+
+        try {
+            while (true) {
+                final XmlElement property = getAtomElement(propertyReader, null, null);
+                final String name = property.getStart().getName().getLocalPart();
+
+                if (properties.containsKey(name)) {
+                    // replace
+                    final InputStream replacement = properties.get(name);
+                    properties.remove(property.getStart().getName().getLocalPart());
+                    pwriter.append(IOUtils.toString(replacement));
+                    IOUtils.closeQuietly(replacement);
+                } else {
+                    pwriter.append(IOUtils.toString(property.toStream()));
+                }
+            }
+        } catch (Exception ignore) {
+            // end
+        }
+
+        for (Map.Entry<String, InputStream> remains : properties.entrySet()) {
+            if (!remains.getKey().startsWith("[LINK]")) {
+                pwriter.append(IOUtils.toString(remains.getValue()));
+                IOUtils.closeQuietly(remains.getValue());
+            }
+        }
+
+        pwriter.flush();
+        pwriter.close();
+
+        writer.add(propertyElement.getValue().getStart());
+        writer.add(new XMLEventReaderWrapper(new ByteArrayInputStream(pbos.toByteArray())));
+        writer.add(propertyElement.getValue().getEnd());
+
+        IOUtils.closeQuietly(pbos);
+
+        writer.add(reader);
+        reader.close();
+        writer.flush();
+        writer.close();
+        // ---------------------------------
+
+        // ---------------------------------
+        // add navigationm changes
+        // ---------------------------------
+        reader = getEventReader(new ByteArrayInputStream(bos.toByteArray()));
+
+        bos.reset();
+        writer = xof.createXMLEventWriter(bos);
+
+        propertyElement = getAtomElement(reader, writer, CONTENT, null, 0, 2, 2, false);
+        writer.flush();
+
+        pbos.reset();
+        pwriter = new OutputStreamWriter(pbos);
+
+        for (Map.Entry<String, InputStream> remains : properties.entrySet()) {
+            if (remains.getKey().startsWith("[LINK]")) {
+                pwriter.append(IOUtils.toString(remains.getValue()));
+                IOUtils.closeQuietly(remains.getValue());
+            }
+        }
+
+        pwriter.flush();
+        pwriter.close();
+
+        writer.add(new XMLEventReaderWrapper(new ByteArrayInputStream(pbos.toByteArray())));
+        IOUtils.closeQuietly(pbos);
+
+        writer.add(propertyElement.getValue().getStart());
+        writer.add(propertyElement.getValue().getContentReader());
+        writer.add(propertyElement.getValue().getEnd());
+
+        writer.add(reader);
+        reader.close();
+        writer.flush();
+        writer.close();
+        // ---------------------------------
 
         return new ByteArrayInputStream(bos.toByteArray());
     }

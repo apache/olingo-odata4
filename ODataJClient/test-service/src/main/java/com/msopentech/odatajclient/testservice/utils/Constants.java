@@ -40,6 +40,8 @@ public class Constants {
 
     public final static String INLINE = ATOM_METADATA_PREFIX + INLINE_LOCAL;
 
+    public final static String CONTENT = "content";
+
     public final static String PROPERTIES = ATOM_METADATA_PREFIX + "properties";
 
     public final static String LINK = "link";

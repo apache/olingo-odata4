@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,6 @@ public class JSONUtilities extends AbstractUtilities {
         final NavigationLinks links = new NavigationLinks();
 
         final Iterator<Map.Entry<String, JsonNode>> fieldIter = srcNode.fields();
-        final List<String> linksFromMeta = Commons.entityLinks.get(version).get(entitySetName);
 
         while (fieldIter.hasNext()) {
             final Map.Entry<String, JsonNode> field = fieldIter.next();
@@ -81,7 +81,7 @@ public class JSONUtilities extends AbstractUtilities {
                 }
 
                 links.addLinks(title, hrefs);
-            } else if (linksFromMeta.contains(field.getKey())) {
+            } else if (Commons.linkInfo.get(version).exists(entitySetName, field.getKey())) {
                 links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString()));
             }
         }
@@ -252,7 +252,8 @@ public class JSONUtilities extends AbstractUtilities {
     }
 
     @Override
-    public InputStream readEntities(final List<String> links, final String linkName, final String next)
+    public InputStream readEntities(
+            final List<String> links, final String linkName, final String next, final boolean forceFeed)
             throws Exception {
 
         if (links.isEmpty()) {
@@ -264,7 +265,7 @@ public class JSONUtilities extends AbstractUtilities {
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        if (links.size() > 1) {
+        if (forceFeed || links.size() > 1) {
             bos.write("[".getBytes());
         }
 
@@ -280,7 +281,7 @@ public class JSONUtilities extends AbstractUtilities {
             IOUtils.copy(entity.getValue(), bos);
         }
 
-        if (links.size() > 1) {
+        if (forceFeed || links.size() > 1) {
             bos.write("]".getBytes());
         }
 
@@ -310,5 +311,36 @@ public class JSONUtilities extends AbstractUtilities {
         }
 
         return IOUtils.toInputStream(toBeChangedNode.toString());
+    }
+
+    @Override
+    protected Map<String, InputStream> getChanges(final InputStream src) throws Exception {
+        final Map<String, InputStream> res = new HashMap<String, InputStream>();
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final JsonNode srcObject = mapper.readTree(src);
+
+        final Iterator<Map.Entry<String, JsonNode>> fields = srcObject.fields();
+        while (fields.hasNext()) {
+            final Map.Entry<String, JsonNode> field = fields.next();
+            res.put(field.getKey(), IOUtils.toInputStream(field.getValue().toString()));
+        }
+
+        return res;
+    }
+
+    @Override
+    protected InputStream setChanges(
+            final InputStream toBeChanged, final Map<String, InputStream> properties) throws Exception {
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode toBeChangedObject = (ObjectNode) mapper.readTree(toBeChanged);
+
+        for (Map.Entry<String, InputStream> property : properties.entrySet()) {
+            final JsonNode propertyNode = mapper.readTree(property.getValue());
+            toBeChangedObject.set(property.getKey(), propertyNode);
+        }
+
+        return IOUtils.toInputStream(toBeChangedObject.toString());
     }
 }

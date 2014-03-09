@@ -56,10 +56,12 @@ public abstract class Commons {
 
     protected final static Set<String> mediaContent = new HashSet<String>();
 
+    protected final static Set<String> feed = new HashSet<String>();
+
     protected final static Map<String, String> entitySetAlias = new HashMap<String, String>();
 
-    protected final static Map<ODataVersion, Map<String, List<String>>> entityLinks =
-            new EnumMap<ODataVersion, Map<String, List<String>>>(ODataVersion.class);
+    protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
+            new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
 
     static {
         sequence.put("Customer", 1000);
@@ -71,6 +73,8 @@ public abstract class Commons {
 
         entitySetAlias.put("Customer.Info", "CustomerInfo");
         entitySetAlias.put("Customer.Orders", "Order");
+        feed.add("Customer.Orders");
+        feed.add("Customer.Logins");
     }
 
     public static String getEntityKey(final String entityId) {

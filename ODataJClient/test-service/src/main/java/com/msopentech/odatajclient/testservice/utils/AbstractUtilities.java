@@ -34,7 +34,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,12 +68,13 @@ public abstract class AbstractUtilities {
     }
 
     private void initialize() throws Exception {
+
         if (!initialized.contains(version)) {
+            final MetadataLinkInfo metadataLinkInfo = new MetadataLinkInfo();
+            Commons.linkInfo.put(version, metadataLinkInfo);
+
             final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
             final XMLEventReader reader = XMLUtilities.getEventReader(metadata);
-
-            final Map<String, List<String>> entityLinksPerVersion = new HashMap<String, List<String>>();
-            Commons.entityLinks.put(version, entityLinksPerVersion);
 
             int initialDepth = 0;
             try {
@@ -82,8 +82,6 @@ public abstract class AbstractUtilities {
                     Map.Entry<Integer, XmlElement> entityType =
                             XMLUtilities.getAtomElement(reader, null, "EntityType", null, initialDepth, 4, 4, false);
                     initialDepth = entityType.getKey();
-                    entityLinksPerVersion.put(entityType.getValue().getStart().
-                            getAttributeByName(new QName("Name")).getValue(), new ArrayList<String>());
 
                     final XMLEventReader entityReader = XMLUtilities.getEventReader(entityType.getValue().toStream());
                     try {
@@ -93,9 +91,10 @@ public abstract class AbstractUtilities {
                                     entityReader, null, "NavigationProperty", null, pos, 2, 2, false);
                             pos = navProperty.getKey();
 
-                            final List<String> links = entityLinksPerVersion.get(entityType.getValue().getStart().
-                                    getAttributeByName(new QName("Name")).getValue());
-                            links.add(navProperty.getValue().
+                            metadataLinkInfo.addLinkName(
+                                    entityType.getValue().getStart().
+                                    getAttributeByName(new QName("Name")).getValue(),
+                                    navProperty.getValue().
                                     getStart().getAttributeByName(new QName("Name")).getValue());
                         }
                     } catch (Exception e) {
@@ -470,7 +469,7 @@ public abstract class AbstractUtilities {
      * @param accept accept header.
      * @return a pair of ETag/links stream
      */
-    public Map.Entry<String, InputStream> readLinks(
+    public LinkInfo readLinks(
             final String entitySetName, final String entityId, final String linkName, final Accept accept)
             throws Exception {
 
@@ -478,8 +477,11 @@ public abstract class AbstractUtilities {
                 entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
                 + LINKS_FILE_PATH + File.separatorChar;
 
-        return new SimpleEntry<String, InputStream>(
-                Commons.getETag(basePath, version), fsManager.readFile(basePath + linkName, accept));
+        final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
+        linkInfo.setEtag(Commons.getETag(basePath, version));
+        linkInfo.setFeed(Commons.feed.contains(entitySetName + "." + linkName));
+
+        return linkInfo;
     }
 
     public Map.Entry<String, InputStream> readEntity(
@@ -503,14 +505,18 @@ public abstract class AbstractUtilities {
         // --------------------------------
         // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing) 
         // --------------------------------
-        final Map.Entry<String, List<String>> linkInfo =
-                XMLUtilities.extractLinkURIs(readLinks(entitySetName, entityId, linkName, Accept.XML).getValue());
+        final LinkInfo linkInfo = readLinks(entitySetName, entityId, linkName, Accept.XML);
+        final Map.Entry<String, List<String>> links = XMLUtilities.extractLinkURIs(linkInfo.getLinks());
         // --------------------------------
 
         // --------------------------------
         // 1. Retrieve expanded object (entry or feed)
         // --------------------------------
-        final InputStream expanded = readEntities(linkInfo.getValue(), linkName, linkInfo.getKey());
+        final InputStream expanded = readEntities(
+                links.getValue(),
+                linkName,
+                links.getKey(),
+                linkInfo.isFeed());
         // --------------------------------
 
         // --------------------------------
@@ -520,8 +526,17 @@ public abstract class AbstractUtilities {
         // --------------------------------
     }
 
+    public InputStream patchEntity(
+            final String entitySetName, final String entityId, final InputStream changes, final Accept accept)
+            throws Exception {
+        final Map.Entry<String, InputStream> entityInfo = readEntity(entitySetName, entityId, accept);
+        final Map<String, InputStream> replacement = getChanges(changes);
+        return createEntity(entityId, entitySetName, setChanges(entityInfo.getValue(), replacement));
+    }
+
     public abstract InputStream readEntities(
-            final List<String> links, final String linkName, final String next) throws Exception;
+            final List<String> links, final String linkName, final String next, final boolean forceFeed)
+            throws Exception;
 
     protected abstract InputStream replaceLink(
             final InputStream toBeChanged, final String linkName, final InputStream replacement) throws Exception;
@@ -529,4 +544,9 @@ public abstract class AbstractUtilities {
     public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames) throws Exception;
 
     protected abstract Accept getDefaultFormat();
+
+    protected abstract Map<String, InputStream> getChanges(final InputStream src) throws Exception;
+
+    protected abstract InputStream setChanges(
+            final InputStream toBeChanged, final Map<String, InputStream> properties) throws Exception;
 }

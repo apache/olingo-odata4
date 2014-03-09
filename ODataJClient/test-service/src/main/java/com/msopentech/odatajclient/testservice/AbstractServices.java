@@ -19,7 +19,6 @@
 package com.msopentech.odatajclient.testservice;
 
 import com.msopentech.odatajclient.testservice.utils.Accept;
-import com.msopentech.odatajclient.testservice.utils.Commons;
 import com.msopentech.odatajclient.testservice.utils.XMLUtilities;
 import com.msopentech.odatajclient.testservice.utils.JSONUtilities;
 import com.msopentech.odatajclient.testservice.utils.ODataVersion;
@@ -27,6 +26,10 @@ import com.msopentech.odatajclient.testservice.utils.FSManager;
 
 import static com.msopentech.odatajclient.testservice.utils.Constants.*;
 
+import com.msopentech.odatajclient.testservice.methods.PATCH;
+import com.msopentech.odatajclient.testservice.utils.AbstractUtilities;
+import com.msopentech.odatajclient.testservice.utils.Commons;
+import com.msopentech.odatajclient.testservice.utils.LinkInfo;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
@@ -60,12 +63,12 @@ public abstract class AbstractServices {
 
     protected abstract ODataVersion getVersion();
 
-    protected final XMLUtilities atom;
+    protected final XMLUtilities xml;
 
     protected final JSONUtilities json;
 
     public AbstractServices() throws Exception {
-        this.atom = new XMLUtilities(getVersion());
+        this.xml = new XMLUtilities(getVersion());
         this.json = new JSONUtilities(getVersion());
     }
 
@@ -84,10 +87,10 @@ public abstract class AbstractServices {
                 throw new UnsupportedMediaTypeException("Unsupported media type");
             }
 
-            return atom.createResponse(
+            return xml.createResponse(
                     FSManager.instance(getVersion()).readFile(SERVICES, acceptType), null, acceptType);
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -117,10 +120,36 @@ public abstract class AbstractServices {
 
     private Response getMetadata(final String filename) {
         try {
-            return atom.
+            return xml.
                     createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
         } catch (Exception e) {
-            return atom.createFaultResponse(Accept.XML.toString(), e);
+            return xml.createFaultResponse(Accept.XML.toString(), e);
+        }
+    }
+
+    @PATCH
+    @Path("/{entitySetName}({entityId})")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    public Response patchEntity(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            final String changes) {
+
+        try {
+            final Accept acceptType = Accept.parse(accept, getVersion());
+
+            if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
+                throw new UnsupportedMediaTypeException("Unsupported media type");
+            }
+
+            final AbstractUtilities util = acceptType == Accept.ATOM ? xml : json;
+            InputStream res = util.patchEntity(entitySetName, entityId, IOUtils.toInputStream(changes), acceptType);
+            return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        } catch (Exception e) {
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -144,19 +173,18 @@ public abstract class AbstractServices {
 
             final InputStream res;
             if (acceptType == Accept.ATOM) {
-                res = atom.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+                res = xml.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
             } else {
                 res = json.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
             }
 
             res.close();
 
-            final Response response = atom.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+            final Response response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
             response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -180,21 +208,21 @@ public abstract class AbstractServices {
 
             final InputStream res;
             if (acceptType == Accept.ATOM) {
-                res = atom.createEntity(entitySetName, IOUtils.toInputStream(entity));
+                res = xml.createEntity(entitySetName, IOUtils.toInputStream(entity));
             } else {
                 res = json.createEntity(entitySetName, IOUtils.toInputStream(entity));
             }
 
             if (prefer.equalsIgnoreCase("return-no-content")) {
                 res.close();
-                Response response = atom.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+                Response response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
                 response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
                 return response;
             } else {
-                return atom.createResponse(res, null, acceptType, Response.Status.CREATED);
+                return xml.createResponse(res, null, acceptType, Response.Status.CREATED);
             }
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -236,7 +264,7 @@ public abstract class AbstractServices {
             try {
                 // search for function ...
                 final InputStream func = FSManager.instance(getVersion()).readFile(name, acceptType);
-                return atom.createResponse(func, null, acceptType);
+                return xml.createResponse(func, null, acceptType);
             } catch (NotFoundException e) {
                 // search for entitySet ...
                 final String basePath = name + File.separatorChar;
@@ -258,10 +286,10 @@ public abstract class AbstractServices {
 
                 InputStream feed = FSManager.instance(getVersion()).readFile(builder.toString(), acceptType);
                 if ("allpages".equals(inlinecount)) {
-                    int count = atom.countAllElements(name);
+                    int count = xml.countAllElements(name);
                     feed.close();
                     if (acceptType == Accept.ATOM) {
-                        feed = atom.addAtomInlinecount(
+                        feed = xml.addAtomInlinecount(
                                 FSManager.instance(getVersion()).readFile(builder.toString(), acceptType),
                                 count,
                                 acceptType);
@@ -273,10 +301,10 @@ public abstract class AbstractServices {
                     }
                 }
 
-                return atom.createResponse(feed, Commons.getETag(basePath, getVersion()), acceptType);
+                return xml.createResponse(feed, Commons.getETag(basePath, getVersion()), acceptType);
             }
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -309,13 +337,13 @@ public abstract class AbstractServices {
                 acceptType = Accept.parse(accept, getVersion());
             }
 
-            final Map.Entry<String, InputStream> entityInfo = atom.readEntity(entitySetName, entityId, acceptType);
+            final Map.Entry<String, InputStream> entityInfo = xml.readEntity(entitySetName, entityId, acceptType);
 
             InputStream entity = entityInfo.getValue();
 
             if (StringUtils.isNotBlank(select)) {
                 if (acceptType == Accept.ATOM) {
-                    entity = atom.selectEntity(entity, select.split(","));
+                    entity = xml.selectEntity(entity, select.split(","));
                 } else {
                     entity = json.selectEntity(entity, select.split(","));
                 }
@@ -326,7 +354,7 @@ public abstract class AbstractServices {
                     throw new UnsupportedMediaTypeException("Unsupported media type");
                 } else if (acceptType == Accept.ATOM) {
                     for (String exp : expand.split(",")) {
-                        entity = atom.expandEntity(
+                        entity = xml.expandEntity(
                                 entitySetName,
                                 entityId,
                                 entity,
@@ -343,10 +371,10 @@ public abstract class AbstractServices {
                 }
             }
 
-            return atom.createResponse(entity, Commons.getETag(entityInfo.getKey(), getVersion()), acceptType);
+            return xml.createResponse(entity, Commons.getETag(entityInfo.getKey(), getVersion()), acceptType);
         } catch (Exception e) {
             LOG.error("Error retrieving entity", e);
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -362,9 +390,9 @@ public abstract class AbstractServices {
 
             FSManager.instance(getVersion()).deleteFile(basePath + ENTITY);
 
-            return atom.createResponse(null, null, null, Response.Status.NO_CONTENT);
+            return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
         } catch (Exception e) {
-            return atom.createFaultResponse(Accept.XML.toString(), e);
+            return xml.createFaultResponse(Accept.XML.toString(), e);
         }
     }
 
@@ -402,36 +430,36 @@ public abstract class AbstractServices {
             InputStream stream;
 
             try {
-                final Map.Entry<String, List<String>> linkInfo = XMLUtilities.extractLinkURIs(
-                        atom.readLinks(entitySetName, entityId, path, Accept.XML).getValue());
+                final LinkInfo linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.XML);
+                final Map.Entry<String, List<String>> links = XMLUtilities.extractLinkURIs(linkInfo.getLinks());
 
                 switch (acceptType) {
                     case JSON:
                     case JSON_FULLMETA:
                     case JSON_NOMETA:
-                        stream = json.readEntities(linkInfo.getValue(), path, linkInfo.getKey());
+                        stream = json.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
                         stream = json.wrapJsonEntities(stream);
                         break;
                     default:
-                        stream = atom.readEntities(linkInfo.getValue(), path, linkInfo.getKey());
+                        stream = xml.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
                 }
             } catch (NotFoundException e) {
                 // if the given path is not about any link then search for property
                 LOG.info("Retrieve property {}", path);
 
                 stream = FSManager.instance(getVersion()).readFile(
-                        basePath + ENTITY, acceptType == null || acceptType == Accept.ATOM.TEXT
+                        basePath + ENTITY, acceptType == null || acceptType == Accept.TEXT
                         ? Accept.XML : acceptType);
 
                 if (searchForValue) {
-                    stream = atom.getAtomPropertyValue(stream, path.split("/"));
+                    stream = xml.getAtomPropertyValue(stream, path.split("/"));
                 } else {
                     if (acceptType == null || acceptType == Accept.XML || acceptType == Accept.ATOM) {
                         // retrieve xml
-                        stream = atom.getAtomProperty(stream, path.split("/"));
+                        stream = xml.getAtomProperty(stream, path.split("/"));
                     } else {
                         // retrieve Edm type from xml
-                        final String edmType = atom.getEdmTypeFromXML(
+                        final String edmType = xml.getEdmTypeFromXML(
                                 FSManager.instance(getVersion()).readFile(basePath + ENTITY, Accept.XML),
                                 path.split("/"));
                         // retrieve json property
@@ -444,9 +472,9 @@ public abstract class AbstractServices {
                 }
             }
 
-            return atom.createResponse(stream, Commons.getETag(basePath, getVersion()), acceptType);
+            return xml.createResponse(stream, Commons.getETag(basePath, getVersion()), acceptType);
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -480,14 +508,14 @@ public abstract class AbstractServices {
                 throw new UnsupportedMediaTypeException("Unsupported media type");
             }
 
-            final Map.Entry<String, InputStream> links = atom.readLinks(entitySetName, entityId, linkName, acceptType);
+            final LinkInfo links = xml.readLinks(entitySetName, entityId, linkName, acceptType);
 
-            return atom.createResponse(
-                    links.getValue(),
-                    links.getKey(),
+            return xml.createResponse(
+                    links.getLinks(),
+                    links.getEtag(),
                     acceptType);
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 
@@ -510,14 +538,14 @@ public abstract class AbstractServices {
                 throw new UnsupportedMediaTypeException("Unsupported type " + accept);
             }
 
-            int count = atom.countAllElements(entitySetName);
+            int count = xml.countAllElements(entitySetName);
 
             final Response.ResponseBuilder builder = Response.ok();
             builder.entity(count);
 
             return builder.build();
         } catch (Exception e) {
-            return atom.createFaultResponse(accept, e);
+            return xml.createFaultResponse(accept, e);
         }
     }
 }

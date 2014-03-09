@@ -74,7 +74,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void patchAsAtom() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
-        final URI uri = client.getURIBuilder(getServiceRoot()).
+        final URI uri = client.getURIBuilder(getStaticServiceRoot()).
                 appendEntityTypeSegment("Product").appendKeySegment(-10).build();
         final String etag = getETag(uri);
         final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -85,7 +85,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void patchAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final URI uri = client.getURIBuilder(getServiceRoot()).
+        final URI uri = client.getURIBuilder(getStaticServiceRoot()).
                 appendEntityTypeSegment("Product").appendKeySegment(-10).build();
         final String etag = getETag(uri);
         final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);

@@ -24,11 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +37,6 @@ public class XmlElement {
      * Logger.
      */
     protected static final Logger LOG = LoggerFactory.getLogger(XmlElement.class);
-
-    private final static String CONTENT = "CONTENT_TAG";
-
-    private final static String CONTENT_STAG = "<" + CONTENT + ">";
-
-    private final static String CONTENT_ETAG = "</" + CONTENT + ">";
 
     private StartElement start;
 
@@ -73,113 +65,13 @@ public class XmlElement {
     }
 
     public XMLEventReader getContentReader() throws Exception {
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-        factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-
-
-        final XMLEventReader contentReader = factory.createXMLEventReader(
-                new ByteArrayInputStream((CONTENT_STAG + IOUtils.toString(getContent()) + CONTENT_ETAG).getBytes()));
-
-        return new XMLEventReaderWrapper(contentReader);
+        return new XMLEventReaderWrapper(getContent());
     }
 
     public void setContent(final InputStream content) throws IOException {
         this.content.reset();
         IOUtils.copyLarge(content, this.content);
         content.close();
-    }
-
-    private class XMLEventReaderWrapper implements XMLEventReader {
-
-        private final XMLEventReader wrapped;
-
-        private XMLEvent nextGivenEvent = null;
-
-        public XMLEventReaderWrapper(XMLEventReader wrapped) {
-            this.wrapped = wrapped;
-
-            try {
-                this.nextGivenEvent = this.wrapped.nextEvent();
-
-                if (this.nextGivenEvent.isStartDocument()) {
-                    this.nextGivenEvent = this.wrapped.nextEvent(); // discard start document    
-                }
-
-                if (this.nextGivenEvent.isStartElement()
-                        && CONTENT.equals(this.nextGivenEvent.asStartElement().getName().getLocalPart())) {
-                    this.nextGivenEvent = this.wrapped.nextEvent(); // discard content start tag
-                }
-
-            } catch (Exception ignore) {
-                // ignore
-            }
-        }
-
-        @Override
-        public XMLEvent nextEvent() throws XMLStreamException {
-            final XMLEvent event = nextGivenEvent;
-
-            if (!isValidEvent(event)) {
-                throw new IllegalStateException("No event found");
-            }
-
-            nextGivenEvent = wrapped.hasNext() ? wrapped.nextEvent() : null;
-
-            return event;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return isValidEvent(nextGivenEvent);
-        }
-
-        @Override
-        public XMLEvent peek() throws XMLStreamException {
-            return wrapped.peek();
-        }
-
-        @Override
-        public String getElementText() throws XMLStreamException {
-            return wrapped.getElementText();
-        }
-
-        @Override
-        public XMLEvent nextTag() throws XMLStreamException {
-            XMLEvent tagEvent = wrapped.nextTag();
-            if (isValidEvent(tagEvent)) {
-                return tagEvent;
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public Object getProperty(final String string) throws IllegalArgumentException {
-            return wrapped.getProperty(string);
-        }
-
-        @Override
-        public void close() throws XMLStreamException {
-            wrapped.close();
-        }
-
-        @Override
-        public Object next() {
-            return wrapped.next();
-        }
-
-        @Override
-        public void remove() {
-            wrapped.remove();
-        }
-
-        private boolean isValidEvent(final XMLEvent event) {
-            // discard content end element tag ...
-            return event != null
-                    && (!event.isEndElement()
-                    || !CONTENT.equals(event.asEndElement().getName().getLocalPart()));
-        }
     }
 
     public InputStream toStream() throws Exception {

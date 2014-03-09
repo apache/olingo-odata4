@@ -204,7 +204,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     public void createWithBackNavigationAsAtom() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
         final ODataEntity actual = createWithBackNavigationLink(format, 9);
-        cleanAfterCreate(format, actual, true, getOldServiceRoot());
+        cleanAfterCreate(format, actual, true, getServiceRoot());
     }
 
     @Test
@@ -212,7 +212,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
         // this needs to be full, otherwise there is no mean to recognize links
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         final ODataEntity actual = createWithBackNavigationLink(format, 10);
-        cleanAfterCreate(format, actual, true, getOldServiceRoot());
+        cleanAfterCreate(format, actual, true, getServiceRoot());
     }
 
     @Test
@@ -379,7 +379,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
         final String sampleName = "Sample customer";
 
         ODataEntity customer = getSampleCustomerProfile(id, sampleName, false);
-        customer = createEntity(getOldServiceRoot(), format, customer, "Customer");
+        customer = createEntity(getServiceRoot(), format, customer, "Customer");
 
         ODataEntity order = client.getObjectFactory().newEntity(
                 "Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
@@ -389,19 +389,19 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
                 client.getPrimitiveValueBuilder().setValue(id).setType(EdmSimpleType.Int32).build()));
 
         order.addLink(client.getObjectFactory().newEntityNavigationLink(
-                "Customer", URIUtils.getURI(getOldServiceRoot(), customer.getEditLink().toASCIIString())));
+                "Customer", URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString())));
 
-        order = createEntity(getOldServiceRoot(), format, order, "Order");
+        order = createEntity(getServiceRoot(), format, order, "Order");
 
         ODataEntity changes = client.getObjectFactory().newEntity(
                 "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
         changes.setEditLink(customer.getEditLink());
         changes.addLink(client.getObjectFactory().newFeedNavigationLink(
-                "Orders", URIUtils.getURI(getOldServiceRoot(), order.getEditLink().toASCIIString())));
+                "Orders", URIUtils.getURI(getServiceRoot(), order.getEditLink().toASCIIString())));
         update(UpdateType.PATCH, changes, format, null);
 
         final ODataEntityRequest customerreq = client.getRetrieveRequestFactory().getEntityRequest(
-                URIUtils.getURI(getOldServiceRoot(), order.getEditLink().toASCIIString() + "/Customer"));
+                URIUtils.getURI(getServiceRoot(), order.getEditLink().toASCIIString() + "/Customer"));
         customerreq.setFormat(format);
 
         customer = customerreq.execute().getBody();
@@ -410,7 +410,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
                 Integer.valueOf(id), customer.getProperty("CustomerId").getPrimitiveValue().<Integer>toCastValue());
 
         final ODataEntitySetRequest orderreq = client.getRetrieveRequestFactory().getEntitySetRequest(
-                URIUtils.getURI(getOldServiceRoot(), customer.getEditLink().toASCIIString() + "/Orders"));
+                URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString() + "/Orders"));
         orderreq.setFormat(format);
 
         final ODataRetrieveResponse<ODataEntitySet> orderres = orderreq.execute();
@@ -421,7 +421,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
                 <Integer>toCastValue());
 
         final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(
-                URIUtils.getURI(getOldServiceRoot(), customer.getEditLink().toASCIIString() + "?$expand=Orders"));
+                URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString() + "?$expand=Orders"));
         req.setFormat(format);
 
         customer = req.execute().getBody();
