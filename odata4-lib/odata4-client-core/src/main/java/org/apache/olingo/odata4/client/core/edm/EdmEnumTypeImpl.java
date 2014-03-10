@@ -25,10 +25,12 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.odata4.client.api.edm.xml.EnumType;
 import org.apache.olingo.odata4.client.api.edm.xml.Member;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEnumType;
+import org.apache.olingo.odata4.commons.api.edm.EdmException;
 import org.apache.olingo.odata4.commons.api.edm.EdmMember;
 import org.apache.olingo.odata4.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
@@ -36,6 +38,14 @@ import org.apache.olingo.odata4.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 
 public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
+
+  private static final EdmPrimitiveTypeKind[] VALID_UNDERLYING_TYPES = new EdmPrimitiveTypeKind[] {
+    EdmPrimitiveTypeKind.Byte,
+    EdmPrimitiveTypeKind.SByte,
+    EdmPrimitiveTypeKind.Int16,
+    EdmPrimitiveTypeKind.Int32,
+    EdmPrimitiveTypeKind.Int64
+  };
 
   private final EdmPrimitiveType underlyingType;
 
@@ -49,9 +59,11 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
     if (xmlEnumType.getUnderlyingType() == null) {
       this.underlyingType = EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance();
     } else {
-      this.underlyingType = EdmPrimitiveTypeKind.fromString(
-              xmlEnumType.getUnderlyingType()).getEdmPrimitiveTypeInstance();
-      // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
+      this.underlyingType = EdmPrimitiveTypeKind.valueOfFQN(xmlEnumType.getUnderlyingType()).
+              getEdmPrimitiveTypeInstance();
+      if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, this.underlyingType.getKind())) {
+        throw new EdmException("Not allowed as underlying type: " + this.underlyingType.getKind());
+      }
     }
 
     final List<? extends Member> xmlMembers = xmlEnumType.getMembers();

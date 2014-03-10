@@ -38,10 +38,9 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
-    // TODO: Should we check for edmNamespace in the underlying type name?
     try {
-      edmPrimitiveTypeInstance = EdmPrimitiveTypeKind.fromString(
-              typeDefinition.getUnderlyingType()).getEdmPrimitiveTypeInstance();
+      edmPrimitiveTypeInstance = EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()).
+              getEdmPrimitiveTypeInstance();
     } catch (IllegalArgumentException e) {
       throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
     }

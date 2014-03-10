@@ -86,13 +86,10 @@ public enum EdmPrimitiveTypeKind {
    * @param value string value type.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */
-  public static EdmPrimitiveTypeKind fromString(final String value) {
-    final String noNsValue = value.substring(4);
-    for (EdmPrimitiveTypeKind edmSimpleType : EdmPrimitiveTypeKind.values()) {
-      if (edmSimpleType.name().equals(noNsValue)) {
-        return edmSimpleType;
-      }
+  public static EdmPrimitiveTypeKind valueOfFQN(final String value) {
+    if (!value.startsWith(EdmPrimitiveType.EDM_NAMESPACE + ".")) {
+      throw new IllegalArgumentException(value + " does not look like an Edm primitive type");
     }
-    throw new IllegalArgumentException(value);
+    return valueOf(value.substring(4));
   }
 }
