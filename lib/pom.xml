@@ -24,13 +24,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-odata4-lib-incubating</artifactId>
+  <artifactId>olingo-lib-incubating</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata4-parent-incubating</artifactId>
+    <artifactId>olingo-parent-incubating</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
