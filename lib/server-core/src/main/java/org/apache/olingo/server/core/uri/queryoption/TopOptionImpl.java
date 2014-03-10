@@ -18,23 +18,23 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 
-/* TODO implement */
+
 public class TopOptionImpl extends SystemQueryOptionImpl implements TopOption {
-  private String value;
+  private int value;
 
   public TopOptionImpl() {
-    setKind(SupportedQueryOptions.TOP);
+    setKind(SystemQueryOptionKind.TOP);
   }
 
   @Override
-  public String getValue() {
+  public int getValue() {
     return value;
   }
 
-  public TopOptionImpl setValue(final String value) {
+  public TopOptionImpl setValue(final int value) {
     this.value = value;
     return this;
   }

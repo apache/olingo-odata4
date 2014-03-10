@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOption {
 
   private List<SelectItemImpl> selectItems;
 
   public SelectOptionImpl() {
-    setKind(SupportedQueryOptions.SELECT);
+    setKind(SystemQueryOptionKind.SELECT);
   }
 
   public SelectOptionImpl setSelectItems(final List<SelectItemImpl> selectItems) {

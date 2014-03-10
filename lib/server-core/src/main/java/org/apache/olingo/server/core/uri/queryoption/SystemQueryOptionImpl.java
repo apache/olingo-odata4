@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 
 public class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption {
 
-  private SupportedQueryOptions kind;
+  private SystemQueryOptionKind kind;
 
   @Override
-  public SupportedQueryOptions getKind() {
+  public SystemQueryOptionKind getKind() {
     return kind;
   }
 
-  void setKind(final SupportedQueryOptions kind) {
+  void setKind(final SystemQueryOptionKind kind) {
     this.kind = kind;
   }
 

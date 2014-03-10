@@ -19,14 +19,14 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class LevelsOptionImpl extends SystemQueryOptionImpl implements LevelsExpandOption {
   private boolean isMax;
   private int value;
 
   public LevelsOptionImpl() {
-    setKind(SupportedQueryOptions.LEVELS);
+    setKind(SystemQueryOptionKind.LEVELS);
   }
 
   public LevelsOptionImpl setValue(final int value) {

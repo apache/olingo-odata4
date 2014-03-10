@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOption {
 
   List<ExpandItemImpl> expandItems = new ArrayList<ExpandItemImpl>();
 
   public ExpandOptionImpl() {
-    setKind(SupportedQueryOptions.EXPAND);
+    setKind(SystemQueryOptionKind.EXPAND);
   }
 
   public void addExpandItem(final ExpandItemImpl expandItem) {

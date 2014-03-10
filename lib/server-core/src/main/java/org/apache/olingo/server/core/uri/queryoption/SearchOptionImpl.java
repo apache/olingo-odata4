@@ -19,14 +19,14 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 
 // TODO planned: support $search 
 public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOption {
 
   public SearchOptionImpl() {
-    setKind(SupportedQueryOptions.SEARCH);
+    setKind(SystemQueryOptionKind.SEARCH);
   }
 
   @Override

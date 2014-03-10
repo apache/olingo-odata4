@@ -19,7 +19,7 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOption {
@@ -27,7 +27,7 @@ public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOpt
   private ExpressionImpl expression;
 
   public FilterOptionImpl() {
-    setKind(SupportedQueryOptions.FILTER);
+    setKind(SystemQueryOptionKind.FILTER);
   }
 
   public FilterOptionImpl setExpression(final ExpressionImpl expression) {

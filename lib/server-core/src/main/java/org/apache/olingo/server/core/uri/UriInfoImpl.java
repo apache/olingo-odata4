@@ -44,7 +44,7 @@ import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
@@ -248,27 +248,27 @@ public class UriInfoImpl implements UriInfo {
 
   public UriInfoImpl setSystemQueryOption(final SystemQueryOptionImpl systemOption) {
 
-    if (systemOption.getKind() == SupportedQueryOptions.EXPAND) {
+    if (systemOption.getKind() == SystemQueryOptionKind.EXPAND) {
       expandOption = (ExpandOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.FILTER) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.FILTER) {
       filterOption = (FilterOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.FORMAT) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.FORMAT) {
       formatOption = (FormatOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.ID) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.ID) {
       idOption = (IdOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.COUNT) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.COUNT) {
       inlineCountOption = (CountOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.ORDERBY) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.ORDERBY) {
       orderByOption = (OrderByOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.SEARCH) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.SEARCH) {
       searchOption = (SearchOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.SELECT) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.SELECT) {
       selectOption = (SelectOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.SKIP) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.SKIP) {
       skipOption = (SkipOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.SKIPTOKEN) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.SKIPTOKEN) {
       skipTokenOption = (SkipTokenOptionImpl) systemOption;
-    } else if (systemOption.getKind() == SupportedQueryOptions.TOP) {
+    } else if (systemOption.getKind() == SystemQueryOptionKind.TOP) {
       topOption = (TopOptionImpl) systemOption;
     }
     return this;

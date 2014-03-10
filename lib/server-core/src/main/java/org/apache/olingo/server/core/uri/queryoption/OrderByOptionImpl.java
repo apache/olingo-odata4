@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByOption {
 
   private List<OrderByItemImpl> orders = new ArrayList<OrderByItemImpl>();
 
   public OrderByOptionImpl() {
-    setKind(SupportedQueryOptions.ORDERBY);
+    setKind(SystemQueryOptionKind.ORDERBY);
   }
 
   @Override

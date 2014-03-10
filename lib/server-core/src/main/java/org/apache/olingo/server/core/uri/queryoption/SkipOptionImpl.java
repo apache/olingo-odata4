@@ -19,21 +19,21 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class SkipOptionImpl extends SystemQueryOptionImpl implements SkipOption {
-  private String value;
+  private int value;
 
   public SkipOptionImpl() {
-    setKind(SupportedQueryOptions.SKIP);
+    setKind(SystemQueryOptionKind.SKIP);
   }
 
   @Override
-  public String getValue() {
+  public int getValue() {
     return value;
   }
 
-  public SkipOptionImpl setValue(final String value) {
+  public SkipOptionImpl setValue(final int value) {
     this.value = value;
     return this;
   }

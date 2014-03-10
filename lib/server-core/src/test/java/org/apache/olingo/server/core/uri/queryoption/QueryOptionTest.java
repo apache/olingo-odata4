@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriInfoResource;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
@@ -95,7 +95,7 @@ public class QueryOptionTest {
 
     assertEquals(expand, option.getExpandOption());
     assertEquals(filter, option.getFilterOption());
-    assertEquals(inlinecount, option.getInlineCountOption());
+    assertEquals(inlinecount, option.getCountOption());
     assertEquals(orderby, option.getOrderByOption());
     assertEquals(search, option.getSearchOption());
     assertEquals(select, option.getSelectOption());
@@ -135,7 +135,7 @@ public class QueryOptionTest {
   @Test
   public void testExpandOptionImpl() {
     ExpandOptionImpl option = new ExpandOptionImpl();
-    assertEquals(SupportedQueryOptions.EXPAND, option.getKind());
+    assertEquals(SystemQueryOptionKind.EXPAND, option.getKind());
 
     ExpandItemImpl item1 = new ExpandItemImpl();
     ExpandItemImpl item2 = new ExpandItemImpl();
@@ -148,7 +148,7 @@ public class QueryOptionTest {
   @Test
   public void testFilterOptionImpl() {
     FilterOptionImpl option = new FilterOptionImpl();
-    assertEquals(SupportedQueryOptions.FILTER, option.getKind());
+    assertEquals(SystemQueryOptionKind.FILTER, option.getKind());
 
     AliasImpl expression = new AliasImpl();
 
@@ -159,7 +159,7 @@ public class QueryOptionTest {
   @Test
   public void testFormatOptionImpl() {
     FormatOptionImpl option = new FormatOptionImpl();
-    assertEquals(SupportedQueryOptions.FORMAT, option.getKind());
+    assertEquals(SystemQueryOptionKind.FORMAT, option.getKind());
 
     option.setFormat("A");
 
@@ -169,7 +169,7 @@ public class QueryOptionTest {
   @Test
   public void testIdOptionImpl() {
     IdOptionImpl option = new IdOptionImpl();
-    assertEquals(SupportedQueryOptions.ID, option.getKind());
+    assertEquals(SystemQueryOptionKind.ID, option.getKind());
 
     option.setValue("A");
 
@@ -179,7 +179,7 @@ public class QueryOptionTest {
   @Test
   public void testInlineCountImpl() {
     CountOptionImpl option = new CountOptionImpl();
-    assertEquals(SupportedQueryOptions.COUNT, option.getKind());
+    assertEquals(SystemQueryOptionKind.COUNT, option.getKind());
 
     assertEquals(false, option.getValue());
     option.setValue(true);
@@ -189,7 +189,7 @@ public class QueryOptionTest {
   @Test
   public void testLevelsExpandOptionImpl() {
     LevelsOptionImpl option = new LevelsOptionImpl();
-    assertEquals(SupportedQueryOptions.LEVELS, option.getKind());
+    assertEquals(SystemQueryOptionKind.LEVELS, option.getKind());
 
     assertEquals(0, option.getValue());
     option.setValue(1);
@@ -239,7 +239,7 @@ public class QueryOptionTest {
   @Test
   public void testSearchOptionImpl() {
     SearchOptionImpl option = new SearchOptionImpl();
-    assertEquals(SupportedQueryOptions.SEARCH, option.getKind());
+    assertEquals(SystemQueryOptionKind.SEARCH, option.getKind());
     // TODO $search is not supported yet
   }
 
@@ -267,7 +267,7 @@ public class QueryOptionTest {
   @Test
   public void testSelectOptionImpl() {
     SelectOptionImpl option = new SelectOptionImpl();
-    assertEquals(SupportedQueryOptions.SELECT, option.getKind());
+    assertEquals(SystemQueryOptionKind.SELECT, option.getKind());
 
     SelectItemImpl item0 = new SelectItemImpl();
     SelectItemImpl item1 = new SelectItemImpl();
@@ -285,16 +285,16 @@ public class QueryOptionTest {
   @Test
   public void testSkipOptionImpl() {
     SkipOptionImpl option = new SkipOptionImpl();
-    assertEquals(SupportedQueryOptions.SKIP, option.getKind());
+    assertEquals(SystemQueryOptionKind.SKIP, option.getKind());
 
-    option.setValue("A");
-    assertEquals("A", option.getValue());
+    option.setValue(10);
+    assertEquals(10, option.getValue());
   }
 
   @Test
   public void testSkipTokenOptionImpl() {
     SkipTokenOptionImpl option = new SkipTokenOptionImpl();
-    assertEquals(SupportedQueryOptions.SKIPTOKEN, option.getKind());
+    assertEquals(SystemQueryOptionKind.SKIPTOKEN, option.getKind());
 
     option.setValue("A");
     assertEquals("A", option.getValue());
@@ -304,8 +304,8 @@ public class QueryOptionTest {
   public void testSystemQueryOptionImpl() {
     SystemQueryOptionImpl option = new SystemQueryOptionImpl();
 
-    option.setKind(SupportedQueryOptions.EXPAND);
-    assertEquals(SupportedQueryOptions.EXPAND, option.getKind());
+    option.setKind(SystemQueryOptionKind.EXPAND);
+    assertEquals(SystemQueryOptionKind.EXPAND, option.getKind());
 
     assertEquals("$expand", option.getName());
   }
@@ -313,9 +313,9 @@ public class QueryOptionTest {
   @Test
   public void testTopOptionImpl() {
     TopOptionImpl option = new TopOptionImpl();
-    assertEquals(SupportedQueryOptions.TOP, option.getKind());
+    assertEquals(SystemQueryOptionKind.TOP, option.getKind());
 
-    option.setValue("A");
-    assertEquals("A", option.getValue());
+    option.setValue(11);
+    assertEquals(11, option.getValue());
   }
 }

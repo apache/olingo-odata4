@@ -19,13 +19,13 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class FormatOptionImpl extends SystemQueryOptionImpl implements FormatOption {
   private String value;
 
   public FormatOptionImpl() {
-    setKind(SupportedQueryOptions.FORMAT);
+    setKind(SystemQueryOptionKind.FORMAT);
   }
 
   public FormatOptionImpl setFormat(final String value) {

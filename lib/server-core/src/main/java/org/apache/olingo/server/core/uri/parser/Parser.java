@@ -217,7 +217,7 @@ public class Parser {
             SkipOptionImpl inlineCountOption = new SkipOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(option.value);
+            inlineCountOption.setValue(Integer.parseInt(option.value));
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$skiptoken")) {
             SkipTokenOptionImpl inlineCountOption = new SkipTokenOptionImpl();
@@ -229,7 +229,7 @@ public class Parser {
             TopOptionImpl inlineCountOption = new TopOptionImpl();
             inlineCountOption.setName(option.name);
             inlineCountOption.setText(option.value);
-            inlineCountOption.setValue(option.value);
+            inlineCountOption.setValue(Integer.parseInt(option.value));
             context.contextUriInfo.setSystemQueryOption(inlineCountOption);
           } else if (option.name.equals("$count")) {
             // todo create CountOption

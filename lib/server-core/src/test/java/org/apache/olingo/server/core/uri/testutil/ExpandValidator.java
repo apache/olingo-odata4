@@ -163,7 +163,7 @@ public class ExpandValidator implements Validator {
   }
 
   public ExpandValidator isInlineCountText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getInlineCountOption();
+    QueryOptionImpl option = (QueryOptionImpl) expandItem.getCountOption();
     assertEquals(text, option.getText());
     return this;
   }

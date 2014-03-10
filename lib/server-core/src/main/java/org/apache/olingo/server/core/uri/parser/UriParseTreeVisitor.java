@@ -2010,7 +2010,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     String text = ctx.children.get(2).getText();
 
-    return skiptoken.setValue(text).setText(text);
+    return skiptoken.setValue(Integer.parseInt(text)).setText(text);
   }
 
   @Override
@@ -2058,7 +2058,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     String text = ctx.children.get(2).getText();
 
-    return top.setValue(text).setText(text);
+    return top.setValue(Integer.parseInt(text)).setText(text);
   }
 
   @Override

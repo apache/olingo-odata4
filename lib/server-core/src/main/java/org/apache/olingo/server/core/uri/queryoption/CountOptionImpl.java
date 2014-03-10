@@ -19,14 +19,14 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class CountOptionImpl extends SystemQueryOptionImpl implements CountOption {
 
   private boolean count;
 
   public CountOptionImpl() {
-    setKind(SupportedQueryOptions.COUNT);
+    setKind(SystemQueryOptionKind.COUNT);
   }
 
   @Override

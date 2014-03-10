@@ -19,13 +19,13 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class IdOptionImpl extends SystemQueryOptionImpl implements IdOption {
   private String value;
 
   public IdOptionImpl() {
-    setKind(SupportedQueryOptions.ID);
+    setKind(SystemQueryOptionKind.ID);
   }
 
   public IdOptionImpl setValue(final String value) {

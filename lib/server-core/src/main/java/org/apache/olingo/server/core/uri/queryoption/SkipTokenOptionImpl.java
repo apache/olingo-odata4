@@ -19,13 +19,13 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class SkipTokenOptionImpl extends SystemQueryOptionImpl implements SkipTokenOption {
   private String skipTokenValue;
 
   public SkipTokenOptionImpl() {
-    setKind(SupportedQueryOptions.SKIPTOKEN);
+    setKind(SystemQueryOptionKind.SKIPTOKEN);
   }
 
   @Override

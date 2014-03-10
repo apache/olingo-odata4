@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
-import org.apache.olingo.server.api.uri.queryoption.SupportedQueryOptions;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 
@@ -55,23 +55,23 @@ public class ExpandItemImpl implements ExpandItem {
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
 
-    if (sysItem.getKind() == SupportedQueryOptions.EXPAND) {
+    if (sysItem.getKind() == SystemQueryOptionKind.EXPAND) {
       expandOption = (ExpandOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.FILTER) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.FILTER) {
       filterOption = (FilterOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.COUNT) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.COUNT) {
       inlineCountOption = (CountOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.ORDERBY) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.ORDERBY) {
       orderByOption = (OrderByOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.SEARCH) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.SEARCH) {
       searchOption = (SearchOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.SELECT) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.SELECT) {
       selectOption = (SelectOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.SKIP) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.SKIP) {
       skipOption = (SkipOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.TOP) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.TOP) {
       topOption = (TopOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SupportedQueryOptions.LEVELS) {
+    } else if (sysItem.getKind() == SystemQueryOptionKind.LEVELS) {
       levelsExpandOption = (LevelsExpandOption) sysItem;
     }
     return this;
@@ -116,7 +116,7 @@ public class ExpandItemImpl implements ExpandItem {
   }
 
   @Override
-  public CountOption getInlineCountOption() {
+  public CountOption getCountOption() {
     return inlineCountOption;
   }
 
