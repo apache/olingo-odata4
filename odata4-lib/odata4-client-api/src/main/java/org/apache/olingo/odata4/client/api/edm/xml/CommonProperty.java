@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.odata4.client.api.edm.xml;
 
-import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
-import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
-
 public interface CommonProperty extends Named {
 
   String getType();
@@ -31,19 +28,12 @@ public interface CommonProperty extends Named {
 
   Integer getMaxLength();
 
-  boolean isFixedLength();
-
   Integer getPrecision();
 
   Integer getScale();
 
   boolean isUnicode();
 
-  String getCollation();
-
   String getSrid();
 
-  ConcurrencyMode getConcurrencyMode();
-
-  StoreGeneratedPattern getStoreGeneratedPattern();
 }

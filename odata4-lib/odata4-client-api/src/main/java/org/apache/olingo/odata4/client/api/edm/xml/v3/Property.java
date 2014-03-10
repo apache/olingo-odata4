@@ -19,9 +19,19 @@
 package org.apache.olingo.odata4.client.api.edm.xml.v3;
 
 import org.apache.olingo.odata4.client.api.edm.xml.CommonProperty;
+import org.apache.olingo.odata4.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.odata4.client.api.edm.StoreGeneratedPattern;
 
 public interface Property extends CommonProperty {
+
+  String getCollation();
+
+  boolean isFixedLength();
+
+  ConcurrencyMode getConcurrencyMode();
+
+  StoreGeneratedPattern getStoreGeneratedPattern();
 
   String getFcSourcePath();
 

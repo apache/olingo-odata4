@@ -55,7 +55,8 @@ public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
         } else if ("Precision".equals(jp.getCurrentName())) {
           term.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          term.setScale(Integer.valueOf(jp.nextTextValue()));
+          final String scale = jp.nextTextValue();
+          term.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
           term.setSrid(jp.nextTextValue());
         } else if ("AppliesTo".equals(jp.getCurrentName())) {

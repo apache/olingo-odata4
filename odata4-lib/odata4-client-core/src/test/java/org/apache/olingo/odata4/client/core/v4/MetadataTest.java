@@ -52,7 +52,6 @@ import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata4.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 import org.apache.olingo.odata4.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
@@ -148,9 +147,6 @@ public class MetadataTest extends AbstractTest {
 
     final Schema second = metadata.getSchema("ODataWebExperimental.Northwind.Model");
     assertNotNull(second);
-
-    assertEquals(StoreGeneratedPattern.Identity,
-            first.getEntityType("Category").getProperty("CategoryID").getStoreGeneratedPattern());
 
     final EntityContainer entityContainer = second.getEntityContainer();
     assertNotNull(entityContainer);

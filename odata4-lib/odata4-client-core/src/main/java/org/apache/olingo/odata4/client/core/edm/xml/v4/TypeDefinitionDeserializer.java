@@ -48,7 +48,8 @@ public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefi
         } else if ("Precision".equals(jp.getCurrentName())) {
           typeDefinition.setPrecision(jp.nextIntValue(0));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          typeDefinition.setScale(jp.nextIntValue(0));
+          final String scale = jp.nextTextValue();
+          typeDefinition.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
           typeDefinition.setSrid(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {

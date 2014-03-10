@@ -20,11 +20,21 @@ package org.apache.olingo.odata4.client.core.edm.xml.v3;
 
 import org.apache.olingo.odata4.client.api.edm.xml.v3.Property;
 import org.apache.olingo.odata4.client.core.edm.xml.AbstractProperty;
+import org.apache.olingo.odata4.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.odata4.client.api.edm.StoreGeneratedPattern;
 
 public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = 6224524803474652100L;
+
+  private String collation;
+
+  private boolean fixedLength;
+
+  private ConcurrencyMode concurrencyMode;
+
+  private StoreGeneratedPattern storeGeneratedPattern = StoreGeneratedPattern.None;
 
   private String fcSourcePath;
 
@@ -37,6 +47,42 @@ public class PropertyImpl extends AbstractProperty implements Property {
   private String fcNSURI;
 
   private boolean fcKeepInContent = true;
+
+  @Override
+  public boolean isFixedLength() {
+    return fixedLength;
+  }
+
+  public void setFixedLength(final boolean fixedLength) {
+    this.fixedLength = fixedLength;
+  }
+
+  @Override
+  public String getCollation() {
+    return collation;
+  }
+
+  public void setCollation(final String collation) {
+    this.collation = collation;
+  }
+
+  @Override
+  public ConcurrencyMode getConcurrencyMode() {
+    return concurrencyMode;
+  }
+
+  public void setConcurrencyMode(final ConcurrencyMode concurrencyMode) {
+    this.concurrencyMode = concurrencyMode;
+  }
+
+  @Override
+  public StoreGeneratedPattern getStoreGeneratedPattern() {
+    return storeGeneratedPattern;
+  }
+
+  public void setStoreGeneratedPattern(final StoreGeneratedPattern storeGeneratedPattern) {
+    this.storeGeneratedPattern = storeGeneratedPattern;
+  }
 
   @Override
   public String getFcSourcePath() {

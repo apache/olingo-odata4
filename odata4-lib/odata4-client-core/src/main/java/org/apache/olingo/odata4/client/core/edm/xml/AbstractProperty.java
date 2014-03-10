@@ -20,8 +20,6 @@ package org.apache.olingo.odata4.client.core.edm.xml;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.odata4.client.api.edm.xml.CommonProperty;
-import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
-import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
 
 @JsonDeserialize(using = PropertyDeserializer.class)
 public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {
@@ -38,21 +36,13 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
 
   private Integer maxLength;
 
-  private boolean fixedLength;
-
   private Integer precision;
 
   private Integer scale;
 
   private boolean unicode = true;
 
-  private String collation;
-
   private String srid;
-
-  private ConcurrencyMode concurrencyMode;
-
-  private StoreGeneratedPattern storeGeneratedPattern = StoreGeneratedPattern.None;
 
   @Override
   public String getName() {
@@ -100,15 +90,6 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
   }
 
   @Override
-  public boolean isFixedLength() {
-    return fixedLength;
-  }
-
-  public void setFixedLength(final boolean fixedLength) {
-    this.fixedLength = fixedLength;
-  }
-
-  @Override
   public Integer getPrecision() {
     return precision;
   }
@@ -136,38 +117,11 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
   }
 
   @Override
-  public String getCollation() {
-    return collation;
-  }
-
-  public void setCollation(final String collation) {
-    this.collation = collation;
-  }
-
-  @Override
   public String getSrid() {
     return srid;
   }
 
   public void setSrid(final String srid) {
     this.srid = srid;
-  }
-
-  @Override
-  public ConcurrencyMode getConcurrencyMode() {
-    return concurrencyMode;
-  }
-
-  public void setConcurrencyMode(final ConcurrencyMode concurrencyMode) {
-    this.concurrencyMode = concurrencyMode;
-  }
-
-  @Override
-  public StoreGeneratedPattern getStoreGeneratedPattern() {
-    return storeGeneratedPattern;
-  }
-
-  public void setStoreGeneratedPattern(final StoreGeneratedPattern storeGeneratedPattern) {
-    this.storeGeneratedPattern = storeGeneratedPattern;
   }
 }

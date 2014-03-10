@@ -47,7 +47,8 @@ public class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeIm
         } else if ("Precision".equals(jp.getCurrentName())) {
           returnType.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          returnType.setScale(Integer.valueOf(jp.nextTextValue()));
+          final String scale = jp.nextTextValue();
+          returnType.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
           returnType.setSrid(jp.nextTextValue());
         }

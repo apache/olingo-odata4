@@ -26,10 +26,10 @@ import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.odata4.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.odata4.client.core.op.impl.AbstractEdmDeserializer;
-import org.apache.olingo.odata4.commons.api.edm.constants.ConcurrencyMode;
+import org.apache.olingo.odata4.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.odata4.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.odata4.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.odata4.commons.api.edm.constants.StoreGeneratedPattern;
+import org.apache.olingo.odata4.client.api.edm.StoreGeneratedPattern;
 
 public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProperty> {
 
@@ -56,39 +56,64 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
           final String maxLenght = jp.nextTextValue();
           property.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
         } else if ("FixedLength".equals(jp.getCurrentName())) {
-          property.setFixedLength(BooleanUtils.toBoolean(jp.nextTextValue()));
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFixedLength(BooleanUtils.toBoolean(jp.nextTextValue()));
+          }
         } else if ("Precision".equals(jp.getCurrentName())) {
           property.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          property.setScale(Integer.valueOf(jp.nextTextValue()));
+          final String scale = jp.nextTextValue();
+          property.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("Unicode".equals(jp.getCurrentName())) {
           property.setUnicode(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Collation".equals(jp.getCurrentName())) {
-          property.setCollation(jp.nextTextValue());
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setCollation(jp.nextTextValue());
+          }
         } else if ("SRID".equals(jp.getCurrentName())) {
           property.setSrid(jp.nextTextValue());
         } else if ("ConcurrencyMode".equals(jp.getCurrentName())) {
-          property.setConcurrencyMode(ConcurrencyMode.valueOf(jp.nextTextValue()));
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setConcurrencyMode(ConcurrencyMode.valueOf(jp.nextTextValue()));
+          }
         } else if ("StoreGeneratedPattern".equals(jp.getCurrentName())) {
-          property.setStoreGeneratedPattern(StoreGeneratedPattern.valueOf(jp.nextTextValue()));
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setStoreGeneratedPattern(StoreGeneratedPattern.valueOf(jp.nextTextValue()));
+          }
         } else if ("FC_SourcePath".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcSourcePath(jp.nextTextValue());
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcSourcePath(jp.nextTextValue());
+          }
         } else if ("FC_TargetPath".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcTargetPath(jp.nextTextValue());
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcTargetPath(jp.nextTextValue());
+          }
         } else if ("FC_ContentKind".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcContentKind(EdmContentKind.valueOf(jp.nextTextValue()));
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcContentKind(EdmContentKind.valueOf(jp.nextTextValue()));
+          }
         } else if ("FC_NsPrefix".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcNSPrefix(jp.nextTextValue());
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcNSPrefix(jp.nextTextValue());
+          }
         } else if ("FC_NsUri".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcNSURI(jp.nextTextValue());
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcNSURI(jp.nextTextValue());
+          }
         } else if ("FC_KeepInContent".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
-                  setFcKeepInContent(BooleanUtils.toBoolean(jp.nextTextValue()));
+          if (property instanceof org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) {
+            ((org.apache.olingo.odata4.client.core.edm.xml.v3.PropertyImpl) property).
+                    setFcKeepInContent(BooleanUtils.toBoolean(jp.nextTextValue()));
+          }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           ((org.apache.olingo.odata4.client.core.edm.xml.v4.PropertyImpl) property).
                   setAnnotation(jp.readValueAs(AnnotationImpl.class));

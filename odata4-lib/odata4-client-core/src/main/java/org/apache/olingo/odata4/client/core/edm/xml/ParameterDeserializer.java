@@ -53,7 +53,8 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
         } else if ("Precision".equals(jp.getCurrentName())) {
           parameter.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          parameter.setScale(Integer.valueOf(jp.nextTextValue()));
+          final String scale = jp.nextTextValue();
+          parameter.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("Mode".equals(jp.getCurrentName())) {
           ((org.apache.olingo.odata4.client.core.edm.xml.v3.ParameterImpl) parameter).
                   setMode(ParameterMode.valueOf(jp.nextTextValue()));
