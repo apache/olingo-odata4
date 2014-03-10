@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-odata4-parent-incubating</artifactId>
+  <artifactId>olingo-parent-incubating</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -58,7 +58,8 @@
   </mailingLists>
 
   <modules>
-    <module>odata4-lib</module>
+    <module>lib</module>
+    <module>fit</module>
   </modules>
 
   <properties>
