@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.olingo.odata4.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityType;
 import org.apache.olingo.odata4.commons.api.edm.EdmKeyPropertyRef;
@@ -39,7 +38,8 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn, final EntityType entityType) {
     final FullQualifiedName baseTypeName = entityType.getBaseType() == null
-            ? null : new EdmTypeInfo(entityType.getBaseType()).getFullQualifiedName();
+            ? null
+            : new EdmTypeInfo.Builder().setTypeExpression(entityType.getBaseType()).build().getFullQualifiedName();
     final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, fqn, baseTypeName, entityType);
     instance.baseType = instance.buildBaseType(baseTypeName);
 

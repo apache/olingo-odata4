@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ReturnType;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.core.edm.AbstractEdmReturnType;
 
@@ -30,7 +29,7 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   private final EdmTypeInfo returnTypeInfo;
 
   public static EdmReturnTypeImpl getInstance(final Edm edm, final ReturnType returnType) {
-    final EdmTypeInfo returnTypeInfo = new EdmTypeInfo(returnType.getType());
+    final EdmTypeInfo returnTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(returnType.getType()).build();
     return new EdmReturnTypeImpl(edm, returnType, returnTypeInfo);
   }
 

@@ -21,7 +21,6 @@ package org.apache.olingo.odata4.client.core.edm;
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.ReferentialConstraint;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.odata4.commons.core.edm.AbstractEdmNavigationProperty;
@@ -35,7 +34,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
     super(edm, navigationProperty.getName());
     this.navigationProperty = navigationProperty;
-    this.edmTypeInfo = new EdmTypeInfo(navigationProperty.getType());
+    this.edmTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(navigationProperty.getType()).build();
   }
 
   @Override

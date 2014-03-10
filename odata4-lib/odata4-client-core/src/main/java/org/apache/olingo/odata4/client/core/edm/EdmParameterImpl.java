@@ -19,7 +19,6 @@
 package org.apache.olingo.odata4.client.core.edm;
 
 import org.apache.olingo.odata4.client.api.edm.xml.CommonParameter;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmMapping;
 import org.apache.olingo.odata4.commons.core.edm.AbstractEdmParameter;
@@ -31,7 +30,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   private final EdmTypeInfo parameterInfo;
 
   public static EdmParameterImpl getInstance(final Edm edm, final CommonParameter parameter) {
-    final EdmTypeInfo paramTypeInfo = new EdmTypeInfo(parameter.getType());
+    final EdmTypeInfo paramTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(parameter.getType()).build();
     return new EdmParameterImpl(edm, parameter, paramTypeInfo);
   }
 

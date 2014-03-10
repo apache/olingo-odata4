@@ -51,6 +51,7 @@ public final class EdmDuration extends SingletonPrimitiveType {
   protected <T> T internalValueOfString(final String value,
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()
         || matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null
@@ -68,7 +69,7 @@ public final class EdmDuration extends SingletonPrimitiveType {
             add(matcher.group(4) == null ? BigDecimal.ZERO : new BigDecimal(matcher.group(4)));
 
     if (result.scale() <= (precision == null ? 0 : precision)) {
-      result = value.startsWith("-") ? result.negate() : result;
+      result = value.charAt(0) == '-' ? result.negate() : result;
     } else {
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(literal, facets)");

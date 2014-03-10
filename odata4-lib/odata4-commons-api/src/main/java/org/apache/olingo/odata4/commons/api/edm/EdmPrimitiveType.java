@@ -68,9 +68,9 @@ package org.apache.olingo.odata4.commons.api.edm;
  */
 public interface EdmPrimitiveType extends EdmType {
 
-  static final String EDM_NAMESPACE = "Edm";
+  String EDM_NAMESPACE = "Edm";
 
-  static final String SYSTEM_NAMESPACE = "System";
+  String SYSTEM_NAMESPACE = "System";
 
   /**
    * Checks type compatibility.

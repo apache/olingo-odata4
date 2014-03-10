@@ -36,7 +36,6 @@ import org.apache.olingo.odata4.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityType;
 import org.apache.olingo.odata4.client.api.edm.xml.v4.TypeDefinition;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.client.api.UnsupportedInV3Exception;
 import org.apache.olingo.odata4.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
@@ -260,7 +259,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
       for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
         final Action action = itor.next();
         if (action.isBound()) {
-          final EdmTypeInfo boundParam = new EdmTypeInfo(action.getParameters().get(0).getType());
+          final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+                  setTypeExpression(action.getParameters().get(0).getType()).build();
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
                   && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
 
@@ -278,7 +278,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
           if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
-            final EdmTypeInfo boundParam = new EdmTypeInfo(functionImport.getParameters().get(0).getType());
+            final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+                    setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
                     && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
 
@@ -308,7 +309,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
       for (final Iterator<Function> itor = functions.iterator(); itor.hasNext() && !found;) {
         final Function function = itor.next();
         if (function.isBound()) {
-          final EdmTypeInfo boundParam = new EdmTypeInfo(function.getParameters().get(0).getType());
+          final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+                  setTypeExpression(function.getParameters().get(0).getType()).build();
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
                   && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
 
@@ -332,7 +334,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
           if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
-            final EdmTypeInfo boundParam = new EdmTypeInfo(functionImport.getParameters().get(0).getType());
+            final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
+                    setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
                     && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
 

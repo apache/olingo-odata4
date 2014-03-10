@@ -20,7 +20,6 @@ package org.apache.olingo.odata4.client.core.edm;
 
 import java.util.Map;
 import org.apache.olingo.odata4.client.api.edm.xml.ComplexType;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata4.commons.api.edm.EdmProperty;
@@ -39,7 +38,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
     if (complexType instanceof org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType) {
       final String baseType = ((org.apache.olingo.odata4.client.api.edm.xml.v4.ComplexType) complexType).getBaseType();
       baseTypeName = baseType == null
-              ? null : new EdmTypeInfo(baseType).getFullQualifiedName();
+              ? null : new EdmTypeInfo.Builder().setTypeExpression(baseType).build().getFullQualifiedName();
     }
     final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, fqn, baseTypeName, complexType);
     instance.baseType = instance.buildBaseType(baseTypeName);

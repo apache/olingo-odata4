@@ -20,7 +20,7 @@ package org.apache.olingo.odata4.client.core.edm.v3;
 
 import java.util.List;
 import org.apache.olingo.odata4.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.odata4.client.api.utils.EdmTypeInfo;
+import org.apache.olingo.odata4.client.core.edm.EdmTypeInfo;
 import org.apache.olingo.odata4.client.core.edm.EdmOperationImportImpl;
 import org.apache.olingo.odata4.commons.api.edm.Edm;
 import org.apache.olingo.odata4.commons.api.edm.EdmEntityContainer;
@@ -40,8 +40,7 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
 
   @Override
   public EdmFunction getFunction(final List<String> parameterNames) {
-    return edm.getFunction(
-            new EdmTypeInfo(functionImport.getName(), container.getNamespace()).getFullQualifiedName(),
-            null, null, parameterNames);
+    return edm.getFunction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
+            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(), null, null, parameterNames);
   }
 }
