@@ -270,15 +270,20 @@ public class JSONUtilities extends AbstractUtilities {
         }
 
         for (String link : links) {
-            final Map.Entry<String, String> uri = Commons.parseEntityURI(link);
-            final Map.Entry<String, InputStream> entity =
-                    readEntity(uri.getKey(), uri.getValue(), Accept.JSON_FULLMETA);
+            try {
+                final Map.Entry<String, String> uri = Commons.parseEntityURI(link);
+                final Map.Entry<String, InputStream> entity =
+                        readEntity(uri.getKey(), uri.getValue(), Accept.JSON_FULLMETA);
 
-            if (bos.size() > 1) {
-                bos.write(",".getBytes());
+                if (bos.size() > 1) {
+                    bos.write(",".getBytes());
+                }
+
+                IOUtils.copy(entity.getValue(), bos);
+            } catch (Exception e) {
+                // log and ignore link
+                LOG.warn("Error parsing uri {}", link, e);
             }
-
-            IOUtils.copy(entity.getValue(), bos);
         }
 
         if (forceFeed || links.size() > 1) {

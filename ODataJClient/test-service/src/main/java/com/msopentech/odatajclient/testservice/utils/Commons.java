@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public abstract class Commons {
         }
     }
 
-    public static InputStream getLinksAsATOM(final Map.Entry<String, List<String>> link)
+    public static InputStream getLinksAsATOM(final Map.Entry<String, Collection<String>> link)
             throws IOException {
         final StringBuilder builder = new StringBuilder();
         builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -111,7 +112,8 @@ public abstract class Commons {
         return IOUtils.toInputStream(builder.toString());
     }
 
-    public static InputStream getLinksAsJSON(final String entitySetName, final Map.Entry<String, List<String>> link)
+    public static InputStream getLinksAsJSON(
+            final String entitySetName, final Map.Entry<String, Collection<String>> link)
             throws IOException {
         final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
         links.put(

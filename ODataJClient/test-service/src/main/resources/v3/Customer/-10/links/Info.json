@@ -1,0 +1,4 @@
+{
+  "odata.metadata": "http://11.10.10.6:8080/DefaultService.svc/$metadata#Customer/$links/Info",
+  "url": "http://11.10.10.6:8080/DefaultService.svc/CustomerInfo(11)"
+}

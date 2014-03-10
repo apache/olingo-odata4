@@ -26,6 +26,7 @@ import com.msopentech.odatajclient.testservice.utils.FSManager;
 
 import static com.msopentech.odatajclient.testservice.utils.Constants.*;
 
+import com.msopentech.odatajclient.testservice.methods.MERGE;
 import com.msopentech.odatajclient.testservice.methods.PATCH;
 import com.msopentech.odatajclient.testservice.utils.AbstractUtilities;
 import com.msopentech.odatajclient.testservice.utils.Commons;
@@ -127,6 +128,21 @@ public abstract class AbstractServices {
         }
     }
 
+    @MERGE
+    @Path("/{entitySetName}({entityId})")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
+    public Response mergeEntity(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+            @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            final String changes) {
+
+        return patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes);
+    }
+
     @PATCH
     @Path("/{entitySetName}({entityId})")
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
@@ -134,6 +150,7 @@ public abstract class AbstractServices {
     public Response patchEntity(
             @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
             @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+            @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
             @PathParam("entitySetName") String entitySetName,
             @PathParam("entityId") String entityId,
             final String changes) {
@@ -146,8 +163,22 @@ public abstract class AbstractServices {
             }
 
             final AbstractUtilities util = acceptType == Accept.ATOM ? xml : json;
-            InputStream res = util.patchEntity(entitySetName, entityId, IOUtils.toInputStream(changes), acceptType);
-            return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+            InputStream res =
+                    util.patchEntity(entitySetName, entityId, IOUtils.toInputStream(changes), acceptType, ifMatch);
+
+            final Response response;
+            if ("return-content".equalsIgnoreCase(prefer)) {
+                response = xml.createResponse(res, null, acceptType, Response.Status.OK);
+            } else {
+                res.close();
+                response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+            }
+
+            if (StringUtils.isNotBlank(prefer)) {
+                response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+            }
+
+            return response;
         } catch (Exception e) {
             return xml.createFaultResponse(accept, e);
         }
@@ -178,10 +209,18 @@ public abstract class AbstractServices {
                 res = json.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
             }
 
-            res.close();
+            final Response response;
+            if ("return-content".equalsIgnoreCase(prefer)) {
+                response = xml.createResponse(res, null, acceptType, Response.Status.OK);
+            } else {
+                res.close();
+                response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+            }
 
-            final Response response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
-            response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+            if (StringUtils.isNotBlank(prefer)) {
+                response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+            }
+
             return response;
         } catch (Exception e) {
             return xml.createFaultResponse(accept, e);
@@ -213,14 +252,19 @@ public abstract class AbstractServices {
                 res = json.createEntity(entitySetName, IOUtils.toInputStream(entity));
             }
 
-            if (prefer.equalsIgnoreCase("return-no-content")) {
+            final Response response;
+            if ("return-no-content".equalsIgnoreCase(prefer)) {
                 res.close();
-                Response response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
-                response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
-                return response;
+                response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
             } else {
-                return xml.createResponse(res, null, acceptType, Response.Status.CREATED);
+                response = xml.createResponse(res, null, acceptType, Response.Status.CREATED);
             }
+
+            if (StringUtils.isNotBlank(prefer)) {
+                response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+            }
+
+            return response;
         } catch (Exception e) {
             return xml.createFaultResponse(accept, e);
         }

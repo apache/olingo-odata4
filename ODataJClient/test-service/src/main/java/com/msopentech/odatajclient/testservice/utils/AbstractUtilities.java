@@ -32,12 +32,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
@@ -60,6 +64,8 @@ public abstract class AbstractUtilities {
     protected final ODataVersion version;
 
     protected final FSManager fsManager;
+
+    protected final static Pattern entityUriPattern = Pattern.compile(".*\\/.*\\(.*\\)");
 
     public AbstractUtilities(final ODataVersion version) throws Exception {
         this.version = version;
@@ -234,7 +240,7 @@ public abstract class AbstractUtilities {
         // 4. Create links file and provided inlines
         // -----------------------------------------
         for (Map.Entry<String, List<String>> link : links.getLinks()) {
-            putLinksInMemory(path, entitySetName, link.getKey(), link.getValue());
+            putLinksInMemory(path, entitySetName, entityKey, link.getKey(), link.getValue());
         }
 
         for (Map.Entry<String, List<InputStream>> inlineEntry : links.getInlines()) {
@@ -258,7 +264,7 @@ public abstract class AbstractUtilities {
                 hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
             }
 
-            putLinksInMemory(path, entitySetName, inlineEntry.getKey(), hrefs);
+            putLinksInMemory(path, entitySetName, entityKey, inlineEntry.getKey(), hrefs);
         }
         // -----------------------------------------
 
@@ -266,15 +272,37 @@ public abstract class AbstractUtilities {
     }
 
     protected void putLinksInMemory(
-            final String basePath, final String entitySetName, final String linkName, final List<String> uris)
+            final String path,
+            final String entitySetName,
+            final String entityKey,
+            final String linkName,
+            final Collection<String> links) throws IOException {
+        final HashSet<String> uris = new HashSet<String>();
+
+        if (Commons.feed.contains(entitySetName + "." + linkName)) {
+            try {
+                final Map.Entry<String, List<String>> currents = XMLUtilities.extractLinkURIs(
+                        readLinks(entitySetName, entityKey, linkName, Accept.JSON_FULLMETA).getLinks());
+                uris.addAll(currents.getValue());
+            } catch (Exception ignore) {
+            }
+        }
+
+        uris.addAll(links);
+
+        putLinksInMemory(path, entitySetName, linkName, uris);
+    }
+
+    protected void putLinksInMemory(
+            final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
             throws IOException {
         fsManager.putInMemory(
-                Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, List<String>>(linkName, uris)),
+                Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
                 fsManager.getAbsolutePath(
                 basePath + LINKS_FILE_PATH + File.separatorChar + linkName, Accept.JSON_FULLMETA));
 
         fsManager.putInMemory(
-                Commons.getLinksAsATOM(new SimpleEntry<String, List<String>>(linkName, uris)),
+                Commons.getLinksAsATOM(new SimpleEntry<String, Collection<String>>(linkName, uris)),
                 fsManager.getAbsolutePath(
                 basePath + LINKS_FILE_PATH + File.separatorChar + linkName, Accept.XML));
     }
@@ -329,7 +357,10 @@ public abstract class AbstractUtilities {
         builder.header("Content-Type", contentType);
 
         final InputStream src;
-        if (e instanceof UnsupportedMediaTypeException) {
+        if (e instanceof ConcurrentModificationException) {
+            builder.status(Response.Status.PRECONDITION_FAILED);
+            src = fsManager.readFile("/badRequest" + ext, null);
+        } else if (e instanceof UnsupportedMediaTypeException) {
             builder.status(Response.Status.UNSUPPORTED_MEDIA_TYPE);
             src = fsManager.readFile("/unsupportedMediaType" + ext, null);
         } else if (e instanceof NotFoundException) {
@@ -527,9 +558,19 @@ public abstract class AbstractUtilities {
     }
 
     public InputStream patchEntity(
-            final String entitySetName, final String entityId, final InputStream changes, final Accept accept)
+            final String entitySetName,
+            final String entityId,
+            final InputStream changes,
+            final Accept accept,
+            final String ifMatch)
             throws Exception {
         final Map.Entry<String, InputStream> entityInfo = readEntity(entitySetName, entityId, accept);
+
+        final String etag = Commons.getETag(entityInfo.getKey(), version);
+        if (StringUtils.isNotBlank(ifMatch) && !ifMatch.equals(etag)) {
+            throw new ConcurrentModificationException("Concurrent modification");
+        }
+
         final Map<String, InputStream> replacement = getChanges(changes);
         return createEntity(entityId, entitySetName, setChanges(entityInfo.getValue(), replacement));
     }

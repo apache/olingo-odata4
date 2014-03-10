@@ -42,10 +42,6 @@ import org.junit.Test;
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     protected String getServiceRoot() {
-        return testDefaultServiceRootURL;
-    }
-    
-    protected String getStaticServiceRoot() {
         return testStaticServiceRootURL;
     }
 
@@ -74,7 +70,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void patchAsAtom() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
-        final URI uri = client.getURIBuilder(getStaticServiceRoot()).
+        final URI uri = client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("Product").appendKeySegment(-10).build();
         final String etag = getETag(uri);
         final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -85,7 +81,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void patchAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final URI uri = client.getURIBuilder(getStaticServiceRoot()).
+        final URI uri = client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("Product").appendKeySegment(-10).build();
         final String etag = getETag(uri);
         final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -96,7 +92,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void replaceAsAtom() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
-        final ODataEntity changes = read(format, client.getURIBuilder(getStaticServiceRoot()).
+        final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("Car").appendKeySegment(14).build());
         updateEntityDescription(format, changes, UpdateType.REPLACE);
     }
@@ -104,7 +100,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void replaceAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final ODataEntity changes = read(format, client.getURIBuilder(getStaticServiceRoot()).
+        final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("Car").appendKeySegment(14).build());
         updateEntityDescription(format, changes, UpdateType.REPLACE);
     }
@@ -156,7 +152,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
         customerInfoURI = client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("CustomerInfo").appendKeySegment(11).build();
-        newInfo = read(format, customerInfoURI);
+        read(format, customerInfoURI);
 
         patch.addLink(client.getObjectFactory().newEntityNavigationLink("Info", customerInfoURI));
 
@@ -223,13 +219,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     public void concurrentModification() {
         final URI uri = client.getURIBuilder(getServiceRoot()).
                 appendEntityTypeSegment("Product").appendKeySegment(-10).build();
-        final String etag = getETag(uri);
+        String etag = getETag(uri);
         final ODataEntity product = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
         product.setEditLink(uri);
         updateEntityStringProperty("BaseConcurrency",
                 client.getConfiguration().getDefaultPubFormat(), product, UpdateType.MERGE, etag);
 
         try {
+            etag += "-invalidone";
             updateEntityStringProperty("BaseConcurrency",
                     client.getConfiguration().getDefaultPubFormat(), product, UpdateType.MERGE, etag);
             fail();

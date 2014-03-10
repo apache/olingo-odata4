@@ -121,7 +121,9 @@ public class XMLUtilities extends AbstractUtilities {
                     inlineReader.close();
                 } catch (Exception ignore) {
                     // inline element not found (inlines are not mondatory).
-                    links.addLinks(title, href.substring(href.lastIndexOf('/') + 1));
+                    if (entityUriPattern.matcher(href).matches()) {
+                        links.addLinks(title, href.substring(href.lastIndexOf('/') + 1));
+                    }
                 }
             }
         } catch (Exception ignore) {
@@ -819,12 +821,17 @@ public class XMLUtilities extends AbstractUtilities {
         }
 
         for (String link : links) {
-            final Map.Entry<String, String> uri = Commons.parseEntityURI(link);
+            try {
+                final Map.Entry<String, String> uri = Commons.parseEntityURI(link);
 
-            final XmlElement entry =
-                    getAtomElement(readEntity(uri.getKey(), uri.getValue(), Accept.ATOM).getValue(), "entry");
+                final XmlElement entry =
+                        getAtomElement(readEntity(uri.getKey(), uri.getValue(), Accept.ATOM).getValue(), "entry");
 
-            IOUtils.copy(entry.toStream(), bos);
+                IOUtils.copy(entry.toStream(), bos);
+            } catch (Exception e) {
+                // log and ignore link
+                LOG.warn("Error parsing uri {}", link, e);
+            }
         }
 
         if (forceFeed || links.size() > 1) {
@@ -893,7 +900,6 @@ public class XMLUtilities extends AbstractUtilities {
             final InputStream toBeChanged,
             final Map<String, InputStream> properties)
             throws Exception {
-
         XMLEventReader reader = getEventReader(toBeChanged);
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -957,6 +963,34 @@ public class XMLUtilities extends AbstractUtilities {
         // ---------------------------------
         // add navigationm changes
         // ---------------------------------
+
+        // remove existent links
+        for (Map.Entry<String, InputStream> remains : properties.entrySet()) {
+
+            if (remains.getKey().startsWith("[LINK]")) {
+                reader = getEventReader(new ByteArrayInputStream(bos.toByteArray()));
+
+                bos.reset();
+                writer = xof.createXMLEventWriter(bos);
+
+                try {
+                    final String linkName = remains.getKey().substring(remains.getKey().indexOf("]") + 1);
+
+                    getAtomElement(reader, writer, LINK,
+                            Collections.<Map.Entry<String, String>>singleton(new SimpleEntry<String, String>(
+                            "title", linkName)), 0, 2, 2, false);
+
+                    writer.add(reader);
+
+                } catch (Exception ignore) {
+                    // ignore
+                }
+
+                writer.flush();
+                writer.close();
+            }
+        }
+
         reader = getEventReader(new ByteArrayInputStream(bos.toByteArray()));
 
         bos.reset();
