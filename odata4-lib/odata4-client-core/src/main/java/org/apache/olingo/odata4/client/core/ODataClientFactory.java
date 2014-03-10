@@ -18,17 +18,20 @@
  */
 package org.apache.olingo.odata4.client.core;
 
+import org.apache.olingo.odata4.client.api.ODataV3Client;
+import org.apache.olingo.odata4.client.api.ODataV4Client;
+
 public final class ODataClientFactory {
 
-    public static ODataV3ClientImpl getV3() {
-        return new ODataV3ClientImpl();
-    }
+  public static ODataV3Client getV3() {
+    return new ODataV3ClientImpl();
+  }
 
-    public static ODataV4ClientImpl getV4() {
-        return new ODataV4ClientImpl();
-    }
+  public static ODataV4Client getV4() {
+    return new ODataV4ClientImpl();
+  }
 
-    private ODataClientFactory() {
-        // empty constructory for static utility class
-    }
+  private ODataClientFactory() {
+    // empty constructory for static utility class
+  }
 }
