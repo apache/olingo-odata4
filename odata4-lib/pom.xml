@@ -42,7 +42,6 @@
     <module>odata4-client-core</module>
     <module>odata4-commons-api</module>
     <module>odata4-commons-core</module>
-    <module>odata4-fit</module>
     <module>odata4-ref</module>
   </modules>
 </project>

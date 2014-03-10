@@ -59,6 +59,7 @@
 
   <modules>
     <module>odata4-lib</module>
+    <module>odata4-fit</module>
   </modules>
 
   <properties>
