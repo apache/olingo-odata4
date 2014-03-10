@@ -58,8 +58,8 @@
   </mailingLists>
 
   <modules>
-    <module>odata4-lib</module>
-    <module>odata4-fit</module>
+    <module>lib</module>
+    <module>fit</module>
   </modules>
 
   <properties>

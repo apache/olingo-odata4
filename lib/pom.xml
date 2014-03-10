@@ -36,12 +36,12 @@
   </parent>
 
   <modules>
-    <module>odata4-server-api</module>
-    <module>odata4-server-core</module>
-    <module>odata4-client-api</module>
-    <module>odata4-client-core</module>
-    <module>odata4-commons-api</module>
-    <module>odata4-commons-core</module>
-    <module>odata4-ref</module>
+    <module>server-api</module>
+    <module>server-core</module>
+    <module>client-api</module>
+    <module>client-core</module>
+    <module>commons-api</module>
+    <module>commons-core</module>
+    <module>ref</module>
   </modules>
 </project>
