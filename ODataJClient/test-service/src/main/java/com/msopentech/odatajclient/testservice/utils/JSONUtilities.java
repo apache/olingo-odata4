@@ -51,6 +51,50 @@ public class JSONUtilities extends AbstractUtilities {
         return Accept.JSON_FULLMETA;
     }
 
+    @Override
+    protected InputStream addLinks(
+            final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
+            throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        for (String link : links) {
+            srcNode.set(link + JSON_NAVIGATION_SUFFIX,
+                    new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
+        }
+
+        return IOUtils.toInputStream(srcNode.toString());
+    }
+
+    @Override
+    protected Set<String> retrieveAllLinkNames(InputStream is) throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        final Set<String> links = new HashSet<String>();
+
+        final Iterator<String> fieldIter = srcNode.fieldNames();
+
+        while (fieldIter.hasNext()) {
+            final String field = fieldIter.next();
+
+            if (field.endsWith(JSON_NAVIGATION_BIND_SUFFIX)
+                    || field.endsWith(JSON_NAVIGATION_SUFFIX)
+                    || field.endsWith(JSON_MEDIA_SUFFIX)
+                    || field.endsWith(JSON_EDITLINK_NAME)) {
+                if (field.indexOf('@') > 0) {
+                    links.add(field.substring(0, field.indexOf('@')));
+                } else {
+                    links.add(field);
+                }
+            }
+        }
+
+        return links;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -60,6 +104,7 @@ public class JSONUtilities extends AbstractUtilities {
             throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
 
         final NavigationLinks links = new NavigationLinks();
 
@@ -244,6 +289,7 @@ public class JSONUtilities extends AbstractUtilities {
             retain.add(name);
             retain.add(name + JSON_NAVIGATION_SUFFIX);
             retain.add(name + JSON_MEDIA_SUFFIX);
+            retain.add(name + JSON_TYPE_SUFFIX);
         }
 
         srcNode.retain(retain);

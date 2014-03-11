@@ -91,7 +91,7 @@ public class FSManager {
     public InputStream readFile(final String relativePath, final Accept accept) {
         final String path = getAbsolutePath(relativePath, accept);
         LOG.info("Read {}", path);
-        
+
         try {
             FileObject fileObject = fsManager.resolveFile(MEM_PREFIX + path);
 

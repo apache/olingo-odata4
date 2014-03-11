@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/ComputerDetail(-10)</id>
+  <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" title="ComputerDetail" href="ComputerDetail(-10)" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Computer" type="application/atom+xml;type=entry" title="Computer" href="ComputerDetail(-10)/Computer" />
+  <title />
+  <updated>2014-03-10T11:52:31Z</updated>
+  <author>
+    <name />
+  </author>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#DefaultContainer.ResetComputerDetailsSpecifications" title="ResetComputerDetailsSpecifications" target="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/ComputerDetail(-10)/ResetComputerDetailsSpecifications" />
+  <content type="application/xml">
+    <m:properties>
+      <d:ComputerDetailId m:type="Edm.Int32">-10</d:ComputerDetailId>
+      <d:Manufacturer m:null="true" />
+      <d:Model m:null="true" />
+      <d:Serial m:null="true" />
+      <d:SpecificationsBag m:type="Collection(Edm.String)" />
+      <d:PurchaseDate m:type="Edm.DateTime">2005-02-09T23:59:59.9999999</d:PurchaseDate>
+      <d:Dimensions m:null="true" />
+    </m:properties>
+  </content>
+</entry>

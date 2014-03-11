@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
@@ -57,10 +58,6 @@ public abstract class Commons {
 
     protected final static Set<String> mediaContent = new HashSet<String>();
 
-    protected final static Set<String> feed = new HashSet<String>();
-
-    protected final static Map<String, String> entitySetAlias = new HashMap<String, String>();
-
     protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
             new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
 
@@ -71,11 +68,43 @@ public abstract class Commons {
         sequence.put("Order", 1000);
 
         mediaContent.add("CustomerInfo");
+    }
 
-        entitySetAlias.put("Customer.Info", "CustomerInfo");
-        entitySetAlias.put("Customer.Orders", "Order");
-        feed.add("Customer.Orders");
-        feed.add("Customer.Logins");
+    public static String getEntityURI(final String entitySetName, final String entityKey) {
+        return entitySetName + "(" + entityKey + ")";
+    }
+
+    public static String getEntityBasePath(final String entitySetName, final String entityKey) {
+        return entitySetName + File.separatorChar + getEntityKey(entityKey) + File.separatorChar;
+    }
+
+    public static String getLinksURI(
+            final ODataVersion version,
+            final String entitySetName,
+            final String entityId,
+            final String linkName) throws IOException {
+        return getEntityURI(entitySetName, entityId) + "/" + linkName;
+    }
+
+    public static String getLinksPath(
+            final ODataVersion version,
+            final String entitySetName,
+            final String entityId,
+            final String linkName,
+            final Accept accept) throws IOException {
+        return getLinksPath(ODataVersion.v3, getEntityBasePath(entitySetName, entityId), linkName, accept);
+
+    }
+
+    public static String getLinksPath(
+            final ODataVersion version, final String basePath, final String linkName, final Accept accept)
+            throws IOException {
+        try {
+            return FSManager.instance(version)
+                    .getAbsolutePath(basePath + LINKS_FILE_PATH + File.separatorChar + linkName, accept);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     public static String getEntityKey(final String entityId) {

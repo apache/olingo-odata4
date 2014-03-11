@@ -195,18 +195,17 @@ public abstract class AbstractServices {
             @PathParam("entityId") String entityId,
             final String entity) {
         try {
-
             final Accept acceptType = Accept.parse(accept, getVersion());
 
             if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
                 throw new UnsupportedMediaTypeException("Unsupported media type");
             }
 
-            final InputStream res;
+            InputStream res;
             if (acceptType == Accept.ATOM) {
-                res = xml.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+                res = xml.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
             } else {
-                res = json.saveSingleEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+                res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
             }
 
             final Response response;
@@ -238,7 +237,6 @@ public abstract class AbstractServices {
             final String entity) {
 
         try {
-
             final Accept acceptType = Accept.parse(accept, getVersion());
 
             if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
@@ -247,9 +245,9 @@ public abstract class AbstractServices {
 
             final InputStream res;
             if (acceptType == Accept.ATOM) {
-                res = xml.createEntity(entitySetName, IOUtils.toInputStream(entity));
+                res = xml.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
             } else {
-                res = json.createEntity(entitySetName, IOUtils.toInputStream(entity));
+                res = json.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
             }
 
             final Response response;
@@ -374,6 +372,7 @@ public abstract class AbstractServices {
             @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
         try {
+
             final Accept acceptType;
             if (StringUtils.isNotBlank(format)) {
                 acceptType = Accept.valueOf(format.toUpperCase());

@@ -42,6 +42,7 @@ import com.msopentech.odatajclient.engine.data.ODataProperty;
 import com.msopentech.odatajclient.engine.metadata.edm.EdmSimpleType;
 import com.msopentech.odatajclient.engine.format.ODataPubFormat;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
+import org.junit.Ignore;
 
 public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     // update an entity
@@ -102,11 +103,11 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
             final ODataInlineEntity info = client.getObjectFactory().newInlineEntity(
                     "Info",
                     URI.create("Customer(-10)/Info"),
-                    getSampleCustomerInfo(-10, "Updated customer information" + "_Info"));
+                    getSampleCustomerInfo(-10, "Updated customer information_Info"));
             info.getEntity().setMediaEntity(true);
             entity.addLink(info);
         }
-        final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+        final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntityTypeSegment("Customer").appendKeySegment(-10).build();
         final String etag = getETag(uri);
         entity.setEditLink(uri);
@@ -129,11 +130,11 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
         if (prefer.equals("return-content")) {
             assertEquals(200, res.getStatusCode());
             if (inlineInfo) {
-                final ODataEntity actual = compareEntities(testDefaultServiceRootURL, format, entity, -10, Collections.
+                final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, entity, -10, Collections.
                         <String>singleton("Info"));
                 assertNotNull(actual);
             } else {
-                final ODataEntity actual = compareEntities(testDefaultServiceRootURL, format, entity, -10, null);
+                final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, entity, -10, null);
                 assertNotNull(actual);
             }
         } else {
@@ -144,8 +145,6 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
 
     private void updateEntityStringProperty(
             final ODataPubFormat format,
-            final String contentType,
-            final String prefer,
             final String propertyName,
             final ODataEntity entitySetName,
             final UpdateType type,
@@ -180,8 +179,6 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
 
     private void updateEntityDateProperty(
             final ODataPubFormat format,
-            final String contentType,
-            final String prefer,
             final String propertyName,
             final ODataEntity entitySetName,
             final UpdateType type,
@@ -213,8 +210,6 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
 
     private void updateEntityIntProperty(
             final ODataPubFormat format,
-            final String contentType,
-            final String prefer,
             final String propertyName,
             final ODataEntity entitySetName,
             final UpdateType type,
@@ -293,27 +288,22 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
         final UpdateType replace = UpdateType.REPLACE;
         final UpdateType merge = UpdateType.MERGE;
         final UpdateType patch = UpdateType.PATCH;
-        try {
-            final HashMap<String, Object> multiKey = new HashMap<String, Object>();
-            multiKey.put("OrderId", -10);
-            multiKey.put("ProductId", -10);
-            final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
-                    appendEntityTypeSegment(entitySet).appendKeySegment(multiKey);
-            final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-            req.setFormat(format);
-            req.setAccept(contentType);
+        final HashMap<String, Object> multiKey = new HashMap<String, Object>();
+        multiKey.put("OrderId", -10);
+        multiKey.put("ProductId", -10);
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+                appendEntityTypeSegment(entitySet).appendKeySegment(multiKey);
+        final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+        req.setFormat(format);
+        req.setAccept(contentType);
 
-            final ODataRetrieveResponse<ODataEntity> res = req.execute();
-            final ODataEntity entity = res.getBody();
+        final ODataRetrieveResponse<ODataEntity> res = req.execute();
+        final ODataEntity entity = res.getBody();
 
-            final String etag = res.getEtag();
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, patch, etag);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
+        final String etag = res.getEtag();
+        updateEntityIntProperty(format, propertyType, entity, replace, etag);
+        updateEntityIntProperty(format, propertyType, entity, merge, etag);
+        updateEntityIntProperty(format, propertyType, entity, patch, etag);
     }
     // update integer property with json minimal metadata. Its throws Illegal Argument Exception 
 
@@ -331,7 +321,7 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
             final HashMap<String, Object> multiKey = new HashMap<String, Object>();
             multiKey.put("OrderId", -10);
             multiKey.put("ProductId", -10);
-            final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+            final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(multiKey);
             final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
             req.setFormat(format);
@@ -341,9 +331,9 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
             final ODataEntity entity = res.getBody();
 
             final String etag = res.getEtag();
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityIntProperty(format, contentType, prefer, propertyType, entity, patch, etag);
+            updateEntityIntProperty(format, propertyType, entity, replace, etag);
+            updateEntityIntProperty(format, propertyType, entity, merge, etag);
+            updateEntityIntProperty(format, propertyType, entity, patch, etag);
         } catch (Exception e) {
             if (e.getMessage().equals("No edit link found")) {
                 assertTrue(true);
@@ -357,19 +347,17 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updateDatePropertyAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final String contentType = "application/json;odata=fullmetadata";
-        final String prefer = "return-content";
         final String entitySet = "ComputerDetail";
         final String propertyType = "PurchaseDate";
         final UpdateType replace = UpdateType.REPLACE;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(
                     "Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail");
             entity.setEditLink(uri);
-            updateEntityDateProperty(format, contentType, prefer, propertyType, entity, replace, etag);
+            updateEntityDateProperty(format, propertyType, entity, replace, etag);
         } catch (Exception e) {
             fail(e.getMessage());
         } catch (AssertionError e) {
@@ -381,22 +369,22 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updateConcurrencyPropertyAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final String contentType = "application/json;odata=fullmetadata";
-        final String prefer = "return-content";
         final String entitySet = "Product";
         final String propertyType = "BaseConcurrency";
         final UpdateType replace = UpdateType.REPLACE;
         final UpdateType merge = UpdateType.MERGE;
         final UpdateType patch = UpdateType.PATCH;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, patch, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, propertyType, entity, replace, etag);
+            updateEntityStringProperty(format, propertyType, entity, merge, etag);
+            updateEntityStringProperty(format, propertyType, entity, patch, etag);
         } catch (ODataClientErrorException e) {
             assertEquals(412, e.getStatusLine().getStatusCode());
         }
@@ -407,22 +395,22 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updatePropertyAsJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final String contentType = "application/json;odata=fullmetadata";
-        final String prefer = "return-content";
         final String entitySet = "Product";
         final String propertyType = "Description";
         final UpdateType replace = UpdateType.REPLACE;
         final UpdateType merge = UpdateType.MERGE;
         final UpdateType patch = UpdateType.PATCH;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, patch, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, propertyType, entity, replace, etag);
+            updateEntityStringProperty(format, propertyType, entity, merge, etag);
+            updateEntityStringProperty(format, propertyType, entity, patch, etag);
         } catch (Exception e) {
             fail(e.getMessage());
         } catch (AssertionError e) {
@@ -434,22 +422,22 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updatePropertyAsATOM() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
-        final String contentType = "application/ATOM+XML";
-        final String prefer = "return-content";
         final String entitySet = "Product";
         final String propertyType = "Description";
         final UpdateType replace = UpdateType.REPLACE;
         final UpdateType merge = UpdateType.MERGE;
         final UpdateType patch = UpdateType.PATCH;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, patch, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, propertyType, entity, replace, etag);
+            updateEntityStringProperty(format, propertyType, entity, merge, etag);
+            updateEntityStringProperty(format, propertyType, entity, patch, etag);
         } catch (Exception e) {
             fail(e.getMessage());
         } catch (AssertionError e) {
@@ -461,22 +449,22 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updatePropertyAsJSONMinimal() {
         final ODataPubFormat format = ODataPubFormat.JSON;
-        final String contentType = "application/json";
-        final String prefer = "return-content";
         final String entitySet = "Product";
         final String propertyType = "Description";
         final UpdateType replace = UpdateType.REPLACE;
         final UpdateType merge = UpdateType.MERGE;
         final UpdateType patch = UpdateType.PATCH;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, replace, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, merge, etag);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, patch, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, propertyType, entity, replace, etag);
+            updateEntityStringProperty(format, propertyType, entity, merge, etag);
+            updateEntityStringProperty(format, propertyType, entity, patch, etag);
         } catch (Exception e) {
             fail(e.getMessage());
         } catch (AssertionError e) {
@@ -488,18 +476,18 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updateNonNullableProperty() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-        final String contentType = "application/json;odata=fullmetadata";
-        final String prefer = "return-content";
         final String entitySet = "Product";
         final String propertyType = "ProductId";
         final UpdateType replace = UpdateType.REPLACE;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(entitySet).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, propertyType, entity, replace, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, propertyType, entity, replace, etag);
         } catch (Exception e) {
             if (e.getMessage().equals("An error occurred while processing this request. [HTTP/1.1 400 Bad Request]")) {
                 assertTrue(true);
@@ -515,17 +503,17 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
     @Test
     public void updatePropertyAsJSONNoMetadata() {
         final ODataPubFormat format = ODataPubFormat.JSON_NO_METADATA;
-        final String contentType = "application/json;odata=nometadata";
-        final String prefer = "return-content";
         final String propertyType = "Product";
         final UpdateType replace = UpdateType.REPLACE;
         try {
-            final URI uri = client.getURIBuilder(testDefaultServiceRootURL).
+            final URI uri = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment(propertyType).appendKeySegment(-10).build();
             final String etag = getETag(uri);
             final ODataEntity entity = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
             entity.setEditLink(uri);
-            updateEntityStringProperty(format, contentType, prefer, "Description", entity, replace, etag);
+            entity.addProperty(client.getObjectFactory().newPrimitiveProperty("ProductId",
+                    client.getPrimitiveValueBuilder().setValue(-10).setType(EdmSimpleType.Int32).build()));
+            updateEntityStringProperty(format, "Description", entity, replace, etag);
         } catch (Exception e) {
             fail(e.getMessage());
         } catch (AssertionError e) {
@@ -570,8 +558,6 @@ public class EntityUpdateMoreTestITCase extends AbstractTestITCase {
             } else {
                 fail(e.getMessage());
             }
-        } catch (AssertionError e) {
-            fail(e.getMessage());
         }
     }
 }

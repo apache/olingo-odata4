@@ -18,7 +18,6 @@
  */
 package com.msopentech.odatajclient.engine.it;
 
-import static com.msopentech.odatajclient.engine.it.AbstractTestITCase.testDefaultServiceRootURL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -74,7 +73,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             assertTrue(vin < 16);
             vinsASC.add(vin);
         }
-        
+
         // 3. add orderby clause to filter above
         req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.orderBy("VIN desc").build());
         feed = req.execute().getBody();
@@ -189,7 +188,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
         req.setFormat(ODataPubFormat.ATOM);
 
         final AtomEntry atomEntry = client.getDeserializer().toEntry(req.execute().getRawResponse(), AtomEntry.class);
-        assertEquals("remotingdestructorprinterswitcheschannelssatellitelanguageresolve",
-                atomEntry.getSummary());
+        assertEquals("remotingdestructorprinterswitcheschannelssatellitelanguageresolve", atomEntry.getSummary());
     }
 }
