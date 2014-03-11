@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.api.edm.xml.v3;
 
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.odata4.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.odata4.client.api.edm.StoreGeneratedPattern;
 
 public interface Property extends CommonProperty {
 
