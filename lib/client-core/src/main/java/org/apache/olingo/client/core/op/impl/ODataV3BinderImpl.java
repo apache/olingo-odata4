@@ -19,19 +19,17 @@
 package org.apache.olingo.client.core.op.impl;
 
 import org.apache.olingo.client.core.ODataV3ClientImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataBinder;
 
 public class ODataV3BinderImpl extends AbstractODataBinder {
 
-    private static final long serialVersionUID = 8970843539708952308L;
+  private static final long serialVersionUID = 8970843539708952308L;
 
-    public ODataV3BinderImpl(final ODataV3ClientImpl client) {
-        super(client);
-    }
+  public ODataV3BinderImpl(final ODataV3ClientImpl client) {
+    super(client);
+  }
 
 //    @Override
 //    protected EdmType newEdmType(final String expression) {
 //        return new EdmV3Type(expression);
 //    }
-
 }

@@ -19,5 +19,13 @@
 package org.apache.olingo.client.api.op;
 
 public interface ODataV3Deserializer extends ODataDeserializer {
+  /**
+   * Gets a list of links from the given InputStream.
+   *
+   * @param input stream to be de-serialized.
+   * @param format OData format.
+   * @return de-serialized links.
+   */
+//    LinkCollection toLinkCollection(InputStream input, ODataFormat format);
 
 }

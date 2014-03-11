@@ -41,17 +41,17 @@ public final class ODataTimestamp implements Serializable {
 
   private final boolean offset;
 
-  public static ODataTimestamp getInstance(final EdmSimpleType type, final Timestamp timestamp) {
+  public static ODataTimestamp getInstance(final ODataJClientEdmPrimitiveType type, final Timestamp timestamp) {
     return new ODataTimestamp(new SimpleDateFormat(type.pattern()),
-            new Date(timestamp.getTime()), timestamp.getNanos(), type == EdmSimpleType.DateTimeOffset);
+            new Date(timestamp.getTime()), timestamp.getNanos(), type == ODataJClientEdmPrimitiveType.DateTimeOffset);
   }
 
-  public static ODataTimestamp parse(final EdmSimpleType type, final String input) {
+  public static ODataTimestamp parse(final ODataJClientEdmPrimitiveType type, final String input) {
     final ODataTimestamp instance;
 
     final String[] dateParts = input.split("\\.");
     final SimpleDateFormat sdf = new SimpleDateFormat(type.pattern());
-    final boolean isOffset = type == EdmSimpleType.DateTimeOffset;
+    final boolean isOffset = type == ODataJClientEdmPrimitiveType.DateTimeOffset;
 
     try {
       final Date date = sdf.parse(dateParts[0]);

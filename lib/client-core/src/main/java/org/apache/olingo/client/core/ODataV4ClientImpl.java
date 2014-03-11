@@ -48,11 +48,8 @@ public class ODataV4ClientImpl extends AbstractODataClient implements ODataV4Cli
 
   private final ODataReader reader = new ODataV4ReaderImpl(this);
 
-//    private final ODataWriter writer = new ODataWriterImpl(this);
   private final ODataBinder binder = new ODataV4BinderImpl(this);
 
-//    private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
-//
 //    private final V4RetrieveRequestFactory retrieveReqFact = new V4RetrieveRequestFactory(this);
 //
 //    private final V4CUDRequestFactory cudReqFact = new V4CUDRequestFactory(this);
@@ -105,20 +102,11 @@ public class ODataV4ClientImpl extends AbstractODataClient implements ODataV4Cli
     return reader;
   }
 
-//    @Override
-//    public ODataWriterImpl getWriter() {
-//        return writer;
-//    }
   @Override
   public ODataBinder getBinder() {
     return binder;
   }
 
-//    @Override
-//    public ODataObjectFactoryImpl getObjectFactory() {
-//        return objectFactory;
-//    }
-//
 //    @Override
 //    public V4RetrieveRequestFactory getRetrieveRequestFactory() {
 //        return retrieveReqFact;

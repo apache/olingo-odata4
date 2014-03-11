@@ -20,9 +20,14 @@ package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-
+import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.domain.ODataEntity;
+import org.apache.olingo.client.api.domain.ODataEntitySet;
+import org.apache.olingo.client.api.domain.ODataLinkCollection;
+import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.Edm;
 
 /**
@@ -58,7 +63,8 @@ public interface ODataReader extends Serializable {
    * @param format de-serialize as AtomFeed or JSONFeed
    * @return de-serialized entity set.
    */
-  //ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
    *
@@ -66,7 +72,8 @@ public interface ODataReader extends Serializable {
    * @param format de-serialize as AtomEntry or JSONEntry
    * @return entity de-serialized.
    */
-  //ODataEntity readEntity(InputStream input, ODataPubFormat format);
+  ODataEntity readEntity(InputStream input, ODataPubFormat format);
+
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
    *
@@ -74,7 +81,8 @@ public interface ODataReader extends Serializable {
    * @param format de-serialize as XML or JSON
    * @return OData entity property de-serialized.
    */
-  //ODataProperty readProperty(InputStream input, ODataFormat format);
+  ODataProperty readProperty(InputStream input, ODataFormat format);
+
   /**
    * Parses a $links request response.
    *
@@ -82,7 +90,8 @@ public interface ODataReader extends Serializable {
    * @param format de-serialize as XML or JSON
    * @return List of URIs.
    */
-  //ODataLinkCollection readLinks(InputStream input, ODataFormat format);
+  ODataLinkCollection readLinks(InputStream input, ODataFormat format);
+
   /**
    * Parses a stream into an OData error.
    *
@@ -90,7 +99,8 @@ public interface ODataReader extends Serializable {
    * @param isXML 'TRUE' if the error is in XML format.
    * @return OData error.
    */
-//  ODataError readError(InputStream inputStream, boolean isXML);
+  Error readError(InputStream inputStream, boolean isXML);
+
   /**
    * Parses a stream into the object type specified by the given reference.
    *
@@ -100,5 +110,5 @@ public interface ODataReader extends Serializable {
    * @param reference reference.
    * @return read object.
    */
-  //<T> T read(InputStream src, String format, Class<T> reference);
+  <T> T read(InputStream src, String format, Class<T> reference);
 }

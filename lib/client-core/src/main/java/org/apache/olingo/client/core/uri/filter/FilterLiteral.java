@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.uri.filter;
 
 import org.apache.olingo.client.api.uri.filter.FilterArg;
-import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.client.api.utils.URIUtils;
 
 /**
  * Filter value literals; obtain instances via <tt>FilterArgFactory</tt>.

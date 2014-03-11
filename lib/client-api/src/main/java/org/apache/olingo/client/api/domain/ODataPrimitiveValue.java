@@ -31,7 +31,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
 import org.apache.olingo.client.api.domain.ODataValue;
@@ -54,7 +54,7 @@ public class ODataPrimitiveValue extends ODataValue {
       this.client = client;
     }
 
-    public AbstractBuilder isSupported(final EdmSimpleType type) {
+    public AbstractBuilder isSupported(final ODataJClientEdmPrimitiveType type) {
       if (type != null && !ArrayUtils.contains(type.getSupportedVersions(), client.getServiceVersion())) {
         throw new IllegalArgumentException(String.format(
                 "Type %s not supported by the current OData working version", type.toString()));
@@ -107,12 +107,12 @@ public class ODataPrimitiveValue extends ODataValue {
      * @param type type.
      * @return the current builder.
      */
-    public Builder setType(final EdmSimpleType type) {
+    public Builder setType(final ODataJClientEdmPrimitiveType type) {
       isSupported(type);
 
-      if (type == EdmSimpleType.Stream) {
+      if (type == ODataJClientEdmPrimitiveType.Stream) {
         throw new IllegalArgumentException(String.format(
-                "Cannot build a primitive value for %s", EdmSimpleType.Stream.toString()));
+                "Cannot build a primitive value for %s", ODataJClientEdmPrimitiveType.Stream.toString()));
       }
 
       this.opv.type = type;
@@ -133,7 +133,7 @@ public class ODataPrimitiveValue extends ODataValue {
       }
 
       if (this.opv.type == null) {
-        this.opv.type = EdmSimpleType.String;
+        this.opv.type = ODataJClientEdmPrimitiveType.String;
       }
 
       if (this.opv.type.isGeospatial()) {
@@ -181,7 +181,7 @@ public class ODataPrimitiveValue extends ODataValue {
   /**
    * Value type.
    */
-  protected EdmSimpleType type;
+  protected ODataJClientEdmPrimitiveType type;
 
   /**
    * Protected constructor, need to use the builder to instantiate this class.

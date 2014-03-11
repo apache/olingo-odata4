@@ -30,7 +30,6 @@ import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataDeserializer;
 
 public class ODataV4DeserializerImpl extends AbstractODataDeserializer implements ODataV4Deserializer {
 
@@ -59,13 +58,4 @@ public class ODataV4DeserializerImpl extends AbstractODataDeserializer implement
       throw new IllegalArgumentException("Could not parse Service Document", e);
     }
   }
-
-//    @Override
-//    protected JSONEntry toJSONEntry(final InputStream input) {
-//        try {
-//            return getObjectMapper().readValue(input, JSONEntry.class);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("While deserializing JSON entry", e);
-//        }
-//    }
 }

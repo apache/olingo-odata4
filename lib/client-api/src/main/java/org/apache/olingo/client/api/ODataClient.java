@@ -18,10 +18,14 @@
  */
 package org.apache.olingo.client.api;
 
+import org.apache.olingo.client.api.domain.ODataGeospatialValue;
+import org.apache.olingo.client.api.domain.ODataObjectFactory;
+import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.op.ODataBinder;
 import org.apache.olingo.client.api.op.ODataDeserializer;
 import org.apache.olingo.client.api.op.ODataReader;
 import org.apache.olingo.client.api.op.ODataSerializer;
+import org.apache.olingo.client.api.op.ODataWriter;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.filter.FilterFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -37,16 +41,21 @@ public interface ODataClient {
 
   FilterFactory getFilterFactory();
 
+  ODataPrimitiveValue.Builder getPrimitiveValueBuilder();
+
+  ODataGeospatialValue.Builder getGeospatialValueBuilder();
+
   ODataSerializer getSerializer();
 
   ODataDeserializer getDeserializer();
 
   ODataReader getReader();
 
-//  ODataWriter getWriter();
+  ODataWriter getWriter();
+
   ODataBinder getBinder();
 
-//  ODataObjectFactory getObjectFactory();
+  ODataObjectFactory getObjectFactory();
 //  RetrieveRequestFactory getRetrieveRequestFactory();
 //  CUDRequestFactory getCUDRequestFactory();
 //  StreamedRequestFactory getStreamedRequestFactory();

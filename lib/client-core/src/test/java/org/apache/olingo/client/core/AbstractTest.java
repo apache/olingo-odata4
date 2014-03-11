@@ -25,7 +25,6 @@ import org.apache.olingo.client.api.ODataV3Client;
 import org.apache.olingo.client.api.ODataV4Client;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTest {

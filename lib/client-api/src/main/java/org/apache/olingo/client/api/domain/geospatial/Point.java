@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.domain.geospatial;
 
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 public class Point extends Geospatial {
 
@@ -69,9 +69,9 @@ public class Point extends Geospatial {
   }
 
   @Override
-  public EdmSimpleType getEdmSimpleType() {
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
     return dimension == Dimension.GEOGRAPHY
-            ? EdmSimpleType.GeographyPoint
-            : EdmSimpleType.GeometryPoint;
+            ? ODataJClientEdmPrimitiveType.GeographyPoint
+            : ODataJClientEdmPrimitiveType.GeometryPoint;
   }
 }

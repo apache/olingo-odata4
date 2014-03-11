@@ -23,6 +23,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.client.api.domain.ODataCollectionValue;
+import org.apache.olingo.client.api.domain.ODataComplexValue;
+import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.client.api.domain.ODataValue;
 
 /**
  * OData entity property.
@@ -71,7 +75,7 @@ public class ODataProperty implements Serializable, ODataInvokeResult {
    * @param name property name.
    * @param value property value.
    */
-  ODataProperty(final String name, final ODataValue value) {
+  public ODataProperty(final String name, final ODataValue value) {
     this.name = name;
     this.value = value;
   }

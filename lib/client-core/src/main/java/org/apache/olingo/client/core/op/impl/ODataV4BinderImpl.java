@@ -22,8 +22,7 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.core.ODataV4ClientImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataBinder;
-import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.client.api.utils.URIUtils;
 
 public class ODataV4BinderImpl extends AbstractODataBinder {
 

@@ -1,0 +1,14 @@
+{
+  "odata.error": {
+    "code": "",
+    "message": {
+      "lang": "en-US",
+      "value": "Unsupported media type requested."
+    },
+    "innererror": {
+      "message": "A supported MIME type could not be found that matches the content type of the response. None of the supported type(s) 'application/atom+xml;type=entry, application/atom+xml, application/json;odata=minimalmetadata;streaming=true, application/json;odata=minimalmetadata;streaming=false, application/json;odata=minimalmetadata, application/json;odata=fullmetadata;streaming=true, application/json;odata=fullmetadata;streaming=false, application/json;odata=fullmetadata, application/json;odata=nometadata;streaming=true, application/json;odata=nometadata;streaming=false, application/json;odata=nometadata, application/json;streaming=true, application/json;streaming=false, application/json;odata=verbose, application/json' matches the content type 'application/xml; charset=UTF-8'.",
+      "type": "Microsoft.Data.OData.ODataContentTypeException",
+      "stacktrace": "   at Microsoft.Data.OData.MediaTypeUtils.GetFormatFromContentType(String contentTypeName, ODataPayloadKind[] supportedPayloadKinds, MediaTypeResolver mediaTypeResolver, MediaType& mediaType, Encoding& encoding, ODataPayloadKind& selectedPayloadKind)\r\n   at Microsoft.Data.OData.MediaTypeUtils.GetFormatFromContentType(String contentTypeHeader, ODataPayloadKind[] supportedPayloadKinds, MediaTypeResolver mediaTypeResolver, MediaType& mediaType, Encoding& encoding, ODataPayloadKind& selectedPayloadKind, String& batchBoundary)\r\n   at Microsoft.Data.OData.ODataMessageReader.ProcessContentType(ODataPayloadKind[] payloadKinds)\r\n   at Microsoft.Data.OData.ODataMessageReader.ReadFromInput[T](Func`2 readFunc, ODataPayloadKind[] payloadKinds)\r\n   at Microsoft.Data.OData.ODataMessageReader.CreateODataEntryReader(IEdmEntitySet entitySet, IEdmEntityType entityType)\r\n   at System.Data.Services.Serializers.EntityDeserializer.Read(SegmentInfo segmentInfo)\r\n   at System.Data.Services.Serializers.ODataMessageReaderDeserializer.Deserialize(SegmentInfo segmentInfo)"
+    }
+  }
+}

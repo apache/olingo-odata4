@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.op.impl;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.op.impl.AbstractODataSerializer;
 
 public class ODataV3SerializerImpl extends AbstractODataSerializer {
 

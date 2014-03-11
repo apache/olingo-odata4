@@ -48,11 +48,8 @@ public class ODataV3ClientImpl extends AbstractODataClient implements ODataV3Cli
 
   private final ODataReader reader = new ODataV3ReaderImpl(this);
 
-//  private final ODataWriterImpl writer = new ODataWriterImpl(this);
   private final ODataBinder binder = new ODataV3BinderImpl(this);
 
-//  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
-//
 //  private final V3RetrieveRequestFactory retrieveReqFact = new V3RetrieveRequestFactory(this);
 //
 //  private final V3CUDRequestFactory cudReqFact = new V3CUDRequestFactory(this);
@@ -105,20 +102,11 @@ public class ODataV3ClientImpl extends AbstractODataClient implements ODataV3Cli
     return reader;
   }
 
-//  @Override
-//  public ODataWriterImpl getWriter() {
-//    return writer;
-//  }
   @Override
   public ODataBinder getBinder() {
     return binder;
   }
 
-//  @Override
-//  public ODataObjectFactoryImpl getObjectFactory() {
-//    return objectFactory;
-//  }
-//
 //  @Override
 //  public V3RetrieveRequestFactory getRetrieveRequestFactory() {
 //    return retrieveReqFact;

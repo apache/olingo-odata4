@@ -90,7 +90,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
      * @param type type.
      * @return the current builder.
      */
-    public Builder setType(final EdmSimpleType type) {
+    public Builder setType(final ODataJClientEdmPrimitiveType type) {
       isSupported(type);
 
       if (!type.isGeospatial()) {
@@ -98,7 +98,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
                 "Use " + ODataPrimitiveValue.class.getSimpleName() + " for non-geospatial types");
       }
 
-      if (type == EdmSimpleType.Geography || type == EdmSimpleType.Geometry) {
+      if (type == ODataJClientEdmPrimitiveType.Geography || type == ODataJClientEdmPrimitiveType.Geometry) {
         throw new IllegalArgumentException(
                 type + "is not an instantiable type. "
                 + "An entity can declare a property to be of type Geometry. "
@@ -215,7 +215,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
   /**
    * Parses given tree as geospatial value.
    */
-  private Geospatial parseTree(final Element tree, final EdmSimpleType type) {
+  private Geospatial parseTree(final Element tree, final ODataJClientEdmPrimitiveType type) {
     Geospatial value;
 
     switch (type) {

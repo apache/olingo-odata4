@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,6 +21,11 @@ package org.apache.olingo.client.api.op;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.Writer;
+import org.apache.olingo.client.api.data.Entry;
+import org.apache.olingo.client.api.data.Feed;
+import org.apache.olingo.client.api.data.Link;
+import org.apache.olingo.client.api.format.ODataFormat;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -28,91 +33,87 @@ import org.w3c.dom.Node;
  */
 public interface ODataSerializer extends Serializable {
 
-    /**
-     * Writes <tt>FeedResource</tt> object onto the given stream.
-     *
-     * @param <T> feed resource type.
-     * @param obj object to be streamed.
-     * @param out output stream.
-     */
-//    <T extends Feed> void feed(T obj, OutputStream out);
+  /**
+   * Writes Feed object onto the given stream.
+   *
+   * @param obj object to be streamed.
+   * @param out output stream.
+   */
+  void feed(Feed obj, OutputStream out);
 
-    /**
-     * Writes <tt>FeedResource</tt> object by the given writer.
-     *
-     * @param <T> feed resource type.
-     * @param obj object to be streamed.
-     * @param writer writer.
-     */
-//    <T extends Feed> void feed(T obj, Writer writer);
+  /**
+   * Writes Feed object by the given writer.
+   *
+   * @param obj object to be streamed.
+   * @param writer writer.
+   */
+  void feed(Feed obj, Writer writer);
 
-    /**
-     * Writes <tt>EntryResource</tt> object onto the given stream.
-     *
-     * @param <T> entry resource type.
-     * @param obj object to be streamed.
-     * @param out output stream.
-     */
-//    <T extends Entry> void entry(T obj, OutputStream out);
+  /**
+   * Writes theEntry object onto the given stream.
+   *
+   * @param obj object to be streamed.
+   * @param out output stream.
+   */
+  void entry(Entry obj, OutputStream out);
 
-    /**
-     * Writes <tt>EntryResource</tt> object by the given writer.
-     *
-     * @param <T> entry resource type.
-     * @param obj object to be streamed.
-     * @param writer writer.
-     */
-//    <T extends Entry> void entry(T obj, Writer writer);
+  /**
+   * Writes the Entry object by the given writer.
+   *
+   * @param obj object to be streamed.
+   * @param writer writer.
+   */
+  void entry(Entry obj, Writer writer);
 
-    /**
-     * Writes entry content onto the given stream.
-     *
-     * @param element element to be streamed.
-     * @param format streaming format.
-     * @param out output stream.
-     */
-//    void property(Element element, ODataFormat format, OutputStream out);
+  /**
+   * Writes entry content onto the given stream.
+   *
+   * @param element element to be streamed.
+   * @param format streaming format.
+   * @param out output stream.
+   */
+  void property(Element element, ODataFormat format, OutputStream out);
 
-    /**
-     * Writes entry content by the given writer.
-     *
-     * @param element element to be streamed.
-     * @param format streaming format.
-     * @param writer writer.
-     */
-//    void property(Element element, ODataFormat format, Writer writer);
+  /**
+   * Writes entry content by the given writer.
+   *
+   * @param element element to be streamed.
+   * @param format streaming format.
+   * @param writer writer.
+   */
+  void property(Element element, ODataFormat format, Writer writer);
 
-    /**
-     * Writes OData link onto the given stream.
-     *
-     * @param link OData link to be streamed.
-     * @param format streaming format.
-     * @param out output stream.
-     */
-//    void link(ODataLink link, ODataFormat format, OutputStream out);
+  /**
+   * Writes link onto the given stream.
+   *
+   * @param link OData link to be streamed.
+   * @param format streaming format.
+   * @param out output stream.
+   */
+  void link(Link link, ODataFormat format, OutputStream out);
 
-    /**
-     * Writes OData link by the given writer.
-     *
-     * @param link OData link to be streamed.
-     * @param format streaming format.
-     * @param writer writer.
-     */
-//    void link(ODataLink link, ODataFormat format, Writer writer);
+  /**
+   * Writes link by the given writer.
+   *
+   * @param link OData link to be streamed.
+   * @param format streaming format.
+   * @param writer writer.
+   */
+  void link(Link link, ODataFormat format, Writer writer);
 
-    /**
-     * Writes DOM object onto the given stream.
-     *
-     * @param content DOM to be streamed.
-     * @param out output stream.
-     */
-    void dom(Node content, OutputStream out);
+  /**
+   * Writes DOM object onto the given stream.
+   *
+   * @param content DOM to be streamed.
+   * @param out output stream.
+   */
+  void dom(Node content, OutputStream out);
 
-    /**
-     * Writes DOM object by the given writer.
-     *
-     * @param content DOM to be streamed.
-     * @param writer writer.
-     */
-    void dom(Node content, Writer writer);
+  /**
+   * Writes DOM object by the given writer.
+   *
+   * @param content DOM to be streamed.
+   * @param writer writer.
+   */
+  void dom(Node content, Writer writer);
 }

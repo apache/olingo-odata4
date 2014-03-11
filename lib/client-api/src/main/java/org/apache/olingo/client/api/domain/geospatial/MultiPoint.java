@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.domain.geospatial;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 public class MultiPoint extends ComposedGeospatial<Point> {
 
@@ -31,9 +31,9 @@ public class MultiPoint extends ComposedGeospatial<Point> {
   }
 
   @Override
-  public EdmSimpleType getEdmSimpleType() {
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
     return dimension == Dimension.GEOGRAPHY
-            ? EdmSimpleType.GeographyMultiPoint
-            : EdmSimpleType.GeometryMultiPoint;
+            ? ODataJClientEdmPrimitiveType.GeographyMultiPoint
+            : ODataJClientEdmPrimitiveType.GeometryMultiPoint;
   }
 }

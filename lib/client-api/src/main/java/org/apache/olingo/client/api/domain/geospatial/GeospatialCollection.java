@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.domain.geospatial;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 /**
  * Wrapper for a collection of geospatials info.
@@ -40,9 +40,9 @@ public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
     }
 
     @Override
-    public EdmSimpleType getEdmSimpleType() {
+    public ODataJClientEdmPrimitiveType getEdmSimpleType() {
         return dimension == Dimension.GEOGRAPHY
-                ? EdmSimpleType.GeographyCollection
-                : EdmSimpleType.GeometryCollection;
+                ? ODataJClientEdmPrimitiveType.GeographyCollection
+                : ODataJClientEdmPrimitiveType.GeometryCollection;
     }
 }

@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.domain.geospatial;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
@@ -31,9 +31,9 @@ public class MultiPolygon extends ComposedGeospatial<Polygon> {
   }
 
   @Override
-  public EdmSimpleType getEdmSimpleType() {
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
     return dimension == Dimension.GEOGRAPHY
-            ? EdmSimpleType.GeographyMultiPolygon
-            : EdmSimpleType.GeometryMultiPolygon;
+            ? ODataJClientEdmPrimitiveType.GeographyMultiPolygon
+            : ODataJClientEdmPrimitiveType.GeometryMultiPolygon;
   }
 }

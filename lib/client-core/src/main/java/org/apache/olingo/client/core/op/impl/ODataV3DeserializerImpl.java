@@ -29,7 +29,6 @@ import org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v3.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataDeserializer;
 
 public class ODataV3DeserializerImpl extends AbstractODataDeserializer implements ODataV3Deserializer {
 
@@ -59,12 +58,4 @@ public class ODataV3DeserializerImpl extends AbstractODataDeserializer implement
     }
   }
 
-//    @Override
-//    protected JSONEntry toJSONEntry(final InputStream input) {
-//        try {
-//            return getObjectMapper().readValue(input, JSONEntry.class);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("While deserializing JSON entry", e);
-//        }
-//    }
 }

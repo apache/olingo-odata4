@@ -19,12 +19,11 @@
 package org.apache.olingo.client.core.uri.filter;
 
 import org.apache.olingo.client.api.uri.filter.FilterArg;
-import org.apache.olingo.client.api.uri.filter.FilterArgFactory;
 
 /**
  * Filter property path; obtain instances via <tt>FilterArgFactory</tt>.
  *
- * @see FilterArgFactory
+ * @see org.apache.olingo.client.api.uri.filter.FilterArgFactory
  */
 public class FilterConst implements FilterArg {
 

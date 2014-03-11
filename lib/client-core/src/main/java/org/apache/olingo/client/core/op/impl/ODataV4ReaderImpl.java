@@ -24,7 +24,6 @@ import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.core.ODataV4ClientImpl;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataReader;
 import org.apache.olingo.commons.api.edm.Edm;
 
 public class ODataV4ReaderImpl extends AbstractODataReader {

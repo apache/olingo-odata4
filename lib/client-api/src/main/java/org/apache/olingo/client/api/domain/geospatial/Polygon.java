@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.domain.geospatial;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.domain.EdmSimpleType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 /**
  * Polygon.
@@ -65,9 +65,9 @@ public class Polygon extends Geospatial {
   }
 
   @Override
-  public EdmSimpleType getEdmSimpleType() {
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
     return dimension == Dimension.GEOGRAPHY
-            ? EdmSimpleType.GeographyPolygon
-            : EdmSimpleType.GeometryPolygon;
+            ? ODataJClientEdmPrimitiveType.GeographyPolygon
+            : ODataJClientEdmPrimitiveType.GeometryPolygon;
   }
 }

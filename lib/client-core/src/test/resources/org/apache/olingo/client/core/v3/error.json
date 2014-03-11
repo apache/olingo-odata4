@@ -1,0 +1,9 @@
+{
+  "odata.error": {
+    "code": "",
+    "message": {
+      "lang": "en-US",
+      "value": "The URL representing the root of the service only supports GET requests."
+    }
+  }
+}

@@ -20,10 +20,14 @@ package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-
+import org.apache.olingo.client.api.data.Entry;
+import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.Feed;
+import org.apache.olingo.client.api.data.LinkCollection;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.w3c.dom.Element;
 
 /**
@@ -34,48 +38,41 @@ public interface ODataDeserializer extends Serializable {
   XMLMetadata toMetadata(InputStream input);
 
   /**
-   * Gets the ServiceDocumentResource object represented by the given InputStream.
+   * Gets the ServiceDocument object represented by the given InputStream.
    *
    * @param input stream to be de-serialized.
    * @param format OData service document format.
-   * @return ServiceDocumentResource object.
+   * @return <tt>ServiceDocument</tt> object.
    */
   ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
 
   /**
    * Gets a feed object from the given InputStream.
    *
-   * @param <T> reference class type
    * @param input stream to be de-serialized.
-   * @param reference reference class (AtomFeed.class, JSONFeed.class).
-   * @return FeedResource instance.
+   * @param format Atom or JSON
+   * @return Feed instance.
    */
-//    <T extends Feed> T toFeed(InputStream input, Class<T> reference);
+  Feed toFeed(InputStream input, ODataPubFormat format);
+
   /**
    * Gets an entry object from the given InputStream.
    *
-   * @param <T> reference class type
    * @param input stream to be de-serialized.
-   * @param reference reference class (AtomEntry.class, JSONV3Entry.class).
-   * @return EntryResource instance.
+   * @param format Atom or JSON
+   * @return Entry instance.
    */
-//    <T extends Entry> T toEntry(InputStream input, Class<T> reference);
+  Entry toEntry(InputStream input, ODataPubFormat format);
+
   /**
    * Gets a DOM representation of the given InputStream.
    *
    * @param input stream to be de-serialized.
-   * @param format OData format.
+   * @param format XML or JSON
    * @return DOM.
    */
-//  Element toPropertyDOM(InputStream input, ODataFormat format);
-  /**
-   * Gets a list of links from the given InputStream.
-   *
-   * @param input stream to be de-serialized.
-   * @param format OData format.
-   * @return de-serialized links.
-   */
-//    LinkCollection toLinkCollection(InputStream input, ODataFormat format);
+  Element toPropertyDOM(InputStream input, ODataFormat format);
+
   /**
    * Gets the ODataError object represented by the given InputStream.
    *
@@ -83,7 +80,8 @@ public interface ODataDeserializer extends Serializable {
    * @param isXML 'TRUE' if the error is represented by XML; 'FALSE' otherwise.
    * @return
    */
-//  ODataError toODataError(InputStream input, boolean isXML);
+  Error toError(InputStream input, boolean isXML);
+
   /**
    * Parses the given input into a DOM tree.
    *
@@ -91,4 +89,14 @@ public interface ODataDeserializer extends Serializable {
    * @return DOM tree
    */
   Element toDOM(InputStream input);
+
+  /**
+   * Gets a list of links from the given InputStream.
+   *
+   * @param input stream to be de-serialized.
+   * @param format OData format.
+   * @return de-serialized links.
+   */
+  LinkCollection toLinkCollection(InputStream input, ODataFormat format);
+
 }
