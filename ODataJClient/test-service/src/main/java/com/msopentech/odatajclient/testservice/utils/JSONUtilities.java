@@ -354,6 +354,10 @@ public class JSONUtilities extends AbstractUtilities {
         final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
         final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
 
+        if (toBeChangedNode.get(linkName + JSON_NAVIGATION_SUFFIX) == null) {
+            throw new NotFoundException();
+        }
+
         toBeChangedNode.set(linkName, replacementNode.get(JSON_VALUE_NAME));
 
         final JsonNode next = replacementNode.get(linkName + JSON_NEXTLINK_NAME);

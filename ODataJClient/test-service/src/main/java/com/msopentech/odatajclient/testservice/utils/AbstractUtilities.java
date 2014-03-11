@@ -408,8 +408,10 @@ public abstract class AbstractUtilities {
 
     public Response createResponse(
             final InputStream entity, final String etag, final Accept accept, final Response.Status status) {
-
         final Response.ResponseBuilder builder = Response.ok();
+        if (version == ODataVersion.v3) {
+            builder.header(ODATA_SERVICE_VERSION, version.getVersion() + ";");
+        }
 
         if (StringUtils.isNotBlank(etag)) {
             builder.header("ETag", etag);
@@ -424,7 +426,11 @@ public abstract class AbstractUtilities {
         }
 
         if (entity != null) {
-            builder.entity(entity);
+            if (accept != null && (Accept.JSON == accept || Accept.JSON_NOMETA == accept)) {
+                builder.entity(Commons.changeFormat(entity, accept));
+            } else {
+                builder.entity(entity);
+            }
         }
 
         return builder.build();
@@ -434,6 +440,9 @@ public abstract class AbstractUtilities {
         LOG.debug("Create fault response about .... ", e);
 
         final Response.ResponseBuilder builder = Response.serverError();
+        if (version == ODataVersion.v3) {
+            builder.header(ODATA_SERVICE_VERSION, version.getVersion() + ";");
+        }
 
         final String ext;
         final Accept contentType;
@@ -518,6 +527,32 @@ public abstract class AbstractUtilities {
                 try {
                     final Map<String, InputStream> value =
                             getPropertyValues(entity, Collections.<String>singletonList("CustomerId"), accept);
+                    res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+                } catch (Exception e) {
+                    if (sequence.containsKey(entitySetName)) {
+                        res = String.valueOf(sequence.get(entitySetName) + 1);
+                    } else {
+                        throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+                    }
+                }
+                sequence.put(entitySetName, Integer.valueOf(res));
+            } else if ("ComputerDetail".equals(entitySetName)) {
+                try {
+                    final Map<String, InputStream> value =
+                            getPropertyValues(entity, Collections.<String>singletonList("ComputerDetailId"), accept);
+                    res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+                } catch (Exception e) {
+                    if (sequence.containsKey(entitySetName)) {
+                        res = String.valueOf(sequence.get(entitySetName) + 1);
+                    } else {
+                        throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+                    }
+                }
+                sequence.put(entitySetName, Integer.valueOf(res));
+            }else if ("AllGeoTypesSet".equals(entitySetName)) {
+                try {
+                    final Map<String, InputStream> value =
+                            getPropertyValues(entity, Collections.<String>singletonList("Id"), accept);
                     res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
                 } catch (Exception e) {
                     if (sequence.containsKey(entitySetName)) {

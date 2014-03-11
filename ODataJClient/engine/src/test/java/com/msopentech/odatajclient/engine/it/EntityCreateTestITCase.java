@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import org.apache.http.entity.ContentType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -59,10 +60,6 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     protected String getServiceRoot() {
         return testStaticServiceRootURL;
-    }
-
-    protected String getOldServiceRoot() {
-        return testDefaultServiceRootURL;
     }
 
     @Test
@@ -253,11 +250,12 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     }
 
     @Test
+    @Ignore
     public void issue135() {
         final int id = 2;
         final ODataEntity original = getSampleCustomerProfile(id, "Sample customer for issue 135", false);
 
-        final URIBuilder uriBuilder = client.getURIBuilder(getOldServiceRoot()).appendEntitySetSegment("Customer");
+        final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
         final ODataEntityCreateRequest createReq =
                 client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
         createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
@@ -271,7 +269,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             fail(e.getMessage());
         } finally {
             final ODataDeleteResponse deleteRes = client.getCUDRequestFactory().getDeleteRequest(
-                    client.getURIBuilder(getOldServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).
+                    client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).
                     build()).
                     execute();
             assertEquals(204, deleteRes.getStatusCode());

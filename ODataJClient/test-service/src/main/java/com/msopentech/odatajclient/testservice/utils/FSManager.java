@@ -111,12 +111,7 @@ public class FSManager {
             }
 
             // return new in-memory content
-            if (accept != null && (Accept.JSON == accept || Accept.JSON_NOMETA == accept)) {
-                return Commons.changeFormat(fileObject.getContent().getInputStream(), accept);
-            } else {
-                return fileObject.getContent().getInputStream();
-            }
-
+            return fileObject.getContent().getInputStream();
         } catch (IOException e) {
             throw new NotFoundException(e);
         }

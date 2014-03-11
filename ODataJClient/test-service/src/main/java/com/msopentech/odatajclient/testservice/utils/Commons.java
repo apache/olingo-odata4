@@ -66,6 +66,8 @@ public abstract class Commons {
         sequence.put("CustomerInfo", 1000);
         sequence.put("Message", 1000);
         sequence.put("Order", 1000);
+        sequence.put("ComputerDetail", 1000);
+        sequence.put("AllGeoTypesSet", 1000);
 
         mediaContent.add("CustomerInfo");
     }
@@ -164,12 +166,13 @@ public abstract class Commons {
         return IOUtils.toInputStream(links.toString());
     }
 
-    public static InputStream changeFormat(final InputStream is, final Accept target) throws IOException {
+    public static InputStream changeFormat(final InputStream is, final Accept target) {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOUtils.copy(is, bos);
-        IOUtils.closeQuietly(is);
 
         try {
+            IOUtils.copy(is, bos);
+            IOUtils.closeQuietly(is);
+
             final ObjectMapper mapper = new ObjectMapper();
             final JsonNode node =
                     changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), target);
@@ -178,6 +181,8 @@ public abstract class Commons {
         } catch (Exception e) {
             LOG.error("Error changing format", e);
             return new ByteArrayInputStream(bos.toByteArray());
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 

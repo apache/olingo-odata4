@@ -20,27 +20,23 @@ package com.msopentech.odatajclient.engine.it;
 
 import static org.junit.Assert.*;
 
+import com.msopentech.odatajclient.engine.client.http.HttpClientException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Test;
 
-import com.msopentech.odatajclient.engine.client.http.HttpClientException;
 import com.msopentech.odatajclient.engine.communication.ODataClientErrorException;
-import com.msopentech.odatajclient.engine.communication.request.cud.CUDRequestFactory;
 import com.msopentech.odatajclient.engine.communication.request.cud.ODataDeleteRequest;
 import com.msopentech.odatajclient.engine.communication.request.cud.ODataEntityCreateRequest;
 import com.msopentech.odatajclient.engine.communication.request.retrieve.ODataEntityRequest;
-import com.msopentech.odatajclient.engine.communication.request.retrieve.RetrieveRequestFactory;
 import com.msopentech.odatajclient.engine.communication.response.ODataDeleteResponse;
 import com.msopentech.odatajclient.engine.communication.response.ODataEntityCreateResponse;
 import com.msopentech.odatajclient.engine.communication.response.ODataRetrieveResponse;
@@ -48,19 +44,16 @@ import com.msopentech.odatajclient.engine.data.ODataCollectionValue;
 import com.msopentech.odatajclient.engine.data.ODataComplexValue;
 import com.msopentech.odatajclient.engine.data.ODataEntity;
 import com.msopentech.odatajclient.engine.data.ODataEntitySet;
-import com.msopentech.odatajclient.engine.data.ODataObjectFactory;
 import com.msopentech.odatajclient.engine.data.ODataInlineEntity;
 import com.msopentech.odatajclient.engine.data.ODataInlineEntitySet;
 import com.msopentech.odatajclient.engine.data.ODataLink;
-import com.msopentech.odatajclient.engine.data.ODataPrimitiveValue;
-import com.msopentech.odatajclient.engine.data.ODataProperty;
-import com.msopentech.odatajclient.engine.data.ODataValue;
 import com.msopentech.odatajclient.engine.metadata.edm.EdmSimpleType;
 import com.msopentech.odatajclient.engine.format.ODataPubFormat;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
 import com.msopentech.odatajclient.engine.utils.URIUtils;
+import org.junit.Ignore;
 
-public class CreateEntityTestITCase extends AbstractTestITCase {
+public class EntityCreateMoreTestITCase extends AbstractTestITCase {
 
     // test with json full metadata
     @Test
@@ -70,9 +63,9 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-content";
         final int id = 1063;
         final ODataEntity original = getNewCustomer(id, "New Customer", false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with atom
 
@@ -83,22 +76,23 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-no-content";
         final int id = 1064;
         final ODataEntity original = getNewCustomer(id, "New Customer", false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // gives null pointer exception when the content type and the accept type is json mo metadata 
 
     @Test(expected = HttpClientException.class)
+    @Ignore // static server doesn't add any entity attribute type; type is expected.
     public void withJSONNoMetadata() {
         final ODataPubFormat format = ODataPubFormat.JSON_NO_METADATA;
         final String contenttype = "application/json;odata=nometadata";
         final String prefer = "return-content";
         final int id = 15;
         final ODataEntity original = getNewCustomer(id, "New Customer", false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // deep insert
 
@@ -109,11 +103,11 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-content";
         final int id = 5777;
         final ODataEntity original = getNewCustomer(id, "New customer", true);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contentType, prefer);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contentType, prefer);
         final ODataEntity actual =
-                validateEntities(testDefaultServiceRootURL, format, original, id, Collections.<String>singleton("Info"),
+                validateEntities(testStaticServiceRootURL, format, original, id, Collections.<String>singleton("Info"),
                 "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // deep insert
 
@@ -124,11 +118,11 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-content";
         final int id = 67;
         final ODataEntity original = getNewCustomer(id, "New customer", true);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contentType, prefer);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contentType, prefer);
         final ODataEntity actual =
-                validateEntities(testDefaultServiceRootURL, format, original, id, Collections.<String>singleton("Info"),
+                validateEntities(testStaticServiceRootURL, format, original, id, Collections.<String>singleton("Info"),
                 "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // with a string having special characters, html tags, numbers and characters
 
@@ -139,13 +133,14 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-content";
         final int id = 11;
         final ODataEntity original = getNewCustomer(id, "New 12,345//\\%^&*()<html>customer", false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // with atom content type and json accept type. its giving 400 error.
 
     @Test
+    @Ignore
     public void createWithATOMReturnJSON() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         final String contenttype = "application/atom+xml";
@@ -153,10 +148,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final int id = 146;
         try {
             final ODataEntity original = getNewCustomer(id, "New Customer", false);
-            createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-            final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+            createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+            final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                     "Customer");
-            delete(format, actual, false, testDefaultServiceRootURL);
+            delete(format, actual, false, testStaticServiceRootURL);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -164,6 +159,7 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
     // with json content type and atom accept type. its giving 400 error.
 
     @Test
+    @Ignore
     public void createWithJSONReturnATOM() {
         final ODataPubFormat format = ODataPubFormat.ATOM;
         final String contenttype = "application/json;odata=fullmetadata";
@@ -171,10 +167,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final int id = 155;
         try {
             final ODataEntity original = getNewCustomer(id, "New Customer", false);
-            createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-            final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+            createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+            final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                     "Customer");
-            delete(format, actual, false, testDefaultServiceRootURL);
+            delete(format, actual, false, testStaticServiceRootURL);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -190,22 +186,22 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final ODataEntity original = getNewCustomer(id,
                 "Sampledskjfhsdkjfhsdkfhksdjhfksdhfvjhdfgkjhfdkjghdfkjghkfdhgkdfhgdfhgkjdfghkdfjghkdfjghfkdjghkdfghkdfhgkdfjghdfkjghkfdjghfksdhfkjsdhfdshfhsdfjhsdkfhkdsfhksdfhksdhfksdhfksdhfksdhfsdhfksdhfkjsdhfksdhfksdhfkds",
                 false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
 
     //Test with no Id
     @Test
     public void withNoId() {
-        final ODataPubFormat format = ODataPubFormat.ATOM;
+        final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         final String contenttype = "application/json;odata=fullmetadata";
         final String prefer = "return-content";
         final int id = 0;
         final ODataEntity original = getNewCustomer(id, "New Customer", false);
-        createEntity(testDefaultServiceRootURL, format, original, "Customer", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null, "Customer");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        createEntity(testStaticServiceRootURL, format, original, "Customer", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null, "Customer");
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test different primitive properties like date, String, decimal
 
@@ -217,10 +213,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final int id = 34;
         final ODataEntity original = getComputerDetailsEntity(id, "Computer details", false,
                 "2013-12-31T23:59:59.9999999", "-32.4985749");
-        createEntity(testDefaultServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+        createEntity(testStaticServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                 "ComputerDetail");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with invalid 
 
@@ -231,14 +227,15 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final String prefer = "return-no-content";
         final int id = 34;
         final ODataEntity original = getComputerDetailsEntity(id, "Computer details", false, "abc", "-32.4985749");
-        createEntity(testDefaultServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+        createEntity(testStaticServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                 "ComputerDetail");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with different decimal values. Returns 400 error
 
     @Test(expected = ODataClientErrorException.class)
+    @Ignore // static server doesn't provide any input validation
     public void testWithDecimal() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         final String contenttype = "application/json;odata=fullmetadata";
@@ -247,10 +244,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final ODataEntity original = getComputerDetailsEntity(id, "Computer details Test", false,
                 "2013-12-31T23:59:59.9999999",
                 "-344587543985799834759845798475943759438573495734985739457349857394857894.4985749");
-        createEntity(testDefaultServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+        createEntity(testStaticServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                 "ComputerDetail");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with date. Unable to parse a date because the property type is datetime and not date
 
@@ -262,10 +259,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         final int id = 35;
         final ODataEntity original = getComputerDetailsEntity(id, "Computer details Test", false, "2013-12-31",
                 "-37894.4985749");
-        createEntity(testDefaultServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, original, id, null,
+        createEntity(testStaticServiceRootURL, format, original, "ComputerDetail", contenttype, prefer);
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, original, id, null,
                 "ComputerDetail");
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // with multiple key test
 
@@ -296,8 +293,9 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
                     client.getPrimitiveValueBuilder().setValue(false).setType(EdmSimpleType.Boolean).build()));
 
             final URIBuilder builder =
-                    client.getURIBuilder(testDefaultServiceRootURL).appendEntitySetSegment("Message");
-            final ODataEntityCreateRequest req = client.getCUDRequestFactory().getEntityCreateRequest(builder.build(), message);
+                    client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Message");
+            final ODataEntityCreateRequest req = client.getCUDRequestFactory().getEntityCreateRequest(builder.build(),
+                    message);
             req.setFormat(format);
             req.setContentType(contentType);
             req.setPrefer(prefer);
@@ -347,8 +345,9 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
                     client.getPrimitiveValueBuilder().setValue(false).setType(EdmSimpleType.Boolean).build()));
 
             final URIBuilder builder =
-                    client.getURIBuilder(testDefaultServiceRootURL).appendEntitySetSegment("Message");
-            final ODataEntityCreateRequest req = client.getCUDRequestFactory().getEntityCreateRequest(builder.build(), message);
+                    client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Message");
+            final ODataEntityCreateRequest req = client.getCUDRequestFactory().getEntityCreateRequest(builder.build(),
+                    message);
             req.setFormat(format);
             req.setContentType(contentType);
             req.setPrefer(prefer);
@@ -449,81 +448,8 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
             }
         }
     }
-    // compares properties of the newly created entity with the properties that were originally provided
 
-    public void checkProperties(final Collection<ODataProperty> original, final Collection<ODataProperty> actual) {
-        assertTrue(original.size() <= actual.size());
-
-        final Map<String, ODataProperty> actualProperties = new HashMap<String, ODataProperty>(actual.size());
-
-        for (ODataProperty prop : actual) {
-            assertFalse(actualProperties.containsKey(prop.getName()));
-            actualProperties.put(prop.getName(), prop);
-        }
-
-        assertTrue(actual.size() <= actualProperties.size());
-
-        for (ODataProperty prop : original) {
-            assertNotNull(prop);
-            if (actualProperties.containsKey(prop.getName())) {
-                final ODataProperty actualProp = actualProperties.get(prop.getName());
-                assertNotNull(actualProp);
-
-                if (prop.getValue() != null && actualProp.getValue() != null) {
-                    checkPropertyValue(prop.getName(), prop.getValue(), actualProp.getValue());
-                }
-            }
-        }
-    }
-    // compares property value of the newly created entity with the property value that were originally provided
-
-    public void checkPropertyValue(final String propertyName,
-            final ODataValue original, final ODataValue actual) {
-
-        assertNotNull("Null original value for " + propertyName, original);
-        assertNotNull("Null actual value for " + propertyName, actual);
-
-        assertEquals("Type mismatch for '" + propertyName + "'",
-                original.getClass().getSimpleName(), actual.getClass().getSimpleName());
-
-        if (original.isComplex()) {
-            final List<ODataProperty> originalPropertyValue = new ArrayList<ODataProperty>();
-            for (ODataProperty prop : original.asComplex()) {
-                originalPropertyValue.add(prop);
-            }
-
-            final List<ODataProperty> actualPropertyValue = new ArrayList<ODataProperty>();
-            for (ODataProperty prop : (ODataComplexValue) actual) {
-                actualPropertyValue.add(prop);
-            }
-
-            checkProperties(originalPropertyValue, actualPropertyValue);
-        } else if (original.isCollection()) {
-            assertTrue(original.asCollection().size() <= actual.asCollection().size());
-
-            boolean found = original.asCollection().isEmpty();
-
-            for (ODataValue originalValue : original.asCollection()) {
-                for (ODataValue actualValue : actual.asCollection()) {
-                    try {
-                        checkPropertyValue(propertyName, originalValue, actualValue);
-                        found = true;
-                    } catch (AssertionError error) {
-                    }
-                }
-            }
-
-            assertTrue("Found " + actual + " and expected " + original, found);
-        } else {
-            assertTrue("Primitive value for '" + propertyName + "' type mismatch",
-                    original.asPrimitive().getTypeName().equals(actual.asPrimitive().getTypeName()));
-
-            assertEquals("Primitive value for '" + propertyName + "' mismatch",
-                    original.asPrimitive().toString(), actual.asPrimitive().toString());
-        }
-    }
     // add Information property
-
     public ODataEntity getInfo(final int id, final String info) {
         final ODataEntity entity =
                 client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo");
@@ -548,12 +474,10 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         // add key attribute
         if (id != 0) {
             entity.addProperty(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                    client.getPrimitiveValueBuilder().setText(String.valueOf(id)).
-                    setType(EdmSimpleType.Int32).build()));
+                    client.getPrimitiveValueBuilder().setValue(id).setType(EdmSimpleType.Int32).build()));
         } else {
             entity.addProperty(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                    client.getPrimitiveValueBuilder().setText(String.valueOf(0)).
-                    setType(EdmSimpleType.Int32).build()));
+                    client.getPrimitiveValueBuilder().setValue(0).setType(EdmSimpleType.Int32).build()));
         }
         final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(
                 "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)");
@@ -595,7 +519,8 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
         entity.addProperty(client.getObjectFactory().newCollectionProperty("BackupContactInfo",
                 backupContactInfoValue));
         if (withInlineInfo) {
-            final ODataInlineEntity inlineInfo = client.getObjectFactory().newInlineEntity("Info", URI.create("Customer(" + id
+            final ODataInlineEntity inlineInfo = client.getObjectFactory().newInlineEntity("Info", URI.create(
+                    "Customer(" + id
                     + ")/Info"), getInfo(id, name + "_Info"));
             inlineInfo.getEntity().setMediaEntity(true);
             entity.addLink(inlineInfo);
@@ -610,7 +535,8 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
             final String purchaseDate, String dimensionValue) {
 
         final ODataEntity entity =
-                client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail");
+                client.getObjectFactory().
+                newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail");
 
 
         entity.addProperty(client.getObjectFactory().newPrimitiveProperty("Manufacturer",
@@ -769,7 +695,8 @@ public class CreateEntityTestITCase extends AbstractTestITCase {
     public void getOpenTypeEntityWithString(final ODataPubFormat format, final String contentType,
             final int id, final String prefer, String uuid) {
         try {
-            ODataEntity entity = client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.OpenTypesService.Row");
+            ODataEntity entity = client.getObjectFactory().newEntity(
+                    "Microsoft.Test.OData.Services.OpenTypesService.Row");
             entity.addProperty(client.getObjectFactory().newPrimitiveProperty("Id",
                     client.getPrimitiveValueBuilder().setType(EdmSimpleType.Guid).setValue(uuid).build()));
             entity.addProperty(client.getObjectFactory().newPrimitiveProperty("LongValue",

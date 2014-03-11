@@ -19,6 +19,7 @@
 package com.msopentech.odatajclient.testservice.utils;
 
 public class Constants {
+    public final static String ODATA_SERVICE_VERSION = "DataServiceVersion";
 
     public final static String DEFAULT_SERVICE_URL = "http://localhost:9080/StaticService/V3/Static.svc/";
 
