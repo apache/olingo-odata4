@@ -33,7 +33,4 @@
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-    <properties>
-        <netbeans.hint.license>apache20</netbeans.hint.license>
-    </properties>
 </project>
