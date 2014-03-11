@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
@@ -153,7 +154,7 @@ public class AtomDeserializer {
 
     final List<Element> actions = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_ACTION);
     for (Element action : actions) {
-      final OperationImpl operation = new OperationImpl();
+      final ODataOperation operation = new ODataOperation();
       operation.setMetadataAnchor(action.getAttribute(ODataConstants.ATTR_METADATA));
       operation.setTitle(action.getAttribute(ODataConstants.ATTR_TITLE));
       operation.setTarget(URI.create(action.getAttribute(ODataConstants.ATTR_TARGET)));

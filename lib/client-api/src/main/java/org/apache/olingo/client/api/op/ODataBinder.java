@@ -31,7 +31,6 @@ import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataLinkCollection;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
-import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.w3c.dom.Element;
 
 public interface ODataBinder extends Serializable {

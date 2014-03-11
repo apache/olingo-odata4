@@ -19,8 +19,7 @@
 package org.apache.olingo.client.api.domain;
 
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.data.LinkType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * OData in-line entity set.
@@ -34,33 +33,33 @@ public class ODataInlineEntitySet extends ODataLink {
   /**
    * Constructor.
    *
-   * @param client OData client.
+   * @param version OData service version.
    * @param uri edit link.
    * @param type type.
    * @param title title.
    * @param entitySet entity set.
    */
-  public ODataInlineEntitySet(final ODataClient client, final URI uri, final LinkType type, final String title,
-          final ODataEntitySet entitySet) {
+  public ODataInlineEntitySet(final ODataServiceVersion version, final URI uri, final ODataLinkType type,
+          final String title, final ODataEntitySet entitySet) {
 
-    super(client, uri, type, title);
+    super(version, uri, type, title);
     this.entitySet = entitySet;
   }
 
   /**
    * Constructor.
    *
-   * @param client OData client.
+   * @param version OData service version.
    * @param baseURI base URI.
    * @param href href.
    * @param type type.
    * @param title title.
    * @param entitySet entity set.
    */
-  public ODataInlineEntitySet(final ODataClient client, final URI baseURI, final String href, final LinkType type,
-          final String title, final ODataEntitySet entitySet) {
+  public ODataInlineEntitySet(final ODataServiceVersion version, final URI baseURI, final String href,
+          final ODataLinkType type, final String title, final ODataEntitySet entitySet) {
 
-    super(client, baseURI, href, type, title);
+    super(version, baseURI, href, type, title);
     this.entitySet = entitySet;
   }
 

@@ -35,7 +35,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.olingo.client.api.ODataConstants;
-import org.apache.olingo.client.api.data.LinkType;
+import org.apache.olingo.client.api.domain.ODataLinkType;
+import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.w3c.dom.Document;
@@ -167,7 +168,7 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
                 + getTitle(field));
         if (field.getValue().isValueNode()) {
           link.setHref(field.getValue().textValue());
-          link.setType(LinkType.ENTITY_NAVIGATION.toString());
+          link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
         }
         // NOTE: this should be expected to happen, but it isn't - at least up to OData 4.0
                 /* if (field.getValue().isArray()) {
@@ -185,7 +186,7 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
         link.setRel(client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL)
                 + getTitle(field));
         link.setHref(field.getValue().textValue());
-        link.setType(LinkType.ASSOCIATION.toString());
+        link.setType(ODataLinkType.ASSOCIATION.toString());
         entry.getAssociationLinks().add(link);
 
         toRemove.add(field.getKey());
@@ -195,14 +196,14 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
         link.setRel(client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL)
                 + getTitle(field));
         link.setHref(field.getValue().textValue());
-        link.setType(LinkType.MEDIA_EDIT.toString());
+        link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entry.getMediaEditLinks().add(link);
 
         toRemove.add(field.getKey());
         toRemove.add(setInline(field.getKey(),
                 ODataConstants.JSON_MEDIAEDIT_LINK_SUFFIX, tree, parser.getCodec(), link));
       } else if (field.getKey().charAt(0) == '#') {
-        final OperationImpl operation = new OperationImpl();
+        final ODataOperation operation = new ODataOperation();
         operation.setMetadataAnchor(field.getKey());
 
         final ObjectNode opNode = (ObjectNode) tree.get(field.getKey());

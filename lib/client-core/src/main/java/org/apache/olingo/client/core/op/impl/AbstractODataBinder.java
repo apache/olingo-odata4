@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.LinkCollection;
-import org.apache.olingo.client.api.data.Operation;
+import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
@@ -311,7 +311,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       entity.addLink(client.getObjectFactory().newMediaEditLink(link.getTitle(), base, link.getHref()));
     }
 
-    for (Operation operation : resource.getOperations()) {
+    for (ODataOperation operation : resource.getOperations()) {
       operation.setTarget(URIUtils.getURI(base, operation.getTarget()));
       entity.getOperations().add(operation);
     }

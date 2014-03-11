@@ -29,7 +29,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataConstants;
 import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.LinkType;
+import org.apache.olingo.client.api.domain.ODataLinkType;
 
 /**
  * Writes out JSON string from an entry.
@@ -75,14 +75,14 @@ public class JSONEntrySerializer extends ODataJacksonSerializer<JSONEntryImpl> {
       } else if (link.getInlineFeed() != null) {
         jgen.writeObjectField(link.getTitle(), link.getInlineFeed());
       } else {
-        LinkType type = null;
+        ODataLinkType type = null;
         try {
-          type = LinkType.fromString(client, link.getRel(), link.getType());
+          type = ODataLinkType.fromString(client, link.getRel(), link.getType());
         } catch (IllegalArgumentException e) {
           // ignore   
         }
 
-        if (type == LinkType.ENTITY_SET_NAVIGATION) {
+        if (type == ODataLinkType.ENTITY_SET_NAVIGATION) {
           final List<String> uris;
           if (entitySetLinks.containsKey(link.getTitle())) {
             uris = entitySetLinks.get(link.getTitle());

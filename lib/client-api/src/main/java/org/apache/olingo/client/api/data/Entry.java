@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.data;
 
+import org.apache.olingo.client.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
 import org.w3c.dom.Element;
@@ -127,7 +128,7 @@ public interface Entry {
    *
    * @return operations.
    */
-  List<Operation> getOperations();
+  List<ODataOperation> getOperations();
 
   /**
    * Gets content.

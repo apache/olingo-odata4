@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.Operation;
+import org.apache.olingo.client.api.domain.ODataOperation;
 import org.w3c.dom.Element;
 
 /**
@@ -49,7 +49,7 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
 
   private final List<Link> mediaEditLinks = new ArrayList<Link>();
 
-  private final List<Operation> operations = new ArrayList<Operation>();
+  private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
   private Element content;
 
@@ -125,7 +125,7 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
   }
 
   @Override
-  public List<Operation> getOperations() {
+  public List<ODataOperation> getOperations() {
     return operations;
   }
 

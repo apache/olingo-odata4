@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.data.Operation;
 
 /**
  * OData entity.
@@ -74,7 +73,7 @@ public class ODataEntity extends ODataItem implements ODataInvokeResult {
   /**
    * Operations (legacy, functions, actions).
    */
-  protected final List<Operation> operations = new ArrayList<Operation>();
+  protected final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
   /**
    * Entity properties.
@@ -114,9 +113,9 @@ public class ODataEntity extends ODataItem implements ODataInvokeResult {
    * @param title operation to look for
    * @return operation if found with given title, <tt>null</tt> otherwise
    */
-  public Operation getOperation(final String title) {
-    Operation result = null;
-    for (Operation operation : operations) {
+  public ODataOperation getOperation(final String title) {
+    ODataOperation result = null;
+    for (ODataOperation operation : operations) {
       if (title.equals(operation.getTitle())) {
         result = operation;
       }
@@ -130,7 +129,7 @@ public class ODataEntity extends ODataItem implements ODataInvokeResult {
    *
    * @return operations.
    */
-  public List<Operation> getOperations() {
+  public List<ODataOperation> getOperations() {
     return this.operations;
   }
 

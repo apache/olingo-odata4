@@ -19,8 +19,6 @@
 package org.apache.olingo.client.api.domain;
 
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.data.LinkType;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -31,12 +29,10 @@ public class ODataLink extends ODataItem {
 
   private static final long serialVersionUID = 7274966414277952124L;
 
-  protected final ODataClient client;
-
   /**
    * Link type.
    */
-  protected final LinkType type;
+  protected final ODataLinkType type;
 
   /**
    * Link rel.
@@ -46,31 +42,30 @@ public class ODataLink extends ODataItem {
   /**
    * Constructor.
    *
-   * @param client OData client.
+   * @param version OData service version.
    * @param uri URI.
    * @param type type.
    * @param title title.
    */
-  public ODataLink(final ODataClient client, final URI uri, final LinkType type, final String title) {
+  public ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
     super(title);
-    this.client = client;
-    this.link = uri;
 
+    this.link = uri;
     this.type = type;
 
     switch (this.type) {
       case ASSOCIATION:
-        this.rel = client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + title;
+        this.rel = version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + title;
         break;
 
       case ENTITY_NAVIGATION:
       case ENTITY_SET_NAVIGATION:
-        this.rel = client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + title;
+        this.rel = version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + title;
         break;
 
       case MEDIA_EDIT:
       default:
-        this.rel = client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + title;
+        this.rel = version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + title;
         break;
     }
   }
@@ -78,16 +73,16 @@ public class ODataLink extends ODataItem {
   /**
    * Constructor.
    *
-   * @param client OData client.
+   * @param version OData service version.
    * @param baseURI base URI.
    * @param href href.
    * @param type type.
    * @param title title.
    */
-  public ODataLink(final ODataClient client,
-          final URI baseURI, final String href, final LinkType type, final String title) {
+  public ODataLink(final ODataServiceVersion version,
+          final URI baseURI, final String href, final ODataLinkType type, final String title) {
 
-    this(client, URIUtils.getURI(baseURI, href), type, title);
+    this(version, URIUtils.getURI(baseURI, href), type, title);
   }
 
   /**
@@ -95,7 +90,7 @@ public class ODataLink extends ODataItem {
    *
    * @return link type;
    */
-  public LinkType getType() {
+  public ODataLinkType getType() {
     return type;
   }
 

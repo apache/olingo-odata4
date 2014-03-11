@@ -16,18 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.data;
+package org.apache.olingo.client.api.domain;
 
 import java.io.Serializable;
 import java.net.URI;
-import org.apache.olingo.client.api.data.Operation;
 
-/**
- * Representation of an OData operation (legacy, action or function).
- */
-public class OperationImpl extends AbstractPayloadObject implements Operation, Serializable {
+public class ODataOperation implements Serializable {
 
-  private static final long serialVersionUID = -5784652334334645128L;
+  private static final long serialVersionUID = 4155165768886762490L;
 
   private String metadataAnchor;
 
@@ -40,7 +36,6 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @return metadata anchor.
    */
-  @Override
   public String getMetadataAnchor() {
     return metadataAnchor;
   }
@@ -50,7 +45,6 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @param metadataAnchor metadata anchor.
    */
-  @Override
   public void setMetadataAnchor(final String metadataAnchor) {
     this.metadataAnchor = metadataAnchor;
   }
@@ -60,7 +54,6 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @return title.
    */
-  @Override
   public String getTitle() {
     return title;
   }
@@ -70,7 +63,6 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @param title title.
    */
-  @Override
   public void setTitle(final String title) {
     this.title = title;
   }
@@ -80,7 +72,6 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @return target.
    */
-  @Override
   public URI getTarget() {
     return target;
   }
@@ -90,8 +81,8 @@ public class OperationImpl extends AbstractPayloadObject implements Operation, S
    *
    * @param target target.
    */
-  @Override
   public void setTarget(final URI target) {
     this.target = target;
   }
+
 }

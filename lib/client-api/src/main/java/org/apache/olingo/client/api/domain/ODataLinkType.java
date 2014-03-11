@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.data;
+package org.apache.olingo.client.api.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 /**
  * OData link types.
  */
-public enum LinkType {
+public enum ODataLinkType {
 
   /**
    * Entity navigation link.
@@ -48,11 +48,11 @@ public enum LinkType {
 
   private String type;
 
-  private LinkType(final String type) {
+  private ODataLinkType(final String type) {
     this.type = type;
   }
 
-  private LinkType setType(final String type) {
+  private ODataLinkType setType(final String type) {
     this.type = type;
     return this;
   }
@@ -65,22 +65,22 @@ public enum LinkType {
    * @param type type.
    * @return <code>ODataLinkType</code> object.
    */
-  public static LinkType fromString(final ODataClient client, final String rel, final String type) {
+  public static ODataLinkType fromString(final ODataClient client, final String rel, final String type) {
     if (StringUtils.isNotBlank(rel) && rel.startsWith(client.getServiceVersion().getNamespaceMap().
             get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
 
       return MEDIA_EDIT.setType(StringUtils.isBlank(type) ? "*/*" : type);
     }
 
-    if (LinkType.ENTITY_NAVIGATION.type.equals(type)) {
+    if (ODataLinkType.ENTITY_NAVIGATION.type.equals(type)) {
       return ENTITY_NAVIGATION;
     }
 
-    if (LinkType.ENTITY_SET_NAVIGATION.type.equals(type)) {
+    if (ODataLinkType.ENTITY_SET_NAVIGATION.type.equals(type)) {
       return ENTITY_SET_NAVIGATION;
     }
 
-    if (LinkType.ASSOCIATION.type.equals(type)) {
+    if (ODataLinkType.ASSOCIATION.type.equals(type)) {
       return ASSOCIATION;
     }
 
