@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
@@ -45,7 +45,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.EnumerationImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MethodCallImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 
 public class FilterValidator implements Validator {
@@ -278,8 +278,8 @@ public class FilterValidator implements Validator {
   }
 
   public FilterValidator goParameter(final int parameterIndex) {
-    if (curExpression instanceof MethodCallImpl) {
-      MethodCallImpl methodCall = (MethodCallImpl) curExpression;
+    if (curExpression instanceof MethodImpl) {
+      MethodImpl methodCall = (MethodImpl) curExpression;
       curExpression = methodCall.getParameters().get(parameterIndex);
     } else {
       fail("Current expression not a methodCall");
@@ -388,12 +388,12 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator isMethod(final MethodCallKind methodKind, final int parameterCount) {
-    if (!(curExpression instanceof MethodCallImpl)) {
+  public FilterValidator isMethod(final MethodKind methodKind, final int parameterCount) {
+    if (!(curExpression instanceof MethodImpl)) {
       fail("Current expression is not a methodCall");
     }
 
-    MethodCallImpl methodCall = (MethodCallImpl) curExpression;
+    MethodImpl methodCall = (MethodImpl) curExpression;
     assertEquals(methodKind, methodCall.getMethod());
     assertEquals(parameterCount, methodCall.getParameters().size());
 
@@ -403,11 +403,11 @@ public class FilterValidator implements Validator {
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
       throws ExpressionVisitException, ODataApplicationException {
 
-    if (!(curExpression instanceof MethodCallImpl)) {
+    if (!(curExpression instanceof MethodImpl)) {
       fail("Current expression is not a method");
     }
 
-    MethodCallImpl methodCall = (MethodCallImpl) curExpression;
+    MethodImpl methodCall = (MethodImpl) curExpression;
 
     Expression parameter = methodCall.getParameters().get(parameterIndex);
     String actualParameterText = FilterTreeToText.Serialize(parameter);

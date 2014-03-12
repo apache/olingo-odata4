@@ -25,21 +25,21 @@ import org.apache.olingo.commons.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCall;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.Method;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class MethodCallImpl extends ExpressionImpl implements MethodCall, VisitableExression {
+public class MethodImpl extends ExpressionImpl implements Method, VisitableExression {
 
-  private MethodCallKind method;
+  private MethodKind method;
   private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
 
   @Override
-  public MethodCallKind getMethod() {
+  public MethodKind getMethod() {
     return method;
   }
 
-  public MethodCallImpl setMethod(final MethodCallKind methodCalls) {
+  public MethodImpl setMethod(final MethodKind methodCalls) {
     method = methodCalls;
     return this;
   }
@@ -53,7 +53,7 @@ public class MethodCallImpl extends ExpressionImpl implements MethodCall, Visita
     return list;
   }
 
-  public MethodCallImpl addParameter(final ExpressionImpl readCommonExpression) {
+  public MethodImpl addParameter(final ExpressionImpl readCommonExpression) {
     parameters.add(readCommonExpression);
     return this;
   }

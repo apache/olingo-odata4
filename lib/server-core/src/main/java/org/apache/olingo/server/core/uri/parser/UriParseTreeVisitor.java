@@ -46,7 +46,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
@@ -180,7 +180,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.EnumerationImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MethodCallImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 
 /**
@@ -889,7 +889,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitCastExpr(final CastExprContext ctx) {
-    MethodCallImpl method = new MethodCallImpl();
+    MethodImpl method = new MethodImpl();
     if (ctx.vE1 != null) {
       // is optional parameter
       ExpressionImpl onExpression = (ExpressionImpl) ctx.vE1.accept(this);
@@ -901,7 +901,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
-    method.setMethod(MethodCallKind.CAST);
+    method.setMethod(MethodKind.CAST);
     method.addParameter(new TypeLiteralImpl().setType(type));
     return method;
   }
@@ -938,15 +938,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitCeilingMethodCallExpr(final CeilingMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.CEILING)
+    return new MethodImpl()
+        .setMethod(MethodKind.CEILING)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitConcatMethodCallExpr(final ConcatMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.CONCAT)
+    return new MethodImpl()
+        .setMethod(MethodKind.CONCAT)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
@@ -1000,8 +1000,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitContainsMethodCallExpr(final ContainsMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.CONTAINS)
+    return new MethodImpl()
+        .setMethod(MethodKind.CONTAINS)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
@@ -1020,30 +1020,30 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitDateMethodCallExpr(final DateMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.DATE)
+    return new MethodImpl()
+        .setMethod(MethodKind.DATE)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitDayMethodCallExpr(final DayMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.DAY)
+    return new MethodImpl()
+        .setMethod(MethodKind.DAY)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitGeoDistanceMethodCallExpr(final GeoDistanceMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.GEODISTANCE)
+    return new MethodImpl()
+        .setMethod(MethodKind.GEODISTANCE)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
   @Override
   public Object visitEndsWithMethodCallExpr(final EndsWithMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.ENDSWITH)
+    return new MethodImpl()
+        .setMethod(MethodKind.ENDSWITH)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
@@ -1222,36 +1222,36 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitFloorMethodCallExpr(final FloorMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.FLOOR)
+    return new MethodImpl()
+        .setMethod(MethodKind.FLOOR)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitFractionalsecondsMethodCallExpr(final FractionalsecondsMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.FRACTIONALSECONDS)
+    return new MethodImpl()
+        .setMethod(MethodKind.FRACTIONALSECONDS)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitGeoLengthMethodCallExpr(final GeoLengthMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.GEOLENGTH)
+    return new MethodImpl()
+        .setMethod(MethodKind.GEOLENGTH)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitHourMethodCallExpr(final HourMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.HOUR)
+    return new MethodImpl()
+        .setMethod(MethodKind.HOUR)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitIndexOfMethodCallExpr(final IndexOfMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.INDEXOF)
+    return new MethodImpl()
+        .setMethod(MethodKind.INDEXOF)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
@@ -1267,15 +1267,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitGeoIntersectsMethodCallExpr(final GeoIntersectsMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.GEOINTERSECTS)
+    return new MethodImpl()
+        .setMethod(MethodKind.GEOINTERSECTS)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
   @Override
   public ExpressionImpl visitIsofExpr(final IsofExprContext ctx) {
-    MethodCallImpl method = new MethodCallImpl();
+    MethodImpl method = new MethodImpl();
     if (ctx.vE1 != null) {
       ExpressionImpl onExpression = (ExpressionImpl) ctx.vE1.accept(this);
       method.addParameter(onExpression);
@@ -1286,7 +1286,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     FullQualifiedName fullName = new FullQualifiedName(namespace, ctx.vODI.getText());
     EdmType type = getType(fullName);
-    method.setMethod(MethodCallKind.ISOF);
+    method.setMethod(MethodKind.ISOF);
     method.addParameter(new TypeLiteralImpl().setType(type));
 
     return method;
@@ -1294,8 +1294,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitLengthMethodCallExpr(final LengthMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.LENGTH)
+    return new MethodImpl()
+        .setMethod(MethodKind.LENGTH)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
@@ -1320,8 +1320,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitMaxDateTimeMethodCallExpr(final MaxDateTimeMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.MAXDATETIME);
+    return new MethodImpl()
+        .setMethod(MethodKind.MAXDATETIME);
   }
 
   @Override
@@ -1371,21 +1371,21 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitMinDateTimeMethodCallExpr(final MinDateTimeMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.MINDATETIME);
+    return new MethodImpl()
+        .setMethod(MethodKind.MINDATETIME);
   }
 
   @Override
   public ExpressionImpl visitMinuteMethodCallExpr(final MinuteMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.MINUTE)
+    return new MethodImpl()
+        .setMethod(MethodKind.MINUTE)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitMonthMethodCallExpr(final MonthMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.MONTH)
+    return new MethodImpl()
+        .setMethod(MethodKind.MONTH)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
@@ -1563,8 +1563,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitNowMethodCallExpr(final NowMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.NOW);
+    return new MethodImpl()
+        .setMethod(MethodKind.NOW);
   }
 
   @Override
@@ -1737,15 +1737,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitRoundMethodCallExpr(final RoundMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.ROUND)
+    return new MethodImpl()
+        .setMethod(MethodKind.ROUND)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitSecondMethodCallExpr(final SecondMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.SECOND)
+    return new MethodImpl()
+        .setMethod(MethodKind.SECOND)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
@@ -2024,16 +2024,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitStartsWithMethodCallExpr(final StartsWithMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.STARTSWITH)
+    return new MethodImpl()
+        .setMethod(MethodKind.STARTSWITH)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this))
         .addParameter((ExpressionImpl) ctx.vE2.accept(this));
   }
 
   @Override
   public ExpressionImpl visitSubstringMethodCallExpr(final SubstringMethodCallExprContext ctx) {
-    MethodCallImpl ret = new MethodCallImpl();
-    ret.setMethod(MethodCallKind.SUBSTRING);
+    MethodImpl ret = new MethodImpl();
+    ret.setMethod(MethodKind.SUBSTRING);
     ret.addParameter((ExpressionImpl) ctx.vE1.accept(this));
     ret.addParameter((ExpressionImpl) ctx.vE2.accept(this));
 
@@ -2047,8 +2047,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitTimeMethodCallExpr(final TimeMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TIME)
+    return new MethodImpl()
+        .setMethod(MethodKind.TIME)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
@@ -2063,44 +2063,44 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public ExpressionImpl visitToLowerMethodCallExpr(final ToLowerMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TOLOWER)
+    return new MethodImpl()
+        .setMethod(MethodKind.TOLOWER)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitTotalOffsetMinutesMethodCallExpr(final TotalOffsetMinutesMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TOTALOFFSETMINUTES)
+    return new MethodImpl()
+        .setMethod(MethodKind.TOTALOFFSETMINUTES)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitTotalsecondsMethodCallExpr(final TotalsecondsMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TOTALSECONDS)
+    return new MethodImpl()
+        .setMethod(MethodKind.TOTALSECONDS)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitToUpperMethodCallExpr(final ToUpperMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TOUPPER)
+    return new MethodImpl()
+        .setMethod(MethodKind.TOUPPER)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
   @Override
   public ExpressionImpl visitTrimMethodCallExpr(final TrimMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.TRIM)
+    return new MethodImpl()
+        .setMethod(MethodKind.TRIM)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 
 
   @Override
   public ExpressionImpl visitYearMethodCallExpr(final YearMethodCallExprContext ctx) {
-    return new MethodCallImpl()
-        .setMethod(MethodCallKind.YEAR)
+    return new MethodImpl()
+        .setMethod(MethodKind.YEAR)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
 

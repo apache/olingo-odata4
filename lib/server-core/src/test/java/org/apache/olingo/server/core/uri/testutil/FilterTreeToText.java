@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
@@ -66,7 +66,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitMethodCall(final MethodCallKind methodCall, final List<String> parameters)
+  public String visitMethodCall(final MethodKind methodCall, final List<String> parameters)
       throws ExpressionVisitException {
 
     String text = "<" + methodCall + "(";

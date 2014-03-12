@@ -19,20 +19,40 @@
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
 /**
- * Enumeration of supported unary operators<br>
- * For the semantic of these operators please see the ODATA specification for URL conventions
+ * Enumeration of supported methods
+ * For the semantic of these methods please see the ODATA specification for URL conventions
  */
-public enum UnaryOperatorKind {
-
-  /**
-   * Minus operator
-   */
-  MINUS("-"),
-
-  /**
-   * not operator
-   */
-  NOT("not");
+public enum MethodKind {
+  CONTAINS("contains"),
+  STARTSWITH("startswith"),
+  ENDSWITH("endswith"),
+  LENGTH("length"),
+  INDEXOF("indexof"),
+  SUBSTRING("substring"),
+  TOLOWER("tolower"),
+  TOUPPER("toupper"),
+  TRIM("trim"),
+  CONCAT("concat"),
+  YEAR("year"),
+  MONTH("month"),
+  DAY("day"),
+  HOUR("hour"),
+  MINUTE("minute"),
+  SECOND("second"),
+  FRACTIONALSECONDS("fractionalseconds"),
+  TOTALSECONDS("totalseconds"), DATE("date"), TIME("time"),
+  TOTALOFFSETMINUTES("totaloffsetminutes"),
+  MINDATETIME("mindatetime"),
+  MAXDATETIME("maxdatetime"),
+  NOW("now"),
+  ROUND("round"),
+  FLOOR("floor"),
+  CEILING("ceiling"),
+  GEODISTANCE("geo.distance"),
+  GEOLENGTH("geo.length"),
+  GEOINTERSECTS("geo.intersects"),
+  CAST("cast"),
+  ISOF("isof");
 
   private String syntax;
 
@@ -40,14 +60,14 @@ public enum UnaryOperatorKind {
    * Constructor for enumeration value
    * @param Syntax used in the URI
    */
-  private UnaryOperatorKind(final String syntax) {
+  private MethodKind(final String syntax) {
     this.syntax = syntax;
   }
 
+  @Override
   /**
    * @return URI syntax for that operator kind
    */
-  @Override
   public String toString() {
     return syntax;
   }
@@ -55,11 +75,12 @@ public enum UnaryOperatorKind {
   /**
    * URI syntax to enumeration value
    * @param Syntax used in the URI
-   * @return Operator kind which represents the given syntax
+   * @return Method kind which represents the given syntax
    */
-  public static UnaryOperatorKind get(final String operator) {
-    for (UnaryOperatorKind op : UnaryOperatorKind.values()) {
-      if (op.toString().equals(operator)) {
+  public static MethodKind get(final String method) {
+    for (MethodKind op : MethodKind.values()) {
+
+      if (op.toString().equals(method)) {
         return op;
       }
     }

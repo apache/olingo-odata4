@@ -19,11 +19,11 @@
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.commons.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.queryoption.expression.AliasExpression;
+import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class AliasImpl extends ExpressionImpl implements AliasExpression {
+public class AliasImpl extends ExpressionImpl implements Alias {
 
   private String parameterName;
 

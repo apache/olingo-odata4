@@ -19,10 +19,22 @@
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
 /**
- * Exception class used by the {@link ExpressionVisitor} to throw exceptions while traversing the expression tree
+ * Represents a unary expression node in the expression tree
+ * <br>
+ * A binary expression node is inserted in the expression tree for any valid
+ * ODATA unary operator in {@link UnaryOperatorKind}
  */
-public class ExpressionVisitException extends Exception {
+public interface Unary extends Expression {
 
-  private static final long serialVersionUID = 1L;
+  /**
+   * @return The used binary operator
+   * @see {@link UnaryOperatorKind}
+   */
+  public Expression getOperand();
+
+  /**
+   * @return Expression sub tree to which the operator applies
+   */
+  public UnaryOperatorKind getOperator();
 
 }
