@@ -55,7 +55,6 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
 
   @Override
   public FullQualifiedName getFunctionFqn() {
-    //TODO: Is this right for V3?
     return new FullQualifiedName(container.getNamespace(), getName());
   }
 }

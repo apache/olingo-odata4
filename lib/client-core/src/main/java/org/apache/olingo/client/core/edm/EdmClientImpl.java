@@ -373,8 +373,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
   @Override
   protected List<EdmSchema> createSchemas() {
-    List<EdmSchema> schemas = new ArrayList<EdmSchema>();
-    for(Schema schema :  xmlMetadata.getSchemas()){
+    final List<EdmSchema> schemas = new ArrayList<EdmSchema>();
+    for (Schema schema : xmlMetadata.getSchemas()) {
       schemas.add(new EdmSchemaImpl(this, xmlMetadata, schema));
     }
     return schemas;

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
-import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -59,21 +58,32 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     super(edm, name, kind);
     this.operation = operation;
   }
-  
+
+  private EdmParameter getBindingParameter() {
+    EdmParameter bindingParam = null;
+    if (isBound()) {
+      final String bindingParamName = operation.getParameters().get(0).getName();
+      bindingParam = getParameter(bindingParamName);
+    }
+    return bindingParam;
+  }
+
   @Override
   public FullQualifiedName getBindingParameterTypeFqn() {
-    if (isBound()) {
-      Parameter bindingParameter = operation.getParameters().get(0);
-      return new FullQualifiedName(getNamespace(), bindingParameter.getName());
+    FullQualifiedName fqn = null;
+    final EdmParameter bindingParam = getBindingParameter();
+    if (bindingParam != null) {
+      fqn = new FullQualifiedName(bindingParam.getType().getNamespace(), bindingParam.getType().getName());
     }
-    return null;
+    return fqn;
   }
 
   @Override
   public Boolean isBindingParameterTypeCollection() {
-    if (isBound()) {
-      Parameter bindingParameter = operation.getParameters().get(0);
-      return bindingParameter.isCollection();
+    Boolean result = null;
+    final EdmParameter bindingParam = getBindingParameter();
+    if (bindingParam != null) {
+      result = bindingParam.isCollection();
     }
     return null;
   }

@@ -26,8 +26,6 @@ public class ParameterImpl extends AbstractParameter implements Parameter {
   private static final long serialVersionUID = -1067642515116697747L;
 
   private String srid;
-  
-  private boolean isCollection;
 
   @Override
   public String getSrid() {
@@ -36,16 +34,6 @@ public class ParameterImpl extends AbstractParameter implements Parameter {
 
   public void setSrid(final String srid) {
     this.srid = srid;
-  }
-
-  //TODO: fill during metadata parsing
-  @Override
-  public boolean isCollection() {
-    return isCollection;
-  }
-  
-  public void setCollection(boolean isCollection) {
-    this.isCollection = isCollection;
   }
 
 }

@@ -33,7 +33,7 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   private final FunctionImport functionImport;
 
   public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
-      final FunctionImport functionImport) {
+          final FunctionImport functionImport) {
 
     super(edm, container, name, functionImport.getEntitySet());
     this.functionImport = functionImport;
@@ -42,8 +42,8 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   @Override
   public EdmFunction getFunction(final List<String> parameterNames) {
     return edm.getFunction(
-        new EdmTypeInfo(functionImport.getFunction(), container.getNamespace()).getFullQualifiedName(),
-        null, null, parameterNames);
+            new EdmTypeInfo(functionImport.getFunction(), container.getNamespace()).getFullQualifiedName(),
+            null, null, parameterNames);
   }
 
   @Override
