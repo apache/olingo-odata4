@@ -16,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.edm.provider;
+package org.apache.olingo.commons.api;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
-import org.apache.olingo.server.api.edm.provider.OperationImport;
+public class ODataRuntimeException extends RuntimeException {
 
-public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
+  private static final long serialVersionUID = 1L;
 
-  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, 
-      final OperationImport operationImport) {
-    super(edm, container, operationImport.getName(), operationImport.getEntitySet());
+  public ODataRuntimeException(String msg) {
+    super(msg);
   }
+
+  public ODataRuntimeException(String msg, Exception e) {
+    super(msg, e);
+  }
+
+  public ODataRuntimeException(Exception e) {
+    super(e);
+  }
+
 }

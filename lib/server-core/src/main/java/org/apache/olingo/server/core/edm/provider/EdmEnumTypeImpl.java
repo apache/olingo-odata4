@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -34,7 +35,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
 
   private final EnumType enumType;
 
-  public EdmEnumTypeImpl(final EdmProviderImpl edm, final FullQualifiedName enumName, final EnumType enumType) {
+  public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final EnumType enumType) {
     super(edm, enumName, enumType.isFlags());
 
     if (enumType.getUnderlyingType() == null) {

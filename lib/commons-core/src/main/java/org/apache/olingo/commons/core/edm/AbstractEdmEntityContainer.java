@@ -1,24 +1,26 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -33,13 +35,17 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
 
   protected final FullQualifiedName entityContainerName;
 
-  private final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  protected final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  private boolean allSingletonsLoaded = false;
 
-  private final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  protected final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  private boolean allEntitySetsLoaded = false;
 
-  private final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+  protected final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+  private boolean allActionImportsLoaded = false;
 
-  private final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
+  protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
+  private boolean allFunctionImportsLoaded = false;
 
   public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName) {
     super(edm, entityContainerName.getName());
@@ -99,4 +105,47 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     return functionImport;
   }
 
+  @Override
+  public List<EdmEntitySet> getEntitySets() {
+    if (!allEntitySetsLoaded) {
+      loadAllEntitySets();
+      allEntitySetsLoaded = true;
+    }
+    return new ArrayList<EdmEntitySet>(entitySets.values());
+  }
+
+  protected abstract void loadAllEntitySets();
+
+  @Override
+  public List<EdmFunctionImport> getFunctionImports() {
+    if (!allFunctionImportsLoaded) {
+      loadAllFunctionImports();
+      allFunctionImportsLoaded = true;
+    }
+    return new ArrayList<EdmFunctionImport>(functionImports.values());
+  }
+
+  protected abstract void loadAllFunctionImports();
+
+  @Override
+  public List<EdmSingleton> getSingletons() {
+    if (!allSingletonsLoaded) {
+      loadAllSingletons();
+      allSingletonsLoaded = true;
+    }
+    return new ArrayList<EdmSingleton>(singletons.values());
+  }
+
+  protected abstract void loadAllSingletons();
+
+  @Override
+  public List<EdmActionImport> getActionImports() {
+    if (!allActionImportsLoaded) {
+      loadAllActionImports();
+      allActionImportsLoaded = true;
+    }
+    return new ArrayList<EdmActionImport>(actionImports.values());
+  }
+
+  protected abstract void loadAllActionImports();
 }

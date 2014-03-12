@@ -72,9 +72,9 @@ public class EdmFunctionImportImplTest {
     when(provider.getFunctionImport(containerName, functionImportName)).thenReturn(functionImportProvider);
 
     final EdmFunctionImport functionImport =
-        new EdmFunctionImportImpl(edm, entityContainer, "test", functionImportProvider);
+        new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
-    assertEquals("test", functionImport.getName());
+    assertEquals("functionImport", functionImport.getName());
     final EdmFunction function = functionImport.getFunction(Collections.<String> emptyList());
     assertEquals(functionName.getNamespace(), function.getNamespace());
     assertEquals(functionName.getName(), function.getName());

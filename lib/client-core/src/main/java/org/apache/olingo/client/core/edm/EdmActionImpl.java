@@ -33,5 +33,4 @@ public class EdmActionImpl extends EdmOperationImpl implements EdmAction {
   private EdmActionImpl(final Edm edm, final FullQualifiedName name, final Action action) {
     super(edm, name, action, EdmTypeKind.ACTION);
   }
-
 }

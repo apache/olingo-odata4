@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -45,6 +46,7 @@ import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Parameter;
+import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 public class EdmProviderImpl extends AbstractEdmImpl {
@@ -127,8 +129,8 @@ public class EdmProviderImpl extends AbstractEdmImpl {
 
   @Override
   public EdmAction createBoundAction(final FullQualifiedName actionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
-    
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+
     try {
       List<Action> actions = actionsMap.get(actionName);
       if (actions == null) {
@@ -145,8 +147,8 @@ public class EdmProviderImpl extends AbstractEdmImpl {
           final List<Parameter> parameters = action.getParameters();
           final Parameter parameter = parameters.get(0);
           if (bindingParameterTypeName.equals(parameter.getType())
-                  && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
-            
+              && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
+
             return EdmActionImpl.getInstance(this, actionName, action);
           }
 
@@ -160,9 +162,9 @@ public class EdmProviderImpl extends AbstractEdmImpl {
 
   @Override
   public EdmFunction createBoundFunction(final FullQualifiedName functionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-          final List<String> parameterNames) {
-    
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
+      final List<String> parameterNames) {
+
     try {
       List<Function> functions = functionsMap.get(functionName);
       if (functions == null) {
@@ -173,7 +175,8 @@ public class EdmProviderImpl extends AbstractEdmImpl {
           functionsMap.put(functionName, functions);
         }
       }
-      final List<String> parameterNamesCopy = parameterNames == null? Collections.<String>emptyList(): parameterNames;
+      final List<String> parameterNamesCopy =
+          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
       for (Function function : functions) {
         if (function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();
@@ -182,8 +185,8 @@ public class EdmProviderImpl extends AbstractEdmImpl {
           }
           final Parameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getType())
-                  && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
-            
+              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
+
             if (parameterNamesCopy.size() == providerParameters.size() - 1) {
               final List<String> providerParameterNames = new ArrayList<String>();
               for (int i = 1; i < providerParameters.size(); i++) {
@@ -259,7 +262,8 @@ public class EdmProviderImpl extends AbstractEdmImpl {
           return null;
         }
       }
-      final List<String> parameterNamesCopy = parameterNames == null? Collections.<String>emptyList(): parameterNames;
+      final List<String> parameterNamesCopy =
+          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
       for (Function function : functions) {
         if (!function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();
@@ -284,4 +288,16 @@ public class EdmProviderImpl extends AbstractEdmImpl {
     }
   }
 
+  @Override
+  protected List<EdmSchema> createSchemas() {
+    try {
+      List<EdmSchema> schemas = new ArrayList<EdmSchema>();
+      for (Schema schema : provider.getSchemas()) {
+        schemas.add(new EdmSchemaImpl(this, provider, schema));
+      }
+      return schemas;
+    } catch (ODataException e) {
+      throw new EdmException(e);
+    }
+  }
 }

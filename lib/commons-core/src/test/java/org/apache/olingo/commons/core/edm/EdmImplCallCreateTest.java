@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -52,6 +53,12 @@ public class EdmImplCallCreateTest {
 
   private Edm edm;
 
+  @Test
+  public void callCreateSchemas() {
+    List<EdmSchema> schemas = edm.getSchemas();
+    assertNotNull(schemas);
+  }
+  
   @Test
   public void callCreateEntityContainer() {
     EdmEntityContainer entityContainer = edm.getEntityContainer(FQN);
@@ -263,6 +270,11 @@ public class EdmImplCallCreateTest {
         return function;
       }
       return null;
+    }
+
+    @Override
+    public List<EdmSchema> createSchemas() {
+      return new ArrayList<EdmSchema>();
     }
   }
 }

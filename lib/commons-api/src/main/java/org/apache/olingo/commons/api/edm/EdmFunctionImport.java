@@ -25,6 +25,16 @@ import java.util.List;
  */
 public interface EdmFunctionImport extends EdmOperationImport {
 
-    EdmFunction getFunction(List<String> parameterNames);
+  EdmFunction getFunction(List<String> parameterNames);
+
+  /**
+   * @return the Full qualified name for the function as specified in the metadata
+   */
+  FullQualifiedName getFunctionFqn();
+
+  /**
+   * @return true if the function import must be included in the service document
+   */
+  boolean isIncludeInServiceDocument();
 
 }

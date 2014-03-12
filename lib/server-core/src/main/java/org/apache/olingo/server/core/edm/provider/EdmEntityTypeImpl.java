@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -38,8 +37,6 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   private final EdmStructuredTypeHelper helper;
 
-  private final EntityType entityType;
-
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
           final EntityType entityType) {
 
@@ -50,9 +47,6 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
       instance.entityBaseType = null;
       
       final List<PropertyRef> key = entityType.getKey();
-      if (key == null && !entityType.isAbstract()) {
-        throw new EdmException("Non-Abstract entity types must define a key.");
-      }
       if (key != null) {
         final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
         for (PropertyRef ref : key) {
@@ -71,7 +65,6 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     super(edm, name, entityType.getBaseType(), entityType.hasStream());
 
     this.helper = new EdmStructuredTypeHelperImpl(edm, entityType);
-    this.entityType = entityType;
   }
 
   @Override
