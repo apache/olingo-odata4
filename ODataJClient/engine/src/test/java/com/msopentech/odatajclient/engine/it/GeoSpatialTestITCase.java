@@ -45,6 +45,7 @@ import com.msopentech.odatajclient.engine.metadata.edm.EdmSimpleType;
 import com.msopentech.odatajclient.engine.metadata.edm.geospatial.Point;
 import com.msopentech.odatajclient.engine.format.ODataPubFormat;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
+import org.junit.Ignore;
 
 public class GeoSpatialTestITCase extends AbstractTestITCase {
     // test with json full metadata
@@ -80,6 +81,7 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
     // test with json and atom as accept and content-type header respectively
 
     @Test
+    @Ignore
     public void withJSONAndATOMReturn() {
         ODataPubFormat format = ODataPubFormat.ATOM;
         String contentType = "application/json;odata=fullmetadata";
@@ -90,6 +92,7 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
     // test with atom and json as content Type and accept header respectively
 
     @Test
+    @Ignore
     public void withATOMAndJSONReturn() {
         ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         String contentType = "application/atom+xml";
@@ -99,11 +102,11 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
     }
     // geo spacial entity create test
 
-    public void geoSpacialTest(final ODataPubFormat format, final String contentType, final String prefer, final int id) {
+    public void geoSpacialTest(
+            final ODataPubFormat format, final String contentType, final String prefer, final int id) {
         try {
-            final ODataEntity entity =
-                    client.getObjectFactory().newEntity(
-                            "Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes");
+            final ODataEntity entity =client.getObjectFactory().newEntity(
+                    "Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes");
             entity.addProperty(client.getObjectFactory().newPrimitiveProperty("Id",
                     client.getPrimitiveValueBuilder().setText(String.valueOf(id)).setType(EdmSimpleType.Int32).
                     build()));
@@ -248,8 +251,8 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
 
             // create request
             final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().
-                    getEntityCreateRequest(client.getURIBuilder(testDefaultServiceRootURL).
-                            appendEntityTypeSegment("AllGeoTypesSet").build(), entity);
+                    getEntityCreateRequest(client.getURIBuilder(testStaticServiceRootURL).
+                    appendEntityTypeSegment("AllGeoTypesSet").build(), entity);
             createReq.setFormat(format);
             createReq.setContentType(contentType);
             createReq.setPrefer(prefer);
@@ -319,7 +322,7 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
             //updateGeog(format,contentType, prefer, entityAfterCreate, UpdateType.REPLACE,entityAfterCreate.getETag());
 
             // delete the entity
-            URIBuilder deleteUriBuilder = client.getURIBuilder(testDefaultServiceRootURL).
+            URIBuilder deleteUriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                     appendEntityTypeSegment("AllGeoTypesSet(" + id + ")");
             ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(deleteUriBuilder.build());
             deleteReq.setFormat(format);
@@ -327,9 +330,7 @@ public class GeoSpatialTestITCase extends AbstractTestITCase {
             assertEquals(204, deleteReq.execute().getStatusCode());
         } catch (Exception e) {
             LOG.error("", e);
-            if (format.equals(ODataPubFormat.JSON) || format.equals(ODataPubFormat.JSON_NO_METADATA)) {
-                assertTrue(true);
-            } else {
+            if (!format.equals(ODataPubFormat.JSON) && !format.equals(ODataPubFormat.JSON_NO_METADATA)) {
                 fail(e.getMessage());
             }
         } catch (AssertionError e) {

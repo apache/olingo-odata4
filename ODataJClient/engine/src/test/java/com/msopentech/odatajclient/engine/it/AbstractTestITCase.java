@@ -68,7 +68,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
@@ -98,7 +97,6 @@ public abstract class AbstractTestITCase {
     protected static String testKeyAsSegmentServiceRootURL;
 
 //    protected static String testODataWriterDefaultServiceRootURL;
-
     protected static String testOpenTypeServiceRootURL;
 
     protected static String testPrimitiveKeysServiceRootURL;
@@ -220,7 +218,8 @@ public abstract class AbstractTestITCase {
         assertNotNull("Null original value for " + propertyName, original);
         assertNotNull("Null actual value for " + propertyName, actual);
 
-        assertEquals("Type mismatch for '" + propertyName + "'",
+        assertEquals("Type mismatch for '" + propertyName + "': "
+                + original.getClass().getSimpleName() + "-" + actual.getClass().getSimpleName(),
                 original.getClass().getSimpleName(), actual.getClass().getSimpleName());
 
         if (original.isComplex()) {
@@ -253,10 +252,12 @@ public abstract class AbstractTestITCase {
 
             assertTrue("Found " + actual + " but expected " + original, found);
         } else {
-            assertTrue("Primitive value for '" + propertyName + "' type mismatch",
+            assertTrue("Primitive value for '" + propertyName + "' type mismatch: " + original.asPrimitive().
+                    getTypeName() + "-" + actual.asPrimitive().getTypeName(),
                     original.asPrimitive().getTypeName().equals(actual.asPrimitive().getTypeName()));
 
-            assertEquals("Primitive value for '" + propertyName + "' mismatch",
+            assertEquals("Primitive value for '" + propertyName + "' mismatch: " + original.asPrimitive().toString()
+                    + "-" + actual.asPrimitive().toString(),
                     original.asPrimitive().toString(), actual.asPrimitive().toString());
         }
     }
@@ -461,7 +462,7 @@ public abstract class AbstractTestITCase {
 
         final ODataRetrieveResponse<ODataEntity> res = req.execute();
         assertEquals(200, res.getStatusCode());
-        
+
         final ODataEntity actual = res.getBody();
         assertNotNull(actual);
 

@@ -46,7 +46,6 @@ import com.msopentech.odatajclient.engine.data.ODataCollectionValue;
 import com.msopentech.odatajclient.engine.data.ODataComplexValue;
 import com.msopentech.odatajclient.engine.data.ODataEntity;
 import com.msopentech.odatajclient.engine.data.ODataEntitySet;
-import com.msopentech.odatajclient.engine.data.ODataObjectFactory;
 import com.msopentech.odatajclient.engine.data.ODataInlineEntity;
 import com.msopentech.odatajclient.engine.data.ODataInlineEntitySet;
 import com.msopentech.odatajclient.engine.data.ODataLink;
@@ -56,8 +55,9 @@ import com.msopentech.odatajclient.engine.metadata.edm.EdmSimpleType;
 import com.msopentech.odatajclient.engine.format.ODataPubFormat;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
 import com.msopentech.odatajclient.engine.utils.URIUtils;
+import org.junit.Ignore;
 
-public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
+public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
 
     // create navigation link with ATOM
     @Test
@@ -66,7 +66,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/atom+xml";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 20, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // create navigation link with JSON full metadata
 
@@ -76,7 +76,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/json;odata=fullmetadata";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 21, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // throws Null pointer exception when the format is JSON No metadata
 
@@ -86,17 +86,18 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/json;odata=nometadata";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 22, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with JSON accept and atom content type
 
     @Test
+    @Ignore
     public void createNavWithJSONAndATOM() {
         final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         final String contentType = "application/atom+xml";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 23, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with JSON full metadata in format and json no metadata in content type
 
@@ -106,7 +107,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/json;odata=nometadata";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 24, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // test with JSON no metadata format and json no metadata in content type
 
@@ -116,7 +117,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/json;odata=fullmetadata";
         final String prefer = "return-content";
         final ODataEntity actual = createNavigation(format, 25, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // create collection navigation link with ATOM
 
@@ -126,7 +127,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/atom+xml";
         final String prefer = "return-content";
         final ODataEntity actual = createCollectionNavigation(format, 55, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
     // create collection navigation link with JSON
 
@@ -136,7 +137,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         final String contentType = "application/json;odata=fullmetadata";
         final String prefer = "return-content";
         final ODataEntity actual = createCollectionNavigation(format, 77, contentType, prefer);
-        delete(format, actual, false, testDefaultServiceRootURL);
+        delete(format, actual, false, testStaticServiceRootURL);
     }
 
     // create a navigation link
@@ -146,13 +147,13 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
 
         final ODataEntity original = getNewCustomer(id, name, false);
         original.addLink(client.getObjectFactory().newEntityNavigationLink(
-                "Info", URI.create(testDefaultServiceRootURL + "/CustomerInfo(11)")));
-        final ODataEntity created = createNav(testDefaultServiceRootURL, format, original, "Customer", contenttype,
+                "Info", URI.create(testStaticServiceRootURL + "/CustomerInfo(11)")));
+        final ODataEntity created = createNav(testStaticServiceRootURL, format, original, "Customer", contenttype,
                 prefer);
 
-        final ODataEntity actual = validateEntities(testDefaultServiceRootURL, format, created, id, null, "Customer");
+        final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, created, id, null, "Customer");
 
-        final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL);
+        final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
         uriBuilder.appendEntityTypeSegment("Customer").appendKeySegment(id).appendEntityTypeSegment("Info");
 
         final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -213,7 +214,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
                         client.getPrimitiveValueBuilder().setValue(id).setType(EdmSimpleType.Int32).build()));
 
                 final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-                        client.getURIBuilder(testDefaultServiceRootURL).appendEntitySetSegment("Order").build(),
+                        client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Order").build(),
                         orderEntity);
                 createReq.setFormat(format);
                 createReq.setContentType(contentType);
@@ -221,12 +222,12 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
                         "Orders",
                         createReq.execute().getBody().getEditLink()));
             }
-            final ODataEntity createdEntity = createNav(testDefaultServiceRootURL, format, original, "Customer",
+            final ODataEntity createdEntity = createNav(testStaticServiceRootURL, format, original, "Customer",
                     contentType, prefer);
             final ODataEntity actualEntity =
-                    validateEntities(testDefaultServiceRootURL, format, createdEntity, id, null, "Customer");
+                    validateEntities(testStaticServiceRootURL, format, createdEntity, id, null, "Customer");
 
-            final URIBuilder uriBuilder = client.getURIBuilder(testDefaultServiceRootURL);
+            final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
             uriBuilder.appendEntityTypeSegment("Customer").appendKeySegment(id).appendEntityTypeSegment("Orders");
 
             final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -247,7 +248,7 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
                 assertEquals(Integer.valueOf(id), customerId);
                 navigationKeys.remove(key);
                 final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(
-                        URIUtils.getURI(testDefaultServiceRootURL, entity.getEditLink().toASCIIString()));
+                        URIUtils.getURI(testStaticServiceRootURL, entity.getEditLink().toASCIIString()));
 
                 deleteReq.setFormat(format);
                 assertEquals(204, deleteReq.execute().getStatusCode());
@@ -313,7 +314,8 @@ public class CreateNavigationLinkTestITCase extends AbstractTestITCase {
         entity.addProperty(client.getObjectFactory().newCollectionProperty("BackupContactInfo",
                 backupContactInfoValue));
         if (withInlineInfo) {
-            final ODataInlineEntity inlineInfo = client.getObjectFactory().newInlineEntity("Info", URI.create("Customer(" + id
+            final ODataInlineEntity inlineInfo = client.getObjectFactory().newInlineEntity("Info", URI.create(
+                    "Customer(" + id
                     + ")/Info"), getInfo(id, name + "_Info"));
             inlineInfo.getEntity().setMediaEntity(true);
             entity.addLink(inlineInfo);

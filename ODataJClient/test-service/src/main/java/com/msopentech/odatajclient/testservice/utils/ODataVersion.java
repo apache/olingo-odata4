@@ -20,7 +20,16 @@ package com.msopentech.odatajclient.testservice.utils;
 
 public enum ODataVersion {
 
-    v3,
-    v4;
+    v3("3.0"),
+    v4("4.0");
 
+    private final String version;
+
+    private ODataVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
 };

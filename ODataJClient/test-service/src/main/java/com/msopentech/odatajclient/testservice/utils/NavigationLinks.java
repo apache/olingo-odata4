@@ -97,6 +97,12 @@ public class NavigationLinks {
         return links.containsKey(name) || inlines.containsKey(name);
     }
 
+    public NavigationLinks remove(final String name) {
+        removeLink(name);
+        removeInlines(name);
+        return this;
+    }
+
     public NavigationLinks removeLink(final String name) {
         links.remove(name);
         return this;

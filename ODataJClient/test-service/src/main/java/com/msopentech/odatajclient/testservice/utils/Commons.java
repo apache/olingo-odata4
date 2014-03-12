@@ -27,8 +27,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,10 +59,6 @@ public abstract class Commons {
 
     protected final static Set<String> mediaContent = new HashSet<String>();
 
-    protected final static Set<String> feed = new HashSet<String>();
-
-    protected final static Map<String, String> entitySetAlias = new HashMap<String, String>();
-
     protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
             new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
 
@@ -69,13 +67,47 @@ public abstract class Commons {
         sequence.put("CustomerInfo", 1000);
         sequence.put("Message", 1000);
         sequence.put("Order", 1000);
+        sequence.put("ComputerDetail", 1000);
+        sequence.put("AllGeoTypesSet", 1000);
 
         mediaContent.add("CustomerInfo");
+    }
 
-        entitySetAlias.put("Customer.Info", "CustomerInfo");
-        entitySetAlias.put("Customer.Orders", "Order");
-        feed.add("Customer.Orders");
-        feed.add("Customer.Logins");
+    public static String getEntityURI(final String entitySetName, final String entityKey) {
+        return entitySetName + "(" + entityKey + ")";
+    }
+
+    public static String getEntityBasePath(final String entitySetName, final String entityKey) {
+        return entitySetName + File.separatorChar + getEntityKey(entityKey) + File.separatorChar;
+    }
+
+    public static String getLinksURI(
+            final ODataVersion version,
+            final String entitySetName,
+            final String entityId,
+            final String linkName) throws IOException {
+        return getEntityURI(entitySetName, entityId) + "/" + linkName;
+    }
+
+    public static String getLinksPath(
+            final ODataVersion version,
+            final String entitySetName,
+            final String entityId,
+            final String linkName,
+            final Accept accept) throws IOException {
+        return getLinksPath(ODataVersion.v3, getEntityBasePath(entitySetName, entityId), linkName, accept);
+
+    }
+
+    public static String getLinksPath(
+            final ODataVersion version, final String basePath, final String linkName, final Accept accept)
+            throws IOException {
+        try {
+            return FSManager.instance(version)
+                    .getAbsolutePath(basePath + LINKS_FILE_PATH + File.separatorChar + linkName, accept);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     public static String getEntityKey(final String entityId) {
@@ -103,7 +135,11 @@ public abstract class Commons {
 
         for (String uri : link.getValue()) {
             builder.append("<uri>");
-            builder.append(DEFAULT_SERVICE_URL).append(uri);
+            if (URI.create(uri).isAbsolute()) {
+                builder.append(uri);
+            } else {
+                builder.append(DEFAULT_SERVICE_URL).append(uri);
+            }
             builder.append("</uri>");
         }
 
@@ -123,7 +159,13 @@ public abstract class Commons {
         final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
         for (String uri : link.getValue()) {
-            uris.add(new ObjectNode(JsonNodeFactory.instance).put("uri", uri));
+            final String absoluteURI;
+            if (URI.create(uri).isAbsolute()) {
+                absoluteURI = uri;
+            } else {
+                absoluteURI = DEFAULT_SERVICE_URL + uri;
+            }
+            uris.add(new ObjectNode(JsonNodeFactory.instance).put("url", absoluteURI));
         }
 
         if (uris.size() == 1) {
@@ -135,12 +177,13 @@ public abstract class Commons {
         return IOUtils.toInputStream(links.toString());
     }
 
-    public static InputStream changeFormat(final InputStream is, final Accept target) throws IOException {
+    public static InputStream changeFormat(final InputStream is, final Accept target) {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOUtils.copy(is, bos);
-        IOUtils.closeQuietly(is);
 
         try {
+            IOUtils.copy(is, bos);
+            IOUtils.closeQuietly(is);
+
             final ObjectMapper mapper = new ObjectMapper();
             final JsonNode node =
                     changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), target);
@@ -149,6 +192,8 @@ public abstract class Commons {
         } catch (Exception e) {
             LOG.error("Error changing format", e);
             return new ByteArrayInputStream(bos.toByteArray());
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 

@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,50 @@ public class JSONUtilities extends AbstractUtilities {
         return Accept.JSON_FULLMETA;
     }
 
+    @Override
+    protected InputStream addLinks(
+            final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
+            throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        for (String link : links) {
+            srcNode.set(link + JSON_NAVIGATION_SUFFIX,
+                    new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
+        }
+
+        return IOUtils.toInputStream(srcNode.toString());
+    }
+
+    @Override
+    protected Set<String> retrieveAllLinkNames(InputStream is) throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        final Set<String> links = new HashSet<String>();
+
+        final Iterator<String> fieldIter = srcNode.fieldNames();
+
+        while (fieldIter.hasNext()) {
+            final String field = fieldIter.next();
+
+            if (field.endsWith(JSON_NAVIGATION_BIND_SUFFIX)
+                    || field.endsWith(JSON_NAVIGATION_SUFFIX)
+                    || field.endsWith(JSON_MEDIA_SUFFIX)
+                    || field.endsWith(JSON_EDITLINK_NAME)) {
+                if (field.indexOf('@') > 0) {
+                    links.add(field.substring(0, field.indexOf('@')));
+                } else {
+                    links.add(field);
+                }
+            }
+        }
+
+        return links;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -60,6 +105,7 @@ public class JSONUtilities extends AbstractUtilities {
             throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
 
         final NavigationLinks links = new NavigationLinks();
 
@@ -244,6 +290,7 @@ public class JSONUtilities extends AbstractUtilities {
             retain.add(name);
             retain.add(name + JSON_NAVIGATION_SUFFIX);
             retain.add(name + JSON_MEDIA_SUFFIX);
+            retain.add(name + JSON_TYPE_SUFFIX);
         }
 
         srcNode.retain(retain);
@@ -308,6 +355,10 @@ public class JSONUtilities extends AbstractUtilities {
         final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
         final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
 
+        if (toBeChangedNode.get(linkName + JSON_NAVIGATION_SUFFIX) == null) {
+            throw new NotFoundException();
+        }
+
         toBeChangedNode.set(linkName, replacementNode.get(JSON_VALUE_NAME));
 
         final JsonNode next = replacementNode.get(linkName + JSON_NEXTLINK_NAME);
@@ -347,5 +398,31 @@ public class JSONUtilities extends AbstractUtilities {
         }
 
         return IOUtils.toInputStream(toBeChangedObject.toString());
+    }
+
+    public static Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
+            throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        final List<String> links = new ArrayList<String>();
+
+        JsonNode uris = srcNode.get("value");
+        if (uris == null) {
+            final JsonNode url = srcNode.get("url");
+            if (url != null) {
+                links.add(url.textValue());
+            }
+        } else {
+            final Iterator<JsonNode> iter = ((ArrayNode) uris).iterator();
+            while (iter.hasNext()) {
+                links.add(iter.next().get("url").textValue());
+            }
+        }
+
+        final JsonNode next = srcNode.get(JSON_NEXTLINK_NAME);
+
+        return new SimpleEntry<String, List<String>>(next == null ? null : next.asText(), links);
     }
 }

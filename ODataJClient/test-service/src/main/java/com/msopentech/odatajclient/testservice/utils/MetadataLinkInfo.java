@@ -18,22 +18,28 @@
  */
 package com.msopentech.odatajclient.testservice.utils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.NotFoundException;
 
 public class MetadataLinkInfo {
 
-    protected final static Set<String> feed = new HashSet<String>();
-
-    protected final static Map<String, String> entitySetAlias = new HashMap<String, String>();
-
     private Map<String, EntitySet> entitySets = new HashMap<String, EntitySet>();
 
-    public void addLinkName(final String entitySetName, final String linkName) {
+    public Set<String> getEntitySets() {
+        return entitySets.keySet();
+    }
+
+    public void addEntitySet(final String entitySetName) {
+        if (!entitySets.containsKey(entitySetName)) {
+            entitySets.put(entitySetName, new EntitySet(entitySetName));
+        }
+    }
+
+    public void addLink(
+            final String entitySetName, final String linkName, final String targetName, final boolean isFeed) {
         final EntitySet entitySet;
         if (entitySets.containsKey(entitySetName)) {
             entitySet = entitySets.get(entitySetName);
@@ -42,35 +48,57 @@ public class MetadataLinkInfo {
             entitySets.put(entitySetName, entitySet);
         }
 
-        entitySet.add(linkName);
-    }
-
-    public Collection<EntitySet> getEntitySets() {
-        return entitySets.values();
+        entitySet.add(linkName, targetName, isFeed);
     }
 
     public Set<String> getNavigationLinkNames(final String entitySetName) {
-        return entitySets.containsKey(entitySetName)
-                ? entitySets.get(entitySetName).getLinks() : Collections.<String>emptySet();
+        final Set<String> res = new HashSet<String>();
+
+        if (!entitySets.containsKey(entitySetName)) {
+            throw new NotFoundException();
+        }
+
+        for (NavigationLink navigationLink : entitySets.get(entitySetName).getLinks()) {
+            res.add(navigationLink.getName());
+        }
+
+        return res;
     }
 
     public boolean exists(final String entitySetName, final String linkName) {
-        return getNavigationLinkNames(entitySetName).contains(linkName);
+        try {
+            return getNavigationLinkNames(entitySetName).contains(linkName);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isFeed(final String entitySetName, final String linkName) {
+        return entitySets.containsKey(entitySetName) && entitySets.get(entitySetName).isFeed(linkName);
+    }
+
+    public String getTargetName(final String entitySetName, final String linkName) {
+        if (!entitySets.containsKey(entitySetName)) {
+            throw new NotFoundException();
+        }
+
+        final String targetName = entitySets.get(entitySetName).getLink(linkName).getTargetName();
+        return targetName.substring(targetName.lastIndexOf(".") + 1);
     }
 
     private static class EntitySet {
 
         private String name;
 
-        private Set<String> links;
+        private Set<NavigationLink> links;
 
         public EntitySet(final String name) {
             this.name = name;
-            links = new HashSet<String>();
+            links = new HashSet<NavigationLink>();
         }
 
-        public void add(final String linkName) {
-            links.add(linkName);
+        public void add(final String linkName, final String targetName, final boolean isFeed) {
+            links.add(new NavigationLink(linkName, targetName, isFeed));
         }
 
         public String getName() {
@@ -81,17 +109,67 @@ public class MetadataLinkInfo {
             this.name = name;
         }
 
-        public Set<String> getLinks() {
+        public Set<NavigationLink> getLinks() {
             return links;
         }
 
-        public void setLinks(final Set<String> links) {
+        public NavigationLink getLink(final String linkName) {
+            for (NavigationLink navigationLink : links) {
+                if (linkName.equalsIgnoreCase(navigationLink.getName())) {
+                    return navigationLink;
+                }
+            }
+
+            throw new NotFoundException();
+        }
+
+        public boolean isFeed(final String linkName) {
+            try {
+                return getLink(linkName).isFeed();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        public void setLinks(final Set<NavigationLink> links) {
             this.links = links;
         }
 
         @Override
         public String toString() {
             return name + ": " + links;
+        }
+    }
+
+    private static class NavigationLink {
+
+        private final String name;
+
+        private final String targetName;
+
+        private final boolean feed;
+
+        public NavigationLink(final String name, final String targetName, final boolean feed) {
+            this.name = name;
+            this.targetName = targetName;
+            this.feed = feed;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getTargetName() {
+            return targetName;
+        }
+
+        public boolean isFeed() {
+            return feed;
+        }
+
+        @Override
+        public String toString() {
+            return name + "(feed: " + isFeed() + ")";
         }
     }
 }

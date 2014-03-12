@@ -45,7 +45,7 @@ import org.junit.Test;
 public class LinkTestITCase extends AbstractTestITCase {
 
     protected String getServiceRoot() {
-        return testDefaultServiceRootURL;
+        return testStaticServiceRootURL;
     }
 
     private ODataLinkCollection doRetrieveLinkURIs(final ODataFormat format, final String linkname) throws IOException {

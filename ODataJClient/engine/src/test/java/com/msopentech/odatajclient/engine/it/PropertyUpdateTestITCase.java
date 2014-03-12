@@ -46,6 +46,7 @@ import com.msopentech.odatajclient.engine.format.ODataFormat;
 import com.msopentech.odatajclient.engine.format.ODataPubFormat;
 import com.msopentech.odatajclient.engine.format.ODataValueFormat;
 import com.msopentech.odatajclient.engine.uri.URIBuilder;
+import org.junit.Ignore;
 
 public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update complex property
@@ -122,24 +123,20 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
         final String collectionEntity = "Customer";
         final String collectionPropertyType = "EmailBag";
         final String primitivePropertyType = "PhoneNumber";
-        try {
-            // update complex property
-            updateComplexProperty(format, contentType, prefer, replace, entitySet, propertyType);
-            updateComplexProperty(format, contentType, prefer, merge, entitySet, propertyType);
-            updateComplexProperty(format, contentType, prefer, patch, entitySet, propertyType);
+        // update complex property
+        updateComplexProperty(format, contentType, prefer, replace, entitySet, propertyType);
+        updateComplexProperty(format, contentType, prefer, merge, entitySet, propertyType);
+        updateComplexProperty(format, contentType, prefer, patch, entitySet, propertyType);
 
-            // update collection property
-            updateCollectionProperty(format, contentType, prefer, replace, collectionEntity, collectionPropertyType);
-            updateCollectionProperty(format, contentType, prefer, merge, collectionEntity, collectionPropertyType);
-            updateCollectionProperty(format, contentType, prefer, patch, collectionEntity, collectionPropertyType);
+        // update collection property
+        updateCollectionProperty(format, contentType, prefer, replace, collectionEntity, collectionPropertyType);
+        updateCollectionProperty(format, contentType, prefer, merge, collectionEntity, collectionPropertyType);
+        updateCollectionProperty(format, contentType, prefer, patch, collectionEntity, collectionPropertyType);
 
-            // update primitive property
-            updatePrimitiveProperty(format, contentType, prefer, replace, collectionEntity, primitivePropertyType);
-            updatePrimitiveProperty(format, contentType, prefer, merge, collectionEntity, primitivePropertyType);
-            updatePrimitiveProperty(format, contentType, prefer, patch, collectionEntity, primitivePropertyType);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        // update primitive property
+        updatePrimitiveProperty(format, contentType, prefer, replace, collectionEntity, primitivePropertyType);
+        updatePrimitiveProperty(format, contentType, prefer, merge, collectionEntity, primitivePropertyType);
+        updatePrimitiveProperty(format, contentType, prefer, patch, collectionEntity, primitivePropertyType);
     }
     //update property with json minimal metadata
 
@@ -192,24 +189,20 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
         final String collectionEntity = "Customer";
         final String collectionPropertyType = "EmailBag";
         final String primitivePropertyType = "PhoneNumber";
-        try {
-            // update complex property
-            updateComplexProperty(format, contentType, prefer, replace, entitySet, propertyType);
-            updateComplexProperty(format, contentType, prefer, merge, entitySet, propertyType);
-            updateComplexProperty(format, contentType, prefer, patch, entitySet, propertyType);
+        // update complex property
+        updateComplexProperty(format, contentType, prefer, replace, entitySet, propertyType);
+        updateComplexProperty(format, contentType, prefer, merge, entitySet, propertyType);
+        updateComplexProperty(format, contentType, prefer, patch, entitySet, propertyType);
 
-            // update collection property
-            updateCollectionProperty(format, contentType, prefer, replace, collectionEntity, collectionPropertyType);
-            updateCollectionProperty(format, contentType, prefer, merge, collectionEntity, collectionPropertyType);
-            updateCollectionProperty(format, contentType, prefer, patch, collectionEntity, collectionPropertyType);
+        // update collection property
+        updateCollectionProperty(format, contentType, prefer, replace, collectionEntity, collectionPropertyType);
+        updateCollectionProperty(format, contentType, prefer, merge, collectionEntity, collectionPropertyType);
+        updateCollectionProperty(format, contentType, prefer, patch, collectionEntity, collectionPropertyType);
 
-            // update primitive property
-            updatePrimitiveProperty(format, contentType, prefer, replace, collectionEntity, primitivePropertyType);
-            updatePrimitiveProperty(format, contentType, prefer, merge, collectionEntity, primitivePropertyType);
-            updatePrimitiveProperty(format, contentType, prefer, patch, collectionEntity, primitivePropertyType);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        // update primitive property
+        updatePrimitiveProperty(format, contentType, prefer, replace, collectionEntity, primitivePropertyType);
+        updatePrimitiveProperty(format, contentType, prefer, merge, collectionEntity, primitivePropertyType);
+        updatePrimitiveProperty(format, contentType, prefer, patch, collectionEntity, primitivePropertyType);
     }
     //update with xml format
 
@@ -250,6 +243,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update with XML format and json contentType
 
     @Test
+    @Ignore
     public void updatePropertyWithXMLAndJSON() {
         final ODataFormat format = ODataFormat.XML;
         final String contentType = "application/json;odata=fullmetadata";
@@ -285,6 +279,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update operation with xml content type header
 
     @Test
+    @Ignore
     public void updatePropertyWithJSONAndXML() {
         final ODataFormat format = ODataFormat.JSON_FULL_METADATA;
         final String contentType = "application/xml";
@@ -481,6 +476,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update string property value 
 
     @Test
+    @Ignore
     public void stringPropertyValue() {
         final ODataValueFormat format = ODataValueFormat.TEXT;
         final String contentType = "application/json";
@@ -554,6 +550,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update string property value 
 
     @Test
+    @Ignore
     public void datePropertyValue() {
         final ODataValueFormat format = ODataValueFormat.TEXT;
         final String contentType = "application/json";
@@ -632,6 +629,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update int property value 
 
     @Test
+    @Ignore
     public void intPropertyValue() {
         final ODataValueFormat format = ODataValueFormat.TEXT;
         final String contentType = "application/json";
@@ -704,6 +702,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update string property value 
 
     @Test
+    @Ignore
     public void decimalPropertyValue() {
         final ODataValueFormat format = ODataValueFormat.TEXT;
         final String contentType = "application/json";
@@ -771,6 +770,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // update boolean property value 
 
     @Test
+    @Ignore
     public void booleanPropertyValue() {
         final ODataValueFormat format = ODataValueFormat.TEXT;
         final String contentType = "application/json";
@@ -906,6 +906,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // delete operation with atom accept and json contentType header
 
     @Test
+    @Ignore
     public void testDeletePrimaryKeyWithATOMAndJSON() {
         ODataPubFormat format = ODataPubFormat.ATOM;
         String contentType = "application/json;odata=fullmetadata";
@@ -918,6 +919,7 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // delete operation with json accept and atom contentType header
 
     @Test
+    @Ignore
     public void testDeletePrimaryKeyWithJSONAndATOM() {
         ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         String contentType = "application/atom+xml";
@@ -979,18 +981,16 @@ public class PropertyUpdateTestITCase extends AbstractTestITCase {
     // delete operation with atom accept and json contentType header
 
     @Test
+    @Ignore
     public void testDeleteNullableWithATOMAndJSON() {
         ODataPubFormat format = ODataPubFormat.ATOM;
         String contentType = "application/json;odata=fullmetadata";
-        try {
-            deleteNullableProperty(format, contentType);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        deleteNullableProperty(format, contentType);
     }
     // delete operation with json accept and atom contentType header
 
     @Test
+    @Ignore
     public void testDeleteNullableWithJSONAndATOM() {
         ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
         String contentType = "application/atom+xml";

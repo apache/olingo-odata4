@@ -80,6 +80,86 @@ public class XMLUtilities extends AbstractUtilities {
      * {@inheritDoc }
      */
     @Override
+    protected InputStream addLinks(
+            final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
+            throws Exception {
+
+        // -----------------------------------------
+        // 0. Build reader and writer
+        // -----------------------------------------
+        final XMLEventReader reader = getEventReader(is);
+        final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final XMLOutputFactory xof = XMLOutputFactory.newInstance();
+        final XMLEventWriter writer = xof.createXMLEventWriter(bos);
+        // -----------------------------------------
+
+        final XmlElement entry = getAtomElement(reader, writer, "entry");
+        writer.add(entry.getStart());
+
+        // add for links
+        for (String link : links) {
+            final Set<Attribute> attributes = new HashSet<Attribute>();
+            attributes.add(eventFactory.createAttribute(new QName("title"), link));
+            attributes.add(eventFactory.createAttribute(new QName("href"),
+                    Commons.getLinksURI(version, entitySetName, entitykey, link)));
+            attributes.add(eventFactory.createAttribute(new QName("rel"), Constants.ATOM_LINK_REL + link));
+            attributes.add(eventFactory.createAttribute(new QName("type"),
+                    Commons.linkInfo.get(version).isFeed(entitySetName, link) ? Constants.ATOM_LINK_FEED
+                    : Constants.ATOM_LINK_ENTRY));
+
+            writer.add(eventFactory.createStartElement(new QName(LINK), attributes.iterator(), null));
+            writer.add(eventFactory.createEndElement(new QName(LINK), null));
+        }
+
+        writer.add(entry.getContentReader());
+        writer.add(entry.getEnd());
+        writer.add(reader);
+        IOUtils.closeQuietly(is);
+
+        writer.flush();
+        writer.close();
+        reader.close();
+
+        return new ByteArrayInputStream(bos.toByteArray());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected Set<String> retrieveAllLinkNames(final InputStream is) throws Exception {
+        final Set<String> links = new HashSet<String>();
+
+        final XMLEventReader reader = getEventReader(is);
+
+        try {
+
+            int startDepth = 0;
+
+            while (true) {
+                final Map.Entry<Integer, XmlElement> linkInfo =
+                        getAtomElement(reader, null, LINK, null, startDepth, 2, 2, true);
+
+                startDepth = linkInfo.getKey();
+
+                links.add(linkInfo.getValue().getStart().getAttributeByName(new QName("title")).getValue());
+            }
+        } catch (Exception ignore) {
+            // ignore
+        } finally {
+            reader.close();
+            IOUtils.closeQuietly(is);
+        }
+
+        return links;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     protected NavigationLinks retrieveNavigationInfo(
             final String entitySetName, final InputStream is)
             throws Exception {
@@ -297,7 +377,6 @@ public class XMLUtilities extends AbstractUtilities {
                     if (match) {
                         start = event.asStartElement();
                     }
-
                 }
 
             } else if (event.getEventType() == XMLStreamConstants.END_ELEMENT) {
@@ -636,8 +715,13 @@ public class XMLUtilities extends AbstractUtilities {
             final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
             writer.add(eventFactory.createStartDocument("UTF-8", "1.0"));
             writer.add(element);
-            writer.add(eventFactory.createNamespace(ATOM_PROPERTY_PREFIX.substring(0, 1), DATASERVICES_NS));
-            writer.add(eventFactory.createNamespace(ATOM_METADATA_PREFIX.substring(0, 1), METADATA_NS));
+
+            if (element.getAttributeByName(new QName(ATOM_DATASERVICE_NS)) == null) {
+                writer.add(eventFactory.createNamespace(ATOM_PROPERTY_PREFIX.substring(0, 1), DATASERVICES_NS));
+            }
+            if (element.getAttributeByName(new QName(ATOM_METADATA_NS)) == null) {
+                writer.add(eventFactory.createNamespace(ATOM_METADATA_PREFIX.substring(0, 1), METADATA_NS));
+            }
         } else {
             writer.add(element);
         }

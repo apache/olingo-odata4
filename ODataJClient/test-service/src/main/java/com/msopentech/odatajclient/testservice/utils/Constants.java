@@ -19,6 +19,7 @@
 package com.msopentech.odatajclient.testservice.utils;
 
 public class Constants {
+    public final static String ODATA_SERVICE_VERSION = "DataServiceVersion";
 
     public final static String DEFAULT_SERVICE_URL = "http://localhost:9080/StaticService/V3/Static.svc/";
 
@@ -29,6 +30,16 @@ public class Constants {
     public final static String ATOM_PROPERTY_PREFIX = "d:";
 
     public final static String ATOM_METADATA_PREFIX = "m:";
+
+    public final static String ATOM_METADATA_NS = "xmlns:m";
+
+    public final static String ATOM_DATASERVICE_NS = "xmlns:d";
+
+    public final static String ATOM_LINK_ENTRY = "application/atom+xml;type=entry";
+
+    public final static String ATOM_LINK_FEED = "application/atom+xml;type=feed";
+
+    public final static String ATOM_LINK_REL = "http://schemas.microsoft.com/ado/2007/08/dataservices/related/";
 
     public final static String TYPE = ATOM_METADATA_PREFIX + "type";
 
