@@ -21,4 +21,7 @@ package org.apache.olingo.client.api.edm.xml.v4;
 public interface Parameter extends org.apache.olingo.client.api.edm.xml.CommonParameter {
 
   String getSrid();
+  
+  //TODO: Has this to be moved into CommonParameter?
+  boolean isCollection();
 }

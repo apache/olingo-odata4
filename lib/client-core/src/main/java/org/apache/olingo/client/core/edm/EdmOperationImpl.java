@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
+import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -57,5 +58,23 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
     super(edm, name, kind);
     this.operation = operation;
+  }
+  
+  @Override
+  public FullQualifiedName getBindingParameterTypeFqn() {
+    if (isBound()) {
+      Parameter bindingParameter = operation.getParameters().get(0);
+      return new FullQualifiedName(getNamespace(), bindingParameter.getName());
+    }
+    return null;
+  }
+
+  @Override
+  public Boolean isBindingParameterTypeCollection() {
+    if (isBound()) {
+      Parameter bindingParameter = operation.getParameters().get(0);
+      return bindingParameter.isCollection();
+    }
+    return null;
   }
 }

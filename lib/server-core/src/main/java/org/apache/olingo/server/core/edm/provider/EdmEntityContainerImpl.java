@@ -1,22 +1,24 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.server.core.edm.provider;
+
+import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -25,9 +27,11 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edm.provider.EntityContainer;
 import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
@@ -36,12 +40,20 @@ import org.apache.olingo.server.api.edm.provider.Singleton;
 public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   private final EdmProvider provider;
+  private EntityContainer container;
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
-          final EntityContainerInfo entityContainerInfo) {
+      final EntityContainerInfo entityContainerInfo) {
 
     super(edm, entityContainerInfo.getContainerName());
     this.provider = provider;
+  }
+
+  public EdmEntityContainerImpl(Edm edm, EdmProvider provider, FullQualifiedName containerFQN,
+      EntityContainer entityContainer) {
+    super(edm, containerFQN);
+    this.provider = provider;
+    this.container = entityContainer;
   }
 
   @Override
@@ -83,7 +95,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     try {
       final ActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
       if (providerImport != null) {
-        actionImport = new EdmActionImportImpl(edm, this, actionImportName, providerImport);
+        actionImport = new EdmActionImportImpl(edm, this, providerImport);
       }
     } catch (ODataException e) {
       throw new EdmException(e);
@@ -99,7 +111,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     try {
       final FunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
       if (providerImport != null) {
-        functionImport = new EdmFunctionImportImpl(edm, this, functionImportName, providerImport);
+        functionImport = new EdmFunctionImportImpl(edm, this, providerImport);
       }
     } catch (ODataException e) {
       throw new EdmException(e);
@@ -108,4 +120,77 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     return functionImport;
   }
 
+  @Override
+  protected void loadAllEntitySets() {
+    loadContainer();
+    List<EntitySet> providerEntitySets = container.getEntitySets();
+    if (providerEntitySets != null) {
+      for (EntitySet entitySet : providerEntitySets) {
+        if (!entitySets.containsKey(entitySet.getName())) {
+          EdmEntitySetImpl impl = new EdmEntitySetImpl(edm, this, entitySet);
+          entitySets.put(impl.getName(), impl);
+        }
+      }
+    }
+  }
+
+  @Override
+  protected void loadAllFunctionImports() {
+    loadContainer();
+    List<FunctionImport> providerFuctionImports = container.getFunctionImports();
+    if (providerFuctionImports != null) {
+      for (FunctionImport functionImport : providerFuctionImports) {
+        String functionName = functionImport.getName();
+        if (!functionImports.containsKey(functionName)) {
+          EdmFunctionImportImpl impl = new EdmFunctionImportImpl(edm, this, functionImport);
+          functionImports.put(functionName, impl);
+        }
+      }
+    }
+
+  }
+
+  @Override
+  protected void loadAllSingletons() {
+    loadContainer();
+    List<Singleton> providerSingletons = container.getSingletons();
+    if (providerSingletons != null) {
+      for (Singleton singleton : providerSingletons) {
+        if (!singletons.containsKey(singleton.getName())) {
+          EdmSingletonImpl impl = new EdmSingletonImpl(edm, this, singleton);
+          singletons.put(singleton.getName(), impl);
+        }
+      }
+    }
+
+  }
+
+  @Override
+  protected void loadAllActionImports() {
+    loadContainer();
+    List<ActionImport> providerActionImports = container.getActionImports();
+    if (providerActionImports != null) {
+      for (ActionImport actionImport : providerActionImports) {
+        if (!actionImports.containsKey(actionImport.getName())) {
+          EdmActionImportImpl impl = new EdmActionImportImpl(edm, this, actionImport);
+          actionImports.put(actionImport.getName(), impl);
+        }
+      }
+    }
+
+  }
+
+  private void loadContainer() {
+    if (container == null) {
+      try {
+        container = provider.getEntityContainer();
+        if (container == null) {
+          // TODO: Should we throw an exception here?
+          container = new EntityContainer().setName(this.getName());
+        }
+      } catch (ODataException e) {
+        throw new EdmException(e);
+      }
+    }
+  }
 }

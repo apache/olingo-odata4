@@ -26,6 +26,9 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -36,6 +39,7 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edm.provider.EntityContainer;
 import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
@@ -56,6 +60,110 @@ public class EdmEntityContainerImplTest {
     EntityContainerInfo entityContainerInfo =
         new EntityContainerInfo().setContainerName(new FullQualifiedName("space", "name"));
     container = new EdmEntityContainerImpl(edm, provider, entityContainerInfo);
+  }
+  
+  @Test
+  public void getAllEntitySetInitial(){
+    List<EdmEntitySet> entitySets = container.getEntitySets();
+    assertNotNull(entitySets);
+    assertEquals(2, entitySets.size());
+  }
+  
+  @Test
+  public void getAllEntitySetsAfterOneWasAlreadyLoaded(){
+    EdmEntitySet entitySet = container.getEntitySet("entitySetName");
+    List<EdmEntitySet> entitySets = container.getEntitySets();
+    assertNotNull(entitySets);
+    assertEquals(2, entitySets.size());
+    boolean contained = false;
+    for(EdmEntitySet es: entitySets){
+      //Already loaded entity set must be the same 
+      if(es.getName().equals("entitySetName")){
+        assertTrue(entitySet == es);
+        contained = true;
+      }
+    }
+    if(!contained){
+      fail("Should have found entity set in this list.");
+    }
+  }
+  
+  @Test
+  public void getAllSingletonsInitial(){
+    List<EdmSingleton> singletons = container.getSingletons();
+    assertNotNull(singletons);
+    assertEquals(2, singletons.size());
+  }
+  
+  @Test
+  public void getAllSingletonsAfterOneWasAlreadyLoaded(){
+    EdmSingleton singleton = container.getSingleton("singletonName");
+    List<EdmSingleton> singletons = container.getSingletons();
+    assertNotNull(singletons);
+    assertEquals(2, singletons.size());
+    boolean contained = false;
+    for(EdmSingleton s: singletons){
+      //Already loaded singleton must be the same 
+      if(s.getName().equals("singletonName")){
+        assertTrue(singleton == s);
+        contained = true;
+      }
+    }
+    if(!contained){
+      fail("Should have found singleton in this list.");
+    }
+  }
+  
+  @Test
+  public void getAllActionImportsInitial(){
+    List<EdmActionImport> actionImports = container.getActionImports();
+    assertNotNull(actionImports);
+    assertEquals(2, actionImports.size());
+  }
+  
+  @Test
+  public void getAllActionImportsAfterOneWasAlreadyLoaded(){
+    EdmActionImport actionImport = container.getActionImport("actionImportName");
+    List<EdmActionImport> actionImports = container.getActionImports();
+    assertNotNull(actionImports);
+    assertEquals(2, actionImports.size());
+    boolean contained = false;
+    for(EdmActionImport ai: actionImports){
+      //Already loaded action import must be the same 
+      if(ai.getName().equals("actionImportName")){
+        assertTrue(actionImport == ai);
+        contained = true;
+      }
+    }
+    if(!contained){
+      fail("Should have found action import in this list.");
+    }
+  }
+  
+  @Test
+  public void getAllFunctionImportsInitial(){
+    List<EdmFunctionImport> functionImports = container.getFunctionImports();
+    assertNotNull(functionImports);
+    assertEquals(2, functionImports.size());
+  }
+  
+  @Test
+  public void getAllFunctionImportsAfterOneWasAlreadyLoaded(){
+    EdmFunctionImport functionImport = container.getFunctionImport("functionImportName");
+    List<EdmFunctionImport> functionImports = container.getFunctionImports();
+    assertNotNull(functionImports);
+    assertEquals(2, functionImports.size());
+    boolean contained = false;
+    for(EdmFunctionImport fi: functionImports){
+      //Already loaded function import must be the same 
+      if(fi.getName().equals("functionImportName")){
+        assertTrue(functionImport == fi);
+        contained = true;
+      }
+    }
+    if(!contained){
+      fail("Should have found function import in this list.");
+    }
   }
 
   @Test
@@ -190,7 +298,7 @@ public class EdmEntityContainerImplTest {
     public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       if (actionImportName != null) {
-        return new ActionImport().setName("singletonName");
+        return new ActionImport().setName("actionImportName");
       }
       return null;
     }
@@ -199,9 +307,35 @@ public class EdmEntityContainerImplTest {
     public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
         throws ODataException {
       if (functionImportName != null) {
-        return new FunctionImport().setName("singletonName");
+        return new FunctionImport().setName("functionImportName");
       }
       return null;
+    }
+    
+    @Override
+    public EntityContainer getEntityContainer() throws ODataException {
+      EntityContainer container = new EntityContainer();
+      List<EntitySet> entitySets = new ArrayList<EntitySet>();
+      entitySets.add(new EntitySet().setName("entitySetName"));
+      entitySets.add(new EntitySet().setName("entitySetName2"));
+      container.setEntitySets(entitySets );
+      
+      List<Singleton> singletons = new ArrayList<Singleton>();
+      singletons.add(new Singleton().setName("singletonName"));
+      singletons.add(new Singleton().setName("singletonName2"));
+      container.setSingletons(singletons );
+      
+      List<ActionImport> actionImports = new ArrayList<ActionImport>();
+      actionImports.add(new ActionImport().setName("actionImportName"));
+      actionImports.add(new ActionImport().setName("actionImportName2"));
+      container.setActionImports(actionImports );
+      
+      List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
+      functionImports.add(new FunctionImport().setName("functionImportName"));
+      functionImports.add(new FunctionImport().setName("functionImportName2"));
+      container.setFunctionImports(functionImports );
+      
+      return container;
     }
   }
 }

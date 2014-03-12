@@ -26,6 +26,12 @@ import java.util.List;
  * Interface representing a Entity Data Model as described in the Conceptual Schema Definition.
  */
 public interface Edm {
+  
+  /**
+   * This method DOES NOT support lazy loading. All schemas are loaded completely!
+   * @return all schemas defined for this EDM
+   */
+  List<EdmSchema> getSchemas();
 
   /**
    * Get entity container by full qualified name.

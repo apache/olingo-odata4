@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class EdmFunctionImportProxy extends EdmOperationImportImpl implements EdmFunctionImport {
 
@@ -44,5 +45,17 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
     return edm.getFunction(
             new EdmTypeInfo(functionImport.getName(), container.getNamespace()).getFullQualifiedName(),
             null, null, parameterNames);
+  }
+
+  @Override
+  public boolean isIncludeInServiceDocument() {
+    //V3 states that all function imports are included in the service document
+    return true;
+  }
+
+  @Override
+  public FullQualifiedName getFunctionFqn() {
+    //TODO: Is this right for V3?
+    return new FullQualifiedName(container.getNamespace(), getName());
   }
 }

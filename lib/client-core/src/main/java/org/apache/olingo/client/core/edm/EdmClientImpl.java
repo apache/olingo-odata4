@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +53,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -367,5 +369,14 @@ public class EdmClientImpl extends AbstractEdmImpl {
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
+  @Override
+  protected List<EdmSchema> createSchemas() {
+    List<EdmSchema> schemas = new ArrayList<EdmSchema>();
+    for(Schema schema :  xmlMetadata.getSchemas()){
+      schemas.add(new EdmSchemaImpl(this, xmlMetadata, schema));
+    }
+    return schemas;
   }
 }

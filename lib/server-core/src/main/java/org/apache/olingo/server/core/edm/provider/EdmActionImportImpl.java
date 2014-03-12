@@ -28,10 +28,9 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
 
   private final ActionImport actionImport;
 
-  public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
-          final ActionImport actionImport) {
+  public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final ActionImport actionImport) {
 
-    super(edm, container, name, actionImport);
+    super(edm, container, actionImport);
     this.actionImport = actionImport;
   }
 

@@ -99,4 +99,10 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
     return entityContainer.getEntitySet(targetEntitySet);
   }
 
+  @Override
+  public boolean isIncludeInServiceDocument() {
+    //V3 states that all entity sets are included in the service document
+    return true;
+  }
+
 }
