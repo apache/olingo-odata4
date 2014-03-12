@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
@@ -3485,46 +3485,46 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("indexof(PropertyString,'47') eq 5")
         .is("<<indexof(<PropertyString>,<'47'>)> eq <5>>")
         .root().left()
-        .isMethod(MethodCallKind.INDEXOF, 2)
+        .isMethod(MethodKind.INDEXOF, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'47'>");
 
     testFilter.runOnETKeyNav("tolower(PropertyString) eq 'foo'")
         .is("<<tolower(<PropertyString>)> eq <'foo'>>")
         .root().left()
-        .isMethod(MethodCallKind.TOLOWER, 1)
+        .isMethod(MethodKind.TOLOWER, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("toupper(PropertyString) eq 'FOO'")
         .is("<<toupper(<PropertyString>)> eq <'FOO'>>")
         .root().left()
-        .isMethod(MethodCallKind.TOUPPER, 1)
+        .isMethod(MethodKind.TOUPPER, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("trim(PropertyString) eq 'fooba'")
         .is("<<trim(<PropertyString>)> eq <'fooba'>>")
         .root().left()
-        .isMethod(MethodCallKind.TRIM, 1)
+        .isMethod(MethodKind.TRIM, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<4>)> eq <'foo'>>")
         .root().left()
-        .isMethod(MethodCallKind.SUBSTRING, 2)
+        .isMethod(MethodKind.SUBSTRING, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<4>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<4>)> eq <'foo'>>")
         .root().left()
-        .isMethod(MethodCallKind.SUBSTRING, 2)
+        .isMethod(MethodKind.SUBSTRING, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<4>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,2,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<2>,<4>)> eq <'foo'>>")
         .root().left()
-        .isMethod(MethodCallKind.SUBSTRING, 3)
+        .isMethod(MethodKind.SUBSTRING, 3)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<2>")
         .isParameterText(2, "<4>");
@@ -3532,360 +3532,360 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("concat(PropertyString,PropertyComplexTwoPrim/PropertyString) eq 'foo'")
         .is("<<concat(<PropertyString>,<PropertyComplexTwoPrim/PropertyString>)> eq <'foo'>>")
         .root().left()
-        .isMethod(MethodCallKind.CONCAT, 2)
+        .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<PropertyComplexTwoPrim/PropertyString>");
 
     testFilter.runOnETKeyNav("concat(PropertyString,'bar') eq 'foobar'")
         .is("<<concat(<PropertyString>,<'bar'>)> eq <'foobar'>>")
         .root().left()
-        .isMethod(MethodCallKind.CONCAT, 2)
+        .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'bar'>");
 
     testFilter.runOnETKeyNav("concat(PropertyString,'bar') eq 'foobar'")
         .is("<<concat(<PropertyString>,<'bar'>)> eq <'foobar'>>")
         .root().left()
-        .isMethod(MethodCallKind.CONCAT, 2)
+        .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'bar'>");
 
     testFilter.runOnETKeyNav("concat(PropertyString, cast(PropertyComplexAllPrim/PropertyInt16,Edm.String))")
         .is("<concat(<PropertyString>,<cast(<PropertyComplexAllPrim/PropertyInt16>,<Edm.String>)>)>")
-        .isMethod(MethodCallKind.CONCAT, 2)
+        .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<cast(<PropertyComplexAllPrim/PropertyInt16>,<Edm.String>)>")
         .goParameter(1)
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<PropertyComplexAllPrim/PropertyInt16>")
         .isParameterText(1, "<Edm.String>");
 
     testFilter.runOnETKeyNav("length(PropertyString) eq 32")
         .is("<<length(<PropertyString>)> eq <32>>")
         .root().left()
-        .isMethod(MethodCallKind.LENGTH, 1)
+        .isMethod(MethodKind.LENGTH, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETAllPrim("year(PropertyDate) eq 2013")
         .is("<<year(<PropertyDate>)> eq <2013>>")
         .root().left()
-        .isMethod(MethodCallKind.YEAR, 1)
+        .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("year(2013-09-25) eq 2013")
         .is("<<year(<2013-09-25>)> eq <2013>>")
         .root().left()
-        .isMethod(MethodCallKind.YEAR, 1)
+        .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("year(PropertyDateTimeOffset) eq 2013")
         .is("<<year(<PropertyDateTimeOffset>)> eq <2013>>")
         .root().left()
-        .isMethod(MethodCallKind.YEAR, 1)
+        .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("year(2013-09-25T12:34:56.123456789012-10:24) eq 2013")
         .is("<<year(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2013>>")
         .root().left()
-        .isMethod(MethodCallKind.YEAR, 1)
+        .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("month(PropertyDate) eq 9")
         .is("<<month(<PropertyDate>)> eq <9>>")
         .root().left()
-        .isMethod(MethodCallKind.MONTH, 1)
+        .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("month(2013-09-25) eq 9")
         .is("<<month(<2013-09-25>)> eq <9>>")
         .root().left()
-        .isMethod(MethodCallKind.MONTH, 1)
+        .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("month(PropertyDateTimeOffset) eq 9")
         .is("<<month(<PropertyDateTimeOffset>)> eq <9>>")
         .root().left()
-        .isMethod(MethodCallKind.MONTH, 1)
+        .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("month(2013-09-25T12:34:56.123456789012-10:24) eq 9")
         .is("<<month(<2013-09-25T12:34:56.123456789012-10:24>)> eq <9>>")
         .root().left()
-        .isMethod(MethodCallKind.MONTH, 1)
+        .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("day(PropertyDate) eq 25")
         .is("<<day(<PropertyDate>)> eq <25>>")
         .root().left()
-        .isMethod(MethodCallKind.DAY, 1)
+        .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("day(2013-09-25) eq 25")
         .is("<<day(<2013-09-25>)> eq <25>>")
         .root().left()
-        .isMethod(MethodCallKind.DAY, 1)
+        .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("day(PropertyDateTimeOffset) eq 25")
         .is("<<day(<PropertyDateTimeOffset>)> eq <25>>")
         .root().left()
-        .isMethod(MethodCallKind.DAY, 1)
+        .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("day(2013-09-25T12:34:56.123456789012-10:24) eq 25")
         .is("<<day(<2013-09-25T12:34:56.123456789012-10:24>)> eq <25>>")
         .root().left()
-        .isMethod(MethodCallKind.DAY, 1)
+        .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("hour(PropertyDateTimeOffset) eq 2")
         .is("<<hour(<PropertyDateTimeOffset>)> eq <2>>")
         .root().left()
-        .isMethod(MethodCallKind.HOUR, 1)
+        .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("hour(PropertyDateTimeOffset) eq 2")
         .is("<<hour(<PropertyDateTimeOffset>)> eq <2>>")
         .root().left()
-        .isMethod(MethodCallKind.HOUR, 1)
+        .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("hour(2013-09-25T12:34:56.123456789012-10:24) eq 2")
         .is("<<hour(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2>>")
         .root().left()
-        .isMethod(MethodCallKind.HOUR, 1)
+        .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("hour(PropertyTimeOfDay) eq 2")
         .is("<<hour(<PropertyTimeOfDay>)> eq <2>>")
         .root().left()
-        .isMethod(MethodCallKind.HOUR, 1)
+        .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("hour(12:34:55.123456789012) eq 12")
         .is("<<hour(<12:34:55.123456789012>)> eq <12>>")
         .root().left()
-        .isMethod(MethodCallKind.HOUR, 1)
+        .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("minute(PropertyDateTimeOffset) eq 34")
         .is("<<minute(<PropertyDateTimeOffset>)> eq <34>>")
         .root().left()
-        .isMethod(MethodCallKind.MINUTE, 1)
+        .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("minute(2013-09-25T12:34:56.123456789012-10:24) eq 34")
         .is("<<minute(<2013-09-25T12:34:56.123456789012-10:24>)> eq <34>>")
         .root().left()
-        .isMethod(MethodCallKind.MINUTE, 1)
+        .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("minute(PropertyTimeOfDay) eq 34")
         .is("<<minute(<PropertyTimeOfDay>)> eq <34>>")
         .root().left()
-        .isMethod(MethodCallKind.MINUTE, 1)
+        .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("minute(12:34:55.123456789012) eq 34")
         .is("<<minute(<12:34:55.123456789012>)> eq <34>>")
         .root().left()
-        .isMethod(MethodCallKind.MINUTE, 1)
+        .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("second(PropertyDateTimeOffset) eq 56")
         .is("<<second(<PropertyDateTimeOffset>)> eq <56>>")
         .root().left()
-        .isMethod(MethodCallKind.SECOND, 1)
+        .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("second(2013-09-25T12:34:56.123456789012-10:24) eq 56")
         .is("<<second(<2013-09-25T12:34:56.123456789012-10:24>)> eq <56>>")
         .root().left()
-        .isMethod(MethodCallKind.SECOND, 1)
+        .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("second(PropertyTimeOfDay) eq 56")
         .is("<<second(<PropertyTimeOfDay>)> eq <56>>")
         .root().left()
-        .isMethod(MethodCallKind.SECOND, 1)
+        .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("second(12:34:55.123456789012) eq 56")
         .is("<<second(<12:34:55.123456789012>)> eq <56>>")
         .root().left()
-        .isMethod(MethodCallKind.SECOND, 1)
+        .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("fractionalseconds(PropertyDateTimeOffset) eq 123456789012")
         .is("<<fractionalseconds(<PropertyDateTimeOffset>)> eq <123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.FRACTIONALSECONDS, 1)
+        .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("fractionalseconds(2013-09-25T12:34:56.123456789012-10:24) eq 123456789012")
         .is("<<fractionalseconds(<2013-09-25T12:34:56.123456789012-10:24>)> eq <123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.FRACTIONALSECONDS, 1)
+        .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("fractionalseconds(PropertyTimeOfDay) eq 123456789012")
         .is("<<fractionalseconds(<PropertyTimeOfDay>)> eq <123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.FRACTIONALSECONDS, 1)
+        .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("fractionalseconds(12:34:55.123456789012) eq 123456789012")
         .is("<<fractionalseconds(<12:34:55.123456789012>)> eq <123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.FRACTIONALSECONDS, 1)
+        .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("totalseconds(PropertyDuration) eq 4711")
         .is("<<totalseconds(<PropertyDuration>)> eq <4711>>")
         .root().left()
-        .isMethod(MethodCallKind.TOTALSECONDS, 1)
+        .isMethod(MethodKind.TOTALSECONDS, 1)
         .isParameterText(0, "<PropertyDuration>");
 
     testFilter.runOnETAllPrim("totalseconds(duration'P10DT5H34M21.123456789012S') eq 4711")
         .is("<<totalseconds(<duration'P10DT5H34M21.123456789012S'>)> eq <4711>>")
         .root().left()
-        .isMethod(MethodCallKind.TOTALSECONDS, 1)
+        .isMethod(MethodKind.TOTALSECONDS, 1)
         .isParameterText(0, "<duration'P10DT5H34M21.123456789012S'>");
 
     testFilter.runOnETAllPrim("date(PropertyDateTimeOffset) eq 2013-09-25")
         .is("<<date(<PropertyDateTimeOffset>)> eq <2013-09-25>>")
         .root().left()
-        .isMethod(MethodCallKind.DATE, 1)
+        .isMethod(MethodKind.DATE, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("date(2013-09-25T12:34:56.123456789012-10:24) eq 2013-09-25")
         .is("<<date(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2013-09-25>>")
         .root().left()
-        .isMethod(MethodCallKind.DATE, 1)
+        .isMethod(MethodKind.DATE, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("time(PropertyDateTimeOffset) eq 12:34:55.123456789012")
         .is("<<time(<PropertyDateTimeOffset>)> eq <12:34:55.123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.TIME, 1)
+        .isMethod(MethodKind.TIME, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("time(2013-09-25T12:34:56.123456789012-10:24) eq 12:34:55.123456789012")
         .is("<<time(<2013-09-25T12:34:56.123456789012-10:24>)> eq <12:34:55.123456789012>>")
         .root().left()
-        .isMethod(MethodCallKind.TIME, 1)
+        .isMethod(MethodKind.TIME, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("round(PropertyDouble) eq 17")
         .is("<<round(<PropertyDouble>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.ROUND, 1)
+        .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("round(17.45e1) eq 17")
         .is("<<round(<17.45e1>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.ROUND, 1)
+        .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<17.45e1>");
 
     testFilter.runOnETAllPrim("round(PropertyDecimal) eq 17")
         .is("<<round(<PropertyDecimal>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.ROUND, 1)
+        .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("round(17.45) eq 17")
         .is("<<round(<17.45>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.ROUND, 1)
+        .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<17.45>");
 
     testFilter.runOnETAllPrim("floor(PropertyDouble) eq 17")
         .is("<<floor(<PropertyDouble>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.FLOOR, 1)
+        .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("floor(17.45e1) eq 17")
         .is("<<floor(<17.45e1>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.FLOOR, 1)
+        .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<17.45e1>");
 
     testFilter.runOnETAllPrim("floor(PropertyDecimal) eq 17")
         .is("<<floor(<PropertyDecimal>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.FLOOR, 1)
+        .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("floor(17.45) eq 17")
         .is("<<floor(<17.45>)> eq <17>>")
         .root().left()
-        .isMethod(MethodCallKind.FLOOR, 1)
+        .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<17.45>");
 
     testFilter.runOnETAllPrim("ceiling(PropertyDouble) eq 18")
         .is("<<ceiling(<PropertyDouble>)> eq <18>>")
         .root().left()
-        .isMethod(MethodCallKind.CEILING, 1)
+        .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("ceiling(17.55e1) eq 18")
         .is("<<ceiling(<17.55e1>)> eq <18>>")
         .root().left()
-        .isMethod(MethodCallKind.CEILING, 1)
+        .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<17.55e1>");
 
     testFilter.runOnETAllPrim("ceiling(PropertyDecimal) eq 18")
         .is("<<ceiling(<PropertyDecimal>)> eq <18>>")
         .root().left()
-        .isMethod(MethodCallKind.CEILING, 1)
+        .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("ceiling(17.55) eq 18")
         .is("<<ceiling(<17.55>)> eq <18>>")
         .root().left()
-        .isMethod(MethodCallKind.CEILING, 1)
+        .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<17.55>");
 
     testFilter.runOnETAllPrim("totaloffsetminutes(PropertyDateTimeOffset) eq 4711")
         .is("<<totaloffsetminutes(<PropertyDateTimeOffset>)> eq <4711>>")
         .root().left()
-        .isMethod(MethodCallKind.TOTALOFFSETMINUTES, 1)
+        .isMethod(MethodKind.TOTALOFFSETMINUTES, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("totaloffsetminutes(2013-09-25T12:34:56.123456789012-10:24) eq 4711")
         .is("<<totaloffsetminutes(<2013-09-25T12:34:56.123456789012-10:24>)> eq <4711>>")
         .root().left()
-        .isMethod(MethodCallKind.TOTALOFFSETMINUTES, 1)
+        .isMethod(MethodKind.TOTALOFFSETMINUTES, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("mindatetime()")
         .is("<mindatetime()>")
-        .isMethod(MethodCallKind.MINDATETIME, 0);
+        .isMethod(MethodKind.MINDATETIME, 0);
 
     testFilter.runOnETAllPrim("mindatetime() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<mindatetime()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
         .root().left()
-        .isMethod(MethodCallKind.MINDATETIME, 0);
+        .isMethod(MethodKind.MINDATETIME, 0);
 
     testFilter.runOnETAllPrim("maxdatetime()")
         .is("<maxdatetime()>")
-        .isMethod(MethodCallKind.MAXDATETIME, 0);
+        .isMethod(MethodKind.MAXDATETIME, 0);
 
     testFilter.runOnETAllPrim("maxdatetime() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<maxdatetime()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
         .root().left()
-        .isMethod(MethodCallKind.MAXDATETIME, 0);
+        .isMethod(MethodKind.MAXDATETIME, 0);
 
     testFilter.runOnETAllPrim("now()")
         .is("<now()>")
-        .isMethod(MethodCallKind.NOW, 0);
+        .isMethod(MethodKind.NOW, 0);
 
     testFilter.runOnETAllPrim("now() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<now()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
         .root().left()
-        .isMethod(MethodCallKind.NOW, 0);
+        .isMethod(MethodKind.NOW, 0);
 
     testFilter.runOnETTwoKeyNav("$it/PropertyString eq 'SomeString'")
         .is("<<$it/PropertyString> eq <'SomeString'>>")
@@ -3912,7 +3912,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnString("endswith($it,'sap.com')")
         .is("<endswith(<$it>,<'sap.com'>)>")
-        .isMethod(MethodCallKind.ENDSWITH, 2)
+        .isMethod(MethodKind.ENDSWITH, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<'sap.com'>")
         .goParameter(0)
@@ -3923,7 +3923,7 @@ public class TestFullResourcePath {
     testFilter.runOnString("endswith($it,'sap.com') eq false")
         .is("<<endswith(<$it>,<'sap.com'>)> eq <false>>")
         .root().left()
-        .isMethod(MethodCallKind.ENDSWITH, 2)
+        .isMethod(MethodKind.ENDSWITH, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<'sap.com'>")
         .goParameter(0)
@@ -3933,7 +3933,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("endswith($it/CollPropertyString,'sap.com')")
         .is("<endswith(<$it/CollPropertyString>,<'sap.com'>)>")
-        .isMethod(MethodCallKind.ENDSWITH, 2)
+        .isMethod(MethodKind.ENDSWITH, 2)
         .isParameterText(0, "<$it/CollPropertyString>")
         .isParameterText(1, "<'sap.com'>")
         .goParameter(0)
@@ -3962,7 +3962,7 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("cast(com.sap.odata.test1.ETBaseTwoKeyNav)")
         .is("<cast(<com.sap.odata.test1.ETBaseTwoKeyNav>)>")
         .root()
-        .isMethod(MethodCallKind.CAST, 1)
+        .isMethod(MethodKind.CAST, 1)
         .isParameterText(0, "<com.sap.odata.test1.ETBaseTwoKeyNav>")
         .goParameter(0)
         .isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
@@ -3970,7 +3970,7 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("cast(PropertyComplexTwoPrim,com.sap.odata.test1.CTBase)")
         .is("<cast(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTBase>)>")
         .root()
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<PropertyComplexTwoPrim>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
@@ -3983,7 +3983,7 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("cast($it,com.sap.odata.test1.CTBase)")
         .is("<cast(<$it>,<com.sap.odata.test1.CTBase>)>")
         .root()
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
@@ -3996,7 +3996,7 @@ public class TestFullResourcePath {
         )
         .is("<<cast(<$it>,<com.sap.odata.test1.CTBase>)> eq <cast(<$it>,<com.sap.odata.test1.CTBase>)>>")
         .root().left()
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
@@ -4005,7 +4005,7 @@ public class TestFullResourcePath {
         .root().left()
         .goParameter(1).isTypedLiteral(EdmTechProvider.nameCTBase)
         .root().right()
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
@@ -4016,27 +4016,27 @@ public class TestFullResourcePath {
 
     testFilter.runOnInt32("cast(Edm.Int32)")
         .is("<cast(<Edm.Int32>)>")
-        .isMethod(MethodCallKind.CAST, 1)
+        .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameInt32);
 
     testFilter.runOnDateTimeOffset("cast(Edm.DateTimeOffset)")
         .is("<cast(<Edm.DateTimeOffset>)>")
-        .isMethod(MethodCallKind.CAST, 1)
+        .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameDateTimeOffset);
 
     testFilter.runOnDuration("cast(Edm.Duration)")
         .is("<cast(<Edm.Duration>)>")
-        .isMethod(MethodCallKind.CAST, 1)
+        .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameDuration);
 
     testFilter.runOnTimeOfDay("cast(Edm.TimeOfDay)")
         .is("<cast(<Edm.TimeOfDay>)>")
-        .isMethod(MethodCallKind.CAST, 1)
+        .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameTimeOfDay);
 
     testFilter.runOnETKeyNav("cast(CollPropertyInt16,Edm.Int32)")
         .is("<cast(<CollPropertyInt16>,<Edm.Int32>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath().first()
         .isPrimitiveProperty("CollPropertyInt16", EdmTechProvider.nameInt16, true)
         .goUpFilterValidator().root()
@@ -4045,7 +4045,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav(
         "cast(PropertyComplex/PropertyComplex/PropertyDateTimeOffset,Edm.DateTimeOffset)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
@@ -4055,7 +4055,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("cast(PropertyComplex/PropertyComplex/PropertyDuration,Edm.Duration)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyDuration>,<Edm.Duration>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
@@ -4065,7 +4065,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("cast(PropertyComplex/PropertyComplex/PropertyTimeOfDay,Edm.TimeOfDay)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyTimeOfDay>,<Edm.TimeOfDay>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
@@ -4075,7 +4075,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("cast(PropertyComplexAllPrim,com.sap.odata.test1.CTTwoPrim)")
         .is("<cast(<PropertyComplexAllPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComplexAllPrim", EdmTechProvider.nameCTAllPrim, false)
         .goUpFilterValidator().root()
@@ -4085,7 +4085,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,com.sap.odata.test1.ETKeyPrimNav)")
         .is("<cast(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyPrimNav>)>")
-        .isMethod(MethodCallKind.CAST, 2)
+        .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
         .goUpFilterValidator().root()
@@ -4253,14 +4253,14 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("isof(com.sap.odata.test1.ETTwoKeyNav)")
         .is("<isof(<com.sap.odata.test1.ETTwoKeyNav>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 1)
+        .isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameETTwoKeyNav);
 
     testFilter.runOnETKeyNav("isof(com.sap.odata.test1.ETBaseTwoKeyNav) eq true")
         .is("<<isof(<com.sap.odata.test1.ETBaseTwoKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left()
-        .isMethod(MethodCallKind.ISOF, 1)
+        .isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
 
     testFilter
@@ -4268,39 +4268,39 @@ public class TestFullResourcePath {
         .is("<<<isof(<com.sap.odata.test1.ETBaseTwoKeyNav>)> eq <true>> and <<PropertyComplex/PropertyInt16> eq <1>>>")
         .root().isBinary(BinaryOperatorKind.AND)
         .left().isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.ISOF, 1)
+        .left().isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
 
     testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne, com.sap.odata.test1.ETKeyNav) eq true")
         .is("<<isof(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.ISOF, 2)
+        .left().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameETKeyNav);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoPrim)")
         .is("<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
-        .root().isMethod(MethodCallKind.ISOF, 2)
+        .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoBase)")
         .is("<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoBase>)>")
-        .root().isMethod(MethodCallKind.ISOF, 2)
+        .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoBase);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoPrim) eq true")
         .is("<<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)> eq <true>>")
-        .root().left().isMethod(MethodCallKind.ISOF, 2)
+        .root().left().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
         .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
 
     testFilter.runOnETKeyNav("isof($it,com.sap.odata.test1.CTTwoPrim)")
         .is("<isof(<$it>,<com.sap.odata.test1.CTTwoPrim>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isIt().goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
 
@@ -4308,14 +4308,14 @@ public class TestFullResourcePath {
         .is("<<isof(<$it>,<com.sap.odata.test1.CTTwoBase>)> eq <false>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isIt().goUpFilterValidator()
         .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoBase);
 
     testFilter.runOnETKeyNav("isof(PropertyComplex/PropertyInt16,Edm.Int32)")
         .is("<isof(<PropertyComplex/PropertyInt16>,<Edm.Int32>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
@@ -4325,7 +4325,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyDateTimeOffset,Edm.DateTimeOffset)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4336,7 +4336,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyTimeOfDay,Edm.TimeOfDay)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyTimeOfDay>,<Edm.TimeOfDay>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4347,7 +4347,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav(" isof(PropertyComplex/PropertyComplex/PropertyDuration,Edm.Duration)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyDuration>,<Edm.Duration>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4358,7 +4358,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyString,Edm.String)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyString>,<Edm.String>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4369,7 +4369,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyString,Edm.Guid)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyString>,<Edm.Guid>)>")
         .root()
-        .isMethod(MethodCallKind.ISOF, 2)
+        .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4438,7 +4438,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("endswith(PropertyComplex/PropertyComplex/PropertyString,'dorf')")
         .is("<endswith(<PropertyComplex/PropertyComplex/PropertyString>,<'dorf'>)>")
-        .isMethod(MethodCallKind.ENDSWITH, 2)
+        .isMethod(MethodKind.ENDSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4448,7 +4448,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("endswith(PropertyComplex/PropertyComplex/PropertyString,'dorf') eq true")
         .is("<<endswith(<PropertyComplex/PropertyComplex/PropertyString>,<'dorf'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.ENDSWITH, 2)
+        .left().isMethod(MethodKind.ENDSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4457,20 +4457,20 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf')")
         .is("<endswith(<'Walldorf'>,<'dorf'>)>")
-        .isMethod(MethodCallKind.ENDSWITH, 2)
+        .isMethod(MethodKind.ENDSWITH, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().goParameter(1).isLiteral("'dorf'");
 
     testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf') eq true")
         .is("<<endswith(<'Walldorf'>,<'dorf'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.ENDSWITH, 2)
+        .left().isMethod(MethodKind.ENDSWITH, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().left().goParameter(1).isLiteral("'dorf'");
 
     testFilter.runOnETKeyNav("startswith(PropertyComplexAllPrim/PropertyString,'Wall')")
         .is("<startswith(<PropertyComplexAllPrim/PropertyString>,<'Wall'>)>")
-        .isMethod(MethodCallKind.STARTSWITH, 2)
+        .isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplexAllPrim")
         .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
@@ -4479,7 +4479,7 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("startswith(PropertyComplexAllPrim/PropertyString,'Wall') eq true")
         .is("<<startswith(<PropertyComplexAllPrim/PropertyString>,<'Wall'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.STARTSWITH, 2)
+        .left().isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplexAllPrim")
         .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
@@ -4487,20 +4487,20 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("startswith('Walldorf','Wall')")
         .is("<startswith(<'Walldorf'>,<'Wall'>)>")
-        .isMethod(MethodCallKind.STARTSWITH, 2)
+        .isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETKeyNav("startswith('Walldorf','Wall') eq true")
         .is("<<startswith(<'Walldorf'>,<'Wall'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.STARTSWITH, 2)
+        .left().isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().left().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETTwoKeyNav("contains(PropertyComplex/PropertyComplex/PropertyString,'Wall')")
         .is("<contains(<PropertyComplex/PropertyComplex/PropertyString>,<'Wall'>)>")
-        .isMethod(MethodCallKind.CONTAINS, 2)
+        .isMethod(MethodKind.CONTAINS, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4510,7 +4510,7 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("contains(PropertyComplex/PropertyComplex/PropertyString,'Wall') eq true")
         .is("<<contains(<PropertyComplex/PropertyComplex/PropertyString>,<'Wall'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.CONTAINS, 2)
+        .left().isMethod(MethodKind.CONTAINS, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
@@ -4519,14 +4519,14 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall')")
         .is("<contains(<'Walldorf'>,<'Wall'>)>")
-        .isMethod(MethodCallKind.CONTAINS, 2)
+        .isMethod(MethodKind.CONTAINS, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall') eq true")
         .is("<<contains(<'Walldorf'>,<'Wall'>)> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodCallKind.CONTAINS, 2)
+        .left().isMethod(MethodKind.CONTAINS, 2)
         .goParameter(0).isLiteral("'Walldorf'")
         .root().left().goParameter(1).isLiteral("'Wall'");
 

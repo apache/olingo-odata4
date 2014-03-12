@@ -22,11 +22,11 @@ import org.apache.olingo.commons.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperator;
+import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.VisitableExression;
 
-public class UnaryImpl extends ExpressionImpl implements UnaryOperator, VisitableExression {
+public class UnaryImpl extends ExpressionImpl implements Unary, VisitableExression {
 
   private UnaryOperatorKind operator;
   private ExpressionImpl expression;

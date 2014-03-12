@@ -19,13 +19,13 @@
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.commons.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryExpression;
+import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class BinaryImpl extends ExpressionImpl implements BinaryExpression {
+public class BinaryImpl extends ExpressionImpl implements Binary {
 
   private BinaryOperatorKind operator;
   private ExpressionImpl left;
@@ -36,7 +36,7 @@ public class BinaryImpl extends ExpressionImpl implements BinaryExpression {
     return operator;
   }
 
-  public BinaryExpression setOperator(final BinaryOperatorKind operator) {
+  public Binary setOperator(final BinaryOperatorKind operator) {
     this.operator = operator;
     return this;
   }

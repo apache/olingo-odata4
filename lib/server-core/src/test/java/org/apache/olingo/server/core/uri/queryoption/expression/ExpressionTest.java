@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
@@ -48,7 +48,7 @@ import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LambdaRefImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MethodCallImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
 import org.apache.olingo.server.core.uri.testutil.FilterTreeToText;
@@ -65,8 +65,8 @@ public class ExpressionTest {
     assertEquals(BinaryOperatorKind.MOD, BinaryOperatorKind.get("mod"));
     assertEquals(null, BinaryOperatorKind.get("XXX"));
 
-    assertEquals(MethodCallKind.CONCAT, MethodCallKind.get("concat"));
-    assertEquals(null, MethodCallKind.get("XXX"));
+    assertEquals(MethodKind.CONCAT, MethodKind.get("concat"));
+    assertEquals(null, MethodKind.get("XXX"));
   }
 
   @Test
@@ -207,15 +207,15 @@ public class ExpressionTest {
 
   @Test
   public void testMethodCallExpression() throws ExpressionVisitException, ODataApplicationException {
-    MethodCallImpl expression = new MethodCallImpl();
-    expression.setMethod(MethodCallKind.CONCAT);
+    MethodImpl expression = new MethodImpl();
+    expression.setMethod(MethodKind.CONCAT);
 
     ExpressionImpl p0 = new LiteralImpl().setText("A");
     ExpressionImpl p1 = new LiteralImpl().setText("B");
     expression.addParameter(p0);
     expression.addParameter(p1);
 
-    assertEquals(MethodCallKind.CONCAT, expression.getMethod());
+    assertEquals(MethodKind.CONCAT, expression.getMethod());
     assertEquals("<concat(<A>,<B>)>", expression.accept(new FilterTreeToText()));
 
     assertEquals(p0, expression.getParameters().get(0));

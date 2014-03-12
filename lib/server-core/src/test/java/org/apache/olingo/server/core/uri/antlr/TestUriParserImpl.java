@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodCallKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
@@ -1066,13 +1066,13 @@ public class TestUriParserImpl {
     // TODO sync
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
         .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodCallKind.GEODISTANCE, 2);
+        .isMethod(MethodKind.GEODISTANCE, 2);
     testFilter.runOnETAllPrim("geo.length(PropertySByte)")
         .is("<geo.length(<PropertySByte>)>")
-        .isMethod(MethodCallKind.GEOLENGTH, 1);
+        .isMethod(MethodKind.GEOLENGTH, 1);
     testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
         .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodCallKind.GEOINTERSECTS, 2);
+        .isMethod(MethodKind.GEOINTERSECTS, 2);
   }
 
   @Test
