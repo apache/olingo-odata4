@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,7 +135,11 @@ public abstract class Commons {
 
         for (String uri : link.getValue()) {
             builder.append("<uri>");
-            builder.append(DEFAULT_SERVICE_URL).append(uri);
+            if (URI.create(uri).isAbsolute()) {
+                builder.append(uri);
+            } else {
+                builder.append(DEFAULT_SERVICE_URL).append(uri);
+            }
             builder.append("</uri>");
         }
 
@@ -154,7 +159,13 @@ public abstract class Commons {
         final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
         for (String uri : link.getValue()) {
-            uris.add(new ObjectNode(JsonNodeFactory.instance).put("uri", uri));
+            final String absoluteURI;
+            if (URI.create(uri).isAbsolute()) {
+                absoluteURI = uri;
+            } else {
+                absoluteURI = DEFAULT_SERVICE_URL + uri;
+            }
+            uris.add(new ObjectNode(JsonNodeFactory.instance).put("url", absoluteURI));
         }
 
         if (uris.size() == 1) {

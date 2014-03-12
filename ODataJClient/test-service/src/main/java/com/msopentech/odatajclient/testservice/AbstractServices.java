@@ -562,6 +562,178 @@ public abstract class AbstractServices {
         }
     }
 
+    @POST
+    @Path("/{entitySetName}({entityId})/$links/{linkName}")
+    public Response postLink(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            @PathParam("linkName") String linkName,
+            String link,
+            @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+        try {
+            final Accept acceptType;
+            if (StringUtils.isNotBlank(format)) {
+                acceptType = Accept.valueOf(format.toUpperCase());
+            } else {
+                acceptType = Accept.parse(accept, getVersion());
+            }
+
+            if (acceptType == Accept.ATOM) {
+                throw new UnsupportedMediaTypeException("Unsupported media type");
+            }
+
+            final Accept content;
+            if (StringUtils.isNotBlank(contentType)) {
+                content = Accept.parse(contentType, getVersion());
+            } else {
+                content = acceptType;
+            }
+
+            final AbstractUtilities utils = getUtilities(acceptType);
+
+            final List<String> links;
+            if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
+                links = XMLUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+            } else {
+                links = JSONUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+            }
+
+            utils.putLinksInMemory(
+                    Commons.getEntityBasePath(entitySetName, entityId),
+                    entitySetName,
+                    entityId,
+                    linkName,
+                    links);
+
+            return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+        } catch (Exception e) {
+            return xml.createFaultResponse(accept, e);
+        }
+    }
+
+    @MERGE
+    @Path("/{entitySetName}({entityId})/$links/{linkName}")
+    public Response mergeLink(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            @PathParam("linkName") String linkName,
+            String link,
+            @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+        return putLink(accept, contentType, entitySetName, entityId, linkName, link, format);
+    }
+
+    @PATCH
+    @Path("/{entitySetName}({entityId})/$links/{linkName}")
+    public Response patchLink(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            @PathParam("linkName") String linkName,
+            String link,
+            @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+        return putLink(accept, contentType, entitySetName, entityId, linkName, link, format);
+    }
+
+    @PUT
+    @Path("/{entitySetName}({entityId})/$links/{linkName}")
+    public Response putLink(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            @PathParam("linkName") String linkName,
+            String link,
+            @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+        try {
+            final Accept acceptType;
+            if (StringUtils.isNotBlank(format)) {
+                acceptType = Accept.valueOf(format.toUpperCase());
+            } else {
+                acceptType = Accept.parse(accept, getVersion());
+            }
+
+            if (acceptType == Accept.ATOM) {
+                throw new UnsupportedMediaTypeException("Unsupported media type");
+            }
+
+            final Accept content;
+            if (StringUtils.isNotBlank(contentType)) {
+                content = Accept.parse(contentType, getVersion());
+            } else {
+                content = acceptType;
+            }
+
+            final AbstractUtilities utils = getUtilities(acceptType);
+
+            final List<String> links;
+            if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
+                links = XMLUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+            } else {
+                links = JSONUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+            }
+
+            utils.putLinksInMemory(
+                    Commons.getEntityBasePath(entitySetName, entityId),
+                    entitySetName,
+                    linkName,
+                    links);
+
+            return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+        } catch (Exception e) {
+            return xml.createFaultResponse(accept, e);
+        }
+    }
+
+    @DELETE
+    @Path("/{entitySetName}({entityId})/$links/{linkName}({linkId})")
+    public Response deleteLink(
+            @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+            @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+            @PathParam("entitySetName") String entitySetName,
+            @PathParam("entityId") String entityId,
+            @PathParam("linkName") String linkName,
+            @PathParam("linkId") String linkId,
+            @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+        try {
+            final Accept acceptType;
+            if (StringUtils.isNotBlank(format)) {
+                acceptType = Accept.valueOf(format.toUpperCase());
+            } else {
+                acceptType = Accept.parse(accept, getVersion());
+            }
+
+            if (acceptType == Accept.ATOM) {
+                throw new UnsupportedMediaTypeException("Unsupported media type");
+            }
+
+            final AbstractUtilities utils = getUtilities(acceptType);
+
+            final Map.Entry<String, List<String>> currents = JSONUtilities.extractLinkURIs(utils.readLinks(
+                    entitySetName, entityId, linkName, Accept.JSON_FULLMETA).getLinks());
+
+            final Map.Entry<String, List<String>> toBeRemoved = JSONUtilities.extractLinkURIs(utils.readLinks(
+                    entitySetName, entityId, linkName + "(" + linkId + ")", Accept.JSON_FULLMETA).getLinks());
+
+            final List<String> remains = currents.getValue();
+            remains.removeAll(toBeRemoved.getValue());
+
+            utils.putLinksInMemory(
+                    Commons.getEntityBasePath(entitySetName, entityId),
+                    entitySetName,
+                    linkName,
+                    remains);
+
+            return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+        } catch (Exception e) {
+            return xml.createFaultResponse(accept, e);
+        }
+    }
+
     /**
      * Count sample.
      *
@@ -590,5 +762,16 @@ public abstract class AbstractServices {
         } catch (Exception e) {
             return xml.createFaultResponse(accept, e);
         }
+    }
+
+    private AbstractUtilities getUtilities(final Accept accept) {
+        final AbstractUtilities utils;
+        if (accept == Accept.XML || accept == Accept.TEXT || accept == Accept.ATOM) {
+            utils = xml;
+        } else {
+            utils = json;
+        }
+
+        return utils;
     }
 }

@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -397,5 +398,31 @@ public class JSONUtilities extends AbstractUtilities {
         }
 
         return IOUtils.toInputStream(toBeChangedObject.toString());
+    }
+
+    public static Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
+            throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
+        IOUtils.closeQuietly(is);
+
+        final List<String> links = new ArrayList<String>();
+
+        JsonNode uris = srcNode.get("value");
+        if (uris == null) {
+            final JsonNode url = srcNode.get("url");
+            if (url != null) {
+                links.add(url.textValue());
+            }
+        } else {
+            final Iterator<JsonNode> iter = ((ArrayNode) uris).iterator();
+            while (iter.hasNext()) {
+                links.add(iter.next().get("url").textValue());
+            }
+        }
+
+        final JsonNode next = srcNode.get(JSON_NEXTLINK_NAME);
+
+        return new SimpleEntry<String, List<String>>(next == null ? null : next.asText(), links);
     }
 }

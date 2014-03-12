@@ -367,8 +367,8 @@ public abstract class AbstractUtilities {
         return fo.getContent().getInputStream();
     }
 
-    protected void putLinksInMemory(
-            final String path,
+    public void putLinksInMemory(
+            final String basePath,
             final String entitySetName,
             final String entityKey,
             final String linkName,
@@ -377,7 +377,7 @@ public abstract class AbstractUtilities {
 
         if (Commons.linkInfo.get(version).isFeed(entitySetName, linkName)) {
             try {
-                final Map.Entry<String, List<String>> currents = XMLUtilities.extractLinkURIs(
+                final Map.Entry<String, List<String>> currents = JSONUtilities.extractLinkURIs(
                         readLinks(entitySetName, entityKey, linkName, Accept.JSON_FULLMETA).getLinks());
                 uris.addAll(currents.getValue());
             } catch (Exception ignore) {
@@ -386,10 +386,10 @@ public abstract class AbstractUtilities {
 
         uris.addAll(links);
 
-        putLinksInMemory(path, entitySetName, linkName, uris);
+        putLinksInMemory(basePath, entitySetName, linkName, uris);
     }
 
-    protected void putLinksInMemory(
+    public void putLinksInMemory(
             final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
             throws IOException {
         fsManager.putInMemory(
