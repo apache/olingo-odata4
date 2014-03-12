@@ -16,17 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.edm.provider;
+package org.apache.olingo.server.core;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
-import org.apache.olingo.server.api.edm.provider.OperationImport;
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.ODataFormat;
+import org.apache.olingo.server.api.ODataSerializer;
+import org.apache.olingo.server.api.ODataServer;
 
-public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
+public class ODataServerImpl extends ODataServer {
 
-  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, 
-      final OperationImport operationImport) {
-    super(edm, container, operationImport.getName(), operationImport.getEntitySet());
+  @Override
+  public ODataSerializer getSerializer(ODataFormat format) {
+    ODataSerializer serializer;
+    switch (format) {
+    case JSON:
+      serializer = new ODataJsonSerializer();
+      break;
+    case XML:
+      serializer = new ODataSerializerImpl();
+      break;
+    default:
+      throw new ODataRuntimeException("Unsupported format: " + format);
+    }
+
+    return serializer;
   }
+
 }

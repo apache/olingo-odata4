@@ -25,8 +25,15 @@ import org.apache.olingo.server.api.edm.provider.EntitySet;
 
 public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
 
+  private EntitySet entitySet;
+
   public EdmEntitySetImpl(final Edm edm, final EdmEntityContainer container, final EntitySet entitySet) {
     super(edm, container, entitySet);
+    this.entitySet = entitySet;
   }
 
+  @Override
+  public boolean isIncludeInServiceDocument() {
+    return entitySet.isIncludeInServiceDocument();
+  }
 }

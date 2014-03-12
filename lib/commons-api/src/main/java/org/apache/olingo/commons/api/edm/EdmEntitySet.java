@@ -26,4 +26,9 @@ package org.apache.olingo.commons.api.edm;
  */
 public interface EdmEntitySet extends EdmBindingTarget {
 
+  /**
+   * @return true if entity set must be included in the service document
+   */
+  boolean isIncludeInServiceDocument();
+
 }

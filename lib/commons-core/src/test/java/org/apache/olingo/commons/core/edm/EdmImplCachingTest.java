@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -52,6 +53,18 @@ public class EdmImplCachingTest {
 
   private Edm edm;
 
+  @Test
+  public void cacheSchema() {
+    List<EdmSchema> schemas = edm.getSchemas();
+    assertNotNull(schemas);
+    
+    assertEquals(1, schemas.size());
+    
+    List<EdmSchema> cachedSchemas = edm.getSchemas();
+    assertTrue(schemas == cachedSchemas );
+    assertEquals(schemas, schemas);
+  }
+  
   @Test
   public void cacheEntityContainer() {
     EdmEntityContainer entityContainer = edm.getEntityContainer(null);
@@ -384,6 +397,14 @@ public class EdmImplCachingTest {
         return function;
       }
       return null;
+    }
+
+    @Override
+    public List<EdmSchema> createSchemas() {
+      List<EdmSchema> schemas = new ArrayList<EdmSchema>();
+      EdmSchema schema = mock(EdmSchema.class);
+      schemas.add(schema);
+      return schemas;
     }
   }
 }

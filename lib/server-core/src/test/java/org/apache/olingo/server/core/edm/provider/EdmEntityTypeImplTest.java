@@ -244,13 +244,6 @@ public class EdmEntityTypeImplTest {
     assertTrue(property == typeWithBaseType.getProperty("nav2"));
   }
 
-  @Test(expected = EdmException.class)
-  public void noKeyOnTypeWithoutBaseTypeMustResultInException() {
-    EdmProviderImpl edm = mock(EdmProviderImpl.class);
-    EntityType entityType = new EntityType().setName("n");
-    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
-  }
-
   @Test
   public void abstractTypeDoesNotNeedKey() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);

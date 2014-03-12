@@ -26,10 +26,17 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntitySet {
 
+  private EntitySet entitySet;
+
   public EdmEntitySetImpl(final Edm edm, final EdmEntityContainer container, final String name,
           final FullQualifiedName type, final EntitySet entitySet) {
 
     super(edm, container, name, type, entitySet);
+    this.entitySet = entitySet;
   }
 
+  @Override
+  public boolean isIncludeInServiceDocument() {
+    return entitySet.isIncludeInServiceDocument();
+  }
 }

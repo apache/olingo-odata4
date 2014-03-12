@@ -179,4 +179,12 @@ public abstract class EdmProvider {
   public List<Schema> getSchemas() throws ODataException {
     return null;
   }
+
+  /**
+   * Returns the entity container of this edm
+   * @return {@link EntityContainer} of this edm
+   */
+  public EntityContainer getEntityContainer() throws ODataException {
+    return null;
+  }
 }

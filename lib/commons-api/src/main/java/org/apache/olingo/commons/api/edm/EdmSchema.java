@@ -21,47 +21,50 @@ package org.apache.olingo.commons.api.edm;
 import java.util.List;
 
 /**
- * A EdmOperation can either be an {@link EdmAction} or an {@link EdmFunction}.
+ * A csdl schema element
  */
-public interface EdmOperation extends EdmType {
-
-  /**
-   * @param name
-   * @return {@link EdmParameter} for this name
-   */
-  EdmParameter getParameter(String name);
-
-  /**
-   * @return a list of all parameter names
-   */
-  List<String> getParameterNames();
-
-  /**
-   * @param bindingParameterEntitySet
-   * @return {@link EdmEntitySet} for this binding
-   */
-  EdmEntitySet getReturnedEntitySet(EdmEntitySet bindingParameterEntitySet);
-
-  /**
-   * @return {@link EdmReturnType} of this operation
-   */
-  EdmReturnType getReturnType();
-
-  /**
-   * For more information on bound operations please refer to the OData V4 specification.
-   *
-   * @return true if bound
-   */
-  boolean isBound();
-
-  /**
-   * @return the fullqualified type name of the binding parameter 
-   */
-  FullQualifiedName getBindingParameterTypeFqn();
+public interface EdmSchema {
   
   /**
-   * @return true if binding parameter is of type collection.
+   * @return the namespace for this schema
    */
-  Boolean isBindingParameterTypeCollection();
+  String getNamespace();
+  
+  /**
+   * @return the alias for this schema. May be null.
+   */
+  String getAlias();
+  
+  /**
+   * @return all enum types for this schema
+   */
+  List<EdmEnumType> getEnumTypes();
+  
+  /**
+   * @return all entity types for this schema
+   */
+  List<EdmEntityType> getEntityTypes();
+  
+  /**
+   * @return all complex types for this schema
+   */
+  List<EdmComplexType> getComplexTypes();
+  
+  /**
+   * @return all actions for this schema
+   */
+  List<EdmAction> getActions();
+  
+  /**
+   * @return all functions for this schema
+   */
+  List<EdmFunction> getFunctions();
+  
+  /**
+   * @return the entity container for this schema. May be null.
+   */
+  EdmEntityContainer getEntityContainer();
+
+  List<EdmTypeDefinition> getTypeDefinitions();
   
 }

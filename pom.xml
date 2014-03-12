@@ -71,7 +71,7 @@
     <jackson.version>2.3.2</jackson.version>
 
     <antlr.version>4.1</antlr.version>
-    
+	
     <sl4j.version>1.7.6</sl4j.version>    
   </properties>
 

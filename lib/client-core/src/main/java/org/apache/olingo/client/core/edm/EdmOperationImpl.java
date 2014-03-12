@@ -58,4 +58,33 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     super(edm, name, kind);
     this.operation = operation;
   }
+
+  private EdmParameter getBindingParameter() {
+    EdmParameter bindingParam = null;
+    if (isBound()) {
+      final String bindingParamName = operation.getParameters().get(0).getName();
+      bindingParam = getParameter(bindingParamName);
+    }
+    return bindingParam;
+  }
+
+  @Override
+  public FullQualifiedName getBindingParameterTypeFqn() {
+    FullQualifiedName fqn = null;
+    final EdmParameter bindingParam = getBindingParameter();
+    if (bindingParam != null) {
+      fqn = new FullQualifiedName(bindingParam.getType().getNamespace(), bindingParam.getType().getName());
+    }
+    return fqn;
+  }
+
+  @Override
+  public Boolean isBindingParameterTypeCollection() {
+    Boolean result = null;
+    final EdmParameter bindingParam = getBindingParameter();
+    if (bindingParam != null) {
+      result = bindingParam.isCollection();
+    }
+    return null;
+  }
 }

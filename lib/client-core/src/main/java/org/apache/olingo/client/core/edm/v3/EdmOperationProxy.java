@@ -62,4 +62,16 @@ public class EdmOperationProxy extends AbstractEdmOperation {
     this.functionImport = functionImport;
   }
 
+  @Override
+  public FullQualifiedName getBindingParameterTypeFqn() {
+    //Not relevant for V3
+    return null;
+  }
+
+  @Override
+  public Boolean isBindingParameterTypeCollection() {
+    //Not relevant for V3
+    return null;
+  }
+
 }

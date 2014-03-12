@@ -16,17 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.edm.provider;
+package org.apache.olingo.server.api;
+
+import java.io.InputStream;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
-import org.apache.olingo.server.api.edm.provider.OperationImport;
 
-public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
+public interface ODataSerializer {
 
-  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, 
-      final OperationImport operationImport) {
-    super(edm, container, operationImport.getName(), operationImport.getEntitySet());
-  }
+  InputStream metadata(Edm edm);
+
+  InputStream serviceDocument(Edm edm, String serviceRoot);
+
 }

@@ -69,7 +69,8 @@ public class EdmTypeDefinitionImplTest {
     FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
     TypeDefinition providerTypeDef =
         new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
-    new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
+    EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
+    def.getUnderlyingType();
   }
 
 }
