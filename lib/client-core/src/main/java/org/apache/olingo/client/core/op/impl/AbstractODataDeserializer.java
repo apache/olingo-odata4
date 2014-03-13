@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Error;
 import org.apache.olingo.client.api.data.Feed;
@@ -150,9 +150,9 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   protected XMLLinkCollectionImpl toLinkCollectionFromXML(final InputStream input) {
     final Element root = toDOM(input);
 
-    final NodeList uris = root.getOwnerDocument().getElementsByTagName(ODataConstants.ELEM_URI);
+    final NodeList uris = root.getOwnerDocument().getElementsByTagName(Constants.ELEM_URI);
 
-    final NodeList next = root.getElementsByTagName(ODataConstants.NEXT_LINK_REL);
+    final NodeList next = root.getElementsByTagName(Constants.NEXT_LINK_REL);
     final XMLLinkCollectionImpl linkCollection = next.getLength() > 0
             ? new XMLLinkCollectionImpl(URI.create(next.item(0).getTextContent()))
             : new XMLLinkCollectionImpl();

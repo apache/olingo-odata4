@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.utils.XMLUtils;
@@ -53,18 +53,18 @@ public class AtomSerializer {
 
   private void setLinks(final Element entry, final List<Link> links) throws ParserConfigurationException {
     for (Link link : links) {
-      final Element linkElem = entry.getOwnerDocument().createElement(ODataConstants.ATOM_ELEM_LINK);
+      final Element linkElem = entry.getOwnerDocument().createElement(Constants.ATOM_ELEM_LINK);
 
-      linkElem.setAttribute(ODataConstants.ATTR_REL, link.getRel());
-      linkElem.setAttribute(ODataConstants.ATTR_TITLE, link.getTitle());
-      linkElem.setAttribute(ODataConstants.ATTR_HREF, link.getHref());
+      linkElem.setAttribute(Constants.ATTR_REL, link.getRel());
+      linkElem.setAttribute(Constants.ATTR_TITLE, link.getTitle());
+      linkElem.setAttribute(Constants.ATTR_HREF, link.getHref());
 
       if (StringUtils.isNotBlank(link.getType())) {
-        linkElem.setAttribute(ODataConstants.ATTR_TYPE, link.getType());
+        linkElem.setAttribute(Constants.ATTR_TYPE, link.getType());
       }
 
       if (link.getInlineEntry() != null || link.getInlineFeed() != null) {
-        final Element inline = entry.getOwnerDocument().createElement(ODataConstants.ATOM_ELEM_INLINE);
+        final Element inline = entry.getOwnerDocument().createElement(Constants.ATOM_ELEM_INLINE);
         linkElem.appendChild(inline);
 
         if (link.getInlineEntry() != null) {
@@ -85,33 +85,33 @@ public class AtomSerializer {
     final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
     final Document doc = builder.newDocument();
 
-    final Element entryElem = doc.createElement(ODataConstants.ATOM_ELEM_ENTRY);
-    entryElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, ODataConstants.NS_ATOM);
-    entryElem.setAttribute(ODataConstants.XMLNS_METADATA,
+    final Element entryElem = doc.createElement(Constants.ATOM_ELEM_ENTRY);
+    entryElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, Constants.NS_ATOM);
+    entryElem.setAttribute(Constants.XMLNS_METADATA,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    entryElem.setAttribute(ODataConstants.XMLNS_DATASERVICES,
+    entryElem.setAttribute(Constants.XMLNS_DATASERVICES,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    entryElem.setAttribute(ODataConstants.XMLNS_GML, ODataConstants.NS_GML);
-    entryElem.setAttribute(ODataConstants.XMLNS_GEORSS, ODataConstants.NS_GEORSS);
+    entryElem.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
+    entryElem.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
     if (entry.getBaseURI() != null) {
-      entryElem.setAttribute(ODataConstants.ATTR_XMLBASE, entry.getBaseURI().toASCIIString());
+      entryElem.setAttribute(Constants.ATTR_XMLBASE, entry.getBaseURI().toASCIIString());
     }
     doc.appendChild(entryElem);
 
-    final Element category = doc.createElement(ODataConstants.ATOM_ELEM_CATEGORY);
-    category.setAttribute(ODataConstants.ATOM_ATTR_TERM, entry.getType());
-    category.setAttribute(ODataConstants.ATOM_ATTR_SCHEME,
+    final Element category = doc.createElement(Constants.ATOM_ELEM_CATEGORY);
+    category.setAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
+    category.setAttribute(Constants.ATOM_ATTR_SCHEME,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
     entryElem.appendChild(category);
 
     if (StringUtils.isNotBlank(entry.getTitle())) {
-      final Element title = doc.createElement(ODataConstants.ATOM_ELEM_TITLE);
+      final Element title = doc.createElement(Constants.ATOM_ELEM_TITLE);
       title.appendChild(doc.createTextNode(entry.getTitle()));
       entryElem.appendChild(title);
     }
 
     if (StringUtils.isNotBlank(entry.getSummary())) {
-      final Element summary = doc.createElement(ODataConstants.ATOM_ELEM_SUMMARY);
+      final Element summary = doc.createElement(Constants.ATOM_ELEM_SUMMARY);
       summary.appendChild(doc.createTextNode(entry.getSummary()));
       entryElem.appendChild(summary);
     }
@@ -120,13 +120,13 @@ public class AtomSerializer {
     setLinks(entryElem, entry.getNavigationLinks());
     setLinks(entryElem, entry.getMediaEditLinks());
 
-    final Element content = doc.createElement(ODataConstants.ATOM_ELEM_CONTENT);
+    final Element content = doc.createElement(Constants.ATOM_ELEM_CONTENT);
     if (entry.isMediaEntry()) {
       if (StringUtils.isNotBlank(entry.getMediaContentType())) {
-        content.setAttribute(ODataConstants.ATTR_TYPE, entry.getMediaContentType());
+        content.setAttribute(Constants.ATTR_TYPE, entry.getMediaContentType());
       }
       if (StringUtils.isNotBlank(entry.getMediaContentSource())) {
-        content.setAttribute(ODataConstants.ATOM_ATTR_SRC, entry.getMediaContentSource());
+        content.setAttribute(Constants.ATOM_ATTR_SRC, entry.getMediaContentSource());
       }
       if (content.getAttributes().getLength() > 0) {
         entryElem.appendChild(content);
@@ -136,7 +136,7 @@ public class AtomSerializer {
         entryElem.appendChild(doc.importNode(entry.getMediaEntryProperties(), true));
       }
     } else {
-      content.setAttribute(ODataConstants.ATTR_TYPE, ContentType.APPLICATION_XML.getMimeType());
+      content.setAttribute(Constants.ATTR_TYPE, ContentType.APPLICATION_XML.getMimeType());
       if (entry.getContent() != null) {
         content.appendChild(doc.importNode(entry.getContent(), true));
       }
@@ -150,27 +150,27 @@ public class AtomSerializer {
     final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
     final Document doc = builder.newDocument();
 
-    final Element feedElem = doc.createElement(ODataConstants.ATOM_ELEM_FEED);
-    feedElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, ODataConstants.NS_ATOM);
-    feedElem.setAttribute(ODataConstants.XMLNS_METADATA,
+    final Element feedElem = doc.createElement(Constants.ATOM_ELEM_FEED);
+    feedElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, Constants.NS_ATOM);
+    feedElem.setAttribute(Constants.XMLNS_METADATA,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    feedElem.setAttribute(ODataConstants.XMLNS_DATASERVICES,
+    feedElem.setAttribute(Constants.XMLNS_DATASERVICES,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    feedElem.setAttribute(ODataConstants.XMLNS_GML, ODataConstants.NS_GML);
-    feedElem.setAttribute(ODataConstants.XMLNS_GEORSS, ODataConstants.NS_GEORSS);
+    feedElem.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
+    feedElem.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
     if (feed.getBaseURI() != null) {
-      feedElem.setAttribute(ODataConstants.ATTR_XMLBASE, feed.getBaseURI().toASCIIString());
+      feedElem.setAttribute(Constants.ATTR_XMLBASE, feed.getBaseURI().toASCIIString());
     }
     doc.appendChild(feedElem);
 
     if (StringUtils.isNotBlank(feed.getTitle())) {
-      final Element title = doc.createElement(ODataConstants.ATOM_ELEM_TITLE);
+      final Element title = doc.createElement(Constants.ATOM_ELEM_TITLE);
       title.appendChild(doc.createTextNode(feed.getTitle()));
       feedElem.appendChild(title);
     }
 
     if (StringUtils.isNotBlank(feed.getSummary())) {
-      final Element summary = doc.createElement(ODataConstants.ATOM_ELEM_SUMMARY);
+      final Element summary = doc.createElement(Constants.ATOM_ELEM_SUMMARY);
       summary.appendChild(doc.createTextNode(feed.getSummary()));
       feedElem.appendChild(summary);
     }

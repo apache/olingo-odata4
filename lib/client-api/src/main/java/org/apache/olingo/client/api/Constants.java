@@ -131,6 +131,8 @@ public class Constants {
   public static final String ELEM_URI = "uri";
 
   // JSON stuff
+  public final static String JSON_CONTEXT = "@odata.context";
+
   public final static String JSON_METADATA = "odata.metadata";
 
   public final static String JSON_TYPE = "odata.type";

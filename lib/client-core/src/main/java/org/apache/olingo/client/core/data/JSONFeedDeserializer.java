@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 
 /**
  * Reads JSON string into a feed.
@@ -43,8 +43,8 @@ public class JSONFeedDeserializer extends ODataJacksonDeserializer<JSONFeedImpl>
 
     final JSONFeedImpl feed = new JSONFeedImpl();
 
-    if (tree.hasNonNull(ODataConstants.JSON_METADATA)) {
-      feed.setMetadata(URI.create(tree.get(ODataConstants.JSON_METADATA).textValue()));
+    if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      feed.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
     }
     if (tree.hasNonNull("odata.count")) {
       feed.setCount(tree.get("odata.count").asInt());
@@ -53,8 +53,8 @@ public class JSONFeedDeserializer extends ODataJacksonDeserializer<JSONFeedImpl>
       feed.setNext(URI.create(tree.get("odata.nextLink").textValue()));
     }
 
-    if (tree.hasNonNull(ODataConstants.JSON_VALUE)) {
-      for (final Iterator<JsonNode> itor = tree.get(ODataConstants.JSON_VALUE).iterator(); itor.hasNext();) {
+    if (tree.hasNonNull(Constants.JSON_VALUE)) {
+      for (final Iterator<JsonNode> itor = tree.get(Constants.JSON_VALUE).iterator(); itor.hasNext();) {
         feed.getEntries().add(itor.next().traverse(parser.getCodec()).readValueAs(JSONEntryImpl.class));
       }
     }

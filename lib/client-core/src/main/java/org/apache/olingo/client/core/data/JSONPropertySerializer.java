@@ -25,7 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -45,26 +45,26 @@ public class JSONPropertySerializer extends ODataJacksonSerializer<JSONPropertyI
     jgen.writeStartObject();
 
     if (property.getMetadata() != null) {
-      jgen.writeStringField(ODataConstants.JSON_METADATA, property.getMetadata().toASCIIString());
+      jgen.writeStringField(Constants.JSON_METADATA, property.getMetadata().toASCIIString());
     }
 
     final Element content = property.getContent();
     if (XMLUtils.hasOnlyTextChildNodes(content)) {
-      jgen.writeStringField(ODataConstants.JSON_VALUE, content.getTextContent());
+      jgen.writeStringField(Constants.JSON_VALUE, content.getTextContent());
     } else {
       try {
         final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
         final Document document = builder.newDocument();
-        final Element wrapper = document.createElement(ODataConstants.ELEM_PROPERTY);
+        final Element wrapper = document.createElement(Constants.ELEM_PROPERTY);
 
         if (XMLUtils.hasElementsChildNode(content)) {
           wrapper.appendChild(document.renameNode(
-                  document.importNode(content, true), null, ODataConstants.JSON_VALUE));
+                  document.importNode(content, true), null, Constants.JSON_VALUE));
 
           JSONDOMTreeUtils.writeSubtree(client, jgen, wrapper);
-        } else if (ODataJClientEdmPrimitiveType.isGeospatial(content.getAttribute(ODataConstants.ATTR_M_TYPE))) {
+        } else if (ODataJClientEdmPrimitiveType.isGeospatial(content.getAttribute(Constants.ATTR_M_TYPE))) {
           wrapper.appendChild(document.renameNode(
-                  document.importNode(content, true), null, ODataConstants.JSON_VALUE));
+                  document.importNode(content, true), null, Constants.JSON_VALUE));
 
           JSONDOMTreeUtils.writeSubtree(client, jgen, wrapper, true);
         } else {

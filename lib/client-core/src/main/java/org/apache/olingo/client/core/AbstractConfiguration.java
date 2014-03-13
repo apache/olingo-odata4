@@ -51,6 +51,8 @@ public abstract class AbstractConfiguration implements Configuration {
 
   private static final String CHUNKING = "chunking";
 
+  private static final long serialVersionUID = 1L;
+
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
   private transient ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -194,5 +196,4 @@ public abstract class AbstractConfiguration implements Configuration {
   public void setExecutor(final ExecutorService executorService) {
     executor = executorService;
   }
-
 }

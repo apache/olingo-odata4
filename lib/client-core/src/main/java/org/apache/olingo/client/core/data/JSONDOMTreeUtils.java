@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.utils.XMLUtils;
@@ -60,14 +60,14 @@ final class JSONDOMTreeUtils {
       if (name.isEmpty()) {
         final Element element = parent.getOwnerDocument().createElementNS(
                 client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES),
-                ODataConstants.PREFIX_DATASERVICES + ODataConstants.ELEM_ELEMENT);
+                Constants.PREFIX_DATASERVICES + Constants.ELEM_ELEMENT);
         parent.appendChild(element);
 
         if (child.isValueNode()) {
           if (child.isNull()) {
             element.setAttributeNS(
                     client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                    ODataConstants.ATTR_NULL, Boolean.toString(true));
+                    Constants.ATTR_NULL, Boolean.toString(true));
           } else {
             element.appendChild(parent.getOwnerDocument().createTextNode(child.asText()));
           }
@@ -76,85 +76,85 @@ final class JSONDOMTreeUtils {
         if (child.isContainerNode()) {
           buildSubtree(client, element, child);
         }
-      } else if (!name.contains("@") && !ODataConstants.JSON_TYPE.equals(name)) {
+      } else if (!name.contains("@") && !Constants.JSON_TYPE.equals(name)) {
         final Element property = parent.getOwnerDocument().createElementNS(
                 client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES),
-                ODataConstants.PREFIX_DATASERVICES + name);
+                Constants.PREFIX_DATASERVICES + name);
         parent.appendChild(property);
 
         boolean typeSet = false;
-        if (node.hasNonNull(name + "@" + ODataConstants.JSON_TYPE)) {
+        if (node.hasNonNull(name + "@" + Constants.JSON_TYPE)) {
           property.setAttributeNS(
                   client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                  ODataConstants.ATTR_M_TYPE,
-                  node.get(name + "@" + ODataConstants.JSON_TYPE).textValue());
+                  Constants.ATTR_M_TYPE,
+                  node.get(name + "@" + Constants.JSON_TYPE).textValue());
           typeSet = true;
         }
 
         if (child.isNull()) {
           property.setAttributeNS(client.getServiceVersion().getNamespaceMap().
                   get(ODataServiceVersion.NS_METADATA),
-                  ODataConstants.ATTR_NULL, Boolean.toString(true));
+                  Constants.ATTR_NULL, Boolean.toString(true));
         } else if (child.isValueNode()) {
           if (!typeSet) {
             if (child.isInt()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Int32.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Int32.toString());
             }
             if (child.isLong()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Int64.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Int64.toString());
             }
             if (child.isBigDecimal()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Decimal.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Decimal.toString());
             }
             if (child.isDouble()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Double.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Double.toString());
             }
             if (child.isBoolean()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Boolean.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.Boolean.toString());
             }
             if (child.isTextual()) {
               property.setAttributeNS(
                       client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-                      ODataConstants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.String.toString());
+                      Constants.ATTR_M_TYPE, ODataJClientEdmPrimitiveType.String.toString());
             }
           }
 
           property.appendChild(parent.getOwnerDocument().createTextNode(child.asText()));
         } else if (child.isContainerNode()) {
-          if (!typeSet && child.hasNonNull(ODataConstants.JSON_TYPE)) {
+          if (!typeSet && child.hasNonNull(Constants.JSON_TYPE)) {
             property.
                     setAttributeNS(client.getServiceVersion().getNamespaceMap().
                             get(ODataServiceVersion.NS_METADATA),
-                            ODataConstants.ATTR_M_TYPE,
-                            child.get(ODataConstants.JSON_TYPE).textValue());
+                            Constants.ATTR_M_TYPE,
+                            child.get(Constants.JSON_TYPE).textValue());
           }
 
-          final String type = property.getAttribute(ODataConstants.ATTR_M_TYPE);
+          final String type = property.getAttribute(Constants.ATTR_M_TYPE);
           if (StringUtils.isNotBlank(type) && ODataJClientEdmPrimitiveType.isGeospatial(type)) {
             if (ODataJClientEdmPrimitiveType.Geography.toString().equals(type)
                     || ODataJClientEdmPrimitiveType.Geometry.toString().equals(type)) {
 
-              final String geoType = child.get(ODataConstants.ATTR_TYPE).textValue();
+              final String geoType = child.get(Constants.ATTR_TYPE).textValue();
               property.setAttributeNS(client.getServiceVersion().getNamespaceMap().get(
-                      ODataServiceVersion.NS_METADATA), ODataConstants.ATTR_M_TYPE,
+                      ODataServiceVersion.NS_METADATA), Constants.ATTR_M_TYPE,
                       geoType.startsWith("Geo")
                       ? ODataJClientEdmPrimitiveType.namespace() + "." + geoType
                       : type + geoType);
             }
 
-            if (child.has(ODataConstants.JSON_COORDINATES) || child.has(ODataConstants.JSON_GEOMETRIES)) {
+            if (child.has(Constants.JSON_COORDINATES) || child.has(Constants.JSON_GEOMETRIES)) {
               GeospatialJSONHandler.deserialize(
-                      child, property, property.getAttribute(ODataConstants.ATTR_M_TYPE));
+                      child, property, property.getAttribute(Constants.ATTR_M_TYPE));
             }
           } else {
             buildSubtree(client, property, child);
@@ -194,9 +194,9 @@ final class JSONDOMTreeUtils {
     for (Node child : XMLUtils.getChildNodes(content, Node.ELEMENT_NODE)) {
       final String childName = XMLUtils.getSimpleName(child);
 
-      final Node typeAttr = child.getAttributes().getNamedItem(ODataConstants.ATTR_M_TYPE);
+      final Node typeAttr = child.getAttributes().getNamedItem(Constants.ATTR_M_TYPE);
       if (typeAttr != null && ODataJClientEdmPrimitiveType.isGeospatial(typeAttr.getTextContent())) {
-        jgen.writeStringField(propType ? ODataConstants.JSON_TYPE : childName + "@" + ODataConstants.JSON_TYPE,
+        jgen.writeStringField(propType ? Constants.JSON_TYPE : childName + "@" + Constants.JSON_TYPE,
                 typeAttr.getTextContent());
 
         jgen.writeObjectFieldStart(childName);
@@ -213,13 +213,13 @@ final class JSONDOMTreeUtils {
                     setText(child.getChildNodes().item(0).getNodeValue()).build();
             out = value.toString();
 
-            jgen.writeStringField(childName + "@" + ODataConstants.JSON_TYPE, type.toString());
+            jgen.writeStringField(childName + "@" + Constants.JSON_TYPE, type.toString());
           }
           jgen.writeStringField(childName, out);
         } else {
-          if (child.getAttributes().getNamedItem(ODataConstants.ATTR_NULL) == null) {
+          if (child.getAttributes().getNamedItem(Constants.ATTR_NULL) == null) {
             if (typeAttr != null && ODataJClientEdmPrimitiveType.String.toString().equals(typeAttr.getTextContent())) {
-              jgen.writeStringField(childName + "@" + ODataConstants.JSON_TYPE, typeAttr.getTextContent());
+              jgen.writeStringField(childName + "@" + Constants.JSON_TYPE, typeAttr.getTextContent());
               jgen.writeStringField(childName, StringUtils.EMPTY);
             } else {
               jgen.writeArrayFieldStart(childName);
@@ -247,7 +247,7 @@ final class JSONDOMTreeUtils {
         } else {
           jgen.writeObjectFieldStart(childName);
           if (typeAttr != null) {
-            jgen.writeStringField(ODataConstants.JSON_TYPE, typeAttr.getTextContent());
+            jgen.writeStringField(Constants.JSON_TYPE, typeAttr.getTextContent());
           }
 
           writeSubtree(client, jgen, child);

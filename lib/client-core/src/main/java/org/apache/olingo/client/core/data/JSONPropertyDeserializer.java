@@ -30,7 +30,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -52,46 +52,46 @@ public class JSONPropertyDeserializer extends ODataJacksonDeserializer<JSONPrope
 
     final JSONPropertyImpl property = new JSONPropertyImpl();
 
-    if (tree.hasNonNull(ODataConstants.JSON_METADATA)) {
-      property.setMetadata(URI.create(tree.get(ODataConstants.JSON_METADATA).textValue()));
-      tree.remove(ODataConstants.JSON_METADATA);
+    if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      property.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+      tree.remove(Constants.JSON_METADATA);
     }
 
     try {
       final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
       final Document document = builder.newDocument();
 
-      Element content = document.createElement(ODataConstants.ELEM_PROPERTY);
+      Element content = document.createElement(Constants.ELEM_PROPERTY);
 
       if (property.getMetadata() != null) {
         final String metadataURI = property.getMetadata().toASCIIString();
         final int dashIdx = metadataURI.lastIndexOf('#');
         if (dashIdx != -1) {
-          content.setAttribute(ODataConstants.ATTR_M_TYPE, metadataURI.substring(dashIdx + 1));
+          content.setAttribute(Constants.ATTR_M_TYPE, metadataURI.substring(dashIdx + 1));
         }
       }
 
       JsonNode subtree = null;
-      if (tree.has(ODataConstants.JSON_VALUE)) {
-        if (tree.has(ODataConstants.JSON_TYPE)
-                && StringUtils.isBlank(content.getAttribute(ODataConstants.ATTR_M_TYPE))) {
+      if (tree.has(Constants.JSON_VALUE)) {
+        if (tree.has(Constants.JSON_TYPE)
+                && StringUtils.isBlank(content.getAttribute(Constants.ATTR_M_TYPE))) {
 
-          content.setAttribute(ODataConstants.ATTR_M_TYPE, tree.get(ODataConstants.JSON_TYPE).asText());
+          content.setAttribute(Constants.ATTR_M_TYPE, tree.get(Constants.JSON_TYPE).asText());
         }
 
-        final JsonNode value = tree.get(ODataConstants.JSON_VALUE);
+        final JsonNode value = tree.get(Constants.JSON_VALUE);
         if (value.isValueNode()) {
           content.appendChild(document.createTextNode(value.asText()));
-        } else if (ODataJClientEdmPrimitiveType.isGeospatial(content.getAttribute(ODataConstants.ATTR_M_TYPE))) {
+        } else if (ODataJClientEdmPrimitiveType.isGeospatial(content.getAttribute(Constants.ATTR_M_TYPE))) {
           subtree = tree.objectNode();
-          ((ObjectNode) subtree).put(ODataConstants.JSON_VALUE, tree.get(ODataConstants.JSON_VALUE));
-          if (StringUtils.isNotBlank(content.getAttribute(ODataConstants.ATTR_M_TYPE))) {
+          ((ObjectNode) subtree).put(Constants.JSON_VALUE, tree.get(Constants.JSON_VALUE));
+          if (StringUtils.isNotBlank(content.getAttribute(Constants.ATTR_M_TYPE))) {
             ((ObjectNode) subtree).put(
-                    ODataConstants.JSON_VALUE + "@" + ODataConstants.JSON_TYPE,
-                    content.getAttribute(ODataConstants.ATTR_M_TYPE));
+                    Constants.JSON_VALUE + "@" + Constants.JSON_TYPE,
+                    content.getAttribute(Constants.ATTR_M_TYPE));
           }
         } else {
-          subtree = tree.get(ODataConstants.JSON_VALUE);
+          subtree = tree.get(Constants.JSON_VALUE);
         }
       } else {
         subtree = tree;
@@ -104,9 +104,9 @@ public class JSONPropertyDeserializer extends ODataJacksonDeserializer<JSONPrope
       final List<Node> children = XMLUtils.getChildNodes(content, Node.ELEMENT_NODE);
       if (children.size() == 1) {
         final Element value = (Element) children.iterator().next();
-        if (ODataConstants.JSON_VALUE.equals(XMLUtils.getSimpleName(value))) {
-          if (StringUtils.isNotBlank(content.getAttribute(ODataConstants.ATTR_M_TYPE))) {
-            value.setAttribute(ODataConstants.ATTR_M_TYPE, content.getAttribute(ODataConstants.ATTR_M_TYPE));
+        if (Constants.JSON_VALUE.equals(XMLUtils.getSimpleName(value))) {
+          if (StringUtils.isNotBlank(content.getAttribute(Constants.ATTR_M_TYPE))) {
+            value.setAttribute(Constants.ATTR_M_TYPE, content.getAttribute(Constants.ATTR_M_TYPE));
           }
           content = value;
         }

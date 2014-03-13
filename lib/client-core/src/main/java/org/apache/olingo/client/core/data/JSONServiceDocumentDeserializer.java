@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<AbstractServiceDocument> {
@@ -43,20 +43,20 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Ab
             ? new org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl()
             : new org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl();
 
-    if (tree.hasNonNull(ODataConstants.JSON_METADATA)
+    if (tree.hasNonNull(Constants.JSON_METADATA)
             && serviceDocument instanceof org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl) {
 
       ((org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl) serviceDocument).
-              setMetadata(tree.get(ODataConstants.JSON_METADATA).textValue());
+              setMetadata(tree.get(Constants.JSON_METADATA).textValue());
     }
-    if (tree.hasNonNull(ODataConstants.JSON_CONTEXT)
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)
             && serviceDocument instanceof org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl) {
 
       ((org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl) serviceDocument).
-              setMetadataContext(tree.get(ODataConstants.JSON_CONTEXT).textValue());
+              setMetadataContext(tree.get(Constants.JSON_CONTEXT).textValue());
     }
 
-    for (final Iterator<JsonNode> itor = tree.get(ODataConstants.JSON_VALUE).elements(); itor.hasNext();) {
+    for (final Iterator<JsonNode> itor = tree.get(Constants.JSON_VALUE).elements(); itor.hasNext();) {
       final JsonNode node = itor.next();
 
       final ServiceDocumentItemImpl item = new ServiceDocumentItemImpl();

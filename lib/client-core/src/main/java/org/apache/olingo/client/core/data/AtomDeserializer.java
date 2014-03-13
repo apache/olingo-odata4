@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -45,26 +45,26 @@ public class AtomDeserializer {
   }
 
   private void common(final Element input, final AtomObject object) {
-    if (StringUtils.isNotBlank(input.getAttribute(ODataConstants.ATTR_XMLBASE))) {
-      object.setBaseURI(input.getAttribute(ODataConstants.ATTR_XMLBASE));
+    if (StringUtils.isNotBlank(input.getAttribute(Constants.ATTR_XMLBASE))) {
+      object.setBaseURI(input.getAttribute(Constants.ATTR_XMLBASE));
     }
 
-    final List<Element> ids = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_ID);
+    final List<Element> ids = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ID);
     if (!ids.isEmpty()) {
       object.setId(ids.get(0).getTextContent());
     }
 
-    final List<Element> titles = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_TITLE);
+    final List<Element> titles = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_TITLE);
     if (!titles.isEmpty()) {
       object.setTitle(titles.get(0).getTextContent());
     }
 
-    final List<Element> summaries = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_SUMMARY);
+    final List<Element> summaries = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_SUMMARY);
     if (!summaries.isEmpty()) {
       object.setSummary(summaries.get(0).getTextContent());
     }
 
-    final List<Element> updateds = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_UPDATED);
+    final List<Element> updateds = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_UPDATED);
     if (!updateds.isEmpty()) {
       try {
         object.setUpdated(ISO_DATEFORMAT.parse(updateds.get(0).getTextContent()));
@@ -75,7 +75,7 @@ public class AtomDeserializer {
   }
 
   public AtomEntryImpl entry(final Element input) {
-    if (!ODataConstants.ATOM_ELEM_ENTRY.equals(input.getNodeName())) {
+    if (!Constants.ATOM_ELEM_ENTRY.equals(input.getNodeName())) {
       return null;
     }
 
@@ -83,43 +83,43 @@ public class AtomDeserializer {
 
     common(input, entry);
 
-    final String etag = input.getAttribute(ODataConstants.ATOM_ATTR_ETAG);
+    final String etag = input.getAttribute(Constants.ATOM_ATTR_ETAG);
     if (StringUtils.isNotBlank(etag)) {
       entry.setETag(etag);
     }
 
-    final List<Element> categories = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_CATEGORY);
+    final List<Element> categories = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_CATEGORY);
     if (!categories.isEmpty()) {
-      entry.setType(categories.get(0).getAttribute(ODataConstants.ATOM_ATTR_TERM));
+      entry.setType(categories.get(0).getAttribute(Constants.ATOM_ATTR_TERM));
     }
 
-    final List<Element> links = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_LINK);
+    final List<Element> links = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_LINK);
     for (Element linkElem : links) {
       final LinkImpl link = new LinkImpl();
-      link.setRel(linkElem.getAttribute(ODataConstants.ATTR_REL));
-      link.setTitle(linkElem.getAttribute(ODataConstants.ATTR_TITLE));
-      link.setHref(linkElem.getAttribute(ODataConstants.ATTR_HREF));
+      link.setRel(linkElem.getAttribute(Constants.ATTR_REL));
+      link.setTitle(linkElem.getAttribute(Constants.ATTR_TITLE));
+      link.setHref(linkElem.getAttribute(Constants.ATTR_HREF));
 
-      if (ODataConstants.SELF_LINK_REL.equals(link.getRel())) {
+      if (Constants.SELF_LINK_REL.equals(link.getRel())) {
         entry.setSelfLink(link);
-      } else if (ODataConstants.EDIT_LINK_REL.equals(link.getRel())) {
+      } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
         entry.setEditLink(link);
       } else if (link.getRel().startsWith(
               client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
 
-        link.setType(linkElem.getAttribute(ODataConstants.ATTR_TYPE));
+        link.setType(linkElem.getAttribute(Constants.ATTR_TYPE));
         entry.getNavigationLinks().add(link);
 
-        final List<Element> inlines = XMLUtils.getChildElements(linkElem, ODataConstants.ATOM_ELEM_INLINE);
+        final List<Element> inlines = XMLUtils.getChildElements(linkElem, Constants.ATOM_ELEM_INLINE);
         if (!inlines.isEmpty()) {
           final List<Element> entries =
-                  XMLUtils.getChildElements(inlines.get(0), ODataConstants.ATOM_ELEM_ENTRY);
+                  XMLUtils.getChildElements(inlines.get(0), Constants.ATOM_ELEM_ENTRY);
           if (!entries.isEmpty()) {
             link.setInlineEntry(entry(entries.get(0)));
           }
 
           final List<Element> feeds =
-                  XMLUtils.getChildElements(inlines.get(0), ODataConstants.ATOM_ELEM_FEED);
+                  XMLUtils.getChildElements(inlines.get(0), Constants.ATOM_ELEM_FEED);
           if (!feeds.isEmpty()) {
             link.setInlineFeed(feed(feeds.get(0)));
           }
@@ -135,15 +135,15 @@ public class AtomDeserializer {
       }
     }
 
-    final List<Element> authors = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_AUTHOR);
+    final List<Element> authors = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_AUTHOR);
     if (!authors.isEmpty()) {
       final AtomEntryImpl.Author author = new AtomEntryImpl.Author();
       for (Node child : XMLUtils.getChildNodes(input, Node.ELEMENT_NODE)) {
-        if (ODataConstants.ATOM_ELEM_AUTHOR_NAME.equals(XMLUtils.getSimpleName(child))) {
+        if (Constants.ATOM_ELEM_AUTHOR_NAME.equals(XMLUtils.getSimpleName(child))) {
           author.setName(child.getTextContent());
-        } else if (ODataConstants.ATOM_ELEM_AUTHOR_URI.equals(XMLUtils.getSimpleName(child))) {
+        } else if (Constants.ATOM_ELEM_AUTHOR_URI.equals(XMLUtils.getSimpleName(child))) {
           author.setUri(child.getTextContent());
-        } else if (ODataConstants.ATOM_ELEM_AUTHOR_EMAIL.equals(XMLUtils.getSimpleName(child))) {
+        } else if (Constants.ATOM_ELEM_AUTHOR_EMAIL.equals(XMLUtils.getSimpleName(child))) {
           author.setEmail(child.getTextContent());
         }
       }
@@ -152,26 +152,26 @@ public class AtomDeserializer {
       }
     }
 
-    final List<Element> actions = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_ACTION);
+    final List<Element> actions = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ACTION);
     for (Element action : actions) {
       final ODataOperation operation = new ODataOperation();
-      operation.setMetadataAnchor(action.getAttribute(ODataConstants.ATTR_METADATA));
-      operation.setTitle(action.getAttribute(ODataConstants.ATTR_TITLE));
-      operation.setTarget(URI.create(action.getAttribute(ODataConstants.ATTR_TARGET)));
+      operation.setMetadataAnchor(action.getAttribute(Constants.ATTR_METADATA));
+      operation.setTitle(action.getAttribute(Constants.ATTR_TITLE));
+      operation.setTarget(URI.create(action.getAttribute(Constants.ATTR_TARGET)));
 
       entry.getOperations().add(operation);
     }
 
-    final List<Element> contents = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_CONTENT);
+    final List<Element> contents = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_CONTENT);
     if (!contents.isEmpty()) {
       final Element content = contents.get(0);
 
-      List<Element> props = XMLUtils.getChildElements(content, ODataConstants.ELEM_PROPERTIES);
+      List<Element> props = XMLUtils.getChildElements(content, Constants.ELEM_PROPERTIES);
       if (props.isEmpty()) {
-        entry.setMediaContentSource(content.getAttribute(ODataConstants.ATOM_ATTR_SRC));
-        entry.setMediaContentType(content.getAttribute(ODataConstants.ATTR_TYPE));
+        entry.setMediaContentSource(content.getAttribute(Constants.ATOM_ATTR_SRC));
+        entry.setMediaContentType(content.getAttribute(Constants.ATTR_TYPE));
 
-        props = XMLUtils.getChildElements(input, ODataConstants.ELEM_PROPERTIES);
+        props = XMLUtils.getChildElements(input, Constants.ELEM_PROPERTIES);
         if (!props.isEmpty()) {
           entry.setMediaEntryProperties(props.get(0));
         }
@@ -184,7 +184,7 @@ public class AtomDeserializer {
   }
 
   public AtomFeedImpl feed(final Element input) {
-    if (!ODataConstants.ATOM_ELEM_FEED.equals(input.getNodeName())) {
+    if (!Constants.ATOM_ELEM_FEED.equals(input.getNodeName())) {
       return null;
     }
 
@@ -192,19 +192,19 @@ public class AtomDeserializer {
 
     common(input, feed);
 
-    final List<Element> entries = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_ENTRY);
+    final List<Element> entries = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ENTRY);
     for (Element entry : entries) {
       feed.getEntries().add(entry(entry));
     }
 
-    final List<Element> links = XMLUtils.getChildElements(input, ODataConstants.ATOM_ELEM_LINK);
+    final List<Element> links = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_LINK);
     for (Element link : links) {
-      if (ODataConstants.NEXT_LINK_REL.equals(link.getAttribute(ODataConstants.ATTR_REL))) {
-        feed.setNext(URI.create(link.getAttribute(ODataConstants.ATTR_HREF)));
+      if (Constants.NEXT_LINK_REL.equals(link.getAttribute(Constants.ATTR_REL))) {
+        feed.setNext(URI.create(link.getAttribute(Constants.ATTR_HREF)));
       }
     }
 
-    final List<Element> counts = XMLUtils.getChildElements(input, ODataConstants.ATOM_ATTR_COUNT);
+    final List<Element> counts = XMLUtils.getChildElements(input, Constants.ATOM_ATTR_COUNT);
     if (!counts.isEmpty()) {
       try {
         feed.setCount(Integer.parseInt(counts.get(0).getTextContent()));

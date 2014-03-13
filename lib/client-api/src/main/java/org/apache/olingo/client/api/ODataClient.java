@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.client.api;
 
+import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.request.batch.BatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataObjectFactory;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -34,7 +40,8 @@ public interface ODataClient {
 
   ODataServiceVersion getServiceVersion();
 
-  //ODataHeaders getVersionHeaders();
+  ODataHeaders getVersionHeaders();
+
   Configuration getConfiguration();
 
   URIBuilder<?> getURIBuilder(String serviceRoot);
@@ -56,9 +63,14 @@ public interface ODataClient {
   ODataBinder getBinder();
 
   ODataObjectFactory getObjectFactory();
-//  RetrieveRequestFactory getRetrieveRequestFactory();
-//  CUDRequestFactory getCUDRequestFactory();
-//  StreamedRequestFactory getStreamedRequestFactory();
-//  InvokeRequestFactory<?, ?, ?, ?, ?, ?, ?, ?> getInvokeRequestFactory();
-//  BatchRequestFactory getBatchRequestFactory();
+
+  RetrieveRequestFactory getRetrieveRequestFactory();
+
+  CUDRequestFactory getCUDRequestFactory();
+
+  StreamedRequestFactory getStreamedRequestFactory();
+
+  InvokeRequestFactory<?> getInvokeRequestFactory();
+
+  BatchRequestFactory getBatchRequestFactory();
 }

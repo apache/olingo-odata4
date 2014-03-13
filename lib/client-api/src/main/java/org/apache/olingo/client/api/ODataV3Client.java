@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.api;
 
+import org.apache.olingo.client.api.communication.request.batch.V3BatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.V3CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.V3InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.V3RetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.V3StreamedRequestFactory;
 import org.apache.olingo.client.api.op.ODataV3Deserializer;
 import org.apache.olingo.client.api.uri.V3URIBuilder;
 import org.apache.olingo.client.api.uri.filter.V3FilterFactory;
@@ -36,4 +41,18 @@ public interface ODataV3Client extends ODataClient {
   @Override
   ODataV3Deserializer getDeserializer();
 
+  @Override
+  V3RetrieveRequestFactory getRetrieveRequestFactory();
+
+  @Override
+  V3CUDRequestFactory getCUDRequestFactory();
+
+  @Override
+  V3StreamedRequestFactory getStreamedRequestFactory();
+
+  @Override
+  V3InvokeRequestFactory getInvokeRequestFactory();
+
+  @Override
+  V3BatchRequestFactory getBatchRequestFactory();
 }

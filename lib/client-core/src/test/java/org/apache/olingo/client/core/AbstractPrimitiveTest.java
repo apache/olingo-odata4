@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -77,7 +77,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
     }
 
     final InputStream written = getClient().getWriter().writeProperty(
-            getClient().getObjectFactory().newPrimitiveProperty(ODataConstants.ELEM_PROPERTY, newValue),
+            getClient().getObjectFactory().newPrimitiveProperty(Constants.ELEM_PROPERTY, newValue),
             getFormat());
     return readPrimitiveValue(written);
   }

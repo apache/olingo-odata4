@@ -28,7 +28,7 @@ import java.io.Writer;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
@@ -160,7 +160,7 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
       final Document doc = builder.newDocument();
       final Element uri = doc.createElementNS(
               client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES),
-              ODataConstants.ELEM_URI);
+              Constants.ELEM_URI);
       uri.appendChild(doc.createTextNode(link.getHref()));
 
       dom(uri, writer);
@@ -172,7 +172,7 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
   protected void jsonLink(final Link link, final Writer writer) {
     final ObjectMapper mapper = getObjectMapper();
     final ObjectNode uri = mapper.createObjectNode();
-    uri.put(ODataConstants.JSON_URL, link.getHref());
+    uri.put(Constants.JSON_URL, link.getHref());
 
     try {
       mapper.writeValue(writer, uri);

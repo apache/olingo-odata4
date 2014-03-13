@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.domain.ODataLinkType;
 
@@ -43,28 +43,28 @@ public class JSONEntrySerializer extends ODataJacksonSerializer<JSONEntryImpl> {
     jgen.writeStartObject();
 
     if (entry.getMetadata() != null) {
-      jgen.writeStringField(ODataConstants.JSON_METADATA, entry.getMetadata().toASCIIString());
+      jgen.writeStringField(Constants.JSON_METADATA, entry.getMetadata().toASCIIString());
     }
     if (StringUtils.isNotBlank(entry.getType())) {
-      jgen.writeStringField(ODataConstants.JSON_TYPE, entry.getType());
+      jgen.writeStringField(Constants.JSON_TYPE, entry.getType());
     }
     if (entry.getId() != null) {
-      jgen.writeStringField(ODataConstants.JSON_ID, entry.getId());
+      jgen.writeStringField(Constants.JSON_ID, entry.getId());
     }
 
     if (entry.getSelfLink() != null) {
-      jgen.writeStringField(ODataConstants.JSON_READ_LINK, entry.getSelfLink().getHref());
+      jgen.writeStringField(Constants.JSON_READ_LINK, entry.getSelfLink().getHref());
     }
 
     if (entry.getEditLink() != null) {
-      jgen.writeStringField(ODataConstants.JSON_EDIT_LINK, entry.getEditLink().getHref());
+      jgen.writeStringField(Constants.JSON_EDIT_LINK, entry.getEditLink().getHref());
     }
 
     if (entry.getMediaContentSource() != null) {
-      jgen.writeStringField(ODataConstants.JSON_MEDIAREAD_LINK, entry.getMediaContentSource());
+      jgen.writeStringField(Constants.JSON_MEDIAREAD_LINK, entry.getMediaContentSource());
     }
     if (entry.getMediaContentType() != null) {
-      jgen.writeStringField(ODataConstants.JSON_MEDIA_CONTENT_TYPE, entry.getMediaContentType());
+      jgen.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entry.getMediaContentType());
     }
 
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
@@ -92,12 +92,12 @@ public class JSONEntrySerializer extends ODataJacksonSerializer<JSONEntryImpl> {
           }
           uris.add(link.getHref());
         } else {
-          jgen.writeStringField(link.getTitle() + ODataConstants.JSON_BIND_LINK_SUFFIX, link.getHref());
+          jgen.writeStringField(link.getTitle() + Constants.JSON_BIND_LINK_SUFFIX, link.getHref());
         }
       }
     }
     for (Map.Entry<String, List<String>> entitySetLink : entitySetLinks.entrySet()) {
-      jgen.writeArrayFieldStart(entitySetLink.getKey() + ODataConstants.JSON_BIND_LINK_SUFFIX);
+      jgen.writeArrayFieldStart(entitySetLink.getKey() + Constants.JSON_BIND_LINK_SUFFIX);
       for (String uri : entitySetLink.getValue()) {
         jgen.writeString(uri);
       }
@@ -106,7 +106,7 @@ public class JSONEntrySerializer extends ODataJacksonSerializer<JSONEntryImpl> {
 
     for (Link link : entry.getMediaEditLinks()) {
       if (link.getTitle() == null) {
-        jgen.writeStringField(ODataConstants.JSON_MEDIAEDIT_LINK, link.getHref());
+        jgen.writeStringField(Constants.JSON_MEDIAEDIT_LINK, link.getHref());
       }
 
       if (link.getInlineEntry() != null) {

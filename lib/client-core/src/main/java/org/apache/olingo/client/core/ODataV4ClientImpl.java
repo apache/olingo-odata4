@@ -20,12 +20,25 @@ package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.ODataV4Client;
 import org.apache.olingo.client.api.V4Configuration;
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.request.batch.V4BatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.V4CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.V4InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.V4RetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.V4StreamedRequestFactory;
 import org.apache.olingo.client.api.op.ODataBinder;
 import org.apache.olingo.client.api.op.ODataReader;
 import org.apache.olingo.client.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.ODataV4Deserializer;
 import org.apache.olingo.client.api.uri.V4URIBuilder;
 import org.apache.olingo.client.api.uri.filter.V4FilterFactory;
+import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
+import org.apache.olingo.client.core.communication.request.batch.V4BatchRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.cud.V4CUDRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.invoke.V4InvokeRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.V4RetrieveRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.streamed.V4StreamedRequestFactoryImpl;
 import org.apache.olingo.client.core.op.impl.ODataV4BinderImpl;
 import org.apache.olingo.client.core.op.impl.ODataV4DeserializerImpl;
 import org.apache.olingo.client.core.op.impl.ODataV4ReaderImpl;
@@ -50,27 +63,28 @@ public class ODataV4ClientImpl extends AbstractODataClient implements ODataV4Cli
 
   private final ODataBinder binder = new ODataV4BinderImpl(this);
 
-//    private final V4RetrieveRequestFactory retrieveReqFact = new V4RetrieveRequestFactory(this);
-//
-//    private final V4CUDRequestFactory cudReqFact = new V4CUDRequestFactory(this);
-//
-//    private final V4StreamedRequestFactory streamedReqFact = new V4StreamedRequestFactory(this);
-//
-//    private final V4InvokeRequestFactory invokeReqFact = new V4InvokeRequestFactory(this);
-//
-//    private final V4BatchRequestFactory batchReqFact = new V4BatchRequestFactory(this);
+  private final V4RetrieveRequestFactory retrieveReqFact = new V4RetrieveRequestFactoryImpl(this);
+
+  private final V4CUDRequestFactory cudReqFact = new V4CUDRequestFactoryImpl(this);
+
+  private final V4StreamedRequestFactory streamedReqFact = new V4StreamedRequestFactoryImpl(this);
+
+  private final V4InvokeRequestFactory invokeReqFact = new V4InvokeRequestFactoryImpl(this);
+
+  private final V4BatchRequestFactory batchReqFact = new V4BatchRequestFactoryImpl(this);
+
   @Override
   public ODataServiceVersion getServiceVersion() {
     return ODataServiceVersion.V40;
   }
-//
-//    @Override
-//    public ODataHeaders getVersionHeaders() {
-//        final ODataHeaders odataHeaders = new ODataHeaders();
-//        odataHeaders.setHeader(ODataHeaders.HeaderName.maxDataServiceVersion, ODataVersion.V4.toString());
-//        odataHeaders.setHeader(ODataHeaders.HeaderName.dataServiceVersion, ODataVersion.V4.toString());
-//        return odataHeaders;
-//    }
+
+  @Override
+  public ODataHeaders getVersionHeaders() {
+    final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
+    odataHeaders.setHeader(HeaderName.maxDataServiceVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HeaderName.dataServiceVersion, ODataServiceVersion.V40.toString());
+    return odataHeaders;
+  }
 
   @Override
   public V4Configuration getConfiguration() {
@@ -107,28 +121,28 @@ public class ODataV4ClientImpl extends AbstractODataClient implements ODataV4Cli
     return binder;
   }
 
-//    @Override
-//    public V4RetrieveRequestFactory getRetrieveRequestFactory() {
-//        return retrieveReqFact;
-//    }
-//
-//    @Override
-//    public V4CUDRequestFactory getCUDRequestFactory() {
-//        return cudReqFact;
-//    }
-//
-//    @Override
-//    public V4StreamedRequestFactory getStreamedRequestFactory() {
-//        return streamedReqFact;
-//    }
-//
-//    @Override
-//    public V4InvokeRequestFactory getInvokeRequestFactory() {
-//        return invokeReqFact;
-//    }
-//
-//    @Override
-//    public V4BatchRequestFactory getBatchRequestFactory() {
-//        return batchReqFact;
-//    }
+  @Override
+  public V4RetrieveRequestFactory getRetrieveRequestFactory() {
+    return retrieveReqFact;
+  }
+
+  @Override
+  public V4CUDRequestFactory getCUDRequestFactory() {
+    return cudReqFact;
+  }
+
+  @Override
+  public V4StreamedRequestFactory getStreamedRequestFactory() {
+    return streamedReqFact;
+  }
+
+  @Override
+  public V4InvokeRequestFactory getInvokeRequestFactory() {
+    return invokeReqFact;
+  }
+
+  @Override
+  public V4BatchRequestFactory getBatchRequestFactory() {
+    return batchReqFact;
+  }
 }

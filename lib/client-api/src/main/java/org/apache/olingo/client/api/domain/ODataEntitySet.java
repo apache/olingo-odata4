@@ -21,7 +21,6 @@ package org.apache.olingo.client.api.domain;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.client.api.domain.ODataInvokeResult;
 
 /**
  * OData entity collection. If pagination was used to get this instance, forward page navigation URI will be available.

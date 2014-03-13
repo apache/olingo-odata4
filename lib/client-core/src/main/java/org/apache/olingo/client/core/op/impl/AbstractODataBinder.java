@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
@@ -81,13 +81,13 @@ public abstract class AbstractODataBinder implements ODataBinder {
     try {
       final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
       final Document doc = builder.newDocument();
-      properties = doc.createElement(ODataConstants.ELEM_PROPERTIES);
-      properties.setAttribute(ODataConstants.XMLNS_METADATA,
+      properties = doc.createElement(Constants.ELEM_PROPERTIES);
+      properties.setAttribute(Constants.XMLNS_METADATA,
               client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-      properties.setAttribute(ODataConstants.XMLNS_DATASERVICES,
+      properties.setAttribute(Constants.XMLNS_DATASERVICES,
               client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-      properties.setAttribute(ODataConstants.XMLNS_GML, ODataConstants.NS_GML);
-      properties.setAttribute(ODataConstants.XMLNS_GEORSS, ODataConstants.NS_GEORSS);
+      properties.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
+      properties.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
     } catch (ParserConfigurationException e) {
       LOG.error("Failure building entry content", e);
     }
@@ -143,7 +143,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       final LinkImpl entryEditLink = new LinkImpl();
       entryEditLink.setTitle(entity.getName());
       entryEditLink.setHref(editLink.toASCIIString());
-      entryEditLink.setRel(ODataConstants.EDIT_LINK_REL);
+      entryEditLink.setRel(Constants.EDIT_LINK_REL);
       entry.setEditLink(entryEditLink);
     }
 
@@ -151,7 +151,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       final LinkImpl entrySelfLink = new LinkImpl();
       entrySelfLink.setTitle(entity.getName());
       entrySelfLink.setHref(entity.getLink().toASCIIString());
-      entrySelfLink.setRel(ODataConstants.SELF_LINK_REL);
+      entrySelfLink.setRel(Constants.SELF_LINK_REL);
       entry.setSelfLink(entrySelfLink);
     }
         // -------------------------------------------------------------
@@ -367,12 +367,12 @@ public abstract class AbstractODataBinder implements ODataBinder {
   public ODataProperty getODataProperty(final Element property) {
     final ODataProperty res;
 
-    final Node nullNode = property.getAttributes().getNamedItem(ODataConstants.ATTR_NULL);
+    final Node nullNode = property.getAttributes().getNamedItem(Constants.ATTR_NULL);
 
     if (nullNode == null) {
-      final ODataJClientEdmType edmType = StringUtils.isBlank(property.getAttribute(ODataConstants.ATTR_M_TYPE))
+      final ODataJClientEdmType edmType = StringUtils.isBlank(property.getAttribute(Constants.ATTR_M_TYPE))
               ? null
-              : new ODataJClientEdmType(property.getAttribute(ODataConstants.ATTR_M_TYPE));
+              : new ODataJClientEdmType(property.getAttribute(Constants.ATTR_M_TYPE));
 
       final PropertyType propType = edmType == null
               ? guessPropertyType(property)
@@ -416,9 +416,9 @@ public abstract class AbstractODataBinder implements ODataBinder {
         final Node child = children.item(i);
 
         if (child.getNodeType() == Node.ELEMENT_NODE
-                && !child.getNodeName().startsWith(ODataConstants.PREFIX_GML)) {
+                && !child.getNodeName().startsWith(Constants.PREFIX_GML)) {
 
-          res = ODataConstants.ELEM_ELEMENT.equals(XMLUtils.getSimpleName(child))
+          res = Constants.ELEM_ELEMENT.equals(XMLUtils.getSimpleName(child))
                   ? PropertyType.COLLECTION
                   : PropertyType.COMPLEX;
         }
@@ -451,19 +451,19 @@ public abstract class AbstractODataBinder implements ODataBinder {
       element = toComplexPropertyElement(prop, doc, setType);
     }
 
-    element.setAttribute(ODataConstants.XMLNS_METADATA,
+    element.setAttribute(Constants.XMLNS_METADATA,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    element.setAttribute(ODataConstants.XMLNS_DATASERVICES,
+    element.setAttribute(Constants.XMLNS_DATASERVICES,
             client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    element.setAttribute(ODataConstants.XMLNS_GML, ODataConstants.NS_GML);
-    element.setAttribute(ODataConstants.XMLNS_GEORSS, ODataConstants.NS_GEORSS);
+    element.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
+    element.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
 
     return element;
   }
 
   protected Element toNullPropertyElement(final ODataProperty prop, final Document doc) {
-    final Element element = doc.createElement(ODataConstants.PREFIX_DATASERVICES + prop.getName());
-    element.setAttribute(ODataConstants.ATTR_NULL, Boolean.toString(true));
+    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + prop.getName());
+    element.setAttribute(Constants.ATTR_NULL, Boolean.toString(true));
     return element;
   }
 
@@ -476,9 +476,9 @@ public abstract class AbstractODataBinder implements ODataBinder {
   protected Element toPrimitivePropertyElement(
           final String name, final ODataPrimitiveValue value, final Document doc, final boolean setType) {
 
-    final Element element = doc.createElement(ODataConstants.PREFIX_DATASERVICES + name);
+    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + name);
     if (setType) {
-      element.setAttribute(ODataConstants.ATTR_M_TYPE, value.getTypeName());
+      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
     }
 
     if (value instanceof ODataGeospatialValue) {
@@ -500,18 +500,18 @@ public abstract class AbstractODataBinder implements ODataBinder {
 
     final ODataCollectionValue value = prop.getCollectionValue();
 
-    final Element element = doc.createElement(ODataConstants.PREFIX_DATASERVICES + prop.getName());
+    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + prop.getName());
     if (value.getTypeName() != null && setType) {
-      element.setAttribute(ODataConstants.ATTR_M_TYPE, value.getTypeName());
+      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
     }
 
     for (ODataValue el : value) {
       if (el.isPrimitive()) {
         element.appendChild(
-                toPrimitivePropertyElement(ODataConstants.ELEM_ELEMENT, el.asPrimitive(), doc, setType));
+                toPrimitivePropertyElement(Constants.ELEM_ELEMENT, el.asPrimitive(), doc, setType));
       } else {
         element.appendChild(
-                toComplexPropertyElement(ODataConstants.ELEM_ELEMENT, el.asComplex(), doc, setType));
+                toComplexPropertyElement(Constants.ELEM_ELEMENT, el.asComplex(), doc, setType));
       }
     }
 
@@ -527,9 +527,9 @@ public abstract class AbstractODataBinder implements ODataBinder {
   protected Element toComplexPropertyElement(
           final String name, final ODataComplexValue value, final Document doc, final boolean setType) {
 
-    final Element element = doc.createElement(ODataConstants.PREFIX_DATASERVICES + name);
+    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + name);
     if (value.getTypeName() != null && setType) {
-      element.setAttribute(ODataConstants.ATTR_M_TYPE, value.getTypeName());
+      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
     }
 
     for (ODataProperty field : value) {
@@ -541,7 +541,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
   protected ODataPrimitiveValue fromPrimitiveValueElement(final Element prop, final ODataJClientEdmType edmType) {
     final ODataPrimitiveValue value;
     if (edmType != null && edmType.getSimpleType().isGeospatial()) {
-      final Element geoProp = ODataConstants.PREFIX_GML.equals(prop.getPrefix())
+      final Element geoProp = Constants.PREFIX_GML.equals(prop.getPrefix())
               ? prop : (Element) XMLUtils.getChildNodes(prop, Node.ELEMENT_NODE).get(0);
       value = client.getGeospatialValueBuilder().
               setType(edmType.getSimpleType()).setTree(geoProp).build();

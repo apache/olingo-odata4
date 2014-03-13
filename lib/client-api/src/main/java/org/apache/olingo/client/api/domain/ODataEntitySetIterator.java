@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.data;
+package org.apache.olingo.client.api.domain;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,10 +29,8 @@ import java.util.NoSuchElementException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,9 +227,9 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
     try {
       if (consume(input, "<entry>", osFeed, false) >= 0) {
-        entry.write("<entry ".getBytes(ODataConstants.UTF8));
-        entry.write(namespaces.getBytes(ODataConstants.UTF8));
-        entry.write(">".getBytes(ODataConstants.UTF8));
+        entry.write("<entry ".getBytes(Constants.UTF8));
+        entry.write(namespaces.getBytes(Constants.UTF8));
+        entry.write(">".getBytes(Constants.UTF8));
 
         if (consume(input, "</entry>", entry, true) >= 0) {
           atomEntry = odataClient.getDeserializer().
@@ -262,7 +260,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
       res = attrsDeclaration == null
               ? StringUtils.EMPTY
-              : new String(attrsDeclaration, ODataConstants.UTF8).trim();
+              : new String(attrsDeclaration, Constants.UTF8).trim();
     } catch (Exception e) {
       LOG.error("Error retrieving entities from EntitySet", e);
       res = StringUtils.EMPTY;

@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.api;
 
+import org.apache.olingo.client.api.communication.request.batch.V4BatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.V4CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.V4InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.V4RetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.V4StreamedRequestFactory;
 import org.apache.olingo.client.api.op.ODataV4Deserializer;
 import org.apache.olingo.client.api.uri.V4URIBuilder;
 import org.apache.olingo.client.api.uri.filter.V4FilterFactory;
@@ -36,4 +41,18 @@ public interface ODataV4Client extends ODataClient {
   @Override
   ODataV4Deserializer getDeserializer();
 
+  @Override
+  V4RetrieveRequestFactory getRetrieveRequestFactory();
+
+  @Override
+  V4CUDRequestFactory getCUDRequestFactory();
+
+  @Override
+  V4StreamedRequestFactory getStreamedRequestFactory();
+
+  @Override
+  V4InvokeRequestFactory getInvokeRequestFactory();
+
+  @Override
+  V4BatchRequestFactory getBatchRequestFactory();
 }

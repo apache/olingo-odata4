@@ -22,10 +22,11 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Error;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
+import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLinkCollection;
 import org.apache.olingo.client.api.domain.ODataProperty;
@@ -36,7 +37,6 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.op.ODataReader;
-import org.apache.olingo.client.core.data.ODataEntitySetIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -88,12 +88,12 @@ public abstract class AbstractODataReader implements ODataReader {
     //     <functionImportName m:type="Collection(AnotherType)">
     //       <element m:type="AnotherType">...</element>
     //     <functionImportName>
-    final String type = property.getAttribute(ODataConstants.ATTR_M_TYPE);
-    final NodeList elements = property.getElementsByTagName(ODataConstants.ELEM_ELEMENT);
+    final String type = property.getAttribute(Constants.ATTR_M_TYPE);
+    final NodeList elements = property.getElementsByTagName(Constants.ELEM_ELEMENT);
     if (StringUtils.isBlank(type) && elements != null && elements.getLength() > 0) {
-      final Node elementType = elements.item(0).getAttributes().getNamedItem(ODataConstants.ATTR_M_TYPE);
+      final Node elementType = elements.item(0).getAttributes().getNamedItem(Constants.ATTR_M_TYPE);
       if (elementType != null) {
-        property.setAttribute(ODataConstants.ATTR_M_TYPE, "Collection(" + elementType.getTextContent() + ")");
+        property.setAttribute(Constants.ATTR_M_TYPE, "Collection(" + elementType.getTextContent() + ")");
       }
     }
 

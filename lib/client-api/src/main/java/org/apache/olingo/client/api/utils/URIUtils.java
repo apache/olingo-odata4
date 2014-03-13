@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.api.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -25,7 +28,10 @@ import java.text.DecimalFormat;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
@@ -144,9 +150,9 @@ public final class URIUtils {
               : (obj instanceof byte[])
               ? "X'" + Hex.encodeHexString((byte[]) obj) + "'"
               : ((obj instanceof ODataTimestamp) && ((ODataTimestamp) obj).getTimezone() == null)
-              ? "datetime'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), ODataConstants.UTF8) + "'"
+              ? "datetime'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), Constants.UTF8) + "'"
               : ((obj instanceof ODataTimestamp) && ((ODataTimestamp) obj).getTimezone() != null)
-              ? "datetimeoffset'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), ODataConstants.UTF8)
+              ? "datetimeoffset'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), Constants.UTF8)
               + "'"
               : (obj instanceof ODataDuration)
               ? "time'" + ((ODataDuration) obj).toString() + "'"
@@ -159,7 +165,7 @@ public final class URIUtils {
               : (obj instanceof Long)
               ? ((Long) obj).toString() + "L"
               : (obj instanceof String)
-              ? "'" + URLEncoder.encode((String) obj, ODataConstants.UTF8) + "'"
+              ? "'" + URLEncoder.encode((String) obj, Constants.UTF8) + "'"
               : obj.toString();
     } catch (Exception e) {
       LOG.warn("While escaping '{}', using toString()", obj, e);
@@ -167,5 +173,24 @@ public final class URIUtils {
     }
 
     return value;
+  }
+
+  public static InputStreamEntity buildInputStreamEntity(final ODataClient client, final InputStream input) {
+    InputStreamEntity entity;
+    if (client.getConfiguration().isUseChuncked()) {
+      entity = new InputStreamEntity(input, -1);
+    } else {
+      byte[] bytes = new byte[0];
+      try {
+        bytes = IOUtils.toByteArray(input);
+      } catch (IOException e) {
+        LOG.error("While reading input for not chunked encoding", e);
+      }
+
+      entity = new InputStreamEntity(new ByteArrayInputStream(bytes), bytes.length);
+    }
+    entity.setChunked(client.getConfiguration().isUseChuncked());
+
+    return entity;
   }
 }

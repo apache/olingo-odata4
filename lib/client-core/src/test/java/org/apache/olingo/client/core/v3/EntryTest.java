@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.olingo.client.api.ODataConstants;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.ODataV3Client;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.format.ODataPubFormat;
@@ -72,7 +72,7 @@ public class EntryTest extends AbstractTest {
     assertNotNull(entry.getBaseURI());
 
     final Element content = entry.getContent();
-    assertEquals(ODataConstants.ELEM_PROPERTIES, content.getNodeName());
+    assertEquals(Constants.ELEM_PROPERTIES, content.getNodeName());
 
     boolean entered = false;
     boolean checked = false;
@@ -84,7 +84,7 @@ public class EntryTest extends AbstractTest {
         checked = true;
 
         assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails",
-                ((Element) property).getAttribute(ODataConstants.ATTR_M_TYPE));
+                ((Element) property).getAttribute(Constants.ATTR_M_TYPE));
       }
     }
     assertTrue(entered);
