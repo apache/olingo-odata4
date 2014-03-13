@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>olingo-fit-incubating</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
@@ -33,6 +33,22 @@
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
+  
+  <properties>
+    <main.basedir>${project.parent.basedir}</main.basedir>
+    
+    <log.directory>${project.build.directory}/log</log.directory>
+        
+    <war.maven.plugin.version>2.4</war.maven.plugin.version>
+    
+    <cargo.maven.plugin.version>1.4.7</cargo.maven.plugin.version>
+    <cargo.servlet.port>9080</cargo.servlet.port>
+    <cargo.tomcat.ajp.port>9889</cargo.tomcat.ajp.port>
+    <cargo.rmi.port>9805</cargo.rmi.port>
+    <cargo.log>${log.directory}/cargo.log</cargo.log>
+    <cargo.output>${log.directory}/cargo-output.log</cargo.output>
+    <tomcat.version>7.0.50</tomcat.version>
+  </properties>
 	
   <dependencies>
     <dependency>
@@ -45,5 +61,156 @@
       <artifactId>olingo-client-core-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <!-- Stax -->
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <!-- /Stax -->
+
+    <!-- REST services CXF -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+    <!-- /REST services CXF -->
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.esigate</groupId>
+      <artifactId>esigate-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-vfs2</artifactId>
+    </dependency>
   </dependencies>
+  
+  <build>
+    <defaultGoal>clean package cargo:run</defaultGoal>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war.maven.plugin.version}</version>
+        <configuration>
+          <webResources>
+            <!--
+                 HACK: Include legal files explicity, otherwise they will end up in the wrong path
+                       or in another jar file in the war.
+            -->
+            <resource>
+              <directory>${project.build.outputDirectory}</directory>
+              <includes>
+                <include>META-INF/DEPENDENCIES*</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>${basedir}/../</directory>
+              <targetPath>META-INF</targetPath>
+              <includes>
+                <include>LICENSE</include>
+              </includes>
+            </resource>
+          </webResources>
+          <packagingExcludes>WEB-INF/classes/esigate.properties,WEB-INF/classes/META-INF/LICENSE*,WEB-INF/classes/META-INF/DEPENDENCIES*</packagingExcludes>
+        </configuration>
+      </plugin>
+          
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.maven.plugin.version}</version>
+        <configuration>
+          <container>
+            <containerId>tomcat7x</containerId>
+            <zipUrlInstaller>
+              <url>http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</url>
+              <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
+              <extractDir>${project.build.directory}/cargo/extract</extractDir>
+            </zipUrlInstaller>
+            <log>${cargo.log}</log>
+            <output>${cargo.output}</output>
+          </container>
+          <configuration>
+            <type>standalone</type>
+            <properties>
+              <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
+              <cargo.tomcat.ajp.port>${cargo.tomcat.ajp.port}</cargo.tomcat.ajp.port>
+              <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
+
+              <!--<cargo.jvmargs>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</cargo.jvmargs>-->
+              <cargo.jvmargs>-noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
+            </properties>
+            <files>
+              <file>
+                <file>${project.build.directory}/classes/esigate.properties</file>
+                <todir>lib</todir>
+              </file>
+            </files>
+            <configfiles>
+              <configfile>
+                <file>${project.build.directory}/classes/context.xml</file>
+                <todir>conf/</todir>
+                <tofile>context.xml</tofile>
+              </configfile>
+              <configfile>
+                <file>${project.build.directory}/classes/tomcat-users.xml</file>
+                <todir>conf/</todir>
+                <tofile>tomcat-users.xml</tofile>
+              </configfile>
+            </configfiles>
+          </configuration>
+          <deployables>
+            <deployable>
+              <properties>
+                <context>/</context>
+              </properties>
+            </deployable>
+          </deployables>
+        </configuration>
+      </plugin>
+    </plugins>
+    
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>..</directory>
+        <targetPath>META-INF</targetPath>
+        <includes>
+          <include>LICENSE</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

@@ -1,0 +1,12 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Customer/$links/Logins",
+  "value":
+          [
+            {
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Login('1')"
+            },
+            {
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Login('4')"
+            }
+          ]
+}
