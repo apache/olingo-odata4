@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 /**
  * This class implements the response to an OData entity create request.
  *
- * @see com.msopentech.odatajclient.engine.communication.request.cud.ODataEntityCreateRequest
+ * @see org.apache.olingo.client.core.communication.request.cud.ODataEntityCreateRequest
  */
 public interface ODataEntityCreateResponse extends ODataResponse {
 

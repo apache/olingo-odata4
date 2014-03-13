@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.domain.ODataInvokeResult;
 /**
  * This class implements a response to a specific invoke request.
  *
- * @see com.msopentech.odatajclient.engine.communication.request.invoke.ODataInvokeRequest
+ * @see org.apache.olingo.client.core.communication.request.invoke.ODataInvokeRequest
  */
 public interface ODataInvokeResponse<T extends ODataInvokeResult> extends ODataResponse {
 

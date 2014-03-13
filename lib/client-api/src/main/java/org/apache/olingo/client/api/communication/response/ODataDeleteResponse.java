@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.communication.response;
 /**
  * This class implements the response to an OData delete request.
  *
- * @see com.msopentech.odatajclient.engine.communication.request.cud.ODataDeleteRequest
+ * @see org.apache.olingo.client.core.communication.request.cud.ODataDeleteRequest
  */
 public interface ODataDeleteResponse extends ODataResponse {
 }

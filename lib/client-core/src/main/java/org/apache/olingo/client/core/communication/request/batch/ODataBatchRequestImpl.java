@@ -125,7 +125,7 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
   /**
    * This class implements a response to a batch request.
    *
-   * @see com.msopentech.odatajclient.engine.communication.request.ODataBatchRequest
+   * @see org.apache.olingo.client.core.communication.request.ODataBatchRequest
    */
   private class ODataBatchResponseImpl extends ODataResponseImpl implements ODataBatchResponse {
 
