@@ -19,8 +19,8 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:etag="W/&quot;'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'&quot;">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-6)</id>
+<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:etag="W/&quot;'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'&quot;">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)</id>
   <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
   <link rel="edit" title="Product" href="Product(-6)" />
   <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-6)/RelatedProducts" />
@@ -33,7 +33,7 @@
     <name />
   </author>
   <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-6)/Picture" />
-  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Product(-6)/ChangeProductDimensions" />
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions" />
   <content type="application/xml">
     <m:properties>
       <d:ProductId m:type="Edm.Int32">-6</d:ProductId>

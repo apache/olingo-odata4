@@ -41,6 +41,10 @@ public class JSONFeedDeserializer extends ODataJacksonDeserializer<JSONFeedImpl>
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
+    if (!tree.has(Constants.JSON_VALUE)) {
+      return null;
+    }
+
     final JSONFeedImpl feed = new JSONFeedImpl();
 
     if (tree.hasNonNull(Constants.JSON_METADATA)) {

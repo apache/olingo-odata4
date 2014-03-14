@@ -436,6 +436,7 @@ public abstract class AbstractUtilities {
   }
 
   public Response createFaultResponse(final String accept, final Exception e) {
+    e.printStackTrace();
     LOG.debug("Create fault response about .... ", e);
 
     final Response.ResponseBuilder builder = Response.serverError();
@@ -718,4 +719,7 @@ public abstract class AbstractUtilities {
 
   protected abstract InputStream setChanges(
           final InputStream toBeChanged, final Map<String, InputStream> properties) throws Exception;
+
+  public abstract InputStream addEditLink(
+          final InputStream content, final String title, final String href) throws Exception;
 }

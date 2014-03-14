@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Customer</id>
+<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customer</id>
   <title type="text">Customer</title>
   <updated>2014-02-13T14:31:05Z</updated>
   <link rel="self" title="Customer" href="Customer" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Customer(-9)</id>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customer(-9)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Customer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Customer" href="Customer(-9)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customer(-9)/Orders" />
@@ -569,7 +569,7 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Customer(-8)</id>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customer(-8)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Customer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Customer" href="Customer(-8)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Customer(-8)/Orders" />
@@ -736,5 +736,5 @@
       </m:properties>
     </content>
   </entry>
-  <link rel="next" href="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Customer?$filter=CustomerId%20gt%20-10&amp;$skiptoken=-8" />
+  <link rel="next" href="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customer?$filter=CustomerId%20gt%20-10&amp;$skiptoken=-8" />
 </feed>

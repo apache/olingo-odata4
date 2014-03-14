@@ -1,13 +1,13 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Customer/$links/Orders",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Customer/$links/Orders",
   "value":
           [
             {
-              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Order(-10)"
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Order(-10)"
             },
             {
-              "url": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Order(-7)"
+              "url": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Order(-7)"
             }
           ],
-  "odata.nextLink": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Customer(-10)/$links/Orders?$skiptoken=-7"
+  "odata.nextLink": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customer(-10)/$links/Orders?$skiptoken=-7"
 }

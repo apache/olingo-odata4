@@ -1,5 +1,5 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata",
   "value":
           [
             {

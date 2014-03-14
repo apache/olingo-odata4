@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Message/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Message/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Message",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Message(FromUsername='1',MessageId=-10)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Message(FromUsername='1',MessageId=-10)",
   "odata.editLink": "Message(FromUsername='1',MessageId=-10)",
   "Sender@odata.navigationLinkUrl": "Message(FromUsername='1',MessageId=-10)/Sender",
   "Recipient@odata.navigationLinkUrl": "Message(FromUsername='1',MessageId=-10)/Recipient",

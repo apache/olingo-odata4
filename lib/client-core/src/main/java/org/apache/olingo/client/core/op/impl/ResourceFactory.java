@@ -55,7 +55,6 @@ public class ResourceFactory {
    */
   public static Entry newEntry(final Class<? extends Entry> resourceClass) {
     Entry result = null;
-
     if (AtomEntryImpl.class.equals(resourceClass)) {
       result = new AtomEntryImpl();
     }
@@ -106,6 +105,6 @@ public class ResourceFactory {
   }
 
   public static ODataPubFormat formatForEntryClass(final Class<? extends Entry> reference) {
-    return reference.equals(AtomEntryImpl.class) ? ODataPubFormat.JSON : ODataPubFormat.ATOM;
+    return reference.equals(AtomEntryImpl.class) ? ODataPubFormat.ATOM : ODataPubFormat.JSON;
   }
 }
