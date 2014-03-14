@@ -16,23 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit;
+package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.fit.utils.ODataVersion;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
-import javax.ws.rs.Path;
-import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.it.AbstractMetadataTestITCase;
+import org.apache.olingo.commons.api.edm.Edm;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
-@Path("/V30/Static.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
-public class V3Services extends AbstractServices {
-
-  public V3Services() throws Exception {
-    super();
-  }
+public class MetadataTestITCase extends AbstractMetadataTestITCase {
 
   @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v3;
+  protected ODataV3Client getClient() {
+    return ODataClientFactory.getV3();
+  }
+
+  @Test
+  public void retrieve() {
+    final Edm metadata = getClient().getRetrieveRequestFactory().
+            getMetadataRequest(getTestServiceRoot()).execute().getBody();
+    assertNotNull(metadata);
   }
 }

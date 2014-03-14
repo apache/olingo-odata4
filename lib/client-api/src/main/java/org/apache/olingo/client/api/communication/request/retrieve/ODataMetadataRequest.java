@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.edm.Edm;
 
 /**
  * This class implements a metadata query request.
  */
-public interface ODataMetadataRequest extends ODataRetrieveRequest<XMLMetadata, ODataPubFormat> {
+public interface ODataMetadataRequest extends ODataRetrieveRequest<Edm, ODataPubFormat> {
 }

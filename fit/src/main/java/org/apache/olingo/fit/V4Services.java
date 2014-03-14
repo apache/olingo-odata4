@@ -23,7 +23,7 @@ import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import org.apache.cxf.interceptor.InInterceptors;
 
-@Path("/V4/Static.svc")
+@Path("/V40/Static.svc")
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V4Services extends AbstractServices {
 

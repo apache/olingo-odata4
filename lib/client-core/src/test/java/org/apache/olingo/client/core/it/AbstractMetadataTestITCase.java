@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit;
+package org.apache.olingo.client.core.it;
 
-import org.apache.olingo.fit.utils.ODataVersion;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
-import javax.ws.rs.Path;
-import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.client.api.ODataClient;
 
-@Path("/V30/Static.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
-public class V3Services extends AbstractServices {
+public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
 
-  public V3Services() throws Exception {
-    super();
-  }
+  protected abstract ODataClient getClient();
 
-  @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v3;
+  protected String getTestServiceRoot() {
+    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";
   }
 }

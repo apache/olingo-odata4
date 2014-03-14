@@ -26,13 +26,13 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.edm.Edm;
 
 /**
  * This class implements a metadata query request.
  */
-class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<XMLMetadata, ODataPubFormat>
+class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<Edm, ODataPubFormat>
         implements ODataMetadataRequest {
 
   /**
@@ -60,7 +60,7 @@ class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<XMLMetadata,
   }
 
   @Override
-  public ODataRetrieveResponse<XMLMetadata> execute() {
+  public ODataRetrieveResponse<Edm> execute() {
     final HttpResponse res = doExecute();
     return new ODataMetadataResponseImpl(httpClient, res);
   }
@@ -70,7 +70,7 @@ class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<XMLMetadata,
    */
   protected class ODataMetadataResponseImpl extends ODataRetrieveResponseImpl {
 
-    private XMLMetadata metadata = null;
+    private Edm metadata = null;
 
     /**
      * Constructor.
@@ -94,11 +94,10 @@ class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<XMLMetadata,
      * {@inheritDoc }
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public XMLMetadata getBody() {
+    public Edm getBody() {
       if (metadata == null) {
         try {
-          metadata = (XMLMetadata) odataClient.getReader().readMetadata(getRawResponse());
+          metadata = odataClient.getReader().readMetadata(getRawResponse());
         } finally {
           this.close();
         }

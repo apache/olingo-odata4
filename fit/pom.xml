@@ -36,32 +36,10 @@
   
   <properties>
     <main.basedir>${project.parent.basedir}</main.basedir>
-    
-    <log.directory>${project.build.directory}/log</log.directory>
-        
     <war.maven.plugin.version>2.4</war.maven.plugin.version>
-    
-    <cargo.maven.plugin.version>1.4.7</cargo.maven.plugin.version>
-    <cargo.servlet.port>9080</cargo.servlet.port>
-    <cargo.tomcat.ajp.port>9889</cargo.tomcat.ajp.port>
-    <cargo.rmi.port>9805</cargo.rmi.port>
-    <cargo.log>${log.directory}/cargo.log</cargo.log>
-    <cargo.output>${log.directory}/cargo-output.log</cargo.output>
-    <tomcat.version>7.0.50</tomcat.version>
   </properties>
 	
   <dependencies>
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-core-incubating</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-client-core-incubating</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
     <!-- Stax -->
     <dependency>
       <groupId>stax</groupId>
@@ -147,28 +125,9 @@
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.maven.plugin.version}</version>
+        <inherited>true</inherited>
         <configuration>
-          <container>
-            <containerId>tomcat7x</containerId>
-            <zipUrlInstaller>
-              <url>http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</url>
-              <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
-              <extractDir>${project.build.directory}/cargo/extract</extractDir>
-            </zipUrlInstaller>
-            <log>${cargo.log}</log>
-            <output>${cargo.output}</output>
-          </container>
           <configuration>
-            <type>standalone</type>
-            <properties>
-              <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
-              <cargo.tomcat.ajp.port>${cargo.tomcat.ajp.port}</cargo.tomcat.ajp.port>
-              <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
-
-              <!--<cargo.jvmargs>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</cargo.jvmargs>-->
-              <cargo.jvmargs>-noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
-            </properties>
             <files>
               <file>
                 <file>${project.build.directory}/classes/esigate.properties</file>
