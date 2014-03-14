@@ -88,7 +88,7 @@
     <cargo.rmi.port>9805</cargo.rmi.port>
     <cargo.log>${log.directory}/cargo.log</cargo.log>
     <cargo.output>${log.directory}/cargo-output.log</cargo.output>
-    <tomcat.version>7.0.50</tomcat.version>   
+    <tomcat.version>7.0.52</tomcat.version>   
   </properties>
 
   <dependencyManagement>
