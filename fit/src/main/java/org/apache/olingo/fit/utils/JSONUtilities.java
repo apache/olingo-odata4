@@ -425,4 +425,15 @@ public class JSONUtilities extends AbstractUtilities {
 
     return new SimpleEntry<String, List<String>>(next == null ? null : next.asText(), links);
   }
+
+  @Override
+  public InputStream addEditLink(
+          final InputStream content, final String title, final String href) throws Exception {
+    final ObjectMapper mapper = new ObjectMapper();
+    final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
+    IOUtils.closeQuietly(content);
+
+    srcNode.set(JSON_EDITLINK_NAME, new TextNode(href));
+    return IOUtils.toInputStream(srcNode.toString());
+  }
 }

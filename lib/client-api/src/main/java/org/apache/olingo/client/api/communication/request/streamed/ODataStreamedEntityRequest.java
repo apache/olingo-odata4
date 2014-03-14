@@ -18,11 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.request.streamed;
 
-import javax.security.auth.login.Configuration;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 
 /**
@@ -38,7 +36,7 @@ public interface ODataStreamedEntityRequest<V extends ODataResponse, T extends O
    * Returns resource representation format.
    *
    * @return the configured format (or default if not specified).
-   * @see Configuration#getDefaultPubFormat()
+   * @see org.apache.olingo.client.api.Configuration#getDefaultPubFormat()
    */
   ODataPubFormat getFormat();
 
@@ -46,7 +44,7 @@ public interface ODataStreamedEntityRequest<V extends ODataResponse, T extends O
    * Override configured request format.
    *
    * @param format request format.
-   * @see ODataFormat
+   * @see org.apache.olingo.client.api.format.ODataFormat
    */
   void setFormat(final ODataPubFormat format);
 }

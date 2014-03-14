@@ -62,7 +62,6 @@ public class AtomEntryImpl extends AbstractEntry implements AtomObject {
       return StringUtils.isBlank(name) && StringUtils.isBlank(uri) && StringUtils.isBlank(email);
     }
   }
-
   private URI baseURI;
 
   private String title;
@@ -102,7 +101,7 @@ public class AtomEntryImpl extends AbstractEntry implements AtomObject {
   }
 
   public Date getUpdated() {
-    return new Date(updated.getTime());
+    return updated == null ? null : new Date(updated.getTime());
   }
 
   @Override

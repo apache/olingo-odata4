@@ -70,10 +70,10 @@ public enum ODataPubFormat {
     final StringBuffer _format = new StringBuffer();
 
     final String[] parts = format.split(";");
-    _format.append(parts[0]);
-    if (ContentType.APPLICATION_JSON.getMimeType().equals(parts[0])) {
+    _format.append(parts[0].trim());
+    if (ContentType.APPLICATION_JSON.getMimeType().equals(parts[0].trim())) {
       if (parts.length > 1 && parts[1].startsWith("odata=")) {
-        _format.append(';').append(parts[1]);
+        _format.append(';').append(parts[1].trim());
       } else {
         result = ODataPubFormat.JSON;
       }

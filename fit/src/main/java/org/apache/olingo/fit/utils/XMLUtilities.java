@@ -283,7 +283,7 @@ public class XMLUtilities extends AbstractUtilities {
     // -----------------------------------------
     // 2. Add edit link if missing
     // -----------------------------------------
-    final InputStream content = addAtomEditLink(
+    final InputStream content = addEditLink(
             new ByteArrayInputStream(tmpBos.toByteArray()),
             entitySetName,
             Constants.DEFAULT_SERVICE_URL + entitySetName + "(" + entityKey + ")");
@@ -463,7 +463,8 @@ public class XMLUtilities extends AbstractUtilities {
     }
   }
 
-  private InputStream addAtomEditLink(
+  @Override
+  public InputStream addEditLink(
           final InputStream content, final String title, final String href)
           throws Exception {
     final XMLOutputFactory xof = XMLOutputFactory.newInstance();
@@ -478,15 +479,17 @@ public class XMLUtilities extends AbstractUtilities {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     XMLEventWriter writer = xof.createXMLEventWriter(bos);
 
+    final String editLinkElement = String.format("<link rel=\"edit\" title=\"%s\" href=\"%s\" />", title, href);
+
     try {
       // check edit link existence
-      final XmlElement editLink = getAtomElement(reader, writer, LINK,
+      getAtomElement(reader, writer, LINK,
               Collections.<Map.Entry<String, String>>singletonList(
               new AbstractMap.SimpleEntry<String, String>("rel", "edit")));
-      writer.add(editLink.getStart());
-      writer.add(editLink.getContentReader());
-      writer.add(editLink.getEnd());
+
+      addAtomElement(IOUtils.toInputStream(editLinkElement), writer);
       writer.add(reader);
+
     } catch (Exception e) {
       reader.close();
       reader = getEventReader(new ByteArrayInputStream(copy.toByteArray()));
@@ -497,9 +500,9 @@ public class XMLUtilities extends AbstractUtilities {
       final XmlElement entryElement = getAtomElement(reader, writer, "entry");
 
       writer.add(entryElement.getStart());
-      addAtomElement(
-              IOUtils.toInputStream(String.format("<link rel=\"edit\" title=\"%s\" href=\"%s\" />", title, href)),
-              writer);
+
+      addAtomElement(IOUtils.toInputStream(editLinkElement), writer);
+
       writer.add(entryElement.getContentReader());
       writer.add(entryElement.getEnd());
 

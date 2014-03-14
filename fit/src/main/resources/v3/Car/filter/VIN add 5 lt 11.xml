@@ -18,7 +18,7 @@
     under the License.
 
 -->
-<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Car</id><title type="text">Car</title><updated>2014-02-13T14:31:04Z</updated><link rel="self" title="Car" href="Car" /><author><name /></author></feed><!--
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car</id><title type="text">Car</title><updated>2014-02-13T14:31:04Z</updated><link rel="self" title="Car" href="Car" /><author><name /></author></feed><!--
 
     Copyright © Microsoft Open Technologies, Inc.
 

@@ -20,6 +20,6 @@
 
 -->
 <links xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">
-  <uri>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Login('1')</uri>
-  <uri>http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Login('4')</uri>
+  <uri>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Login('1')</uri>
+  <uri>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Login('4')</uri>
 </links>

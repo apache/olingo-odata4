@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/$metadata#Order/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Order/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Order",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V3/Static.svc/Order(-10)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Order(-10)",
   "odata.editLink": "Order(-10)",
   "Login@odata.navigationLinkUrl": "Order(-10)/Login",
   "Customer@odata.navigationLinkUrl": "Order(-10)/Customer",

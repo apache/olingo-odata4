@@ -22,6 +22,7 @@ import org.apache.olingo.client.api.ODataClient;
 
 public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
 
+  @Override
   protected abstract ODataClient getClient();
 
   protected String getTestServiceRoot() {

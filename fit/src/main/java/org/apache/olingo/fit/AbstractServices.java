@@ -33,6 +33,7 @@ import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.LinkInfo;
 import java.io.File;
 import java.io.InputStream;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.fit.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +130,21 @@ public abstract class AbstractServices {
   }
 
   @MERGE
+  @Path("/{entitySetName}/{entityId}")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response mergeEntityKeyAsSegment(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          final String changes) {
+
+    return patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes);
+  }
+
+  @MERGE
   @Path("/{entitySetName}({entityId})")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
@@ -139,6 +156,20 @@ public abstract class AbstractServices {
           @PathParam("entityId") String entityId,
           final String changes) {
 
+    return patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes);
+  }
+
+  @PATCH
+  @Path("/{entitySetName}/{entityId}")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response patchEntityKeyAsSegment(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          final String changes) {
     return patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
@@ -184,10 +215,23 @@ public abstract class AbstractServices {
   }
 
   @PUT
+  @Path("/{entitySetName}/{entityId}")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response putNewEntityKeyAsSegment(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          final String entity) {
+    return replaceEntity(accept, prefer, entitySetName, entityId, entity);
+  }
+
+  @PUT
   @Path("/{entitySetName}({entityId})")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
-  public Response putNewEntity(
+  public Response replaceEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
@@ -350,6 +394,29 @@ public abstract class AbstractServices {
   }
 
   /**
+   * Retrieve entity with key as segment.
+   *
+   * @param accept Accept header.
+   * @param entitySetName Entity set name.
+   * @param entityId entity id.
+   * @param format format query option.
+   * @param expand expand query option.
+   * @param select select query option.
+   * @return entity.
+   */
+  @GET
+  @Path("/{entitySetName}/{entityId}")
+  public Response getEntityKeyAsSegment(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
+    return getEntity(accept, entitySetName, entityId, format, expand, select, true);
+  }
+
+  /**
    * Retrieve entity sample.
    *
    * @param accept Accept header.
@@ -370,50 +437,52 @@ public abstract class AbstractServices {
           @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
-    try {
+    return getEntity(accept, entitySetName, entityId, format, expand, select, false);
+  }
 
-      final Accept acceptType;
-      if (StringUtils.isNotBlank(format)) {
-        acceptType = Accept.valueOf(format.toUpperCase());
-      } else {
-        acceptType = Accept.parse(accept, getVersion());
+  public Response getEntity(
+          final String accept,
+          final String entitySetName,
+          final String entityId,
+          final String format,
+          final String expand,
+          final String select,
+          final boolean keyAsSegment) {
+
+    try {
+      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+      if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
-      final Map.Entry<String, InputStream> entityInfo = xml.readEntity(entitySetName, entityId, acceptType);
+      final Map.Entry<String, InputStream> entityInfo =
+              utils.getValue().readEntity(entitySetName, entityId, utils.getKey());
 
       InputStream entity = entityInfo.getValue();
 
+      if (keyAsSegment) {
+        entity = utils.getValue().addEditLink(
+                entity, entitySetName, Constants.DEFAULT_SERVICE_URL + entitySetName + "/" + entityId);
+      }
+
       if (StringUtils.isNotBlank(select)) {
-        if (acceptType == Accept.ATOM) {
-          entity = xml.selectEntity(entity, select.split(","));
-        } else {
-          entity = json.selectEntity(entity, select.split(","));
-        }
+        entity = utils.getValue().selectEntity(entity, select.split(","));
       }
 
       if (StringUtils.isNotBlank(expand)) {
-        if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
-          throw new UnsupportedMediaTypeException("Unsupported media type");
-        } else if (acceptType == Accept.ATOM) {
-          for (String exp : expand.split(",")) {
-            entity = xml.expandEntity(
-                    entitySetName,
-                    entityId,
-                    entity,
-                    exp);
-          }
-        } else {
-          for (String exp : expand.split(",")) {
-            entity = json.expandEntity(
-                    entitySetName,
-                    entityId,
-                    entity,
-                    exp);
-          }
+        for (String exp : expand.split(",")) {
+          entity = utils.getValue().expandEntity(
+                  entitySetName,
+                  entityId,
+                  entity,
+                  exp);
         }
       }
 
-      return xml.createResponse(entity, Commons.getETag(entityInfo.getKey(), getVersion()), acceptType);
+      return utils.getValue().createResponse(
+              entity, Commons.getETag(entityInfo.getKey(), getVersion()), utils.getKey());
+
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return xml.createFaultResponse(accept, e);
@@ -421,11 +490,18 @@ public abstract class AbstractServices {
   }
 
   @DELETE
+  @Path("/{entitySetName}/{entityId}")
+  public Response removeEntityKeyAsSegment(
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId) {
+    return removeEntity(entitySetName, entityId);
+  }
+
+  @DELETE
   @Path("/{entitySetName}({entityId})")
   public Response removeEntity(
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId) {
-
     try {
       final String basePath =
               entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
@@ -761,6 +837,17 @@ public abstract class AbstractServices {
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
+  }
+
+  private Map.Entry<Accept, AbstractUtilities> getUtilities(final String accept, final String format) {
+    final Accept acceptType;
+    if (StringUtils.isNotBlank(format)) {
+      acceptType = Accept.valueOf(format.toUpperCase());
+    } else {
+      acceptType = Accept.parse(accept, getVersion());
+    }
+
+    return new AbstractMap.SimpleEntry<Accept, AbstractUtilities>(acceptType, getUtilities(acceptType));
   }
 
   private AbstractUtilities getUtilities(final Accept accept) {

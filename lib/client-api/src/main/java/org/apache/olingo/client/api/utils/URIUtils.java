@@ -35,8 +35,8 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
-import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
-import org.apache.olingo.client.api.edm.xml.EntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,12 +124,13 @@ public final class URIUtils {
    * @return URI segment.
    */
   public static String rootFunctionImportURISegment(
-          final EntityContainer entityContainer, final CommonFunctionImport functionImport) {
+          final EdmEntityContainer entityContainer, final EdmFunctionImport functionImport) {
 
     final StringBuilder result = new StringBuilder();
-    if (!entityContainer.isDefaultEntityContainer()) {
-      result.append(entityContainer.getName()).append('.');
-    }
+    // TODO: https://issues.apache.org/jira/browse/OLINGO-209
+    // if (!entityContainer.isDefaultEntityContainer()) {
+    //  result.append(entityContainer.getName()).append('.');
+    // }
     result.append(functionImport.getName());
 
     return result.toString();
