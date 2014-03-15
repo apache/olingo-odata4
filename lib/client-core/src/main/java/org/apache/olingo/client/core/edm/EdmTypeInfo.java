@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -73,6 +74,8 @@ public class EdmTypeInfo {
 
   private EdmPrimitiveType primitiveType;
 
+  private final boolean geospatialType;
+
   private EdmEnumType enumType;
 
   private EdmComplexType complexType;
@@ -116,6 +119,9 @@ public class EdmTypeInfo {
     } catch (IllegalArgumentException e) {
       LOG.debug("{} does not appear to refer to an Edm primitive type", this.fullQualifiedName);
     }
+    // TODO: implement Geospatial types!
+    this.geospatialType = this.fullQualifiedName.getNamespace().equals(EdmPrimitiveType.EDM_NAMESPACE)
+            && this.fullQualifiedName.getName().startsWith("Geo");
     if (this.primitiveType == null && this.edm != null) {
       this.enumType = this.edm.getEnumType(this.fullQualifiedName);
       if (this.enumType == null) {
@@ -140,11 +146,19 @@ public class EdmTypeInfo {
   }
 
   public boolean isPrimitiveType() {
-    return this.primitiveType != null;
+    return this.primitiveType != null || isGeospatialType();
   }
 
   public EdmPrimitiveType getPrimitiveType() {
     return primitiveType;
+  }
+
+  public boolean isGeospatialType() {
+    return geospatialType;
+  }
+
+  public Object getGeospatialType() {
+    throw new NotImplementedException("Geospatial types missing");
   }
 
   public boolean isEnumType() {

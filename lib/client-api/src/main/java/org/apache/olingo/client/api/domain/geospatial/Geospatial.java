@@ -31,127 +31,139 @@ import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
  */
 public abstract class Geospatial implements Serializable {
 
-    public enum Dimension {
+  public enum Dimension {
 
-        GEOMETRY,
-        GEOGRAPHY;
+    GEOMETRY,
+    GEOGRAPHY;
 
-    }
+  }
 
-    public enum Type {
-
-        /**
-         * The OGIS geometry type number for points.
-         */
-        POINT,
-        /**
-         * The OGIS geometry type number for lines.
-         */
-        LINESTRING,
-        /**
-         * The OGIS geometry type number for polygons.
-         */
-        POLYGON,
-        /**
-         * The OGIS geometry type number for aggregate points.
-         */
-        MULTIPOINT,
-        /**
-         * The OGIS geometry type number for aggregate lines.
-         */
-        MULTILINESTRING,
-        /**
-         * The OGIS geometry type number for aggregate polygons.
-         */
-        MULTIPOLYGON,
-        /**
-         * The OGIS geometry type number for feature collections.
-         */
-        GEOSPATIALCOLLECTION;
-
-    }
-
-    protected final Dimension dimension;
-
-    protected final Type type;
+  public enum Type {
 
     /**
-     * Null value means it is expected to vary per instance.
+     * The OGIS geometry type number for points.
      */
-    protected Integer srid;
-
+    POINT,
     /**
-     * Constructor.
-     *
-     * @param dimension dimension.
-     * @param type type.
+     * The OGIS geometry type number for lines.
      */
-    protected Geospatial(final Dimension dimension, final Type type) {
-        this.dimension = dimension;
-        this.type = type;
-    }
-
+    LINESTRING,
     /**
-     * Gets dimension.
-     *
-     * @return dimension.
-     * @see Dimension
+     * The OGIS geometry type number for polygons.
      */
-    public Dimension getDimension() {
-        return dimension;
-    }
-
+    POLYGON,
     /**
-     * Gets type.
-     *
-     * @return type.
-     * @see Type
+     * The OGIS geometry type number for aggregate points.
      */
-    public Type getType() {
-        return type;
-    }
-
+    MULTIPOINT,
     /**
-     * Gets s-rid.
-     *
-     * @return s-rid.
+     * The OGIS geometry type number for aggregate lines.
      */
-    public Integer getSrid() {
-        return srid;
-    }
-
+    MULTILINESTRING,
     /**
-     * Sets s-rid.
-     *
-     * @param srid s-rid.
+     * The OGIS geometry type number for aggregate polygons.
      */
-    public void setSrid(final Integer srid) {
-        this.srid = srid;
-    }
-
-    public abstract ODataJClientEdmPrimitiveType getEdmSimpleType();
-
+    MULTIPOLYGON,
     /**
-     * {@inheritDoc }
+     * The OGIS geometry type number for feature collections.
      */
-    @Override
-    public boolean equals(final Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
+    GEOSPATIALCOLLECTION;
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
+  }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+  protected final Dimension dimension;
+
+  protected final Type type;
+
+  protected String crs;
+
+  /**
+   * Null value means it is expected to vary per instance.
+   */
+  protected Integer srid;
+
+  /**
+   * Constructor.
+   *
+   * @param dimension dimension.
+   * @param type type.
+   */
+  protected Geospatial(final Dimension dimension, final Type type, final String crs) {
+    this.dimension = dimension;
+    this.type = type;
+    this.crs = crs;
+  }
+
+  /**
+   * Gets dimension.
+   *
+   * @return dimension.
+   * @see Dimension
+   */
+  public Dimension getDimension() {
+    return dimension;
+  }
+
+  /**
+   * Gets type.
+   *
+   * @return type.
+   * @see Type
+   */
+  public Type getType() {
+    return type;
+  }
+
+  /**
+   * Gets CRS.
+   *
+   * @return CRS
+   */
+  public String getCrs() {
+    return crs;
+  }
+
+  /**
+   * Gets s-rid.
+   *
+   * @return s-rid.
+   */
+  public Integer getSrid() {
+    return srid;
+  }
+
+  /**
+   * Sets s-rid.
+   *
+   * @param srid s-rid.
+   */
+  public void setSrid(final Integer srid) {
+    this.srid = srid;
+  }
+
+  public abstract ODataJClientEdmPrimitiveType getEdmSimpleType();
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

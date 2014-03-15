@@ -367,7 +367,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
   public ODataProperty getODataProperty(final Element property) {
     final ODataProperty res;
 
-    final Node nullNode = property.getAttributes().getNamedItem(Constants.ATTR_NULL);
+    final Node nullNode = property.getAttributes().getNamedItem(Constants.ATTR_M_NULL);
 
     if (nullNode == null) {
       final ODataJClientEdmType edmType = StringUtils.isBlank(property.getAttribute(Constants.ATTR_M_TYPE))
@@ -463,7 +463,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
 
   protected Element toNullPropertyElement(final ODataProperty prop, final Document doc) {
     final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + prop.getName());
-    element.setAttribute(Constants.ATTR_NULL, Boolean.toString(true));
+    element.setAttribute(Constants.ATTR_M_NULL, Boolean.toString(true));
     return element;
   }
 

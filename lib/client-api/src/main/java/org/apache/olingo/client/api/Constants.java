@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 /**
  * Constant values related to the OData protocol.
@@ -41,19 +42,21 @@ public class Constants {
 
   public static final String XMLNS_DATASERVICES = XMLConstants.XMLNS_ATTRIBUTE + ":d";
 
-  public static final String PREFIX_DATASERVICES = "d:";
+  public static final String PREFIX_DATASERVICES = "d";
 
   public static final String XMLNS_METADATA = XMLConstants.XMLNS_ATTRIBUTE + ":m";
 
-  public static final String PREFIX_METADATA = "m:";
+  public static final String PREFIX_METADATA = "m";
 
   public static final String XMLNS_GEORSS = XMLConstants.XMLNS_ATTRIBUTE + ":georss";
 
-  public static final String PREFIX_GEORSS = "georss:";
+  public static final String PREFIX_GEORSS = "georss";
 
   public static final String XMLNS_GML = XMLConstants.XMLNS_ATTRIBUTE + ":gml";
 
-  public static final String PREFIX_GML = "gml:";
+  public static final String PREFIX_GML = "gml";
+
+  public final static String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
 
   /**
    * Edit link rel value.
@@ -74,9 +77,11 @@ public class Constants {
 
   public final static String ATTR_TYPE = "type";
 
-  public static final String ATTR_M_TYPE = PREFIX_METADATA + ATTR_TYPE;
+  public static final String ATTR_M_TYPE = PREFIX_METADATA + ":" + ATTR_TYPE;
 
-  public static final String ATTR_NULL = PREFIX_METADATA + "null";
+  public final static String ATTR_NULL = "null";
+
+  public static final String ATTR_M_NULL = PREFIX_METADATA + ":" + ATTR_NULL;
 
   public static final String ATTR_XMLBASE = "xml:base";
 
@@ -92,39 +97,51 @@ public class Constants {
 
   public static final String ELEM_COLLECTION = "collection";
 
-  public static final String ATTR_SRSNAME = PREFIX_GML + "srsName";
+  public static final String ATTR_SRSNAME = "srsName";
 
-  public static final String ELEM_POINT = PREFIX_GML + "Point";
+  public static final String ELEM_POINT = "Point";
 
-  public static final String ELEM_MULTIPOINT = PREFIX_GML + "MultiPoint";
+  public static final String ELEM_MULTIPOINT = "MultiPoint";
 
-  public static final String ELEM_POINTMEMBERS = PREFIX_GML + "pointMembers";
+  public static final String ELEM_POINTMEMBERS = "pointMembers";
 
-  public static final String ELEM_LINESTRING = PREFIX_GML + "LineString";
+  public static final QName QNAME_POINTMEMBERS = new QName(Constants.NS_GML, ELEM_POINTMEMBERS);
 
-  public static final String ELEM_MULTILINESTRING = PREFIX_GML + "MultiCurve";
+  public static final String ELEM_LINESTRING = "LineString";
 
-  public static final String ELEM_LINESTRINGMEMBERS = PREFIX_GML + "curveMembers";
+  public static final QName QNAME_LINESTRING = new QName(Constants.NS_GML, ELEM_LINESTRING);
 
-  public static final String ELEM_POLYGON = PREFIX_GML + "Polygon";
+  public static final String ELEM_MULTILINESTRING = "MultiCurve";
 
-  public static final String ELEM_POLYGON_EXTERIOR = PREFIX_GML + "exterior";
+  public static final String ELEM_LINESTRINGMEMBERS = "curveMembers";
 
-  public static final String ELEM_POLYGON_INTERIOR = PREFIX_GML + "interior";
+  public static final String ELEM_POLYGON = "Polygon";
 
-  public static final String ELEM_POLYGON_LINEARRING = PREFIX_GML + "LinearRing";
+  public static final QName QNAME_POLYGON = new QName(Constants.NS_GML, ELEM_POLYGON);
 
-  public static final String ELEM_MULTIPOLYGON = PREFIX_GML + "MultiSurface";
+  public static final String ELEM_POLYGON_EXTERIOR = "exterior";
 
-  public static final String ELEM_SURFACEMEMBERS = PREFIX_GML + "surfaceMembers";
+  public static final QName QNAME_POLYGON_EXTERIOR = new QName(Constants.NS_GML, ELEM_POLYGON_EXTERIOR);
 
-  public static final String ELEM_GEOCOLLECTION = PREFIX_GML + "MultiGeometry";
+  public static final String ELEM_POLYGON_INTERIOR = "interior";
 
-  public static final String ELEM_GEOMEMBERS = PREFIX_GML + "geometryMembers";
+  public static final QName QNAME_POLYGON_INTERIOR = new QName(Constants.NS_GML, ELEM_POLYGON_INTERIOR);
 
-  public static final String ELEM_POS = PREFIX_GML + "pos";
+  public static final String ELEM_POLYGON_LINEARRING = "LinearRing";
 
-  public static final String ELEM_POSLIST = PREFIX_GML + "posList";
+  public static final String ELEM_MULTIPOLYGON = "MultiSurface";
+
+  public static final String ELEM_SURFACEMEMBERS = "surfaceMembers";
+
+  public static final String ELEM_GEOCOLLECTION = "MultiGeometry";
+
+  public static final String ELEM_GEOMEMBERS = "geometryMembers";
+
+  public static final QName QNAME_GEOMEMBERS = new QName(Constants.NS_GML, ELEM_GEOMEMBERS);
+
+  public static final String ELEM_POS = "pos";
+
+  public static final String ELEM_POSLIST = "posList";
 
   public static final String ELEM_PROPERTY = "property";
 
@@ -161,6 +178,8 @@ public class Constants {
 
   public final static String JSON_MEDIAEDIT_LINK_SUFFIX = "@odata.mediaEditLink";
 
+  public final static String JSON_NULL = "odata.null";
+
   public final static String JSON_VALUE = "value";
 
   public final static String JSON_URL = "url";
@@ -170,8 +189,6 @@ public class Constants {
   public final static String JSON_GEOMETRIES = "geometries";
 
   public final static String JSON_CRS = "crs";
-
-  public final static String JSON_GIS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
 
   // Atom stuff
   public final static String ATOM_ELEM_ENTRY = "entry";
