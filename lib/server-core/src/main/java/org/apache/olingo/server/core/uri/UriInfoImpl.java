@@ -1,27 +1,30 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.server.core.uri;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoAll;
@@ -44,22 +47,12 @@ import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
-import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.IdOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
 
 public class UriInfoImpl implements UriInfo {
 
@@ -68,19 +61,10 @@ public class UriInfoImpl implements UriInfo {
   private List<String> entitySetNames = new ArrayList<String>(); // for $entity
   private EdmEntityType entityTypeCast; // for $entity
 
-  // Query options
   private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
-  private ExpandOptionImpl expandOption;
-  private FilterOptionImpl filterOption;
-  private FormatOptionImpl formatOption;
-  private IdOption idOption;
-  private CountOptionImpl inlineCountOption;
-  private OrderByOptionImpl orderByOption;
-  private SearchOptionImpl searchOption;
-  private SelectOptionImpl selectOption;
-  private SkipOptionImpl skipOption;
-  private SkipTokenOptionImpl skipTokenOption;
-  private TopOptionImpl topOption;
+
+  HashMap<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
+      new HashMap<SystemQueryOptionKind, SystemQueryOption>();
 
   private String fragment;
 
@@ -162,27 +146,27 @@ public class UriInfoImpl implements UriInfo {
 
   @Override
   public ExpandOption getExpandOption() {
-    return expandOption;
+    return (ExpandOption) systemQueryOptions.get(SystemQueryOptionKind.EXPAND);
   }
 
   @Override
   public FilterOption getFilterOption() {
-    return filterOption;
+    return (FilterOption) systemQueryOptions.get(SystemQueryOptionKind.FILTER);
   }
 
   @Override
   public FormatOption getFormatOption() {
-    return formatOption;
+    return (FormatOption) systemQueryOptions.get(SystemQueryOptionKind.FORMAT);
   }
 
   @Override
   public IdOption getIdOption() {
-    return idOption;
+    return (IdOption) systemQueryOptions.get(SystemQueryOptionKind.ID);
   }
 
   @Override
   public CountOption getCountOption() {
-    return inlineCountOption;
+    return (CountOption) systemQueryOptions.get(SystemQueryOptionKind.COUNT);
   }
 
   @Override
@@ -201,33 +185,33 @@ public class UriInfoImpl implements UriInfo {
 
   @Override
   public OrderByOption getOrderByOption() {
-    return orderByOption;
+    return (OrderByOption) systemQueryOptions.get(SystemQueryOptionKind.ORDERBY);
   }
 
   @Override
   public SearchOption getSearchOption() {
 
-    return searchOption;
+    return (SearchOption) systemQueryOptions.get(SystemQueryOptionKind.SEARCH);
   }
 
   @Override
   public SelectOption getSelectOption() {
-    return selectOption;
+    return (SelectOption) systemQueryOptions.get(SystemQueryOptionKind.SELECT);
   }
 
   @Override
   public SkipOption getSkipOption() {
-    return skipOption;
+    return (SkipOption) systemQueryOptions.get(SystemQueryOptionKind.SKIP);
   }
 
   @Override
   public SkipTokenOption getSkipTokenOption() {
-    return skipTokenOption;
+    return (SkipTokenOption) systemQueryOptions.get(SystemQueryOptionKind.SKIPTOKEN);
   }
 
   @Override
   public TopOption getTopOption() {
-    return topOption;
+    return (TopOption) systemQueryOptions.get(SystemQueryOptionKind.TOP);
   }
 
   public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
@@ -249,28 +233,33 @@ public class UriInfoImpl implements UriInfo {
   public UriInfoImpl setSystemQueryOption(final SystemQueryOptionImpl systemOption) {
 
     if (systemOption.getKind() == SystemQueryOptionKind.EXPAND) {
-      expandOption = (ExpandOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.EXPAND, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.FILTER) {
-      filterOption = (FilterOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.FILTER, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.FORMAT) {
-      formatOption = (FormatOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.FORMAT, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.ID) {
-      idOption = (IdOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.ID, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.COUNT) {
-      inlineCountOption = (CountOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.COUNT, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.ORDERBY) {
-      orderByOption = (OrderByOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.ORDERBY, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.SEARCH) {
-      searchOption = (SearchOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.SEARCH, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.SELECT) {
-      selectOption = (SelectOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.SELECT, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.SKIP) {
-      skipOption = (SkipOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.SKIP, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.SKIPTOKEN) {
-      skipTokenOption = (SkipTokenOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.SKIPTOKEN, systemOption);
     } else if (systemOption.getKind() == SystemQueryOptionKind.TOP) {
-      topOption = (TopOptionImpl) systemOption;
+      systemQueryOptions.put(SystemQueryOptionKind.TOP, systemOption);
+    } else if (systemOption.getKind() == SystemQueryOptionKind.LEVELS) {
+      systemQueryOptions.put(SystemQueryOptionKind.LEVELS, systemOption);
+    } else {
+      throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
     }
+
     return this;
   }
 
@@ -291,6 +280,10 @@ public class UriInfoImpl implements UriInfo {
 
   public void removeResourcePart(int index) {
     this.pathParts.remove(index);
-    
+  }
+
+  @Override
+  public Collection<SystemQueryOption> getSystemQueryOptions() {
+    return Collections.unmodifiableCollection(systemQueryOptions.values());
   }
 }

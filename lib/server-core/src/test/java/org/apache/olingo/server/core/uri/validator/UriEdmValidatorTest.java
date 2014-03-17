@@ -18,25 +18,23 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.RawUri;
-import org.apache.olingo.server.core.uri.parser.UriDecoder;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UriEdmValidatorTest {
 
   private Edm edm = new EdmProviderImpl(new EdmTechProvider());
 
-  String[] uris = {
+  String[] tmpUri = {
       "$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid                                                                    ",
       "$crossjoin(invalidEntitySet)                                                                                 ",
       "$entity                                                                                                      ",
@@ -50,26 +48,17 @@ public class UriEdmValidatorTest {
       "FICRTESTwoKeyNavParam(ParameterInt16=@invalidAlias)?@validAlias=1                                            ",
       "FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/PropertyComplex                         ",
       "FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count                                  ",
-      "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref                                                              ",
-      "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count                                                            ",
-      "ESKeyNav?$top=-3                                                                                             ",
-      "ESAllPrim?$count=foo                                                                                         ",
-      "ESAllPrim?$skip=-3                                                                                           "
+      // "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref                                                              ",
+//      "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count                                                            ",
+//      "ESKeyNav?$top=-3                                                                                             ",
+//      "ESAllPrim?$count=foo                                                                                         ",
+//      "ESAllPrim?$skip=-3                                                                                           "
   };
 
   @Test
-  public void foo() throws Exception {
-    for (String uri : uris) {
-      Parser parser = new Parser();
-      System.out.println(uri);
-      UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
-      assertNotNull(uriInfo);
-    }
-  }
-
-  @Test
+  @Ignore("key predicate validation not implemented")
   public void keyPredicateValidTypes() throws Exception {
-    String[] uris = { "/ESAllPrim" };
+    String[] uris = {};
 
     for (String uri : uris) {
       parseAndValidate(uri);
@@ -78,6 +67,7 @@ public class UriEdmValidatorTest {
   }
 
   @Test
+  @Ignore("key predicate validation not implemented")
   public void keyPredicateInvalidTypes() throws UriParserException {
     String[] uris = {};
 
@@ -94,22 +84,40 @@ public class UriEdmValidatorTest {
 
   @Test
   public void systemQueryOptionValid() throws Exception {
-    String[] uris = {
+    String[] uris =
+    {
+        /* service document */
+        "",
+        /* metadata */
         "/$metadata",
-        "/$metadata?$format=json"
+        "/$metadata?$format=atom",
     };
 
     for (String uri : uris) {
-      parseAndValidate(uri);
+      try {
+        parseAndValidate(uri);
+      } catch (Exception e) {
+        throw new Exception("Faild for uri: " + uri, e);
+      }
     }
 
   }
 
   @Test
   public void systemQueryOptionInvalid() throws Exception {
-    String[] uris = {
-        "/$metadata?$format=json&$top=3"
-    };
+    String[] uris =
+        {
+            /* service document */
+            /* metadata */
+            "/$metadata?$format=json&$top=3&$skip=5&$skiptoken=123",
+
+            /* misc */
+            "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref                                                              ",
+            "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count                                                            ",
+            "ESKeyNav?$top=-3                                                                                             ",
+            "ESAllPrim?$count=foo                                                                                         ",
+            "ESAllPrim?$skip=-3                                                                                           "
+        };
 
     for (String uri : uris) {
 
@@ -124,7 +132,7 @@ public class UriEdmValidatorTest {
 
   private void parseAndValidate(String uri) throws UriParserException, UriValidationException {
     UriInfo uriInfo = new Parser().parseUri(uri.trim(), edm);
-    Validator validator = new Validator();
+    SystemQueryValidator validator = new SystemQueryValidator();
     validator.validate(uriInfo, edm);
   }
 }

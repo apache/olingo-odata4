@@ -20,6 +20,10 @@ package org.apache.olingo.server.core.uri.validator;
 
 public class UriValidationException extends Exception {
 
+  public UriValidationException(String msg) {
+    super(msg);
+  }
+
   private static final long serialVersionUID = -3179078078053564742L;
 
 }

@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.server.api.uri;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
+
 /**
  * Object acting as general access to URI information extracted from the request URI. Depending on
  * the URI info kind different interfaces are used to provide access to that information. </p>
@@ -42,5 +47,7 @@ public interface UriInfo extends
   public UriInfoMetadata asUriInfoMetadata();
 
   public UriInfoResource asUriInfoResource();
+
+  public Collection<SystemQueryOption> getSystemQueryOptions();
 
 }
