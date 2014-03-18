@@ -30,27 +30,27 @@ public class SystemQueryValidator {
   //CHECKSTYLE:OFF (Maven checkstyle)
   private boolean[][] decisionMatrix =
       {
-          /*                                       FILTER FORMAT EXPAND ID     COUNT  ORDERBY SEARCH SELECT SKIP   SKIPTOKEN LEVELS TOP */
-          /*                              all */ { true , true , true , false, true , true ,  true , true , true , true ,    true , false },
-          /*                            batch */ { false, false, false, false, false, false,  false, false, false, false,    false, false },
-          /*                        crossjoin */ { true , true , true , false, true , true ,  true , true , true , true ,    true , true  },
-          /*                         entityId */ { false, true , true , true , false, false,  false, true , false, false,    true , false },
-          /*                         metadata */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*                         resource */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*                          service */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*                        entitySet */ { true , true , true , false, true , true ,  true , true , true , true ,    true , true  },
-          /*                   entitySetCount */ { false, false, false, false, false, false,  false, false, false, false,    false, false },
-          /*                           entity */ { false, true , true , false, false, false,  false, true , false, false,    true , false },
-          /*                      mediaStream */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*                       references */ { true , true , false, false, false, true ,  true , false, true , true ,    false, true  },
-          /*                        reference */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*                  propertyComplex */ { false, true , true , false, false, false,  false, true , false, false,    true , false },
-          /*        propertyComplexCollection */ { true , true , true , false, true , true ,  false, false, true , true ,    true , true  },
-          /*   propertyComplexCollectionCount */ { false, false, false, false, false, false,  false, false, false, false,    false, false },
-          /*                propertyPrimitive */ { false, true , false, false, false, false,  false, false, false, false,    false, false },
-          /*      propertyPrimitiveCollection */ { true , true , false, false, false, true ,  false, false, true , true ,    false, true  },
-          /* propertyPrimitiveCollectionCount */ { false, false, false, false, false, false,  false, false, false, false,    false, false },
-          /*           propertyPrimitiveValue */ { false, true , false, false, false, false,  false, false, false, false,    false, false },          
+          /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
+          /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    false },
+          /*                            batch  1 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                        crossjoin  2 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    true  },
+          /*                         entityId  3 */ { false,   true ,   true ,   true ,   false,   false,    false,   true ,   false,   false,      true ,    false },
+          /*                         metadata  4 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                         resource  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                          service  6 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                        entitySet  7 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    true  },
+          /*                   entitySetCount  8 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                           entity  9 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      true ,    false },
+          /*                      mediaStream 10 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                       references 11 */ { true ,   true ,   false,   false,   false,   true ,    true ,   false,   true ,   true ,      false,    true  },
+          /*                        reference 12 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                  propertyComplex 13 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      true ,    false },
+          /*        propertyComplexCollection 14 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   false,   true ,   true ,      true ,    true  },
+          /*   propertyComplexCollectionCount 15 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*                propertyPrimitive 16 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*      propertyPrimitiveCollection 17 */ { true ,   true ,   false,   false,   false,   true ,    false,   false,   true ,   true ,      false,    true  },
+          /* propertyPrimitiveCollectionCount 18 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          /*           propertyPrimitiveValue 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },          
       };
   //CHECKSTYLE:ON
   //@formatter:on
@@ -102,7 +102,7 @@ public class SystemQueryValidator {
       idx = 11;
       break;
     default:
-      throw new ODataRuntimeException("Unsupported Option: " + queryOptionKind);
+      throw new ODataRuntimeException("Unsupported option: " + queryOptionKind);
     }
 
     return idx;
@@ -134,26 +134,33 @@ public class SystemQueryValidator {
       idx = 6;
       break;
     default:
-      throw new ODataRuntimeException("Unsupported Option: " + uriInfo.getKind());
+      throw new ODataRuntimeException("Unsupported uriInfo kind: " + uriInfo.getKind());
     }
 
     return idx;
   }
 
-  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
-
-  }
-
   private void validateQueryOptions(final UriInfo uriInfo) throws UriValidationException {
+    try {
     int row = rowIndex(uriInfo);
 
     for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
       int col = colIndex(option.getKind());
+      
+      System.out.print("[" + row +"][" + col +"]");
+
+      
       if (!decisionMatrix[row][col]) {
-        throw new UriValidationException("Unsupported System Query Option for Uri Type: " + option.getName());
+        throw new UriValidationException("System query option not allowed: " + option.getName());
       }
     }
+    }finally {
+      System.out.println();
+    }
+    
+  }
 
+  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
   }
 
 }
