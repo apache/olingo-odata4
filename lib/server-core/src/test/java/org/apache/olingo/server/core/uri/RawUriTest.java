@@ -122,6 +122,8 @@ public class RawUriTest {
 
     rawUri = runRawParser("nonServiceSegment/entitySet", 1);
     checkPath(rawUri, "nonServiceSegment/entitySet", Arrays.asList("entitySet"));
+    
+    rawUri = runRawParser("http://test.org/a?abc=xx+yz", 0);
   }
 
   
