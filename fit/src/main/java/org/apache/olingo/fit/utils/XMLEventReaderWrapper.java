@@ -47,30 +47,22 @@ public class XMLEventReaderWrapper implements XMLEventReader {
     this.wrapped = factory.createXMLEventReader(
             new ByteArrayInputStream(
             (XMLEventReaderWrapper.CONTENT_STAG
-            + IOUtils.toString(stream)
+            + IOUtils.toString(stream).replaceAll("^<\\?xml.*\\?>", "")
             + XMLEventReaderWrapper.CONTENT_ETAG).getBytes()));
 
-    init(wrapped);
+    init();
   }
 
-  public XMLEventReaderWrapper(final XMLEventReader wrapped) {
-    this.wrapped = wrapped;
-    init(wrapped);
-  }
-
-  private void init(final XMLEventReader wrapped) {
+  private void init() {
 
     try {
-      this.nextGivenEvent = this.wrapped.nextEvent();
+      do {
 
-      if (this.nextGivenEvent.isStartDocument()) {
-        this.nextGivenEvent = this.wrapped.nextEvent(); // discard start document    
-      }
+        this.nextGivenEvent = this.wrapped.nextEvent();
 
-      if (this.nextGivenEvent.isStartElement()
-              && CONTENT.equals(this.nextGivenEvent.asStartElement().getName().getLocalPart())) {
-        this.nextGivenEvent = this.wrapped.nextEvent(); // discard content start tag
-      }
+      } while (this.nextGivenEvent.isStartDocument()
+              || (this.nextGivenEvent.isStartElement()
+              && CONTENT.equals(this.nextGivenEvent.asStartElement().getName().getLocalPart())));
 
     } catch (Exception ignore) {
       // ignore

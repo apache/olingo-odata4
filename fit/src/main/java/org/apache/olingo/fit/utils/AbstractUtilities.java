@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,9 +38,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.events.StartElement;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -56,8 +52,6 @@ public abstract class AbstractUtilities {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractUtilities.class);
 
-  private static Set<ODataVersion> initialized = EnumSet.noneOf(ODataVersion.class);
-
   protected final ODataVersion version;
 
   protected final FSManager fsManager;
@@ -67,97 +61,6 @@ public abstract class AbstractUtilities {
   public AbstractUtilities(final ODataVersion version) throws Exception {
     this.version = version;
     this.fsManager = FSManager.instance(version);
-    initialize();
-  }
-
-  private void initialize() throws Exception {
-
-    if (!initialized.contains(version)) {
-      final MetadataLinkInfo metadataLinkInfo = new MetadataLinkInfo();
-      Commons.linkInfo.put(version, metadataLinkInfo);
-
-      final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
-      final XMLEventReader reader = XMLUtilities.getEventReader(metadata);
-
-      int initialDepth = 0;
-      try {
-        while (true) {
-          Map.Entry<Integer, XmlElement> entityType =
-                  XMLUtilities.getAtomElement(reader, null, "EntityType", null, initialDepth, 4, 4, false);
-          initialDepth = entityType.getKey();
-
-          final String entitySetName =
-                  entityType.getValue().getStart().getAttributeByName(new QName("Name")).getValue();
-
-          final XMLEventReader entityReader = XMLUtilities.getEventReader(entityType.getValue().toStream());
-          int size = 0;
-
-          try {
-            while (true) {
-              final XmlElement navProperty =
-                      XMLUtilities.getAtomElement(entityReader, null, "NavigationProperty");
-
-              final String linkName =
-                      navProperty.getStart().getAttributeByName(new QName("Name")).getValue();
-
-              final Map.Entry<String, Boolean> target = getTargetInfo(navProperty.getStart(), linkName);
-
-              metadataLinkInfo.addLink(
-                      entitySetName,
-                      linkName,
-                      target.getKey(),
-                      target.getValue());
-
-              size++;
-            }
-          } catch (Exception e) {
-          } finally {
-            entityReader.close();
-          }
-
-          if (size == 0) {
-            metadataLinkInfo.addEntitySet(entitySetName);
-          }
-        }
-      } catch (Exception e) {
-      } finally {
-        reader.close();
-        initialized.add(version);
-      }
-    }
-  }
-
-  private Map.Entry<String, Boolean> getTargetInfo(final StartElement element, final String linkName)
-          throws Exception {
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
-    XMLEventReader reader = XMLUtilities.getEventReader(metadata);
-
-    final String associationName = element.getAttributeByName(new QName("Relationship")).getValue();
-
-    final Map.Entry<Integer, XmlElement> association = XMLUtilities.getAtomElement(
-            reader, null, "Association",
-            Collections.<Map.Entry<String, String>>singleton(new SimpleEntry<String, String>(
-            "Name", associationName.substring(associationName.lastIndexOf(".") + 1))),
-            0, 4, 4, false);
-
-    final InputStream associationContent = association.getValue().toStream();
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    IOUtils.copy(associationContent, bos);
-    IOUtils.closeQuietly(associationContent);
-
-    reader.close();
-    reader = XMLUtilities.getEventReader(new ByteArrayInputStream(bos.toByteArray()));
-
-    final Map.Entry<Integer, XmlElement> associationEnd = XMLUtilities.getAtomElement(
-            reader, null, "End",
-            Collections.<Map.Entry<String, String>>singleton(new SimpleEntry<String, String>("Role", linkName)),
-            0, -1, -1, false);
-
-    final String target = associationEnd.getValue().getStart().getAttributeByName(new QName("Type")).getValue();
-    final boolean feed = associationEnd.getValue().getStart().getAttributeByName(
-            new QName("Multiplicity")).getValue().equals("*");
-
-    return new SimpleEntry<String, Boolean>(target, feed);
   }
 
   public boolean isMediaContent(final String entityName) {
@@ -275,8 +178,7 @@ public abstract class AbstractUtilities {
 
     for (String availableLink : new HashSet<String>(linksToBeMantained)) {
       try {
-        fsManager.resolve(
-                Commons.getLinksPath(version, entitySetName, key, availableLink, Accept.JSON_FULLMETA));
+        fsManager.resolve(Commons.getLinksPath(version, entitySetName, key, availableLink, Accept.JSON_FULLMETA));
       } catch (Exception e) {
         linksToBeMantained.remove(availableLink);
       }
@@ -376,8 +278,7 @@ public abstract class AbstractUtilities {
 
     if (Commons.linkInfo.get(version).isFeed(entitySetName, linkName)) {
       try {
-        final Map.Entry<String, List<String>> currents = JSONUtilities.extractLinkURIs(
-                readLinks(entitySetName, entityKey, linkName, Accept.JSON_FULLMETA).getLinks());
+        final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
       } catch (Exception ignore) {
       }
@@ -436,7 +337,6 @@ public abstract class AbstractUtilities {
   }
 
   public Response createFaultResponse(final String accept, final Exception e) {
-    e.printStackTrace();
     LOG.debug("Create fault response about .... ", e);
 
     final Response.ResponseBuilder builder = Response.serverError();
@@ -490,8 +390,7 @@ public abstract class AbstractUtilities {
           propertyNames.add("FromUsername");
 
           final StringBuilder keyBuilder = new StringBuilder();
-          for (Map.Entry<String, InputStream> value
-                  : getPropertyValues(entity, propertyNames, accept).entrySet()) {
+          for (Map.Entry<String, InputStream> value : getPropertyValues(entity, propertyNames).entrySet()) {
 
             if (keyBuilder.length() > 0) {
               keyBuilder.append(",");
@@ -513,7 +412,7 @@ public abstract class AbstractUtilities {
       } else if ("Order".equals(entitySetName)) {
         try {
           final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("OrderId"), accept);
+                  getPropertyValues(entity, Collections.<String>singletonList("OrderId"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -526,7 +425,7 @@ public abstract class AbstractUtilities {
       } else if ("Customer".equals(entitySetName)) {
         try {
           final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("CustomerId"), accept);
+                  getPropertyValues(entity, Collections.<String>singletonList("CustomerId"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -539,7 +438,7 @@ public abstract class AbstractUtilities {
       } else if ("ComputerDetail".equals(entitySetName)) {
         try {
           final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("ComputerDetailId"), accept);
+                  getPropertyValues(entity, Collections.<String>singletonList("ComputerDetailId"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -552,7 +451,7 @@ public abstract class AbstractUtilities {
       } else if ("AllGeoTypesSet".equals(entitySetName)) {
         try {
           final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("Id"), accept);
+                  getPropertyValues(entity, Collections.<String>singletonList("Id"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -565,7 +464,7 @@ public abstract class AbstractUtilities {
       } else if ("CustomerInfo".equals(entitySetName)) {
         try {
           final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("CustomerInfoId"), accept);
+                  getPropertyValues(entity, Collections.<String>singletonList("CustomerInfoId"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -587,35 +486,15 @@ public abstract class AbstractUtilities {
     }
   }
 
-  private static Map<String, InputStream> getPropertyValues(
-          final InputStream is, final List<String> propertyNames, final Accept accept)
+  private Map<String, InputStream> getPropertyValues(final InputStream is, final List<String> propertyNames)
           throws Exception {
     final Map<String, InputStream> res = new LinkedHashMap<String, InputStream>();
 
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    IOUtils.copy(is, bos);
-    IOUtils.closeQuietly(is);
-
     for (String propertyName : propertyNames) {
-      final InputStream value;
-
-      switch (accept) {
-        case JSON:
-        case JSON_FULLMETA:
-        case JSON_NOMETA:
-          value = JSONUtilities.getJsonPropertyValue(
-                  new ByteArrayInputStream(bos.toByteArray()),
-                  propertyName);
-          break;
-        default:
-          value = XMLUtilities.getAtomPropertyValue(
-                  new ByteArrayInputStream(bos.toByteArray()),
-                  new String[] {propertyName, "$value"});
-      }
-      res.put(propertyName, value);
+      res.put(propertyName, getPropertyValue(is, Collections.<String>singletonList(propertyName)));
     }
 
-    IOUtils.closeQuietly(bos);
+    IOUtils.closeQuietly(is);
 
     return res;
   }
@@ -650,8 +529,7 @@ public abstract class AbstractUtilities {
       throw new UnsupportedMediaTypeException("Unsupported media type");
     }
 
-    final String basePath =
-            entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath + ENTITY, accept));
   }
 
@@ -666,7 +544,7 @@ public abstract class AbstractUtilities {
     // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing) 
     // --------------------------------
     final LinkInfo linkInfo = readLinks(entitySetName, entityId, linkName, Accept.XML);
-    final Map.Entry<String, List<String>> links = XMLUtilities.extractLinkURIs(linkInfo.getLinks());
+    final Map.Entry<String, List<String>> links = extractLinkURIs(entitySetName, entityId, linkName);
     // --------------------------------
 
     // --------------------------------
@@ -704,6 +582,52 @@ public abstract class AbstractUtilities {
     return addOrReplaceEntity(entityId, entitySetName, setChanges(entityInfo.getValue(), replacement));
   }
 
+  public InputStream replaceProperty(
+          final String entitySetName,
+          final String entityId,
+          final InputStream changes,
+          final List<String> path,
+          final Accept accept,
+          final boolean justValue) throws Exception {
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+
+    final Accept acceptType = accept == null || Accept.TEXT == accept
+            ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
+
+    // read atom
+    InputStream stream = fsManager.readFile(basePath + ENTITY, acceptType);
+
+    // change atom
+    stream = replaceProperty(stream, changes, path, justValue);
+
+    // save atom
+    fsManager.putInMemory(stream, fsManager.getAbsolutePath(basePath + ENTITY, acceptType));
+
+    return fsManager.readFile(basePath + ENTITY, acceptType);
+  }
+
+  public InputStream deleteProperty(
+          final String entitySetName,
+          final String entityId,
+          final List<String> path,
+          final Accept accept) throws Exception {
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+
+    final Accept acceptType = accept == null || Accept.TEXT == accept
+            ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
+
+    // read atom
+    InputStream stream = fsManager.readFile(basePath + ENTITY, acceptType);
+
+    // change atom
+    stream = deleteProperty(stream, path);
+
+    // save atom
+    fsManager.putInMemory(stream, fsManager.getAbsolutePath(basePath + ENTITY, acceptType));
+
+    return fsManager.readFile(basePath + ENTITY, acceptType);
+  }
+
   public abstract InputStream readEntities(
           final List<String> links, final String linkName, final String next, final boolean forceFeed)
           throws Exception;
@@ -722,4 +646,22 @@ public abstract class AbstractUtilities {
 
   public abstract InputStream addEditLink(
           final InputStream content, final String title, final String href) throws Exception;
+
+  protected abstract InputStream replaceProperty(
+          final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
+          throws Exception;
+
+  protected abstract InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception;
+
+  public abstract InputStream getProperty(
+          final String entitySetName, final String entityId, final List<String> path, final String edmType)
+          throws Exception;
+
+  public abstract InputStream getPropertyValue(final InputStream is, final List<String> path)
+          throws Exception;
+
+  public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is) throws Exception;
+  
+  public abstract Map.Entry<String, List<String>> extractLinkURIs(
+          final String entitySetName, final String entityId, final String linkName) throws Exception;
 }

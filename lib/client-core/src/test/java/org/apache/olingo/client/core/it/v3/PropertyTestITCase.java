@@ -44,7 +44,6 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -57,85 +56,71 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   @Test
-  @Ignore
   public void replacePropertyValue() throws IOException {
     updatePropertyValue(ODataValueFormat.TEXT, UpdateType.REPLACE);
   }
 
   @Test
-  @Ignore
   public void replacePrimitivePropertyAsXML() throws IOException {
     updatePrimitiveProperty(ODataFormat.XML);
   }
 
   @Test
-  @Ignore
   public void replacePrimitivePropertyAsJSON() throws IOException {
     updatePrimitiveProperty(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  @Ignore
   public void replaceCollectionPropertyAsXML() throws IOException {
     updateCollectionProperty(ODataFormat.XML);
   }
 
   @Test
-  @Ignore
   public void replaceCollectionPropertyAsJSON() throws IOException {
     updateCollectionProperty(ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  @Ignore
   public void replaceComplexPropertyAsXML() throws IOException {
     updateComplexProperty(ODataFormat.XML, UpdateType.REPLACE);
   }
 
   @Test
-  @Ignore
   public void replaceComplexPropertyAsJSON() throws IOException {
     updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.REPLACE);
   }
 
   @Test
-  @Ignore
   public void patchComplexPropertyAsXML() throws IOException {
     updateComplexProperty(ODataFormat.XML, UpdateType.PATCH);
   }
 
   @Test
-  @Ignore
   public void patchComplexPropertyAsJSON() throws IOException {
     updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
   }
 
   @Test
-  @Ignore
   public void mergeComplexPropertyAsXML() throws IOException {
     updateComplexProperty(ODataFormat.XML, UpdateType.MERGE);
   }
 
   @Test
-  @Ignore
   public void mergeComplexPropertyAsJSON() throws IOException {
     updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.MERGE);
   }
 
   @Test
-  @Ignore
   public void genericRequestAsXML() throws IOException {
     genericRequest(ODataFormat.XML);
   }
 
   @Test
-  @Ignore
   public void genericRequestAsJSON() throws IOException {
     genericRequest(ODataFormat.JSON);
   }
 
   @Test
-  @Ignore
   public void readCountValue() throws IOException {
     final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").count();
@@ -155,7 +140,6 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   @Test
-  @Ignore
   public void nullNullableProperty() {
     final ODataDeleteResponse res = client.getCUDRequestFactory().getDeleteRequest(client.getURIBuilder(
             getServiceRoot()).
@@ -166,7 +150,6 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   @Test(expected = ODataClientErrorException.class)
-  @Ignore
   public void nullNonNullableProperty() {
     client.getCUDRequestFactory().getDeleteRequest(client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Driver").appendKeySegment("1").

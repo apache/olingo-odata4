@@ -28,6 +28,8 @@ public class Constants {
 
   public final static String ODATA_METADATA_PREFIX = DEFAULT_SERVICE_URL + "$metadata#";
 
+  public final static String ATOM_DEF_TYPE = "Edm.String";
+
   public final static String ATOM_PROPERTY_PREFIX = "d:";
 
   public final static String ATOM_METADATA_PREFIX = "m:";
