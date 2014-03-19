@@ -23,39 +23,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.domain.ODataCollectionValue;
-import org.apache.olingo.client.api.domain.ODataComplexValue;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataValue;
 
 /**
  * OData entity property.
  */
 public class ODataProperty implements Serializable, ODataInvokeResult {
-
-  /**
-   * Property type.
-   */
-  public enum PropertyType {
-
-    /**
-     * Primitive.
-     */
-    PRIMITIVE,
-    /**
-     * Collection
-     */
-    COLLECTION,
-    /**
-     * Complex.
-     */
-    COMPLEX,
-    /**
-     * Empty type (possibly, no type information could be retrieved).
-     */
-    EMPTY
-
-  }
 
   private static final long serialVersionUID = 926939448778950450L;
 

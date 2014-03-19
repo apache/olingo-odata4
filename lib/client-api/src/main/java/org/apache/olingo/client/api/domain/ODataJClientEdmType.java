@@ -38,7 +38,7 @@ public class ODataJClientEdmType {
 
   private boolean collection;
 
-  private ODataJClientEdmPrimitiveType simpleType;
+  private ODataJClientEdmPrimitiveType primitiveType;
 
   private EnumType enumType;
 
@@ -88,7 +88,7 @@ public class ODataJClientEdmType {
     }
 
     if (namespaceOrAlias.equals(ODataJClientEdmPrimitiveType.namespace())) {
-      this.simpleType = ODataJClientEdmPrimitiveType.fromValue(
+      this.primitiveType = ODataJClientEdmPrimitiveType.fromValue(
               ODataJClientEdmPrimitiveType.namespace() + "." + typeName);
     } else if (metadata != null) {
       if (!metadata.isNsOrAlias(namespaceOrAlias)) {
@@ -116,7 +116,7 @@ public class ODataJClientEdmType {
         }
       }
 
-      if (!isSimpleType() && !isEnumType() && !isComplexType() && !isEntityType()) {
+      if (!isPrimitiveType() && !isEnumType() && !isComplexType() && !isEntityType()) {
         throw new IllegalArgumentException("Could not parse type information out of " + typeExpression);
       }
     }
@@ -136,8 +136,12 @@ public class ODataJClientEdmType {
    *
    * @return 'TRUE' if is a simple type; 'FALSE' otherwise.
    */
-  public final boolean isSimpleType() {
-    return this.simpleType != null;
+  public final boolean isPrimitiveType() {
+    return this.primitiveType != null;
+  }
+
+  public boolean isGeospatialType() {
+    return isPrimitiveType() && this.primitiveType.isGeospatial();
   }
 
   /**
@@ -145,12 +149,12 @@ public class ODataJClientEdmType {
    *
    * @return simple type. An <tt>EdmTypeNotFoundException</tt> will be raised if it is not a simple type.
    */
-  public final ODataJClientEdmPrimitiveType getSimpleType() {
-    if (!isSimpleType()) {
+  public final ODataJClientEdmPrimitiveType getPrimitiveType() {
+    if (!isPrimitiveType()) {
       throw new IllegalArgumentException("Cannot find Primitive in " + this.typeExpression);
     }
 
-    return this.simpleType;
+    return this.primitiveType;
   }
 
   /**

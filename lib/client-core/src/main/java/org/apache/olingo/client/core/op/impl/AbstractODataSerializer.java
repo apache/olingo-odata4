@@ -20,33 +20,25 @@ package org.apache.olingo.client.core.op.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.ODataSerializer;
-import org.apache.olingo.client.api.utils.XMLUtils;
-import org.apache.olingo.client.core.data.AbstractPayloadObject;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.AtomFeedImpl;
+import org.apache.olingo.client.core.data.AtomPropertyImpl;
 import org.apache.olingo.client.core.data.AtomSerializer;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
 import org.apache.olingo.client.core.data.JSONFeedImpl;
 import org.apache.olingo.client.core.data.JSONPropertyImpl;
-import org.apache.olingo.client.core.xml.XMLParser;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public abstract class AbstractODataSerializer extends AbstractJacksonTool implements ODataSerializer {
 
@@ -56,7 +48,8 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
 
   public AbstractODataSerializer(final ODataClient client) {
     super(client);
-    this.atomSerializer = new AtomSerializer(client);
+
+    this.atomSerializer = new AtomSerializer(client.getServiceVersion());
   }
 
   @Override
@@ -88,16 +81,16 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
   }
 
   @Override
-  public void property(final Element element, final ODataFormat format, final OutputStream out) {
-    property(element, format, new OutputStreamWriter(out));
+  public void property(final Property obj, final OutputStream out) {
+    property(obj, new OutputStreamWriter(out));
   }
 
   @Override
-  public void property(final Element element, final ODataFormat format, final Writer writer) {
-    if (format == ODataFormat.XML) {
-      dom(element, writer);
+  public void property(final Property obj, final Writer writer) {
+    if (obj instanceof AtomPropertyImpl) {
+      atom((AtomPropertyImpl) obj, writer);
     } else {
-      json(element, writer);
+      json((JSONPropertyImpl) obj, writer);
     }
   }
 
@@ -109,63 +102,28 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
   @Override
   public void link(final Link link, final ODataFormat format, final Writer writer) {
     if (format == ODataFormat.XML) {
-      xmlLink(link, writer);
+      atom(link, writer);
     } else {
       jsonLink(link, writer);
     }
   }
 
-  @Override
-  public void dom(final Node content, final OutputStream out) {
-    dom(content, new OutputStreamWriter(out));
-  }
-
-  @Override
-  public void dom(final Node content, final Writer writer) {
-    XMLParser.PARSER.serialize(content, writer);
-  }
-
   /*
    * ------------------ Protected methods ------------------
    */
-  protected <T extends AbstractPayloadObject> void atom(final T obj, final Writer writer) {
+  protected <T> void atom(final T obj, final Writer writer) {
     try {
-      dom(atomSerializer.serialize(obj), writer);
+      atomSerializer.write(writer, obj);
     } catch (Exception e) {
       throw new IllegalArgumentException("While serializing Atom object", e);
     }
   }
 
-  protected <T extends AbstractPayloadObject> void json(final T obj, final Writer writer) {
+  protected <T> void json(final T obj, final Writer writer) {
     try {
       getObjectMapper().writeValue(writer, obj);
     } catch (IOException e) {
       throw new IllegalArgumentException("While serializing JSON object", e);
-    }
-  }
-
-  protected void json(final Element element, final Writer writer) {
-    try {
-      final JSONPropertyImpl property = new JSONPropertyImpl();
-      property.setContent(element);
-      getObjectMapper().writeValue(writer, property);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While serializing JSON property", e);
-    }
-  }
-
-  protected void xmlLink(final Link link, final Writer writer) {
-    try {
-      final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-      final Document doc = builder.newDocument();
-      final Element uri = doc.createElementNS(
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES),
-              Constants.ELEM_URI);
-      uri.appendChild(doc.createTextNode(link.getHref()));
-
-      dom(uri, writer);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("While serializing XML link", e);
     }
   }
 

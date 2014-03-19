@@ -1,0 +1,1 @@
+{"odata.metadata":"http://192.168.0.160:8080/DefaultService.svc/$metadata#Edm.GeometryCollection","value":{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[4.0,6.0]},{"type":"LineString","coordinates":[[4.0,6.0],[7.0,10.0]]}],"crs":{"type":"name","properties":{"name":"EPSG:0"}}}}

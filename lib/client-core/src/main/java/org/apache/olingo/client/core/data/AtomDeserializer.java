@@ -18,201 +18,322 @@
  */
 package org.apache.olingo.client.core.data;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataClient;
+import java.text.ParseException;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.ODataOperation;
-import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-public class AtomDeserializer {
+public class AtomDeserializer extends AbstractAtomDealer {
 
   private static final Logger LOG = LoggerFactory.getLogger(AtomDeserializer.class);
 
-  private static final ISO8601DateFormat ISO_DATEFORMAT = new ISO8601DateFormat();
+  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
 
-  private final ODataClient client;
+  private final AtomPropertyDeserializer propDeserializer;
 
-  public AtomDeserializer(final ODataClient client) {
-    this.client = client;
+  public AtomDeserializer(final ODataServiceVersion version) {
+    super(version);
+    this.propDeserializer = new AtomPropertyDeserializer(version);
   }
 
-  private void common(final Element input, final AtomObject object) {
-    if (StringUtils.isNotBlank(input.getAttribute(Constants.ATTR_XMLBASE))) {
-      object.setBaseURI(input.getAttribute(Constants.ATTR_XMLBASE));
+  private AtomPropertyImpl property(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    return propDeserializer.deserialize(reader, skipBeforeFirstStartElement(reader));
+  }
+
+  private StartElement skipBeforeFirstStartElement(final XMLEventReader reader) throws XMLStreamException {
+    StartElement startEvent = null;
+    while (reader.hasNext() && startEvent == null) {
+      final XMLEvent event = reader.nextEvent();
+      if (event.isStartElement()) {
+        startEvent = event.asStartElement();
+      }
+    }
+    if (startEvent == null) {
+      throw new IllegalArgumentException("Cannot find any XML start element");
     }
 
-    final List<Element> ids = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ID);
-    if (!ids.isEmpty()) {
-      object.setId(ids.get(0).getTextContent());
-    }
+    return startEvent;
+  }
 
-    final List<Element> titles = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_TITLE);
-    if (!titles.isEmpty()) {
-      object.setTitle(titles.get(0).getTextContent());
-    }
+  private void common(final XMLEventReader reader, final StartElement start,
+          final AbstractAtomObject object, final String key) throws XMLStreamException {
 
-    final List<Element> summaries = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_SUMMARY);
-    if (!summaries.isEmpty()) {
-      object.setSummary(summaries.get(0).getTextContent());
-    }
+    boolean foundEndElement = false;
+    while (reader.hasNext() && !foundEndElement) {
+      final XMLEvent event = reader.nextEvent();
 
-    final List<Element> updateds = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_UPDATED);
-    if (!updateds.isEmpty()) {
-      try {
-        object.setUpdated(ISO_DATEFORMAT.parse(updateds.get(0).getTextContent()));
-      } catch (Exception e) {
-        LOG.error("Could not parse date {}", updateds.get(0).getTextContent(), e);
+      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
+        try {
+          object.setCommonProperty(key, event.asCharacters().getData());
+        } catch (ParseException e) {
+          throw new XMLStreamException("While parsing Atom entry or feed common elements", e);
+        }
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndElement = true;
       }
     }
   }
 
-  public AtomEntryImpl entry(final Element input) {
-    if (!Constants.ATOM_ELEM_ENTRY.equals(input.getNodeName())) {
+  private void inline(final XMLEventReader reader, final StartElement start, final LinkImpl link)
+          throws XMLStreamException {
+
+    boolean foundEndElement = false;
+    while (reader.hasNext() && !foundEndElement) {
+      final XMLEvent event = reader.nextEvent();
+
+      if (event.isStartElement() && inlineQName.equals(event.asStartElement().getName())) {
+        StartElement inline = null;
+        while (reader.hasNext() && inline == null) {
+          final XMLEvent innerEvent = reader.peek();
+          if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
+            reader.nextEvent();
+          } else if (innerEvent.isStartElement()) {
+            inline = innerEvent.asStartElement();
+          }
+        }
+        if (inline != null) {
+          if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
+            link.setInlineEntry(entry(reader, inline));
+          }
+          if (Constants.QNAME_ATOM_ELEM_FEED.equals(inline.getName())) {
+            link.setInlineFeed(feed(reader, inline));
+          }
+        }
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndElement = true;
+      }
+    }
+  }
+
+  private void properties(final XMLEventReader reader, final StartElement start, final AtomEntryImpl entry)
+          throws XMLStreamException {
+
+    boolean foundEndProperties = false;
+    while (reader.hasNext() && !foundEndProperties) {
+      final XMLEvent event = reader.nextEvent();
+
+      if (event.isStartElement()) {
+        entry.getProperties().add(propDeserializer.deserialize(reader, event.asStartElement()));
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndProperties = true;
+      }
+    }
+  }
+
+  private AtomEntryImpl entry(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    if (!Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
       return null;
     }
 
     final AtomEntryImpl entry = new AtomEntryImpl();
-
-    common(input, entry);
-
-    final String etag = input.getAttribute(Constants.ATOM_ATTR_ETAG);
-    if (StringUtils.isNotBlank(etag)) {
-      entry.setETag(etag);
+    final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
+    if (xmlBase != null) {
+      entry.setBaseURI(xmlBase.getValue());
+    }
+    final Attribute etag = start.getAttributeByName(etagQName);
+    if (etag != null) {
+      entry.setETag(etag.getValue());
     }
 
-    final List<Element> categories = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_CATEGORY);
-    if (!categories.isEmpty()) {
-      entry.setType(categories.get(0).getAttribute(Constants.ATOM_ATTR_TERM));
-    }
+    boolean foundEndEntry = false;
+    while (reader.hasNext() && !foundEndEntry) {
+      final XMLEvent event = reader.nextEvent();
 
-    final List<Element> links = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_LINK);
-    for (Element linkElem : links) {
-      final LinkImpl link = new LinkImpl();
-      link.setRel(linkElem.getAttribute(Constants.ATTR_REL));
-      link.setTitle(linkElem.getAttribute(Constants.ATTR_TITLE));
-      link.setHref(linkElem.getAttribute(Constants.ATTR_HREF));
-
-      if (Constants.SELF_LINK_REL.equals(link.getRel())) {
-        entry.setSelfLink(link);
-      } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
-        entry.setEditLink(link);
-      } else if (link.getRel().startsWith(
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
-
-        link.setType(linkElem.getAttribute(Constants.ATTR_TYPE));
-        entry.getNavigationLinks().add(link);
-
-        final List<Element> inlines = XMLUtils.getChildElements(linkElem, Constants.ATOM_ELEM_INLINE);
-        if (!inlines.isEmpty()) {
-          final List<Element> entries =
-                  XMLUtils.getChildElements(inlines.get(0), Constants.ATOM_ELEM_ENTRY);
-          if (!entries.isEmpty()) {
-            link.setInlineEntry(entry(entries.get(0)));
+      if (event.isStartElement()) {
+        if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), entry, "id");
+        } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), entry, "title");
+        } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), entry, "summary");
+        } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), entry, "updated");
+        } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
+          final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
+          if (term != null) {
+            entry.setType(term.getValue());
+          }
+        } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
+          final LinkImpl link = new LinkImpl();
+          final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
+          if (rel != null) {
+            link.setRel(rel.getValue());
+          }
+          final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
+          if (title != null) {
+            link.setTitle(title.getValue());
+          }
+          final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+          if (href != null) {
+            link.setHref(href.getValue());
+          }
+          final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
+          if (type != null) {
+            link.setType(type.getValue());
           }
 
-          final List<Element> feeds =
-                  XMLUtils.getChildElements(inlines.get(0), Constants.ATOM_ELEM_FEED);
-          if (!feeds.isEmpty()) {
-            link.setInlineFeed(feed(feeds.get(0)));
+          if (Constants.SELF_LINK_REL.equals(link.getRel())) {
+            entry.setSelfLink(link);
+          } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
+            entry.setEditLink(link);
+          } else if (link.getRel().startsWith(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
+            entry.getNavigationLinks().add(link);
+            inline(reader, event.asStartElement(), link);
+          } else if (link.getRel().startsWith(
+                  version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
+
+            entry.getAssociationLinks().add(link);
+          } else if (link.getRel().startsWith(
+                  version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
+
+            final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
+            if (metag != null) {
+              link.setMediaETag(metag.getValue());
+            }
+            entry.getMediaEditLinks().add(link);
           }
+        } else if (actionQName.equals(event.asStartElement().getName())) {
+          final ODataOperation operation = new ODataOperation();
+          final Attribute metadata = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_METADATA));
+          if (metadata != null) {
+            operation.setMetadataAnchor(metadata.getValue());
+          }
+          final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
+          if (title != null) {
+            operation.setTitle(title.getValue());
+          }
+          final Attribute target = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TARGET));
+          if (target != null) {
+            operation.setTarget(URI.create(target.getValue()));
+          }
+
+          entry.getOperations().add(operation);
+        } else if (Constants.QNAME_ATOM_ELEM_CONTENT.equals(event.asStartElement().getName())) {
+          final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
+          if (type == null || ContentType.APPLICATION_XML.getMimeType().equals(type.getValue())) {
+            properties(reader, skipBeforeFirstStartElement(reader), entry);
+          } else {
+            entry.setMediaContentType(type.getValue());
+            final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
+            if (src != null) {
+              entry.setMediaContentSource(src.getValue());
+            }
+          }
+        } else if (propertiesQName.equals(event.asStartElement().getName())) {
+          properties(reader, event.asStartElement(), entry);
         }
-      } else if (link.getRel().startsWith(
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
-
-        entry.getAssociationLinks().add(link);
-      } else if (link.getRel().startsWith(
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
-
-        entry.getMediaEditLinks().add(link);
       }
-    }
 
-    final List<Element> authors = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_AUTHOR);
-    if (!authors.isEmpty()) {
-      final AtomEntryImpl.Author author = new AtomEntryImpl.Author();
-      for (Node child : XMLUtils.getChildNodes(input, Node.ELEMENT_NODE)) {
-        if (Constants.ATOM_ELEM_AUTHOR_NAME.equals(XMLUtils.getSimpleName(child))) {
-          author.setName(child.getTextContent());
-        } else if (Constants.ATOM_ELEM_AUTHOR_URI.equals(XMLUtils.getSimpleName(child))) {
-          author.setUri(child.getTextContent());
-        } else if (Constants.ATOM_ELEM_AUTHOR_EMAIL.equals(XMLUtils.getSimpleName(child))) {
-          author.setEmail(child.getTextContent());
-        }
-      }
-      if (!author.isEmpty()) {
-        entry.setAuthor(author);
-      }
-    }
-
-    final List<Element> actions = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ACTION);
-    for (Element action : actions) {
-      final ODataOperation operation = new ODataOperation();
-      operation.setMetadataAnchor(action.getAttribute(Constants.ATTR_METADATA));
-      operation.setTitle(action.getAttribute(Constants.ATTR_TITLE));
-      operation.setTarget(URI.create(action.getAttribute(Constants.ATTR_TARGET)));
-
-      entry.getOperations().add(operation);
-    }
-
-    final List<Element> contents = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_CONTENT);
-    if (!contents.isEmpty()) {
-      final Element content = contents.get(0);
-
-      List<Element> props = XMLUtils.getChildElements(content, Constants.ELEM_PROPERTIES);
-      if (props.isEmpty()) {
-        entry.setMediaContentSource(content.getAttribute(Constants.ATOM_ATTR_SRC));
-        entry.setMediaContentType(content.getAttribute(Constants.ATTR_TYPE));
-
-        props = XMLUtils.getChildElements(input, Constants.ELEM_PROPERTIES);
-        if (!props.isEmpty()) {
-          entry.setMediaEntryProperties(props.get(0));
-        }
-      } else {
-        entry.setContent(props.get(0));
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndEntry = true;
       }
     }
 
     return entry;
   }
 
-  public AtomFeedImpl feed(final Element input) {
-    if (!Constants.ATOM_ELEM_FEED.equals(input.getNodeName())) {
+  private AtomEntryImpl entry(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    return entry(reader, skipBeforeFirstStartElement(reader));
+  }
+
+  private void count(final XMLEventReader reader, final StartElement start, final AtomFeedImpl feed)
+          throws XMLStreamException {
+
+    boolean foundEndElement = false;
+    while (reader.hasNext() && !foundEndElement) {
+      final XMLEvent event = reader.nextEvent();
+
+      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
+        feed.setCount(Integer.valueOf(event.asCharacters().getData()));
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndElement = true;
+      }
+    }
+  }
+
+  private AtomFeedImpl feed(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
 
     final AtomFeedImpl feed = new AtomFeedImpl();
-
-    common(input, feed);
-
-    final List<Element> entries = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_ENTRY);
-    for (Element entry : entries) {
-      feed.getEntries().add(entry(entry));
+    final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
+    if (xmlBase != null) {
+      feed.setBaseURI(xmlBase.getValue());
     }
 
-    final List<Element> links = XMLUtils.getChildElements(input, Constants.ATOM_ELEM_LINK);
-    for (Element link : links) {
-      if (Constants.NEXT_LINK_REL.equals(link.getAttribute(Constants.ATTR_REL))) {
-        feed.setNext(URI.create(link.getAttribute(Constants.ATTR_HREF)));
+    boolean foundEndFeed = false;
+    while (reader.hasNext() && !foundEndFeed) {
+      final XMLEvent event = reader.nextEvent();
+
+      if (event.isStartElement()) {
+        if (countQName.equals(event.asStartElement().getName())) {
+          count(reader, event.asStartElement(), feed);
+        } else if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), feed, "id");
+        } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), feed, "title");
+        } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), feed, "summary");
+        } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), feed, "updated");
+        } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
+          final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
+          if (rel != null && Constants.NEXT_LINK_REL.equals(rel.getValue())) {
+            final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+            if (href != null) {
+              feed.setNext(URI.create(href.getValue()));
+            }
+          }
+        } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
+          feed.getEntries().add(entry(reader, event.asStartElement()));
+        }
       }
-    }
 
-    final List<Element> counts = XMLUtils.getChildElements(input, Constants.ATOM_ATTR_COUNT);
-    if (!counts.isEmpty()) {
-      try {
-        feed.setCount(Integer.parseInt(counts.get(0).getTextContent()));
-      } catch (Exception e) {
-        LOG.error("Could not parse $inlinecount {}", counts.get(0).getTextContent(), e);
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndFeed = true;
       }
     }
 
     return feed;
+  }
+
+  private AtomFeedImpl feed(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    return feed(reader, skipBeforeFirstStartElement(reader));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T read(final InputStream input, final Class<T> reference) throws XMLStreamException {
+    if (AtomFeedImpl.class.equals(reference)) {
+      return (T) feed(input);
+    } else if (AtomEntryImpl.class.equals(reference)) {
+      return (T) entry(input);
+    } else if (AtomPropertyImpl.class.equals(reference)) {
+      return (T) property(input);
+    }
+    return null;
   }
 }

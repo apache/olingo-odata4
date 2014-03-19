@@ -29,6 +29,53 @@ public class ODataLink extends ODataItem {
 
   private static final long serialVersionUID = 7274966414277952124L;
 
+  public static class Builder {
+
+    private ODataServiceVersion version;
+
+    private URI uri;
+
+    private ODataLinkType type;
+
+    private String title;
+
+    private String mediaETag;
+
+    public Builder setVersion(final ODataServiceVersion version) {
+      this.version = version;
+      return this;
+    }
+
+    public Builder setURI(final URI uri) {
+      this.uri = uri;
+      return this;
+    }
+
+    public Builder setURI(final URI baseURI, final String href) {
+      this.uri = URIUtils.getURI(baseURI, href);
+      return this;
+    }
+
+    public Builder setType(final ODataLinkType type) {
+      this.type = type;
+      return this;
+    }
+
+    public Builder setTitle(final String title) {
+      this.title = title;
+      return this;
+    }
+
+    public void setMediaETag(final String mediaETag) {
+      this.mediaETag = mediaETag;
+    }
+
+    public ODataLink build() {
+      ODataLink instance = new ODataLink(version, uri, type, title);
+      instance.mediaETag = this.mediaETag;
+      return instance;
+    }
+  }
   /**
    * Link type.
    */
@@ -40,6 +87,11 @@ public class ODataLink extends ODataItem {
   protected final String rel;
 
   /**
+   * ETag for media edit links.
+   */
+  private String mediaETag;
+
+  /**
    * Constructor.
    *
    * @param version OData service version.
@@ -47,7 +99,7 @@ public class ODataLink extends ODataItem {
    * @param type type.
    * @param title title.
    */
-  public ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
+  protected ODataLink(final ODataServiceVersion version, final URI uri, final ODataLinkType type, final String title) {
     super(title);
 
     this.link = uri;
@@ -79,7 +131,7 @@ public class ODataLink extends ODataItem {
    * @param type type.
    * @param title title.
    */
-  public ODataLink(final ODataServiceVersion version,
+  protected ODataLink(final ODataServiceVersion version,
           final URI baseURI, final String href, final ODataLinkType type, final String title) {
 
     this(version, URIUtils.getURI(baseURI, href), type, title);
@@ -102,4 +154,14 @@ public class ODataLink extends ODataItem {
   public String getRel() {
     return rel;
   }
+
+  /**
+   * Gets Media ETag.
+   *
+   * @return media ETag
+   */
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
 }

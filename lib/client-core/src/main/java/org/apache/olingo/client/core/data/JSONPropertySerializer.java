@@ -19,28 +19,22 @@
 package org.apache.olingo.client.core.data;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
-import javax.xml.parsers.DocumentBuilder;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.utils.XMLUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.apache.olingo.client.api.data.Property;
 
 /**
- * Writes out JSON string from <tt>JSONProperty</tt>.
+ * Writes out JSON string from <tt>JSONPropertyImpl</tt>.
  *
- * @see JSONProperty
+ * @see JSONPropertyImpl
  */
-public class JSONPropertySerializer extends ODataJacksonSerializer<JSONPropertyImpl> {
+public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyImpl> {
 
   @Override
-  public void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen, final SerializerProvider provider)
-          throws IOException, JsonProcessingException {
+  protected void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen,
+          final SerializerProvider provider) throws IOException, JsonProcessingException {
 
     jgen.writeStartObject();
 
@@ -48,30 +42,15 @@ public class JSONPropertySerializer extends ODataJacksonSerializer<JSONPropertyI
       jgen.writeStringField(Constants.JSON_METADATA, property.getMetadata().toASCIIString());
     }
 
-    final Element content = property.getContent();
-    if (XMLUtils.hasOnlyTextChildNodes(content)) {
-      jgen.writeStringField(Constants.JSON_VALUE, content.getTextContent());
-    } else {
-      try {
-        final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-        final Document document = builder.newDocument();
-        final Element wrapper = document.createElement(Constants.ELEM_PROPERTY);
-
-        if (XMLUtils.hasElementsChildNode(content)) {
-          wrapper.appendChild(document.renameNode(
-                  document.importNode(content, true), null, Constants.JSON_VALUE));
-
-          JSONDOMTreeUtils.writeSubtree(client, jgen, wrapper);
-        } else if (ODataJClientEdmPrimitiveType.isGeospatial(content.getAttribute(Constants.ATTR_M_TYPE))) {
-          wrapper.appendChild(document.renameNode(
-                  document.importNode(content, true), null, Constants.JSON_VALUE));
-
-          JSONDOMTreeUtils.writeSubtree(client, jgen, wrapper, true);
-        } else {
-          JSONDOMTreeUtils.writeSubtree(client, jgen, content);
-        }
-      } catch (Exception e) {
-        throw new JsonParseException("Cannot serialize property", JsonLocation.NA, e);
+    if (property.getValue().isNull()) {
+      jgen.writeBooleanField(Constants.JSON_NULL, true);
+    } else if (property.getValue().isSimple()) {
+      jgen.writeStringField(Constants.JSON_VALUE, property.getValue().asSimple().get());
+    } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
+      property(jgen, property, Constants.JSON_VALUE);
+    } else if (property.getValue().isComplex()) {
+      for (Property cproperty : property.getValue().asComplex().get()) {
+        property(jgen, cproperty, cproperty.getName());
       }
     }
 

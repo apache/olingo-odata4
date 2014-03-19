@@ -24,11 +24,11 @@ import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Error;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.LinkCollection;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.w3c.dom.Element;
 
 /**
  * Utility class for serialization.
@@ -65,13 +65,13 @@ public interface ODataDeserializer extends Serializable {
   Entry toEntry(InputStream input, ODataPubFormat format);
 
   /**
-   * Gets a DOM representation of the given InputStream.
+   * Gets a property object from the given InputStream.
    *
    * @param input stream to be de-serialized.
    * @param format XML or JSON
-   * @return DOM.
+   * @return Property instance.
    */
-  Element toPropertyDOM(InputStream input, ODataFormat format);
+  Property toProperty(InputStream input, ODataFormat format);
 
   /**
    * Gets the ODataError object represented by the given InputStream.
@@ -81,14 +81,6 @@ public interface ODataDeserializer extends Serializable {
    * @return
    */
   Error toError(InputStream input, boolean isXML);
-
-  /**
-   * Parses the given input into a DOM tree.
-   *
-   * @param input stream to be parsed and de-serialized.
-   * @return DOM tree
-   */
-  Element toDOM(InputStream input);
 
   /**
    * Gets a list of links from the given InputStream.

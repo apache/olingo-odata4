@@ -27,22 +27,23 @@ import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
  */
 public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
-    private static final long serialVersionUID = -9181547636133878977L;
+  private static final long serialVersionUID = -9181547636133878977L;
 
-    /**
-     * Constructor.
-     *
-     * @param dimension dimension.
-     * @param geospatials geospatials info.
-     */
-    public GeospatialCollection(final Dimension dimension, final List<Geospatial> geospatials) {
-        super(dimension, Type.GEOSPATIALCOLLECTION, geospatials);
-    }
+  /**
+   * Constructor.
+   *
+   * @param dimension dimension.
+   * @param crs crs.
+   * @param geospatials geospatials info.
+   */
+  public GeospatialCollection(final Dimension dimension, final String crs, final List<Geospatial> geospatials) {
+    super(dimension, Type.GEOSPATIALCOLLECTION, crs, geospatials);
+  }
 
-    @Override
-    public ODataJClientEdmPrimitiveType getEdmSimpleType() {
-        return dimension == Dimension.GEOGRAPHY
-                ? ODataJClientEdmPrimitiveType.GeographyCollection
-                : ODataJClientEdmPrimitiveType.GeometryCollection;
-    }
+  @Override
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
+    return dimension == Dimension.GEOGRAPHY
+            ? ODataJClientEdmPrimitiveType.GeographyCollection
+            : ODataJClientEdmPrimitiveType.GeometryCollection;
+  }
 }

@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.LinkCollection;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
@@ -31,7 +32,6 @@ import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataLinkCollection;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
-import org.w3c.dom.Element;
 
 public interface ODataBinder extends Serializable {
 
@@ -73,12 +73,14 @@ public interface ODataBinder extends Serializable {
   Link getLink(ODataLink link, boolean isXML);
 
   /**
-   * Gets the given OData property as DOM element.
+   * Gets a <tt>Property</tt> from the given OData property.
    *
-   * @param prop OData property.
-   * @return <tt>Element</tt> object.
+   * @param property OData property.
+   * @param reference reference class.
+   * @param setType whether to explicitly output type information.
+   * @return <tt>Property</tt> object.
    */
-  Element toDOMElement(ODataProperty prop);
+  Property getProperty(ODataProperty property, Class<? extends Entry> reference, boolean setType);
 
   /**
    * Gets <tt>ODataServiceDocument</tt> from the given service document resource.
@@ -123,12 +125,12 @@ public interface ODataBinder extends Serializable {
   ODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
 
   /**
-   * Gets an <tt>ODataProperty</tt> from the given DOM element.
+   * Gets an <tt>ODataProperty</tt> from the given property resource.
    *
-   * @param property content.
+   * @param property property resource.
    * @return <tt>ODataProperty</tt> object.
    */
-  ODataProperty getODataProperty(Element property);
+  ODataProperty getODataProperty(Property property);
 
   /**
    * Gets <tt>ODataLinkCollection</tt> from the given link collection resource.

@@ -1,0 +1,1 @@
+{"odata.metadata":"http://192.168.0.160:8080/DefaultService.svc/$metadata#Edm.GeographyLineString","odata.type":"Edm.GeographyLineString","value":{"type":"LineString","coordinates":[[40.5,40.5],[30.5,30.5],[20.5,40.5],[10.5,30.5]],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}}

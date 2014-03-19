@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.Constants;
  * <br/>
  * If metadata information is available, the corresponding entry fields and content will be populated.
  */
-public class JSONFeedDeserializer extends ODataJacksonDeserializer<JSONFeedImpl> {
+public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl> {
 
   @Override
   protected JSONFeedImpl doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
@@ -50,11 +50,11 @@ public class JSONFeedDeserializer extends ODataJacksonDeserializer<JSONFeedImpl>
     if (tree.hasNonNull(Constants.JSON_METADATA)) {
       feed.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
     }
-    if (tree.hasNonNull("odata.count")) {
-      feed.setCount(tree.get("odata.count").asInt());
+    if (tree.hasNonNull(Constants.JSON_COUNT)) {
+      feed.setCount(tree.get(Constants.JSON_COUNT).asInt());
     }
-    if (tree.hasNonNull("odata.nextLink")) {
-      feed.setNext(URI.create(tree.get("odata.nextLink").textValue()));
+    if (tree.hasNonNull(Constants.JSON_NEXT_LINK)) {
+      feed.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
     }
 
     if (tree.hasNonNull(Constants.JSON_VALUE)) {

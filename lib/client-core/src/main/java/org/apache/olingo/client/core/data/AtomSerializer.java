@@ -18,167 +18,240 @@
  */
 package org.apache.olingo.client.core.data;
 
+import java.io.Writer;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
+import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.utils.XMLUtils;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-public class AtomSerializer {
+public class AtomSerializer extends AbstractAtomDealer {
 
-  private final ODataClient client;
+  private static final XMLOutputFactory FACTORY = XMLOutputFactory.newInstance();
 
-  public AtomSerializer(final ODataClient client) {
-    this.client = client;
+  private final AtomPropertySerializer propSerializer;
+
+  public AtomSerializer(final ODataServiceVersion version) {
+    super(version);
+    this.propSerializer = new AtomPropertySerializer(version);
   }
 
-  public <T extends AbstractPayloadObject> Element serialize(final T obj) throws ParserConfigurationException {
-    if (obj instanceof AtomEntryImpl) {
-      return entry((AtomEntryImpl) obj);
-    } else if (obj instanceof AtomFeedImpl) {
-      return feed((AtomFeedImpl) obj);
-    } else {
-      throw new IllegalArgumentException("Unsupported Atom object for standalone serialization: " + obj);
-    }
+  private void startDocument(final XMLStreamWriter writer, final String rootElement) throws XMLStreamException {
+    writer.writeStartDocument();
+    writer.setDefaultNamespace(Constants.NS_ATOM);
+
+    writer.writeStartElement(rootElement);
+
+    namespaces(writer);
   }
 
-  private void setLinks(final Element entry, final List<Link> links) throws ParserConfigurationException {
+  private void property(final Writer outWriter, final Property property) throws XMLStreamException {
+    final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
+
+    writer.writeStartDocument();
+
+    propSerializer.property(writer, property);
+
+    writer.writeEndDocument();
+    writer.flush();
+  }
+
+  private void links(final XMLStreamWriter writer, final List<Link> links) throws XMLStreamException {
     for (Link link : links) {
-      final Element linkElem = entry.getOwnerDocument().createElement(Constants.ATOM_ELEM_LINK);
+      writer.writeStartElement(Constants.ATOM_ELEM_LINK);
 
-      linkElem.setAttribute(Constants.ATTR_REL, link.getRel());
-      linkElem.setAttribute(Constants.ATTR_TITLE, link.getTitle());
-      linkElem.setAttribute(Constants.ATTR_HREF, link.getHref());
-
+      if (StringUtils.isNotBlank(link.getRel())) {
+        writer.writeAttribute(Constants.ATTR_REL, link.getRel());
+      }
+      if (StringUtils.isNotBlank(link.getTitle())) {
+        writer.writeAttribute(Constants.ATTR_TITLE, link.getTitle());
+      }
+      if (StringUtils.isNotBlank(link.getHref())) {
+        writer.writeAttribute(Constants.ATTR_HREF, link.getHref());
+      }
       if (StringUtils.isNotBlank(link.getType())) {
-        linkElem.setAttribute(Constants.ATTR_TYPE, link.getType());
+        writer.writeAttribute(Constants.ATTR_TYPE, link.getType());
       }
 
       if (link.getInlineEntry() != null || link.getInlineFeed() != null) {
-        final Element inline = entry.getOwnerDocument().createElement(Constants.ATOM_ELEM_INLINE);
-        linkElem.appendChild(inline);
+        writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ATOM_ELEM_INLINE,
+                version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
 
         if (link.getInlineEntry() != null) {
-          inline.appendChild(entry.getOwnerDocument().importNode(
-                  entry((AtomEntryImpl) link.getInlineEntry()), true));
+          writer.writeStartElement(Constants.ATOM_ELEM_ENTRY);
+          entry(writer, link.getInlineEntry());
+          writer.writeEndElement();
         }
         if (link.getInlineFeed() != null) {
-          inline.appendChild(entry.getOwnerDocument().importNode(
-                  feed((AtomFeedImpl) link.getInlineFeed()), true));
+          writer.writeStartElement(Constants.ATOM_ELEM_FEED);
+          feed(writer, link.getInlineFeed());
+          writer.writeEndElement();
         }
+
+        writer.writeEndElement();
       }
 
-      entry.appendChild(linkElem);
+      writer.writeEndElement();
     }
   }
 
-  private Element entry(final AtomEntryImpl entry) throws ParserConfigurationException {
-    final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-    final Document doc = builder.newDocument();
+  private void common(final XMLStreamWriter writer, final AbstractAtomObject object) throws XMLStreamException {
+    if (StringUtils.isNotBlank(object.getTitle())) {
+      writer.writeStartElement(Constants.ATOM_ELEM_TITLE);
+      writer.writeAttribute(Constants.ATTR_TYPE, TYPE_TEXT);
+      writer.writeCharacters(object.getTitle());
+      writer.writeEndElement();
+    }
 
-    final Element entryElem = doc.createElement(Constants.ATOM_ELEM_ENTRY);
-    entryElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, Constants.NS_ATOM);
-    entryElem.setAttribute(Constants.XMLNS_METADATA,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    entryElem.setAttribute(Constants.XMLNS_DATASERVICES,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    entryElem.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
-    entryElem.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
+    if (StringUtils.isNotBlank(object.getSummary())) {
+      writer.writeStartElement(Constants.ATOM_ELEM_SUMMARY);
+      writer.writeAttribute(Constants.ATTR_TYPE, "text");
+      writer.writeCharacters(object.getSummary());
+      writer.writeEndElement();
+    }
+  }
+
+  private void properties(final XMLStreamWriter writer, final List<Property> properties) throws XMLStreamException {
+    for (Property property : properties) {
+      propSerializer.property(writer, property, false);
+    }
+  }
+
+  private void entry(final XMLStreamWriter writer, final Entry entry) throws XMLStreamException {
     if (entry.getBaseURI() != null) {
-      entryElem.setAttribute(Constants.ATTR_XMLBASE, entry.getBaseURI().toASCIIString());
-    }
-    doc.appendChild(entryElem);
-
-    final Element category = doc.createElement(Constants.ATOM_ELEM_CATEGORY);
-    category.setAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
-    category.setAttribute(Constants.ATOM_ATTR_SCHEME,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
-    entryElem.appendChild(category);
-
-    if (StringUtils.isNotBlank(entry.getTitle())) {
-      final Element title = doc.createElement(Constants.ATOM_ELEM_TITLE);
-      title.appendChild(doc.createTextNode(entry.getTitle()));
-      entryElem.appendChild(title);
+      writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, entry.getBaseURI().toASCIIString());
     }
 
-    if (StringUtils.isNotBlank(entry.getSummary())) {
-      final Element summary = doc.createElement(Constants.ATOM_ELEM_SUMMARY);
-      summary.appendChild(doc.createTextNode(entry.getSummary()));
-      entryElem.appendChild(summary);
+    writer.writeStartElement(Constants.ATOM_ELEM_ID);
+    writer.writeCharacters(entry.getId());
+    writer.writeEndElement();
+
+    writer.writeStartElement(Constants.ATOM_ELEM_CATEGORY);
+    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, version.getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
+    writer.writeAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
+    writer.writeEndElement();
+
+    if (entry instanceof AbstractAtomObject) {
+      common(writer, (AbstractAtomObject) entry);
     }
 
-    setLinks(entryElem, entry.getAssociationLinks());
-    setLinks(entryElem, entry.getNavigationLinks());
-    setLinks(entryElem, entry.getMediaEditLinks());
+    links(writer, entry.getAssociationLinks());
+    links(writer, entry.getNavigationLinks());
+    links(writer, entry.getMediaEditLinks());
 
-    final Element content = doc.createElement(Constants.ATOM_ELEM_CONTENT);
+    writer.writeStartElement(Constants.ATOM_ELEM_CONTENT);
     if (entry.isMediaEntry()) {
       if (StringUtils.isNotBlank(entry.getMediaContentType())) {
-        content.setAttribute(Constants.ATTR_TYPE, entry.getMediaContentType());
+        writer.writeAttribute(Constants.ATTR_TYPE, entry.getMediaContentType());
       }
       if (StringUtils.isNotBlank(entry.getMediaContentSource())) {
-        content.setAttribute(Constants.ATOM_ATTR_SRC, entry.getMediaContentSource());
+        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entry.getMediaContentSource());
       }
-      if (content.getAttributes().getLength() > 0) {
-        entryElem.appendChild(content);
-      }
+      writer.writeEndElement();
 
-      if (entry.getMediaEntryProperties() != null) {
-        entryElem.appendChild(doc.importNode(entry.getMediaEntryProperties(), true));
-      }
+      writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
+      properties(writer, entry.getProperties());
     } else {
-      content.setAttribute(Constants.ATTR_TYPE, ContentType.APPLICATION_XML.getMimeType());
-      if (entry.getContent() != null) {
-        content.appendChild(doc.importNode(entry.getContent(), true));
-      }
-      entryElem.appendChild(content);
+      writer.writeAttribute(Constants.ATTR_TYPE, ContentType.APPLICATION_XML.getMimeType());
+      writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
+      properties(writer, entry.getProperties());
+      writer.writeEndElement();
     }
-
-    return entryElem;
+    writer.writeEndElement();
   }
 
-  private Element feed(final AtomFeedImpl feed) throws ParserConfigurationException {
-    final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-    final Document doc = builder.newDocument();
+  private void entry(final Writer outWriter, final Entry entry) throws XMLStreamException {
+    final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
-    final Element feedElem = doc.createElement(Constants.ATOM_ELEM_FEED);
-    feedElem.setAttribute(XMLConstants.XMLNS_ATTRIBUTE, Constants.NS_ATOM);
-    feedElem.setAttribute(Constants.XMLNS_METADATA,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    feedElem.setAttribute(Constants.XMLNS_DATASERVICES,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    feedElem.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
-    feedElem.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
+    startDocument(writer, Constants.ATOM_ELEM_ENTRY);
+
+    entry(writer, entry);
+
+    writer.writeEndElement();
+    writer.writeEndDocument();
+    writer.flush();
+  }
+
+  private void feed(final XMLStreamWriter writer, final Feed feed) throws XMLStreamException {
     if (feed.getBaseURI() != null) {
-      feedElem.setAttribute(Constants.ATTR_XMLBASE, feed.getBaseURI().toASCIIString());
-    }
-    doc.appendChild(feedElem);
-
-    if (StringUtils.isNotBlank(feed.getTitle())) {
-      final Element title = doc.createElement(Constants.ATOM_ELEM_TITLE);
-      title.appendChild(doc.createTextNode(feed.getTitle()));
-      feedElem.appendChild(title);
+      writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, feed.getBaseURI().toASCIIString());
     }
 
-    if (StringUtils.isNotBlank(feed.getSummary())) {
-      final Element summary = doc.createElement(Constants.ATOM_ELEM_SUMMARY);
-      summary.appendChild(doc.createTextNode(feed.getSummary()));
-      feedElem.appendChild(summary);
+    if (feed.getCount() != null) {
+      writer.writeStartElement(
+              version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_COUNT);
+      writer.writeCharacters(Integer.toString(feed.getCount()));
+      writer.writeEndElement();
+    }
+
+    writer.writeStartElement(Constants.ATOM_ELEM_ID);
+    writer.writeCharacters(feed.getId());
+    writer.writeEndElement();
+
+    if (feed instanceof AbstractAtomObject) {
+      common(writer, (AbstractAtomObject) feed);
     }
 
     for (Entry entry : feed.getEntries()) {
-      feedElem.appendChild(doc.importNode(entry((AtomEntryImpl) entry), true));
+      writer.writeStartElement(Constants.ATOM_ELEM_ENTRY);
+      entry(writer, entry);
+      writer.writeEndElement();
     }
 
-    return feedElem;
+    if (feed.getNext() != null) {
+      final LinkImpl next = new LinkImpl();
+      next.setRel(Constants.NEXT_LINK_REL);
+      next.setHref(feed.getNext().toASCIIString());
+
+      links(writer, Collections.<Link>singletonList(next));
+    }
+  }
+
+  private void feed(final Writer outWriter, final Feed feed) throws XMLStreamException {
+    final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
+
+    startDocument(writer, Constants.ATOM_ELEM_FEED);
+
+    feed(writer, feed);
+
+    writer.writeEndElement();
+    writer.writeEndDocument();
+    writer.flush();
+  }
+
+  private void link(final Writer outWriter, final Link link) throws XMLStreamException {
+    final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
+
+    writer.writeStartDocument();
+    writer.writeNamespace(
+            Constants.PREFIX_DATASERVICES, version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+
+    writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_URI);
+    writer.writeCharacters(link.getHref());
+    writer.writeEndElement();
+
+    writer.writeEndDocument();
+    writer.flush();
+  }
+
+  public <T> void write(final Writer writer, final T obj) throws XMLStreamException {
+    if (obj instanceof Feed) {
+      feed(writer, (Feed) obj);
+    } else if (obj instanceof Entry) {
+      entry(writer, (Entry) obj);
+    } else if (obj instanceof Property) {
+      property(writer, (Property) obj);
+    } else if (obj instanceof Link) {
+      link(writer, (Link) obj);
+    }
   }
 }

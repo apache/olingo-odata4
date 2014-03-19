@@ -31,10 +31,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.ODataDuration;
-import org.apache.olingo.client.api.domain.ODataTimestamp;
-import org.apache.olingo.client.api.domain.ODataValue;
 
 /**
  * OData primitive property value.

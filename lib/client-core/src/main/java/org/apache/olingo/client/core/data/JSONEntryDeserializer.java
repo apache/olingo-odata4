@@ -23,31 +23,29 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.domain.ODataLinkType;
 import org.apache.olingo.client.api.domain.ODataOperation;
-import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Reads JSON string into an entry.
  * <br/>
  * If metadata information is available, the corresponding entry fields and content will be populated.
  */
-public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImpl> {
+public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImpl> {
 
   private String getTitle(final Map.Entry<String, JsonNode> entry) {
     return entry.getKey().substring(0, entry.getKey().indexOf('@'));
@@ -61,18 +59,17 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
       final JsonNode inline = tree.path(entryNamePrefix);
 
       if (inline instanceof ObjectNode) {
-        final JsonParser inlineParser = inline.traverse();
-        inlineParser.setCodec(codec);
-        link.setInlineEntry(inlineParser.readValuesAs(JSONEntryImpl.class).next());
+        link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+        link.setInlineEntry(inline.traverse(codec).readValuesAs(JSONEntryImpl.class).next());
       }
 
       if (inline instanceof ArrayNode) {
+        link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
+
         final JSONFeedImpl feed = new JSONFeedImpl();
         final Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
         while (entries.hasNext()) {
-          final JsonParser inlineParser = entries.next().traverse();
-          inlineParser.setCodec(codec);
-          feed.getEntries().add(inlineParser.readValuesAs(JSONEntryImpl.class).next());
+          feed.getEntries().add(entries.next().traverse(codec).readValuesAs(JSONEntryImpl.class).next());
         }
 
         link.setInlineFeed(feed);
@@ -90,10 +87,6 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
     if (tree.has(Constants.JSON_VALUE) && tree.get(Constants.JSON_VALUE).isArray()) {
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
-
-    final boolean isMediaEntry =
-            tree.hasNonNull(Constants.JSON_MEDIAREAD_LINK)
-            && tree.hasNonNull(Constants.JSON_MEDIA_CONTENT_TYPE);
 
     final JSONEntryImpl entry = new JSONEntryImpl();
 
@@ -118,7 +111,11 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
     }
 
     if (tree.hasNonNull(Constants.JSON_ID)) {
-      entry.setId(tree.get(Constants.JSON_ID).textValue());
+      try {
+        entry.setId(tree.get(Constants.JSON_ID).textValue());
+      } catch (ParseException e) {
+        throw new JsonMappingException("While parsing Atom entry or feed common elements", e);
+      }
       tree.remove(Constants.JSON_ID);
     }
 
@@ -145,10 +142,6 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
       tree.remove(Constants.JSON_MEDIAREAD_LINK);
     }
     if (tree.hasNonNull(Constants.JSON_MEDIAEDIT_LINK)) {
-      /*final LinkImpl link = new LinkImpl();
-      link.setHref(tree.get(Constants.JSON_MEDIAEDIT_LINK).textValue());
-      entry.getMediaEditLinks().add(link);*/
-
       tree.remove(Constants.JSON_MEDIAEDIT_LINK);
     }
     if (tree.hasNonNull(Constants.JSON_MEDIA_CONTENT_TYPE)) {
@@ -157,15 +150,15 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
     }
 
     final Set<String> toRemove = new HashSet<String>();
-    final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields();
-    while (itor.hasNext()) {
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
       if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK_SUFFIX)) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL)
-                + getTitle(field));
+        link.setRel(client.getServiceVersion().getNamespaceMap().
+                get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+
         if (field.getValue().isValueNode()) {
           link.setHref(field.getValue().textValue());
           link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
@@ -173,18 +166,18 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
         // NOTE: this should be expected to happen, but it isn't - at least up to OData 4.0
                 /* if (field.getValue().isArray()) {
          * link.setHref(field.getValue().asText());
-         * link.setType(LinkType.ENTITY_SET_NAVIGATION.toString());
+         * link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
          * } */
+
         entry.getNavigationLinks().add(link);
 
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(),
-                Constants.JSON_NAVIGATION_LINK_SUFFIX, tree, parser.getCodec(), link));
+        toRemove.add(setInline(field.getKey(), Constants.JSON_NAVIGATION_LINK_SUFFIX, tree, parser.getCodec(), link));
       } else if (field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK_SUFFIX)) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL)
-                + getTitle(field));
+        link.setRel(client.getServiceVersion().getNamespaceMap().
+                get(ODataServiceVersion.ASSOCIATION_LINK_REL) + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.ASSOCIATION.toString());
         entry.getAssociationLinks().add(link);
@@ -193,15 +186,27 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
       } else if (field.getKey().endsWith(Constants.JSON_MEDIAEDIT_LINK_SUFFIX)) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
-        link.setRel(client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL)
-                + getTitle(field));
+        link.setRel(client.getServiceVersion().getNamespaceMap().
+                get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entry.getMediaEditLinks().add(link);
 
+        if (tree.has(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX)) {
+          link.setMediaETag(tree.get(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX).asText());
+          toRemove.add(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX);
+        }
+
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(),
-                Constants.JSON_MEDIAEDIT_LINK_SUFFIX, tree, parser.getCodec(), link));
+        toRemove.add(setInline(field.getKey(), Constants.JSON_MEDIAEDIT_LINK_SUFFIX, tree, parser.getCodec(), link));
+      } else if (field.getKey().endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+        final String linkTitle = getTitle(field);
+        for (Link link : entry.getMediaEditLinks()) {
+          if (linkTitle.equals(link.getTitle())) {
+            ((LinkImpl) link).setType(field.getValue().asText());
+          }
+        }
+        toRemove.add(field.getKey());
       } else if (field.getKey().charAt(0) == '#') {
         final ODataOperation operation = new ODataOperation();
         operation.setMetadataAnchor(field.getKey());
@@ -217,23 +222,21 @@ public class JSONEntryDeserializer extends ODataJacksonDeserializer<JSONEntryImp
     }
     tree.remove(toRemove);
 
-    try {
-      final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-      final Document document = builder.newDocument();
+    String type = null;
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
 
-      final Element properties = document.createElementNS(
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.ELEM_PROPERTIES);
-
-      JSONDOMTreeUtils.buildSubtree(client, properties, tree);
-
-      if (isMediaEntry) {
-        entry.setMediaEntryProperties(properties);
+      if (type == null && field.getKey().endsWith(Constants.JSON_TYPE_SUFFIX)) {
+        type = field.getValue().asText();
       } else {
-        entry.setContent(properties);
+        final JSONPropertyImpl property = new JSONPropertyImpl();
+        property.setName(field.getKey());
+        property.setType(type);
+        type = null;
+
+        value(property, field.getValue());
+        entry.getProperties().add(property);
       }
-    } catch (ParserConfigurationException e) {
-      throw new JsonParseException("Cannot build entry content", parser.getCurrentLocation(), e);
     }
 
     return entry;

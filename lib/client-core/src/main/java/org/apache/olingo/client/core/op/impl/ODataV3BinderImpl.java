@@ -27,9 +27,4 @@ public class ODataV3BinderImpl extends AbstractODataBinder {
   public ODataV3BinderImpl(final ODataV3ClientImpl client) {
     super(client);
   }
-
-//    @Override
-//    protected EdmType newEdmType(final String expression) {
-//        return new EdmV3Type(expression);
-//    }
 }

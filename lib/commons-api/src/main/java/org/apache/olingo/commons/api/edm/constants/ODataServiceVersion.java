@@ -71,6 +71,7 @@ public enum ODataServiceVersion {
     {
       put(NS_METADATA, "http://docs.oasis-open.org/odata/ns/metadata");
       put(NS_DATA, "http://docs.oasis-open.org/odata/ns/data");
+      put(NS_SCHEME, "http://docs.oasis-open.org/odata/ns/scheme");
     }
   });
 

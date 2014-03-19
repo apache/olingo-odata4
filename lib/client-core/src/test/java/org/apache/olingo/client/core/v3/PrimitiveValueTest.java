@@ -170,7 +170,7 @@ public class PrimitiveValueTest extends AbstractTest {
 
   @Test
   public void managePoint() {
-    final Point primitive = new Point(Geospatial.Dimension.GEOGRAPHY);
+    final Point primitive = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     primitive.setX(52.8606);
     primitive.setY(173.334);
 
@@ -194,27 +194,27 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageLineString() {
     final List<Point> points = new ArrayList<Point>();
-    Point point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(40.5);
     point.setY(40.5);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(30.5);
     point.setY(30.5);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(20.5);
     point.setY(40.5);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(10.5);
     point.setY(30.5);
     points.add(point);
 
-    final LineString primitive = new LineString(Geospatial.Dimension.GEOGRAPHY, points);
+    final LineString primitive = new LineString(Geospatial.Dimension.GEOGRAPHY, null, points);
 
     final ODataValue value = getClient().getGeospatialValueBuilder().
             setType(ODataJClientEdmPrimitiveType.GeographyLineString).setValue(primitive).build();
@@ -234,12 +234,12 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageMultiPoint() {
     final List<Point> points = new ArrayList<Point>();
-    Point point = new Point(Geospatial.Dimension.GEOMETRY);
+    Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(0);
     point.setY(0);
     points.add(point);
 
-    final MultiPoint primitive = new MultiPoint(Geospatial.Dimension.GEOMETRY, points);
+    final MultiPoint primitive = new MultiPoint(Geospatial.Dimension.GEOMETRY, null, points);
 
     final ODataValue value = getClient().getGeospatialValueBuilder().
             setType(ODataJClientEdmPrimitiveType.GeometryMultiPoint).setValue(primitive).build();
@@ -258,48 +258,48 @@ public class PrimitiveValueTest extends AbstractTest {
 
     // line one ...
     List<Point> points = new ArrayList<Point>();
-    Point point = new Point(Geospatial.Dimension.GEOMETRY);
+    Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(10);
     point.setY(10);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(20);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(10);
     point.setY(40);
     points.add(point);
 
-    lines.add(new LineString(Geospatial.Dimension.GEOMETRY, points));
+    lines.add(new LineString(Geospatial.Dimension.GEOMETRY, null, points));
 
     // line two ...
     points = new ArrayList<Point>();
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(40);
     point.setY(40);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(30);
     point.setY(30);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(40);
     point.setY(20);
     points.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(30);
     point.setY(10);
     points.add(point);
-    lines.add(new LineString(Geospatial.Dimension.GEOMETRY, points));
+    lines.add(new LineString(Geospatial.Dimension.GEOMETRY, null, points));
 
-    final MultiLineString primitive = new MultiLineString(Geospatial.Dimension.GEOMETRY, lines);
+    final MultiLineString primitive = new MultiLineString(Geospatial.Dimension.GEOMETRY, null, lines);
 
     final ODataValue value =
             getClient().getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryMultiLineString).
@@ -327,32 +327,32 @@ public class PrimitiveValueTest extends AbstractTest {
     final List<Point> interior = new ArrayList<Point>();
     final List<Point> exterior = new ArrayList<Point>();
 
-    Point point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(5);
     point.setY(15);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(10);
     point.setY(40);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(20);
     point.setY(10);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(10);
     point.setY(5);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(5);
     point.setY(15);
     exterior.add(point);
 
-    final Polygon primitive = new Polygon(Geospatial.Dimension.GEOGRAPHY, interior, exterior);
+    final Polygon primitive = new Polygon(Geospatial.Dimension.GEOGRAPHY, null, interior, exterior);
 
     final ODataValue value =
             getClient().getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeographyPolygon).
@@ -379,86 +379,86 @@ public class PrimitiveValueTest extends AbstractTest {
     List<Point> exterior = new ArrayList<Point>();
 
     // exterior one ...
-    Point point = new Point(Geospatial.Dimension.GEOMETRY);
+    Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(40);
     point.setY(40);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(45);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(45);
     point.setY(30);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(40);
     point.setY(40);
     exterior.add(point);
 
-    polygons.add(new Polygon(Geospatial.Dimension.GEOMETRY, interior, exterior));
+    polygons.add(new Polygon(Geospatial.Dimension.GEOMETRY, null, interior, exterior));
 
     // interior two ...
     interior = new ArrayList<Point>();
     exterior = new ArrayList<Point>();
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(30);
     point.setY(20);
     interior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(25);
     interior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(15);
     interior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(30);
     point.setY(20);
     interior.add(point);
 
     // exterior two ...
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(35);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(45);
     point.setY(20);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(30);
     point.setY(5);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(10);
     point.setY(10);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(10);
     point.setY(30);
     exterior.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(20);
     point.setY(35);
     exterior.add(point);
 
-    polygons.add(new Polygon(Geospatial.Dimension.GEOMETRY, interior, exterior));
+    polygons.add(new Polygon(Geospatial.Dimension.GEOMETRY, null, interior, exterior));
 
-    final MultiPolygon primitive = new MultiPolygon(Geospatial.Dimension.GEOMETRY, polygons);
+    final MultiPolygon primitive = new MultiPolygon(Geospatial.Dimension.GEOMETRY, null, polygons);
 
     final ODataValue value =
             getClient().getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryMultiPolygon).
@@ -492,19 +492,19 @@ public class PrimitiveValueTest extends AbstractTest {
   public void manageGeomCollection() {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
-    Point point = new Point(Geospatial.Dimension.GEOMETRY);
+    Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(1);
     point.setY(2);
     point.setZ(3);
     collection.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOMETRY);
+    point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(4);
     point.setY(5);
     point.setZ(6);
     collection.add(point);
 
-    final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOMETRY, collection);
+    final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOMETRY, null, collection);
 
     final ODataValue value =
             getClient().getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryCollection).
@@ -524,19 +524,19 @@ public class PrimitiveValueTest extends AbstractTest {
   public void manageGeogCollection() {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
-    Point point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(1);
     point.setY(2);
     point.setZ(3);
     collection.add(point);
 
-    point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(4);
     point.setY(5);
     point.setZ(6);
     collection.add(point);
 
-    final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, collection);
+    final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, null, collection);
 
     final ODataValue value =
             getClient().getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeographyCollection).

@@ -21,7 +21,6 @@ package org.apache.olingo.client.api.data;
 import org.apache.olingo.client.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
-import org.w3c.dom.Element;
 
 public interface Entry {
 
@@ -31,13 +30,6 @@ public interface Entry {
    * @return ETag.
    */
   String getETag();
-
-  /**
-   * Sets ETag.
-   *
-   * @param eTag ETag.
-   */
-  void setETag(String eTag);
 
   /**
    * Gets base URI.
@@ -66,13 +58,6 @@ public interface Entry {
    * @return entry ID.
    */
   String getId();
-
-  /**
-   * Sets entry ID.
-   *
-   * @param id entry ID.
-   */
-  void setId(String id);
 
   /**
    * Gets entry self link.
@@ -131,32 +116,19 @@ public interface Entry {
   List<ODataOperation> getOperations();
 
   /**
-   * Gets content.
+   * Gets properties.
    *
-   * @return content.
+   * @return properties.
    */
-  Element getContent();
+  List<Property> getProperties();
 
   /**
-   * Sets content.
+   * Gets property with given name.
    *
-   * @param content content.
+   * @param name property name
+   * @return property with given name if found, null otherwise
    */
-  void setContent(Element content);
-
-  /**
-   * Gets media entry properties.
-   *
-   * @return media entry properties.
-   */
-  Element getMediaEntryProperties();
-
-  /**
-   * Sets media entry properties.
-   *
-   * @param content media entry properties.
-   */
-  void setMediaEntryProperties(Element content);
+  Property getProperty(String name);
 
   /**
    * Gets media content type.

@@ -78,7 +78,8 @@ public class ODataWriterImpl implements ODataWriter {
   public InputStream writeProperty(final ODataProperty property, final ODataFormat format) {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
-      client.getSerializer().property(client.getBinder().toDOMElement(property), format, output);
+      client.getSerializer().property(client.getBinder().getProperty(
+              property, ResourceFactory.entryClassForFormat(format == ODataFormat.XML), true), output);
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

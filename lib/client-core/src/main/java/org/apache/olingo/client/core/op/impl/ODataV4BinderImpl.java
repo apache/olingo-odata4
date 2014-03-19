@@ -32,10 +32,6 @@ public class ODataV4BinderImpl extends AbstractODataBinder {
     super(client);
   }
 
-//    @Override
-//    protected EdmType newEdmType(final String expression) {
-//        return new EdmV4Type(expression);
-//    }
   @Override
   public ODataServiceDocument getODataServiceDocument(final ServiceDocument resource) {
     final ODataServiceDocument serviceDocument = super.getODataServiceDocument(resource);

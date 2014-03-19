@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.op.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.olingo.client.api.ODataClient;
@@ -50,12 +49,9 @@ public class ODataV4DeserializerImpl extends AbstractODataDeserializer implement
 
   @Override
   public ServiceDocument toServiceDocument(final InputStream input, final ODataFormat format) {
-    try {
-      return format == ODataFormat.XML
-              ? getXmlMapper().readValue(input, XMLServiceDocumentImpl.class)
-              : getObjectMapper().readValue(input, JSONServiceDocumentImpl.class);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Could not parse Service Document", e);
-    }
+    return format == ODataFormat.XML
+            ? xml(input, XMLServiceDocumentImpl.class)
+            : json(input, JSONServiceDocumentImpl.class);
+
   }
 }

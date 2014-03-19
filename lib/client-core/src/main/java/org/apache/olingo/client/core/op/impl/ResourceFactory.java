@@ -20,11 +20,14 @@ package org.apache.olingo.client.core.op.impl;
 
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.AtomFeedImpl;
+import org.apache.olingo.client.core.data.AtomPropertyImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
 import org.apache.olingo.client.core.data.JSONFeedImpl;
+import org.apache.olingo.client.core.data.JSONPropertyImpl;
 
 public class ResourceFactory {
 
@@ -60,6 +63,18 @@ public class ResourceFactory {
     }
     if (JSONEntryImpl.class.equals(resourceClass)) {
       result = new JSONEntryImpl();
+    }
+
+    return result;
+  }
+
+  public static Property newProperty(final Class<? extends Entry> resourceClass) {
+    Property result = null;
+    if (AtomEntryImpl.class.equals(resourceClass)) {
+      result = new AtomPropertyImpl();
+    }
+    if (JSONEntryImpl.class.equals(resourceClass)) {
+      result = new JSONPropertyImpl();
     }
 
     return result;

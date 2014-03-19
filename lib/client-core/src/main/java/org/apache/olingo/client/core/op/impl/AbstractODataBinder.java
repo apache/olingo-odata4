@@ -20,19 +20,18 @@ package org.apache.olingo.client.core.op.impl;
 
 import java.io.StringWriter;
 import java.net.URI;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-
+import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.LinkCollection;
-import org.apache.olingo.client.api.domain.ODataOperation;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
+import org.apache.olingo.client.api.data.Value;
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataComplexValue;
 import org.apache.olingo.client.api.domain.ODataEntity;
@@ -40,26 +39,26 @@ import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.client.api.domain.ODataJClientEdmType;
+import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataLinkCollection;
+import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.domain.ODataProperty.PropertyType;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.op.ODataBinder;
-import org.apache.olingo.client.api.utils.XMLUtils;
 import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.data.CollectionValueImpl;
+import org.apache.olingo.client.core.data.ComplexValueImpl;
+import org.apache.olingo.client.core.data.GeospatialValueImpl;
+import org.apache.olingo.client.core.data.JSONPropertyImpl;
 import org.apache.olingo.client.core.data.LinkImpl;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.client.core.data.NullValueImpl;
+import org.apache.olingo.client.core.data.PrimitiveValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public abstract class AbstractODataBinder implements ODataBinder {
 
@@ -74,25 +73,6 @@ public abstract class AbstractODataBinder implements ODataBinder {
 
   protected AbstractODataBinder(final ODataClient client) {
     this.client = client;
-  }
-
-  protected Element newEntryContent() {
-    Element properties = null;
-    try {
-      final DocumentBuilder builder = XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder();
-      final Document doc = builder.newDocument();
-      properties = doc.createElement(Constants.ELEM_PROPERTIES);
-      properties.setAttribute(Constants.XMLNS_METADATA,
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-      properties.setAttribute(Constants.XMLNS_DATASERVICES,
-              client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-      properties.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
-      properties.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
-    } catch (ParserConfigurationException e) {
-      LOG.error("Failure building entry content", e);
-    }
-
-    return properties;
   }
 
   @Override
@@ -112,6 +92,8 @@ public abstract class AbstractODataBinder implements ODataBinder {
   @Override
   public Feed getFeed(final ODataEntitySet feed, final Class<? extends Feed> reference) {
     final Feed feedResource = ResourceFactory.newFeed(reference);
+
+    feedResource.setCount(feed.getCount());
 
     final URI next = feed.getNext();
     if (next != null) {
@@ -188,30 +170,94 @@ public abstract class AbstractODataBinder implements ODataBinder {
     }
     // -------------------------------------------------------------
 
-    final Element content = newEntryContent();
     if (entity.isMediaEntity()) {
-      entry.setMediaEntryProperties(content);
       entry.setMediaContentSource(entity.getMediaContentSource());
       entry.setMediaContentType(entity.getMediaContentType());
-    } else {
-      entry.setContent(content);
     }
 
-    for (ODataProperty prop : entity.getProperties()) {
-      content.appendChild(toDOMElement(prop, content.getOwnerDocument(), setType));
+    for (ODataProperty property : entity.getProperties()) {
+      entry.getProperties().add(getProperty(property, reference, setType));
     }
 
     return entry;
   }
 
   @Override
-  public Element toDOMElement(final ODataProperty prop) {
-    try {
-      return toDOMElement(prop, XMLUtils.DOC_BUILDER_FACTORY.newDocumentBuilder().newDocument(), true);
-    } catch (ParserConfigurationException e) {
-      LOG.error("Error retrieving property DOM", e);
-      throw new IllegalArgumentException(e);
+  public Link getLink(final ODataLink link, boolean isXML) {
+    final Link linkResource = new LinkImpl();
+    linkResource.setRel(link.getRel());
+    linkResource.setTitle(link.getName());
+    linkResource.setHref(link.getLink() == null ? null : link.getLink().toASCIIString());
+    linkResource.setType(link.getType().toString());
+    linkResource.setMediaETag(link.getMediaETag());
+
+    if (link instanceof ODataInlineEntity) {
+      // append inline entity
+      final ODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
+      LOG.debug("Append in-line entity\n{}", inlineEntity);
+
+      linkResource.setInlineEntry(getEntry(inlineEntity, ResourceFactory.entryClassForFormat(isXML)));
+    } else if (link instanceof ODataInlineEntitySet) {
+      // append inline feed
+      final ODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
+      LOG.debug("Append in-line feed\n{}", InlineFeed);
+
+      linkResource.setInlineFeed(getFeed(InlineFeed, ResourceFactory.feedClassForFormat(isXML)));
     }
+
+    return linkResource;
+  }
+
+  @Override
+  public Property getProperty(final ODataProperty property, final Class<? extends Entry> reference,
+          final boolean setType) {
+
+    final Property propertyResource = ResourceFactory.newProperty(reference);
+    propertyResource.setName(property.getName());
+    propertyResource.setValue(getValue(property.getValue(), reference, setType));
+
+    if (setType) {
+      if (property.hasPrimitiveValue()) {
+        propertyResource.setType(property.getPrimitiveValue().getTypeName());
+      } else if (property.hasComplexValue()) {
+        propertyResource.setType(property.getComplexValue().getTypeName());
+      } else if (property.hasCollectionValue()) {
+        propertyResource.setType(property.getCollectionValue().getTypeName());
+      }
+    }
+
+    return propertyResource;
+  }
+
+  private Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+    Value valueResource = null;
+
+    if (value == null) {
+      valueResource = new NullValueImpl();
+    } else if (value.isPrimitive()) {
+      final ODataPrimitiveValue _value = value.asPrimitive();
+      if (_value instanceof ODataGeospatialValue) {
+        valueResource = new GeospatialValueImpl(((ODataGeospatialValue) _value).getGeospatial());
+      } else {
+        valueResource = new PrimitiveValueImpl(_value.toString());
+      }
+    } else if (value.isComplex()) {
+      final ODataComplexValue _value = value.asComplex();
+      valueResource = new ComplexValueImpl();
+
+      for (final Iterator<ODataProperty> itor = _value.iterator(); itor.hasNext();) {
+        valueResource.asComplex().get().add(getProperty(itor.next(), reference, setType));
+      }
+    } else if (value.isCollection()) {
+      final ODataCollectionValue _value = value.asCollection();
+      valueResource = new CollectionValueImpl();
+
+      for (final Iterator<ODataValue> itor = _value.iterator(); itor.hasNext();) {
+        valueResource.asCollection().get().add(getValue(itor.next(), reference, setType));
+      }
+    }
+
+    return valueResource;
   }
 
   @Override
@@ -316,287 +362,55 @@ public abstract class AbstractODataBinder implements ODataBinder {
       entity.getOperations().add(operation);
     }
 
-    final Element content;
     if (resource.isMediaEntry()) {
       entity.setMediaEntity(true);
       entity.setMediaContentSource(resource.getMediaContentSource());
       entity.setMediaContentType(resource.getMediaContentType());
-      content = resource.getMediaEntryProperties();
-    } else {
-      content = resource.getContent();
     }
-    if (content != null) {
-      for (Node property : XMLUtils.getChildNodes(content, Node.ELEMENT_NODE)) {
-        try {
-          entity.getProperties().add(getODataProperty((Element) property));
-        } catch (IllegalArgumentException e) {
-          LOG.warn("Failure retrieving EdmType for {}", property.getTextContent(), e);
-        }
-      }
+
+    for (Property property : resource.getProperties()) {
+      entity.getProperties().add(getODataProperty(property));
     }
 
     return entity;
   }
 
   @Override
-  public Link getLink(final ODataLink link, boolean isXML) {
-    final Link linkResource = new LinkImpl();
-    linkResource.setRel(link.getRel());
-    linkResource.setTitle(link.getName());
-    linkResource.setHref(link.getLink() == null ? null : link.getLink().toASCIIString());
-    linkResource.setType(link.getType().toString());
-
-    if (link instanceof ODataInlineEntity) {
-      // append inline entity
-      final ODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
-      LOG.debug("Append in-line entity\n{}", inlineEntity);
-
-      linkResource.setInlineEntry(getEntry(inlineEntity, ResourceFactory.entryClassForFormat(isXML)));
-    } else if (link instanceof ODataInlineEntitySet) {
-      // append inline feed
-      final ODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
-      LOG.debug("Append in-line feed\n{}", InlineFeed);
-
-      linkResource.setInlineFeed(getFeed(InlineFeed, ResourceFactory.feedClassForFormat(isXML)));
-    }
-
-    return linkResource;
+  public ODataProperty getODataProperty(final Property property) {
+    return new ODataProperty(property.getName(), getODataValue(property));
   }
 
-  @Override
-  public ODataProperty getODataProperty(final Element property) {
-    final ODataProperty res;
+  private ODataValue getODataValue(final Property resource) {
+    ODataValue value = null;
 
-    final Node nullNode = property.getAttributes().getNamedItem(Constants.ATTR_M_NULL);
+    if (resource.getValue().isSimple()) {
+      value = new ODataPrimitiveValue.Builder(client).setText(resource.getValue().asSimple().get()).
+              setType(resource.getType() == null
+                      ? null
+                      : ODataJClientEdmPrimitiveType.fromValue(resource.getType())).build();
+    } else if (resource.getValue().isGeospatial()) {
+      value = new ODataGeospatialValue.Builder(client).setValue(resource.getValue().asGeospatial().get()).
+              setType(resource.getType() == null
+                      || ODataJClientEdmPrimitiveType.Geography.toString().equals(resource.getType())
+                      || ODataJClientEdmPrimitiveType.Geometry.toString().equals(resource.getType())
+                      ? null
+                      : ODataJClientEdmPrimitiveType.fromValue(resource.getType())).build();
+    } else if (resource.getValue().isComplex()) {
+      value = new ODataComplexValue(resource.getType());
 
-    if (nullNode == null) {
-      final ODataJClientEdmType edmType = StringUtils.isBlank(property.getAttribute(Constants.ATTR_M_TYPE))
-              ? null
-              : new ODataJClientEdmType(property.getAttribute(Constants.ATTR_M_TYPE));
-
-      final PropertyType propType = edmType == null
-              ? guessPropertyType(property)
-              : edmType.isCollection()
-              ? PropertyType.COLLECTION
-              : edmType.isSimpleType()
-              ? PropertyType.PRIMITIVE
-              : PropertyType.COMPLEX;
-
-      switch (propType) {
-        case COLLECTION:
-          res = fromCollectionPropertyElement(property, edmType);
-          break;
-
-        case COMPLEX:
-          res = fromComplexPropertyElement(property, edmType);
-          break;
-
-        case PRIMITIVE:
-          res = fromPrimitivePropertyElement(property, edmType);
-          break;
-
-        case EMPTY:
-        default:
-          res = client.getObjectFactory().newPrimitiveProperty(XMLUtils.getSimpleName(property), null);
+      for (Property property : resource.getValue().asComplex().get()) {
+        value.asComplex().add(getODataProperty(property));
       }
-    } else {
-      res = client.getObjectFactory().newPrimitiveProperty(XMLUtils.getSimpleName(property), null);
-    }
+    } else if (resource.getValue().isCollection()) {
+      value = new ODataCollectionValue(resource.getType());
 
-    return res;
-  }
-
-  protected PropertyType guessPropertyType(final Element property) {
-    PropertyType res = null;
-
-    if (property.hasChildNodes()) {
-      final NodeList children = property.getChildNodes();
-
-      for (int i = 0; res == null && i < children.getLength(); i++) {
-        final Node child = children.item(i);
-
-        if (child.getNodeType() == Node.ELEMENT_NODE
-                && !child.getNodeName().startsWith(Constants.PREFIX_GML)) {
-
-          res = Constants.ELEM_ELEMENT.equals(XMLUtils.getSimpleName(child))
-                  ? PropertyType.COLLECTION
-                  : PropertyType.COMPLEX;
-        }
+      for (Value _value : resource.getValue().asCollection().get()) {
+        final JSONPropertyImpl fake = new JSONPropertyImpl();
+        fake.setValue(_value);
+        value.asCollection().add(getODataValue(fake));
       }
-    } else {
-      res = PropertyType.EMPTY;
-    }
-
-    if (res == null) {
-      res = PropertyType.PRIMITIVE;
-    }
-
-    return res;
-  }
-
-  protected Element toDOMElement(final ODataProperty prop, final Document doc, final boolean setType) {
-    final Element element;
-
-    if (prop.hasNullValue()) {
-      // null property handling
-      element = toNullPropertyElement(prop, doc);
-    } else if (prop.hasPrimitiveValue()) {
-      // primitive property handling
-      element = toPrimitivePropertyElement(prop, doc, setType);
-    } else if (prop.hasCollectionValue()) {
-      // collection property handling
-      element = toCollectionPropertyElement(prop, doc, setType);
-    } else {
-      // complex property handling
-      element = toComplexPropertyElement(prop, doc, setType);
-    }
-
-    element.setAttribute(Constants.XMLNS_METADATA,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
-    element.setAttribute(Constants.XMLNS_DATASERVICES,
-            client.getServiceVersion().getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-    element.setAttribute(Constants.XMLNS_GML, Constants.NS_GML);
-    element.setAttribute(Constants.XMLNS_GEORSS, Constants.NS_GEORSS);
-
-    return element;
-  }
-
-  protected Element toNullPropertyElement(final ODataProperty prop, final Document doc) {
-    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + prop.getName());
-    element.setAttribute(Constants.ATTR_M_NULL, Boolean.toString(true));
-    return element;
-  }
-
-  protected Element toPrimitivePropertyElement(
-          final ODataProperty prop, final Document doc, final boolean setType) {
-
-    return toPrimitivePropertyElement(prop.getName(), prop.getPrimitiveValue(), doc, setType);
-  }
-
-  protected Element toPrimitivePropertyElement(
-          final String name, final ODataPrimitiveValue value, final Document doc, final boolean setType) {
-
-    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + name);
-    if (setType) {
-      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
-    }
-
-    if (value instanceof ODataGeospatialValue) {
-      element.appendChild(doc.importNode(((ODataGeospatialValue) value).toTree(), true));
-    } else {
-      element.setTextContent(value.toString());
-    }
-
-    return element;
-  }
-
-  protected Element toCollectionPropertyElement(
-          final ODataProperty prop, final Document doc, final boolean setType) {
-
-    if (!prop.hasCollectionValue()) {
-      throw new IllegalArgumentException("Invalid property value type "
-              + prop.getValue().getClass().getSimpleName());
-    }
-
-    final ODataCollectionValue value = prop.getCollectionValue();
-
-    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + prop.getName());
-    if (value.getTypeName() != null && setType) {
-      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
-    }
-
-    for (ODataValue el : value) {
-      if (el.isPrimitive()) {
-        element.appendChild(
-                toPrimitivePropertyElement(Constants.ELEM_ELEMENT, el.asPrimitive(), doc, setType));
-      } else {
-        element.appendChild(
-                toComplexPropertyElement(Constants.ELEM_ELEMENT, el.asComplex(), doc, setType));
-      }
-    }
-
-    return element;
-  }
-
-  protected Element toComplexPropertyElement(
-          final ODataProperty prop, final Document doc, final boolean setType) {
-
-    return toComplexPropertyElement(prop.getName(), prop.getComplexValue(), doc, setType);
-  }
-
-  protected Element toComplexPropertyElement(
-          final String name, final ODataComplexValue value, final Document doc, final boolean setType) {
-
-    final Element element = doc.createElement(Constants.PREFIX_DATASERVICES + name);
-    if (value.getTypeName() != null && setType) {
-      element.setAttribute(Constants.ATTR_M_TYPE, value.getTypeName());
-    }
-
-    for (ODataProperty field : value) {
-      element.appendChild(toDOMElement(field, doc, true));
-    }
-    return element;
-  }
-
-  protected ODataPrimitiveValue fromPrimitiveValueElement(final Element prop, final ODataJClientEdmType edmType) {
-    final ODataPrimitiveValue value;
-    if (edmType != null && edmType.getSimpleType().isGeospatial()) {
-      final Element geoProp = Constants.PREFIX_GML.equals(prop.getPrefix())
-              ? prop : (Element) XMLUtils.getChildNodes(prop, Node.ELEMENT_NODE).get(0);
-      value = client.getGeospatialValueBuilder().
-              setType(edmType.getSimpleType()).setTree(geoProp).build();
-    } else {
-      value = client.getPrimitiveValueBuilder().
-              setType(edmType == null ? null : edmType.getSimpleType()).setText(prop.getTextContent()).build();
-    }
-    return value;
-  }
-
-  protected ODataProperty fromPrimitivePropertyElement(final Element prop, final ODataJClientEdmType edmType) {
-    return client.getObjectFactory().newPrimitiveProperty(
-            XMLUtils.getSimpleName(prop), fromPrimitiveValueElement(prop, edmType));
-  }
-
-  protected ODataComplexValue fromComplexValueElement(final Element prop, final ODataJClientEdmType edmType) {
-    final ODataComplexValue value = new ODataComplexValue(edmType == null ? null : edmType.getTypeExpression());
-
-    for (Node child : XMLUtils.getChildNodes(prop, Node.ELEMENT_NODE)) {
-      value.add(getODataProperty((Element) child));
     }
 
     return value;
   }
-
-  protected ODataProperty fromComplexPropertyElement(final Element prop, final ODataJClientEdmType edmType) {
-    return client.getObjectFactory().newComplexProperty(XMLUtils.getSimpleName(prop),
-            fromComplexValueElement(prop, edmType));
-  }
-
-  protected ODataProperty fromCollectionPropertyElement(final Element prop, final ODataJClientEdmType edmType) {
-    final ODataCollectionValue value =
-            new ODataCollectionValue(edmType == null ? null : edmType.getTypeExpression());
-
-    final ODataJClientEdmType type = edmType == null ? null : new ODataJClientEdmType(edmType.getBaseType());
-    final NodeList elements = prop.getChildNodes();
-
-    for (int i = 0; i < elements.getLength(); i++) {
-      if (elements.item(i).getNodeType() != Node.TEXT_NODE) {
-        final Element child = (Element) elements.item(i);
-
-        switch (guessPropertyType(child)) {
-          case COMPLEX:
-            value.add(fromComplexValueElement(child, type));
-            break;
-          case PRIMITIVE:
-            value.add(fromPrimitiveValueElement(child, type));
-            break;
-          default:
-          // do not add null or empty values
-        }
-      }
-    }
-
-    return client.getObjectFactory().newCollectionProperty(XMLUtils.getSimpleName(prop), value);
-  }
-
 }

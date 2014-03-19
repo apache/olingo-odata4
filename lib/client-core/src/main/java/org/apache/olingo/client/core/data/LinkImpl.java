@@ -34,6 +34,8 @@ public class LinkImpl extends AbstractPayloadObject implements Link {
 
   private String type;
 
+  private String mediaETag;
+
   private Entry entry;
 
   private Feed feed;
@@ -76,6 +78,16 @@ public class LinkImpl extends AbstractPayloadObject implements Link {
   @Override
   public void setType(final String type) {
     this.type = type;
+  }
+
+  @Override
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
+  @Override
+  public void setMediaETag(final String mediaETag) {
+    this.mediaETag = mediaETag;
   }
 
   @Override

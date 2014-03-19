@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,12 @@ import org.apache.olingo.client.api.uri.SegmentType;
  * @see JSONEntry
  */
 @JsonDeserialize(using = JSONFeedDeserializer.class)
+@JsonSerialize(using = JSONFeedSerializer.class)
 public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
 
   private static final long serialVersionUID = -3576372289800799417L;
+
+  private String id;
 
   private URI metadata;
 
@@ -74,10 +78,20 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
   }
 
   @Override
+  public String getId() {
+    return id;
+  }
+
+  public void setId(final String id) {
+    this.id = id;
+  }
+
+  @Override
   public Integer getCount() {
     return count;
   }
 
+  @Override
   public void setCount(final Integer count) {
     this.count = count;
   }

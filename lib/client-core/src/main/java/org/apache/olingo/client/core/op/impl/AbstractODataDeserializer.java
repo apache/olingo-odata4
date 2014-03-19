@@ -18,26 +18,20 @@
  */
 package org.apache.olingo.client.core.op.impl;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
-import com.fasterxml.aalto.stax.OutputFactoryImpl;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Error;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.LinkCollection;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.op.ODataDeserializer;
 import org.apache.olingo.client.core.data.AtomDeserializer;
+import org.apache.olingo.client.core.data.AtomEntryImpl;
+import org.apache.olingo.client.core.data.AtomFeedImpl;
+import org.apache.olingo.client.core.data.AtomPropertyImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
 import org.apache.olingo.client.core.data.JSONErrorBundle;
 import org.apache.olingo.client.core.data.JSONFeedImpl;
@@ -45,9 +39,6 @@ import org.apache.olingo.client.core.data.JSONLinkCollectionImpl;
 import org.apache.olingo.client.core.data.JSONPropertyImpl;
 import org.apache.olingo.client.core.data.XMLErrorImpl;
 import org.apache.olingo.client.core.data.XMLLinkCollectionImpl;
-import org.apache.olingo.client.core.xml.XMLParser;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public abstract class AbstractODataDeserializer extends AbstractJacksonTool implements ODataDeserializer {
 
@@ -57,135 +48,70 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
 
   public AbstractODataDeserializer(final ODataClient client) {
     super(client);
-    this.atomDeserializer = new AtomDeserializer(client);
+
+    this.atomDeserializer = new AtomDeserializer(client.getServiceVersion());
   }
 
   @Override
   public Feed toFeed(final InputStream input, final ODataPubFormat format) {
     return format == ODataPubFormat.ATOM
-            ? toAtomFeed(input)
-            : toJSONFeed(input);
+            ? atom(input, AtomFeedImpl.class)
+            : json(input, JSONFeedImpl.class);
   }
 
   @Override
   public Entry toEntry(final InputStream input, final ODataPubFormat format) {
     return format == ODataPubFormat.ATOM
-            ? toAtomEntry(input)
-            : toJSONEntry(input);
+            ? atom(input, AtomEntryImpl.class)
+            : json(input, JSONEntryImpl.class);
   }
 
   @Override
-  public Element toPropertyDOM(final InputStream input, final ODataFormat format) {
+  public Property toProperty(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
-            ? toPropertyDOMFromXML(input)
-            : toPropertyDOMFromJSON(input);
+            ? atom(input, AtomPropertyImpl.class)
+            : json(input, JSONPropertyImpl.class);
   }
 
   @Override
   public LinkCollection toLinkCollection(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
-            ? toLinkCollectionFromXML(input)
-            : toLinkCollectionFromJSON(input);
+            ? xml(input, XMLLinkCollectionImpl.class)
+            : json(input, JSONLinkCollectionImpl.class);
   }
 
   @Override
   public Error toError(final InputStream input, final boolean isXML) {
     return isXML
-            ? toErrorFromXML(input)
-            : toErrorFromJSON(input);
-  }
-
-  @Override
-  public Element toDOM(final InputStream input) {
-    return XMLParser.PARSER.deserialize(input);
+            ? xml(input, XMLErrorImpl.class)
+            : json(input, JSONErrorBundle.class).getError();
   }
 
   /*
    * ------------------ Protected methods ------------------
    */
-  protected Feed toAtomFeed(final InputStream input) {
+  protected <T> T xml(final InputStream input, final Class<T> reference) {
     try {
-      return atomDeserializer.feed(toDOM(input));
+      return getXmlMapper().readValue(input, reference);
     } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing Atom feed", e);
+      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }
 
-  protected Entry toAtomEntry(final InputStream input) {
+  protected <T> T atom(final InputStream input, final Class<T> reference) {
     try {
-      return atomDeserializer.entry(toDOM(input));
+      return atomDeserializer.read(input, reference);
     } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing Atom entry", e);
+      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }
 
-  protected Feed toJSONFeed(final InputStream input) {
+  protected <T> T json(final InputStream input, final Class<T> reference) {
     try {
-      return getObjectMapper().readValue(input, JSONFeedImpl.class);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While deserializing JSON feed", e);
-    }
-  }
-
-  protected Entry toJSONEntry(final InputStream input) {
-    try {
-      return getObjectMapper().readValue(input, JSONEntryImpl.class);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While deserializing JSON entry", e);
-    }
-  }
-
-  protected Element toPropertyDOMFromXML(final InputStream input) {
-    return toDOM(input);
-  }
-
-  protected Element toPropertyDOMFromJSON(final InputStream input) {
-    try {
-      return getObjectMapper().readValue(input, JSONPropertyImpl.class).getContent();
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While deserializing JSON property", e);
-    }
-  }
-
-  protected XMLLinkCollectionImpl toLinkCollectionFromXML(final InputStream input) {
-    final Element root = toDOM(input);
-
-    final NodeList uris = root.getOwnerDocument().getElementsByTagName(Constants.ELEM_URI);
-
-    final NodeList next = root.getElementsByTagName(Constants.NEXT_LINK_REL);
-    final XMLLinkCollectionImpl linkCollection = next.getLength() > 0
-            ? new XMLLinkCollectionImpl(URI.create(next.item(0).getTextContent()))
-            : new XMLLinkCollectionImpl();
-    for (int i = 0; i < uris.getLength(); i++) {
-      linkCollection.getLinks().add(URI.create(uris.item(i).getTextContent()));
-    }
-
-    return linkCollection;
-  }
-
-  protected JSONLinkCollectionImpl toLinkCollectionFromJSON(final InputStream input) {
-    try {
-      return getObjectMapper().readValue(input, JSONLinkCollectionImpl.class);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While deserializing JSON $links", e);
-    }
-  }
-
-  protected Error toErrorFromXML(final InputStream input) {
-    try {
-      final XmlMapper xmlMapper = new XmlMapper(
-              new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
-      return xmlMapper.readValue(input, XMLErrorImpl.class);
+      return getObjectMapper().readValue(input, reference);
     } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing XML error", e);
+      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }
 
-  protected Error toErrorFromJSON(final InputStream input) {
-    try {
-      return getObjectMapper().readValue(input, JSONErrorBundle.class).getError();
-    } catch (IOException e) {
-      throw new IllegalArgumentException("While deserializing JSON error", e);
-    }
-  }
 }

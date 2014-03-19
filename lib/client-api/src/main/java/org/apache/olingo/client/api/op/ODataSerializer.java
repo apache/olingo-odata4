@@ -24,9 +24,8 @@ import java.io.Writer;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.format.ODataFormat;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Utility class for serialization.
@@ -66,22 +65,20 @@ public interface ODataSerializer extends Serializable {
   void entry(Entry obj, Writer writer);
 
   /**
-   * Writes entry content onto the given stream.
+   * Writes the property object onto the given stream.
    *
-   * @param element element to be streamed.
-   * @param format streaming format.
+   * @param property object to be streamed.
    * @param out output stream.
    */
-  void property(Element element, ODataFormat format, OutputStream out);
+  void property(Property property, OutputStream out);
 
   /**
-   * Writes entry content by the given writer.
+   * Writes the property object by the given writer.
    *
-   * @param element element to be streamed.
-   * @param format streaming format.
+   * @param property object to be streamed.
    * @param writer writer.
    */
-  void property(Element element, ODataFormat format, Writer writer);
+  void property(Property property, Writer writer);
 
   /**
    * Writes link onto the given stream.
@@ -100,20 +97,4 @@ public interface ODataSerializer extends Serializable {
    * @param writer writer.
    */
   void link(Link link, ODataFormat format, Writer writer);
-
-  /**
-   * Writes DOM object onto the given stream.
-   *
-   * @param content DOM to be streamed.
-   * @param out output stream.
-   */
-  void dom(Node content, OutputStream out);
-
-  /**
-   * Writes DOM object by the given writer.
-   *
-   * @param content DOM to be streamed.
-   * @param writer writer.
-   */
-  void dom(Node content, Writer writer);
 }

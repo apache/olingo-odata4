@@ -24,16 +24,16 @@ import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 
 public class LineString extends ComposedGeospatial<Point> {
 
-    private static final long serialVersionUID = 3207958185407535907L;
+  private static final long serialVersionUID = 3207958185407535907L;
 
-    public LineString(final Dimension dimension, final List<Point> points) {
-        super(dimension, Type.LINESTRING, points);
-    }
+  public LineString(final Dimension dimension, final String crs, final List<Point> points) {
+    super(dimension, Type.LINESTRING, crs, points);
+  }
 
-    @Override
-    public ODataJClientEdmPrimitiveType getEdmSimpleType() {
-        return dimension == Dimension.GEOGRAPHY
-                ? ODataJClientEdmPrimitiveType.GeographyLineString
-                : ODataJClientEdmPrimitiveType.GeometryLineString;
-    }
+  @Override
+  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
+    return dimension == Dimension.GEOGRAPHY
+            ? ODataJClientEdmPrimitiveType.GeographyLineString
+            : ODataJClientEdmPrimitiveType.GeometryLineString;
+  }
 }

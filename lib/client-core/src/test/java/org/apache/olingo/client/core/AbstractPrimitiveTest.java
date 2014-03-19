@@ -69,7 +69,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
     if (ODataJClientEdmPrimitiveType.isGeospatial(value.getTypeName())) {
       newValue = getClient().getGeospatialValueBuilder().
               setType(ODataJClientEdmPrimitiveType.fromValue(value.getTypeName())).
-              setTree(((ODataGeospatialValue) value).toTree()).build();
+              setValue(((ODataGeospatialValue) value).getGeospatial()).build();
     } else {
       newValue = getClient().getPrimitiveValueBuilder().
               setType(ODataJClientEdmPrimitiveType.fromValue(value.getTypeName())).

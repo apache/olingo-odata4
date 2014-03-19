@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.data;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
@@ -30,19 +29,9 @@ import org.apache.olingo.client.api.data.Feed;
  *
  * @see AtomEntry
  */
-public class AtomFeedImpl extends AbstractPayloadObject implements AtomObject, Feed {
+public class AtomFeedImpl extends AbstractAtomObject implements Feed {
 
   private static final long serialVersionUID = 5466590540021319153L;
-
-  private URI baseURI;
-
-  private String id;
-
-  private String title;
-
-  private String summary;
-
-  private Date updated;
 
   private Integer count;
 
@@ -51,51 +40,6 @@ public class AtomFeedImpl extends AbstractPayloadObject implements AtomObject, F
   private URI next;
 
   @Override
-  public URI getBaseURI() {
-    return baseURI;
-  }
-
-  @Override
-  public void setBaseURI(final String baseURI) {
-    this.baseURI = URI.create(baseURI);
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(final String id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  @Override
-  public void setTitle(final String title) {
-    this.title = title;
-  }
-
-  public String getSummary() {
-    return summary;
-  }
-
-  @Override
-  public void setSummary(final String summary) {
-    this.summary = summary;
-  }
-
-  public Date getUpdated() {
-    return new Date(updated.getTime());
-  }
-
-  @Override
-  public void setUpdated(final Date updated) {
-    this.updated = new Date(updated.getTime());
-  }
-
   public void setCount(final Integer count) {
     this.count = count;
   }

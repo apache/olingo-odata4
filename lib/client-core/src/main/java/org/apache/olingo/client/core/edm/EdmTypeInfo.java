@@ -119,7 +119,7 @@ public class EdmTypeInfo {
     } catch (IllegalArgumentException e) {
       LOG.debug("{} does not appear to refer to an Edm primitive type", this.fullQualifiedName);
     }
-    // TODO: implement Geospatial types!
+    // TODO - OLINGO-65 implement Geospatial types!
     this.geospatialType = this.fullQualifiedName.getNamespace().equals(EdmPrimitiveType.EDM_NAMESPACE)
             && this.fullQualifiedName.getName().startsWith("Geo");
     if (this.primitiveType == null && this.edm != null) {

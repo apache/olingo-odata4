@@ -31,11 +31,25 @@ public interface Feed {
   URI getBaseURI();
 
   /**
-   * Gets number of entries if an <tt>inlinecount</tt> was required.
+   * Sets number of entries.
+   *
+   * @param count number of entries
+   */
+  void setCount(Integer count);
+
+  /**
+   * Gets number of entries - if it was required.
    *
    * @return number of entries into the feed.
    */
   Integer getCount();
+
+  /**
+   * Gest feed ID.
+   *
+   * @return feed ID.
+   */
+  String getId();
 
   /**
    * Gets entries.

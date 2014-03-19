@@ -48,7 +48,7 @@ public class AnnotationDeserializer extends AbstractEdmDeserializer<AnnotationIm
           annotation.setConstExpr(parseAnnotationConstExprConstruct(jp));
         } else {
           // Dynamic Expressions
-          annotation.setDynExpr(jp.readValueAs( DynExprConstructImpl.class));
+          annotation.setDynExpr(jp.readValueAs(DynExprConstructImpl.class));
         }
       }
     }

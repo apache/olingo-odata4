@@ -16,26 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.data;
+package org.apache.olingo.client.api.data;
 
-import java.util.Date;
+public interface Value {
 
-/**
- * Common methods for <tt>AtomEntryImpl</tt> and <tt>AtomFeedImpl</tt>.
- *
- * @see AtomEntryImpl
- * @see AtomFeedImpl
- */
-public interface AtomObject {
+  boolean isNull();
 
-  void setBaseURI(String baseURI);
+  boolean isSimple();
 
-  void setId(String id);
+  boolean isGeospatial();
 
-  void setTitle(String title);
+  boolean isComplex();
 
-  void setSummary(String summary);
+  boolean isCollection();
 
-  void setUpdated(Date updated);
+  Object get();
 
+  NullValue asNull();
+
+  PrimitiveValue asSimple();
+
+  GeospatialValue asGeospatial();
+
+  ComplexValue asComplex();
+
+  CollectionValue asCollection();
 }

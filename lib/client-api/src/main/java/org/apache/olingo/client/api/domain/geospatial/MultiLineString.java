@@ -26,8 +26,8 @@ public class MultiLineString extends ComposedGeospatial<LineString> {
 
   private static final long serialVersionUID = -5042414471218124125L;
 
-  public MultiLineString(final Dimension dimension, final List<LineString> lineStrings) {
-    super(dimension, Type.MULTILINESTRING, lineStrings);
+  public MultiLineString(final Dimension dimension, final String crs, final List<LineString> lineStrings) {
+    super(dimension, Type.MULTILINESTRING, crs, lineStrings);
   }
 
   @Override

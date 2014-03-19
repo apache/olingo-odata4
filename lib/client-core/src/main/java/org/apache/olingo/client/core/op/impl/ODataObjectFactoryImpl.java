@@ -160,7 +160,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI link) {
-    return new ODataLink(client.getServiceVersion(), link, ODataLinkType.ENTITY_NAVIGATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   /**
@@ -173,7 +174,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink(client.getServiceVersion(), baseURI, href, ODataLinkType.ENTITY_NAVIGATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   /**
@@ -185,7 +187,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newFeedNavigationLink(final String name, final URI link) {
-    return new ODataLink(client.getServiceVersion(), link, ODataLinkType.ENTITY_SET_NAVIGATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   /**
@@ -198,7 +201,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newFeedNavigationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink(client.getServiceVersion(), baseURI, href, ODataLinkType.ENTITY_SET_NAVIGATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   /**
@@ -210,7 +214,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newAssociationLink(final String name, final URI link) {
-    return new ODataLink(client.getServiceVersion(), link, ODataLinkType.ASSOCIATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+            setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   /**
@@ -223,7 +228,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newAssociationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink(client.getServiceVersion(), baseURI, href, ODataLinkType.ASSOCIATION, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+            setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   /**
@@ -235,7 +241,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newMediaEditLink(final String name, final URI link) {
-    return new ODataLink(client.getServiceVersion(), link, ODataLinkType.MEDIA_EDIT, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+            setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 
   /**
@@ -248,7 +255,8 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
    */
   @Override
   public ODataLink newMediaEditLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink(client.getServiceVersion(), baseURI, href, ODataLinkType.MEDIA_EDIT, name);
+    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+            setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 
   /**

@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.ODataV3Client;
 import org.apache.olingo.client.api.ODataV4Client;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
@@ -34,6 +35,15 @@ public abstract class AbstractTest {
   protected static ODataV4Client v4Client;
 
   protected abstract ODataClient getClient();
+
+  @BeforeClass
+  public static void setUp() {
+    XMLUnit.setIgnoreComments(true);
+    XMLUnit.setIgnoreAttributeOrder(true);
+    XMLUnit.setIgnoreWhitespace(true);
+    XMLUnit.setNormalizeWhitespace(true);
+    XMLUnit.setCompareUnmatched(false);
+  }
 
   /**
    * This is needed for correct number handling (Double, for example).

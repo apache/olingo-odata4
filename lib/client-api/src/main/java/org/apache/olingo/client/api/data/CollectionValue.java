@@ -16,31 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.xml;
+package org.apache.olingo.client.api.data;
 
-import java.io.InputStream;
-import java.io.Writer;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import java.util.List;
 
-/**
- * DOM Parser.
- */
-public abstract class AbstractDOMParser {
+public interface CollectionValue extends Value {
 
-  /**
-   * Parses the given input into a DOM tree.
-   *
-   * @param input stream to be parsed and de-serialized.
-   * @return DOM tree
-   */
-  public abstract Element deserialize(InputStream input);
-
-  /**
-   * Writes DOM object by the given writer.
-   *
-   * @param content DOM to be streamed.
-   * @param writer writer.
-   */
-  public abstract void serialize(Node content, Writer writer);
+  @Override
+  List<Value> get();
 }

@@ -20,10 +20,9 @@ package org.apache.olingo.client.core.op.impl;
 
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
@@ -39,9 +38,6 @@ import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.op.ODataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public abstract class AbstractODataReader implements ODataReader {
 
@@ -70,33 +66,7 @@ public abstract class AbstractODataReader implements ODataReader {
 
   @Override
   public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    final Element property = client.getDeserializer().toPropertyDOM(input, format);
-
-    // The ODataProperty object is used either for actual entity properties and for invoke result 
-    // (when return type is neither an entity nor a collection of entities).
-    // Such formats are mostly the same except for collections: an entity property looks like
-    //     <aproperty m:type="Collection(AType)">
-    //       <element>....</element>
-    //     </aproperty>
-    //
-    // while an invoke result with returnType="Collection(AnotherType)" looks like
-    //     <functionImportName>
-    //       <element m:type="AnotherType">...</element>
-    //     <functionImportName>
-    //
-    // The code below is meant for "normalizing" the latter into
-    //     <functionImportName m:type="Collection(AnotherType)">
-    //       <element m:type="AnotherType">...</element>
-    //     <functionImportName>
-    final String type = property.getAttribute(Constants.ATTR_M_TYPE);
-    final NodeList elements = property.getElementsByTagName(Constants.ELEM_ELEMENT);
-    if (StringUtils.isBlank(type) && elements != null && elements.getLength() > 0) {
-      final Node elementType = elements.item(0).getAttributes().getNamedItem(Constants.ATTR_M_TYPE);
-      if (elementType != null) {
-        property.setAttribute(Constants.ATTR_M_TYPE, "Collection(" + elementType.getTextContent() + ")");
-      }
-    }
-
+    final Property property = client.getDeserializer().toProperty(input, format);
     return client.getBinder().getODataProperty(property);
   }
 

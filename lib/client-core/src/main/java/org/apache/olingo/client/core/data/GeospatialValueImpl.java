@@ -16,22 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.xml;
+package org.apache.olingo.client.core.data;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import org.apache.olingo.client.api.data.GeospatialValue;
+import org.apache.olingo.client.api.domain.geospatial.Geospatial;
 
-public final class XMLParser {
+public class GeospatialValueImpl extends AbstractValue implements GeospatialValue {
 
-  public static final AbstractDOMParser PARSER;
+  private final Geospatial value;
 
-  static {
-    final Iterator<AbstractDOMParser> itor
-            = ServiceLoader.load(AbstractDOMParser.class, Thread.currentThread().getContextClassLoader()).iterator();
-    PARSER = itor.hasNext() ? itor.next() : new DefaultDOMParserImpl();
+  public GeospatialValueImpl(final Geospatial value) {
+    this.value = value;
   }
 
-  private XMLParser() {
-    // Empty private constructor for static utility classes       
+  @Override
+  public boolean isGeospatial() {
+    return true;
   }
+
+  @Override
+  public Geospatial get() {
+    return value;
+  }
+
 }

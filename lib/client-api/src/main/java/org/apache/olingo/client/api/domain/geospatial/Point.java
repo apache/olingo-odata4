@@ -40,8 +40,8 @@ public class Point extends Geospatial {
    */
   private double z;
 
-  public Point(final Dimension dimension) {
-    super(dimension, Type.POINT);
+  public Point(final Dimension dimension, final String crs) {
+    super(dimension, Type.POINT, crs);
   }
 
   public double getX() {

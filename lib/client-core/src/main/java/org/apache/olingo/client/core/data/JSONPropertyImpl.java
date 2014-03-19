@@ -21,20 +21,17 @@ package org.apache.olingo.client.core.data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
-import org.w3c.dom.Element;
 
 /**
  * A single property (primitive, complex or collection) represented via JSON.
  */
 @JsonSerialize(using = JSONPropertySerializer.class)
 @JsonDeserialize(using = JSONPropertyDeserializer.class)
-public class JSONPropertyImpl extends AbstractPayloadObject {
+public class JSONPropertyImpl extends AbstractPropertyImpl {
 
   private static final long serialVersionUID = 553414431536637434L;
 
   private URI metadata;
-
-  private Element content;
 
   /**
    * Gets metadata URI.
@@ -52,23 +49,5 @@ public class JSONPropertyImpl extends AbstractPayloadObject {
    */
   public void setMetadata(final URI metadata) {
     this.metadata = metadata;
-  }
-
-  /**
-   * Gets content.
-   *
-   * @return content as DOM element.
-   */
-  public Element getContent() {
-    return content;
-  }
-
-  /**
-   * Sets content.
-   *
-   * @param content content as DOM element.
-   */
-  public void setContent(final Element content) {
-    this.content = content;
   }
 }

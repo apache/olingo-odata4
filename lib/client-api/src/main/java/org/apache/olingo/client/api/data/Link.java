@@ -77,6 +77,20 @@ public interface Link {
   void setHref(String href);
 
   /**
+   * Gets Media ETag.
+   *
+   * @return media ETag
+   */
+  String getMediaETag();
+
+  /**
+   * Sets Media ETag.
+   *
+   * @param etag media ETag
+   */
+  void setMediaETag(String etag);
+
+  /**
    * Gets in-line entry.
    *
    * @return in-line entry.

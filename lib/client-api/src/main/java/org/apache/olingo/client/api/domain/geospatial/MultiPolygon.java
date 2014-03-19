@@ -26,8 +26,8 @@ public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
   private static final long serialVersionUID = -160184788048512883L;
 
-  public MultiPolygon(final Dimension dimension, final List<Polygon> polygons) {
-    super(dimension, Type.MULTIPOLYGON, polygons);
+  public MultiPolygon(final Dimension dimension, final String crs, final List<Polygon> polygons) {
+    super(dimension, Type.MULTIPOLYGON, crs, polygons);
   }
 
   @Override

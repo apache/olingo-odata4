@@ -20,7 +20,6 @@ package org.apache.olingo.client.api.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -65,9 +64,9 @@ public enum ODataLinkType {
    * @param type type.
    * @return <code>ODataLinkType</code> object.
    */
-  public static ODataLinkType fromString(final ODataClient client, final String rel, final String type) {
-    if (StringUtils.isNotBlank(rel) && rel.startsWith(client.getServiceVersion().getNamespaceMap().
-            get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
+  public static ODataLinkType fromString(final ODataServiceVersion version, final String rel, final String type) {
+    if (StringUtils.isNotBlank(rel)
+            && rel.startsWith(version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
 
       return MEDIA_EDIT.setType(StringUtils.isBlank(type) ? "*/*" : type);
     }

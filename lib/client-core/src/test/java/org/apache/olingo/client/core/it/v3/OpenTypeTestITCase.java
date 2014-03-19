@@ -120,7 +120,7 @@ public class OpenTypeTestITCase extends AbstractV3TestITCase {
             client.getPrimitiveValueBuilder().setType(ODataJClientEdmPrimitiveType.DateTime).setValue(new Date()).
             build()));
 
-    final Point point = new Point(Geospatial.Dimension.GEOGRAPHY);
+    final Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(1.2);
     point.setY(2.1);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPoint",
@@ -129,36 +129,35 @@ public class OpenTypeTestITCase extends AbstractV3TestITCase {
     final List<Point> points = new ArrayList<Point>();
     points.add(point);
     points.add(point);
-    final MultiPoint multipoint = new MultiPoint(Geospatial.Dimension.GEOMETRY, points);
+    final MultiPoint multipoint = new MultiPoint(Geospatial.Dimension.GEOMETRY, null, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPoint",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryMultiPoint).
             setValue(multipoint).build()));
-    final LineString lineString = new LineString(Geospatial.Dimension.GEOMETRY, points);
+    final LineString lineString = new LineString(Geospatial.Dimension.GEOMETRY, null, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aLineString",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryLineString).
             setValue(lineString).build()));
     final List<LineString> lineStrings = new ArrayList<LineString>();
     lineStrings.add(lineString);
     lineStrings.add(lineString);
-    final MultiLineString multiLineString = new MultiLineString(Geospatial.Dimension.GEOGRAPHY, lineStrings);
+    final MultiLineString multiLineString = new MultiLineString(Geospatial.Dimension.GEOGRAPHY, null, lineStrings);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiLineString",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeometryMultiLineString).
             setValue(multiLineString).build()));
-    final Point otherPoint = new Point(Geospatial.Dimension.GEOGRAPHY);
+    final Point otherPoint = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     otherPoint.setX(3.4);
     otherPoint.setY(4.3);
     points.set(1, otherPoint);
     points.add(otherPoint);
     points.add(point);
-    final Polygon polygon =
-            new Polygon(Geospatial.Dimension.GEOGRAPHY, points, points);
+    final Polygon polygon = new Polygon(Geospatial.Dimension.GEOGRAPHY, null, points, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPolygon",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeographyPolygon).
             setValue(polygon).build()));
     final List<Polygon> polygons = new ArrayList<Polygon>();
     polygons.add(polygon);
     polygons.add(polygon);
-    final MultiPolygon multiPolygon = new MultiPolygon(Geospatial.Dimension.GEOGRAPHY, polygons);
+    final MultiPolygon multiPolygon = new MultiPolygon(Geospatial.Dimension.GEOGRAPHY, null, polygons);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPolygon",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeographyMultiPolygon).
             setValue(multiPolygon).build()));
@@ -167,7 +166,7 @@ public class OpenTypeTestITCase extends AbstractV3TestITCase {
     geospatials.add(polygon);
     geospatials.add(multiLineString);
     geospatials.add(multiPolygon);
-    final GeospatialCollection geoColl = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, geospatials);
+    final GeospatialCollection geoColl = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, null, geospatials);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aCollection",
             client.getGeospatialValueBuilder().setType(ODataJClientEdmPrimitiveType.GeographyCollection).
             setValue(geoColl).build()));

@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
 
-@SuppressWarnings("rawtypes")
 public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
 
   @Override
@@ -59,7 +58,7 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
         } else if ("Reference".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.EdmxImpl) edmx).getReferences().
-                  add(jp.readValueAs( ReferenceImpl.class));
+                  add(jp.readValueAs(ReferenceImpl.class));
         }
       }
     }

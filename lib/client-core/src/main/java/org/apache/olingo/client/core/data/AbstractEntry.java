@@ -23,21 +23,19 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
+import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.domain.ODataOperation;
-import org.w3c.dom.Element;
 
 /**
  * Abstract base for classes implementing an OData entry in Atom and JSON.
  */
-public abstract class AbstractEntry extends AbstractPayloadObject implements Entry {
+public abstract class AbstractEntry extends AbstractAtomObject implements Entry {
 
   private static final long serialVersionUID = 2127764552600969783L;
 
   private String eTag;
 
   private String type;
-
-  private String id;
 
   private Link readLink;
 
@@ -51,9 +49,7 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
 
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
-  private Element content;
-
-  private Element mediaEntryProperties;
+  private final List<Property> properties = new ArrayList<Property>();
 
   private String mediaContentSource;
 
@@ -64,7 +60,6 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
     return eTag;
   }
 
-  @Override
   public void setETag(final String eTag) {
     this.eTag = eTag;
   }
@@ -77,16 +72,6 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
   @Override
   public void setType(final String type) {
     this.type = type;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(final String id) {
-    this.id = id;
   }
 
   @Override
@@ -130,26 +115,21 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
   }
 
   @Override
-  public Element getContent() {
-    return content;
+  public List<Property> getProperties() {
+    return properties;
   }
 
   @Override
-  public void setContent(final Element content) {
-    this.content = content;
-  }
+  public Property getProperty(final String name) {
+    Property result = null;
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public Element getMediaEntryProperties() {
-    return mediaEntryProperties;
-  }
+    for (Property property : properties) {
+      if (name.equals(property.getName())) {
+        result = property;
+      }
+    }
 
-  @Override
-  public void setMediaEntryProperties(final Element mediaEntryProperties) {
-    this.mediaEntryProperties = mediaEntryProperties;
+    return result;
   }
 
   @Override
@@ -174,6 +154,6 @@ public abstract class AbstractEntry extends AbstractPayloadObject implements Ent
 
   @Override
   public boolean isMediaEntry() {
-    return getMediaEntryProperties() != null || StringUtils.isNotBlank(this.mediaContentSource);
+    return StringUtils.isNotBlank(this.mediaContentSource);
   }
 }

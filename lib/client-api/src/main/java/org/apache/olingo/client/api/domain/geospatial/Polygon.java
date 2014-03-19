@@ -37,13 +37,14 @@ public class Polygon extends Geospatial {
    * Constructor.
    *
    * @param dimension dimension.
+   * @param crs crs.
    * @param interior interior points.
    * @param exterior exterior points.
    */
-  public Polygon(final Dimension dimension, final List<Point> interior, final List<Point> exterior) {
-    super(dimension, Type.POLYGON);
-    this.interior = new MultiPoint(dimension, interior);
-    this.exterior = new MultiPoint(dimension, exterior);
+  public Polygon(final Dimension dimension, final String crs, final List<Point> interior, final List<Point> exterior) {
+    super(dimension, Type.POLYGON, crs);
+    this.interior = new MultiPoint(dimension, crs, interior);
+    this.exterior = new MultiPoint(dimension, crs, exterior);
   }
 
   /**

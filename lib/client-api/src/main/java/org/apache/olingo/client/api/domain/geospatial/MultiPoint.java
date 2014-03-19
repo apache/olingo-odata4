@@ -26,8 +26,8 @@ public class MultiPoint extends ComposedGeospatial<Point> {
 
   private static final long serialVersionUID = 4951011255142116129L;
 
-  public MultiPoint(final Dimension dimension, final List<Point> points) {
-    super(dimension, Type.MULTIPOINT, points);
+  public MultiPoint(final Dimension dimension, final String crs, final List<Point> points) {
+    super(dimension, Type.MULTIPOINT, crs, points);
   }
 
   @Override

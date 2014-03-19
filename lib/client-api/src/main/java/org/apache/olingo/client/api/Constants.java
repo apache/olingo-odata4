@@ -31,8 +31,6 @@ public class Constants {
 
   public final static String NAME = "name";
 
-  public final static String PROPERTIES = "properties";
-
   // XML namespaces and prefixes
   public final static String NS_ATOM = "http://www.w3.org/2005/Atom";
 
@@ -71,7 +69,7 @@ public class Constants {
   public static final String NEXT_LINK_REL = "next";
 
   // XML elements and attributes
-  public static final String ELEM_PROPERTIES = PREFIX_METADATA + PROPERTIES;
+  public static final String PROPERTIES = "properties";
 
   public static final String ELEM_ELEMENT = "element";
 
@@ -83,15 +81,17 @@ public class Constants {
 
   public static final String ATTR_M_NULL = PREFIX_METADATA + ":" + ATTR_NULL;
 
-  public static final String ATTR_XMLBASE = "xml:base";
+  public static final String ATTR_XML_BASE = "base";
+
+  public static final QName QNAME_ATTR_XML_BASE = new QName(XMLConstants.XML_NS_URI, ATTR_XML_BASE);
 
   public static final String ATTR_REL = "rel";
 
-  public static final String ATTR_HREF = "href";
+  public static final String ATTR_TITLE = "title";
 
   public static final String ATTR_METADATA = "metadata";
 
-  public static final String ATTR_TITLE = "title";
+  public static final String ATTR_HREF = "href";
 
   public static final String ATTR_TARGET = "target";
 
@@ -99,17 +99,19 @@ public class Constants {
 
   public static final String ATTR_SRSNAME = "srsName";
 
+  public static final QName QNAME_ATTR_SRSNAME = new QName(NS_GML, ATTR_SRSNAME);
+
   public static final String ELEM_POINT = "Point";
 
   public static final String ELEM_MULTIPOINT = "MultiPoint";
 
   public static final String ELEM_POINTMEMBERS = "pointMembers";
 
-  public static final QName QNAME_POINTMEMBERS = new QName(Constants.NS_GML, ELEM_POINTMEMBERS);
+  public static final QName QNAME_POINTMEMBERS = new QName(NS_GML, ELEM_POINTMEMBERS);
 
   public static final String ELEM_LINESTRING = "LineString";
 
-  public static final QName QNAME_LINESTRING = new QName(Constants.NS_GML, ELEM_LINESTRING);
+  public static final QName QNAME_LINESTRING = new QName(NS_GML, ELEM_LINESTRING);
 
   public static final String ELEM_MULTILINESTRING = "MultiCurve";
 
@@ -117,15 +119,15 @@ public class Constants {
 
   public static final String ELEM_POLYGON = "Polygon";
 
-  public static final QName QNAME_POLYGON = new QName(Constants.NS_GML, ELEM_POLYGON);
+  public static final QName QNAME_POLYGON = new QName(NS_GML, ELEM_POLYGON);
 
   public static final String ELEM_POLYGON_EXTERIOR = "exterior";
 
-  public static final QName QNAME_POLYGON_EXTERIOR = new QName(Constants.NS_GML, ELEM_POLYGON_EXTERIOR);
+  public static final QName QNAME_POLYGON_EXTERIOR = new QName(NS_GML, ELEM_POLYGON_EXTERIOR);
 
   public static final String ELEM_POLYGON_INTERIOR = "interior";
 
-  public static final QName QNAME_POLYGON_INTERIOR = new QName(Constants.NS_GML, ELEM_POLYGON_INTERIOR);
+  public static final QName QNAME_POLYGON_INTERIOR = new QName(NS_GML, ELEM_POLYGON_INTERIOR);
 
   public static final String ELEM_POLYGON_LINEARRING = "LinearRing";
 
@@ -137,7 +139,7 @@ public class Constants {
 
   public static final String ELEM_GEOMEMBERS = "geometryMembers";
 
-  public static final QName QNAME_GEOMEMBERS = new QName(Constants.NS_GML, ELEM_GEOMEMBERS);
+  public static final QName QNAME_GEOMEMBERS = new QName(NS_GML, ELEM_GEOMEMBERS);
 
   public static final String ELEM_POS = "pos";
 
@@ -154,9 +156,13 @@ public class Constants {
 
   public final static String JSON_TYPE = "odata.type";
 
+  public final static String JSON_TYPE_SUFFIX = "@" + JSON_TYPE;
+
   public final static String JSON_ETAG = "odata.etag";
 
   public final static String JSON_MEDIA_ETAG = "odata.mediaETag";
+
+  public final static String JSON_MEDIA_ETAG_SUFFIX = "@" + JSON_MEDIA_ETAG;
 
   public final static String JSON_ID = "odata.id";
 
@@ -168,15 +174,17 @@ public class Constants {
 
   public final static String JSON_MEDIAEDIT_LINK = "odata.mediaEditLink";
 
+  public final static String JSON_MEDIAEDIT_LINK_SUFFIX = "@" + JSON_MEDIAEDIT_LINK;
+
   public final static String JSON_MEDIA_CONTENT_TYPE = "odata.mediaContentType";
+
+  public final static String JSON_MEDIA_CONTENT_TYPE_SUFFIX = "@" + JSON_MEDIA_CONTENT_TYPE;
 
   public final static String JSON_NAVIGATION_LINK_SUFFIX = "@odata.navigationLinkUrl";
 
   public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
 
   public final static String JSON_ASSOCIATION_LINK_SUFFIX = "@odata.associationLinkUrl";
-
-  public final static String JSON_MEDIAEDIT_LINK_SUFFIX = "@odata.mediaEditLink";
 
   public final static String JSON_NULL = "odata.null";
 
@@ -190,38 +198,52 @@ public class Constants {
 
   public final static String JSON_CRS = "crs";
 
+  public final static String JSON_COUNT = "odata.count";
+
+  public final static String JSON_NEXT_LINK = "odata.nextLink";
+
   // Atom stuff
   public final static String ATOM_ELEM_ENTRY = "entry";
 
+  public static final QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
+
   public final static String ATOM_ELEM_FEED = "feed";
+
+  public static final QName QNAME_ATOM_ELEM_FEED = new QName(NS_ATOM, ATOM_ELEM_FEED);
 
   public final static String ATOM_ELEM_CATEGORY = "category";
 
+  public static final QName QNAME_ATOM_ELEM_CATEGORY = new QName(NS_ATOM, ATOM_ELEM_CATEGORY);
+
+  public static final String ATOM_ELEM_COUNT = "count";
+
   public final static String ATOM_ELEM_ID = "id";
 
-  public final static String ATOM_ELEM_LINK = "link";
-
-  public final static String ATOM_ELEM_CONTENT = "content";
+  public static final QName QNAME_ATOM_ELEM_ID = new QName(NS_ATOM, ATOM_ELEM_ID);
 
   public static final String ATOM_ELEM_TITLE = "title";
 
+  public static final QName QNAME_ATOM_ELEM_TITLE = new QName(NS_ATOM, ATOM_ELEM_TITLE);
+
   public static final String ATOM_ELEM_SUMMARY = "summary";
+
+  public static final QName QNAME_ATOM_ELEM_SUMMARY = new QName(NS_ATOM, ATOM_ELEM_SUMMARY);
 
   public static final String ATOM_ELEM_UPDATED = "updated";
 
-  public static final String ATOM_ELEM_AUTHOR = "author";
+  public static final QName QNAME_ATOM_ELEM_UPDATED = new QName(NS_ATOM, ATOM_ELEM_UPDATED);
 
-  public static final String ATOM_ELEM_AUTHOR_NAME = "name";
+  public final static String ATOM_ELEM_LINK = "link";
 
-  public static final String ATOM_ELEM_AUTHOR_URI = "uri";
+  public static final QName QNAME_ATOM_ELEM_LINK = new QName(NS_ATOM, ATOM_ELEM_LINK);
 
-  public static final String ATOM_ELEM_AUTHOR_EMAIL = "email";
+  public final static String ATOM_ELEM_CONTENT = "content";
 
-  public static final String ATOM_ELEM_ACTION = PREFIX_METADATA + "action";
+  public static final QName QNAME_ATOM_ELEM_CONTENT = new QName(NS_ATOM, ATOM_ELEM_CONTENT);
 
-  public static final String ATOM_ELEM_INLINE = PREFIX_METADATA + "inline";
+  public static final String ATOM_ELEM_ACTION = "action";
 
-  public static final String ATOM_ATTR_TITLE = "atom:title";
+  public static final String ATOM_ELEM_INLINE = "inline";
 
   public static final String ATOM_ATTR_TERM = "term";
 
@@ -229,8 +251,6 @@ public class Constants {
 
   public static final String ATOM_ATTR_SRC = "src";
 
-  public static final String ATOM_ATTR_ETAG = PREFIX_METADATA + "etag";
-
-  public static final String ATOM_ATTR_COUNT = PREFIX_METADATA + "count";
+  public static final String ATOM_ATTR_ETAG = "etag";
 
 }
