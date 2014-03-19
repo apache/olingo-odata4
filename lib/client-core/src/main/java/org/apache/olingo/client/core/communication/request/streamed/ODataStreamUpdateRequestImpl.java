@@ -68,7 +68,8 @@ public class ODataStreamUpdateRequestImpl
     return (StreamUpdateStreamManager) streamManager;
   }
 
-  public class StreamUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataStreamUpdateResponse> {
+  public class StreamUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataStreamUpdateResponse>
+          implements StreamUpdateStreamManager {
 
     /**
      * Private constructor.

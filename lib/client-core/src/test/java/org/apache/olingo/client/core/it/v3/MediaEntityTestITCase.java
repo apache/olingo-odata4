@@ -40,15 +40,12 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractV3TestITCase {
 
   @Test
-  @Ignore
   public void read() throws Exception {
     final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
@@ -64,7 +61,6 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
   }
 
   @Test(expected = ODataClientErrorException.class)
-  @Ignore
   public void readWithXmlError() throws Exception {
     final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
@@ -76,7 +72,6 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
   }
 
   @Test(expected = ODataClientErrorException.class)
-  @Ignore
   public void readWithJsonError() throws Exception {
     final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
@@ -88,57 +83,31 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
   }
 
   @Test
-  @Ignore
   public void updateMediaEntityAsAtom() throws Exception {
     updateMediaEntity(ODataPubFormat.ATOM, 14);
   }
 
   @Test
-  @Ignore
   public void updateMediaEntityAsJson() throws Exception {
     updateMediaEntity(ODataPubFormat.JSON, 15);
   }
 
   @Test
-  @Ignore
   public void createMediaEntityAsAtom() throws Exception {
     createMediaEntity(ODataPubFormat.ATOM, IOUtils.toInputStream("buffered stream sample"));
   }
 
   @Test
-  @Ignore
   public void createMediaEntityAsJson() throws Exception {
     createMediaEntity(ODataPubFormat.JSON, IOUtils.toInputStream("buffered stream sample"));
   }
 
   @Test
-  @Ignore
   public void issue137() throws Exception {
     createMediaEntity(ODataPubFormat.JSON, this.getClass().getResourceAsStream("/sample.png"));
   }
 
   @Test
-  @Ignore
-  public void issue136() throws Exception {
-    byte[] input = new byte[65000];
-    for (int i = 0; i < 65000; i++) {
-      input[i] = (byte) i;
-    }
-    createMediaEntity(ODataPubFormat.ATOM, new ByteArrayInputStream(input));
-  }
-
-  @Test(expected = HttpClientException.class)
-  @Ignore
-  public void issue136FailsWithException() throws Exception {
-    byte[] input = new byte[68000];
-    for (int i = 0; i < 68000; i++) {
-      input[i] = (byte) i;
-    }
-    createMediaEntity(ODataPubFormat.ATOM, new ByteArrayInputStream(input));
-  }
-
-  @Test
-  @Ignore
   public void updateNamedStream() throws Exception {
     URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(16).appendNavigationSegment("Photo");
@@ -175,9 +144,6 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
     final MediaEntityUpdateStreamManager streamManager = updateReq.execute();
     final ODataMediaEntityUpdateResponse updateRes = streamManager.getResponse();
     assertEquals(204, updateRes.getStatusCode());
-
-    builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
 

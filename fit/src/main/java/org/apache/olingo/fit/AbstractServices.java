@@ -34,9 +34,12 @@ import org.apache.olingo.fit.utils.LinkInfo;
 import java.io.File;
 import java.io.InputStream;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -64,6 +67,8 @@ public abstract class AbstractServices {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
 
+  private static Set<ODataVersion> initialized = EnumSet.noneOf(ODataVersion.class);
+
   protected abstract ODataVersion getVersion();
   protected final XMLUtilities xml;
 
@@ -72,6 +77,11 @@ public abstract class AbstractServices {
   public AbstractServices() throws Exception {
     this.xml = new XMLUtilities(getVersion());
     this.json = new JSONUtilities(getVersion());
+
+    if (!initialized.contains(getVersion())) {
+      xml.retrieveLinkInfoFromMetadata();
+      initialized.add(getVersion());
+    }
   }
 
   /**
@@ -272,13 +282,15 @@ public abstract class AbstractServices {
   @POST
   @Path("/{entitySetName}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
-  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postNewEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
 
+    // default
+    AbstractUtilities utils = xml;
     try {
       final Accept acceptType = Accept.parse(accept, getVersion());
 
@@ -286,19 +298,22 @@ public abstract class AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
+      utils = getUtilities(acceptType);
+
       final InputStream res;
-      if (acceptType == Accept.ATOM) {
-        res = xml.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
+
+      if (utils.isMediaContent(entitySetName)) {
+        res = utils.addMediaEntity(entitySetName, IOUtils.toInputStream(entity));
       } else {
-        res = json.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
+        res = utils.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
       }
 
       final Response response;
       if ("return-no-content".equalsIgnoreCase(prefer)) {
-        res.close();
-        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        IOUtils.closeQuietly(res);
+        response = utils.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
       } else {
-        response = xml.createResponse(res, null, acceptType, Response.Status.CREATED);
+        response = utils.createResponse(res, null, acceptType, Response.Status.CREATED);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -307,7 +322,7 @@ public abstract class AbstractServices {
 
       return response;
     } catch (Exception e) {
-      return xml.createFaultResponse(accept, e);
+      return utils.createFaultResponse(accept, e);
     }
   }
 
@@ -489,6 +504,28 @@ public abstract class AbstractServices {
     }
   }
 
+  @GET
+  @Path("/{entitySetName}({entityId})/$value")
+  public Response getMediaEntity(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId) {
+
+    try {
+      if (!accept.contains("*/*") && !accept.contains("application/octet-stream")) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final AbstractUtilities utils = getUtilities(null);
+      final Map.Entry<String, InputStream> entityInfo = utils.readMediaEntity(entitySetName, entityId);
+      return utils.createResponse(entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), getVersion()), null);
+
+    } catch (Exception e) {
+      LOG.error("Error retrieving entity", e);
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
   @DELETE
   @Path("/{entitySetName}/{entityId}")
   public Response removeEntityKeyAsSegment(
@@ -514,6 +551,327 @@ public abstract class AbstractServices {
     }
   }
 
+  private Response replaceProperty(
+          final String accept,
+          final String prefer,
+          final String entitySetName,
+          final String entityId,
+          final String path,
+          final String format,
+          final String changes,
+          final boolean justValue) {
+    try {
+      Accept acceptType = null;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else if (StringUtils.isNotBlank(accept)) {
+        acceptType = Accept.parse(accept, getVersion(), null);
+      }
+
+      // if the given path is not about any link then search for property
+      LOG.info("Retrieve property {}", path);
+
+      final AbstractUtilities utils = getUtilities(acceptType);
+
+      final InputStream changed = utils.replaceProperty(
+              entitySetName,
+              entityId,
+              IOUtils.toInputStream(changes),
+              Arrays.asList(path.split("/")),
+              acceptType,
+              justValue);
+
+      final Response response;
+      if ("return-content".equalsIgnoreCase(prefer)) {
+        response = xml.createResponse(changed, null, acceptType, Response.Status.OK);
+      } else {
+        changed.close();
+        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+      }
+
+      if (StringUtils.isNotBlank(prefer)) {
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+      }
+
+      return response;
+
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  private Response deletePropertyValue(
+          final String accept,
+          final String prefer,
+          final String entitySetName,
+          final String entityId,
+          final String path,
+          final String format) {
+    try {
+      Accept acceptType = null;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else if (StringUtils.isNotBlank(accept)) {
+        acceptType = Accept.parse(accept, getVersion(), null);
+      }
+
+      // if the given path is not about any link then search for property
+      LOG.info("Retrieve property {}", path);
+
+      final AbstractUtilities utils = getUtilities(acceptType);
+
+      final InputStream changed = utils.deleteProperty(
+              entitySetName,
+              entityId,
+              Arrays.asList(path.split("/")),
+              acceptType);
+
+      final Response response;
+      if ("return-content".equalsIgnoreCase(prefer)) {
+        response = xml.createResponse(changed, null, acceptType, Response.Status.OK);
+      } else {
+        changed.close();
+        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+      }
+
+      if (StringUtils.isNotBlank(prefer)) {
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+      }
+
+      return response;
+
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  /**
+   * Replace property value.
+   *
+   * @param accept
+   * @param entitySetName
+   * @param entityId
+   * @param path
+   * @param format
+   * @param changes
+   * @return
+   */
+  @PUT
+  @Path("/{entitySetName}({entityId})/{path:.*}/$value")
+  public Response replacePropertyValue(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String changes) {
+    return replaceProperty(accept, prefer, entitySetName, entityId, path, format, changes, true);
+  }
+
+  /**
+   * Replace property.
+   *
+   * @param accept
+   * @param entitySetName
+   * @param entityId
+   * @param path
+   * @param format
+   * @param changes
+   * @return
+   */
+  @MERGE
+  @Path("/{entitySetName}({entityId})/{path:.*}")
+  public Response mergeProperty(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String changes) {
+    return replaceProperty(accept, prefer, entitySetName, entityId, path, format, changes, false);
+  }
+
+  /**
+   * Replace property.
+   *
+   * @param accept
+   * @param entitySetName
+   * @param entityId
+   * @param path
+   * @param format
+   * @param changes
+   * @return
+   */
+  @PATCH
+  @Path("/{entitySetName}({entityId})/{path:.*}")
+  public Response patchProperty(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String changes) {
+    return replaceProperty(accept, prefer, entitySetName, entityId, path, format, changes, false);
+  }
+
+  @PUT
+  @Produces({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.WILDCARD, MediaType.APPLICATION_OCTET_STREAM})
+  @Path("/{entitySetName}({entityId})/$value")
+  public Response replaceMediaEntity(
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          String value) {
+    try {
+
+      final AbstractUtilities utils = getUtilities(null);
+
+      InputStream res = utils.putMediaInMemory(entitySetName, entityId, IOUtils.toInputStream(value));
+
+      final Response response;
+      if ("return-content".equalsIgnoreCase(prefer)) {
+        response = xml.createResponse(res, null, null, Response.Status.OK);
+      } else {
+        res.close();
+        response = xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+      }
+
+      if (StringUtils.isNotBlank(prefer)) {
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+      }
+
+      return response;
+
+    } catch (Exception e) {
+      LOG.error("Error retrieving entity", e);
+      return xml.createFaultResponse(Accept.JSON.toString(), e);
+    }
+  }
+
+  /**
+   * Replace property.
+   *
+   * @param accept
+   * @param entitySetName
+   * @param entityId
+   * @param path
+   * @param format
+   * @param changes
+   * @return
+   */
+  @PUT
+  @Path("/{entitySetName}({entityId})/{path:.*}")
+  public Response replaceProperty(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String changes) {
+    if (xml.isMediaContent(entitySetName + "/" + path)) {
+      return replaceMediaProperty(prefer, entitySetName, entityId, path, format, changes);
+    } else {
+      return replaceProperty(accept, prefer, entitySetName, entityId, path, format, changes, false);
+    }
+  }
+
+  private Response replaceMediaProperty(
+          final String prefer,
+          final String entitySetName,
+          final String entityId,
+          final String path,
+          final String format,
+          final String value) {
+    try {
+      final AbstractUtilities utils = getUtilities(null);
+
+      InputStream res = utils.putMediaInMemory(entitySetName, entityId, path, IOUtils.toInputStream(value));
+
+      final Response response;
+      if ("return-content".equalsIgnoreCase(prefer)) {
+        response = xml.createResponse(res, null, null, Response.Status.OK);
+      } else {
+        res.close();
+        response = xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+      }
+
+      if (StringUtils.isNotBlank(prefer)) {
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+      }
+
+      return response;
+
+    } catch (Exception e) {
+      LOG.error("Error retrieving entity", e);
+      return xml.createFaultResponse(Accept.JSON.toString(), e);
+    }
+  }
+
+  /**
+   * Nullify property value.
+   *
+   * @param accept
+   * @param entitySetName
+   * @param entityId
+   * @param path
+   * @param format
+   * @param changes
+   * @return
+   */
+  @DELETE
+  @Path("/{entitySetName}({entityId})/{path:.*}/$value")
+  public Response deleteProperty(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+    return deletePropertyValue(accept, prefer, entitySetName, entityId, path, format);
+  }
+
+  /**
+   * Retrieve property sample.
+   *
+   * @param accept Accept header.
+   * @param entitySetName Entity set name.
+   * @param entityId entity id.
+   * @param path path.
+   * @param format format query option.
+   * @return property.
+   */
+  @GET
+  @Path("/{entitySetName}({entityId})/{path:.*}/$value")
+  public Response getPathValue(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    AbstractUtilities utils = null;
+    try {
+      Accept acceptType = null;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else if (StringUtils.isNotBlank(accept)) {
+        acceptType = Accept.parse(accept, getVersion(), null);
+      }
+      utils = getUtilities(acceptType);
+
+      return navigateProperty(acceptType, entitySetName, entityId, path, true);
+
+    } catch (Exception e) {
+      return (utils == null ? xml : utils).createFaultResponse(accept, e);
+    }
+  }
+
   /**
    * Retrieve property sample.
    *
@@ -533,67 +891,97 @@ public abstract class AbstractServices {
           @PathParam("path") String path,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
 
+    // default utilities
+    final AbstractUtilities utils = xml;
+
     try {
-      boolean searchForValue = path.endsWith("$value");
-      Accept acceptType = null;
-      if (StringUtils.isNotBlank(format)) {
-        acceptType = Accept.valueOf(format.toUpperCase());
-      } else if (StringUtils.isNotBlank(accept)) {
-        acceptType = Accept.parse(accept, getVersion(), null);
-      }
-
-      final String basePath =
-              entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
-
-      InputStream stream;
-
-      try {
-        final LinkInfo linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.XML);
-        final Map.Entry<String, List<String>> links = XMLUtilities.extractLinkURIs(linkInfo.getLinks());
-
-        switch (acceptType) {
-          case JSON:
-          case JSON_FULLMETA:
-          case JSON_NOMETA:
-            stream = json.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
-            stream = json.wrapJsonEntities(stream);
-            break;
-          default:
-            stream = xml.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
-        }
-      } catch (NotFoundException e) {
-        // if the given path is not about any link then search for property
-        LOG.info("Retrieve property {}", path);
-
-        stream = FSManager.instance(getVersion()).readFile(
-                basePath + ENTITY, acceptType == null || acceptType == Accept.TEXT
-                ? Accept.XML : acceptType);
-
-        if (searchForValue) {
-          stream = xml.getAtomPropertyValue(stream, path.split("/"));
-        } else {
-          if (acceptType == null || acceptType == Accept.XML || acceptType == Accept.ATOM) {
-            // retrieve xml
-            stream = xml.getAtomProperty(stream, path.split("/"));
-          } else {
-            // retrieve Edm type from xml
-            final String edmType = xml.getEdmTypeFromXML(
-                    FSManager.instance(getVersion()).readFile(basePath + ENTITY, Accept.XML),
-                    path.split("/"));
-            // retrieve json property
-            stream = json.getJsonProperty(stream, path.split("/"), edmType);
-          }
+      if (utils.isMediaContent(entitySetName + "/" + path)) {
+        return navigateStreamedEntity(entitySetName, entityId, path);
+      } else {
+        Accept acceptType = null;
+        if (StringUtils.isNotBlank(format)) {
+          acceptType = Accept.valueOf(format.toUpperCase());
+        } else if (StringUtils.isNotBlank(accept)) {
+          acceptType = Accept.parse(accept, getVersion(), null);
         }
 
-        if ((searchForValue && acceptType != null && acceptType != Accept.TEXT) || acceptType == Accept.ATOM) {
-          throw new UnsupportedMediaTypeException("Unsupported media type " + acceptType);
+        try {
+          return navigateEntity(acceptType, entitySetName, entityId, path);
+        } catch (NotFoundException e) {
+          // if the given path is not about any link then search for property
+          return navigateProperty(acceptType, entitySetName, entityId, path, false);
         }
       }
-
-      return xml.createResponse(stream, Commons.getETag(basePath, getVersion()), acceptType);
     } catch (Exception e) {
-      return xml.createFaultResponse(accept, e);
+      return utils.createFaultResponse(accept, e);
     }
+  }
+
+  private Response navigateStreamedEntity(
+          String entitySetName,
+          String entityId,
+          String path) throws Exception {
+
+    final AbstractUtilities utils = getUtilities(null);
+    final Map.Entry<String, InputStream> entityInfo = utils.readMediaEntity(entitySetName, entityId, path);
+    return utils.createResponse(entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), getVersion()), null);
+  }
+
+  private Response navigateEntity(
+          final Accept acceptType,
+          String entitySetName,
+          String entityId,
+          String path) throws Exception {
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+
+    final LinkInfo linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.XML);
+    final Map.Entry<String, List<String>> links = xml.extractLinkURIs(linkInfo.getLinks());
+
+    InputStream stream;
+
+    switch (acceptType) {
+      case JSON:
+      case JSON_FULLMETA:
+      case JSON_NOMETA:
+        stream = json.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
+        stream = json.wrapJsonEntities(stream);
+        break;
+      default:
+        stream = xml.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
+    }
+
+    return xml.createResponse(stream, Commons.getETag(basePath, getVersion()), acceptType);
+  }
+
+  private Response navigateProperty(
+          final Accept acceptType,
+          final String entitySetName,
+          final String entityId,
+          final String path,
+          final boolean searchForValue) throws Exception {
+
+    if ((searchForValue && acceptType != null && acceptType != Accept.TEXT) || acceptType == Accept.ATOM) {
+      throw new UnsupportedMediaTypeException("Unsupported media type " + acceptType);
+    }
+
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+
+    InputStream stream = FSManager.instance(getVersion()).readFile(
+            basePath + ENTITY, acceptType == null || acceptType == Accept.TEXT
+            ? Accept.XML : acceptType);
+
+    final AbstractUtilities utils = getUtilities(acceptType);
+
+    final List<String> pathElements = Arrays.asList(path.split("\\/"));
+
+    if (searchForValue) {
+      stream = utils.getPropertyValue(stream, pathElements);
+    } else {
+      String edmType = xml.getEdmTypeFromAtom(entitySetName, entityId, pathElements);
+      stream = utils.getProperty(entitySetName, entityId, pathElements, edmType);
+    }
+
+    return xml.createResponse(stream, Commons.getETag(basePath, getVersion()), acceptType);
   }
 
   /**
@@ -670,9 +1058,9 @@ public abstract class AbstractServices {
 
       final List<String> links;
       if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
-        links = XMLUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = xml.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
       } else {
-        links = JSONUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = json.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
       }
 
       utils.putLinksInMemory(
@@ -747,9 +1135,9 @@ public abstract class AbstractServices {
 
       final List<String> links;
       if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
-        links = XMLUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = xml.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
       } else {
-        links = JSONUtilities.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = json.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
       }
 
       utils.putLinksInMemory(
@@ -788,10 +1176,10 @@ public abstract class AbstractServices {
 
       final AbstractUtilities utils = getUtilities(acceptType);
 
-      final Map.Entry<String, List<String>> currents = JSONUtilities.extractLinkURIs(utils.readLinks(
+      final Map.Entry<String, List<String>> currents = json.extractLinkURIs(utils.readLinks(
               entitySetName, entityId, linkName, Accept.JSON_FULLMETA).getLinks());
 
-      final Map.Entry<String, List<String>> toBeRemoved = JSONUtilities.extractLinkURIs(utils.readLinks(
+      final Map.Entry<String, List<String>> toBeRemoved = json.extractLinkURIs(utils.readLinks(
               entitySetName, entityId, linkName + "(" + linkId + ")", Accept.JSON_FULLMETA).getLinks());
 
       final List<String> remains = currents.getValue();

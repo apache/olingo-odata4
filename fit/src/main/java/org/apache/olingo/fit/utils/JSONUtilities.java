@@ -176,35 +176,41 @@ public class JSONUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(srcNode.toString());
   }
 
-  protected static InputStream getJsonPropertyValue(final InputStream src, final String name)
+  @Override
+  public InputStream getPropertyValue(final InputStream src, final List<String> path)
           throws Exception {
-    ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
-    JsonNode node = getJsonProperty(srcNode, new String[] {name}, 0);
+    JsonNode node = getProperty(srcNode, path, 0);
     return IOUtils.toInputStream(node.asText());
   }
 
-  public static InputStream getJsonProperty(final InputStream src, final String[] path, final String edmType)
+  @Override
+  public InputStream getProperty(
+          final String entitySetName, final String entityId, final List<String> path, final String edmType)
           throws Exception {
+
+    final InputStream src =
+            fsManager.readFile(Commons.getEntityBasePath(entitySetName, entityId) + ENTITY, Accept.JSON_FULLMETA);
 
     final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
 
-    final ObjectNode property = new ObjectNode(JsonNodeFactory.instance);
+    final ObjectNode propertyNode = new ObjectNode(JsonNodeFactory.instance);
 
     if (StringUtils.isNotBlank(edmType)) {
-      property.put(JSON_ODATAMETADATA_NAME, ODATA_METADATA_PREFIX + edmType);
+      propertyNode.put(JSON_ODATAMETADATA_NAME, ODATA_METADATA_PREFIX + edmType);
     }
 
-    JsonNode jsonNode = getJsonProperty(srcNode, path, 0);
+    JsonNode jsonNode = getProperty(srcNode, path, 0);
     if (jsonNode.isObject()) {
-      property.putAll((ObjectNode) jsonNode);
+      propertyNode.putAll((ObjectNode) jsonNode);
     } else {
-      property.put("value", jsonNode.asText());
+      propertyNode.put("value", jsonNode.asText());
     }
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    mapper.writeValue(bos, property);
+    mapper.writeValue(bos, propertyNode);
 
     final InputStream res = new ByteArrayInputStream(bos.toByteArray());
     IOUtils.closeQuietly(bos);
@@ -212,16 +218,16 @@ public class JSONUtilities extends AbstractUtilities {
     return res;
   }
 
-  private static JsonNode getJsonProperty(final JsonNode node, final String[] path, final int index)
+  private JsonNode getProperty(final JsonNode node, final List<String> path, final int index)
           throws NotFoundException {
     final Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
     while (iter.hasNext()) {
       final Map.Entry<String, JsonNode> entry = iter.next();
-      if (path[index].equals(entry.getKey())) {
-        if (path.length - 1 == index) {
+      if (path.get(index).equals(entry.getKey())) {
+        if (path.size() - 1 == index) {
           return entry.getValue();
         } else {
-          return getJsonProperty(entry.getValue(), path, index + 1);
+          return getProperty(entry.getValue(), path, index + 1);
         }
       }
     }
@@ -400,7 +406,16 @@ public class JSONUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(toBeChangedObject.toString());
   }
 
-  public static Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
+  @Override
+  public Map.Entry<String, List<String>> extractLinkURIs(
+          final String entitySetName, final String entityId, final String linkName)
+          throws Exception {
+    final LinkInfo links = readLinks(entitySetName, entityId, linkName, Accept.JSON_FULLMETA);
+    return extractLinkURIs(links.getLinks());
+  }
+
+  @Override
+  public Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
           throws Exception {
     final ObjectMapper mapper = new ObjectMapper();
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
@@ -434,6 +449,54 @@ public class JSONUtilities extends AbstractUtilities {
     IOUtils.closeQuietly(content);
 
     srcNode.set(JSON_EDITLINK_NAME, new TextNode(href));
+    return IOUtils.toInputStream(srcNode.toString());
+  }
+
+  @Override
+  public InputStream replaceProperty(
+          final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
+          throws Exception {
+    final ObjectMapper mapper = new ObjectMapper();
+    final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
+    IOUtils.closeQuietly(src);
+
+    final JsonNode replacementNode;
+    if (justValue) {
+      replacementNode = new TextNode(IOUtils.toString(replacement));
+    } else {
+      replacementNode = (ObjectNode) mapper.readTree(replacement);
+    }
+    IOUtils.closeQuietly(replacement);
+
+    JsonNode node = srcNode;
+    for (int i = 0; i < path.size() - 1; i++) {
+      node = node.get(path.get(i));
+      if (node == null) {
+        throw new NotFoundException();
+      }
+    }
+
+    ((ObjectNode) node).set(path.get(path.size() - 1), replacementNode);
+
+    return IOUtils.toInputStream(srcNode.toString());
+  }
+
+  @Override
+  public InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception {
+    final ObjectMapper mapper = new ObjectMapper();
+    final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
+    IOUtils.closeQuietly(src);
+
+    JsonNode node = srcNode;
+    for (int i = 0; i < path.size() - 1; i++) {
+      node = node.get(path.get(i));
+      if (node == null) {
+        throw new NotFoundException();
+      }
+    }
+
+    ((ObjectNode) node).set(path.get(path.size() - 1), null);
+
     return IOUtils.toInputStream(srcNode.toString());
   }
 }

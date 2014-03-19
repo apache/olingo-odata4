@@ -375,6 +375,7 @@
                 <exclude>**/META-INF/services/*</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.ini</exclude>
+                <exclude>**/*.bin</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**</exclude>
