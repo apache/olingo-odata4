@@ -114,5 +114,12 @@ public interface UriInfoResource {
    * @return List of resource parts.
    */
   List<UriResource> getUriResourceParts();
+  
+  /**
+   * Give the last part of a resource path.
+   * 
+   * @return An uri resource object.
+   */
+  UriResource getUriResourceLastPart();
 
 }

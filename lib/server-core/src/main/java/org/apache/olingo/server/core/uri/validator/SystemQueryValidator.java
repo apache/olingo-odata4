@@ -18,9 +18,12 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
@@ -39,7 +42,9 @@ public class SystemQueryValidator {
           /*                         resource  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
           /*                          service  6 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
           /*                        entitySet  7 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true ,    true  },
+
           /*                   entitySetCount  8 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
+          
           /*                           entity  9 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      true ,    false },
           /*                      mediaStream 10 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
           /*                       references 11 */ { true ,   true ,   false,   false,   false,   true ,    true ,   false,   true ,   true ,      false,    true  },
@@ -57,7 +62,7 @@ public class SystemQueryValidator {
 
   public void validate(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
 
-    validateQueryOptions(uriInfo);
+    validateQueryOptions(uriInfo, edm);
     validateKeyPredicateTypes(uriInfo, edm);
 
   }
@@ -108,7 +113,7 @@ public class SystemQueryValidator {
     return idx;
   }
 
-  private int rowIndex(final UriInfo uriInfo) {
+  private int rowIndex(final UriInfo uriInfo, Edm edm) throws UriValidationException {
     int idx;
 
     switch (uriInfo.getKind()) {
@@ -128,7 +133,7 @@ public class SystemQueryValidator {
       idx = 4;
       break;
     case resource:
-      idx = 5;
+      idx = rowIndexForResourceKind(uriInfo, edm);
       break;
     case service:
       idx = 6;
@@ -140,27 +145,77 @@ public class SystemQueryValidator {
     return idx;
   }
 
-  private void validateQueryOptions(final UriInfo uriInfo) throws UriValidationException {
-    try {
-    int row = rowIndex(uriInfo);
+  private int rowIndexForResourceKind(UriInfo uriInfo, Edm edm) throws UriValidationException {
+    int idx = 5;
 
-    for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
-      int col = colIndex(option.getKind());
-      
-      System.out.print("[" + row +"][" + col +"]");
+    UriResource lastPathSegemnt = uriInfo.getUriResourceLastPart();
 
-      
-      if (!decisionMatrix[row][col]) {
-        throw new UriValidationException("System query option not allowed: " + option.getName());
+    switch (lastPathSegemnt.getKind()) {
+    case count:
+      List<UriResource> parts = uriInfo.getUriResourceParts();
+      UriResource secondLastPart = parts.get(parts.size() - 2);
+      switch (secondLastPart.getKind()) {
+      case entitySet:
+        idx = 8;
+        break;
+        default : throw new UriValidationException("Illegal path part kind: " + lastPathSegemnt.getKind());
       }
+      break;
+    case action:
+      break;
+    case complexProperty:
+      break;
+    case entitySet:
+      idx = 7;
+      break;
+    case function:
+      break;
+    case it:
+      break;
+    case lambdaAll:
+      break;
+    case lambdaAny:
+      break;
+    case lambdaVariable:
+      break;
+    case navigationProperty:
+      break;
+    case primitiveProperty:
+      break;
+    case ref:
+      break;
+    case root:
+      break;
+    case singleton:
+      break;
+    case value:
+      break;
+    default:
+      throw new ODataRuntimeException("Unsupported uriResource kind: " + lastPathSegemnt.getKind());
     }
-    }finally {
+
+    return idx;
+  }
+
+  private void validateQueryOptions(final UriInfo uriInfo, Edm edm) throws UriValidationException {
+    try {
+      int row = rowIndex(uriInfo, edm);
+
+      for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
+        int col = colIndex(option.getKind());
+
+        System.out.print("[" + row + "][" + col + "]");
+
+        if (!decisionMatrix[row][col]) {
+          throw new UriValidationException("System query option not allowed: " + option.getName());
+        }
+      }
+    } finally {
       System.out.println();
     }
-    
+
   }
 
-  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
-  }
+  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {}
 
 }
