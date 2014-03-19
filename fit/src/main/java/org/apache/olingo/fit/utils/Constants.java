@@ -72,6 +72,8 @@ public class Constants {
 
   public final static String ENTITY = "entity";
 
+  public final static String MEDIA_CONTENT_FILENAME = "$value.bin";
+
   public final static String SKIP_TOKEN = "skiptoken";
 
   public final static String FILTER = "filter";

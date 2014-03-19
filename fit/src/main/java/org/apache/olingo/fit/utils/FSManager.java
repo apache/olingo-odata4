@@ -70,6 +70,7 @@ public class FSManager {
   }
 
   public FileObject putInMemory(final InputStream is, final String path) throws IOException {
+    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA scrivo "+path);
     final FileObject memObject = fsManager.resolveFile(MEM_PREFIX + path);
 
     if (memObject.exists()) {
@@ -84,8 +85,15 @@ public class FSManager {
     IOUtils.copy(is, os);
     IOUtils.closeQuietly(is);
     IOUtils.closeQuietly(os);
+    
+    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA inserito valore "+
+            IOUtils.toString(memObject.getContent().getInputStream()));
 
     return memObject;
+  }
+
+  public InputStream readFile(final String relativePath) {
+    return readFile(relativePath, null);
   }
 
   public InputStream readFile(final String relativePath, final Accept accept) {

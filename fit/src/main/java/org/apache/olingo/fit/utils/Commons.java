@@ -36,11 +36,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -57,7 +55,7 @@ public abstract class Commons {
 
   protected final static Map<String, Integer> sequence = new HashMap<String, Integer>();
 
-  protected final static Set<String> mediaContent = new HashSet<String>();
+  protected final static Map<String, String> mediaContent = new HashMap<String, String>();
 
   protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
           new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
@@ -65,12 +63,15 @@ public abstract class Commons {
   static {
     sequence.put("Customer", 1000);
     sequence.put("CustomerInfo", 1000);
+    sequence.put("Car", 1000);
     sequence.put("Message", 1000);
     sequence.put("Order", 1000);
     sequence.put("ComputerDetail", 1000);
     sequence.put("AllGeoTypesSet", 1000);
 
-    mediaContent.add("CustomerInfo");
+    mediaContent.put("CustomerInfo", "CustomerinfoId");
+    mediaContent.put("Car", "VIN");
+    mediaContent.put("Car/Photo", null);
   }
 
   public static String getEntityURI(final String entitySetName, final String entityKey) {

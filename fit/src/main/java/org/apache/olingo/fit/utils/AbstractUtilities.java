@@ -64,7 +64,7 @@ public abstract class AbstractUtilities {
   }
 
   public boolean isMediaContent(final String entityName) {
-    return Commons.mediaContent.contains(entityName);
+    return Commons.mediaContent.containsKey(entityName);
   }
 
   /**
@@ -164,7 +164,7 @@ public abstract class AbstractUtilities {
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(is, bos);
-    is.close();
+    IOUtils.closeQuietly(is);
 
     // -----------------------------------------
     // 0. Retrieve navigation links to be mantained
@@ -195,7 +195,7 @@ public abstract class AbstractUtilities {
     final String entityKey = key == null ? getDefaultEntryKey(
             entitySetName, new ByteArrayInputStream(bos.toByteArray()), getDefaultFormat()) : key;
 
-    final String path = entitySetName + File.separatorChar + Commons.getEntityKey(entityKey) + File.separatorChar;
+    final String path = Commons.getEntityBasePath(entitySetName, entityKey);
     // -----------------------------------------
 
     // -----------------------------------------
@@ -268,6 +268,72 @@ public abstract class AbstractUtilities {
     return fo.getContent().getInputStream();
   }
 
+  public InputStream addMediaEntity(
+          final String entitySetName,
+          final InputStream is) throws Exception {
+
+    // -----------------------------------------
+    // 0. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
+    // -----------------------------------------
+    final String entityKey = getDefaultEntryKey(entitySetName, null, getDefaultFormat());
+    final String path = Commons.getEntityBasePath(entitySetName, entityKey);
+    // -----------------------------------------
+
+    // -----------------------------------------
+    // 1. save the media entity value
+    // -----------------------------------------
+    fsManager.putInMemory(is, fsManager.getAbsolutePath(path + MEDIA_CONTENT_FILENAME, null));
+    IOUtils.closeQuietly(is);
+    // -----------------------------------------
+
+    // -----------------------------------------
+    // 2. save entity as atom
+    // -----------------------------------------
+    final String entityURI = Commons.getEntityURI(entitySetName, entityKey);
+    String entity = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+            + "<entry xml:base=\"" + DEFAULT_SERVICE_URL + "\" "
+            + "xmlns=\"http://www.w3.org/2005/Atom\" "
+            + "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" "
+            + "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
+            + "xmlns:georss=\"http://www.georss.org/georss\" "
+            + "xmlns:gml=\"http://www.opengis.net/gml\">"
+            + "<id>" + DEFAULT_SERVICE_URL + entityURI + "</id>"
+            + "<category term=\"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\" "
+            + "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />"
+            + "<link rel=\"edit\" title=\"Car\" href=\"" + entityURI + "\" />"
+            + "<link rel=\"edit-media\" title=\"Car\" href=\"" + entityURI + "/$value\" />"
+            + "<content type=\"*/*\" src=\"" + entityURI + "/$value\" />"
+            + "<m:properties>"
+            + "<d:" + Commons.mediaContent.get(entitySetName) + " m:type=\"Edm.Int32\">" + entityKey + "</d:VIN>"
+            + "<d:Description m:null=\"true\" />"
+            + "</m:properties>"
+            + "</entry>";
+
+    fsManager.putInMemory(
+            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + ENTITY, Accept.ATOM));
+    // -----------------------------------------
+
+    // -----------------------------------------
+    // 3. save entity as json
+    // -----------------------------------------
+    entity = "{"
+            + "\"odata.metadata\": \"" + DEFAULT_SERVICE_URL + "/$metadata#" + entitySetName + "/@Element\","
+            + "\"odata.type\": \"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\","
+            + "\"odata.id\": \"" + DEFAULT_SERVICE_URL + entityURI + "\","
+            + "\"odata.editLink\": \"" + entityURI + "\","
+            + "\"odata.mediaEditLink\": \"" + entityURI + "/$value\","
+            + "\"odata.mediaReadLink\": \"" + entityURI + "/$value\","
+            + "\"odata.mediaContentType\": \"*/*\","
+            + "\"" + Commons.mediaContent.get(entitySetName) + "\": " + entityKey + ","
+            + "\"Description\": null" + "}";
+
+    fsManager.putInMemory(
+            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + ENTITY, Accept.JSON_FULLMETA));
+    // -----------------------------------------
+
+    return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
+  }
+
   public void putLinksInMemory(
           final String basePath,
           final String entitySetName,
@@ -319,19 +385,38 @@ public abstract class AbstractUtilities {
 
     if (accept != null) {
       builder.header("Content-Type", accept.toString());
+    } else {
+      builder.header("Content-Type", "*/*");
     }
 
     if (status != null) {
       builder.status(status);
     }
 
+    int contentLength = 0;
+
     if (entity != null) {
-      if (accept != null && (Accept.JSON == accept || Accept.JSON_NOMETA == accept)) {
-        builder.entity(Commons.changeFormat(entity, accept));
-      } else {
-        builder.entity(entity);
+      try {
+        final InputStream toBeStreamedBack;
+
+        if (accept != null && (Accept.JSON == accept || Accept.JSON_NOMETA == accept)) {
+          toBeStreamedBack = Commons.changeFormat(entity, accept);
+        } else {
+          toBeStreamedBack = entity;
+        }
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOUtils.copy(toBeStreamedBack, bos);
+        IOUtils.closeQuietly(toBeStreamedBack);
+
+        contentLength = bos.size();
+        builder.entity(new ByteArrayInputStream(bos.toByteArray()));
+      } catch (IOException ioe) {
+        LOG.error("Error streaming response entity back", ioe);
       }
     }
+
+    builder.header("Content-Length", contentLength);
 
     return builder.build();
   }
@@ -400,10 +485,10 @@ public abstract class AbstractUtilities {
           }
           res = keyBuilder.toString();
         } catch (Exception e) {
-          int messageId = sequence.get(entitySetName) + 1;
+          final int messageId;
           if (sequence.containsKey(entitySetName)) {
-            res = "MessageId=" + String.valueOf(messageId)
-                    + ",FromUsername=1";
+            messageId = sequence.get(entitySetName) + 1;
+            res = "MessageId=" + String.valueOf(messageId) + ",FromUsername=1";
           } else {
             throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
@@ -474,6 +559,19 @@ public abstract class AbstractUtilities {
           }
         }
         sequence.put(entitySetName, Integer.valueOf(res));
+      } else if ("Car".equals(entitySetName)) {
+        try {
+          final Map<String, InputStream> value =
+                  getPropertyValues(entity, Collections.<String>singletonList("VIN"));
+          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+        } catch (Exception e) {
+          if (sequence.containsKey(entitySetName)) {
+            res = String.valueOf(sequence.get(entitySetName) + 1);
+          } else {
+            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+          }
+        }
+        sequence.put(entitySetName, Integer.valueOf(res));
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }
@@ -521,6 +619,32 @@ public abstract class AbstractUtilities {
     linkInfo.setFeed(Commons.linkInfo.get(version).isFeed(entitySetName, linkName));
 
     return linkInfo;
+  }
+
+  public InputStream putMediaInMemory(
+          final String entitySetName, final String entityId, final InputStream value)
+          throws IOException {
+    return putMediaInMemory(entitySetName, entityId, null, value);
+  }
+
+  public InputStream putMediaInMemory(
+          final String entitySetName, final String entityId, final String name, final InputStream value)
+          throws IOException {
+    final FileObject fo = fsManager.putInMemory(value, fsManager.getAbsolutePath(
+            Commons.getEntityBasePath(entitySetName, entityId) + (name == null ? MEDIA_CONTENT_FILENAME : name), null));
+
+    return fo.getContent().getInputStream();
+  }
+
+  public Map.Entry<String, InputStream> readMediaEntity(final String entitySetName, final String entityId) {
+    return readMediaEntity(entitySetName, entityId, null);
+  }
+
+  public Map.Entry<String, InputStream> readMediaEntity(
+          final String entitySetName, final String entityId, final String name) {
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+    return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath
+            + (name == null ? MEDIA_CONTENT_FILENAME : name)));
   }
 
   public Map.Entry<String, InputStream> readEntity(
@@ -661,7 +785,7 @@ public abstract class AbstractUtilities {
           throws Exception;
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is) throws Exception;
-  
+
   public abstract Map.Entry<String, List<String>> extractLinkURIs(
           final String entitySetName, final String entityId, final String linkName) throws Exception;
 }
