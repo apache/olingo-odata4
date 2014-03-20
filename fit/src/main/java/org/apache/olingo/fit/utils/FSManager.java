@@ -84,7 +84,7 @@ public class FSManager {
     IOUtils.copy(is, os);
     IOUtils.closeQuietly(is);
     IOUtils.closeQuietly(os);
-    
+
     return memObject;
   }
 

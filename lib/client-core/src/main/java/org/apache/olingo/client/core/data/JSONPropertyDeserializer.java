@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.data;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
@@ -63,20 +62,8 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
       property.setValue(new NullValueImpl());
     }
 
-    JsonNode subtree = null;
-    if (tree.has(Constants.JSON_VALUE)) {
-      final JsonNode value = tree.get(Constants.JSON_VALUE);
-      if (value.isValueNode()) {
-        property.setValue(new PrimitiveValueImpl(value.asText()));
-      } else {
-        subtree = tree.get(Constants.JSON_VALUE);
-      }
-    } else {
-      subtree = tree;
-    }
-
-    if (property.getValue() == null && subtree != null) {
-      value(property, subtree);
+    if (property.getValue() == null) {
+      value(property, tree.has(Constants.JSON_VALUE) ? tree.get(Constants.JSON_VALUE) : tree);
     }
 
     return property;

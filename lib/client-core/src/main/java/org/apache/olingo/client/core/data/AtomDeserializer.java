@@ -122,6 +122,34 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
+  private XMLLinkCollectionImpl linkCollection(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+
+    final XMLLinkCollectionImpl linkCollection = new XMLLinkCollectionImpl();
+
+    boolean isURI = false;
+    boolean isNext = false;
+    while (reader.hasNext()) {
+      final XMLEvent event = reader.nextEvent();
+      if (event.isStartElement()) {
+        isURI = uriQName.equals(event.asStartElement().getName());
+        isNext = nextQName.equals(event.asStartElement().getName());
+      }
+
+      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
+        if (isURI) {
+          linkCollection.getLinks().add(URI.create(event.asCharacters().getData()));
+          isURI = false;
+        } else if (isNext) {
+          linkCollection.setNext(URI.create(event.asCharacters().getData()));
+          isNext = false;
+        }
+      }
+    }
+
+    return linkCollection;
+  }
+
   private void properties(final XMLEventReader reader, final StartElement start, final AtomEntryImpl entry)
           throws XMLStreamException {
 
@@ -333,6 +361,8 @@ public class AtomDeserializer extends AbstractAtomDealer {
       return (T) entry(input);
     } else if (AtomPropertyImpl.class.equals(reference)) {
       return (T) property(input);
+    } else if (XMLLinkCollectionImpl.class.equals(reference)) {
+      return (T) linkCollection(input);
     }
     return null;
   }

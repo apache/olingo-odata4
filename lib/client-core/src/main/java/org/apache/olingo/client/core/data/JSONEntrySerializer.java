@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
@@ -70,7 +71,9 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
         }
         uris.add(link.getHref());
       } else {
-        jgen.writeStringField(link.getTitle() + Constants.JSON_BIND_LINK_SUFFIX, link.getHref());
+        if (StringUtils.isNotBlank(link.getHref())) {
+          jgen.writeStringField(link.getTitle() + Constants.JSON_BIND_LINK_SUFFIX, link.getHref());
+        }
       }
 
       if (link.getInlineEntry() != null) {

@@ -236,11 +236,14 @@ public class AtomSerializer extends AbstractAtomDealer {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
     writer.writeStartDocument();
-    writer.writeNamespace(
-            Constants.PREFIX_DATASERVICES, version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
 
-    writer.writeStartElement(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_URI);
+    writer.writeStartElement(Constants.ELEM_LINKS);
+    writer.writeDefaultNamespace(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+
+    writer.writeStartElement(Constants.ELEM_URI);
     writer.writeCharacters(link.getHref());
+    writer.writeEndElement();
+
     writer.writeEndElement();
 
     writer.writeEndDocument();

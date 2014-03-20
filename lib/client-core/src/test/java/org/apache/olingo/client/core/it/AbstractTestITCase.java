@@ -214,7 +214,7 @@ public abstract class AbstractTestITCase {
 
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Information",
             getClient().getPrimitiveValueBuilder().setText(sampleinfo).setType(
-            ODataJClientEdmPrimitiveType.String).build()));
+                    ODataJClientEdmPrimitiveType.String).build()));
 
     return entity;
   }
@@ -228,12 +228,12 @@ public abstract class AbstractTestITCase {
     // add name attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
             getClient().getPrimitiveValueBuilder().setText(sampleName).setType(
-            ODataJClientEdmPrimitiveType.String).build()));
+                    ODataJClientEdmPrimitiveType.String).build()));
 
     // add key attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
             getClient().getPrimitiveValueBuilder().setText(String.valueOf(id)).setType(
-            ODataJClientEdmPrimitiveType.Int32).build()));
+                    ODataJClientEdmPrimitiveType.Int32).build()));
 
     // add BackupContactInfo attribute (collection)
     final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(

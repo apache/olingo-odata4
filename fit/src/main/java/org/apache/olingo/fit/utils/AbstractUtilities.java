@@ -423,6 +423,7 @@ public abstract class AbstractUtilities {
 
   public Response createFaultResponse(final String accept, final Exception e) {
     LOG.debug("Create fault response about .... ", e);
+    e.printStackTrace();
 
     final Response.ResponseBuilder builder = Response.serverError();
     if (version == ODataVersion.v3) {

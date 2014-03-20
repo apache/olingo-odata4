@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.client.core.op.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Error;
@@ -78,7 +76,7 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   @Override
   public LinkCollection toLinkCollection(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
-            ? xml(input, XMLLinkCollectionImpl.class)
+            ? atom(input, XMLLinkCollectionImpl.class)
             : json(input, JSONLinkCollectionImpl.class);
   }
 
@@ -110,10 +108,7 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
 
   protected <T> T json(final InputStream input, final Class<T> reference) {
     try {
-      String maz = IOUtils.toString(input);
-      ByteArrayInputStream bais = new ByteArrayInputStream(maz.getBytes());
-    System.out.println("KKKKKKKKKKKKKKKKKK\n" + maz);
-      return getObjectMapper().readValue(bais, reference);
+      return getObjectMapper().readValue(input, reference);
     } catch (Exception e) {
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }

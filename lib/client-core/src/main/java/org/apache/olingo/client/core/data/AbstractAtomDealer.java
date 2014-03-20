@@ -48,6 +48,9 @@ abstract class AbstractAtomDealer {
 
   protected final QName countQName;
 
+  protected final QName uriQName;
+  protected final QName nextQName;
+
   public AbstractAtomDealer(final ODataServiceVersion version) {
     this.version = version;
 
@@ -65,6 +68,10 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_ELEMENT);
     this.countQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_COUNT);
+    this.uriQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_URI);
+    this.nextQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.NEXT_LINK_REL);
   }
 
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {

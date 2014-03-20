@@ -136,7 +136,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       entrySelfLink.setRel(Constants.SELF_LINK_REL);
       entry.setSelfLink(entrySelfLink);
     }
-        // -------------------------------------------------------------
+    // -------------------------------------------------------------
 
     // -------------------------------------------------------------
     // Append navigation links (handling inline entry / feed as well)
@@ -148,7 +148,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       entry.getNavigationLinks().add(getLink(link,
               ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
     }
-        // -------------------------------------------------------------
+    // -------------------------------------------------------------
 
     // -------------------------------------------------------------
     // Append edit-media links
@@ -158,7 +158,7 @@ public abstract class AbstractODataBinder implements ODataBinder {
       entry.getMediaEditLinks().add(getLink(link,
               ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
     }
-        // -------------------------------------------------------------
+    // -------------------------------------------------------------
 
     // -------------------------------------------------------------
     // Append association links

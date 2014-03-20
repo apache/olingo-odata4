@@ -147,6 +147,8 @@ public class Constants {
 
   public static final String ELEM_PROPERTY = "property";
 
+  public static final String ELEM_LINKS = "links";
+
   public static final String ELEM_URI = "uri";
 
   // JSON stuff

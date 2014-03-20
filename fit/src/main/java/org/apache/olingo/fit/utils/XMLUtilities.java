@@ -319,7 +319,9 @@ public class XMLUtilities extends AbstractUtilities {
         startDepth = linkInfo.getKey();
 
         final String title = link.getStart().getAttributeByName(new QName("title")).getValue();
-        final String href = link.getStart().getAttributeByName(new QName("href")).getValue();
+
+        final Attribute hrefAttr = link.getStart().getAttributeByName(new QName("href"));
+        final String href = hrefAttr == null ? null : hrefAttr.getValue();
 
         try {
           final XmlElement inlineElement =
@@ -341,7 +343,7 @@ public class XMLUtilities extends AbstractUtilities {
           inlineReader.close();
         } catch (Exception ignore) {
           // inline element not found (inlines are not mondatory).
-          if (entityUriPattern.matcher(href).matches()) {
+          if (StringUtils.isNotBlank(href) && entityUriPattern.matcher(href).matches()) {
             links.addLinks(title, href.substring(href.lastIndexOf('/') + 1));
           }
         }
