@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -70,7 +69,6 @@ import org.apache.olingo.server.core.uri.UriResourceValueImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.AliasAndValueContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AltAddContext;
@@ -128,7 +126,6 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.NamespaceContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NaninfinityContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NowMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NullruleContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.Number_in_jsonContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OdataIdentifierContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
@@ -157,14 +154,11 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.TopContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalOffsetMinutesMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TotalsecondsMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TrimMethodCallExprContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.UnaryContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.YearMethodCallExprContext;
-import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
@@ -208,8 +202,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       this.isCollection = isCollection;
     }
 
-    public TypeInformation() {
-    }
+    public TypeInformation() {}
   }
 
   public UriContext context = null;
@@ -687,26 +680,26 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return ret;
   }
 
-  private EdmType removeUriResourceStartingTypeFilterImpl(UriInfoImpl uriInfoImplpath) {
+  private EdmType removeUriResourceStartingTypeFilterImpl(final UriInfoImpl uriInfoImplpath) {
 
     List<UriResource> segments = uriInfoImplpath.getUriResourceParts();
     if (segments.size() == 0) {
       return null;
     }
-    
+
     UriResource segment = segments.get(0);
     if (segment instanceof UriResourceStartingTypeFilterImpl) {
       UriResourceStartingTypeFilterImpl startingTypeFilter = (UriResourceStartingTypeFilterImpl) segment;
-      
+
       EdmType type = null;
-      if (startingTypeFilter.getTypeFilterOnEntry()!= null) {
-         type =startingTypeFilter.getTypeFilterOnEntry();
-      } else if (startingTypeFilter.getTypeFilterOnCollection()!= null) {
-        type =startingTypeFilter.getTypeFilterOnCollection();
+      if (startingTypeFilter.getTypeFilterOnEntry() != null) {
+        type = startingTypeFilter.getTypeFilterOnEntry();
+      } else if (startingTypeFilter.getTypeFilterOnCollection() != null) {
+        type = startingTypeFilter.getTypeFilterOnCollection();
       } else {
-        type =startingTypeFilter.getType();
+        type = startingTypeFilter.getType();
       }
-      
+
       uriInfoImplpath.removeResourcePart(0);
       return type;
     }
@@ -1141,9 +1134,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     super.visitExpandPath(ctx);
 
-    EdmType startType = this.removeUriResourceStartingTypeFilterImpl(context.contextUriInfo);
+    EdmType startType = removeUriResourceStartingTypeFilterImpl(context.contextUriInfo);
     expandItem.setResourcePath(context.contextUriInfo);
-    if ( startType != null) {
+    if (startType != null) {
       expandItem.setTypeFilter(startType);
     }
 
@@ -1308,11 +1301,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (text.equals("max")) {
       levels.setMax();
-    } else    {
+    } else {
       levels.setValue(Integer.parseInt(text));
     }
     levels.setText(text);
-    
 
     return levels;
 
@@ -1557,7 +1549,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitNaninfinity(NaninfinityContext ctx) {
+  public Object visitNaninfinity(final NaninfinityContext ctx) {
     return new LiteralImpl().setType(EdmPrimitiveTypeKind.Decimal.getEdmPrimitiveTypeInstance()).setText(ctx.getText());
   }
 
@@ -1808,8 +1800,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       } else {
         UriInfoImpl uriInfo = (UriInfoImpl) context.contextSelectItem.getResourcePath();
         UriResource last = uriInfo.getLastResourcePart();
-        
-        prevType = getTypeInformation( last).type;
+
+        prevType = getTypeInformation(last).type;
         if (prevType == null) {
           throw wrap(new UriParserSemanticException("prev segement not typed"));
         }
@@ -1840,7 +1832,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(simple);
 
-            EdmType startType = this.removeUriResourceStartingTypeFilterImpl(uriInfo);
+            EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
             if (startType != null) {
               context.contextSelectItem.setTypeFilter(startType);
             }
@@ -1860,7 +1852,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
             uriInfo.addResourcePart(complex);
 
-            EdmType startType = this.removeUriResourceStartingTypeFilterImpl(uriInfo);
+            EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
             if (startType != null) {
               context.contextSelectItem.setTypeFilter(startType);
             }
@@ -1895,7 +1887,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
               uriInfo.addResourcePart(resourcePart);
 
-              EdmType startType = this.removeUriResourceStartingTypeFilterImpl(uriInfo);
+              EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
               if (startType != null) {
                 context.contextSelectItem.setTypeFilter(startType);
               }
@@ -1914,7 +1906,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
               uriInfo.addResourcePart(resourcePart);
 
-              EdmType startType = this.removeUriResourceStartingTypeFilterImpl(uriInfo);
+              EdmType startType = removeUriResourceStartingTypeFilterImpl(uriInfo);
               if (startType != null) {
                 context.contextSelectItem.setTypeFilter(startType);
               }
@@ -2095,7 +2087,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         .setMethod(MethodKind.TRIM)
         .addParameter((ExpressionImpl) ctx.vE1.accept(this));
   }
-
 
   @Override
   public ExpressionImpl visitYearMethodCallExpr(final YearMethodCallExprContext ctx) {

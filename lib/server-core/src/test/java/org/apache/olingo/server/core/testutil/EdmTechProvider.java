@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -31,6 +31,7 @@ import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.AliasInfo;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
+import org.apache.olingo.server.api.edm.provider.EntityContainer;
 import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.EntityType;
@@ -45,6 +46,7 @@ import org.apache.olingo.server.api.edm.provider.Property;
 import org.apache.olingo.server.api.edm.provider.PropertyRef;
 import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.server.api.edm.provider.ReturnType;
+import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 
 public class EdmTechProvider extends EdmProvider {
@@ -463,7 +465,8 @@ public class EdmTechProvider extends EdmProvider {
 
   Property propertyInt16_NotNullable = new Property()
       .setName("PropertyInt16")
-      .setType(nameInt16);
+      .setType(nameInt16)
+      .setNullable(false);
   Property propertyInt32 = new Property()
       .setName("PropertyInt32")
       .setType(nameInt32);
@@ -495,6 +498,212 @@ public class EdmTechProvider extends EdmProvider {
 
   Property propertyTimeOfDay = new Property().setName("PropertyTimeOfDay")
       .setType(nameTimeOfDay);
+
+  @Override
+  public EntityContainer getEntityContainer() throws ODataException {
+    // TODO Auto-generated method stub
+    return super.getEntityContainer();
+  }
+
+  @Override
+  public List<Schema> getSchemas() throws ODataException {
+    List<Schema> schemas = new ArrayList<Schema>();
+    Schema schema = new Schema();
+    schema.setNamespace("com.sap.odata.test1");
+    schema.setAlias("Namespace1_Alias");
+    schemas.add(schema);
+    // EnumTypes
+    List<EnumType> enumTypes = new ArrayList<EnumType>();
+    schema.setEnumTypes(enumTypes);
+    enumTypes.add(getEnumType(nameENString));
+    // EntityTypes
+    List<EntityType> entityTypes = new ArrayList<EntityType>();
+    schema.setEntityTypes(entityTypes);
+    entityTypes.add(getEntityType(nameETAllPrim));
+    entityTypes.add(getEntityType(nameETCollAllPrim));
+    entityTypes.add(getEntityType(nameETTwoPrim));
+    entityTypes.add(getEntityType(nameETMixPrimCollComp));
+    entityTypes.add(getEntityType(nameETTwoKeyTwoPrim));
+    entityTypes.add(getEntityType(nameETBase));
+    entityTypes.add(getEntityType(nameETTwoBase));
+    entityTypes.add(getEntityType(nameETAllKey));
+    entityTypes.add(getEntityType(nameETCompAllPrim));
+    entityTypes.add(getEntityType(nameETCompCollAllPrim));
+    entityTypes.add(getEntityType(nameETCompComp));
+    entityTypes.add(getEntityType(nameETCompCollComp));
+    entityTypes.add(getEntityType(nameETMedia));
+    entityTypes.add(getEntityType(nameETFourKeyAlias));
+    entityTypes.add(getEntityType(nameETServerSidePaging));
+    entityTypes.add(getEntityType(nameETAllNullable));
+    entityTypes.add(getEntityType(nameETKeyNav));
+    entityTypes.add(getEntityType(nameETTwoKeyNav));
+    entityTypes.add(getEntityType(nameETBaseTwoKeyNav));
+    entityTypes.add(getEntityType(nameETTwoBaseTwoKeyNav));
+    entityTypes.add(getEntityType(nameETCompMixPrimCollComp));
+    entityTypes.add(getEntityType(nameETKeyPrimNav));
+
+    // ComplexTypes
+    List<ComplexType> complexType = new ArrayList<ComplexType>();
+    schema.setComplexTypes(complexType);
+    complexType.add(getComplexType(nameCTPrim));
+    complexType.add(getComplexType(nameCTAllPrim));
+    complexType.add(getComplexType(nameCTCollAllPrim));
+    complexType.add(getComplexType(nameCTTwoPrim));
+    complexType.add(getComplexType(nameCTMixPrimCollComp));
+    complexType.add(getComplexType(nameCTBase));
+    complexType.add(getComplexType(nameCTTwoBase));
+    complexType.add(getComplexType(nameCTCompComp));
+    complexType.add(getComplexType(nameCTCompCollComp));
+    complexType.add(getComplexType(nameCTPrimComp));
+    complexType.add(getComplexType(nameCTNavFiveProp));
+    complexType.add(getComplexType(nameCTPrimEnum));
+    complexType.add(getComplexType(nameCTBasePrimCompNav));
+    complexType.add(getComplexType(nameCTTwoBasePrimCompNav));
+    complexType.add(getComplexType(nameCTCompNav));
+
+    // TypeDefinitions
+
+    // Actions
+    List<Action> actions = new ArrayList<Action>();
+    schema.setActions(actions);
+    actions.addAll(getActions(nameUARTPrimParam));
+    actions.addAll(getActions(nameUARTPrimCollParam));
+    actions.addAll(getActions(nameUARTCompParam));
+    actions.addAll(getActions(nameUARTCompCollParam));
+    actions.addAll(getActions(nameUARTETParam));
+    actions.addAll(getActions(nameUARTETCollAllPrimParam));
+    actions.addAll(getActions(nameBAETTwoKeyNavRTETTwoKeyNav));
+    actions.addAll(getActions(nameBAESAllPrimRTETAllPrim));
+    actions.addAll(getActions(nameBAESTwoKeyNavRTESTwoKeyNav));
+    actions.addAll(getActions(nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav));
+    actions.addAll(getActions(nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
+
+    // Functions
+    List<Function> functions = new ArrayList<Function>();
+    schema.setFunctions(functions);
+
+    functions.addAll(getFunctions(nameUFNRTInt16));
+    functions.addAll(getFunctions(nameUFCRTETKeyNav));
+    functions.addAll(getFunctions(nameUFCRTETTwoKeyNavParam));
+    functions.addAll(getFunctions(nameUFCRTETTwoKeyNavParamCTTwoPrim));
+    functions.addAll(getFunctions(nameUFCRTStringTwoParam));
+    functions.addAll(getFunctions(nameUFCRTESTwoKeyNavParam));
+    // TODO: check why it exists twice
+    functions.addAll(getFunctions(nameUFCRTString));
+    functions.addAll(getFunctions(nameUFCRTCollStringTwoParam));
+    functions.addAll(getFunctions(nameUFCRTCollString));
+    functions.addAll(getFunctions(nameUFCRTCTAllPrimTwoParam));
+    functions.addAll(getFunctions(nameUFCRTCTTwoPrimParam));
+    functions.addAll(getFunctions(nameUFCRTCollCTTwoPrimParam));
+    functions.addAll(getFunctions(nameUFCRTCTTwoPrim));
+    functions.addAll(getFunctions(nameUFCRTCollCTTwoPrim));
+    functions.addAll(getFunctions(nameUFCRTETMedia));
+    functions.addAll(getFunctions(nameUFNRTESMixPrimCollCompTwoParam));
+    functions.addAll(getFunctions(nameUFCRTETAllPrimTwoParam));
+    functions.addAll(getFunctions(nameUFCRTESMixPrimCollCompTwoParam));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCStringRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCETBaseTwoKeyNavRTETTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCESBaseTwoKeyNavRTESBaseTwoKey));
+    functions.addAll(getFunctions(nameBFCESAllPrimRTCTAllPrim));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTCTTwoPrim));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTCollCTTwoPrim));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTString));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTCollString));
+    functions.addAll(getFunctions(nameBFCETTwoKeyNavRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCETBaseTwoKeyNavRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCSINavRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCETBaseTwoKeyNavRTESBaseTwoKey));
+    functions.addAll(getFunctions(nameBFCCollStringRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCCTPrimCompRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCCTPrimCompRTESBaseTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCCollCTPrimCompRTESAllPrim));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCESKeyNavRTETKeyNav));
+    functions.addAll(getFunctions(nameBFCETKeyNavRTETKeyNav));
+    functions.addAll(getFunctions(nameBFESTwoKeyNavRTESTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCETTwoKeyNavRTETTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCETTwoKeyNavRTCTTwoPrim));
+    functions.addAll(getFunctions(nameBFCESTwoKeyNavRTStringParam));
+    functions.addAll(getFunctions(nameBFCESKeyNavRTETKeyNavParam));
+    functions.addAll(getFunctions(nameBFCCTPrimCompRTETTwoKeyNavParam));
+    functions.addAll(getFunctions(nameBAETTwoKeyNavRTETTwoKeyNav));
+    functions.addAll(getFunctions(nameBFCCTPrimCompRTESTwoKeyNavParam));
+
+    // EntityContainer
+    EntityContainer container = new EntityContainer();
+    schema.setEntityContainer(container);
+    container.setName(nameContainer.getName());
+
+    // EntitySets
+    List<EntitySet> entitySets = new ArrayList<EntitySet>();
+    container.setEntitySets(entitySets);
+    entitySets.add(getEntitySet(nameContainer, "ESAllPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESCollAllPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESTwoPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESMixPrimCollComp"));
+    entitySets.add(getEntitySet(nameContainer, "ESBase"));
+    entitySets.add(getEntitySet(nameContainer, "ESTwoBase"));
+    entitySets.add(getEntitySet(nameContainer, "ESTwoKeyTwoPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESBaseTwoKeyTwoPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESTwoBaseTwoKeyTwoPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESAllKey"));
+    entitySets.add(getEntitySet(nameContainer, "ESCompAllPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESCompCollAllPrim"));
+    entitySets.add(getEntitySet(nameContainer, "ESCompComp"));
+    entitySets.add(getEntitySet(nameContainer, "ESCompCollComp"));
+    entitySets.add(getEntitySet(nameContainer, "ESMedia"));
+    entitySets.add(getEntitySet(nameContainer, "ESKeyTwoKeyComp"));
+    entitySets.add(getEntitySet(nameContainer, "ESInvisible"));
+    entitySets.add(getEntitySet(nameContainer, "ESServerSidePaging"));
+    entitySets.add(getEntitySet(nameContainer, "ESAllNullable"));
+    entitySets.add(getEntitySet(nameContainer, "ESKeyNav"));
+    entitySets.add(getEntitySet(nameContainer, "ESTwoKeyNav"));
+    entitySets.add(getEntitySet(nameContainer, "ESBaseTwoKeyNav"));
+    entitySets.add(getEntitySet(nameContainer, "ESCompMixPrimCollComp"));
+    entitySets.add(getEntitySet(nameContainer, "ESFourKeyAlias"));
+
+    // Singletons
+    List<Singleton> singletons = new ArrayList<Singleton>();
+    container.setSingletons(singletons);
+    singletons.add(getSingleton(nameContainer, "SI"));
+    singletons.add(getSingleton(nameContainer, "SINav"));
+    singletons.add(getSingleton(nameContainer, "SIMedia"));
+
+    // ActionImports
+    List<ActionImport> actionImports = new ArrayList<ActionImport>();
+    container.setActionImports(actionImports);
+    actionImports.add(getActionImport(nameContainer, "AIRTPrimParam"));
+    actionImports.add(getActionImport(nameContainer, "AIRTPrimCollParam"));
+    actionImports.add(getActionImport(nameContainer, "AIRTCompParam"));
+    actionImports.add(getActionImport(nameContainer, "AIRTCompCollParam"));
+    actionImports.add(getActionImport(nameContainer, "AIRTETParam"));
+    actionImports.add(getActionImport(nameContainer, "AIRTETCollAllPrimParam"));
+
+    // FunctionImports
+    List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
+    container.setFunctionImports(functionImports);
+    functionImports.add(getFunctionImport(nameContainer, "FINRTInt16"));
+    functionImports.add(getFunctionImport(nameContainer, "FINInvisibleRTInt16"));
+    functionImports.add(getFunctionImport(nameContainer, "FINInvisible2RTInt16"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTETKeyNav"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTETTwoKeyNavParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTStringTwoParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCollStringTwoParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCTAllPrimTwoParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTESMixPrimCollCompTwoParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FINRTESMixPrimCollCompTwoParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCollCTTwoPrim"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTETMedia"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCTTwoPrimParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCTTwoPrim"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCollString"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTString"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTESTwoKeyNavParam"));
+    functionImports.add(getFunctionImport(nameContainer, "FICRTCollCTTwoPrimParam"));
+
+    return schemas;
+  }
 
   @Override
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name) throws ODataException
@@ -876,34 +1085,42 @@ public class EdmTechProvider extends EdmProvider {
         return new EntitySet()
             .setName("ESKeyTwoKeyComp")
             .setType(nameETKeyTwoKeyComp);
+
       } else if (name.equals("ESInvisible")) {
         return new EntitySet()
             .setName("ESInvisible")
             .setType(nameETAllPrim);
+
       } else if (name.equals("ESServerSidePaging")) {
         return new EntitySet()
             .setName("ESServerSidePaging")
             .setType(nameETServerSidePaging);
+
       } else if (name.equals("ESAllNullable")) {
         return new EntitySet()
             .setName("ESAllNullable")
             .setType(nameETAllNullable);
+
       } else if (name.equals("ESKeyNav")) {
         return new EntitySet()
             .setName("ESKeyNav")
             .setType(nameETKeyNav);
+
       } else if (name.equals("ESTwoKeyNav")) {
         return new EntitySet()
             .setName("ESTwoKeyNav")
             .setType(nameETTwoKeyNav);
+
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new EntitySet()
             .setName("ESBaseTwoKeyNav")
             .setType(nameETBaseTwoKeyNav);
+
       } else if (name.equals("ESCompMixPrimCollComp")) {
         return new EntitySet()
             .setName("ESCompMixPrimCollComp")
             .setType(nameETCompMixPrimCollComp);
+
       } else if (name.equals("ESFourKeyAlias")) {
         return new EntitySet()
             .setName("ESFourKeyAlias")
@@ -1203,6 +1420,13 @@ public class EdmTechProvider extends EdmProvider {
                   .setPropertyName("PropertyComplexComplex/PropertyComplex/PropertyString")
                   .setAlias("KeyAlias3")))
           .setProperties(Arrays.asList(propertyGuid, propertyComplex_CTTwoPrim, propertyComplexComplex_CTCompComp));
+    } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
+      return new EntityType()
+          .setName("ETCompMixPrimCollComp")
+          .setKey(Arrays.asList(
+              new PropertyRef()
+                  .setPropertyName("PropertyInt16")))
+          .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyMixedPrimCollComp_CTMixPrimCollComp));
     }
 
     return null;

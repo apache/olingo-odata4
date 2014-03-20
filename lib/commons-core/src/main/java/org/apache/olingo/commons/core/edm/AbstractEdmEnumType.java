@@ -202,5 +202,10 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");
     }
   }
+  
+  @Override
+  public boolean isFlags() {
+    return isFlags;
+  }
 
 }

@@ -16,23 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.api.serializer;
 
-import java.io.InputStream;
-
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataSerializer;
-
-public class ODataSerializerImpl implements ODataSerializer {
-
-  @Override
-  public InputStream metadata(Edm edm) {
-       return null;
-  }
-
-  @Override
-  public InputStream serviceDocument(Edm edm, String serviceRoot) {
-    return null;
-  }
-
+public enum ODataFormat {
+  XML, JSON
 }

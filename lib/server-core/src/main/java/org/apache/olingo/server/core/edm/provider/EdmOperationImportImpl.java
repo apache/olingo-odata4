@@ -25,7 +25,7 @@ import org.apache.olingo.server.api.edm.provider.OperationImport;
 
 public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
 
-  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container, 
+  public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
       final OperationImport operationImport) {
     super(edm, container, operationImport.getName(), operationImport.getEntitySet());
   }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.core.serializer.json;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -33,9 +33,9 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.server.api.ODataFormat;
-import org.apache.olingo.server.api.ODataSerializer;
 import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.serializer.ODataFormat;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.testutil.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
