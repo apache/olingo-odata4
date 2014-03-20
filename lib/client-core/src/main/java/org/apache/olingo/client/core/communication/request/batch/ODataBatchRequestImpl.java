@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
@@ -65,7 +65,7 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
    * @param odataClient client instance getting this request
    * @param uri batch request URI (http://serviceRoot/$batch)
    */
-  ODataBatchRequestImpl(final ODataClient odataClient, final URI uri) {
+  ODataBatchRequestImpl(final CommonODataClient odataClient, final URI uri) {
     super(odataClient, HttpMethod.POST, uri);
 
     // create a random UUID value for boundary

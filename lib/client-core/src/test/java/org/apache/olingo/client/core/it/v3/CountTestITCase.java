@@ -25,14 +25,14 @@ import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataValueFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
-public class CountTestITCase extends AbstractV3TestITCase {
+public class CountTestITCase extends AbstractTestITCase {
     //counts the total number of customers
 
     @Test
     public void entityCount() {
-        URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+        CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntitySetSegment("Customer").count();
         final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
         req.setFormat(ODataValueFormat.TEXT);
@@ -47,7 +47,7 @@ public class CountTestITCase extends AbstractV3TestITCase {
 
     @Test
     public void invalidAccept() {
-        final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+        final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
                 appendEntitySetSegment("Customer").count();
         final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
         req.setFormat(ODataValueFormat.TEXT);

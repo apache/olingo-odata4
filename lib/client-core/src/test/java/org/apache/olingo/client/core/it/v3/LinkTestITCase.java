@@ -29,27 +29,27 @@ import java.util.List;
 import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataLinkUpdateRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataLinkCollectionRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataLinkCollection;
+import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.api.uri.V3URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.junit.Test;
 
 /**
  * This is the unit test class to check basic link operations.
  */
-public class LinkTestITCase extends AbstractV3TestITCase {
+public class LinkTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;
   }
 
   private ODataLinkCollection doRetrieveLinkURIs(final ODataFormat format, final String linkname) throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataLinkCollectionRequest req =
@@ -95,7 +95,7 @@ public class LinkTestITCase extends AbstractV3TestITCase {
     final ODataLink newLink = client.getObjectFactory().
             newAssociationLink(null, URI.create(getServiceRoot() + "/Login('3')"));
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins");
 
     final ODataLinkCreateRequest req =
@@ -135,7 +135,7 @@ public class LinkTestITCase extends AbstractV3TestITCase {
     ODataLink newLink =
             client.getObjectFactory().newAssociationLink(null, URI.create(getServiceRoot() + "/CustomerInfo(12)"));
 
-    final V3URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Info");
 
     ODataLinkUpdateRequest req =

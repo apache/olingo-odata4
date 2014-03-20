@@ -37,21 +37,21 @@ import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
 import org.junit.Test;
 
 /**
  * This is the unit test class to check entity retrieve operations.
  */
-public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
+public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;
   }
 
   private void withInlineEntry(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Info");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -104,7 +104,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
   }
 
   private void withInlineFeed(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Orders");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -143,7 +143,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(16);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -175,7 +175,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Message").appendKeySegment(multiKey);
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -208,7 +208,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
   }
 
   private void checkForETag(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder =
+    final CommonURIBuilder<?> uriBuilder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Product").appendKeySegment(-10);
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -226,7 +226,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void issue99() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Car");
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Car");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.JSON);

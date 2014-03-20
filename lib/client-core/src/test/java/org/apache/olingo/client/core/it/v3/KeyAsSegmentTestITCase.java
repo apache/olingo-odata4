@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -31,7 +31,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class KeyAsSegmentTestITCase extends AbstractV3TestITCase {
+public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @BeforeClass
   public static void enableKeyAsSegment() {
@@ -39,7 +39,7 @@ public class KeyAsSegmentTestITCase extends AbstractV3TestITCase {
   }
 
   private void read(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());

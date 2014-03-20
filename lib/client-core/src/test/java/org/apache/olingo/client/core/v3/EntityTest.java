@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
@@ -38,7 +38,7 @@ import org.junit.Test;
 public class EntityTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

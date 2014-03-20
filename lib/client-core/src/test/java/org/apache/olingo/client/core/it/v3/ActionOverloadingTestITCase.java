@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-public class ActionOverloadingTestITCase extends AbstractV3TestITCase {
+public class ActionOverloadingTestITCase extends AbstractTestITCase {
 
 //  @Test
 //  public void retrieveProducts() {

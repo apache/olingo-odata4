@@ -19,9 +19,9 @@
 package org.apache.olingo.client.core.communication.request.cud;
 
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.UpdateType;
-import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -35,13 +35,13 @@ import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.http.HttpMethod;
 
-public abstract class AbstractCUDRequestFactory implements CUDRequestFactory {
+public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFactory {
 
   private static final long serialVersionUID = -2723641791198745990L;
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  protected AbstractCUDRequestFactory(final ODataClient client) {
+  protected AbstractCUDRequestFactory(final CommonODataClient client) {
     this.client = client;
   }
 

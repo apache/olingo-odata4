@@ -25,11 +25,11 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 
 abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
-  protected ODataClient client;
+  protected CommonODataClient client;
 
   protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt)
           throws IOException, JsonProcessingException;
@@ -38,7 +38,7 @@ abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
   public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    client = (ODataClient) ctxt.findInjectableValue(ODataClient.class.getName(), null, null);
+    client = (CommonODataClient) ctxt.findInjectableValue(CommonODataClient.class.getName(), null, null);
     return doDeserialize(jp, ctxt);
   }
 

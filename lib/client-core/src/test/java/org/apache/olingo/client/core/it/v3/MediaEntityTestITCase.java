@@ -40,14 +40,14 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 
-public class MediaEntityTestITCase extends AbstractV3TestITCase {
+public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws Exception {
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -62,7 +62,7 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithXmlError() throws Exception {
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -73,7 +73,7 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithJsonError() throws Exception {
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -109,7 +109,7 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void updateNamedStream() throws Exception {
-    URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(16).appendNavigationSegment("Photo");
 
     final String TO_BE_UPDATED = "buffered stream sample";
@@ -131,7 +131,7 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
   }
 
   private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
-    URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
 
     final String TO_BE_UPDATED = "new buffered stream sample";
@@ -153,7 +153,7 @@ public class MediaEntityTestITCase extends AbstractV3TestITCase {
   }
 
   private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car");
 
     final ODataMediaEntityCreateRequest createReq =

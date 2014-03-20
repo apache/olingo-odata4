@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
@@ -49,7 +49,7 @@ public class ODataMediaEntityCreateRequestImpl
    * @param targetURI target entity set.
    * @param media media entity blob to be created.
    */
-  ODataMediaEntityCreateRequestImpl(final ODataClient odataClient, final URI targetURI, final InputStream media) {
+  ODataMediaEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final InputStream media) {
     super(odataClient, HttpMethod.POST, targetURI);
     this.media = media;
   }

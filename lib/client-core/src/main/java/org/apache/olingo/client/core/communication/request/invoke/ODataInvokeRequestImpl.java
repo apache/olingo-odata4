@@ -30,7 +30,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
@@ -70,8 +70,8 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
    * @param method HTTP method of the request.
    * @param uri URI that identifies the operation.
    */
-  ODataInvokeRequestImpl(
-          final ODataClient odataClient,
+  public ODataInvokeRequestImpl(
+          final CommonODataClient odataClient,
           final Class<T> reference,
           final HttpMethod method,
           final URI uri) {

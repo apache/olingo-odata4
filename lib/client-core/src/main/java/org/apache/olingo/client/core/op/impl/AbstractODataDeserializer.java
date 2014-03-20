@@ -19,15 +19,14 @@
 package org.apache.olingo.client.core.op.impl;
 
 import java.io.InputStream;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.data.Feed;
-import org.apache.olingo.client.api.data.LinkCollection;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.ODataDeserializer;
+import org.apache.olingo.client.api.op.CommonODataDeserializer;
 import org.apache.olingo.client.core.data.AtomDeserializer;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.AtomFeedImpl;
@@ -35,18 +34,16 @@ import org.apache.olingo.client.core.data.AtomPropertyImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
 import org.apache.olingo.client.core.data.JSONErrorBundle;
 import org.apache.olingo.client.core.data.JSONFeedImpl;
-import org.apache.olingo.client.core.data.JSONLinkCollectionImpl;
 import org.apache.olingo.client.core.data.JSONPropertyImpl;
 import org.apache.olingo.client.core.data.XMLErrorImpl;
-import org.apache.olingo.client.core.data.XMLLinkCollectionImpl;
 
-public abstract class AbstractODataDeserializer extends AbstractJacksonTool implements ODataDeserializer {
+public abstract class AbstractODataDeserializer extends AbstractJacksonTool implements CommonODataDeserializer {
 
   private static final long serialVersionUID = -4244158979195609909L;
 
   private final AtomDeserializer atomDeserializer;
 
-  public AbstractODataDeserializer(final ODataClient client) {
+  public AbstractODataDeserializer(final CommonODataClient client) {
     super(client);
 
     this.atomDeserializer = new AtomDeserializer(client.getServiceVersion());
@@ -71,13 +68,6 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
     return format == ODataFormat.XML
             ? atom(input, AtomPropertyImpl.class)
             : json(input, JSONPropertyImpl.class);
-  }
-
-  @Override
-  public LinkCollection toLinkCollection(final InputStream input, final ODataFormat format) {
-    return format == ODataFormat.XML
-            ? atom(input, XMLLinkCollectionImpl.class)
-            : json(input, JSONLinkCollectionImpl.class);
   }
 
   @Override

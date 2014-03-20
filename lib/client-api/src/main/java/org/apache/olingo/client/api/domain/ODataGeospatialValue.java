@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.domain;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.domain.geospatial.Geospatial;
 
 public class ODataGeospatialValue extends ODataPrimitiveValue {
@@ -35,7 +35,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
     /**
      * Constructor.
      */
-    public Builder(final ODataClient client) {
+    public Builder(final CommonODataClient client) {
       super(client);
       this.ogv = new ODataGeospatialValue(client);
     }
@@ -98,7 +98,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
    *
    * @see Builder
    */
-  protected ODataGeospatialValue(final ODataClient client) {
+  protected ODataGeospatialValue(final CommonODataClient client) {
     super(client);
   }
 

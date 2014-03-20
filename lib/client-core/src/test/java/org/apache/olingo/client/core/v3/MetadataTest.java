@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -56,7 +56,7 @@ import org.junit.Test;
 public class MetadataTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

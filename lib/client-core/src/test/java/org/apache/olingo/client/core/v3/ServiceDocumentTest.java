@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.v3;
 
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -31,7 +31,7 @@ import org.junit.Test;
 public class ServiceDocumentTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

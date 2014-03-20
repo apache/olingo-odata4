@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
 import static org.junit.Assert.assertNotNull;
@@ -40,7 +40,7 @@ import org.junit.Test;
 /**
  * This is the unit test class to check basic feed operations.
  */
-public class EntitySetTestITCase extends AbstractV3TestITCase {
+public class EntitySetTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;
@@ -87,7 +87,7 @@ public class EntitySetTestITCase extends AbstractV3TestITCase {
   }
 
   private void readEntitySetWithNextLink(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -111,7 +111,7 @@ public class EntitySetTestITCase extends AbstractV3TestITCase {
   }
 
   private void readODataEntitySetIterator(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetIteratorRequest req =
@@ -134,7 +134,7 @@ public class EntitySetTestITCase extends AbstractV3TestITCase {
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Car");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());

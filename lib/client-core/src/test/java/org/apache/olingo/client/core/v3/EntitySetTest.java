@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -33,7 +33,7 @@ import org.junit.Test;
 public class EntitySetTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

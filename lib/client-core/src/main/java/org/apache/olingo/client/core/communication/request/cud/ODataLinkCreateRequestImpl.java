@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
@@ -53,7 +53,7 @@ public class ODataLinkCreateRequestImpl extends AbstractODataBasicRequest<ODataL
    * @param targetURI entity set URI.
    * @param link entity to be linked.
    */
-  ODataLinkCreateRequestImpl(final ODataClient odataClient, final URI targetURI, final ODataLink link) {
+  ODataLinkCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final ODataLink link) {
     super(odataClient, ODataFormat.class, HttpMethod.POST, targetURI);
     // set request body
     this.link = link;

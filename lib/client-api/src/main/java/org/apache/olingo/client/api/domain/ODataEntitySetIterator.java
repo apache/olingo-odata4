@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.format.ODataPubFormat;
@@ -49,7 +49,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
   private static final long serialVersionUID = 9039605899821494025L;
 
-  private final ODataClient odataClient;
+  private final CommonODataClient odataClient;
 
   private final InputStream stream;
 
@@ -72,7 +72,9 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
    * @param stream source stream.
    * @param format OData format.
    */
-  public ODataEntitySetIterator(final ODataClient odataClient, final InputStream stream, final ODataPubFormat format) {
+  public ODataEntitySetIterator(final CommonODataClient odataClient, final InputStream stream,
+          final ODataPubFormat format) {
+
     this.odataClient = odataClient;
     this.stream = stream;
     this.format = format;

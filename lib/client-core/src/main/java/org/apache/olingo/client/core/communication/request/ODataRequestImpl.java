@@ -33,8 +33,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.V3Configuration;
+import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
@@ -73,7 +73,7 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(ODataRequest.class);
 
-  protected final ODataClient odataClient;
+  protected final CommonODataClient odataClient;
 
   protected final Class<T> formatRef;
 
@@ -110,7 +110,7 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
    * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
    * @param uri OData request URI.
    */
-  protected ODataRequestImpl(final ODataClient odataClient,
+  protected ODataRequestImpl(final CommonODataClient odataClient,
           final Class<T> formatRef, final HttpMethod method, final URI uri) {
 
     this.odataClient = odataClient;
@@ -376,7 +376,7 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
 
     // Add header for KeyAsSegment management
     if (odataClient.getServiceVersion() == ODataServiceVersion.V30
-            && ((V3Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
+            && ((Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
       addCustomHeader(
               HeaderName.dataServiceUrlConventions.toString(), ODataHeaderValues.keyAsSegment);
     }

@@ -36,13 +36,13 @@ import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 
-public class PropertyRetrieveTestITCase extends AbstractV3TestITCase {
+public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
   private void retreivePropertyTest(final ODataFormat format, String entitySegment, String structuralSegment) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySegment).appendPropertySegment(structuralSegment);
     final ODataPropertyRequest req = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
@@ -208,7 +208,7 @@ public class PropertyRetrieveTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void navigationMediaLink() {
-    URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
@@ -231,7 +231,7 @@ public class PropertyRetrieveTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void navigationMediaLinkInvalidQuery() {
-    URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photo");
     ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
@@ -254,7 +254,7 @@ public class PropertyRetrieveTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void navigationMediaLinkInvalidFormat() {
-    URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/atom+xml");

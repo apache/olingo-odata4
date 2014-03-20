@@ -21,7 +21,7 @@ package org.apache.olingo.client.core;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class ODataClientTest {
 
   @Test
   public void before() {
-    ODataClient client = ODataClientFactory.getV3();
+    CommonODataClient client = ODataClientFactory.getV3();
     assertNotNull(client);
     assertEquals(ODataServiceVersion.V30, client.getServiceVersion());
 

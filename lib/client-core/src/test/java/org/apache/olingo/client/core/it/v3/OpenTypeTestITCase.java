@@ -40,13 +40,13 @@ import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
 import org.apache.olingo.client.api.domain.geospatial.Point;
 import org.apache.olingo.client.api.domain.geospatial.Polygon;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class OpenTypeTestITCase extends AbstractV3TestITCase {
+public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkOpenTypeEntityTypesExist() {
@@ -62,7 +62,7 @@ public class OpenTypeTestITCase extends AbstractV3TestITCase {
   }
 
   private ODataEntity readRow(final ODataPubFormat format, final String uuid) {
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(format, builder.build());
   }

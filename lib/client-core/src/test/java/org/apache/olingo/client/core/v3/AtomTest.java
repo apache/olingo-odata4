@@ -28,7 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -39,7 +39,7 @@ import org.junit.Test;
 public class AtomTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

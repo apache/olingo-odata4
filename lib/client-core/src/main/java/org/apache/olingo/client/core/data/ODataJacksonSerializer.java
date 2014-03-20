@@ -25,11 +25,11 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 
 abstract class ODataJacksonSerializer<T> extends JsonSerializer<T> {
 
-  protected ODataClient client;
+  protected CommonODataClient client;
 
   protected abstract void doSerialize(T value, JsonGenerator jgen, SerializerProvider provider)
           throws IOException, JsonProcessingException;
@@ -38,7 +38,7 @@ abstract class ODataJacksonSerializer<T> extends JsonSerializer<T> {
   public void serialize(final T value, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    client = (ODataClient) provider.getAttribute(ODataClient.class);
+    client = (CommonODataClient) provider.getAttribute(CommonODataClient.class);
     doSerialize(value, jgen, provider);
   }
 

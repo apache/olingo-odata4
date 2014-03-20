@@ -30,7 +30,7 @@ import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 
 /**
  * OData primitive property value.
@@ -41,12 +41,12 @@ public class ODataPrimitiveValue extends ODataValue {
 
   protected abstract static class AbstractBuilder {
 
-    private final ODataClient client;
+    private final CommonODataClient client;
 
     /**
      * Constructor.
      */
-    public AbstractBuilder(final ODataClient client) {
+    public AbstractBuilder(final CommonODataClient client) {
       this.client = client;
     }
 
@@ -70,7 +70,7 @@ public class ODataPrimitiveValue extends ODataValue {
     /**
      * Constructor.
      */
-    public Builder(final ODataClient client) {
+    public Builder(final CommonODataClient client) {
       super(client);
       this.opv = new ODataPrimitiveValue(client);
     }
@@ -162,7 +162,7 @@ public class ODataPrimitiveValue extends ODataValue {
     }
   }
 
-  protected ODataClient client;
+  protected CommonODataClient client;
 
   /**
    * Text value.
@@ -184,7 +184,7 @@ public class ODataPrimitiveValue extends ODataValue {
    *
    * @see Builder
    */
-  protected ODataPrimitiveValue(final ODataClient client) {
+  protected ODataPrimitiveValue(final CommonODataClient client) {
     super();
     this.client = client;
   }

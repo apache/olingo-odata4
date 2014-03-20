@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
@@ -45,7 +45,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Function;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.v3.EdmActionProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
-import org.apache.olingo.client.core.edm.v3.V3FunctionImportUtils;
+import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -190,7 +190,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
             found = functionImport.getParameters().isEmpty();
             result = EdmActionProxy.getInstance(this, actionName, functionImport);
           }
@@ -231,7 +231,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (V3FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
+          if (FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
             final Set<String> functionParamNames = new HashSet<String>();
             for (CommonParameter param : functionImport.getParameters()) {
               functionParamNames.add(param.getName());
@@ -280,7 +280,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
@@ -336,7 +336,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())

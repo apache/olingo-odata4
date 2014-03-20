@@ -20,9 +20,7 @@ package org.apache.olingo.client.core;
 
 import java.util.Locale;
 
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.ODataV3Client;
-import org.apache.olingo.client.api.ODataV4Client;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -30,11 +28,11 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
 
-  protected static ODataV3Client v3Client;
+  protected static org.apache.olingo.client.api.v3.ODataClient v3Client;
 
-  protected static ODataV4Client v4Client;
+  protected static org.apache.olingo.client.api.v4.ODataClient v4Client;
 
-  protected abstract ODataClient getClient();
+  protected abstract CommonODataClient getClient();
 
   @BeforeClass
   public static void setUp() {

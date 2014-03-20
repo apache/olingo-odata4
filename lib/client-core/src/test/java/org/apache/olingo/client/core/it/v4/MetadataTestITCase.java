@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import org.apache.olingo.client.api.ODataV4Client;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.it.AbstractMetadataTestITCase;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -28,7 +28,7 @@ import org.junit.Test;
 public class MetadataTestITCase extends AbstractMetadataTestITCase {
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return ODataClientFactory.getV4();
   }
 

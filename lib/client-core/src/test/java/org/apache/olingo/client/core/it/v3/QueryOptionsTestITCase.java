@@ -33,15 +33,15 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.api.uri.V3URIBuilder.InlineCount;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.junit.Test;
 
 /**
  * This is the unit test class to check for query options.
  */
-public class QueryOptionsTestITCase extends AbstractV3TestITCase {
+public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   /**
    * Test <tt>$expand</tt>.
@@ -59,7 +59,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
    */
   @Test
   public void filterOrderby() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").filter("(VIN lt 16)");
 
     // 1. check that filtered entity set looks as expected
@@ -98,7 +98,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
    */
   @Test
   public void format() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).format("json");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -132,7 +132,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
    */
   @Test
   public void skiptoken() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").skipToken("-10");
 
     final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -150,7 +150,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
    */
   @Test
   public void inlinecount() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
             inlineCount(InlineCount.allpages);
 
     final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -165,7 +165,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
    */
   @Test
   public void select() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).select("CustomerId,Orders").expand("Orders");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -177,7 +177,7 @@ public class QueryOptionsTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void issue131() {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-7).select("Name");
 
     ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());

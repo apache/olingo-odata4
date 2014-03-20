@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.communication.request.streamed;
 
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamedEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -45,7 +45,7 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
    * @param method HTTP request method.
    * @param uri request URI.
    */
-  public AbstractODataStreamedEntityRequest(final ODataClient odataClient, final HttpMethod method,
+  public AbstractODataStreamedEntityRequest(final CommonODataClient odataClient, final HttpMethod method,
           URI uri) {
     super(odataClient, method, uri);
     setAccept(getFormat().toString());

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.olingo.client.api.Configuration;
+import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 
-public abstract class AbstractConfiguration implements Configuration {
+public abstract class AbstractConfiguration implements CommonConfiguration {
 
   private static final String DEFAULT_PUB_FORMAT = "pubFormat";
 

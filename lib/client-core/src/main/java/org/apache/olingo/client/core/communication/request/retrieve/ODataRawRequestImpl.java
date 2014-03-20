@@ -24,7 +24,7 @@ import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.format.ODataPubFormat;
@@ -44,7 +44,7 @@ public class ODataRawRequestImpl extends ODataRequestImpl<ODataPubFormat>
    * @param odataClient client instance getting this request
    * @param uri request URI.
    */
-  ODataRawRequestImpl(final ODataClient odataClient, final URI uri) {
+  ODataRawRequestImpl(final CommonODataClient odataClient, final URI uri) {
     super(odataClient, ODataPubFormat.class, HttpMethod.GET, uri);
   }
 

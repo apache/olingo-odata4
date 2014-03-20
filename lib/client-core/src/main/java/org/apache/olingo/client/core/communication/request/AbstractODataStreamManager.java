@@ -31,7 +31,6 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.core.Wrapper;
 
 /**
  * OData request payload management abstract class.

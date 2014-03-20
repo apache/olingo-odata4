@@ -23,11 +23,10 @@ import java.net.URI;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.LinkCollection;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
@@ -41,14 +40,13 @@ import org.apache.olingo.client.api.domain.ODataInlineEntity;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataLinkCollection;
 import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.ODataBinder;
+import org.apache.olingo.client.api.op.CommonODataBinder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.data.CollectionValueImpl;
 import org.apache.olingo.client.core.data.ComplexValueImpl;
@@ -60,7 +58,7 @@ import org.apache.olingo.client.core.data.PrimitiveValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractODataBinder implements ODataBinder {
+public abstract class AbstractODataBinder implements CommonODataBinder {
 
   private static final long serialVersionUID = 454285889193689536L;
 
@@ -69,9 +67,9 @@ public abstract class AbstractODataBinder implements ODataBinder {
    */
   protected final Logger LOG = LoggerFactory.getLogger(AbstractODataBinder.class);
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  protected AbstractODataBinder(final ODataClient client) {
+  protected AbstractODataBinder(final CommonODataClient client) {
     this.client = client;
   }
 
@@ -258,13 +256,6 @@ public abstract class AbstractODataBinder implements ODataBinder {
     }
 
     return valueResource;
-  }
-
-  @Override
-  public ODataLinkCollection getLinkCollection(final LinkCollection linkCollection) {
-    final ODataLinkCollection collection = new ODataLinkCollection(linkCollection.getNext());
-    collection.setLinks(linkCollection.getLinks());
-    return collection;
   }
 
   @Override

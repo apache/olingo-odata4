@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.client.api.ODataV4Client;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
@@ -58,7 +58,7 @@ import org.junit.Test;
 public class MetadataTest extends AbstractTest {
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return v4Client;
   }
 

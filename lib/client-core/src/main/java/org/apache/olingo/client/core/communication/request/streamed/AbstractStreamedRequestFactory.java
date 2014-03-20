@@ -20,20 +20,20 @@ package org.apache.olingo.client.core.communication.request.streamed;
 
 import java.io.InputStream;
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.CommonStreamedRequestFactory;
 import org.apache.olingo.client.api.http.HttpMethod;
 
-public abstract class AbstractStreamedRequestFactory implements StreamedRequestFactory {
+public abstract class AbstractStreamedRequestFactory implements CommonStreamedRequestFactory {
 
   private static final long serialVersionUID = -2438839640443961168L;
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  protected AbstractStreamedRequestFactory(final ODataClient client) {
+  protected AbstractStreamedRequestFactory(final CommonODataClient client) {
     this.client = client;
   }
 

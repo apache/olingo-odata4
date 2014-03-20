@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.it;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 
 public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
 
   @Override
-  protected abstract ODataClient getClient();
+  protected abstract CommonODataClient getClient();
 
   protected String getTestServiceRoot() {
     return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";

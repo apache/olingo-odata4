@@ -22,13 +22,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 
-public class FilterTestITCase extends AbstractV3TestITCase {
+public class FilterTestITCase extends AbstractTestITCase {
 
   private void filterQueryTest(final String entity, final String filter, final int expected) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entity).filter(filter);
     final ODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
             execute().getBody();

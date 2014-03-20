@@ -38,15 +38,15 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class AsyncTestITCase extends AbstractV3TestITCase {
+public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
@@ -96,7 +96,7 @@ public class AsyncTestITCase extends AbstractV3TestITCase {
   @Test
   @Ignore
   public void createMediaEntity() throws InterruptedException, ExecutionException, IOException {
-    URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
+    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final String TO_BE_UPDATED = "async buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);

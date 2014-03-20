@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.junit.Test;
 
-public class PrimitiveKeysTestITCase extends AbstractV3TestITCase {
+public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   private void readEntity(final String entityType, final Object key, final ODataPubFormat format) {
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(

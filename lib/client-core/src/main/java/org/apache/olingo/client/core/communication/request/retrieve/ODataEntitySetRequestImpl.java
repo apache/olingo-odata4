@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
@@ -41,7 +41,7 @@ public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODat
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataEntitySetRequestImpl(final ODataClient odataClient, final URI query) {
+  ODataEntitySetRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 

@@ -47,7 +47,7 @@ import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.NoContentException;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,7 +55,7 @@ import org.junit.Test;
 /**
  * This is the unit test class to check create entity operations.
  */
-public class EntityCreateTestITCase extends AbstractV3TestITCase {
+public class EntityCreateTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;
@@ -254,7 +254,7 @@ public class EntityCreateTestITCase extends AbstractV3TestITCase {
     final int id = 2;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer for issue 135", false);
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
     final ODataEntityCreateRequest createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
     createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
@@ -307,7 +307,7 @@ public class EntityCreateTestITCase extends AbstractV3TestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -348,7 +348,7 @@ public class EntityCreateTestITCase extends AbstractV3TestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Info");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -459,7 +459,7 @@ public class EntityCreateTestITCase extends AbstractV3TestITCase {
             client.getPrimitiveValueBuilder().setValue(false).
             setType(ODataJClientEdmPrimitiveType.Boolean).build()));
 
-    final URIBuilder<?> builder =
+    final CommonURIBuilder<?> builder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Message");
     final ODataEntityCreateRequest req = client.getCUDRequestFactory().getEntityCreateRequest(builder.build(),
             message);

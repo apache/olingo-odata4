@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
@@ -46,7 +46,7 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
 
   private final AtomSerializer atomSerializer;
 
-  public AbstractODataSerializer(final ODataClient client) {
+  public AbstractODataSerializer(final CommonODataClient client) {
     super(client);
 
     this.atomSerializer = new AtomSerializer(client.getServiceVersion());

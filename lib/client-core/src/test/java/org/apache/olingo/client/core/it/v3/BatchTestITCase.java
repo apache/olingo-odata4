@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-public class BatchTestITCase extends AbstractV3TestITCase {
+public class BatchTestITCase extends AbstractTestITCase {
 
 //  private static String PREFIX = "!!PREFIX!!";
 //

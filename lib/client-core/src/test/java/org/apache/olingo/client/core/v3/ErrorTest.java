@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.v3;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -30,7 +30,7 @@ import org.junit.Test;
 public class ErrorTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

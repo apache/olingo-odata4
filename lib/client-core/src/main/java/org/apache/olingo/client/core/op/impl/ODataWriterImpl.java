@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataProperty;
@@ -36,9 +36,9 @@ public class ODataWriterImpl implements ODataWriter {
 
   private static final long serialVersionUID = 3265794768412314485L;
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  public ODataWriterImpl(final ODataClient client) {
+  public ODataWriterImpl(final CommonODataClient client) {
     this.client = client;
   }
 

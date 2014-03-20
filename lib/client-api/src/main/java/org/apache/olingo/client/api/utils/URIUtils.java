@@ -31,7 +31,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
@@ -176,7 +176,7 @@ public final class URIUtils {
     return value;
   }
 
-  public static InputStreamEntity buildInputStreamEntity(final ODataClient client, final InputStream input) {
+  public static InputStreamEntity buildInputStreamEntity(final CommonODataClient client, final InputStream input) {
     InputStreamEntity entity;
     if (client.getConfiguration().isUseChuncked()) {
       entity = new InputStreamEntity(input, -1);

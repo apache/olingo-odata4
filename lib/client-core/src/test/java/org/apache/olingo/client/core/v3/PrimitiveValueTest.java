@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.client.api.ODataV3Client;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -49,7 +49,7 @@ import org.junit.Test;
 public class PrimitiveValueTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 

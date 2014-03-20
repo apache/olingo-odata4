@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-public class InvokeTestITCase extends AbstractV3TestITCase {
+public class InvokeTestITCase extends AbstractTestITCase {
 
 //    private void getWithNoParams(final ODataPubFormat format) {
 //        final Edm metadata =

@@ -23,7 +23,7 @@ import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
@@ -44,7 +44,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataVal
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataValueRequestImpl(final ODataClient odataClient, final URI query) {
+  ODataValueRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataValueFormat.class, query);
   }
 

@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.junit.Test;
 
-public class ServiceDocumentTestITCase extends AbstractV3TestITCase {
+public class ServiceDocumentTestITCase extends AbstractTestITCase {
 
   private void retrieveServiceDocument(final ODataFormat format) {
     final ODataServiceDocumentRequest req =

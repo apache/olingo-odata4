@@ -22,7 +22,7 @@ import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -41,7 +41,7 @@ class ODataMetadataRequestImpl extends AbstractODataRetrieveRequest<Edm, ODataPu
    * @param odataClient client instance getting this request
    * @param uri metadata URI.
    */
-  ODataMetadataRequestImpl(final ODataClient odataClient, final URI uri) {
+  ODataMetadataRequestImpl(final CommonODataClient odataClient, final URI uri) {
     super(odataClient, ODataPubFormat.class, uri);
     super.setAccept(ContentType.APPLICATION_XML.getMimeType());
     super.setContentType(ContentType.APPLICATION_XML.getMimeType());

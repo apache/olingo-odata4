@@ -39,7 +39,7 @@ import org.junit.Test;
 /**
  * This is the unit test class to check entity update operations.
  */
-public class EntityUpdateTestITCase extends AbstractV3TestITCase {
+public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;

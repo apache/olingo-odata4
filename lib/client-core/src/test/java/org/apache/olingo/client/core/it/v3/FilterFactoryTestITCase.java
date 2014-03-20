@@ -19,27 +19,27 @@
 package org.apache.olingo.client.core.it.v3;
 
 import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.api.uri.filter.URIFilter;
-import org.apache.olingo.client.api.uri.filter.V3FilterArgFactory;
-import org.apache.olingo.client.api.uri.filter.V3FilterFactory;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
+import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-public class FilterFactoryTestITCase extends AbstractV3TestITCase {
+public class FilterFactoryTestITCase extends AbstractTestITCase {
 
-  private V3FilterFactory getFilterFactory() {
+  private FilterFactory getFilterFactory() {
     return getClient().getFilterFactory();
   }
 
-  private V3FilterArgFactory getFilterArgFactory() {
+  private FilterArgFactory getFilterArgFactory() {
     return getFilterFactory().getArgFactory();
   }
 
   private void match(final String entitySet, final URIFilter filter, final int expected) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySet).filter(filter);
 
     final ODataEntitySet feed = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).

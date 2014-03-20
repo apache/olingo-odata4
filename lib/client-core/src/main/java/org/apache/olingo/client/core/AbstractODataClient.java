@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataObjectFactory;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.op.ODataWriter;
 import org.apache.olingo.client.core.op.impl.ODataObjectFactoryImpl;
 import org.apache.olingo.client.core.op.impl.ODataWriterImpl;
 
-abstract class AbstractODataClient implements ODataClient {
+public abstract class AbstractODataClient implements CommonODataClient {
 
   private static final long serialVersionUID = 7269096702397630265L;
 

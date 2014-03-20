@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -31,10 +31,9 @@ import org.apache.olingo.client.core.communication.request.AbstractODataBasicReq
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
- * This is an abstract representation of an OData retrieve query request returning one or more result item. Get instance
- * by using ODataRetrieveRequestFactory.
+ * This is an abstract representation of an OData retrieve query request returning one or more result item.
  */
-abstract class AbstractODataRetrieveRequest<V, T extends Enum<T>>
+public abstract class AbstractODataRetrieveRequest<V, T extends Enum<T>>
         extends AbstractODataBasicRequest<ODataRetrieveResponse<V>, T>
         implements ODataRetrieveRequest<V, T>, ODataBatchableRequest {
 
@@ -45,7 +44,7 @@ abstract class AbstractODataRetrieveRequest<V, T extends Enum<T>>
    * @param formatRef reference class for the format being used
    * @param query query to be executed.
    */
-  AbstractODataRetrieveRequest(final ODataClient odataClient, final Class<T> formatRef, final URI query) {
+  public AbstractODataRetrieveRequest(final CommonODataClient odataClient, final Class<T> formatRef, final URI query) {
     super(odataClient, formatRef, HttpMethod.GET, query);
   }
 

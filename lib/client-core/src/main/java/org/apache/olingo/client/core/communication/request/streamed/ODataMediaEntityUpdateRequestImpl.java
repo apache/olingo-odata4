@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityUpdateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
@@ -50,7 +50,7 @@ public class ODataMediaEntityUpdateRequestImpl
    * @param editURI edit URI of the entity to be updated.
    * @param media media entity blob to be created.
    */
-  ODataMediaEntityUpdateRequestImpl(final ODataClient odataClient,
+  ODataMediaEntityUpdateRequestImpl(final CommonODataClient odataClient,
           final HttpMethod method, final URI editURI, final InputStream media) {
 
     super(odataClient, method, editURI);

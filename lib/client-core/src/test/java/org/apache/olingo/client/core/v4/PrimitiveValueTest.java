@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.apache.olingo.client.api.ODataV4Client;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -34,7 +34,7 @@ import org.junit.Test;
 public class PrimitiveValueTest extends AbstractTest {
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return v4Client;
   }
 

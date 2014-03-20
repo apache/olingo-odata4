@@ -26,13 +26,13 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.core.edm.xml.v4.ReturnTypeImpl;
 import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
 
-  protected ODataClient client;
+  protected CommonODataClient client;
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
     return ConstExprConstructImpl.Type.fromString(jp.getCurrentName()) != null;
@@ -64,7 +64,7 @@ public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
   public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    client = (ODataClient) ctxt.findInjectableValue(ODataClient.class.getName(), null, null);
+    client = (CommonODataClient) ctxt.findInjectableValue(CommonODataClient.class.getName(), null, null);
     return doDeserialize(jp, ctxt);
   }
 

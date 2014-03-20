@@ -50,14 +50,14 @@ import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 
 import org.junit.Test;
 
 import org.junit.Ignore;
 
-public class NavigationLinkCreateTestITCase extends AbstractV3TestITCase {
+public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
 
   // create navigation link with ATOM
   @Test
@@ -153,7 +153,7 @@ public class NavigationLinkCreateTestITCase extends AbstractV3TestITCase {
 
     final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, created, id, null, "Customer");
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Info");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -176,7 +176,7 @@ public class NavigationLinkCreateTestITCase extends AbstractV3TestITCase {
   // create a navigation link
   public ODataEntity createNav(final String url, final ODataPubFormat format, final ODataEntity original,
           final String entitySetName, final String contentType, final String prefer) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(url);
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(url);
     uriBuilder.appendEntitySetSegment(entitySetName);
     final ODataEntityCreateRequest createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
@@ -227,7 +227,7 @@ public class NavigationLinkCreateTestITCase extends AbstractV3TestITCase {
       final ODataEntity actualEntity =
               validateEntities(testStaticServiceRootURL, format, createdEntity, id, null, "Customer");
 
-      final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+      final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
       uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
 
       final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
@@ -383,7 +383,7 @@ public class NavigationLinkCreateTestITCase extends AbstractV3TestITCase {
           final int actualObjectId,
           final Collection<String> expands, final String entitySetName) {
 
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(serviceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(serviceRootURL).
             appendEntitySetSegment(entitySetName).appendKeySegment(actualObjectId);
 
     if (expands != null) {

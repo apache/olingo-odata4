@@ -20,14 +20,13 @@ package org.apache.olingo.client.core.op.impl;
 
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.ODataLinkCollection;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.ODataValue;
@@ -35,11 +34,11 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
-import org.apache.olingo.client.api.op.ODataReader;
+import org.apache.olingo.client.api.op.CommonODataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractODataReader implements ODataReader {
+public abstract class AbstractODataReader implements CommonODataReader {
 
   private static final long serialVersionUID = -1988865870981207079L;
 
@@ -48,9 +47,9 @@ public abstract class AbstractODataReader implements ODataReader {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractODataReader.class);
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  protected AbstractODataReader(final ODataClient client) {
+  protected AbstractODataReader(final CommonODataClient client) {
     this.client = client;
   }
 
@@ -68,12 +67,6 @@ public abstract class AbstractODataReader implements ODataReader {
   public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
     final Property property = client.getDeserializer().toProperty(input, format);
     return client.getBinder().getODataProperty(property);
-  }
-
-  @Override
-  public ODataLinkCollection readLinks(final InputStream input, final ODataFormat format) {
-    return client.getBinder().getLinkCollection(
-            client.getDeserializer().toLinkCollection(input, format));
   }
 
   @Override
@@ -95,8 +88,6 @@ public abstract class AbstractODataReader implements ODataReader {
         res = readEntity(src, ODataPubFormat.fromString(format));
       } else if (ODataProperty.class.isAssignableFrom(reference)) {
         res = readProperty(src, ODataFormat.fromString(format));
-      } else if (ODataLinkCollection.class.isAssignableFrom(reference)) {
-        res = readLinks(src, ODataFormat.fromString(format));
       } else if (ODataValue.class.isAssignableFrom(reference)) {
         res = client.getPrimitiveValueBuilder().
                 setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT

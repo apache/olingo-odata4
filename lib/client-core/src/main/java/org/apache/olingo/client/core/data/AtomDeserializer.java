@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.data;
 
+import org.apache.olingo.client.core.data.v3.XMLLinkCollectionImpl;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;

@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -54,7 +54,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param uri URI of the entity to be updated.
    * @param changes changes to be applied.
    */
-  ODataEntityUpdateRequestImpl(final ODataClient odataClient,
+  ODataEntityUpdateRequestImpl(final CommonODataClient odataClient,
           final HttpMethod method, final URI uri, final ODataEntity changes) {
 
     super(odataClient, ODataPubFormat.class, method, uri);

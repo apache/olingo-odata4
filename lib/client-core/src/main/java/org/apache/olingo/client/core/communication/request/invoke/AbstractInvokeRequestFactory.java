@@ -20,21 +20,22 @@ package org.apache.olingo.client.core.communication.request.invoke;
 
 import java.net.URI;
 import java.util.Map;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
+import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.communication.request.invoke.CommonInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.domain.ODataInvokeResult;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 
-abstract class AbstractInvokeRequestFactory<FI extends CommonFunctionImport> implements InvokeRequestFactory<FI> {
+public abstract class AbstractInvokeRequestFactory<FI extends CommonFunctionImport>
+        implements CommonInvokeRequestFactory<FI> {
 
   private static final long serialVersionUID = -906760270085197249L;
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  protected AbstractInvokeRequestFactory(final ODataClient client) {
+  protected AbstractInvokeRequestFactory(final CommonODataClient client) {
     this.client = client;
   }
 

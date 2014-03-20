@@ -39,7 +39,7 @@ import java.util.Locale;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -64,7 +64,7 @@ import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
@@ -92,7 +92,7 @@ public abstract class AbstractTestITCase {
     Locale.setDefault(Locale.ENGLISH);
   }
 
-  protected abstract ODataClient getClient();
+  protected abstract CommonODataClient getClient();
 
   protected void checkLinks(final Collection<ODataLink> original, final Collection<ODataLink> actual) {
     assertTrue(original.size() <= actual.size());
@@ -365,7 +365,8 @@ public abstract class AbstractTestITCase {
           final ODataEntity original,
           final String entitySetName) {
 
-    final URIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).appendEntitySetSegment(entitySetName);
+    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
+            appendEntitySetSegment(entitySetName);
 
     debugODataEntity(original, "About to create");
 
@@ -391,7 +392,7 @@ public abstract class AbstractTestITCase {
           final int actualObjectId,
           final Collection<String> expands) {
 
-    final URIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
+    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(actualObjectId);
 
     // search expanded

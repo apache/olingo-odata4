@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.olingo.client.api.ODataV3Client;
-import org.apache.olingo.client.api.uri.V3URIBuilder;
+import org.apache.olingo.client.api.v3.ODataClient;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class URIBuilderTest extends AbstractTest {
   private static final String SERVICE_ROOT = "http://host/service";
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 
@@ -57,7 +57,7 @@ public class URIBuilderTest extends AbstractTest {
     final Map<String, Object> multiKey = new HashMap<String, Object>();
     multiKey.put("OrderId", -10);
     multiKey.put("ProductId", -10);
-    V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("OrderLine").appendKeySegment(multiKey).
             appendPropertySegment("Quantity").appendValueSegment();
 
@@ -84,7 +84,7 @@ public class URIBuilderTest extends AbstractTest {
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
 
     uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").
-            inlineCount(V3URIBuilder.InlineCount.allpages).build();
+            inlineCount(URIBuilder.InlineCount.allpages).build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
             addParameter("$inlinecount", "allpages").build(), uri);
@@ -92,7 +92,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void filter() throws URISyntaxException {
-    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
             filter(getClient().getFilterFactory().lt("VIN", 16));
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet").
@@ -102,7 +102,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void unboundAction() throws URISyntaxException {
-    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendOperationCallSegment("ProductsByCategoryId",
                     Collections.<String, Object>singletonMap("categoryId", 2));
 
@@ -112,7 +112,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void boundAction() throws URISyntaxException {
-    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Products").appendOperationCallSegment("MostExpensive", null);
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -121,7 +121,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void derived() throws URISyntaxException {
-    final V3URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customers").appendNavigationSegment("Model").
             appendDerivedEntityTypeSegment("Namespace.VipCustomer").appendKeySegment(1);
 

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.ODataV4Client;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -33,7 +33,7 @@ import org.junit.Test;
 public class ServiceDocumentTest extends AbstractTest {
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return v4Client;
   }
 

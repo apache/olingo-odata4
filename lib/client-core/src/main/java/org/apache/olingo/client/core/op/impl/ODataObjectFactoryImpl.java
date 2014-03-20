@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.op.impl;
 
 import java.net.URI;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.domain.ODataLinkType;
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataComplexValue;
@@ -36,9 +36,9 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   private static final long serialVersionUID = -3769695665946919447L;
 
-  protected final ODataClient client;
+  protected final CommonODataClient client;
 
-  public ODataObjectFactoryImpl(final ODataClient client) {
+  public ODataObjectFactoryImpl(final CommonODataClient client) {
     this.client = client;
   }
 

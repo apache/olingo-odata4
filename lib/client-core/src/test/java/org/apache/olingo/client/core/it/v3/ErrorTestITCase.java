@@ -28,14 +28,14 @@ import java.io.InputStream;
 import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -47,7 +47,7 @@ import org.junit.Test;
 /**
  * This is the unit test class to check basic entity operations.
  */
-public class ErrorTestITCase extends AbstractV3TestITCase {
+public class ErrorTestITCase extends AbstractTestITCase {
 
   private class ErrorGeneratingRequest
           extends AbstractODataBasicRequest<ODataEntityCreateResponse, ODataPubFormat> {
@@ -69,10 +69,10 @@ public class ErrorTestITCase extends AbstractV3TestITCase {
 
     private class ErrorResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
 
-      private final ODataClient odataClient;
+      private final CommonODataClient odataClient;
 
       public ErrorResponseImpl(
-              final ODataClient odataClient, final HttpClient client, final HttpResponse res) {
+              final CommonODataClient odataClient, final HttpClient client, final HttpResponse res) {
 
         super(client, res);
         this.odataClient = odataClient;
@@ -86,7 +86,7 @@ public class ErrorTestITCase extends AbstractV3TestITCase {
   }
 
   private void stacktraceError(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ErrorGeneratingRequest errorReq = new ErrorGeneratingRequest(HttpMethod.POST, uriBuilder.build());
@@ -114,7 +114,7 @@ public class ErrorTestITCase extends AbstractV3TestITCase {
   }
 
   private void notfoundError(final ODataPubFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer(154)");
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -148,7 +148,7 @@ public class ErrorTestITCase extends AbstractV3TestITCase {
 
     final EdmEntityContainer container = metadata.getSchemas().get(0).getEntityContainer();
     final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
-    final URIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment(URIUtils.rootFunctionImportURISegment(container, funcImp), null);
     // TODO: review invoke
 //        final ODataInvokeRequest<ODataEntitySet> req =

@@ -42,14 +42,14 @@ import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
  * This is the unit test class to check basic entity operations.
  */
-public class PropertyTestITCase extends AbstractV3TestITCase {
+public class PropertyTestITCase extends AbstractTestITCase {
 
   protected String getServiceRoot() {
     return testStaticServiceRootURL;
@@ -122,7 +122,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
 
   @Test
   public void readCountValue() throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").count();
 
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -158,7 +158,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   private void updatePropertyValue(final ODataValueFormat format, final UpdateType type) throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").
@@ -201,7 +201,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
 
     ODataPropertyRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
@@ -247,7 +247,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
@@ -294,7 +294,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   private void updatePrimitiveProperty(final ODataFormat format) throws IOException {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
@@ -338,7 +338,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   private void rawRequest(final ODataFormat format) {
-    final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());

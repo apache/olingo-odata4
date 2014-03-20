@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
@@ -54,7 +54,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    * @param targetURI entity set or entity or entity property URI.
    * @param property value to be created.
    */
-  ODataPropertyUpdateRequestImpl(final ODataClient odataClient,
+  ODataPropertyUpdateRequestImpl(final CommonODataClient odataClient,
           final HttpMethod method, final URI targetURI, final ODataProperty property) {
 
     super(odataClient, ODataFormat.class, method, targetURI);

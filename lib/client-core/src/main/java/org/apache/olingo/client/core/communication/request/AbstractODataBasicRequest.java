@@ -26,7 +26,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
@@ -51,7 +51,7 @@ public abstract class AbstractODataBasicRequest<V extends ODataResponse, T exten
      * @param method request method.
      * @param uri OData request URI.
      */
-    public AbstractODataBasicRequest(final ODataClient odataClient,
+    public AbstractODataBasicRequest(final CommonODataClient odataClient,
             final Class<T> formatRef, final HttpMethod method, final URI uri) {
 
         super(odataClient, formatRef, method, uri);

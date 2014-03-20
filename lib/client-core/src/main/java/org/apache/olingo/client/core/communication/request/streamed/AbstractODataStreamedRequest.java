@@ -28,7 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
@@ -37,7 +37,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
-import org.apache.olingo.client.core.Wrapper;
+import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
 import org.apache.commons.io.IOUtils;
 
@@ -68,7 +68,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param method OData request HTTP method.
    * @param uri OData request URI.
    */
-  public AbstractODataStreamedRequest(final ODataClient odataClient,
+  public AbstractODataStreamedRequest(final CommonODataClient odataClient,
           final HttpMethod method, final URI uri) {
 
     super(odataClient, ODataMediaFormat.class, method, uri);
