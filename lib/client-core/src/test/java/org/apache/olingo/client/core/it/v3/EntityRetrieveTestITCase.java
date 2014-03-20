@@ -30,7 +30,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.communication.request.retrieve.ObjectWrapper;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
@@ -152,7 +151,7 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
-    
+
     final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNull(entitySet);
 
