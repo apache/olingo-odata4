@@ -181,7 +181,7 @@ public class JSONUtilities extends AbstractUtilities {
           throws Exception {
     final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
-    JsonNode node = getProperty(srcNode, path, 0);
+    JsonNode node = getProperty(srcNode, path);
     return IOUtils.toInputStream(node.asText());
   }
 
@@ -202,8 +202,11 @@ public class JSONUtilities extends AbstractUtilities {
       propertyNode.put(JSON_ODATAMETADATA_NAME, ODATA_METADATA_PREFIX + edmType);
     }
 
-    JsonNode jsonNode = getProperty(srcNode, path, 0);
-    if (jsonNode.isObject()) {
+    JsonNode jsonNode = getProperty(srcNode, path);
+
+    if (jsonNode.isArray()) {
+      propertyNode.put("value", (ArrayNode) jsonNode);
+    } else if (jsonNode.isObject()) {
       propertyNode.putAll((ObjectNode) jsonNode);
     } else {
       propertyNode.put("value", jsonNode.asText());
@@ -218,20 +221,18 @@ public class JSONUtilities extends AbstractUtilities {
     return res;
   }
 
-  private JsonNode getProperty(final JsonNode node, final List<String> path, final int index)
+  private JsonNode getProperty(final JsonNode node, final List<String> path)
           throws NotFoundException {
-    final Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
-    while (iter.hasNext()) {
-      final Map.Entry<String, JsonNode> entry = iter.next();
-      if (path.get(index).equals(entry.getKey())) {
-        if (path.size() - 1 == index) {
-          return entry.getValue();
-        } else {
-          return getProperty(entry.getValue(), path, index + 1);
-        }
+
+    JsonNode propertyNode = node;
+    for (int i = 0; i < path.size(); i++) {
+      propertyNode = propertyNode.get(path.get(i));
+      if (propertyNode == null) {
+        throw new NotFoundException();
       }
     }
-    throw new NotFoundException();
+
+    return propertyNode;
   }
 
   public InputStream addJsonInlinecount(
