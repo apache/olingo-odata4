@@ -1,25 +1,23 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -27,13 +25,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.olingo.commons.core.Decoder;
 import org.apache.olingo.server.core.uri.parser.RawUri.QueryOption;
 
 public class UriDecoder {
 
   static Pattern uriPattern = Pattern.compile("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
 
-  public static RawUri decodeUri(final String uri, final int scipSegments) throws UriParserSyntaxException {
+  public static RawUri decodeUri(final String uri, final int scipSegments) {
     RawUri rawUri = new RawUri();
 
     Matcher m = uriPattern.matcher(uri);
@@ -52,7 +51,7 @@ public class UriDecoder {
     return rawUri;
   }
 
-  private static void decode(final RawUri rawUri) throws UriParserSyntaxException {
+  private static void decode(final RawUri rawUri) {
     rawUri.pathSegmentListDecoded = new ArrayList<String>();
     for (String segment : rawUri.pathSegmentList) {
       rawUri.pathSegmentListDecoded.add(decode(segment));
@@ -119,19 +118,13 @@ public class UriDecoder {
       start = end + 1;
     }
 
-    
     list.add(input.substring(start));
-    
 
     return list;
   }
 
-  public static String decode(final String encoded) throws UriParserSyntaxException {
-    try {
-      return URLDecoder.decode(encoded, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw new UriParserSyntaxException("Error while decoding");
-    }
+  public static String decode(final String encoded) {
+    return Decoder.decode(encoded);
   }
 
 }

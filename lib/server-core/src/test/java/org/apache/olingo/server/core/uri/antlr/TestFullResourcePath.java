@@ -1,29 +1,29 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.server.core.uri.antlr;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.ODataApplicationException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -2573,7 +2573,10 @@ public class TestFullResourcePath {
   @Test
   public void misc() {
 
-    testUri.run("");
+    testUri.run("")
+        .isKind(UriInfoKind.service);
+    testUri.run("/")
+        .isKind(UriInfoKind.service);
 
     testUri.run("$all")
         .isKind(UriInfoKind.all);
@@ -5079,7 +5082,7 @@ public class TestFullResourcePath {
         + "/com.sap.odata.test1.CTBase/com.sap.odata.test1.CTBase").isExSemantic(0);
 
     testUri.runEx("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav").isExSemantic(0);
-    
+
     // $ref
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyComplexTwoPrim/$ref").isExSemantic(0);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyComplexTwoPrim/$count").isExSemantic(0);
@@ -5097,7 +5100,7 @@ public class TestFullResourcePath {
   }
 
   public static String encode(final String decoded) throws UnsupportedEncodingException {
-    return URLEncoder.encode(decoded, "UTF-8");
+    return Encoder.encode(decoded);
 
   }
 
