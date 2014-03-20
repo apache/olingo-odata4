@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 
 /**
- * This class implements a generic OData request.
+ * This interface represents a generic OData request.
  */
 public interface ODataRawRequest extends ODataRequest {
 

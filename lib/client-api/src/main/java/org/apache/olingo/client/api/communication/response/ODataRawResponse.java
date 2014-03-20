@@ -19,7 +19,7 @@
 package org.apache.olingo.client.api.communication.response;
 
 /**
- * This class implements a generic OData response.
+ * This interface represents a generic OData response.
  */
 public interface ODataRawResponse extends ODataResponse {
 
