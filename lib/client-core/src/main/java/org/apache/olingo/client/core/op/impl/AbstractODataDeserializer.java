@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.client.core.op.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Error;
@@ -108,7 +110,10 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
 
   protected <T> T json(final InputStream input, final Class<T> reference) {
     try {
-      return getObjectMapper().readValue(input, reference);
+      String maz = IOUtils.toString(input);
+      ByteArrayInputStream bais = new ByteArrayInputStream(maz.getBytes());
+    System.out.println("KKKKKKKKKKKKKKKKKK\n" + maz);
+      return getObjectMapper().readValue(bais, reference);
     } catch (Exception e) {
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }

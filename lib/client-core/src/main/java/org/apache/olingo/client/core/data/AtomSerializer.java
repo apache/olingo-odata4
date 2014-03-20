@@ -131,9 +131,11 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, entry.getBaseURI().toASCIIString());
     }
 
-    writer.writeStartElement(Constants.ATOM_ELEM_ID);
-    writer.writeCharacters(entry.getId());
-    writer.writeEndElement();
+    if (StringUtils.isNotBlank(entry.getId())) {
+      writer.writeStartElement(Constants.ATOM_ELEM_ID);
+      writer.writeCharacters(entry.getId());
+      writer.writeEndElement();
+    }
 
     writer.writeStartElement(Constants.ATOM_ELEM_CATEGORY);
     writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, version.getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
@@ -193,9 +195,11 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeEndElement();
     }
 
-    writer.writeStartElement(Constants.ATOM_ELEM_ID);
-    writer.writeCharacters(feed.getId());
-    writer.writeEndElement();
+    if (StringUtils.isNotBlank(feed.getId())) {
+      writer.writeStartElement(Constants.ATOM_ELEM_ID);
+      writer.writeCharacters(feed.getId());
+      writer.writeEndElement();
+    }
 
     if (feed instanceof AbstractAtomObject) {
       common(writer, (AbstractAtomObject) feed);
