@@ -16,27 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.retrieve;
-
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.data.ObjectWrapper;
+package org.apache.olingo.client.api.communication.response;
 
 /**
- * This class implements a generic OData retrieve query request.
+ * This class implements a generic OData response.
  */
-public interface ODataGenericRetrieveRequest extends ODataRawRequest {
+public interface ODataRawResponse extends ODataResponse {
 
   /**
-   * Sets accepted format.
    *
-   * @param format format.
+   * @param <T> OData domain object
+   * @param reference an OData domain object class reference
+   * @return response body parsed as the given reference, if available, <tt>null</tt> otherwise
    */
-  void setFormat(final String format);
-
-  /**
-   * Executes the query.
-   *
-   * @return query response.
-   */
-  ODataRetrieveResponse<ObjectWrapper> execute();
+  <T> T getBodyAs(final Class<T> reference);
 }

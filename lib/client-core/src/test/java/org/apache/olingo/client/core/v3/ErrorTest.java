@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.olingo.client.api.ODataV3Client;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;
@@ -34,15 +34,15 @@ public class ErrorTest extends AbstractTest {
     return v3Client;
   }
 
-  private Error error(final String name, final ODataPubFormat format) {
-    final Error error = getClient().getDeserializer().toError(
+  private ODataError error(final String name, final ODataPubFormat format) {
+    final ODataError error = getClient().getDeserializer().toError(
             getClass().getResourceAsStream(name + "." + getSuffix(format)), format == ODataPubFormat.ATOM);
     assertNotNull(error);
     return error;
   }
 
   private void simple(final ODataPubFormat format) {
-    final Error error = error("error", format);
+    final ODataError error = error("error", format);
     assertNull(error.getInnerErrorStacktrace());
   }
 
@@ -57,7 +57,7 @@ public class ErrorTest extends AbstractTest {
   }
 
   private void stacktrace(final ODataPubFormat format) {
-    final Error error = error("stacktrace", format);
+    final ODataError error = error("stacktrace", format);
     assertNotNull(error.getInnerErrorStacktrace());
   }
 

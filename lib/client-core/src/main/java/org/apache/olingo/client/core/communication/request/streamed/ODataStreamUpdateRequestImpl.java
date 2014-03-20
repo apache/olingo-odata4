@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.communication.request.streamed.StreamUpdateS
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData stream create/update request. Get instance by using ODataStreamedRequestFactory.
@@ -93,7 +93,7 @@ public class ODataStreamUpdateRequestImpl
   /**
    * Response class about an ODataStreamUpdateRequest.
    */
-  private class ODataStreamUpdateResponseImpl extends ODataResponseImpl implements ODataStreamUpdateResponse {
+  private class ODataStreamUpdateResponseImpl extends AbstractODataResponse implements ODataStreamUpdateResponse {
 
     private InputStream input = null;
 

@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieve
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This is an abstract representation of an OData retrieve query request returning one or more result item. Get instance
@@ -68,7 +68,7 @@ abstract class AbstractODataRetrieveRequest<V, T extends Enum<T>>
   /**
    * Response abstract class about an ODataRetrieveRequest.
    */
-  protected abstract class ODataRetrieveResponseImpl extends ODataResponseImpl implements ODataRetrieveResponse<V> {
+  protected abstract class ODataRetrieveResponseImpl extends AbstractODataResponse implements ODataRetrieveResponse<V> {
 
     /**
      * Constructor.

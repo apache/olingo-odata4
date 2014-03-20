@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.it.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -28,14 +27,14 @@ import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataGenericRetrieveRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
-import org.apache.olingo.client.api.data.ObjectWrapper;
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
@@ -44,6 +43,7 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.URIBuilder;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
@@ -111,13 +111,13 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
   }
 
   @Test
-  public void genericRequestAsXML() throws IOException {
-    genericRequest(ODataFormat.XML);
+  public void rawRequestAsXML() throws IOException {
+    rawRequest(ODataFormat.XML);
   }
 
   @Test
-  public void genericRequestAsJSON() throws IOException {
-    genericRequest(ODataFormat.JSON);
+  public void rawRequestAsJSON() throws IOException {
+    rawRequest(ODataFormat.JSON);
   }
 
   @Test
@@ -271,7 +271,7 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
-            alternativeNames);
+                    alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -337,19 +337,17 @@ public class PropertyTestITCase extends AbstractV3TestITCase {
     assertEquals(newMsg, phoneNumber.getPrimitiveValue().<String>toCastValue());
   }
 
-  private void genericRequest(final ODataFormat format) {
+  private void rawRequest(final ODataFormat format) {
     final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
-    final ODataGenericRetrieveRequest req =
-            client.getRetrieveRequestFactory().getGenericRetrieveRequest(uriBuilder.build());
+    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.toString());
 
-    final ODataRetrieveResponse<ObjectWrapper> res = req.execute();
+    final ODataRawResponse res = req.execute();
+    assertNotNull(res);
 
-    ObjectWrapper wrapper = res.getBody();
-
-    final ODataProperty property = wrapper.getODataProperty();
+    final ODataProperty property = res.getBodyAs(ODataProperty.class);
     assertNotNull(property);
   }
 }

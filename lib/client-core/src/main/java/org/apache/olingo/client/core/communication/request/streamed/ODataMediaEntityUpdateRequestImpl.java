@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdat
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
@@ -96,7 +96,7 @@ public class ODataMediaEntityUpdateRequestImpl
   /**
    * Response class about an ODataMediaEntityUpdateRequest.
    */
-  private class ODataMediaEntityUpdateResponseImpl extends ODataResponseImpl
+  private class ODataMediaEntityUpdateResponseImpl extends AbstractODataResponse
           implements ODataMediaEntityUpdateResponse {
 
     private ODataEntity entity = null;

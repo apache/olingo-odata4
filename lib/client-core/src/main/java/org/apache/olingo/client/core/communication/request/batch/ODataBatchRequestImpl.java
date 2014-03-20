@@ -40,7 +40,7 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.streamed.AbstractODataStreamedRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
 
 /**
@@ -127,7 +127,7 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
    *
    * @see org.apache.olingo.client.core.communication.request.ODataBatchRequest
    */
-  private class ODataBatchResponseImpl extends ODataResponseImpl implements ODataBatchResponse {
+  private class ODataBatchResponseImpl extends AbstractODataResponse implements ODataBatchResponse {
 
     /**
      * Constructor.

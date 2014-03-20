@@ -23,12 +23,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import java.util.Map;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 
 /**
  * This class represents an OData error returned as JSON.
  */
-public class XMLErrorImpl extends AbstractPayloadObject implements Error {
+public class XMLErrorImpl extends AbstractPayloadObject implements ODataError {
 
   private static final long serialVersionUID = -3476499168507242932L;
 

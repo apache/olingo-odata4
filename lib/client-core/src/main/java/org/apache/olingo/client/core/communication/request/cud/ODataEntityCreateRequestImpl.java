@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData create request.
@@ -84,7 +84,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
   /**
    * Response class about an ODataEntityCreateRequest.
    */
-  private class ODataEntityCreateResponseImpl extends ODataResponseImpl implements ODataEntityCreateResponse {
+  private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
 
     private ODataEntity entity = null;
 

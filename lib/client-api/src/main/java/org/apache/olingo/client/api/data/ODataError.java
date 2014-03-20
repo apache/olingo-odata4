@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.data;
 /**
  * OData error.
  */
-public interface Error {
+public interface ODataError {
 
   /**
    * Gets error code.

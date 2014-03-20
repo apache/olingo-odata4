@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataLinkCollection;
@@ -99,7 +99,7 @@ public interface ODataReader extends Serializable {
    * @param isXML 'TRUE' if the error is in XML format.
    * @return OData error.
    */
-  Error readError(InputStream inputStream, boolean isXML);
+  ODataError readError(InputStream inputStream, boolean isXML);
 
   /**
    * Parses a stream into the object type specified by the given reference.

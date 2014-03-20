@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.data;
+package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
@@ -39,7 +40,7 @@ public class ObjectWrapper {
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(ObjectWrapper.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ObjectWrapper.class);
 
   private final ODataReader reader;
 
@@ -143,7 +144,7 @@ public class ObjectWrapper {
    *
    * @return <tt>ODataError</tt> if success; null otherwise.
    */
-  public Error getODataError() {
-    return reader.read(new ByteArrayInputStream(obj), null, Error.class);
+  public ODataError getODataError() {
+    return reader.read(new ByteArrayInputStream(obj), null, ODataError.class);
   }
 }

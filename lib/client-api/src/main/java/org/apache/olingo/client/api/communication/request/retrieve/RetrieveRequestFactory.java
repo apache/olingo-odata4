@@ -96,18 +96,10 @@ public interface RetrieveRequestFactory extends Serializable {
   ODataMediaRequest getMediaRequest(URI query);
 
   /**
-   * Implements a raw request returning a stream.
+   * Implements a raw request request without specifying any return type.
    *
    * @param uri query to be performed.
    * @return new ODataRawRequest instance.
    */
   ODataRawRequest getRawRequest(URI uri);
-
-  /**
-   * Implements a generic retrieve request without specifying any return type.
-   *
-   * @param uri query to be performed.
-   * @return new ODataGenericRerieveRequest instance.
-   */
-  ODataGenericRetrieveRequest getGenericRetrieveRequest(URI uri);
 }

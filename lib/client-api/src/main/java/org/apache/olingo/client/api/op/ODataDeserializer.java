@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.op;
 import java.io.InputStream;
 import java.io.Serializable;
 import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.LinkCollection;
 import org.apache.olingo.client.api.data.Property;
@@ -80,7 +80,7 @@ public interface ODataDeserializer extends Serializable {
    * @param isXML 'TRUE' if the error is represented by XML; 'FALSE' otherwise.
    * @return
    */
-  Error toError(InputStream input, boolean isXML);
+  ODataError toError(InputStream input, boolean isXML);
 
   /**
    * Gets a list of links from the given InputStream.

@@ -46,7 +46,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData invoke operation request.
@@ -177,7 +177,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
   /**
    * Response class about an ODataInvokeRequest.
    */
-  protected class ODataInvokeResponseImpl extends ODataResponseImpl implements ODataInvokeResponse<T> {
+  protected class ODataInvokeResponseImpl extends AbstractODataResponse implements ODataInvokeResponse<T> {
 
     private T invokeResult = null;
 

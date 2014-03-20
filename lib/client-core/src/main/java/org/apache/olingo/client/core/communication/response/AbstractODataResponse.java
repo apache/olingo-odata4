@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract representation of an OData response.
  */
-public abstract class ODataResponseImpl implements ODataResponse {
+public abstract class AbstractODataResponse implements ODataResponse {
 
   /**
    * Logger.
@@ -93,7 +93,7 @@ public abstract class ODataResponseImpl implements ODataResponse {
   /**
    * Constructor.
    */
-  public ODataResponseImpl() {
+  public AbstractODataResponse() {
     this.client = null;
     this.res = null;
   }
@@ -104,7 +104,7 @@ public abstract class ODataResponseImpl implements ODataResponse {
    * @param client HTTP client.
    * @param res HTTP response.
    */
-  public ODataResponseImpl(final HttpClient client, final HttpResponse res) {
+  public AbstractODataResponse(final HttpClient client, final HttpResponse res) {
     this.client = client;
     this.res = res;
 

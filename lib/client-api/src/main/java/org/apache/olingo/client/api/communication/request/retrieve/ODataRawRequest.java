@@ -19,9 +19,24 @@
 package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 
 /**
  * This class implements a generic OData request.
  */
 public interface ODataRawRequest extends ODataRequest {
+
+  /**
+   * Sets accepted format.
+   *
+   * @param format format.
+   */
+  void setFormat(final String format);
+
+  /**
+   * Executes the query.
+   *
+   * @return query response.
+   */
+  ODataRawResponse execute();
 }

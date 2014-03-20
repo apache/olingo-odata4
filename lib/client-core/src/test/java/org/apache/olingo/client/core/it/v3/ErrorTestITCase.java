@@ -38,7 +38,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -67,7 +67,7 @@ public class ErrorTestITCase extends AbstractV3TestITCase {
       return new ErrorResponseImpl(client, httpClient, res);
     }
 
-    private class ErrorResponseImpl extends ODataResponseImpl implements ODataEntityCreateResponse {
+    private class ErrorResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
 
       private final ODataClient odataClient;
 

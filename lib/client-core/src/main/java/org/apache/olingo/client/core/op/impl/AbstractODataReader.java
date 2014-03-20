@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.op.impl;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
@@ -77,7 +77,7 @@ public abstract class AbstractODataReader implements ODataReader {
   }
 
   @Override
-  public Error readError(final InputStream inputStream, final boolean isXML) {
+  public ODataError readError(final InputStream inputStream, final boolean isXML) {
     return client.getDeserializer().toError(inputStream, isXML);
   }
 
@@ -107,7 +107,7 @@ public abstract class AbstractODataReader implements ODataReader {
         res = readMetadata(src);
       } else if (ODataServiceDocument.class.isAssignableFrom(reference)) {
         res = readServiceDocument(src, ODataFormat.fromString(format));
-      } else if (Error.class.isAssignableFrom(reference)) {
+      } else if (ODataError.class.isAssignableFrom(reference)) {
         res = readError(src, !format.toString().contains("json"));
       } else {
         throw new IllegalArgumentException("Invalid reference type " + reference);

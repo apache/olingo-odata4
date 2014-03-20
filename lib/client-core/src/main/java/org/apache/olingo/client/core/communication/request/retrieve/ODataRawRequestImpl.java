@@ -18,12 +18,19 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements a generic OData request.
@@ -40,4 +47,55 @@ public class ODataRawRequestImpl extends ODataRequestImpl<ODataPubFormat>
   ODataRawRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, ODataPubFormat.class, HttpMethod.GET, uri);
   }
+
+  @Override
+  public void setFormat(final String format) {
+    setAccept(format);
+    setContentType(format);
+  }
+
+  @Override
+  public ODataRawResponse execute() {
+    return new ODataRawResponseImpl(httpClient, doExecute());
+  }
+
+  private class ODataRawResponseImpl extends AbstractODataResponse implements ODataRawResponse {
+
+    private byte[] obj = null;
+
+    /**
+     * Constructor.
+     * <br/>
+     * Just to create response templates to be initialized from batch.
+     */
+    private ODataRawResponseImpl() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param client HTTP client.
+     * @param res HTTP response.
+     */
+    private ODataRawResponseImpl(final HttpClient client, final HttpResponse res) {
+      super(client, res);
+    }
+
+    @Override
+    public <T> T getBodyAs(final Class<T> reference) {
+      if (obj == null) {
+        try {
+          this.obj = IOUtils.toByteArray(getRawResponse());
+        } catch (IOException e) {
+          throw new IllegalArgumentException(e);
+        } finally {
+          this.close();
+        }
+      }
+
+      return odataClient.getReader().read(new ByteArrayInputStream(obj), getContentType(), reference);
+    }
+
+  }
+
 }

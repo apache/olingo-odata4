@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.op.impl;
 import java.io.InputStream;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.LinkCollection;
 import org.apache.olingo.client.api.data.Property;
@@ -81,7 +81,7 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   }
 
   @Override
-  public Error toError(final InputStream input, final boolean isXML) {
+  public ODataError toError(final InputStream input, final boolean isXML) {
     return isXML
             ? xml(input, XMLErrorImpl.class)
             : json(input, JSONErrorBundle.class).getError();

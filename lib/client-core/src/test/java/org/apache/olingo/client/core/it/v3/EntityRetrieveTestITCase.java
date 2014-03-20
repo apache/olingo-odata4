@@ -27,9 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataGenericRetrieveRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.data.ObjectWrapper;
+import org.apache.olingo.client.core.communication.request.retrieve.ObjectWrapper;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
@@ -142,34 +143,32 @@ public class EntityRetrieveTestITCase extends AbstractV3TestITCase {
     withInlineFeed(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void genericRequest(final ODataPubFormat format) {
+  private void rawRequest(final ODataPubFormat format) {
     final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(16);
 
-    final ODataGenericRetrieveRequest req =
-            client.getRetrieveRequestFactory().getGenericRetrieveRequest(uriBuilder.build());
+    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.toString());
 
-    final ODataRetrieveResponse<ObjectWrapper> res = req.execute();
-
-    final ObjectWrapper wrapper = res.getBody();
-
-    final ODataEntitySet entitySet = wrapper.getODataEntitySet();
+    final ODataRawResponse res = req.execute();
+    assertNotNull(res);
+    
+    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNull(entitySet);
 
-    final ODataEntity entity = wrapper.getODataEntity();
+    final ODataEntity entity = res.getBodyAs(ODataEntity.class);
     assertNotNull(entity);
   }
 
   @Test
-  public void genericRequestAsAtom() {
-    genericRequest(ODataPubFormat.ATOM);
+  public void rawRequestAsAtom() {
+    rawRequest(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void genericRequestAsJSON() {
+  public void rawRequestAsJSON() {
     // this needs to be full, otherwise actions will not be provided
-    genericRequest(ODataPubFormat.JSON_FULL_METADATA);
+    rawRequest(ODataPubFormat.JSON_FULL_METADATA);
   }
 
   private void multiKey(final ODataPubFormat format) {

@@ -50,7 +50,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.data.JSONErrorImpl;
 import org.apache.olingo.client.core.data.XMLErrorImpl;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
@@ -411,7 +411,7 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
           final boolean isXML = getAccept().indexOf("json") == -1;
-          Error error;
+          ODataError error;
 
           try {
             error = odataClient.getReader().readError(httpEntity.getContent(), isXML);
@@ -460,8 +460,8 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
     throw new IllegalStateException("No response class template has been found");
   }
 
-  private Error getGenericError(final int code, final String errorMsg, final boolean isXML) {
-    final Error error;
+  private ODataError getGenericError(final int code, final String errorMsg, final boolean isXML) {
+    final ODataError error;
     if (isXML) {
       error = new XMLErrorImpl();
       final XMLErrorImpl.Message msg = new XMLErrorImpl.Message(

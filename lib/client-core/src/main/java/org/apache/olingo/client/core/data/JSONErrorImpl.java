@@ -20,12 +20,12 @@ package org.apache.olingo.client.core.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.client.api.data.Error;
+import org.apache.olingo.client.api.data.ODataError;
 
 /**
  * This class represents an OData error returned as JSON.
  */
-public class JSONErrorImpl extends AbstractPayloadObject implements Error {
+public class JSONErrorImpl extends AbstractPayloadObject implements ODataError {
 
   private static final long serialVersionUID = -3476499168507242932L;
 

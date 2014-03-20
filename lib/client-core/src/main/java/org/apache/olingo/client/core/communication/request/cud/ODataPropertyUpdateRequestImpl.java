@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData update entity property request.
@@ -88,7 +88,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   /**
    * Response class about an ODataPropertyUpdateRequest.
    */
-  private class ODataPropertyUpdateResponseImpl extends ODataResponseImpl implements ODataPropertyUpdateResponse {
+  private class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
 
     private ODataProperty property = null;
 

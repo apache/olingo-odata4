@@ -22,8 +22,7 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 
 /**
- * This is an abstract representation of an OData retrieve query request returning one or more result item. Get instance
- * by using ODataRetrieveRequestFactory.
+ * This is an abstract representation of an OData retrieve query request returning one or more result item.
  */
 public interface ODataRetrieveRequest<V, T extends Enum<T>> extends ODataBasicRequest<ODataRetrieveResponse<V>, T> {
 }

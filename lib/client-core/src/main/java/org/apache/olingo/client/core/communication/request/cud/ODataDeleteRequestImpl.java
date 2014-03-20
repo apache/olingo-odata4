@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an OData delete request.
@@ -69,7 +69,7 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
   /**
    * Response class about an ODataDeleteRequest.
    */
-  private class ODataDeleteResponseImpl extends ODataResponseImpl implements ODataDeleteResponse {
+  private class ODataDeleteResponseImpl extends AbstractODataResponse implements ODataDeleteResponse {
 
     /**
      * Constructor.

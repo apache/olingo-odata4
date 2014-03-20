@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
-import org.apache.olingo.client.core.communication.response.ODataResponseImpl;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
  * This class implements an update link OData request.
@@ -88,7 +88,7 @@ public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataL
   /**
    * This class implements the response to an OData link operation request.
    */
-  public class ODataLinkUpdateResponseImpl extends ODataResponseImpl implements ODataLinkOperationResponse {
+  public class ODataLinkUpdateResponseImpl extends AbstractODataResponse implements ODataLinkOperationResponse {
 
     /**
      * Constructor.

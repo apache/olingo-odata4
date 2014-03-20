@@ -24,7 +24,6 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataGenericRetrieveRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
@@ -89,10 +88,5 @@ public abstract class AbstractRetrieveRequestFactory implements RetrieveRequestF
             StringUtils.isNotBlank(serviceRoot) && serviceRoot.endsWith("/")
             ? client.getURIBuilder(serviceRoot).build()
             : client.getURIBuilder(serviceRoot + "/").build());
-  }
-
-  @Override
-  public ODataGenericRetrieveRequest getGenericRetrieveRequest(final URI uri) {
-    return new ODataGenericRetrieveRequestImpl(client, uri);
   }
 }

@@ -19,22 +19,22 @@
 package org.apache.olingo.client.core.it.v3;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataGenericRetrieveRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.data.ObjectWrapper;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
@@ -47,13 +47,13 @@ public class EntitySetTestITCase extends AbstractV3TestITCase {
   }
 
   @Test
-  public void genericRequestAsAtom() throws IOException {
-    genericRequest(ODataPubFormat.ATOM);
+  public void rawRequestAsAtom() throws IOException {
+    rawRequest(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void genericRequestAsJSON() throws IOException {
-    genericRequest(ODataPubFormat.JSON);
+  public void rawRequestAsJSON() throws IOException {
+    rawRequest(ODataPubFormat.JSON);
   }
 
   @Test
@@ -133,19 +133,17 @@ public class EntitySetTestITCase extends AbstractV3TestITCase {
     assertTrue(feedIterator.getNext().toASCIIString().endsWith("Customer?$skiptoken=-9"));
   }
 
-  private void genericRequest(final ODataPubFormat format) {
+  private void rawRequest(final ODataPubFormat format) {
     final URIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Car");
 
-    final ODataGenericRetrieveRequest req =
-            client.getRetrieveRequestFactory().getGenericRetrieveRequest(uriBuilder.build());
+    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
     req.setFormat(format.toString());
 
-    final ODataRetrieveResponse<ObjectWrapper> res = req.execute();
+    final ODataRawResponse res = req.execute();
+    assertNotNull(res);
 
-    ObjectWrapper wrapper = res.getBody();
-
-    final ODataEntitySet entitySet = wrapper.getODataEntitySet();
+    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNotNull(entitySet);
   }
 }
