@@ -287,8 +287,4 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableCollection(systemQueryOptions.values());
   }
 
-  @Override
-  public UriResource getUriResourceLastPart() {
-    return lastResourcePart;
-  }
 }

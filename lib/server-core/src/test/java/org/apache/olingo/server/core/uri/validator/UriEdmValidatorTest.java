@@ -29,6 +29,7 @@ import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class UriEdmValidatorTest {
   private static final String URI_ENTITY = "/ESAllPrim(1)";
   private static final String URI_MEDIA_STREAM = "/ESMedia(1)/$value";
   private static final String URI_REFERENCES = "/ESAllPrim/$ref";
-  private static final String URI_REFERENECE = "/ESAllPrim(1)/$ref";
+  private static final String URI_REFERENCE = "/ESAllPrim(1)/$ref";
   private static final String URI_PROPERTY_COMPLEX = "/ESCompComp(1)/PropertyComplex";
   private static final String URI_PROPERTY_COMPLEX_COLLECTION =
       "/ESCompCollComp(1)/PropertyComplex/CollPropertyComplex";
@@ -62,7 +63,7 @@ public class UriEdmValidatorTest {
   private static final String QO_EXPAND = "$expand=*";
   private static final String QO_ID = "$id=Products(0)";
   private static final String QO_COUNT = "$count";
-//  private static final String QO_ORDERBY = "$orderby=bla asc";
+//  private static final String QO_ORDERBY = "$orderby=true";
 //  private static final String QO_SEARCH = "$search='bla'";
   private static final String QO_SELECT = "$select=*";
   private static final String QO_SKIP = "$skip=3";
@@ -95,6 +96,31 @@ public class UriEdmValidatorTest {
       { URI_ENTITY_SET, QO_SKIP }, { URI_ENTITY_SET, QO_SKIPTOKEN }, { URI_ENTITY_SET, QO_LEVELS },
       { URI_ENTITY_SET, QO_TOP },
 
+      { URI_ENTITY, QO_FORMAT }, { URI_ENTITY, QO_EXPAND }, { URI_ENTITY, QO_SELECT }, { URI_ENTITY, QO_LEVELS },
+
+      { URI_MEDIA_STREAM, QO_FORMAT },
+
+      { URI_REFERENCES, QO_FILTER }, { URI_REFERENCES, QO_FORMAT }, /* { URI_REFERENCES, QO_ORDERBY }, */
+      /* { URI_REFERENCES, QO_SEARCH }, */{ URI_REFERENCES, QO_SKIP }, { URI_REFERENCES, QO_SKIPTOKEN },
+      { URI_REFERENCES, QO_TOP },
+
+      { URI_REFERENCE, QO_FORMAT },
+
+      { URI_PROPERTY_COMPLEX, QO_FORMAT }, { URI_PROPERTY_COMPLEX, QO_SELECT }, { URI_PROPERTY_COMPLEX, QO_EXPAND },
+      { URI_PROPERTY_COMPLEX, QO_LEVELS },
+
+      { URI_PROPERTY_COMPLEX_COLLECTION, QO_FILTER }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_FORMAT },
+      { URI_PROPERTY_COMPLEX_COLLECTION, QO_EXPAND }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_COUNT },
+      { URI_PROPERTY_COMPLEX_COLLECTION, QO_SKIP }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_SKIPTOKEN },
+      { URI_PROPERTY_COMPLEX_COLLECTION, QO_LEVELS }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_TOP },
+
+      { URI_PROPERTY_PRIMITIVE, QO_FORMAT },
+
+      { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_FILTER }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_FORMAT },
+      /* { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_ORDERBY }, */{ URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SKIP },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SKIPTOKEN }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_TOP },
+
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_FORMAT },
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {
@@ -127,11 +153,75 @@ public class UriEdmValidatorTest {
       /* { URI_ENTITY_SET_COUNT, QO_ORDERBY }, *//* { URI_ENTITY_SET_COUNT, QO_SEARCH }, */
       { URI_ENTITY_SET_COUNT, QO_SELECT }, { URI_ENTITY_SET_COUNT, QO_SKIP }, { URI_ENTITY_SET_COUNT, QO_SKIPTOKEN },
       { URI_ENTITY_SET_COUNT, QO_LEVELS }, { URI_ENTITY_SET_COUNT, QO_TOP },
+
+      { URI_ENTITY, QO_FILTER }, { URI_ENTITY, QO_ID }, { URI_ENTITY, QO_COUNT }, /* { URI_ENTITY, QO_ORDERBY }, */
+      /* { URI_ENTITY, QO_SEARCH }, */{ URI_ENTITY, QO_SKIP }, { URI_ENTITY, QO_SKIPTOKEN }, { URI_ENTITY, QO_TOP },
+
+      { URI_MEDIA_STREAM, QO_FILTER }, { URI_MEDIA_STREAM, QO_ID, }, { URI_MEDIA_STREAM, QO_EXPAND },
+      { URI_MEDIA_STREAM, QO_COUNT }, /* { URI_MEDIA_STREAM, QO_ORDERBY }, *//* { URI_MEDIA_STREAM, QO_SEARCH }, */
+      { URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP }, { URI_MEDIA_STREAM, QO_SKIPTOKEN },
+      { URI_MEDIA_STREAM, QO_LEVELS }, { URI_MEDIA_STREAM, QO_TOP },
+
+      { URI_REFERENCES, QO_ID, }, { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_COUNT },
+      { URI_REFERENCES, QO_SELECT }, { URI_REFERENCES, QO_LEVELS },
+
+      { URI_REFERENCE, QO_FILTER }, { URI_REFERENCE, QO_ID, }, { URI_REFERENCE, QO_EXPAND },
+      { URI_REFERENCE, QO_COUNT }, /* { URI_REFERENCE, QO_ORDERBY }, *//* { URI_REFERENCE, QO_SEARCH }, */
+      { URI_REFERENCE, QO_SELECT }, { URI_REFERENCE, QO_SKIP }, { URI_REFERENCE, QO_SKIPTOKEN },
+      { URI_REFERENCE, QO_LEVELS }, { URI_REFERENCE, QO_TOP },
+
+      { URI_PROPERTY_COMPLEX, QO_FILTER }, { URI_PROPERTY_COMPLEX, QO_ID, }, { URI_PROPERTY_COMPLEX, QO_COUNT },
+      /* { URI_PROPERTY_COMPLEX, QO_ORDERBY }, *//* { URI_PROPERTY_COMPLEX, QO_SEARCH }, */
+      { URI_PROPERTY_COMPLEX, QO_SKIP }, { URI_PROPERTY_COMPLEX, QO_SKIPTOKEN }, { URI_PROPERTY_COMPLEX, QO_TOP },
+
+      { URI_PROPERTY_COMPLEX_COLLECTION, QO_ID, }, /* { URI_PROPERTY_COMPLEX_COLLECTION, QO_ORDERBY }, */
+      /* { URI_PROPERTY_COMPLEX_COLLECTION, QO_SEARCH }, */{ URI_PROPERTY_COMPLEX_COLLECTION, QO_SELECT },
+
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_FILTER }, { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_FORMAT },
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_ID, }, { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_EXPAND },
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_COUNT }, /* { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_ORDERBY }, */
+      /* { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SEARCH }, */{ URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SELECT },
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SKIP }, { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SKIPTOKEN },
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_LEVELS }, { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_TOP },
+
+      { URI_PROPERTY_PRIMITIVE, QO_FILTER }, { URI_PROPERTY_PRIMITIVE, QO_ID, }, { URI_PROPERTY_PRIMITIVE, QO_EXPAND },
+      { URI_PROPERTY_PRIMITIVE, QO_COUNT }, /* { URI_PROPERTY_PRIMITIVE, QO_ORDERBY }, */
+      /* { URI_PROPERTY_PRIMITIVE, QO_SEARCH }, */{ URI_PROPERTY_PRIMITIVE, QO_SELECT },
+      { URI_PROPERTY_PRIMITIVE, QO_SKIP }, { URI_PROPERTY_PRIMITIVE, QO_SKIPTOKEN },
+      { URI_PROPERTY_PRIMITIVE, QO_LEVELS }, { URI_PROPERTY_PRIMITIVE, QO_TOP },
+
+      { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_ID, }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_EXPAND },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_COUNT }, /* { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SEARCH }, */
+      { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SELECT }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_LEVELS },
+
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_FILTER }, { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_FORMAT },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_ID, }, { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_EXPAND },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_COUNT },
+      /* { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_ORDERBY }, */
+      /* { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_SEARCH }, */
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_SELECT }, { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_SKIP },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_SKIPTOKEN },
+      { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_LEVELS }, { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_TOP },
+
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_FILTER }, { URI_PROPERTY_PRIMITIVE_VALUE, QO_ID, },
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_EXPAND }, { URI_PROPERTY_PRIMITIVE_VALUE, QO_COUNT },
+      /* { URI_PROPERTY_PRIMITIVE_VALUE, QO_ORDERBY }, *//* { URI_PROPERTY_PRIMITIVE_VALUE, QO_SEARCH }, */
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_SELECT }, { URI_PROPERTY_PRIMITIVE_VALUE, QO_SKIP },
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_SKIPTOKEN }, { URI_PROPERTY_PRIMITIVE_VALUE, QO_LEVELS },
+      { URI_PROPERTY_PRIMITIVE_VALUE, QO_TOP },
+
   };
+  private Parser parser;
+
+  @Before
+  public void before() {
+    parser = new Parser();
+  }
 
   @Test
+  @Ignore
   public void bla() throws Exception {
-    String[][] m = { { URI_ENTITY_SET_COUNT, QO_FILTER } };
+    String[][] m = { { URI_PROPERTY_PRIMITIVE_VALUE, QO_SELECT } };
     String[] uris = constructUri(m);
     System.out.println(uris[0]);
 
@@ -165,91 +255,6 @@ public class UriEdmValidatorTest {
     }
   }
 
-  @Test
-  @Ignore
-  public void systemQueryOptionValid() throws Exception {
-    String[] uris =
-    {
-        /* $filter */
-        "/$all?$format=bla",
-        // "/$batch?$format=bla",
-        "/$crossjoin(ESAllPrim)?$format=bla",
-        "/$entity?$id=Products(0)?$format=bla",
-        "/$metadata?$format=bla",
-        "?$format=bla",
-        "/ESAllPrim?$format=bla",
-        "/ESAllPrim/$count?$format=bla",
-        "/ESAllPrim(1)?$format=bla",
-        "/ESMedia(1)/$value?$format=bla",
-        "/ESAllPrim/$ref?$format=bla",
-        "/ESAllPrim(1)/$ref?$format=bla",
-        "/ESCompComp(1)/PropertyComplex?$format=bla",
-        "/ESCompCollComp(1)/PropertyComplex/CollPropertyComplex?$format=bla",
-        "/ESCompCollComp(1)/PropertyComplex/CollPropertyComplex/$count?$format=bla",
-        "/ESAllPrim(1)/PropertyString?$format=bla",
-        "/ESCollAllPrim/CollPropertyString?$format=bla",
-        "/ESCollAllPrim/CollPropertyString/$count?$format=bla",
-        "/ESAllPrim(1)/PropertyString/$value?$format=bla"
-    };
-
-    for (String uri : uris) {
-      try {
-        parseAndValidate(uri);
-      } catch (Exception e) {
-        throw new Exception("Faild for uri: " + uri, e);
-      }
-    }
-
-  }
-
-  String[] tmpUri = {
-      "$crossjoin(ESKeyNav, ESTwoKeyNav)/invalid                                                                    ",
-      "$crossjoin(invalidEntitySet)                                                                                 ",
-      "$entity                                                                                                      ",
-      "$entity?$idfalse=ESKeyNav(1)                                                                                 ",
-      "ESAllPrim(PropertyInt16='1')                                                                                 ",
-      "ESCollAllPrim(null)                                                                                          ",
-      "ESTwoPrim(1)/com.sap.odata.test1.ETBase(1)                                                                   ",
-      "ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase(1)                                     ",
-      "ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase(1)                                     ",
-      "FICRTCollCTTwoPrimParam(ParameterInt16='1',ParameterString='2')                                              ",
-      "FICRTESTwoKeyNavParam(ParameterInt16=@invalidAlias)?@validAlias=1                                            ",
-      "FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/PropertyComplex                         ",
-      "FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count                                  ",
-      // "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref                                                              ",
-//      "ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count                                                            ",
-//      "ESKeyNav?$top=-3                                                                                             ",
-//      "ESAllPrim?$count=foo                                                                                         ",
-//      "ESAllPrim?$skip=-3                                                                                           "
-  };
-
-  @Test
-  @Ignore("key predicate validation not implemented")
-  public void keyPredicateValidTypes() throws Exception {
-    String[] uris = {};
-
-    for (String uri : uris) {
-      parseAndValidate(uri);
-    }
-
-  }
-
-  @Test
-  @Ignore("key predicate validation not implemented")
-  public void keyPredicateInvalidTypes() throws UriParserException {
-    String[] uris = {};
-
-    for (String uri : uris) {
-
-      try {
-        parseAndValidate(uri);
-        fail("Validation Exception not thrown: " + uri);
-      } catch (UriValidationException e) {
-        assertTrue(e instanceof UriValidationException);
-      }
-    }
-  }
-
   private String[] constructUri(String[][] uriParameterMatrix) {
     ArrayList<String> uris = new ArrayList<String>();
     for (String[] uriParameter : uriParameterMatrix) {
@@ -268,26 +273,8 @@ public class UriEdmValidatorTest {
     return uris.toArray(new String[0]);
   }
 
-  @Test
-  @Ignore
-  public void systemQueryOptionInvalid() throws Exception {
-    String[] uris =
-    {
-        };
-
-    for (String uri : uris) {
-
-      try {
-        parseAndValidate(uri);
-        fail("Validation Exception not thrown: " + uri);
-      } catch (UriValidationException e) {
-        assertTrue(e instanceof UriValidationException);
-      }
-    }
-  }
-
   private void parseAndValidate(String uri) throws UriParserException, UriValidationException {
-    UriInfo uriInfo = new Parser().parseUri(uri.trim(), edm);
+    UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     SystemQueryValidator validator = new SystemQueryValidator();
 
     System.out.print("URI: " + uri);
