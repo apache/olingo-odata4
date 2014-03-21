@@ -237,6 +237,7 @@ public class SystemQueryValidator {
     case root:
       break;
     case singleton:
+      idx = 9;
       break;
     case value: {
       int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;

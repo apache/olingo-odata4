@@ -57,6 +57,7 @@ public class UriEdmValidatorTest {
   private static final String URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT =
       "/ESCollAllPrim/CollPropertyString/$count";
   private static final String URI_PROPERTY_PRIMITIVE_VALUE = "/ESAllPrim(1)/PropertyString/$value";
+  private static final String URI_SINGLETON = "/SI";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla";
@@ -121,6 +122,9 @@ public class UriEdmValidatorTest {
       { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SKIPTOKEN }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_TOP },
 
       { URI_PROPERTY_PRIMITIVE_VALUE, QO_FORMAT },
+
+      { URI_SINGLETON, QO_FORMAT }, { URI_SINGLETON, QO_EXPAND }, { URI_SINGLETON, QO_SELECT },
+      { URI_SINGLETON, QO_LEVELS },
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {
@@ -210,6 +214,9 @@ public class UriEdmValidatorTest {
       { URI_PROPERTY_PRIMITIVE_VALUE, QO_SKIPTOKEN }, { URI_PROPERTY_PRIMITIVE_VALUE, QO_LEVELS },
       { URI_PROPERTY_PRIMITIVE_VALUE, QO_TOP },
 
+      { URI_SINGLETON, QO_FILTER }, { URI_SINGLETON, QO_ID }, { URI_SINGLETON, QO_COUNT },
+      /* { URI_SINGLETON, QO_ORDERBY }, *//* { URI_SINGLETON, QO_SEARCH }, */{ URI_SINGLETON, QO_SKIP },
+      { URI_SINGLETON, QO_SKIPTOKEN }, { URI_SINGLETON, QO_TOP },
   };
   private Parser parser;
 
@@ -219,9 +226,10 @@ public class UriEdmValidatorTest {
   }
 
   @Test
-  @Ignore
-  public void bla() throws Exception {
-    String[][] m = { { URI_PROPERTY_PRIMITIVE_VALUE, QO_SELECT } };
+//  @Ignore
+      public
+      void bla() throws Exception {
+    String[][] m = { { URI_SINGLETON, QO_SELECT } };
     String[] uris = constructUri(m);
     System.out.println(uris[0]);
 
