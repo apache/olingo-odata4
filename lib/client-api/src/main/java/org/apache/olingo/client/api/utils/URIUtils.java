@@ -32,7 +32,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -158,11 +157,11 @@ public final class URIUtils {
               : (obj instanceof ODataDuration)
               ? "time'" + ((ODataDuration) obj).toString() + "'"
               : (obj instanceof BigDecimal)
-              ? new DecimalFormat(ODataJClientEdmPrimitiveType.Decimal.pattern()).format((BigDecimal) obj) + "M"
+              ? new DecimalFormat("#.#######################").format((BigDecimal) obj) + "M"
               : (obj instanceof Double)
-              ? new DecimalFormat(ODataJClientEdmPrimitiveType.Double.pattern()).format((Double) obj) + "D"
+              ? new DecimalFormat("#.#######################E0").format((Double) obj) + "D"
               : (obj instanceof Float)
-              ? new DecimalFormat(ODataJClientEdmPrimitiveType.Single.pattern()).format((Float) obj) + "f"
+              ? new DecimalFormat("#.#######E0").format((Float) obj) + "f"
               : (obj instanceof Long)
               ? ((Long) obj).toString() + "L"
               : (obj instanceof String)

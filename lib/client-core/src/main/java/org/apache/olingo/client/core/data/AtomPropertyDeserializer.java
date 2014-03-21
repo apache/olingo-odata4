@@ -28,8 +28,8 @@ import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.CollectionValue;
 import org.apache.olingo.client.api.data.ComplexValue;
 import org.apache.olingo.client.api.data.Value;
-import org.apache.olingo.client.api.domain.ODataJClientEdmType;
 import org.apache.olingo.client.api.domain.ODataPropertyType;
+import org.apache.olingo.client.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -43,7 +43,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
   }
 
   private Value fromPrimitive(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmType typeInfo) throws XMLStreamException {
+          final EdmTypeInfo typeInfo) throws XMLStreamException {
 
     Value value = null;
 
@@ -52,14 +52,15 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
-        if (typeInfo != null && typeInfo.isGeospatialType()) {
-          final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(version, typeInfo.getBaseType());
+        if (typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
+          final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(
+                  version, typeInfo.getFullQualifiedName().toString());
           value = new GeospatialValueImpl(this.geoDeserializer.deserialize(reader, event.asStartElement(), geoType));
         }
       }
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()
-              && (typeInfo == null || !typeInfo.isGeospatialType())) {
+              && (typeInfo == null || !typeInfo.getPrimitiveTypeKind().isGeospatial())) {
 
         value = new PrimitiveValueImpl(event.asCharacters().getData());
       }
@@ -94,13 +95,13 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
   }
 
   private CollectionValue fromCollection(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmType typeInfo) throws XMLStreamException {
+          final EdmTypeInfo typeInfo) throws XMLStreamException {
 
     final CollectionValueImpl value = new CollectionValueImpl();
 
-    final ODataJClientEdmType type = typeInfo == null
+    final EdmTypeInfo type = typeInfo == null
             ? null
-            : new ODataJClientEdmType(typeInfo.getBaseType());
+            : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -176,12 +177,9 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     Value value;
     final Attribute nullAttr = start.getAttributeByName(this.nullQName);
     if (nullAttr == null) {
-      final ODataJClientEdmType typeInfo = StringUtils.isBlank(property.getType())
+      final EdmTypeInfo typeInfo = StringUtils.isBlank(property.getType())
               ? null
-              : new ODataJClientEdmType(property.getType());
-//      final EdmTypeInfo typeInfo = StringUtils.isBlank(property.getType())
-//              ? null
-//              : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+              : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
 
       final ODataPropertyType propType = typeInfo == null
               ? guessPropertyType(reader)

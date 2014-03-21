@@ -19,16 +19,18 @@
 package org.apache.olingo.client.core.communication.request.invoke.v4;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory;
 import org.apache.olingo.client.api.domain.ODataInvokeResult;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
+import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractInvokeRequestFactory;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory<FunctionImport>
-        implements InvokeRequestFactory {
+public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory implements InvokeRequestFactory {
 
   private static final long serialVersionUID = 8452737360003104372L;
 
@@ -37,8 +39,10 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory<Funct
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          final URI uri, final XMLMetadata metadata, final FunctionImport functionImport) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(final URI uri, final Edm edm,
+          final FullQualifiedName container, final String functionImport,
+          final LinkedHashMap<String, ODataValue> parameters) {
+
+    throw new NotImplementedException("Not available yet.");
   }
 }

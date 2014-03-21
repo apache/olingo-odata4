@@ -70,7 +70,7 @@ public interface CommonODataClient {
 
   CommonStreamedRequestFactory getStreamedRequestFactory();
 
-  CommonInvokeRequestFactory<?> getInvokeRequestFactory();
+  CommonInvokeRequestFactory getInvokeRequestFactory();
 
   CommonBatchRequestFactory getBatchRequestFactory();
 }

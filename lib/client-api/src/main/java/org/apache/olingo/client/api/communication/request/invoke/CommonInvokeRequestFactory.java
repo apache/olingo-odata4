@@ -20,39 +20,42 @@ package org.apache.olingo.client.api.communication.request.invoke;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import org.apache.olingo.client.api.domain.ODataInvokeResult;
 import org.apache.olingo.client.api.domain.ODataValue;
-import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * OData request factory class.
  */
-public interface CommonInvokeRequestFactory<FI extends CommonFunctionImport> extends Serializable {
+public interface CommonInvokeRequestFactory extends Serializable {
 
   /**
    * Gets an invoke request instance.
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
-   * @param metadata Edm metadata
+   * @param edm Edm metadata
+   * @param container Entity container
    * @param functionImport function import to be invoked
    * @return new ODataInvokeRequest instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          URI uri, XMLMetadata metadata, FI functionImport);
+          URI uri, Edm edm, FullQualifiedName container, String functionImport);
 
   /**
    * Gets an invoke request instance.
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
-   * @param metadata Edm metadata
+   * @param edm Edm metadata
+   * @param container Entity container
    * @param functionImport function import to be invoked
    * @param parameters parameters to pass to function import invocation
    * @return new ODataInvokeRequest instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          URI uri, XMLMetadata metadata, FI functionImport, Map<String, ODataValue> parameters);
+          URI uri, Edm edm, FullQualifiedName container, String functionImport,
+          LinkedHashMap<String, ODataValue> parameters);
 }

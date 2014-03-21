@@ -19,7 +19,6 @@
 package org.apache.olingo.client.api.communication.request.invoke.v3;
 
 import org.apache.olingo.client.api.communication.request.invoke.CommonInvokeRequestFactory;
-import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 
-public interface InvokeRequestFactory extends CommonInvokeRequestFactory<FunctionImport> {
+public interface InvokeRequestFactory extends CommonInvokeRequestFactory {
 }

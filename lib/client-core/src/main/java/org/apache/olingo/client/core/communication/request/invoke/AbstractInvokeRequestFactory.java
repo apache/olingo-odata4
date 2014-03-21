@@ -19,17 +19,14 @@
 package org.apache.olingo.client.core.communication.request.invoke;
 
 import java.net.URI;
-import java.util.Map;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.CommonInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.domain.ODataInvokeResult;
-import org.apache.olingo.client.api.domain.ODataValue;
-import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public abstract class AbstractInvokeRequestFactory<FI extends CommonFunctionImport>
-        implements CommonInvokeRequestFactory<FI> {
+public abstract class AbstractInvokeRequestFactory implements CommonInvokeRequestFactory {
 
   private static final long serialVersionUID = -906760270085197249L;
 
@@ -40,13 +37,10 @@ public abstract class AbstractInvokeRequestFactory<FI extends CommonFunctionImpo
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          final URI uri,
-          final XMLMetadata metadata,
-          final FI functionImport,
-          final Map<String, ODataValue> parameters) {
-    final ODataInvokeRequest<RES> result = getInvokeRequest(uri, metadata, functionImport);
-    result.setParameters(parameters);
-    return result;
+  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(final URI uri, final Edm edm,
+          final FullQualifiedName container, final String functionImport) {
+
+    return getInvokeRequest(uri, edm, container, functionImport, null);
   }
+
 }
