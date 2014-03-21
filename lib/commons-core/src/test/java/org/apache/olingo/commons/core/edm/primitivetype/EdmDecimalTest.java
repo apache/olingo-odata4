@@ -25,24 +25,23 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.Uint7;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class EdmDecimalTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeKind.Decimal.getEdmPrimitiveTypeInstance();
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Decimal);
 
   @Test
   public void compatibility() {
     assertTrue(instance.isCompatible(Uint7.getInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Byte.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int16.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int64.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Single.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Double.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Byte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int16)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int64)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Single)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Double)));
   }
 
   @Test

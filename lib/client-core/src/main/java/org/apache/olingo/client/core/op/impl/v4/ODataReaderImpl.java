@@ -38,7 +38,7 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
 
   @Override
   public Edm readMetadata(final InputStream input) {
-    return new EdmClientImpl(client.getDeserializer().toMetadata(input));
+    return new EdmClientImpl(client.getServiceVersion(), client.getDeserializer().toMetadata(input));
   }
 
   @Override

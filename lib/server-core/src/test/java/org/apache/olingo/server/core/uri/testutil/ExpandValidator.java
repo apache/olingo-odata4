@@ -35,7 +35,6 @@ import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 
 public class ExpandValidator implements Validator {
   private Edm edm;

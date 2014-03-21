@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.api.edm.geo;
 
 import java.util.List;
-
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Polygon.
@@ -66,9 +65,9 @@ public class Polygon extends Geospatial {
   }
 
   @Override
-  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
+  public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-            ? ODataJClientEdmPrimitiveType.GeographyPolygon
-            : ODataJClientEdmPrimitiveType.GeometryPolygon;
+           ? EdmPrimitiveTypeKind.GeographyPolygon
+           : EdmPrimitiveTypeKind.GeometryPolygon;
   }
 }

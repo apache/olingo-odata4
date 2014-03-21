@@ -64,10 +64,11 @@ public final class EdmDate extends SingletonPrimitiveType {
     try {
       return EdmDateTimeOffset.convertDateTime(dateTimeValue, returnType);
     } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value), e");
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
     }
   }
 

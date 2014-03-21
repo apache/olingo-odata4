@@ -49,8 +49,9 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -133,7 +134,7 @@ public class MetadataTest extends AbstractTest {
             new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "ProductReview"));
     assertNotNull(entity);
     assertFalse(entity.getPropertyNames().isEmpty());
-    assertEquals(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance(),
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32),
             entity.getProperty("ProductId").getType());
 
     assertFalse(entity.getKeyPropertyRefs().isEmpty());
@@ -150,7 +151,7 @@ public class MetadataTest extends AbstractTest {
     for (EdmActionImportInfo info : metadata.getServiceMetadata().getActionImportInfos()) {
       actionImports.add(info.getActionImportName());
     }
-    final Set<String> expectedAI = new HashSet<String>(Arrays.asList(new String[]{
+    final Set<String> expectedAI = new HashSet<String>(Arrays.asList(new String[] {
       "ResetDataSource",
       "IncreaseSalaries",
       "Sack",
@@ -162,7 +163,7 @@ public class MetadataTest extends AbstractTest {
     for (EdmFunctionImportInfo info : metadata.getServiceMetadata().getFunctionImportInfos()) {
       functionImports.add(info.getFunctionImportName());
     }
-    final Set<String> expectedFI = new HashSet<String>(Arrays.asList(new String[]{
+    final Set<String> expectedFI = new HashSet<String>(Arrays.asList(new String[] {
       "GetPrimitiveString",
       "GetSpecificCustomer",
       "GetCustomerCount",
@@ -177,7 +178,7 @@ public class MetadataTest extends AbstractTest {
 
     final EdmFunctionImport getArgumentPlusOne = container.getFunctionImport("GetArgumentPlusOne");
     assertNotNull(getArgumentPlusOne);
-    assertEquals(EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance(),
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32),
             getArgumentPlusOne.getFunction(null).getReturnType().getType());
 
     final EdmActionImport resetDataSource = container.getActionImport("ResetDataSource");
@@ -191,7 +192,7 @@ public class MetadataTest extends AbstractTest {
     final EdmFunction getComputer = metadata.getFunction(
             new FullQualifiedName(container.getNamespace(), "GetComputer"),
             new FullQualifiedName(container.getNamespace(), computer.getName()),
-            Boolean.FALSE, Arrays.asList(new String[]{"computer"}));
+            Boolean.FALSE, Arrays.asList(new String[] {"computer"}));
     assertNotNull(getComputer);
     assertEquals(computer, getComputer.getParameter("computer").getType());
     assertEquals(computer, getComputer.getReturnType().getType());

@@ -26,15 +26,15 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.olingo.client.api.data.CollectionValue;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.Value;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.ODataJClientEdmType;
+import org.apache.olingo.client.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
 
-  private static final ODataJClientEdmPrimitiveType[] NUMBER_TYPES = {
-    ODataJClientEdmPrimitiveType.Byte, ODataJClientEdmPrimitiveType.SByte,
-    ODataJClientEdmPrimitiveType.Single, ODataJClientEdmPrimitiveType.Double,
-    ODataJClientEdmPrimitiveType.Int16, ODataJClientEdmPrimitiveType.Int32, ODataJClientEdmPrimitiveType.Int64
+  private static final EdmPrimitiveTypeKind[] NUMBER_TYPES = {
+    EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
+    EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
+    EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64
   };
 
   private final JSONGeoValueSerializer geoSerializer = new JSONGeoValueSerializer();
@@ -50,20 +50,20 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   }
 
   private void value(final JsonGenerator jgen, final String type, final Value value) throws IOException {
-    final ODataJClientEdmType typeInfo = type == null
+    final EdmTypeInfo typeInfo = type == null
             ? null
-            : new ODataJClientEdmType(type);
+            : new EdmTypeInfo.Builder().setTypeExpression(type).build();
 
     if (value.isNull()) {
       jgen.writeNull();
     } else if (value.isSimple()) {
       final boolean isNumber = typeInfo == null
               ? NumberUtils.isNumber(value.asSimple().get())
-              : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveType());
+              : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveTypeKind());
       final boolean isBoolean = typeInfo == null
               ? (value.asSimple().get().equalsIgnoreCase(Boolean.TRUE.toString())
               || value.asSimple().get().equalsIgnoreCase(Boolean.FALSE.toString()))
-              : typeInfo.getPrimitiveType() == ODataJClientEdmPrimitiveType.Boolean;
+              : typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Boolean;
 
       if (isNumber) {
         jgen.writeNumber(value.asSimple().get());
@@ -77,7 +77,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       geoSerializer.serialize(jgen, value.asGeospatial().get());
       jgen.writeEndObject();
     } else if (value.isCollection()) {
-      collection(jgen, typeInfo == null ? null : typeInfo.getBaseType(), value.asCollection());
+      collection(jgen, typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(), value.asCollection());
     } else if (value.isComplex()) {
       jgen.writeStartObject();
       for (Property property : value.asComplex().get()) {

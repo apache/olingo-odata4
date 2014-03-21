@@ -28,9 +28,9 @@ import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.CollectionValue;
 import org.apache.olingo.client.api.data.ComplexValue;
 import org.apache.olingo.client.api.data.Value;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataJClientEdmType;
 import org.apache.olingo.client.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 class AtomPropertyDeserializer extends AbstractAtomDealer {
@@ -53,7 +53,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
 
       if (event.isStartElement()) {
         if (typeInfo != null && typeInfo.isGeospatialType()) {
-          final ODataJClientEdmPrimitiveType geoType = ODataJClientEdmPrimitiveType.fromValue(typeInfo.getBaseType());
+          final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(version, typeInfo.getBaseType());
           value = new GeospatialValueImpl(this.geoDeserializer.deserialize(reader, event.asStartElement(), geoType));
         }
       }

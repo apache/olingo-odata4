@@ -56,15 +56,19 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmImpl;
 
 public class EdmClientImpl extends AbstractEdmImpl {
+
+  private final ODataServiceVersion version;
 
   private final XMLMetadata xmlMetadata;
 
   private final EdmServiceMetadata serviceMetadata;
 
-  public EdmClientImpl(final XMLMetadata xmlMetadata) {
+  public EdmClientImpl(final ODataServiceVersion version, final XMLMetadata xmlMetadata) {
+    this.version = version;
     this.xmlMetadata = xmlMetadata;
     this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(xmlMetadata);
   }
@@ -115,7 +119,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
     if (schema != null) {
       final EnumType xmlEnumType = schema.getEnumType(enumName.getName());
       if (xmlEnumType != null) {
-        result = new EdmEnumTypeImpl(this, enumName, xmlEnumType);
+        result = new EdmEnumTypeImpl(version, this, enumName, xmlEnumType);
       }
     }
 
@@ -131,7 +135,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
       final TypeDefinition xmlTypeDefinition = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getTypeDefinition(typeDefinitionName.getName());
       if (xmlTypeDefinition != null) {
-        result = new EdmTypeDefinitionImpl(this, typeDefinitionName, xmlTypeDefinition);
+        result = new EdmTypeDefinitionImpl(version, this, typeDefinitionName, xmlTypeDefinition);
       }
     } else {
       throw new UnsupportedInV3Exception();
@@ -378,7 +382,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected List<EdmSchema> createSchemas() {
     final List<EdmSchema> schemas = new ArrayList<EdmSchema>();
     for (Schema schema : xmlMetadata.getSchemas()) {
-      schemas.add(new EdmSchemaImpl(this, xmlMetadata, schema));
+      schemas.add(new EdmSchemaImpl(version, this, xmlMetadata, schema));
     }
     return schemas;
   }

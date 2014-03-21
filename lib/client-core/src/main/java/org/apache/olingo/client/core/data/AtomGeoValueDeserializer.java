@@ -28,20 +28,21 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
+import org.apache.olingo.client.api.data.GeoUtils;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 class AtomGeoValueDeserializer {
 
   private List<Point> points(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     final List<Point> result = new ArrayList<Point>();
 
@@ -67,7 +68,7 @@ class AtomGeoValueDeserializer {
   }
 
   private MultiPoint multipoint(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     List<Point> points = Collections.<Point>emptyList();
 
@@ -88,13 +89,13 @@ class AtomGeoValueDeserializer {
   }
 
   private LineString lineString(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     return new LineString(GeoUtils.getDimension(type), crs, points(reader, start, type, null));
   }
 
   private Polygon polygon(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     List<Point> extPoints = null;
     List<Point> intPoints = null;
@@ -121,7 +122,7 @@ class AtomGeoValueDeserializer {
   }
 
   private MultiLineString multiLineString(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     final List<LineString> lineStrings = new ArrayList<LineString>();
 
@@ -142,7 +143,7 @@ class AtomGeoValueDeserializer {
   }
 
   private MultiPolygon multiPolygon(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     final List<Polygon> polygons = new ArrayList<Polygon>();
 
@@ -163,7 +164,7 @@ class AtomGeoValueDeserializer {
   }
 
   private GeospatialCollection collection(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
 
     final List<Geospatial> geospatials = new ArrayList<Geospatial>();
 
@@ -196,7 +197,7 @@ class AtomGeoValueDeserializer {
   }
 
   public Geospatial deserialize(final XMLEventReader reader, final StartElement start,
-          final ODataJClientEdmPrimitiveType type) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type) throws XMLStreamException {
 
     String crs = null;
     final Attribute srsName = start.getAttributeByName(Constants.QNAME_ATTR_SRSNAME);

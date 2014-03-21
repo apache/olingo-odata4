@@ -50,9 +50,10 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -82,7 +83,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(responseStatus);
     assertTrue(responseStatus.getNavigationPropertyNames().isEmpty());
     assertEquals("Recipient", responseStatus.getBaseType().getName());
-    assertEquals(EdmPrimitiveTypeKind.DateTimeOffset.getEdmPrimitiveTypeInstance(),
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.DateTimeOffset),
             responseStatus.getProperty("Time").getType());
 
     // 3. Entity
@@ -106,8 +107,8 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(move);
     assertTrue(move.isBound());
     assertEquals(2, move.getParameterNames().size());
-    assertEquals(
-            EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance(), move.getParameter("DestinationId").getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String),
+            move.getParameter("DestinationId").getType());
 
     // 5. EntityContainer
     final EdmEntityContainer container = edm.getEntityContainer(

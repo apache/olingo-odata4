@@ -58,7 +58,6 @@ import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataValue;
@@ -68,6 +67,7 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,7 +214,7 @@ public abstract class AbstractTestITCase {
 
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Information",
             getClient().getPrimitiveValueBuilder().setText(sampleinfo).setType(
-                    ODataJClientEdmPrimitiveType.String).build()));
+                    EdmPrimitiveTypeKind.String).build()));
 
     return entity;
   }
@@ -228,12 +228,12 @@ public abstract class AbstractTestITCase {
     // add name attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
             getClient().getPrimitiveValueBuilder().setText(sampleName).setType(
-                    ODataJClientEdmPrimitiveType.String).build()));
+                    EdmPrimitiveTypeKind.String).build()));
 
     // add key attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
             getClient().getPrimitiveValueBuilder().setText(String.valueOf(id)).setType(
-                    ODataJClientEdmPrimitiveType.Int32).build()));
+                    EdmPrimitiveTypeKind.Int32).build()));
 
     // add BackupContactInfo attribute (collection)
     final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(
@@ -249,13 +249,13 @@ public abstract class AbstractTestITCase {
     // add BackupContactInfo.ContactDetails.AlternativeNames attribute (collection)
     final ODataCollectionValue altNamesValue = new ODataCollectionValue("Collection(Edm.String)");
     altNamesValue.add(getClient().getPrimitiveValueBuilder().
-            setText("myname").setType(ODataJClientEdmPrimitiveType.String).build());
+            setText("myname").setType(EdmPrimitiveTypeKind.String).build());
     contactDetails.add(getClient().getObjectFactory().newCollectionProperty("AlternativeNames", altNamesValue));
 
     // add BackupContactInfo.ContactDetails.EmailBag attribute (collection)
     final ODataCollectionValue emailBagValue = new ODataCollectionValue("Collection(Edm.String)");
     emailBagValue.add(getClient().getPrimitiveValueBuilder().
-            setText("myname@mydomain.com").setType(ODataJClientEdmPrimitiveType.String).build());
+            setText("myname@mydomain.com").setType(EdmPrimitiveTypeKind.String).build());
     contactDetails.add(getClient().getObjectFactory().newCollectionProperty("EmailBag", emailBagValue));
 
     // add BackupContactInfo.ContactDetails.ContactAlias attribute (complex)
@@ -266,7 +266,7 @@ public abstract class AbstractTestITCase {
     // add BackupContactInfo.ContactDetails.ContactAlias.AlternativeNames attribute (collection)
     final ODataCollectionValue aliasAltNamesValue = new ODataCollectionValue("Collection(Edm.String)");
     aliasAltNamesValue.add(getClient().getPrimitiveValueBuilder().
-            setText("myAlternativeName").setType(ODataJClientEdmPrimitiveType.String).build());
+            setText("myAlternativeName").setType(EdmPrimitiveTypeKind.String).build());
     contactAliasValue.add(getClient().getObjectFactory().newCollectionProperty("AlternativeNames", aliasAltNamesValue));
 
     if (withInlineInfo) {

@@ -26,7 +26,6 @@ import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.ODataValue;
@@ -35,6 +34,7 @@ import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.op.CommonODataReader;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public abstract class AbstractODataReader implements CommonODataReader {
       } else if (ODataValue.class.isAssignableFrom(reference)) {
         res = client.getPrimitiveValueBuilder().
                 setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
-                        ? ODataJClientEdmPrimitiveType.String : ODataJClientEdmPrimitiveType.Stream).
+                        ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                 setText(IOUtils.toString(src)).
                 build();
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.api.edm.geo;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Base class for all geospatial info.
@@ -141,7 +141,7 @@ public abstract class Geospatial implements Serializable {
     this.srid = srid;
   }
 
-  public abstract ODataJClientEdmPrimitiveType getEdmSimpleType();
+  public abstract EdmPrimitiveTypeKind getEdmPrimitiveTypeKind();
 
   /**
    * {@inheritDoc }

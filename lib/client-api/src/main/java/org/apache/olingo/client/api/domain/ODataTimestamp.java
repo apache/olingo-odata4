@@ -25,6 +25,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Helper class for handling datetime and datetime-offset primitive values.
@@ -41,17 +42,25 @@ public final class ODataTimestamp implements Serializable {
 
   private final boolean offset;
 
-  public static ODataTimestamp getInstance(final ODataJClientEdmPrimitiveType type, final Timestamp timestamp) {
-    return new ODataTimestamp(new SimpleDateFormat(type.pattern()),
-            new Date(timestamp.getTime()), timestamp.getNanos(), type == ODataJClientEdmPrimitiveType.DateTimeOffset);
+  private static String getPattern(final EdmPrimitiveTypeKind type) {
+    return type == EdmPrimitiveTypeKind.DateTime
+            ? "yyyy-MM-dd'T'HH:mm:ss"
+            : type == EdmPrimitiveTypeKind.Date
+            ? "yyyy-MM-dd"
+            : "yyyy-MM-dd'T'HH:mm:ss";
   }
 
-  public static ODataTimestamp parse(final ODataJClientEdmPrimitiveType type, final String input) {
+  public static ODataTimestamp getInstance(final EdmPrimitiveTypeKind type, final Timestamp timestamp) {
+    return new ODataTimestamp(new SimpleDateFormat(getPattern(type)),
+            new Date(timestamp.getTime()), timestamp.getNanos(), type == EdmPrimitiveTypeKind.DateTimeOffset);
+  }
+
+  public static ODataTimestamp parse(final EdmPrimitiveTypeKind type, final String input) {
     final ODataTimestamp instance;
 
     final String[] dateParts = input.split("\\.");
-    final SimpleDateFormat sdf = new SimpleDateFormat(type.pattern());
-    final boolean isOffset = type == ODataJClientEdmPrimitiveType.DateTimeOffset;
+    final SimpleDateFormat sdf = new SimpleDateFormat(getPattern(type));
+    final boolean isOffset = type == EdmPrimitiveTypeKind.DateTimeOffset;
 
     try {
       final Date date = sdf.parse(dateParts[0]);
@@ -70,7 +79,7 @@ public final class ODataTimestamp implements Serializable {
         instance = new ODataTimestamp(sdf, date, isOffset);
       }
     } catch (Exception e) {
-      throw new IllegalArgumentException("Cannot parse " + type.pattern(), e);
+      throw new IllegalArgumentException("Cannot parse " + getPattern(type), e);
     }
 
     return instance;

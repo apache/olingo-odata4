@@ -24,13 +24,12 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.Uint7;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class EdmByteTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeKind.Byte.getEdmPrimitiveTypeInstance();
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Byte);
 
   @Test
   public void compatibility() {

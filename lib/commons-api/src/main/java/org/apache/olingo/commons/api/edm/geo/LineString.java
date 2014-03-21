@@ -16,34 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.api.edm.geo;
 
 import java.util.List;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+public class LineString extends ComposedGeospatial<Point> {
 
-/**
- * Wrapper for a collection of geospatials info.
- */
-public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
+  private static final long serialVersionUID = 3207958185407535907L;
 
-  private static final long serialVersionUID = -9181547636133878977L;
-
-  /**
-   * Constructor.
-   *
-   * @param dimension dimension.
-   * @param crs crs.
-   * @param geospatials geospatials info.
-   */
-  public GeospatialCollection(final Dimension dimension, final String crs, final List<Geospatial> geospatials) {
-    super(dimension, Type.GEOSPATIALCOLLECTION, crs, geospatials);
+  public LineString(final Dimension dimension, final String crs, final List<Point> points) {
+    super(dimension, Type.LINESTRING, crs, points);
   }
 
   @Override
-  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
+  public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-            ? ODataJClientEdmPrimitiveType.GeographyCollection
-            : ODataJClientEdmPrimitiveType.GeometryCollection;
+           ? EdmPrimitiveTypeKind.GeographyLineString
+           : EdmPrimitiveTypeKind.GeometryLineString;
   }
 }

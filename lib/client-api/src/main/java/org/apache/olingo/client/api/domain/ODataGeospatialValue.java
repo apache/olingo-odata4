@@ -19,7 +19,8 @@
 package org.apache.olingo.client.api.domain;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 public class ODataGeospatialValue extends ODataPrimitiveValue {
 
@@ -57,7 +58,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
      * @param type type.
      * @return the current builder.
      */
-    public Builder setType(final ODataJClientEdmPrimitiveType type) {
+    public Builder setType(final EdmPrimitiveTypeKind type) {
       isSupported(type);
 
       if (type != null && !type.isGeospatial()) {
@@ -65,7 +66,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
                 "Use " + ODataPrimitiveValue.class.getSimpleName() + " for non-geospatial types");
       }
 
-      if (type == ODataJClientEdmPrimitiveType.Geography || type == ODataJClientEdmPrimitiveType.Geometry) {
+      if (type == EdmPrimitiveTypeKind.Geography || type == EdmPrimitiveTypeKind.Geometry) {
         throw new IllegalArgumentException(
                 type + " is not an instantiable type. "
                 + "An entity can declare a property to be of type Geometry. "
@@ -86,7 +87,7 @@ public class ODataGeospatialValue extends ODataPrimitiveValue {
         throw new IllegalArgumentException("No Geospatial value provided");
       }
       if (this.ogv.type == null) {
-        this.ogv.type = ((Geospatial) this.ogv.value).getEdmSimpleType();
+        this.ogv.type = ((Geospatial) this.ogv.value).getEdmPrimitiveTypeKind();
       }
 
       return this.ogv;

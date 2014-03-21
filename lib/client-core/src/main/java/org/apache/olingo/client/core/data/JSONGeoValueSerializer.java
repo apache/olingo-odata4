@@ -22,16 +22,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.util.Iterator;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.geospatial.ComposedGeospatial;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.ComposedGeospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 class JSONGeoValueSerializer {
 
@@ -106,17 +106,17 @@ class JSONGeoValueSerializer {
   }
 
   public void serialize(final JsonGenerator jgen, final Geospatial value) throws IOException {
-    if (value.getEdmSimpleType().equals(ODataJClientEdmPrimitiveType.GeographyCollection)
-            || value.getEdmSimpleType().equals(ODataJClientEdmPrimitiveType.GeometryCollection)) {
+    if (value.getEdmPrimitiveTypeKind().equals(EdmPrimitiveTypeKind.GeographyCollection)
+            || value.getEdmPrimitiveTypeKind().equals(EdmPrimitiveTypeKind.GeometryCollection)) {
 
-      jgen.writeStringField(Constants.ATTR_TYPE, ODataJClientEdmPrimitiveType.GeometryCollection.name());
+      jgen.writeStringField(Constants.ATTR_TYPE, EdmPrimitiveTypeKind.GeometryCollection.name());
     } else {
-      final int yIdx = value.getEdmSimpleType().name().indexOf('y');
-      final String itemType = value.getEdmSimpleType().name().substring(yIdx + 1);
+      final int yIdx = value.getEdmPrimitiveTypeKind().name().indexOf('y');
+      final String itemType = value.getEdmPrimitiveTypeKind().name().substring(yIdx + 1);
       jgen.writeStringField(Constants.ATTR_TYPE, itemType);
     }
 
-    switch (value.getEdmSimpleType()) {
+    switch (value.getEdmPrimitiveTypeKind()) {
       case GeographyPoint:
       case GeometryPoint:
         jgen.writeArrayFieldStart(Constants.JSON_COORDINATES);

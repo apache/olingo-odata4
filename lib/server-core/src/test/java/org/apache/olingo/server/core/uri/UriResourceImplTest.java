@@ -32,9 +32,10 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.core.edm.provider.EdmComplexTypeImpl;
 import org.apache.olingo.server.core.edm.provider.EdmEntitySetImpl;
@@ -42,30 +43,12 @@ import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.edm.provider.EdmSingletonImpl;
 import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.server.core.uri.UriParameterImpl;
-import org.apache.olingo.server.core.uri.UriResourceActionImpl;
-import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourceCountImpl;
-import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
-import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
-import org.apache.olingo.server.core.uri.UriResourceItImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaAllImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaAnyImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaVarImpl;
-import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourceRefImpl;
-import org.apache.olingo.server.core.uri.UriResourceRootImpl;
-import org.apache.olingo.server.core.uri.UriResourceSingletonImpl;
-import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
-import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
-import org.apache.olingo.server.core.uri.UriResourceValueImpl;
-import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.junit.Test;
 
 public class UriResourceImplTest {
+
   Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
 
   @Test
@@ -119,7 +102,7 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLambdaVariable());
-    assertEquals(EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance(), impl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("all", impl.toString());
   }
 
@@ -135,7 +118,7 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLamdaVariable());
-    assertEquals(EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance(), impl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("any", impl.toString());
   }
 
@@ -155,8 +138,8 @@ public class UriResourceImplTest {
     assertEquals(property.getType(), impl.getComplexType());
     impl.getComplexType();
 
-    EdmComplexTypeImpl complexTypeImplType =
-        (EdmComplexTypeImpl) edm.getComplexType(EdmTechProvider.nameCTBasePrimCompNav);
+    EdmComplexTypeImpl complexTypeImplType
+            = (EdmComplexTypeImpl) edm.getComplexType(EdmTechProvider.nameCTBasePrimCompNav);
 
     impl.setTypeFilter(complexTypeImplType);
     assertEquals(complexTypeImplType, impl.getTypeFilter());
@@ -216,15 +199,14 @@ public class UriResourceImplTest {
 
     // function
     EdmFunction function = (EdmFunction) edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
-        .getFunction(new ArrayList<String>());
+            .getFunction(new ArrayList<String>());
     assertNotNull(function);
     impl.setFunction(function);
-    
 
     assertEquals(function, impl.getFunction());
     assertEquals("UFNRTInt16", impl.toString());
     assertEquals(function.getReturnType().getType(), impl.getType());
-    assertEquals(false,impl.isParameterListFilled());
+    assertEquals(false, impl.isParameterListFilled());
 
     // function import
     impl = new UriResourceFunctionImpl();
@@ -247,12 +229,13 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
 
     assertEquals(parameter, impl.getParameters().get(0));
-    assertEquals(true,impl.isParameterListFilled());
+    assertEquals(true, impl.isParameterListFilled());
   }
 
   @Test
   public void testUriResourceImplKeyPred() {
     class Mock extends UriResourceWithKeysImpl {
+
       EdmType type;
 
       public Mock() {
@@ -299,7 +282,7 @@ public class UriResourceImplTest {
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
     assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav/()com.sap.odata.test1.ETTwoBaseTwoKeyNav",
-        impl.toString(true));
+            impl.toString(true));
 
     // set entry
     impl = new Mock();
@@ -330,6 +313,7 @@ public class UriResourceImplTest {
   @Test
   public void testUriResourceImplTyped() {
     class Mock extends UriResourceTypedImpl {
+
       EdmType type;
 
       public Mock() {
@@ -498,7 +482,6 @@ public class UriResourceImplTest {
     assertEquals(true, impl.isCollection());
   }
 
-  
   @Test
   public void testUriResourceStartingTypeFilterImpl() {
     UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();

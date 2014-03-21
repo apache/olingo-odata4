@@ -21,10 +21,11 @@ package org.apache.olingo.commons.core.edm;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public abstract class AbstractEdmReturnType implements EdmReturnType {
 
@@ -44,7 +45,7 @@ public abstract class AbstractEdmReturnType implements EdmReturnType {
     if (typeImpl == null) {
       if (EdmPrimitiveType.EDM_NAMESPACE.equals(typeName.getNamespace())) {
         try {
-          typeImpl = EdmPrimitiveTypeKind.valueOf(typeName.getName()).getEdmPrimitiveTypeInstance();
+          typeImpl = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(typeName.getName()));
         } catch (IllegalArgumentException e) {
           throw new EdmException("Cannot find type with name: " + typeName, e);
         }

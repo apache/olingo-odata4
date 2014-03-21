@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.utils;
+package org.apache.olingo.client.api.data;
 
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 public final class GeoUtils {
 
@@ -28,7 +28,7 @@ public final class GeoUtils {
     // Empty private constructor for static utility classes       
   }
 
-  public static Geospatial.Dimension getDimension(final ODataJClientEdmPrimitiveType type) {
+  public static Geospatial.Dimension getDimension(final EdmPrimitiveTypeKind type) {
     Geospatial.Dimension dimension;
 
     switch (type) {
@@ -50,39 +50,39 @@ public final class GeoUtils {
     return dimension;
   }
 
-  public static ODataJClientEdmPrimitiveType getType(final Geospatial.Dimension dimension, final String elementName) {
-    ODataJClientEdmPrimitiveType type = null;
+  public static EdmPrimitiveTypeKind getType(final Geospatial.Dimension dimension, final String elementName) {
+    EdmPrimitiveTypeKind type = null;
 
     if (Constants.ELEM_POINT.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyPoint
-              : ODataJClientEdmPrimitiveType.GeometryPoint;
+              ? EdmPrimitiveTypeKind.GeographyPoint
+              : EdmPrimitiveTypeKind.GeometryPoint;
     } else if (Constants.ELEM_MULTIPOINT.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyMultiPoint
-              : ODataJClientEdmPrimitiveType.GeometryMultiPoint;
+              ? EdmPrimitiveTypeKind.GeographyMultiPoint
+              : EdmPrimitiveTypeKind.GeometryMultiPoint;
     } else if (Constants.ELEM_LINESTRING.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyLineString
-              : ODataJClientEdmPrimitiveType.GeometryLineString;
+              ? EdmPrimitiveTypeKind.GeographyLineString
+              : EdmPrimitiveTypeKind.GeometryLineString;
     } else if (Constants.ELEM_MULTILINESTRING.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyMultiLineString
-              : ODataJClientEdmPrimitiveType.GeometryMultiLineString;
+              ? EdmPrimitiveTypeKind.GeographyMultiLineString
+              : EdmPrimitiveTypeKind.GeometryMultiLineString;
     } else if (Constants.ELEM_POLYGON.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyPolygon
-              : ODataJClientEdmPrimitiveType.GeometryPolygon;
+              ? EdmPrimitiveTypeKind.GeographyPolygon
+              : EdmPrimitiveTypeKind.GeometryPolygon;
     } else if (Constants.ELEM_MULTIPOLYGON.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyMultiPolygon
-              : ODataJClientEdmPrimitiveType.GeometryMultiPolygon;
+              ? EdmPrimitiveTypeKind.GeographyMultiPolygon
+              : EdmPrimitiveTypeKind.GeometryMultiPolygon;
     } else if (Constants.ELEM_GEOCOLLECTION.equals(elementName)
             || Constants.ELEM_GEOMEMBERS.equals(elementName)) {
 
       type = dimension == Geospatial.Dimension.GEOGRAPHY
-              ? ODataJClientEdmPrimitiveType.GeographyCollection
-              : ODataJClientEdmPrimitiveType.GeometryCollection;
+              ? EdmPrimitiveTypeKind.GeographyCollection
+              : EdmPrimitiveTypeKind.GeometryCollection;
     }
 
     return type;

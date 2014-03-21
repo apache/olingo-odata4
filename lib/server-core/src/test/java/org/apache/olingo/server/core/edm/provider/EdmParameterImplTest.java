@@ -27,17 +27,15 @@ import static org.mockito.Mockito.when;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Parameter;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
-import org.apache.olingo.server.core.edm.provider.EdmParameterImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 public class EdmParameterImplTest {

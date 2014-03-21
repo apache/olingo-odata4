@@ -28,9 +28,8 @@ import java.util.UUID;
 import javax.xml.datatype.Duration;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * OData primitive property value.
@@ -50,8 +49,8 @@ public class ODataPrimitiveValue extends ODataValue {
       this.client = client;
     }
 
-    public AbstractBuilder isSupported(final ODataJClientEdmPrimitiveType type) {
-      if (type != null && !ArrayUtils.contains(type.getSupportedVersions(), client.getServiceVersion())) {
+    public AbstractBuilder isSupported(final EdmPrimitiveTypeKind type) {
+      if (type != null && !type.getSupportedVersions().contains(client.getServiceVersion())) {
         throw new IllegalArgumentException(String.format(
                 "Type %s not supported by the current OData working version", type.toString()));
       }
@@ -103,12 +102,12 @@ public class ODataPrimitiveValue extends ODataValue {
      * @param type type.
      * @return the current builder.
      */
-    public Builder setType(final ODataJClientEdmPrimitiveType type) {
+    public Builder setType(final EdmPrimitiveTypeKind type) {
       isSupported(type);
 
-      if (type == ODataJClientEdmPrimitiveType.Stream) {
+      if (type == EdmPrimitiveTypeKind.Stream) {
         throw new IllegalArgumentException(String.format(
-                "Cannot build a primitive value for %s", ODataJClientEdmPrimitiveType.Stream.toString()));
+                "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
       }
 
       this.opv.type = type;
@@ -129,7 +128,7 @@ public class ODataPrimitiveValue extends ODataValue {
       }
 
       if (this.opv.type == null) {
-        this.opv.type = ODataJClientEdmPrimitiveType.String;
+        this.opv.type = EdmPrimitiveTypeKind.String;
       }
 
       if (this.opv.type.isGeospatial()) {
@@ -147,7 +146,7 @@ public class ODataPrimitiveValue extends ODataValue {
         this.opv.value = new ODataDuration((Duration) this.opv.value);
       }
 
-      if (this.opv.value != null && !this.opv.type.javaType().isAssignableFrom(this.opv.value.getClass())) {
+      if (this.opv.value != null && !this.opv.getJavaType().isAssignableFrom(this.opv.value.getClass())) {
         throw new IllegalArgumentException("Provided value is not compatible with " + this.opv.type.toString());
       }
 
@@ -177,7 +176,7 @@ public class ODataPrimitiveValue extends ODataValue {
   /**
    * Value type.
    */
-  protected ODataJClientEdmPrimitiveType type;
+  protected EdmPrimitiveTypeKind type;
 
   /**
    * Protected constructor, need to use the builder to instantiate this class.
@@ -189,15 +188,82 @@ public class ODataPrimitiveValue extends ODataValue {
     this.client = client;
   }
 
+  private Class<?> getJavaType() {
+    Class<?> javaType = null;
+
+    switch (this.type) {
+      case Binary:
+        javaType = byte[].class;
+        break;
+
+      case SByte:
+        javaType = Byte.class;
+        break;
+
+      case Boolean:
+        javaType = Boolean.class;
+        break;
+
+      case Date:
+      case DateTime:
+      case DateTimeOffset:
+        javaType = ODataTimestamp.class;
+        break;
+
+      case Time:
+      case TimeOfDay:
+        javaType = ODataDuration.class;
+        break;
+
+      case Decimal:
+        javaType = BigDecimal.class;
+        break;
+
+      case Single:
+        javaType = Float.class;
+        break;
+
+      case Double:
+        javaType = Double.class;
+        break;
+
+      case Guid:
+        javaType = UUID.class;
+        break;
+
+      case Int16:
+        javaType = Short.class;
+        break;
+
+      case Byte:
+      case Int32:
+        javaType = Integer.class;
+        break;
+
+      case Int64:
+        javaType = Long.class;
+        break;
+
+      case Stream:
+        javaType = URI.class;
+        break;
+
+      case String:
+        javaType = String.class;
+        break;
+
+      default:
+        javaType = this.value.getClass();
+    }
+
+    return javaType;
+  }
+
   /**
    * Parses given text as object value.
    */
   private void parseText() {
     switch (this.type) {
-      case Null:
-        this.value = null;
-        break;
-
       case Binary:
         this.value = Base64.decodeBase64(this.toString());
         break;
@@ -267,10 +333,6 @@ public class ODataPrimitiveValue extends ODataValue {
    */
   private void formatValue() {
     switch (this.type) {
-      case Null:
-        this.text = StringUtils.EMPTY;
-        break;
-
       case Binary:
         this.text = Base64.encodeBase64String(this.<byte[]>toCastValue());
         break;
@@ -295,15 +357,15 @@ public class ODataPrimitiveValue extends ODataValue {
         break;
 
       case Decimal:
-        this.text = new DecimalFormat(this.type.pattern()).format(this.<BigDecimal>toCastValue());
+        this.text = new DecimalFormat("#.#######################").format(this.<BigDecimal>toCastValue());
         break;
 
       case Single:
-        this.text = new DecimalFormat(this.type.pattern()).format(this.<Float>toCastValue());
+        this.text = new DecimalFormat("#.#######E0").format(this.<Float>toCastValue());
         break;
 
       case Double:
-        this.text = new DecimalFormat(this.type.pattern()).format(this.<Double>toCastValue());
+        this.text = new DecimalFormat("#.#######################E0").format(this.<Double>toCastValue());
         break;
 
       case Guid:
@@ -341,7 +403,7 @@ public class ODataPrimitiveValue extends ODataValue {
    * @return type name.
    */
   public String getTypeName() {
-    return type.toString();
+    return type.getFullQualifiedName().toString();
   }
 
   /**
@@ -369,6 +431,6 @@ public class ODataPrimitiveValue extends ODataValue {
    */
   @SuppressWarnings("unchecked")
   public <T> T toCastValue() {
-    return (T) type.javaType().cast(toValue());
+    return (T) getJavaType().cast(toValue());
   }
 }

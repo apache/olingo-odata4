@@ -16,24 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.util.List;
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
+import org.apache.olingo.commons.api.edm.geo.Point;
 
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+public final class EdmGeometryPolygon extends AbstractEdmGeospatialType<Point> {
 
-public class LineString extends ComposedGeospatial<Point> {
+  private static final EdmGeometryPolygon INSTANCE = new EdmGeometryPolygon();
 
-  private static final long serialVersionUID = 3207958185407535907L;
-
-  public LineString(final Dimension dimension, final String crs, final List<Point> points) {
-    super(dimension, Type.LINESTRING, crs, points);
+  public static EdmGeometryPolygon getInstance() {
+    return INSTANCE;
   }
 
-  @Override
-  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
-    return dimension == Dimension.GEOGRAPHY
-            ? ODataJClientEdmPrimitiveType.GeographyLineString
-            : ODataJClientEdmPrimitiveType.GeometryLineString;
+  public EdmGeometryPolygon() {
+    super(Point.class, Dimension.GEOMETRY, Type.POLYGON);
   }
+
 }

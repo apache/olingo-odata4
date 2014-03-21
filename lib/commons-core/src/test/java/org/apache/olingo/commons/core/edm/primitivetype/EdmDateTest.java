@@ -25,12 +25,12 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class EdmDateTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeKind.Date.getEdmPrimitiveTypeInstance();
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Date);
 
   @Test
   public void toUriLiteral() throws Exception {

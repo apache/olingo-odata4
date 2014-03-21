@@ -22,13 +22,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class PrimitiveValueTest extends AbstractTest {
@@ -44,15 +44,15 @@ public class PrimitiveValueTest extends AbstractTest {
     final String primitive = "-P9DT51M12.5063807S";
     try {
       new ODataPrimitiveValue.Builder(ODataClientFactory.getV3()).
-              setType(ODataJClientEdmPrimitiveType.TimeOfDay).setText(primitive).build();
+              setType(EdmPrimitiveTypeKind.TimeOfDay).setText(primitive).build();
       fail();
     } catch (IllegalArgumentException iae) {
       // ignore
     }
 
     final ODataValue value = getClient().getPrimitiveValueBuilder().
-            setType(ODataJClientEdmPrimitiveType.TimeOfDay).setText(primitive).build();
-    assertEquals(ODataJClientEdmPrimitiveType.TimeOfDay.toString(), value.asPrimitive().getTypeName());
+            setType(EdmPrimitiveTypeKind.TimeOfDay).setText(primitive).build();
+    assertEquals(EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName().toString(), value.asPrimitive().getTypeName());
     // performed cast to improve the check
     assertEquals(primitive, value.asPrimitive().<ODataDuration>toCastValue().toString());
   }
@@ -63,15 +63,15 @@ public class PrimitiveValueTest extends AbstractTest {
     final String primitive = "2013-01-10";
     try {
       new ODataPrimitiveValue.Builder(ODataClientFactory.getV3()).
-              setType(ODataJClientEdmPrimitiveType.Date).setText(primitive).build();
+              setType(EdmPrimitiveTypeKind.Date).setText(primitive).build();
       fail();
     } catch (IllegalArgumentException iae) {
       // ignore
     }
 
     final ODataValue value = getClient().getPrimitiveValueBuilder().
-            setType(ODataJClientEdmPrimitiveType.Date).setText(primitive).build();
-    assertEquals(ODataJClientEdmPrimitiveType.Date.toString(), value.asPrimitive().getTypeName());
+            setType(EdmPrimitiveTypeKind.Date).setText(primitive).build();
+    assertEquals(EdmPrimitiveTypeKind.Date.getFullQualifiedName().toString(), value.asPrimitive().getTypeName());
     // performed cast to improve the check
     assertEquals(primitive, value.asPrimitive().<ODataTimestamp>toCastValue().toString());
   }

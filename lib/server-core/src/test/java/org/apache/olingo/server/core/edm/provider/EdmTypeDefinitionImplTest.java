@@ -24,31 +24,30 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.edm.provider.EdmTypeDefinitionImpl;
 import org.junit.Test;
 
 public class EdmTypeDefinitionImplTest {
 
   @Test
   public void typeDefOnStringNoFacets() throws Exception {
-    FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    TypeDefinition providerTypeDef =
-        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
-    EdmTypeDefinition typeDefImpl =
-        new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
+    final FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
+    final TypeDefinition providerTypeDef= 
+            new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
+    final EdmTypeDefinition typeDefImpl = 
+            new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
 
     assertEquals("name", typeDefImpl.getName());
     assertEquals("namespace", typeDefImpl.getNamespace());
     assertEquals(String.class, typeDefImpl.getDefaultType());
     assertEquals(EdmTypeKind.DEFINITION, typeDefImpl.getKind());
-    assertEquals(EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance(), typeDefImpl.getUnderlyingType());
-    assertTrue(typeDefImpl.isCompatible(EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance()));
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeDefImpl.getUnderlyingType());
+    assertTrue(typeDefImpl.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String)));
 
     // String validation
     assertEquals("'StringValue'", typeDefImpl.toUriLiteral("StringValue"));
@@ -67,8 +66,8 @@ public class EdmTypeDefinitionImplTest {
   @Test(expected = EdmException.class)
   public void invalidTypeResultsInEdmException() throws Exception {
     FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    TypeDefinition providerTypeDef =
-        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
+    TypeDefinition providerTypeDef
+            = new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
     EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
     def.getUnderlyingType();
   }

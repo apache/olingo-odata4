@@ -33,4 +33,12 @@
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+  </dependencies>
+    
 </project>

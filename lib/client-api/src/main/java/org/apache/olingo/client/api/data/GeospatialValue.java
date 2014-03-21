@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.data;
 
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 public interface GeospatialValue extends Value {
 

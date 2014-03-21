@@ -22,15 +22,15 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.UUID;
 
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 /**
  * Represent the primitive types of the Entity Data Model (EDM).
@@ -72,11 +72,11 @@ public enum ODataJClientEdmPrimitiveType {
   /**
    * A 64-bit value expressed as Coordinated Universal Time (UTC).
    */
-  DateTime(new ODataServiceVersion[]{ODataServiceVersion.V30}, ODataTimestamp.class, "yyyy-MM-dd'T'HH:mm:ss"),
+  DateTime(new ODataServiceVersion[] {ODataServiceVersion.V30}, ODataTimestamp.class, "yyyy-MM-dd'T'HH:mm:ss"),
   /**
    * Date without a time-zone offset.
    */
-  Date(new ODataServiceVersion[]{ODataServiceVersion.V40}, ODataTimestamp.class, "yyyy-MM-dd"),
+  Date(new ODataServiceVersion[] {ODataServiceVersion.V40}, ODataTimestamp.class, "yyyy-MM-dd"),
   /**
    * Date and time as an Offset in minutes from GMT.
    */
@@ -84,15 +84,15 @@ public enum ODataJClientEdmPrimitiveType {
   /**
    * The time of day with values ranging from 0:00:00.x to 23:59:59.y, where x and y depend upon the precision.
    */
-  Time(new ODataServiceVersion[]{ODataServiceVersion.V30}, ODataDuration.class),
+  Time(new ODataServiceVersion[] {ODataServiceVersion.V30}, ODataDuration.class),
   /**
    * The time of day with values ranging from 0:00:00.x to 23:59:59.y, where x and y depend upon the precision.
    */
-  TimeOfDay(new ODataServiceVersion[]{ODataServiceVersion.V40}, ODataDuration.class),
+  TimeOfDay(new ODataServiceVersion[] {ODataServiceVersion.V40}, ODataDuration.class),
   /**
    * Signed duration in days, hours, minutes, and (sub)seconds.
    */
-  Duration(new ODataServiceVersion[]{ODataServiceVersion.V40}, ODataDuration.class),
+  Duration(new ODataServiceVersion[] {ODataServiceVersion.V40}, ODataDuration.class),
   /**
    * Numeric values with fixed precision and scale.
    */
@@ -254,25 +254,6 @@ public enum ODataJClientEdmPrimitiveType {
       }
     }
     throw new IllegalArgumentException(value);
-  }
-
-  /**
-   * Gets <tt>EdmSimpleType</tt> from object instance.
-   *
-   * @param workingVersion OData version.
-   * @param obj object.
-   * @return <tt>EdmSimpleType</tt> object.
-   */
-  public static ODataJClientEdmPrimitiveType fromObject(final ODataServiceVersion workingVersion, final Object obj) {
-    for (ODataJClientEdmPrimitiveType edmSimpleType : ODataJClientEdmPrimitiveType.values()) {
-      if (edmSimpleType.javaType().equals(obj.getClass())) {
-        return edmSimpleType == DateTimeOffset || edmSimpleType == DateTime || edmSimpleType == Date
-                ? ((ODataTimestamp) obj).isOffset()
-                ? DateTimeOffset : workingVersion == ODataServiceVersion.V30 ? DateTime : Date
-                : edmSimpleType;
-      }
-    }
-    throw new IllegalArgumentException(obj.getClass().getSimpleName() + " is not a simple type");
   }
 
   /**

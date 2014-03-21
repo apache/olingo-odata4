@@ -29,14 +29,13 @@ import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.ReturnType;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.edm.provider.EdmReturnTypeImpl;
 import org.junit.Test;
 
 public class EdmReturnTypeImplTest {
@@ -47,7 +46,7 @@ public class EdmReturnTypeImplTest {
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
-    assertEquals(EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance(), typeImpl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
     assertFalse(typeImpl.isCollection());
 
     assertNull(typeImpl.getPrecision());
@@ -62,7 +61,7 @@ public class EdmReturnTypeImplTest {
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
-    assertEquals(EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance(), typeImpl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
     assertTrue(typeImpl.isCollection());
   }
 

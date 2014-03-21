@@ -25,14 +25,14 @@ import java.util.Iterator;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 class AtomGeoValueSerializer {
 
@@ -126,7 +126,7 @@ class AtomGeoValueSerializer {
   }
 
   public void serialize(final XMLStreamWriter writer, final Geospatial value) throws XMLStreamException {
-    switch (value.getEdmSimpleType()) {
+    switch (value.getEdmPrimitiveTypeKind()) {
       case GeographyPoint:
       case GeometryPoint:
         writer.writeStartElement(Constants.PREFIX_GML, Constants.ELEM_POINT, Constants.NS_GML);

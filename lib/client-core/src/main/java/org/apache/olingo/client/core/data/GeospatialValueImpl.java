@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.data;
 
 import org.apache.olingo.client.api.data.GeospatialValue;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 public class GeospatialValueImpl extends AbstractValue implements GeospatialValue {
 

@@ -32,22 +32,22 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataTimestamp;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial.Dimension;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
 import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 public abstract class AbstractPrimitiveTest extends AbstractTest {
 
@@ -66,13 +66,15 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected ODataPrimitiveValue writePrimitiveValue(final ODataPrimitiveValue value) {
     final ODataPrimitiveValue newValue;
-    if (ODataJClientEdmPrimitiveType.isGeospatial(value.getTypeName())) {
+    final EdmPrimitiveTypeKind typeKind = EdmPrimitiveTypeKind.valueOfFQN(
+            getClient().getServiceVersion(), value.getTypeName());
+    if (typeKind.isGeospatial()) {
       newValue = getClient().getGeospatialValueBuilder().
-              setType(ODataJClientEdmPrimitiveType.fromValue(value.getTypeName())).
+              setType(EdmPrimitiveTypeKind.valueOfFQN(getVersion(), value.getTypeName())).
               setValue(((ODataGeospatialValue) value).getGeospatial()).build();
     } else {
       newValue = getClient().getPrimitiveValueBuilder().
-              setType(ODataJClientEdmPrimitiveType.fromValue(value.getTypeName())).
+              setType(EdmPrimitiveTypeKind.valueOfFQN(getClient().getServiceVersion(), value.getTypeName())).
               setValue(value.toValue()).build();
     }
 
@@ -95,7 +97,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
     final ODataPrimitiveValue value =
             readPrimitiveValue(getClass().getResourceAsStream(getFilename(entity, propertyName)));
 
-    if (ODataJClientEdmPrimitiveType.isGeospatial(value.getTypeName())) {
+    final EdmPrimitiveTypeKind typeKind = EdmPrimitiveTypeKind.valueOfFQN(
+            getClient().getServiceVersion(), value.getTypeName());
+    if (typeKind.isGeospatial()) {
       assertEquals(value.toValue(), writePrimitiveValue(value).toValue());
     } else {
       assertEquals(value.toString(), writePrimitiveValue(value).toString());
@@ -106,7 +110,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void int32(final String entity, final String propertyName, final int check) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.Int32.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Int32.toString(), opv.getTypeName());
 
     final Integer value = opv.<Integer>toCastValue();
     assertNotNull(value);
@@ -115,7 +119,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void string(final String entity, final String propertyName, final String check) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.String.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.String.toString(), opv.getTypeName());
 
     final String value = opv.<String>toCastValue();
     assertNotNull(value);
@@ -126,7 +130,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void decimal(final String entity, final String propertyName, final BigDecimal check) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.Decimal.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Decimal.toString(), opv.getTypeName());
 
     final BigDecimal value = opv.<BigDecimal>toCastValue();
     assertNotNull(value);
@@ -135,7 +139,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void datetime(final String entity, final String propertyName, final String check) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.DateTime.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.DateTime.toString(), opv.getTypeName());
 
     final ODataTimestamp value = opv.<ODataTimestamp>toCastValue();
     assertNotNull(value);
@@ -144,7 +148,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void guid(final String entity, final String propertyName, final String check) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.Guid.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Guid.toString(), opv.getTypeName());
 
     final UUID value = opv.<UUID>toCastValue();
     assertNotNull(value);
@@ -153,7 +157,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
 
   protected void binary(final String entity, final String propertyName) {
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
-    assertEquals(ODataJClientEdmPrimitiveType.Binary.toString(), opv.getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Binary.toString(), opv.getTypeName());
 
     final byte[] value = opv.<byte[]>toCastValue();
     assertNotNull(value);
@@ -171,7 +175,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final Point expectedValues,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -202,7 +206,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final List<Point> check,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -219,7 +223,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final List<Point> check,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -246,7 +250,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final List<List<Point>> check,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -301,7 +305,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final List<Point> checkInterior,
           final List<Point> checkExterior,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -321,7 +325,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final List<List<Point>> checkInterior,
           final List<List<Point>> checkExterior,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -344,7 +348,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
   protected void geomCollection(
           final String entity,
           final String propertyName,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
@@ -373,7 +377,7 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
   protected void geogCollection(
           final String entity,
           final String propertyName,
-          final ODataJClientEdmPrimitiveType expectedType,
+          final EdmPrimitiveTypeKind expectedType,
           final Dimension expectedDimension) {
 
     final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);

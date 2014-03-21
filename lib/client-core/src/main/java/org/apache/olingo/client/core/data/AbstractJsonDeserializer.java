@@ -27,23 +27,30 @@ import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.CollectionValue;
 import org.apache.olingo.client.api.data.ComplexValue;
 import org.apache.olingo.client.api.data.Value;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.ODataJClientEdmType;
 import org.apache.olingo.client.api.domain.ODataPropertyType;
+import org.apache.olingo.client.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
 
-  private final JSONGeoValueDeserializer geoDeserializer = new JSONGeoValueDeserializer();
+  private JSONGeoValueDeserializer geoDeserializer;
 
-  protected ODataJClientEdmPrimitiveType getPrimitiveType(final JsonNode node) {
-    ODataJClientEdmPrimitiveType result = ODataJClientEdmPrimitiveType.String;
+  private JSONGeoValueDeserializer getGeoDeserializer() {
+    if (geoDeserializer == null) {
+      geoDeserializer = new JSONGeoValueDeserializer(client.getServiceVersion());
+    }
+    return geoDeserializer;
+  }
+
+  protected EdmPrimitiveTypeKind getPrimitiveType(final JsonNode node) {
+    EdmPrimitiveTypeKind result = EdmPrimitiveTypeKind.String;
 
     if (node.isIntegralNumber()) {
-      result = ODataJClientEdmPrimitiveType.Int32;
+      result = EdmPrimitiveTypeKind.Int32;
     } else if (node.isBoolean()) {
-      result = ODataJClientEdmPrimitiveType.Boolean;
+      result = EdmPrimitiveTypeKind.Boolean;
     } else if (node.isFloatingPointNumber()) {
-      result = ODataJClientEdmPrimitiveType.Double;
+      result = EdmPrimitiveTypeKind.Double;
     }
 
     return result;
@@ -65,16 +72,14 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
     return type;
   }
 
-  private Value fromPrimitive(final JsonNode node, final ODataJClientEdmType typeInfo) {
+  private Value fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) {
     Value value = null;
 
     if (node.isNull()) {
       value = new NullValueImpl();
     } else {
-      if (typeInfo != null && typeInfo.isGeospatialType()) {
-        final ODataJClientEdmPrimitiveType geoType = ODataJClientEdmPrimitiveType.fromValue(typeInfo.getBaseType());
-
-        value = new GeospatialValueImpl(this.geoDeserializer.deserialize(node, geoType));
+      if (typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
+        value = new GeospatialValueImpl(getGeoDeserializer().deserialize(node, typeInfo));
       } else {
         value = new PrimitiveValueImpl(node.asText());
       }
@@ -106,12 +111,12 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
     return value;
   }
 
-  private CollectionValue fromCollection(final Iterator<JsonNode> nodeItor, final ODataJClientEdmType typeInfo) {
+  private CollectionValue fromCollection(final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo) {
     final CollectionValueImpl value = new CollectionValueImpl();
 
-    final ODataJClientEdmType type = typeInfo == null
+    final EdmTypeInfo type = typeInfo == null
             ? null
-            : new ODataJClientEdmType(typeInfo.getBaseType());
+            : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     while (nodeItor.hasNext()) {
       final JsonNode child = nodeItor.next();
@@ -130,9 +135,9 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
   }
 
   protected void value(final JSONPropertyImpl property, final JsonNode node) {
-    final ODataJClientEdmType typeInfo = StringUtils.isBlank(property.getType())
+    final EdmTypeInfo typeInfo = StringUtils.isBlank(property.getType())
             ? null
-            : new ODataJClientEdmType(property.getType());
+            : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
 
     final ODataPropertyType propType = typeInfo == null
             ? guessPropertyType(node)
@@ -157,7 +162,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
 
       case PRIMITIVE:
         if (property.getType() == null) {
-          property.setType(getPrimitiveType(node).toString());
+          property.setType(getPrimitiveType(node).getFullQualifiedName().toString());
         }
         property.setValue(fromPrimitive(node, typeInfo));
         break;

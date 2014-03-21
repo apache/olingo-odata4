@@ -54,7 +54,6 @@ import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 
 public class ResourceValidator implements Validator {
   private Edm edm;

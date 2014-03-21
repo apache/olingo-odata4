@@ -16,24 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.core.edm.primitivetype;
 
-import java.util.List;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+public final class EdmGeometry extends AbstractEdmGeospatialType<Geospatial> {
 
-public class MultiPolygon extends ComposedGeospatial<Polygon> {
+  private static final EdmGeometry INSTANCE = new EdmGeometry();
 
-  private static final long serialVersionUID = -160184788048512883L;
-
-  public MultiPolygon(final Dimension dimension, final String crs, final List<Polygon> polygons) {
-    super(dimension, Type.MULTIPOLYGON, crs, polygons);
+  public static EdmGeometry getInstance() {
+    return INSTANCE;
   }
 
-  @Override
-  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
-    return dimension == Dimension.GEOGRAPHY
-            ? ODataJClientEdmPrimitiveType.GeographyMultiPolygon
-            : ODataJClientEdmPrimitiveType.GeometryMultiPolygon;
+  public EdmGeometry() {
+    super(Geospatial.class, Dimension.GEOMETRY, null);
   }
+
 }

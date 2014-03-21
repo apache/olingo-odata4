@@ -25,14 +25,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.junit.Test;
 
 public class EntityTest extends AbstractTest {
@@ -89,7 +89,7 @@ public class EntityTest extends AbstractTest {
       if ("GeogMultiLine".equals(property.getName())) {
         found = true;
         assertTrue(property.hasPrimitiveValue());
-        assertEquals(ODataJClientEdmPrimitiveType.GeographyMultiLineString.toString(),
+        assertEquals(EdmPrimitiveTypeKind.GeographyMultiLineString.getFullQualifiedName().toString(),
                 property.getPrimitiveValue().getTypeName());
       }
     }
@@ -168,7 +168,7 @@ public class EntityTest extends AbstractTest {
     assertNotNull(entity);
 
     final ODataProperty geogCollection = entity.getProperty("GeogCollection");
-    assertEquals(ODataJClientEdmPrimitiveType.GeographyCollection.toString(),
+    assertEquals(EdmPrimitiveTypeKind.GeographyCollection.getFullQualifiedName().toString(),
             geogCollection.getPrimitiveValue().getTypeName());
 
     int count = 0;

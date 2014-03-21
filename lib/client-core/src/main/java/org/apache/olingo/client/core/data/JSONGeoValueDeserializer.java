@@ -24,19 +24,28 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
-import org.apache.olingo.client.api.domain.geospatial.Geospatial;
-import org.apache.olingo.client.api.domain.geospatial.GeospatialCollection;
-import org.apache.olingo.client.api.domain.geospatial.LineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiLineString;
-import org.apache.olingo.client.api.domain.geospatial.MultiPoint;
-import org.apache.olingo.client.api.domain.geospatial.MultiPolygon;
-import org.apache.olingo.client.api.domain.geospatial.Point;
-import org.apache.olingo.client.api.domain.geospatial.Polygon;
+import org.apache.olingo.client.api.data.GeoUtils;
+import org.apache.olingo.client.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 class JSONGeoValueDeserializer {
 
-  private Point point(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type, final String crs) {
+  private final ODataServiceVersion version;
+
+  public JSONGeoValueDeserializer(final ODataServiceVersion version) {
+    this.version = version;
+  }
+
+  private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final String crs) {
     Point point = null;
 
     if (itor.hasNext()) {
@@ -48,7 +57,7 @@ class JSONGeoValueDeserializer {
     return point;
   }
 
-  private MultiPoint multipoint(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     MultiPoint multiPoint = null;
@@ -67,7 +76,7 @@ class JSONGeoValueDeserializer {
     return multiPoint;
   }
 
-  private LineString lineString(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     LineString lineString = null;
@@ -86,7 +95,7 @@ class JSONGeoValueDeserializer {
     return lineString;
   }
 
-  private MultiLineString multiLineString(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private MultiLineString multiLineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     MultiLineString multiLineString = null;
@@ -105,7 +114,7 @@ class JSONGeoValueDeserializer {
     return multiLineString;
   }
 
-  private Polygon polygon(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private Polygon polygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     List<Point> extPoints = null;
@@ -135,7 +144,7 @@ class JSONGeoValueDeserializer {
     return new Polygon(GeoUtils.getDimension(type), crs, intPoints, extPoints);
   }
 
-  private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     MultiPolygon multiPolygon = null;
@@ -154,7 +163,7 @@ class JSONGeoValueDeserializer {
     return multiPolygon;
   }
 
-  private GeospatialCollection collection(final Iterator<JsonNode> itor, final ODataJClientEdmPrimitiveType type,
+  private GeospatialCollection collection(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
     GeospatialCollection collection = null;
@@ -166,16 +175,16 @@ class JSONGeoValueDeserializer {
         final JsonNode geo = itor.next();
         final String collItemType = geo.get(Constants.ATTR_TYPE).asText();
         final String callAsType;
-        if (ODataJClientEdmPrimitiveType.GeographyCollection.name().equals(collItemType)
-                || ODataJClientEdmPrimitiveType.GeometryCollection.name().equals(collItemType)) {
+        if (EdmPrimitiveTypeKind.GeographyCollection.name().equals(collItemType)
+                || EdmPrimitiveTypeKind.GeometryCollection.name().equals(collItemType)) {
 
           callAsType = collItemType;
         } else {
-          callAsType = (type == ODataJClientEdmPrimitiveType.GeographyCollection ? "Geography" : "Geometry")
+          callAsType = (type == EdmPrimitiveTypeKind.GeographyCollection ? "Geography" : "Geometry")
                   + collItemType;
         }
 
-        geospatials.add(deserialize(geo, ODataJClientEdmPrimitiveType.valueOf(callAsType)));
+        geospatials.add(deserialize(geo, new EdmTypeInfo.Builder().setTypeExpression(callAsType).build()));
       }
 
       collection = new GeospatialCollection(GeoUtils.getDimension(type), crs, geospatials);
@@ -186,9 +195,10 @@ class JSONGeoValueDeserializer {
     return collection;
   }
 
-  public Geospatial deserialize(final JsonNode node, final ODataJClientEdmPrimitiveType type) {
-    final ODataJClientEdmPrimitiveType actualType;
-    if ((type == ODataJClientEdmPrimitiveType.Geography || type == ODataJClientEdmPrimitiveType.Geometry)
+  public Geospatial deserialize(final JsonNode node, final EdmTypeInfo typeInfo) {
+    final EdmPrimitiveTypeKind actualType;
+    if ((typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Geography
+            || typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Geometry)
             && node.has(Constants.ATTR_TYPE)) {
 
       String nodeType = node.get(Constants.ATTR_TYPE).asText();
@@ -196,9 +206,9 @@ class JSONGeoValueDeserializer {
         final int yIdx = nodeType.indexOf('y');
         nodeType = nodeType.substring(yIdx + 1);
       }
-      actualType = ODataJClientEdmPrimitiveType.fromValue(type.toString() + nodeType);
+      actualType = EdmPrimitiveTypeKind.valueOfFQN(version, typeInfo.getFullQualifiedName().toString() + nodeType);
     } else {
-      actualType = type;
+      actualType = typeInfo.getPrimitiveTypeKind();
     }
 
     final Iterator<JsonNode> cooItor = node.has(Constants.JSON_COORDINATES)
@@ -214,37 +224,37 @@ class JSONGeoValueDeserializer {
     switch (actualType) {
       case GeographyPoint:
       case GeometryPoint:
-        value = point(cooItor, type, crs);
+        value = point(cooItor, actualType, crs);
         break;
 
       case GeographyMultiPoint:
       case GeometryMultiPoint:
-        value = multipoint(cooItor, type, crs);
+        value = multipoint(cooItor, actualType, crs);
         break;
 
       case GeographyLineString:
       case GeometryLineString:
-        value = lineString(cooItor, type, crs);
+        value = lineString(cooItor, actualType, crs);
         break;
 
       case GeographyMultiLineString:
       case GeometryMultiLineString:
-        value = multiLineString(cooItor, type, crs);
+        value = multiLineString(cooItor, actualType, crs);
         break;
 
       case GeographyPolygon:
       case GeometryPolygon:
-        value = polygon(cooItor, type, crs);
+        value = polygon(cooItor, actualType, crs);
         break;
 
       case GeographyMultiPolygon:
       case GeometryMultiPolygon:
-        value = multiPolygon(cooItor, type, crs);
+        value = multiPolygon(cooItor, actualType, crs);
         break;
 
       case GeographyCollection:
       case GeometryCollection:
-        value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), type, crs);
+        value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, crs);
         break;
 
       default:

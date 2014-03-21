@@ -18,15 +18,13 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +70,7 @@ public class EdmTypeInfo {
 
   private final FullQualifiedName fullQualifiedName;
 
-  private EdmPrimitiveType primitiveType;
-
-  private final boolean geospatialType;
+  private EdmPrimitiveTypeKind primitiveType;
 
   private EdmEnumType enumType;
 
@@ -114,14 +110,10 @@ public class EdmTypeInfo {
     this.fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
     try {
-      this.primitiveType = EdmPrimitiveTypeKind.valueOf(this.fullQualifiedName.getName()).
-              getEdmPrimitiveTypeInstance();
+      this.primitiveType = EdmPrimitiveTypeKind.valueOf(this.fullQualifiedName.getName());
     } catch (IllegalArgumentException e) {
       LOG.debug("{} does not appear to refer to an Edm primitive type", this.fullQualifiedName);
     }
-    // TODO - OLINGO-65 implement Geospatial types!
-    this.geospatialType = this.fullQualifiedName.getNamespace().equals(EdmPrimitiveType.EDM_NAMESPACE)
-            && this.fullQualifiedName.getName().startsWith("Geo");
     if (this.primitiveType == null && this.edm != null) {
       this.enumType = this.edm.getEnumType(this.fullQualifiedName);
       if (this.enumType == null) {
@@ -146,19 +138,11 @@ public class EdmTypeInfo {
   }
 
   public boolean isPrimitiveType() {
-    return this.primitiveType != null || isGeospatialType();
+    return this.primitiveType != null;
   }
 
-  public EdmPrimitiveType getPrimitiveType() {
+  public EdmPrimitiveTypeKind getPrimitiveTypeKind() {
     return primitiveType;
-  }
-
-  public boolean isGeospatialType() {
-    return geospatialType;
-  }
-
-  public Object getGeospatialType() {
-    throw new NotImplementedException("Geospatial types missing");
   }
 
   public boolean isEnumType() {

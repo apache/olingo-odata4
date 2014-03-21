@@ -38,7 +38,6 @@ import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataOperation;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
@@ -55,6 +54,7 @@ import org.apache.olingo.client.core.data.JSONPropertyImpl;
 import org.apache.olingo.client.core.data.LinkImpl;
 import org.apache.olingo.client.core.data.NullValueImpl;
 import org.apache.olingo.client.core.data.PrimitiveValueImpl;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -378,14 +378,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = new ODataPrimitiveValue.Builder(client).setText(resource.getValue().asSimple().get()).
               setType(resource.getType() == null
                       ? null
-                      : ODataJClientEdmPrimitiveType.fromValue(resource.getType())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = new ODataGeospatialValue.Builder(client).setValue(resource.getValue().asGeospatial().get()).
               setType(resource.getType() == null
-                      || ODataJClientEdmPrimitiveType.Geography.toString().equals(resource.getType())
-                      || ODataJClientEdmPrimitiveType.Geometry.toString().equals(resource.getType())
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
                       ? null
-                      : ODataJClientEdmPrimitiveType.fromValue(resource.getType())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isComplex()) {
       value = new ODataComplexValue(resource.getType());
 

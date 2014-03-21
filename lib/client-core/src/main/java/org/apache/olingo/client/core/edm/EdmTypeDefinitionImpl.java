@@ -22,10 +22,12 @@ import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements EdmTypeDefinition {
 
@@ -33,14 +35,14 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
 
   private EdmPrimitiveType edmPrimitiveTypeInstance;
 
-  public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
-          final TypeDefinition typeDefinition) {
+  public EdmTypeDefinitionImpl(final ODataServiceVersion version, final Edm edm,
+          final FullQualifiedName typeDefinitionName, final TypeDefinition typeDefinition) {
 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
     try {
-      edmPrimitiveTypeInstance = EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()).
-              getEdmPrimitiveTypeInstance();
+      this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getNonGeoInstance(
+              EdmPrimitiveTypeKind.valueOfFQN(version, typeDefinition.getUnderlyingType()));
     } catch (IllegalArgumentException e) {
       throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
     }

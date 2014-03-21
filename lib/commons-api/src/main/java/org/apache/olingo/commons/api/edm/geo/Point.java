@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain.geospatial;
+package org.apache.olingo.commons.api.edm.geo;
 
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 public class Point extends Geospatial {
 
@@ -69,9 +69,9 @@ public class Point extends Geospatial {
   }
 
   @Override
-  public ODataJClientEdmPrimitiveType getEdmSimpleType() {
+  public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-            ? ODataJClientEdmPrimitiveType.GeographyPoint
-            : ODataJClientEdmPrimitiveType.GeometryPoint;
+           ? EdmPrimitiveTypeKind.GeographyPoint
+           : EdmPrimitiveTypeKind.GeometryPoint;
   }
 }

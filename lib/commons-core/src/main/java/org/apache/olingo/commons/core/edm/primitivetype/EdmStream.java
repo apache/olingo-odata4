@@ -18,33 +18,39 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import java.net.URI;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
-//TODO: Is this class still necessary?
 /**
- * Implementation of the simple type Null.
+ * Implementation of the EDM primitive type Stream as URI.
  */
-public final class EdmNull extends SingletonPrimitiveType {
+public final class EdmStream extends SingletonPrimitiveType {
 
-  private static final EdmNull INSTANCE = new EdmNull();
+  private static final EdmStream INSTANCE = new EdmStream();
 
-  public static EdmNull getInstance() {
+  public static EdmStream getInstance() {
     return INSTANCE;
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return this == obj || obj == null;
-  }
-
-  @Override
-  public int hashCode() {
-    return 0;
-  }
-
-  @Override
   public Class<?> getDefaultType() {
-    return null;
+    return URI.class;
+  }
+
+  @Override
+  public boolean validate(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) {
+
+    if (value == null) {
+      return isNullable == null || isNullable;
+    }
+
+    try {
+      new URI(value);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   @Override
@@ -52,7 +58,19 @@ public final class EdmNull extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
-    return null;
+    URI stream = null;
+    try {
+      stream = new URI(value);
+    } catch (Exception e) {
+      throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+    }
+
+    if (returnType.isAssignableFrom(URI.class)) {
+      return returnType.cast(stream);
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    }
   }
 
   @Override
@@ -60,16 +78,11 @@ public final class EdmNull extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    return null;
-  }
-
-  @Override
-  public String toUriLiteral(final String literal) {
-    return "null";
-  }
-
-  @Override
-  public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
-    return null;
+    if (value instanceof URI) {
+      return ((URI) value).toASCIIString();
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+    }
   }
 }

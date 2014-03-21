@@ -29,7 +29,6 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataValueFormat;
@@ -38,6 +37,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * This class implements an OData update entity property value request.
@@ -125,7 +125,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
         try {
           value = new ODataPrimitiveValue.Builder(odataClient).
                   setType(format == ODataValueFormat.TEXT
-                  ? ODataJClientEdmPrimitiveType.String : ODataJClientEdmPrimitiveType.Stream).
+                          ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).
                   build();
         } catch (IOException e) {

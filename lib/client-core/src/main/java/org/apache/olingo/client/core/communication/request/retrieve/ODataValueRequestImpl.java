@@ -26,11 +26,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * This class implements an OData entity property value query request.
@@ -93,7 +93,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataVal
         try {
           value = new ODataPrimitiveValue.Builder(odataClient).
                   setType(format == ODataValueFormat.TEXT
-                  ? ODataJClientEdmPrimitiveType.String : ODataJClientEdmPrimitiveType.Stream).
+                          ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).
                   build();
         } catch (IOException e) {

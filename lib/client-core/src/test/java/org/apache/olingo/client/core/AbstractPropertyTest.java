@@ -27,13 +27,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.domain.ODataJClientEdmPrimitiveType;
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataComplexValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
             + "Customer_-10_CustomerId_value.txt");
 
     final ODataValue value = getClient().getPrimitiveValueBuilder().
-            setType(ODataJClientEdmPrimitiveType.String).
+            setType(EdmPrimitiveTypeKind.String).
             setText(IOUtils.toString(input)).
             build();
     assertNotNull(value);
@@ -76,7 +76,8 @@ public abstract class AbstractPropertyTest extends AbstractTest {
     } else {
       // This is needed because type information gets lost with JSON serialization
       final ODataPrimitiveValue typedValue = getClient().getPrimitiveValueBuilder().
-              setType(ODataJClientEdmPrimitiveType.fromValue(property.getPrimitiveValue().getTypeName())).
+              setType(EdmPrimitiveTypeKind.valueOfFQN(
+                              getClient().getServiceVersion(), property.getPrimitiveValue().getTypeName())).
               setText(written.getPrimitiveValue().toString()).
               build();
       comparable = getClient().getObjectFactory().newPrimitiveProperty(written.getName(), typedValue);

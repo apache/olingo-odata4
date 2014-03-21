@@ -24,20 +24,19 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.Uint7;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
 public class EdmInt32Test extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance();
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32);
 
   @Test
   public void compatibility() {
     assertTrue(instance.isCompatible(Uint7.getInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Byte.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeKind.Int16.getEdmPrimitiveTypeInstance()));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Byte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int16)));
   }
 
   @Test
