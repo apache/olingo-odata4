@@ -173,8 +173,7 @@ public class SystemQueryValidator {
       if (lastPathSegemnt instanceof UriResourcePartTyped) {
         if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
           idx = 14;
-        }
-        else {
+        } else {
           idx = 13;
         }
       } else {
@@ -186,8 +185,7 @@ public class SystemQueryValidator {
       if (lastPathSegemnt instanceof UriResourcePartTyped) {
         if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
           idx = 7;
-        }
-        else {
+        } else {
           idx = 9;
         }
       } else {
@@ -211,8 +209,7 @@ public class SystemQueryValidator {
       if (lastPathSegemnt instanceof UriResourcePartTyped) {
         if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
           idx = 17;
-        }
-        else {
+        } else {
           idx = 16;
         }
       } else {
@@ -228,8 +225,7 @@ public class SystemQueryValidator {
       if (secondLastPathSegment instanceof UriResourcePartTyped) {
         if (((UriResourcePartTyped) secondLastPathSegment).isCollection()) {
           idx = 11;
-        }
-        else {
+        } else {
           idx = 12;
         }
       } else {
