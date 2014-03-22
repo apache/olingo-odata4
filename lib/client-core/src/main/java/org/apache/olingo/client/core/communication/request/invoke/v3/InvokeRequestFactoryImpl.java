@@ -52,6 +52,7 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory imple
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(final URI uri, final Edm edm,
           final FullQualifiedName container, final String functionImport,
           final LinkedHashMap<String, ODataValue> parameters) {

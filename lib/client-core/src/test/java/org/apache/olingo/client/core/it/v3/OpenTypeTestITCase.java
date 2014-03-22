@@ -69,17 +69,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   private void read(final ODataPubFormat format) {
     ODataEntity row = readRow(format, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
-    assertEquals(
-            EdmPrimitiveTypeKind.Double.toString(),
-            row.getProperty("Double").getPrimitiveValue().getTypeName());
-    assertEquals(
-            EdmPrimitiveTypeKind.Guid.toString(),
-            row.getProperty("Id").getPrimitiveValue().getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Double, row.getProperty("Double").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Guid, row.getProperty("Id").getPrimitiveValue().getTypeKind());
 
     row = readRow(format, "672b8250-1e6e-4785-80cf-b94b572e42b3");
-    assertEquals(
-            EdmPrimitiveTypeKind.Decimal.toString(),
-            row.getProperty("Decimal").getPrimitiveValue().getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Decimal, row.getProperty("Decimal").getPrimitiveValue().getTypeKind());
   }
 
   @Test
@@ -213,45 +207,45 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Row").build(), row);
+                    appendEntitySetSegment("Row").build(), row);
     createReq.setFormat(format);
     final ODataEntityCreateResponse createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     row = readRow(format, guid.toString());
     assertNotNull(row);
-    assertEquals(EdmPrimitiveTypeKind.Guid.toString(),
-            row.getProperty("Id").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.String.toString(),
-            row.getProperty("aString").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.Boolean.toString(),
-            row.getProperty("aBoolean").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.Int64.toString(),
-            row.getProperty("aLong").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.Double.toString(),
-            row.getProperty("aDouble").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.SByte.toString(),
-            row.getProperty("aByte").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.DateTime.toString(),
-            row.getProperty("aDate").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeographyPoint.toString(),
-            row.getProperty("aPoint").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPoint.toString(),
-            row.getProperty("aMultiPoint").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeometryLineString.toString(),
-            row.getProperty("aLineString").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeometryMultiLineString.toString(),
-            row.getProperty("aMultiLineString").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeographyPolygon.toString(),
-            row.getProperty("aPolygon").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeographyMultiPolygon.toString(),
-            row.getProperty("aMultiPolygon").getPrimitiveValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.GeographyCollection.toString(),
-            row.getProperty("aCollection").getPrimitiveValue().getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.Guid,
+            row.getProperty("Id").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.String,
+            row.getProperty("aString").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Boolean,
+            row.getProperty("aBoolean").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Int64,
+            row.getProperty("aLong").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Double,
+            row.getProperty("aDouble").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.SByte,
+            row.getProperty("aByte").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.DateTime,
+            row.getProperty("aDate").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyPoint,
+            row.getProperty("aPoint").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPoint,
+            row.getProperty("aMultiPoint").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryLineString,
+            row.getProperty("aLineString").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryMultiLineString,
+            row.getProperty("aMultiLineString").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyPolygon,
+            row.getProperty("aPolygon").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyMultiPolygon,
+            row.getProperty("aMultiPolygon").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyCollection,
+            row.getProperty("aCollection").getPrimitiveValue().getTypeKind());
     assertEquals("Microsoft.Test.OData.Services.OpenTypesService.ContactDetails",
-            row.getProperty("aContact").getComplexValue().getTypeName());
-    assertEquals(EdmPrimitiveTypeKind.SByte.toString(),
-            row.getProperty("aContact").getComplexValue().get("SignedByte").getPrimitiveValue().getTypeName());
+            row.getProperty("aContact").getComplexValue().getType());
+    assertEquals(EdmPrimitiveTypeKind.SByte,
+            row.getProperty("aContact").getComplexValue().get("SignedByte").getPrimitiveValue().getTypeKind());
 
     final ODataDeleteResponse deleteRes = client.getCUDRequestFactory().getDeleteRequest(row.getEditLink()).
             execute();

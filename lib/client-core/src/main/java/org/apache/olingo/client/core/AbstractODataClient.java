@@ -19,10 +19,10 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataObjectFactory;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.op.ODataWriter;
+import org.apache.olingo.client.core.domain.ODataGeospatialValueImpl;
+import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.client.core.op.impl.ODataObjectFactoryImpl;
 import org.apache.olingo.client.core.op.impl.ODataWriterImpl;
 
@@ -35,13 +35,13 @@ public abstract class AbstractODataClient implements CommonODataClient {
   private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
 
   @Override
-  public ODataPrimitiveValue.Builder getPrimitiveValueBuilder() {
-    return new ODataPrimitiveValue.Builder(this);
+  public ODataPrimitiveValueImpl.BuilderImpl getPrimitiveValueBuilder() {
+    return new ODataPrimitiveValueImpl.BuilderImpl(this.getServiceVersion());
   }
 
   @Override
-  public ODataGeospatialValue.Builder getGeospatialValueBuilder() {
-    return new ODataGeospatialValue.Builder(this);
+  public ODataGeospatialValueImpl.BuilderImpl getGeospatialValueBuilder() {
+    return new ODataGeospatialValueImpl.BuilderImpl();
   }
 
   @Override

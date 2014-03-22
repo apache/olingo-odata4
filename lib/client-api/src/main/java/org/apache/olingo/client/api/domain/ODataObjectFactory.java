@@ -19,15 +19,6 @@
 package org.apache.olingo.client.api.domain;
 
 import java.net.URI;
-import org.apache.olingo.client.api.domain.ODataCollectionValue;
-import org.apache.olingo.client.api.domain.ODataComplexValue;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.domain.ODataInlineEntity;
-import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataProperty;
 
 /**
  * Entry point for generating OData domain objects.
@@ -193,10 +184,19 @@ public interface ODataObjectFactory {
    * Instantiates a new primitive property.
    *
    * @param name name.
-   * @param value value.
+   * @param value primitive value.
    * @return primitive property.
    */
   ODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
+
+  /**
+   * Instantiates a new primitive property.
+   *
+   * @param name name.
+   * @param value geospatial value.
+   * @return primitive property.
+   */
+  ODataProperty newPrimitiveProperty(String name, ODataGeospatialValue value);
 
   /**
    * Instantiates a new complex property.

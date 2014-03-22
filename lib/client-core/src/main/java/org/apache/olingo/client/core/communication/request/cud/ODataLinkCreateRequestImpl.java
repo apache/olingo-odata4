@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataLinkOperationRes
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 

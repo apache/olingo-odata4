@@ -28,35 +28,33 @@ import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
 public class CountTestITCase extends AbstractTestITCase {
-    //counts the total number of customers
 
-    @Test
-    public void entityCount() {
-        CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-                appendEntitySetSegment("Customer").count();
-        final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-        req.setFormat(ODataValueFormat.TEXT);
-        try {
-            final ODataValue value = req.execute().getBody();
-            assertTrue(10 <= Integer.parseInt(value.toString()));
-        } catch (ODataClientErrorException e) {
-            LOG.error("Error code: {}", e.getStatusLine().getStatusCode(), e);
-        }
+  @Test
+  public void entityCount() {
+    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customer").count();
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+    req.setFormat(ODataValueFormat.TEXT);
+    try {
+      final ODataValue value = req.execute().getBody();
+      assertTrue(10 <= Integer.parseInt(value.toString()));
+    } catch (ODataClientErrorException e) {
+      LOG.error("Error code: {}", e.getStatusLine().getStatusCode(), e);
     }
-    //returns 415 error for invalid header.
+  }
 
-    @Test
-    public void invalidAccept() {
-        final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-                appendEntitySetSegment("Customer").count();
-        final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-        req.setFormat(ODataValueFormat.TEXT);
-        req.setAccept("application/json;odata=fullmetadata");
-        try {
-            final ODataValue value = req.execute().getBody();
-            fail();
-        } catch (ODataClientErrorException e) {
-            assertEquals(415, e.getStatusLine().getStatusCode());
-        }
+  @Test
+  public void invalidAccept() {
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customer").count();
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+    req.setFormat(ODataValueFormat.TEXT);
+    req.setAccept("application/json;odata=fullmetadata");
+    try {
+      final ODataValue value = req.execute().getBody();
+      fail();
+    } catch (ODataClientErrorException e) {
+      assertEquals(415, e.getStatusLine().getStatusCode());
     }
+  }
 }

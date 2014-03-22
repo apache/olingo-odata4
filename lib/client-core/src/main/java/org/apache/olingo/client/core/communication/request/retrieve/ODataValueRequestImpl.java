@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -27,15 +26,15 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * This class implements an OData entity property value query request.
  */
-public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataValue, ODataValueFormat>
+public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPrimitiveValue, ODataValueFormat>
         implements ODataValueRequest {
 
   /**
@@ -52,7 +51,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataVal
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<ODataValue> execute() {
+  public ODataRetrieveResponse<ODataPrimitiveValue> execute() {
     final HttpResponse res = doExecute();
     return new ODataValueResponseImpl(httpClient, res);
   }
@@ -62,7 +61,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataVal
    */
   protected class ODataValueResponseImpl extends ODataRetrieveResponseImpl {
 
-    private ODataValue value = null;
+    private ODataPrimitiveValue value = null;
 
     /**
      * Constructor.
@@ -86,17 +85,17 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataVal
      * {@inheritDoc }
      */
     @Override
-    public ODataValue getBody() {
+    public ODataPrimitiveValue getBody() {
       if (value == null) {
         final ODataValueFormat format = ODataValueFormat.fromString(getContentType());
 
         try {
-          value = new ODataPrimitiveValue.Builder(odataClient).
+          value = new ODataPrimitiveValueImpl.BuilderImpl(odataClient.getServiceVersion()).
                   setType(format == ODataValueFormat.TEXT
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).
                   build();
-        } catch (IOException e) {
+        } catch (Exception e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

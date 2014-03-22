@@ -171,7 +171,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     Integer id = null;
     for (ODataProperty prop : created.getProperties()) {
       if ("VIN".equals(prop.getName())) {
-        id = prop.getPrimitiveValue().<Integer>toCastValue();
+        id = prop.getPrimitiveValue().toCastValue(Integer.class);
       }
     }
     assertNotNull(id);

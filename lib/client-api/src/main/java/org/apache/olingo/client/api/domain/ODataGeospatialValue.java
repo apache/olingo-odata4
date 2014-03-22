@@ -18,92 +18,40 @@
  */
 package org.apache.olingo.client.api.domain;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.edm.EdmGeospatialType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
-public class ODataGeospatialValue extends ODataPrimitiveValue {
+public interface ODataGeospatialValue extends ODataValue {
 
-  private static final long serialVersionUID = -3984105137562291082L;
+  interface Builder {
 
-  /**
-   * Geospatial value builder.
-   */
-  public static class Builder extends AbstractBuilder {
+    Builder setType(EdmPrimitiveTypeKind type);
 
-    private final ODataGeospatialValue ogv;
+    Builder setValue(Geospatial value);
 
-    /**
-     * Constructor.
-     */
-    public Builder(final CommonODataClient client) {
-      super(client);
-      this.ogv = new ODataGeospatialValue(client);
-    }
+    ODataGeospatialValue build();
 
-    /**
-     * Sets the actual object value.
-     *
-     * @param value value.
-     * @return the current builder.
-     */
-    public <T extends Geospatial> Builder setValue(final T value) {
-      this.ogv.value = value;
-      return this;
-    }
-
-    /**
-     * Sets actual value type.
-     *
-     * @param type type.
-     * @return the current builder.
-     */
-    public Builder setType(final EdmPrimitiveTypeKind type) {
-      isSupported(type);
-
-      if (type != null && !type.isGeospatial()) {
-        throw new IllegalArgumentException(
-                "Use " + ODataPrimitiveValue.class.getSimpleName() + " for non-geospatial types");
-      }
-
-      if (type == EdmPrimitiveTypeKind.Geography || type == EdmPrimitiveTypeKind.Geometry) {
-        throw new IllegalArgumentException(
-                type + " is not an instantiable type. "
-                + "An entity can declare a property to be of type Geometry. "
-                + "An instance of an entity MUST NOT have a value of type Geometry. "
-                + "Each value MUST be of some subtype.");
-      }
-      this.ogv.type = type;
-      return this;
-    }
-
-    /**
-     * Builds the geospatial value.
-     *
-     * @return <tt>ODataGeospatialValue</tt> object.
-     */
-    public ODataGeospatialValue build() {
-      if (this.ogv.value == null) {
-        throw new IllegalArgumentException("No Geospatial value provided");
-      }
-      if (this.ogv.type == null) {
-        this.ogv.type = ((Geospatial) this.ogv.value).getEdmPrimitiveTypeKind();
-      }
-
-      return this.ogv;
-    }
   }
 
+  EdmPrimitiveTypeKind getTypeKind();
+
+  EdmGeospatialType getType();
+
   /**
-   * Protected constructor, need to use the builder to instantiate this class.
+   * Returns the current geospatial value.
    *
-   * @see Builder
+   * @return the current geospatial value.
    */
-  protected ODataGeospatialValue(final CommonODataClient client) {
-    super(client);
-  }
+  Geospatial toValue();
 
-  public Geospatial getGeospatial() {
-    return (Geospatial) this.value;
-  }
+  /**
+   * Returns the current value casted to the given type.
+   *
+   * @param <T> cast type
+   * @param reference class reference
+   * @return the current value as typed java instance
+   */
+  <T extends Geospatial> T toCastValue(Class<T> reference);
+
 }

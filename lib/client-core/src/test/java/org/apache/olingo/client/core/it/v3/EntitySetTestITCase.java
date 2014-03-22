@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;

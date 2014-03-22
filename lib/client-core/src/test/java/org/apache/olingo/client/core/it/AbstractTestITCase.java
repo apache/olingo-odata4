@@ -64,7 +64,7 @@ import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.JSONEntryImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -198,8 +198,8 @@ public abstract class AbstractTestITCase {
       assertTrue("Found " + actual + " but expected " + original, found);
     } else {
       assertTrue("Primitive value for '" + propertyName + "' type mismatch: " + original.asPrimitive().
-              getTypeName() + "-" + actual.asPrimitive().getTypeName(),
-              original.asPrimitive().getTypeName().equals(actual.asPrimitive().getTypeName()));
+              getTypeKind() + "-" + actual.asPrimitive().getTypeKind(),
+              original.asPrimitive().getTypeKind().equals(actual.asPrimitive().getTypeKind()));
 
       assertEquals("Primitive value for '" + propertyName + "' mismatch: " + original.asPrimitive().toString()
               + "-" + actual.asPrimitive().toString(),

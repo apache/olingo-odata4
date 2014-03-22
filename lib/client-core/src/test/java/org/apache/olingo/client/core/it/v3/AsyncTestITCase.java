@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -95,7 +94,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
    */
   @Test
   @Ignore
-  public void createMediaEntity() throws InterruptedException, ExecutionException, IOException {
+  public void createMediaEntity() throws Exception {
     CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final String TO_BE_UPDATED = "async buffered stream sample";
@@ -110,7 +109,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     while (!futureCreateRes.isDone()) {
       Thread.sleep(1000L);
     }
-    
+
     final ODataMediaEntityCreateResponse createRes = futureCreateRes.get();
 
     assertEquals(201, createRes.getStatusCode());
@@ -120,8 +119,8 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertEquals(2, created.getProperties().size());
 
     final int id = "VIN".equals(created.getProperties().get(0).getName())
-            ? created.getProperties().get(0).getPrimitiveValue().<Integer>toCastValue()
-            : created.getProperties().get(1).getPrimitiveValue().<Integer>toCastValue();
+            ? created.getProperties().get(0).getPrimitiveValue().toCastValue(Integer.class)
+            : created.getProperties().get(1).getPrimitiveValue().toCastValue(Integer.class);
 
     builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();

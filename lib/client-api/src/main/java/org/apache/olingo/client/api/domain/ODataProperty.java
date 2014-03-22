@@ -107,6 +107,24 @@ public class ODataProperty implements Serializable, ODataInvokeResult {
   }
 
   /**
+   * Checks if has geospatial value.
+   *
+   * @return 'TRUE' if has geospatial value; 'FALSE' otherwise.
+   */
+  public boolean hasGeospatialValue() {
+    return !hasNullValue() && this.value.isGeospatial();
+  }
+
+  /**
+   * Gets geospatial value.
+   *
+   * @return geospatial value if exists; null otherwise.
+   */
+  public ODataGeospatialValue getGeospatialValue() {
+    return hasGeospatialValue() ? this.value.asGeospatial() : null;
+  }
+
+  /**
    * Checks if has complex value.
    *
    * @return 'TRUE' if has complex value; 'FALSE' otherwise.

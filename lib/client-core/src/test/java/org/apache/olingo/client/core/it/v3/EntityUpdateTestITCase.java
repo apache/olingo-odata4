@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
@@ -106,16 +107,16 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void patchLinkAsAtom() {
+  public void patchLinkAsAtom() throws EdmPrimitiveTypeException {
     patchLink(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void patchLinkAsJSON() {
+  public void patchLinkAsJSON() throws EdmPrimitiveTypeException {
     patchLink(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  public void patchLink(final ODataPubFormat format) {
+  public void patchLink(final ODataPubFormat format) throws EdmPrimitiveTypeException {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).build();
 
@@ -142,7 +143,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     ODataEntity newInfo = req.execute().getBody();
 
     assertEquals(Integer.valueOf(12),
-            newInfo.getProperty("CustomerInfoId").getPrimitiveValue().<Integer>toCastValue());
+            newInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
     // ---------------------------------------
 
     // ---------------------------------------
@@ -167,11 +168,13 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     newInfo = req.execute().getBody();
 
     assertEquals(Integer.valueOf(11),
-            newInfo.getProperty("CustomerInfoId").getPrimitiveValue().<Integer>toCastValue());
+            newInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
     // ---------------------------------------
   }
 
-  private ODataEntityUpdateRequest buildMultiKeyUpdateReq(final ODataPubFormat format) {
+  private ODataEntityUpdateRequest buildMultiKeyUpdateReq(final ODataPubFormat format)
+          throws EdmPrimitiveTypeException {
+
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
@@ -180,7 +183,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     message.getAssociationLinks().clear();
     message.getNavigationLinks().clear();
 
-    final boolean before = message.getProperty("IsRead").getPrimitiveValue().<Boolean>toCastValue();
+    final boolean before = message.getProperty("IsRead").getPrimitiveValue().toCastValue(Boolean.class);
     message.getProperties().remove(message.getProperty("IsRead"));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("IsRead",
             client.getPrimitiveValueBuilder().setValue(!before).
@@ -189,23 +192,23 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     return client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, message);
   }
 
-  private void mergeMultiKey(final ODataPubFormat format) {
+  private void mergeMultiKey(final ODataPubFormat format) throws EdmPrimitiveTypeException {
     final ODataEntityUpdateResponse res = buildMultiKeyUpdateReq(format).execute();
     assertEquals(204, res.getStatusCode());
   }
 
   @Test
-  public void mergeMultiKeyAsAtom() {
+  public void mergeMultiKeyAsAtom() throws EdmPrimitiveTypeException {
     mergeMultiKey(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void mergeMultiKeyAsJSON() {
+  public void mergeMultiKeyAsJSON() throws EdmPrimitiveTypeException {
     mergeMultiKey(ODataPubFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  public void updateReturnContent() {
+  public void updateReturnContent() throws EdmPrimitiveTypeException {
     final ODataEntityUpdateRequest req = buildMultiKeyUpdateReq(client.getConfiguration().getDefaultPubFormat());
     req.setPrefer(ODataHeaderValues.preferReturnContent);
 

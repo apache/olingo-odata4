@@ -18,419 +18,50 @@
  */
 package org.apache.olingo.client.api.domain;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.UUID;
-
-import javax.xml.datatype.Duration;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
-/**
- * OData primitive property value.
- */
-public class ODataPrimitiveValue extends ODataValue {
+public interface ODataPrimitiveValue extends ODataValue {
 
-  private static final long serialVersionUID = 2841837627899878223L;
+  interface Builder {
 
-  protected abstract static class AbstractBuilder {
+    Builder setType(EdmPrimitiveTypeKind type);
 
-    private final CommonODataClient client;
+    Builder setText(String text);
 
-    /**
-     * Constructor.
-     */
-    public AbstractBuilder(final CommonODataClient client) {
-      this.client = client;
-    }
+    Builder setValue(Object value);
 
-    public AbstractBuilder isSupported(final EdmPrimitiveTypeKind type) {
-      if (type != null && !type.getSupportedVersions().contains(client.getServiceVersion())) {
-        throw new IllegalArgumentException(String.format(
-                "Type %s not supported by the current OData working version", type.toString()));
-      }
-
-      return this;
-    }
+    ODataPrimitiveValue build();
   }
 
-  /**
-   * Primitive value builder.
-   */
-  public static class Builder extends AbstractBuilder {
+  EdmPrimitiveTypeKind getTypeKind();
 
-    private final ODataPrimitiveValue opv;
-
-    /**
-     * Constructor.
-     */
-    public Builder(final CommonODataClient client) {
-      super(client);
-      this.opv = new ODataPrimitiveValue(client);
-    }
-
-    /**
-     * Sets the given value provided as a text.
-     *
-     * @param text value.
-     * @return the current builder.
-     */
-    public Builder setText(final String text) {
-      this.opv.text = text;
-      return this;
-    }
-
-    /**
-     * Sets the actual object value.
-     *
-     * @param value value.
-     * @return the current builder.
-     */
-    public Builder setValue(final Object value) {
-      this.opv.value = value;
-      return this;
-    }
-
-    /**
-     * Sets actual value type.
-     *
-     * @param type type.
-     * @return the current builder.
-     */
-    public Builder setType(final EdmPrimitiveTypeKind type) {
-      isSupported(type);
-
-      if (type == EdmPrimitiveTypeKind.Stream) {
-        throw new IllegalArgumentException(String.format(
-                "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
-      }
-
-      this.opv.type = type;
-      return this;
-    }
-
-    /**
-     * Builds the primitive value.
-     *
-     * @return <code>ODataPrimitiveValue</code> object.
-     */
-    public ODataPrimitiveValue build() {
-      if (this.opv.text == null && this.opv.value == null) {
-        throw new IllegalArgumentException("Must provide either text or value");
-      }
-      if (this.opv.text != null && this.opv.value != null) {
-        throw new IllegalArgumentException("Cannot provide both text and value");
-      }
-
-      if (this.opv.type == null) {
-        this.opv.type = EdmPrimitiveTypeKind.String;
-      }
-
-      if (this.opv.type.isGeospatial()) {
-        throw new IllegalArgumentException(
-                "Use " + ODataGeospatialValue.class.getSimpleName() + " for geospatial types");
-      }
-
-      if (this.opv.value instanceof Timestamp) {
-        this.opv.value = ODataTimestamp.getInstance(this.opv.type, (Timestamp) this.opv.value);
-      } else if (this.opv.value instanceof Date) {
-        this.opv.value = ODataTimestamp.getInstance(this.opv.type,
-                new Timestamp(((Date) this.opv.value).getTime()));
-      }
-      if (this.opv.value instanceof Duration) {
-        this.opv.value = new ODataDuration((Duration) this.opv.value);
-      }
-
-      if (this.opv.value != null && !this.opv.getJavaType().isAssignableFrom(this.opv.value.getClass())) {
-        throw new IllegalArgumentException("Provided value is not compatible with " + this.opv.type.toString());
-      }
-
-      if (this.opv.text != null) {
-        this.opv.parseText();
-      }
-      if (this.opv.value != null) {
-        this.opv.formatValue();
-      }
-
-      return this.opv;
-    }
-  }
-
-  protected CommonODataClient client;
+  EdmPrimitiveType getType();
 
   /**
-   * Text value.
-   */
-  private String text;
-
-  /**
-   * Actual value.
-   */
-  protected Object value;
-
-  /**
-   * Value type.
-   */
-  protected EdmPrimitiveTypeKind type;
-
-  /**
-   * Protected constructor, need to use the builder to instantiate this class.
+   * Returns the current value as generic Object.
    *
-   * @see Builder
+   * @return an uncasted instance of this value
    */
-  protected ODataPrimitiveValue(final CommonODataClient client) {
-    super();
-    this.client = client;
-  }
-
-  private Class<?> getJavaType() {
-    Class<?> javaType = null;
-
-    switch (this.type) {
-      case Binary:
-        javaType = byte[].class;
-        break;
-
-      case SByte:
-        javaType = Byte.class;
-        break;
-
-      case Boolean:
-        javaType = Boolean.class;
-        break;
-
-      case Date:
-      case DateTime:
-      case DateTimeOffset:
-        javaType = ODataTimestamp.class;
-        break;
-
-      case Time:
-      case TimeOfDay:
-        javaType = ODataDuration.class;
-        break;
-
-      case Decimal:
-        javaType = BigDecimal.class;
-        break;
-
-      case Single:
-        javaType = Float.class;
-        break;
-
-      case Double:
-        javaType = Double.class;
-        break;
-
-      case Guid:
-        javaType = UUID.class;
-        break;
-
-      case Int16:
-        javaType = Short.class;
-        break;
-
-      case Byte:
-      case Int32:
-        javaType = Integer.class;
-        break;
-
-      case Int64:
-        javaType = Long.class;
-        break;
-
-      case Stream:
-        javaType = URI.class;
-        break;
-
-      case String:
-        javaType = String.class;
-        break;
-
-      default:
-        javaType = this.value.getClass();
-    }
-
-    return javaType;
-  }
+  Object toValue();
 
   /**
-   * Parses given text as object value.
-   */
-  private void parseText() {
-    switch (this.type) {
-      case Binary:
-        this.value = Base64.decodeBase64(this.toString());
-        break;
-
-      case SByte:
-        this.value = Byte.parseByte(this.toString());
-        break;
-
-      case Boolean:
-        this.value = Boolean.parseBoolean(this.toString());
-        break;
-
-      case Date:
-      case DateTime:
-      case DateTimeOffset:
-        this.value = ODataTimestamp.parse(this.type, this.toString());
-        break;
-
-      case Time:
-      case TimeOfDay:
-        this.value = new ODataDuration(this.toString());
-        break;
-
-      case Decimal:
-        this.value = new BigDecimal(this.toString());
-        break;
-
-      case Single:
-        this.value = Float.parseFloat(this.toString());
-        break;
-
-      case Double:
-        this.value = Double.parseDouble(this.toString());
-        break;
-
-      case Guid:
-        this.value = UUID.fromString(this.toString());
-        break;
-
-      case Int16:
-        this.value = Short.parseShort(this.toString());
-        break;
-
-      case Byte:
-      case Int32:
-        this.value = Integer.parseInt(this.toString());
-        break;
-
-      case Int64:
-        this.value = Long.parseLong(this.toString());
-        break;
-
-      case Stream:
-        this.value = URI.create(this.toString());
-        break;
-
-      case String:
-        this.value = this.toString();
-        break;
-
-      default:
-    }
-  }
-
-  /**
-   * Format given value as text.
-   */
-  private void formatValue() {
-    switch (this.type) {
-      case Binary:
-        this.text = Base64.encodeBase64String(this.<byte[]>toCastValue());
-        break;
-
-      case SByte:
-        this.text = this.<Byte>toCastValue().toString();
-        break;
-
-      case Boolean:
-        this.text = this.<Boolean>toCastValue().toString();
-        break;
-
-      case Date:
-      case DateTime:
-      case DateTimeOffset:
-        this.text = this.<ODataTimestamp>toCastValue().toString();
-        break;
-
-      case Time:
-      case TimeOfDay:
-        this.text = this.<ODataDuration>toCastValue().toString();
-        break;
-
-      case Decimal:
-        this.text = new DecimalFormat("#.#######################").format(this.<BigDecimal>toCastValue());
-        break;
-
-      case Single:
-        this.text = new DecimalFormat("#.#######E0").format(this.<Float>toCastValue());
-        break;
-
-      case Double:
-        this.text = new DecimalFormat("#.#######################E0").format(this.<Double>toCastValue());
-        break;
-
-      case Guid:
-        this.text = this.<UUID>toCastValue().toString();
-        break;
-
-      case Int16:
-        this.text = this.<Short>toCastValue().toString();
-        break;
-
-      case Byte:
-      case Int32:
-        this.text = this.<Integer>toCastValue().toString();
-        break;
-
-      case Int64:
-        this.text = this.<Long>toCastValue().toString();
-        break;
-
-      case Stream:
-        this.text = this.<URI>toCastValue().toASCIIString();
-        break;
-
-      case String:
-        this.text = this.<String>toCastValue();
-        break;
-
-      default:
-    }
-  }
-
-  /**
-   * Gets type name.
+   * Returns the current value casted to the given type.
    *
-   * @return type name.
+   * @param <T> cast type
+   * @param reference class reference
+   * @return the current value as typed java instance
+   * @throws EdmPrimitiveTypeException if the object is not assignable to the type T.
    */
-  public String getTypeName() {
-    return type.getFullQualifiedName().toString();
-  }
+  <T> T toCastValue(Class<T> reference) throws EdmPrimitiveTypeException;
 
   /**
-   * {@inheritDoc }
+   * Serialize the current value as String.
+   *
+   * @return a String representation of this value
    */
   @Override
-  public String toString() {
-    return this.text;
-  }
+  String toString();
 
-  /**
-   * Gets actual primitive value.
-   *
-   * @return
-   */
-  public Object toValue() {
-    return this.value;
-  }
-
-  /**
-   * Casts primitive value.
-   *
-   * @param <T> cast.
-   * @return casted value.
-   */
-  @SuppressWarnings("unchecked")
-  public <T> T toCastValue() {
-    return (T) getJavaType().cast(toValue());
-  }
 }

@@ -50,7 +50,8 @@ import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   // create collection navigation link with ATOM
 
   @Test
-  public void createCollectionNavWithAtom() {
+  public void createCollectionNavWithAtom() throws EdmPrimitiveTypeException {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final String contentType = "application/atom+xml";
     final String prefer = "return-content";
@@ -132,7 +133,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   // create collection navigation link with JSON
 
   @Test
-  public void createCollectionNavWithJSON() {
+  public void createCollectionNavWithJSON() throws EdmPrimitiveTypeException {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final String contentType = "application/json;odata=fullmetadata";
     final String prefer = "return-content";
@@ -195,7 +196,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   // create collection navigation link
 
   public ODataEntity createCollectionNavigation(final ODataPubFormat format, final int id,
-          final String contentType, final String prefer) {
+          final String contentType, final String prefer) throws EdmPrimitiveTypeException {
     {
       final String name = "Collection Navigation Key Customer";
       final ODataEntity original = getNewCustomer(id, name, false);
@@ -242,8 +243,8 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
       assertEquals(2, entitySet.getCount());
 
       for (ODataEntity entity : entitySet.getEntities()) {
-        final Integer key = entity.getProperty("OrderId").getPrimitiveValue().<Integer>toCastValue();
-        final Integer customerId = entity.getProperty("CustomerId").getPrimitiveValue().<Integer>toCastValue();
+        final Integer key = entity.getProperty("OrderId").getPrimitiveValue().toCastValue(Integer.class);
+        final Integer customerId = entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class);
         assertTrue(navigationKeys.contains(key));
         assertEquals(Integer.valueOf(id), customerId);
         navigationKeys.remove(key);
@@ -511,7 +512,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
       assertTrue("Found " + actual + " and expected " + original, found);
     } else {
       assertTrue("Primitive value for '" + propertyName + "' type mismatch",
-              original.asPrimitive().getTypeName().equals(actual.asPrimitive().getTypeName()));
+              original.asPrimitive().getTypeKind() == actual.asPrimitive().getTypeKind());
 
       assertEquals("Primitive value for '" + propertyName + "' mismatch",
               original.asPrimitive().toString(), actual.asPrimitive().toString());

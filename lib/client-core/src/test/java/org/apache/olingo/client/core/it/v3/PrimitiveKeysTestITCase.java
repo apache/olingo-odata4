@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataDuration;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.junit.Test;
@@ -46,26 +45,16 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
   }
 
   private void readPrimitiveKeys(final ODataPubFormat format) {
-    // commented as per #115
-    //readEntity("EdmBinarySet", new byte[] {Byte.valueOf("2"), Byte.valueOf("3"), Byte.valueOf("4")}, format);
     readEntity("EdmBooleanSet", Boolean.TRUE, format);
     readEntity("EdmByteSet", 255, format);
     readEntity("EdmDecimalSet", new BigDecimal("79228162514264337593543950335"), format);
     readEntity("EdmDoubleSet", 1.7976931348623157E+308D, format);
-    readEntity("EdmSingleSet", 3.40282347E+38F, format);
+    readEntity("EdmSingleSet", 3.4028235E+38F, format);
     readEntity("EdmGuidSet", UUID.fromString("00000000-0000-0000-0000-000000000000"), format);
     readEntity("EdmInt16Set", 32767, format);
     readEntity("EdmInt32Set", -2147483648, format);
     readEntity("EdmInt64Set", 9223372036854775807L, format);
     readEntity("EdmStringSet", "$", format);
-    readEntity("EdmTimeSet", new ODataDuration("-P10675199DT2H48M5.4775808S"), format);
-    // commented as per #115
-    //readEntity("EdmDateTimeSet",
-    //        ODataTimestamp.parse(EdmSimpleType.DATE_TIME.pattern(), "0001-01-01T00:00:00"),
-    //        format);
-    //readEntity("EdmDateTimeOffsetSet",
-    //        ODataTimestamp.parse(EdmSimpleType.DATE_TIME_OFFSET.pattern(), "2013-08-14T13:33:46.1045905+02:00"),
-    //        format);
   }
 
   @Test

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.utils;
+package org.apache.olingo.client.core.uri;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,18 +24,21 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.UUID;
-
+import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataDuration;
-import org.apache.olingo.client.api.domain.ODataTimestamp;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTime;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,13 +152,16 @@ public final class URIUtils {
               ? "guid'" + obj.toString() + "'"
               : (obj instanceof byte[])
               ? "X'" + Hex.encodeHexString((byte[]) obj) + "'"
-              : ((obj instanceof ODataTimestamp) && ((ODataTimestamp) obj).getTimezone() == null)
-              ? "datetime'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), Constants.UTF8) + "'"
-              : ((obj instanceof ODataTimestamp) && ((ODataTimestamp) obj).getTimezone() != null)
-              ? "datetimeoffset'" + URLEncoder.encode(((ODataTimestamp) obj).toString(), Constants.UTF8)
+              : (obj instanceof Timestamp)
+              ? "datetime'" + URLEncoder.encode(EdmDateTime.getInstance().
+                      valueToString(obj, null, null, null, null, null), Constants.UTF8) + "'"
+              : (obj instanceof Calendar)
+              ? "datetimeoffset'" + URLEncoder.encode(EdmDateTimeOffset.getInstance().
+                      valueToString(obj, null, null, null, null, null), Constants.UTF8)
               + "'"
-              : (obj instanceof ODataDuration)
-              ? "time'" + ((ODataDuration) obj).toString() + "'"
+              : (obj instanceof Duration)
+              ? "time'" + URLEncoder.encode(EdmTime.getInstance().
+                      valueToString(obj, null, null, null, null, null), Constants.UTF8) + "'"
               : (obj instanceof BigDecimal)
               ? new DecimalFormat("#.#######################").format((BigDecimal) obj) + "M"
               : (obj instanceof Double)

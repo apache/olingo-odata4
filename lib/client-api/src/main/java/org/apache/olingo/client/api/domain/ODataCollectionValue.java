@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * OData collection property value.
  */
-public class ODataCollectionValue extends ODataValue implements Iterable<ODataValue> {
+public class ODataCollectionValue extends AbstractODataValue implements Iterable<ODataValue> {
 
   private static final long serialVersionUID = -3665659846001987187L;
 
@@ -74,7 +74,7 @@ public class ODataCollectionValue extends ODataValue implements Iterable<ODataVa
    *
    * @return value type name.
    */
-  public String getTypeName() {
+  public String getType() {
     return typeName;
   }
 

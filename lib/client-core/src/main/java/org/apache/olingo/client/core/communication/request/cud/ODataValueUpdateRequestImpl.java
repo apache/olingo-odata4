@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import org.apache.commons.io.IOUtils;
@@ -30,13 +29,13 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
@@ -48,7 +47,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
   /**
    * Value to be created.
    */
-  private final ODataValue value;
+  private final ODataPrimitiveValue value;
 
   /**
    * Constructor.
@@ -59,7 +58,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    * @param value value to be created.
    */
   ODataValueUpdateRequestImpl(final CommonODataClient odataClient,
-          final HttpMethod method, final URI targetURI, final ODataValue value) {
+          final HttpMethod method, final URI targetURI, final ODataPrimitiveValue value) {
 
     super(odataClient, ODataValueFormat.class, method, targetURI);
     // set request body
@@ -94,7 +93,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    */
   private class ODataValueUpdateResponseImpl extends AbstractODataResponse implements ODataValueUpdateResponse {
 
-    private ODataValue value = null;
+    private ODataPrimitiveValue value = null;
 
     /**
      * Constructor.
@@ -118,17 +117,17 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
      * {@inheritDoc }
      */
     @Override
-    public ODataValue getBody() {
+    public ODataPrimitiveValue getBody() {
       if (value == null) {
         final ODataValueFormat format = ODataValueFormat.fromString(getAccept());
 
         try {
-          value = new ODataPrimitiveValue.Builder(odataClient).
+          value = new ODataPrimitiveValueImpl.BuilderImpl(odataClient.getServiceVersion()).
                   setType(format == ODataValueFormat.TEXT
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).
                   build();
-        } catch (IOException e) {
+        } catch (Exception e) {
           throw new HttpClientException(e);
         } finally {
           this.close();

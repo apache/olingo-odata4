@@ -51,12 +51,10 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     while (reader.hasNext() && !foundEndProperty) {
       final XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement()) {
-        if (typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
-          final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(
-                  version, typeInfo.getFullQualifiedName().toString());
-          value = new GeospatialValueImpl(this.geoDeserializer.deserialize(reader, event.asStartElement(), geoType));
-        }
+      if (event.isStartElement() && typeInfo != null && typeInfo.getPrimitiveTypeKind().isGeospatial()) {
+        final EdmPrimitiveTypeKind geoType = EdmPrimitiveTypeKind.valueOfFQN(
+                version, typeInfo.getFullQualifiedName().toString());
+        value = new GeospatialValueImpl(this.geoDeserializer.deserialize(reader, event.asStartElement(), geoType));
       }
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()

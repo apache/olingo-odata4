@@ -38,11 +38,11 @@ import org.apache.olingo.client.api.communication.response.ODataValueUpdateRespo
 import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataFormat;
 import org.apache.olingo.client.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
@@ -56,17 +56,17 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void replacePropertyValue() throws IOException {
+  public void replacePropertyValue() throws Exception {
     updatePropertyValue(ODataValueFormat.TEXT, UpdateType.REPLACE);
   }
 
   @Test
-  public void replacePrimitivePropertyAsXML() throws IOException {
+  public void replacePrimitivePropertyAsXML() throws IOException, EdmPrimitiveTypeException {
     updatePrimitiveProperty(ODataFormat.XML);
   }
 
   @Test
-  public void replacePrimitivePropertyAsJSON() throws IOException {
+  public void replacePrimitivePropertyAsJSON() throws IOException, EdmPrimitiveTypeException {
     updatePrimitiveProperty(ODataFormat.JSON_FULL_METADATA);
   }
 
@@ -128,10 +128,10 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
 
-    final ODataRetrieveResponse<ODataValue> res = req.execute();
+    final ODataRetrieveResponse<ODataPrimitiveValue> res = req.execute();
     assertEquals(200, res.getStatusCode());
 
-    final ODataValue value = res.getBody();
+    final ODataPrimitiveValue value = res.getBody();
     debugODataValue(value, "Retrieved property");
 
     assertNotNull(value);
@@ -157,7 +157,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
             execute();
   }
 
-  private void updatePropertyValue(final ODataValueFormat format, final UpdateType type) throws IOException {
+  private void updatePropertyValue(final ODataValueFormat format, final UpdateType type)
+          throws IOException, EdmPrimitiveTypeException {
+
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
@@ -168,13 +170,13 @@ public class PropertyTestITCase extends AbstractTestITCase {
     ODataValueRequest retrieveReq = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
-    ODataRetrieveResponse<ODataValue> retrieveRes = retrieveReq.execute();
+    ODataRetrieveResponse<ODataPrimitiveValue> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
-    ODataValue phoneNumber = retrieveRes.getBody();
+    ODataPrimitiveValue phoneNumber = retrieveRes.getBody();
     assertNotNull(phoneNumber);
 
-    final String oldMsg = phoneNumber.asPrimitive().<String>toCastValue();
+    final String oldMsg = phoneNumber.toCastValue(String.class);
     final String newMsg = "new msg (" + System.currentTimeMillis() + ")";
 
     assertNotEquals(newMsg, oldMsg);
@@ -197,7 +199,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     phoneNumber = retrieveRes.getBody();
     assertNotNull(phoneNumber);
 
-    assertEquals(newMsg, phoneNumber.asPrimitive().<String>toCastValue());
+    assertEquals(newMsg, phoneNumber.asPrimitive().toCastValue(String.class));
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
@@ -293,7 +295,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertEquals(origSize + 1, alternativeNames.getCollectionValue().size());
   }
 
-  private void updatePrimitiveProperty(final ODataFormat format) throws IOException {
+  private void updatePrimitiveProperty(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
@@ -307,7 +309,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     ODataProperty phoneNumber = retrieveRes.getBody();
 
-    final String oldMsg = phoneNumber.getPrimitiveValue().<String>toCastValue();
+    final String oldMsg = phoneNumber.getPrimitiveValue().toCastValue(String.class);
     final String newMsg = "new item " + System.currentTimeMillis();
 
     assertNotEquals(newMsg, oldMsg);
@@ -334,7 +336,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertEquals(200, retrieveRes.getStatusCode());
 
     phoneNumber = retrieveRes.getBody();
-    assertEquals(newMsg, phoneNumber.getPrimitiveValue().<String>toCastValue());
+    assertEquals(newMsg, phoneNumber.getPrimitiveValue().toCastValue(String.class));
   }
 
   private void rawRequest(final ODataFormat format) {

@@ -19,7 +19,6 @@
 package org.apache.olingo.client.api.domain;
 
 import java.net.URI;
-import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
@@ -52,7 +51,7 @@ public class ODataLink extends ODataItem {
     }
 
     public Builder setURI(final URI baseURI, final String href) {
-      this.uri = URIUtils.getURI(baseURI, href);
+      this.uri = getURI(baseURI, href);
       return this;
     }
 
@@ -76,6 +75,30 @@ public class ODataLink extends ODataItem {
       return instance;
     }
   }
+
+  /**
+   * Build URI starting from the given base and href.
+   * <br/>
+   * If href is absolute or base is null then base will be ignored.
+   *
+   * @param base URI prefix.
+   * @param href URI suffix.
+   * @return built URI.
+   */
+  private static URI getURI(final URI base, final String href) {
+    if (href == null) {
+      throw new IllegalArgumentException("Null link provided");
+    }
+
+    URI uri = URI.create(href);
+
+    if (!uri.isAbsolute() && base != null) {
+      uri = URI.create(base.toASCIIString() + "/" + href);
+    }
+
+    return uri.normalize();
+  }
+
   /**
    * Link type.
    */
@@ -134,7 +157,7 @@ public class ODataLink extends ODataItem {
   protected ODataLink(final ODataServiceVersion version,
           final URI baseURI, final String href, final ODataLinkType type, final String title) {
 
-    this(version, URIUtils.getURI(baseURI, href), type, title);
+    this(version, getURI(baseURI, href), type, title);
   }
 
   /**

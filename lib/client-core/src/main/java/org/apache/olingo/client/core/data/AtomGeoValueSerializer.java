@@ -36,10 +36,10 @@ import org.apache.olingo.commons.api.edm.geo.Polygon;
 
 class AtomGeoValueSerializer {
 
-  public static final ThreadLocal<DecimalFormat> DOUBLE_FORMAT = new ThreadLocal<DecimalFormat>() {
+  private static final ThreadLocal<DecimalFormat> DOUBLE_FORMAT = new ThreadLocal<DecimalFormat>() {
     @Override
     protected DecimalFormat initialValue() {
-      DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+      final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
       otherSymbols.setDecimalSeparator('.');
       return new DecimalFormat("#.#########################", otherSymbols);
     }

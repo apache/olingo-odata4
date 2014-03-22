@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * OData complex property value.
  */
-public class ODataComplexValue extends ODataValue implements Iterable<ODataProperty> {
+public class ODataComplexValue extends AbstractODataValue implements Iterable<ODataProperty> {
 
   private static final long serialVersionUID = -1878555027714020431L;
 
@@ -42,7 +42,7 @@ public class ODataComplexValue extends ODataValue implements Iterable<ODataPrope
   /**
    * Constructor.
    *
-   * @param typeName type name.
+   * @param type type name.
    */
   public ODataComplexValue(final String typeName) {
     this.typeName = typeName;
@@ -82,7 +82,7 @@ public class ODataComplexValue extends ODataValue implements Iterable<ODataPrope
    *
    * @return value type name.
    */
-  public String getTypeName() {
+  public String getType() {
     return typeName;
   }
 

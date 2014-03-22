@@ -47,7 +47,8 @@ import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.NoContentException;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -182,14 +183,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void createWithFeedNavigationAsAtom() {
+  public void createWithFeedNavigationAsAtom() throws EdmPrimitiveTypeException {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final ODataEntity actual = createWithFeedNavigationLink(format, 7);
     cleanAfterCreate(format, actual, false, getServiceRoot());
   }
 
   @Test
-  public void createWithFeedNavigationAsJSON() {
+  public void createWithFeedNavigationAsJSON() throws EdmPrimitiveTypeException {
     // this needs to be full, otherwise there is no mean to recognize links
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final ODataEntity actual = createWithFeedNavigationLink(format, 8);
@@ -197,14 +198,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void createWithBackNavigationAsAtom() {
+  public void createWithBackNavigationAsAtom() throws EdmPrimitiveTypeException {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final ODataEntity actual = createWithBackNavigationLink(format, 9);
     cleanAfterCreate(format, actual, true, getServiceRoot());
   }
 
   @Test
-  public void createWithBackNavigationAsJSON() {
+  public void createWithBackNavigationAsJSON() throws EdmPrimitiveTypeException {
     // this needs to be full, otherwise there is no mean to recognize links
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final ODataEntity actual = createWithBackNavigationLink(format, 10);
@@ -275,7 +276,9 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     }
   }
 
-  private ODataEntity createWithFeedNavigationLink(final ODataPubFormat format, final int id) {
+  private ODataEntity createWithFeedNavigationLink(final ODataPubFormat format, final int id)
+          throws EdmPrimitiveTypeException {
+
     final String sampleName = "Sample customer";
     final ODataEntity original = getSampleCustomerProfile(id, sampleName, false);
 
@@ -321,8 +324,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(2, entitySet.getCount());
 
     for (ODataEntity entity : entitySet.getEntities()) {
-      final Integer key = entity.getProperty("OrderId").getPrimitiveValue().<Integer>toCastValue();
-      final Integer customerId = entity.getProperty("CustomerId").getPrimitiveValue().<Integer>toCastValue();
+      final Integer key = entity.getProperty("OrderId").getPrimitiveValue().toCastValue(Integer.class);
+      final Integer customerId = entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(keys.contains(key));
       assertEquals(Integer.valueOf(id), customerId);
       keys.remove(key);
@@ -374,7 +377,9 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     return actual;
   }
 
-  private ODataEntity createWithBackNavigationLink(final ODataPubFormat format, final int id) {
+  private ODataEntity createWithBackNavigationLink(final ODataPubFormat format, final int id)
+          throws EdmPrimitiveTypeException {
+
     final String sampleName = "Sample customer";
 
     ODataEntity customer = getSampleCustomerProfile(id, sampleName, false);
@@ -405,8 +410,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     customer = customerreq.execute().getBody();
 
-    assertEquals(
-            Integer.valueOf(id), customer.getProperty("CustomerId").getPrimitiveValue().<Integer>toCastValue());
+    assertEquals(Integer.valueOf(id),
+            customer.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class));
 
     final ODataEntitySetRequest orderreq = client.getRetrieveRequestFactory().getEntitySetRequest(
             URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString() + "/Orders"));
@@ -417,7 +422,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     assertEquals(Integer.valueOf(id),
             orderres.getBody().getEntities().get(0).getProperty("OrderId").getPrimitiveValue().
-            <Integer>toCastValue());
+            toCastValue(Integer.class));
 
     final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(
             URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString() + "?$expand=Orders"));

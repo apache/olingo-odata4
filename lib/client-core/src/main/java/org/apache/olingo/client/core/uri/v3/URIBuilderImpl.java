@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.uri.v3;
 
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;

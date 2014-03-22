@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
-import org.apache.olingo.client.api.utils.URIUtils;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.impl.AbstractODataBinder;
 

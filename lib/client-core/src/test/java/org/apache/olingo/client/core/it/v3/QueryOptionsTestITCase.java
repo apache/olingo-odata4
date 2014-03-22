@@ -36,6 +36,7 @@ import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.junit.Test;
 
 /**
@@ -58,7 +59,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * @see org.apache.olingo.client.core.v3.FilterFactoryTest for more tests.
    */
   @Test
-  public void filterOrderby() {
+  public void filterOrderby() throws EdmPrimitiveTypeException {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").filter("(VIN lt 16)");
 
@@ -71,7 +72,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     // 2. extract VIN values - sorted ASC by default
     final List<Integer> vinsASC = new ArrayList<Integer>(5);
     for (ODataEntity entity : feed.getEntities()) {
-      final Integer vin = entity.getProperty("VIN").getPrimitiveValue().<Integer>toCastValue();
+      final Integer vin = entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(vin < 16);
       vinsASC.add(vin);
     }
@@ -85,7 +86,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     // 4. extract again VIN value - now they were required to be sorted DESC
     final List<Integer> vinsDESC = new ArrayList<Integer>(5);
     for (ODataEntity entity : feed.getEntities()) {
-      vinsDESC.add(entity.getProperty("VIN").getPrimitiveValue().<Integer>toCastValue());
+      vinsDESC.add(entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class));
     }
 
     // 5. reverse vinsASC and expect to be equal to vinsDESC
@@ -131,7 +132,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * Test <tt>$skiptoken</tt>.
    */
   @Test
-  public void skiptoken() {
+  public void skiptoken() throws EdmPrimitiveTypeException {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").skipToken("-10");
 
@@ -141,7 +142,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     assertEquals(2, feed.getEntities().size());
 
     for (ODataEntity entity : feed.getEntities()) {
-      assertTrue(entity.getProperty("CustomerId").getPrimitiveValue().<Integer>toCastValue() > -10);
+      assertTrue(entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class) > -10);
     }
   }
 

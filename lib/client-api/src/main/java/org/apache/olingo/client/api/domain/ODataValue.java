@@ -19,93 +19,66 @@
 package org.apache.olingo.client.api.domain;
 
 import java.io.Serializable;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Abstract representation of an OData entity property value.
  */
-public abstract class ODataValue implements Serializable {
-
-  private static final long serialVersionUID = 7445422004232581877L;
+public interface ODataValue extends Serializable {
 
   /**
    * Check is is a primitive value.
    *
    * @return 'TRUE' if primitive; 'FALSE' otherwise.
    */
-  public boolean isPrimitive() {
-    return (this instanceof ODataPrimitiveValue);
-  }
+  boolean isPrimitive();
 
   /**
    * Casts to primitive value.
    *
    * @return primitive value.
    */
-  public ODataPrimitiveValue asPrimitive() {
-    return isPrimitive() ? (ODataPrimitiveValue) this : null;
-  }
+  ODataPrimitiveValue asPrimitive();
 
   /**
-   * Check is is a complex value.
+   * Check is is a geospatail value.
    *
-   * @return 'TRUE' if complex; 'FALSE' otherwise.
+   * @return 'TRUE' if geospatail; 'FALSE' otherwise.
    */
-  public boolean isComplex() {
-    return (this instanceof ODataComplexValue);
-  }
+  boolean isGeospatial();
 
   /**
-   * Casts to complex value.
+   * Casts to geospatail value.
    *
-   * @return complex value.
+   * @return geospatail value.
    */
-  public ODataComplexValue asComplex() {
-    return isComplex() ? (ODataComplexValue) this : null;
-  }
+  ODataGeospatialValue asGeospatial();
 
   /**
    * Check is is a collection value.
    *
    * @return 'TRUE' if collection; 'FALSE' otherwise.
    */
-  public boolean isCollection() {
-    return (this instanceof ODataCollectionValue);
-  }
+  boolean isCollection();
 
   /**
    * Casts to collection value.
    *
    * @return collection value.
    */
-  public ODataCollectionValue asCollection() {
-    return isCollection() ? (ODataCollectionValue) this : null;
-  }
+  ODataCollectionValue asCollection();
 
   /**
-   * {@inheritDoc }
+   * Check is is a complex value.
+   *
+   * @return 'TRUE' if complex; 'FALSE' otherwise.
    */
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
+  boolean isComplex();
 
   /**
-   * {@inheritDoc }
+   * Casts to complex value.
+   *
+   * @return complex value.
    */
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
+  ODataComplexValue asComplex();
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
 }

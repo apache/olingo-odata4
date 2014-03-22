@@ -39,6 +39,7 @@ import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.op.impl.ResourceFactory;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.junit.Test;
 
 /**
@@ -170,7 +171,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     rawRequest(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void multiKey(final ODataPubFormat format) {
+  private void multiKey(final ODataPubFormat format) throws EdmPrimitiveTypeException {
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
@@ -184,16 +185,16 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     final ODataEntity entity = res.getBody();
     assertNotNull(entity);
-    assertEquals("1", entity.getProperty("FromUsername").getPrimitiveValue().<String>toCastValue());
+    assertEquals("1", entity.getProperty("FromUsername").getPrimitiveValue().toCastValue(String.class));
   }
 
   @Test
-  public void multiKeyAsAtom() {
+  public void multiKeyAsAtom() throws EdmPrimitiveTypeException {
     multiKey(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void multiKeyAsJSON() {
+  public void multiKeyAsJSON() throws EdmPrimitiveTypeException {
     multiKey(ODataPubFormat.JSON_FULL_METADATA);
   }
 

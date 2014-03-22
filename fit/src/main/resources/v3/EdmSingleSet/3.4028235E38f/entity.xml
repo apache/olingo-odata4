@@ -20,9 +20,9 @@
 
 -->
 <entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/EdmSingleSet(3.40282347E%2B38f)</id>
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/EdmSingleSet(3.4028235E%2B38f)</id>
   <category term="Microsoft.Test.OData.Services.PrimitiveKeysService.EdmSingle" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
-  <link rel="edit" title="EdmSingle" href="EdmSingleSet(3.40282347E%2B38f)" />
+  <link rel="edit" title="EdmSingle" href="EdmSingleSet(3.4028235E%2B38f)" />
   <title />
   <updated>2014-02-12T15:20:45Z</updated>
   <author>
@@ -30,7 +30,7 @@
   </author>
   <content type="application/xml">
     <m:properties>
-      <d:Id m:type="Edm.Single">3.40282347E+38</d:Id>
+      <d:Id m:type="Edm.Single">3.4028235E+38</d:Id>
     </m:properties>
   </content>
 </entry>

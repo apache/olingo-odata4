@@ -18,16 +18,13 @@
  */
 package org.apache.olingo.client.core.v4;
 
+import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.domain.ODataDuration;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataTimestamp;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
@@ -39,40 +36,38 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageTimeOfDay() {
-    // OData V4 only
-    final String primitive = "-P9DT51M12.5063807S";
-    try {
-      new ODataPrimitiveValue.Builder(ODataClientFactory.getV3()).
-              setType(EdmPrimitiveTypeKind.TimeOfDay).setText(primitive).build();
-      fail();
-    } catch (IllegalArgumentException iae) {
-      // ignore
-    }
+  public void manageTimeOfDay() throws EdmPrimitiveTypeException {
+    final Calendar expected = Calendar.getInstance();
+    expected.clear();
+    expected.set(2013, 0, 10, 21, 45, 17);
 
     final ODataValue value = getClient().getPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.TimeOfDay).setText(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName().toString(), value.asPrimitive().getTypeName());
-    // performed cast to improve the check
-    assertEquals(primitive, value.asPrimitive().<ODataDuration>toCastValue().toString());
+            setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(expected).build();
+    assertEquals(EdmPrimitiveTypeKind.TimeOfDay, value.asPrimitive().getTypeKind());
+
+    final Calendar actual = value.asPrimitive().toCastValue(Calendar.class);
+    assertEquals(expected.get(Calendar.HOUR), actual.get(Calendar.HOUR));
+    assertEquals(expected.get(Calendar.MINUTE), actual.get(Calendar.MINUTE));
+    assertEquals(expected.get(Calendar.SECOND), actual.get(Calendar.SECOND));
+    
+    assertEquals("21:45:17", value.asPrimitive().toString());
   }
 
   @Test
-  public void manageDate() {
-    // OData V4 only
-    final String primitive = "2013-01-10";
-    try {
-      new ODataPrimitiveValue.Builder(ODataClientFactory.getV3()).
-              setType(EdmPrimitiveTypeKind.Date).setText(primitive).build();
-      fail();
-    } catch (IllegalArgumentException iae) {
-      // ignore
-    }
+  public void manageDate() throws EdmPrimitiveTypeException {
+    final Calendar expected = Calendar.getInstance();
+    expected.clear();
+    expected.set(2013, 0, 10);
 
     final ODataValue value = getClient().getPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Date).setText(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.Date.getFullQualifiedName().toString(), value.asPrimitive().getTypeName());
-    // performed cast to improve the check
-    assertEquals(primitive, value.asPrimitive().<ODataTimestamp>toCastValue().toString());
+            setType(EdmPrimitiveTypeKind.Date).setValue(expected).build();
+    assertEquals(EdmPrimitiveTypeKind.Date, value.asPrimitive().getTypeKind());
+
+    final Calendar actual = value.asPrimitive().toCastValue(Calendar.class);
+    assertEquals(expected.get(Calendar.YEAR), actual.get(Calendar.YEAR));
+    assertEquals(expected.get(Calendar.MONTH), actual.get(Calendar.MONTH));
+    assertEquals(expected.get(Calendar.DATE), actual.get(Calendar.DATE));
+
+    assertEquals("2013-01-10", value.asPrimitive().toString());
   }
 }

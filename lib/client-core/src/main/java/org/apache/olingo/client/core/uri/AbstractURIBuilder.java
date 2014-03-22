@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import org.apache.olingo.client.api.utils.URIUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

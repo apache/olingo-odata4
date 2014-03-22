@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
             getVersion().name().toLowerCase() + File.separatorChar
             + "Customer_-10_CustomerId_value.txt");
 
-    final ODataValue value = getClient().getPrimitiveValueBuilder().
+    final ODataPrimitiveValue value = getClient().getPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.String).
             setText(IOUtils.toString(input)).
             build();
@@ -59,14 +60,14 @@ public abstract class AbstractPropertyTest extends AbstractTest {
     assertEquals("-10", value.toString());
   }
 
-  private ODataProperty primitive() throws IOException {
+  private ODataProperty primitive() throws IOException, EdmPrimitiveTypeException {
     final InputStream input = getClass().getResourceAsStream(
             getVersion().name().toLowerCase() + File.separatorChar
             + "Customer_-10_CustomerId." + getSuffix(getFormat()));
     final ODataProperty property = getClient().getReader().readProperty(input, getFormat());
     assertNotNull(property);
     assertTrue(property.hasPrimitiveValue());
-    assertTrue(-10 == property.getPrimitiveValue().<Integer>toCastValue());
+    assertTrue(-10 == property.getPrimitiveValue().toCastValue(Integer.class));
 
     ODataProperty comparable;
     final ODataProperty written = getClient().getReader().readProperty(
@@ -76,8 +77,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
     } else {
       // This is needed because type information gets lost with JSON serialization
       final ODataPrimitiveValue typedValue = getClient().getPrimitiveValueBuilder().
-              setType(EdmPrimitiveTypeKind.valueOfFQN(
-                              getClient().getServiceVersion(), property.getPrimitiveValue().getTypeName())).
+              setType(property.getPrimitiveValue().getTypeKind()).
               setText(written.getPrimitiveValue().toString()).
               build();
       comparable = getClient().getObjectFactory().newPrimitiveProperty(written.getName(), typedValue);
@@ -89,7 +89,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
   }
 
   @Test
-  public void readPrimitiveProperty() throws IOException {
+  public void readPrimitiveProperty() throws IOException, EdmPrimitiveTypeException {
     primitive();
   }
 
@@ -109,7 +109,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataComplexValue typedValue = new ODataComplexValue(property.getComplexValue().getTypeName());
+      final ODataComplexValue typedValue = new ODataComplexValue(property.getComplexValue().getType());
       for (final Iterator<ODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
         final ODataProperty prop = itor.next();
         typedValue.add(prop);
@@ -144,7 +144,7 @@ public abstract class AbstractPropertyTest extends AbstractTest {
     } else {
       // This is needed because type information gets lost with JSON serialization
       final ODataCollectionValue typedValue =
-              new ODataCollectionValue(property.getCollectionValue().getTypeName());
+              new ODataCollectionValue(property.getCollectionValue().getType());
       for (final Iterator<ODataValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {
         final ODataValue value = itor.next();
         if (value.isPrimitive()) {

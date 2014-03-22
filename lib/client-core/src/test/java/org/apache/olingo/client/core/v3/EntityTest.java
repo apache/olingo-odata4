@@ -88,9 +88,8 @@ public class EntityTest extends AbstractTest {
     for (ODataProperty property : entity.getProperties()) {
       if ("GeogMultiLine".equals(property.getName())) {
         found = true;
-        assertTrue(property.hasPrimitiveValue());
-        assertEquals(EdmPrimitiveTypeKind.GeographyMultiLineString.getFullQualifiedName().toString(),
-                property.getPrimitiveValue().getTypeName());
+        assertTrue(property.hasGeospatialValue());
+        assertEquals(EdmPrimitiveTypeKind.GeographyMultiLineString, property.getGeospatialValue().getTypeKind());
       }
     }
     assertTrue(found);
@@ -168,11 +167,10 @@ public class EntityTest extends AbstractTest {
     assertNotNull(entity);
 
     final ODataProperty geogCollection = entity.getProperty("GeogCollection");
-    assertEquals(EdmPrimitiveTypeKind.GeographyCollection.getFullQualifiedName().toString(),
-            geogCollection.getPrimitiveValue().getTypeName());
+    assertEquals(EdmPrimitiveTypeKind.GeographyCollection, geogCollection.getGeospatialValue().getTypeKind());
 
     int count = 0;
-    for (Geospatial g : geogCollection.getPrimitiveValue().<GeospatialCollection>toCastValue()) {
+    for (Geospatial g : geogCollection.getGeospatialValue().toCastValue(GeospatialCollection.class)) {
       assertNotNull(g);
       count++;
     }

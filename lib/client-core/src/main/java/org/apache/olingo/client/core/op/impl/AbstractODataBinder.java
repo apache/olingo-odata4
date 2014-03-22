@@ -22,8 +22,8 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
@@ -35,18 +35,15 @@ import org.apache.olingo.client.api.domain.ODataCollectionValue;
 import org.apache.olingo.client.api.domain.ODataComplexValue;
 import org.apache.olingo.client.api.domain.ODataEntity;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.domain.ODataGeospatialValue;
 import org.apache.olingo.client.api.domain.ODataInlineEntity;
 import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.client.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.ODataOperation;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.domain.ODataProperty;
 import org.apache.olingo.client.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.ODataValue;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.op.CommonODataBinder;
-import org.apache.olingo.client.api.utils.URIUtils;
 import org.apache.olingo.client.core.data.CollectionValueImpl;
 import org.apache.olingo.client.core.data.ComplexValueImpl;
 import org.apache.olingo.client.core.data.GeospatialValueImpl;
@@ -54,6 +51,7 @@ import org.apache.olingo.client.core.data.JSONPropertyImpl;
 import org.apache.olingo.client.core.data.LinkImpl;
 import org.apache.olingo.client.core.data.NullValueImpl;
 import org.apache.olingo.client.core.data.PrimitiveValueImpl;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,11 +214,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     if (setType) {
       if (property.hasPrimitiveValue()) {
-        propertyResource.setType(property.getPrimitiveValue().getTypeName());
+        propertyResource.setType(property.getPrimitiveValue().getType().toString());
       } else if (property.hasComplexValue()) {
-        propertyResource.setType(property.getComplexValue().getTypeName());
+        propertyResource.setType(property.getComplexValue().getType());
       } else if (property.hasCollectionValue()) {
-        propertyResource.setType(property.getCollectionValue().getTypeName());
+        propertyResource.setType(property.getCollectionValue().getType());
       }
     }
 
@@ -233,12 +231,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (value == null) {
       valueResource = new NullValueImpl();
     } else if (value.isPrimitive()) {
-      final ODataPrimitiveValue _value = value.asPrimitive();
-      if (_value instanceof ODataGeospatialValue) {
-        valueResource = new GeospatialValueImpl(((ODataGeospatialValue) _value).getGeospatial());
-      } else {
-        valueResource = new PrimitiveValueImpl(_value.toString());
-      }
+      valueResource = new PrimitiveValueImpl(value.asPrimitive().toString());
+    } else if (value.isGeospatial()) {
+      valueResource = new GeospatialValueImpl(value.asGeospatial().toValue());
     } else if (value.isComplex()) {
       final ODataComplexValue _value = value.asComplex();
       valueResource = new ComplexValueImpl();
@@ -375,12 +370,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     ODataValue value = null;
 
     if (resource.getValue().isSimple()) {
-      value = new ODataPrimitiveValue.Builder(client).setText(resource.getValue().asSimple().get()).
+      value = client.getPrimitiveValueBuilder().
+              setText(resource.getValue().asSimple().get()).
               setType(resource.getType() == null
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isGeospatial()) {
-      value = new ODataGeospatialValue.Builder(client).setValue(resource.getValue().asGeospatial().get()).
+      value = client.getGeospatialValueBuilder().
+              setValue(resource.getValue().asGeospatial().get()).
               setType(resource.getType() == null
                       || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
                       || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
