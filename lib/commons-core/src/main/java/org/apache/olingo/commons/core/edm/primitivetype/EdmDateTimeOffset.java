@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -33,7 +34,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
           "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
-          + "T(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,3}?)0*)?)?"
+          + "T(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,12}?)0*)?)?"
           + "(Z|([-+]\\p{Digit}{2}:\\p{Digit}{2}))?");
 
   private static final EdmDateTimeOffset INSTANCE = new EdmDateTimeOffset();
@@ -74,6 +75,10 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
             Byte.parseByte(matcher.group(5)),
             matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
 
+    // cloning the original Calendar instance to avoid vanishing the Calendar value check - triggered by any
+    // get method - empowered by the convertDateTime() method below
+    final Timestamp timestamp = new Timestamp(((Calendar) dateTimeValue.clone()).getTimeInMillis());
+
     if (matcher.group(7) != null) {
       if (matcher.group(7).length() == 1 || matcher.group(7).length() > 13) {
         throw new EdmPrimitiveTypeException(
@@ -84,18 +89,28 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         throw new EdmPrimitiveTypeException(
                 "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
-      final String milliSeconds = decimals + "000".substring(decimals.length());
+      final String milliSeconds = decimals.length() > 3
+                                  ? decimals.substring(0, 3)
+                                  : decimals + "000".substring(decimals.length());
       dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+
+      if (!decimals.isEmpty()) {
+        timestamp.setNanos(Integer.parseInt(decimals));
+      }
+    }
+
+    if (returnType.isAssignableFrom(Timestamp.class)) {
+      return returnType.cast(timestamp);
     }
 
     try {
       return convertDateTime(dateTimeValue, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value), e");
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
     }
   }
 
@@ -138,9 +153,19 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue = createDateTime(value);
+    final Calendar dateTimeValue;
+    final int fractionalSecs;
+    if (value instanceof Timestamp) {
+      final Calendar tmp = Calendar.getInstance();
+      tmp.setTimeInMillis(((Timestamp) value).getTime());
+      dateTimeValue = createDateTime(tmp);
+      fractionalSecs = ((Timestamp) value).getNanos();
+    } else {
+      dateTimeValue = createDateTime(value);
+      fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
+    }
 
-    final StringBuilder result = new StringBuilder(23); // 23 characters are enough for millisecond precision.
+    final StringBuilder result = new StringBuilder();
     final int year = dateTimeValue.get(Calendar.YEAR);
     appendTwoDigits(result, year / 100);
     appendTwoDigits(result, year % 100);
@@ -156,10 +181,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
     try {
-      appendMilliseconds(result, dateTimeValue.get(Calendar.MILLISECOND), precision);
+      if (value instanceof Timestamp) {
+        appendFractionalSeconds(result, fractionalSecs, precision);
+      } else {
+        appendMilliseconds(result, fractionalSecs, precision);
+      }
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets), e");
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
     }
 
     final int offsetInMinutes = (dateTimeValue.get(Calendar.ZONE_OFFSET)
@@ -218,8 +247,9 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @param result a {@link StringBuilder}
    * @param milliseconds an integer that must satisfy <code>0 &lt;= milliseconds &lt;= 999</code>
    * @param precision the upper limit for decimal digits (optional, defaults to zero)
+   * @throws IllegalArgumentException if precision is not met
    */
-  protected static void appendMilliseconds(final StringBuilder result, final long milliseconds,
+  protected static void appendMilliseconds(final StringBuilder result, final int milliseconds,
           final Integer precision) throws IllegalArgumentException {
     final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
     if (digits > 0) {
@@ -234,6 +264,26 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       if (precision == null || precision < digits) {
         throw new IllegalArgumentException();
       }
+    }
+  }
+
+  /**
+   * Appends the given fractional seconds to the given string builder.
+   *
+   * @param result a {@link StringBuilder}
+   * @param fractionalSeconds fractional seconds
+   * @param precision the upper limit for decimal digits (optional, defaults to zero)
+   * @throws IllegalArgumentException if precision is not met
+   */
+  protected static void appendFractionalSeconds(final StringBuilder result, final int fractionalSeconds,
+          final Integer precision) throws IllegalArgumentException {
+
+    if (fractionalSeconds > 0) {
+      if (precision == null || precision < String.valueOf(fractionalSeconds).length()) {
+        throw new IllegalArgumentException();
+      }
+
+      result.append('.').append(fractionalSeconds);
     }
   }
 }

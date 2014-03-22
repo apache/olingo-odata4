@@ -54,35 +54,41 @@ public final class EdmDateTime extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
-    Calendar calendar = null;
-    Timestamp timestamp = null;
-
     final String[] dateParts = value.split("\\.");
+
+    final Date date;
     try {
-      final Date date = DATE_FORMAT.get().parse(dateParts[0]);
-      if (dateParts.length > 1) {
-        int idx = dateParts[1].indexOf('+');
-        if (idx == -1) {
-          idx = dateParts[1].indexOf('-');
-        }
-        if (idx == -1) {
-          calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-          calendar.setTime(date);
-
-          timestamp = new Timestamp(calendar.getTimeInMillis());
-          timestamp.setNanos(Integer.parseInt(dateParts[1]));
-        } else {
-          calendar = Calendar.getInstance(TimeZone.getTimeZone(dateParts[1].substring(idx)));
-          calendar.setTime(date);
-
-          timestamp = new Timestamp(calendar.getTimeInMillis());
-          timestamp.setNanos(Integer.parseInt(dateParts[1].substring(0, idx)));
-        }
-      } else {
-        timestamp = new Timestamp(date.getTime());
-      }
+      date = DATE_FORMAT.get().parse(dateParts[0]);
     } catch (Exception e) {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
+    }
+
+    TimeZone timezone = null;
+    Integer fractionalSecs = null;
+    if (dateParts.length > 1) {
+      int idx = dateParts[1].indexOf('+');
+      if (idx == -1) {
+        idx = dateParts[1].indexOf('-');
+      }
+      if (idx == -1) {
+        fractionalSecs = Integer.parseInt(dateParts[1]);
+      } else {
+        timezone = TimeZone.getTimeZone(dateParts[1].substring(idx));
+        fractionalSecs = Integer.parseInt(dateParts[1].substring(0, idx));
+      }
+    }
+
+    if (fractionalSecs != null && String.valueOf(fractionalSecs).length() > (precision == null ? 0 : precision)) {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+    }
+
+    final Calendar calendar = timezone == null ? Calendar.getInstance() : Calendar.getInstance(timezone);
+    calendar.setTime(date);
+    final Timestamp timestamp = new Timestamp(date.getTime());
+    if (fractionalSecs != null) {
+      calendar.set(Calendar.MILLISECOND, fractionalSecs);
+      timestamp.setNanos(fractionalSecs);
     }
 
     if (returnType.isAssignableFrom(Calendar.class)) {
@@ -100,25 +106,32 @@ public final class EdmDateTime extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
+    Date date = null;
+    Integer fractionalSecs = null;
     if (value instanceof Calendar) {
       final Calendar calendar = (Calendar) value;
-
-      final StringBuilder formatted = new StringBuilder().append(DATE_FORMAT.get().format(calendar.getTime()));
-      formatted.append(calendar.getTimeZone());
-
-      return formatted.toString();
-    } else if (value instanceof Timestamp) {
-      final Timestamp timestamp = (Timestamp) value;
-
-      final StringBuilder formatted = new StringBuilder().append(DATE_FORMAT.get().format(timestamp));
-      if (timestamp.getNanos() > 0) {
-        formatted.append('.').append(String.valueOf(timestamp.getNanos()));
-      }
-
-      return formatted.toString();
-    } else {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+      date = calendar.getTime();
+      fractionalSecs = calendar.get(Calendar.MILLISECOND);
     }
+    if (value instanceof Timestamp) {
+      final Timestamp timestamp = (Timestamp) value;
+      date = new Date(timestamp.getTime());
+      fractionalSecs = timestamp.getNanos();
+    }
+
+    final StringBuilder result = new StringBuilder().append(DATE_FORMAT.get().format(date));
+
+    try {
+      if (value instanceof Timestamp) {
+        EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
+      } else {
+        EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
+      }
+    } catch (final IllegalArgumentException e) {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
+    }
+
+    return result.toString();
   }
 }
