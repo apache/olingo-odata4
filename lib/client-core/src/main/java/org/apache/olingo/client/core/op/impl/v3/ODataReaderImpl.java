@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.op.v3.ODataReader;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.v3.ODataClientImpl;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataReader;
+import org.apache.olingo.client.core.op.AbstractODataReader;
 import org.apache.olingo.commons.api.edm.Edm;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {

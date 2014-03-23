@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.EntityKey;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
-import org.apache.olingo.client.core.op.impl.EntityKeyDeserializer;
+import org.apache.olingo.client.core.op.EntityKeyDeserializer;
 
 @JsonDeserialize(using = EntityKeyDeserializer.class)
 public class EntityKeyImpl extends AbstractEdmItem implements EntityKey {

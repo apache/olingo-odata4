@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 
 public class ReferenceDeserializer extends AbstractEdmDeserializer<ReferenceImpl> {
 

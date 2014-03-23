@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.PropertyRefImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 
 public class ReferentialConstraintRoleDeserializer extends AbstractEdmDeserializer<ReferentialConstraintRoleImpl> {
 

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op.impl;
+package org.apache.olingo.client.core.op;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,45 +26,48 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.AbstractEntitySet;
+import org.apache.olingo.client.core.edm.xml.AbstractEnumType;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyBindingImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntitySet> {
+public class EnumTypeDeserializer extends AbstractEdmDeserializer<AbstractEnumType> {
 
   @Override
-  protected AbstractEntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected AbstractEnumType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntitySet entitySet = ODataServiceVersion.V30 == client.getServiceVersion()
-            ? new org.apache.olingo.client.core.edm.xml.v3.EntitySetImpl()
-            : new org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl();
+    final AbstractEnumType enumType = ODataServiceVersion.V30 == client.getServiceVersion()
+            ? new org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl()
+            : new org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Name".equals(jp.getCurrentName())) {
-          entitySet.setName(jp.nextTextValue());
-        } else if ("EntityType".equals(jp.getCurrentName())) {
-          entitySet.setEntityType(jp.nextTextValue());
-        } else if ("IncludeInServiceDocument".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl) entitySet).
-                  setIncludeInServiceDocument(BooleanUtils.toBoolean(jp.nextTextValue()));
-        } else if ("NavigationPropertyBinding".equals(jp.getCurrentName())) {
+          enumType.setName(jp.nextTextValue());
+        } else if ("UnderlyingType".equals(jp.getCurrentName())) {
+          enumType.setUnderlyingType(jp.nextTextValue());
+        } else if ("IsFlags".equals(jp.getCurrentName())) {
+          enumType.setFlags(BooleanUtils.toBoolean(jp.nextTextValue()));
+        } else if ("Member".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl) entitySet).
-                  getNavigationPropertyBindings().add(
-                          jp.readValueAs(NavigationPropertyBindingImpl.class));
+          if (enumType instanceof org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl) {
+            ((org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl) enumType).
+                    getMembers().add(jp.readValueAs(
+                                    org.apache.olingo.client.core.edm.xml.v3.MemberImpl.class));
+          } else {
+            ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).
+                    getMembers().add(jp.readValueAs(
+                                    org.apache.olingo.client.core.edm.xml.v4.MemberImpl.class));
+          }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl) entitySet).
+          ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).
                   setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }
 
-    return entitySet;
+    return enumType;
   }
-
 }

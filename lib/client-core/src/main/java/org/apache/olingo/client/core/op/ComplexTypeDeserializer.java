@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op.impl;
+package org.apache.olingo.client.core.op;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,67 +26,58 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.AbstractEntityType;
-import org.apache.olingo.client.core.edm.xml.EntityKeyImpl;
+import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEntityType> {
+public class ComplexTypeDeserializer extends AbstractEdmDeserializer<AbstractComplexType> {
 
   @Override
-  protected AbstractEntityType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected AbstractComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntityType entityType = ODataServiceVersion.V30 == client.getServiceVersion()
-            ? new org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl()
-            : new org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl();
+    final AbstractComplexType complexType = ODataServiceVersion.V30 == client.getServiceVersion()
+            ? new org.apache.olingo.client.core.edm.xml.v3.ComplexTypeImpl()
+            : new org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Name".equals(jp.getCurrentName())) {
-          entityType.setName(jp.nextTextValue());
+          complexType.setName(jp.nextTextValue());
         } else if ("Abstract".equals(jp.getCurrentName())) {
-          entityType.setAbstractEntityType(BooleanUtils.toBoolean(jp.nextTextValue()));
+          ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
+                  setAbstractEntityType(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("BaseType".equals(jp.getCurrentName())) {
-          entityType.setBaseType(jp.nextTextValue());
+          ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
+                  setBaseType(jp.nextTextValue());
         } else if ("OpenType".equals(jp.getCurrentName())) {
-          entityType.setOpenType(BooleanUtils.toBoolean(jp.nextTextValue()));
-        } else if ("HasStream".equals(jp.getCurrentName())) {
-          entityType.setHasStream(BooleanUtils.toBoolean(jp.nextTextValue()));
-        } else if ("Key".equals(jp.getCurrentName())) {
-          jp.nextToken();
-          entityType.setKey(jp.readValueAs(EntityKeyImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
+                  setOpenType(BooleanUtils.toBoolean(jp.nextTextValue()));
         } else if ("Property".equals(jp.getCurrentName())) {
           jp.nextToken();
-          if (entityType instanceof org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) {
-            ((org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) entityType).
+          if (complexType instanceof org.apache.olingo.client.core.edm.xml.v3.ComplexTypeImpl) {
+            ((org.apache.olingo.client.core.edm.xml.v3.ComplexTypeImpl) complexType).
                     getProperties().add(jp.readValueAs(
                                     org.apache.olingo.client.core.edm.xml.v3.PropertyImpl.class));
           } else {
-            ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
+            ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
                     getProperties().add(jp.readValueAs(
                                     org.apache.olingo.client.core.edm.xml.v4.PropertyImpl.class));
           }
         } else if ("NavigationProperty".equals(jp.getCurrentName())) {
           jp.nextToken();
-          if (entityType instanceof org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) {
-            ((org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) entityType).
-                    getNavigationProperties().add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v3.NavigationPropertyImpl.class));
-          } else {
-            ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
-                    getNavigationProperties().add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyImpl.class));
-          }
+          ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
+                  getNavigationProperties().add(jp.readValueAs(
+                                  org.apache.olingo.client.core.edm.xml.v4.NavigationPropertyImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
+          ((org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl) complexType).
                   setAnnotation(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }
 
-    return entityType;
+    return complexType;
   }
 }

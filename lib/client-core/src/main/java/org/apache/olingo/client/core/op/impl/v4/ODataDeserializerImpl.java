@@ -29,7 +29,7 @@ import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataDeserializer;
+import org.apache.olingo.client.core.op.AbstractODataDeserializer;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 

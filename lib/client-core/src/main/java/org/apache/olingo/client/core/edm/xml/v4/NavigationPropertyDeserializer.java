@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.edm.xml.v4;
 
 import org.apache.olingo.client.core.edm.xml.OnDeleteImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

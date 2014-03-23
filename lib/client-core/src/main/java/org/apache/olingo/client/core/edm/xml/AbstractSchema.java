@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.core.op.impl.SchemaDeserializer;
+import org.apache.olingo.client.core.op.SchemaDeserializer;
 
 @JsonDeserialize(using = SchemaDeserializer.class)
 public abstract class AbstractSchema extends AbstractEdmItem implements Schema {

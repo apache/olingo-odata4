@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.op.impl.ResourceFactory;
+import org.apache.olingo.client.core.op.ResourceFactory;
 import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {
