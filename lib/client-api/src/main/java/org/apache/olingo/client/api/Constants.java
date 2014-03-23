@@ -29,7 +29,9 @@ public class Constants {
   // Other stuff
   public final static String UTF8 = "UTF-8";
 
-  public final static String NAME = "name";
+  public final static Integer DEFAULT_PRECISION = 40;
+
+  public final static Integer DEFAULT_SCALE = 25;
 
   // XML namespaces and prefixes
   public final static String NS_ATOM = "http://www.w3.org/2005/Atom";
@@ -38,32 +40,19 @@ public class Constants {
 
   public static final String NS_GML = "http://www.opengis.net/gml";
 
-  public static final String XMLNS_DATASERVICES = XMLConstants.XMLNS_ATTRIBUTE + ":d";
-
   public static final String PREFIX_DATASERVICES = "d";
-
-  public static final String XMLNS_METADATA = XMLConstants.XMLNS_ATTRIBUTE + ":m";
 
   public static final String PREFIX_METADATA = "m";
 
-  public static final String XMLNS_GEORSS = XMLConstants.XMLNS_ATTRIBUTE + ":georss";
-
   public static final String PREFIX_GEORSS = "georss";
-
-  public static final String XMLNS_GML = XMLConstants.XMLNS_ATTRIBUTE + ":gml";
 
   public static final String PREFIX_GML = "gml";
 
   public final static String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
 
-  /**
-   * Edit link rel value.
-   */
+  // Link rel(s)
   public static final String EDIT_LINK_REL = "edit";
 
-  /**
-   * Self link rel value.
-   */
   public static final String SELF_LINK_REL = "self";
 
   public static final String NEXT_LINK_REL = "next";
@@ -75,11 +64,7 @@ public class Constants {
 
   public final static String ATTR_TYPE = "type";
 
-  public static final String ATTR_M_TYPE = PREFIX_METADATA + ":" + ATTR_TYPE;
-
   public final static String ATTR_NULL = "null";
-
-  public static final String ATTR_M_NULL = PREFIX_METADATA + ":" + ATTR_NULL;
 
   public static final String ATTR_XML_BASE = "base";
 
@@ -94,8 +79,6 @@ public class Constants {
   public static final String ATTR_HREF = "href";
 
   public static final String ATTR_TARGET = "target";
-
-  public static final String ELEM_COLLECTION = "collection";
 
   public static final String ATTR_SRSNAME = "srsName";
 
@@ -142,8 +125,6 @@ public class Constants {
   public static final QName QNAME_GEOMEMBERS = new QName(NS_GML, ELEM_GEOMEMBERS);
 
   public static final String ELEM_POS = "pos";
-
-  public static final String ELEM_POSLIST = "posList";
 
   public static final String ELEM_PROPERTY = "property";
 
@@ -203,6 +184,8 @@ public class Constants {
   public final static String JSON_COUNT = "odata.count";
 
   public final static String JSON_NEXT_LINK = "odata.nextLink";
+
+  public final static String JSON_NAME = "name";
 
   // Atom stuff
   public final static String ATOM_ELEM_ENTRY = "entry";

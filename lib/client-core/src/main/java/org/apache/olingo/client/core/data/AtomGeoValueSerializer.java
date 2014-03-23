@@ -18,13 +18,12 @@
  */
 package org.apache.olingo.client.core.data;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Collections;
 import java.util.Iterator;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -33,17 +32,9 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class AtomGeoValueSerializer {
-
-  private static final ThreadLocal<DecimalFormat> DOUBLE_FORMAT = new ThreadLocal<DecimalFormat>() {
-    @Override
-    protected DecimalFormat initialValue() {
-      final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-      otherSymbols.setDecimalSeparator('.');
-      return new DecimalFormat("#.#########################", otherSymbols);
-    }
-  };
 
   private void points(final XMLStreamWriter writer, final Iterator<Point> itor, final boolean wrap)
           throws XMLStreamException {
@@ -56,7 +47,15 @@ class AtomGeoValueSerializer {
       }
 
       writer.writeStartElement(Constants.PREFIX_GML, Constants.ELEM_POS, Constants.NS_GML);
-      writer.writeCharacters(DOUBLE_FORMAT.get().format(point.getX()) + " " + DOUBLE_FORMAT.get().format(point.getY()));
+      try {
+        writer.writeCharacters(EdmDouble.getInstance().valueToString(point.getX(), null, null,
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                + " "
+                + EdmDouble.getInstance().valueToString(point.getY(), null, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+      } catch (EdmPrimitiveTypeException e) {
+        throw new XMLStreamException("While serializing point coordinates as double", e);
+      }
       writer.writeEndElement();
 
       if (wrap) {

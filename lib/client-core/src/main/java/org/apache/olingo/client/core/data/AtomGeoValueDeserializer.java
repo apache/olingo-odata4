@@ -29,6 +29,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.GeoUtils;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -38,6 +39,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class AtomGeoValueDeserializer {
 
@@ -54,8 +56,14 @@ class AtomGeoValueDeserializer {
         final String[] pointInfo = event.asCharacters().getData().split(" ");
 
         final Point point = new Point(GeoUtils.getDimension(type), crs);
-        point.setX(Double.valueOf(pointInfo[0]));
-        point.setY(Double.valueOf(pointInfo[1]));
+        try {
+          point.setX(EdmDouble.getInstance().valueOfString(pointInfo[0], null, null,
+                  Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+          point.setY(EdmDouble.getInstance().valueOfString(pointInfo[1], null, null,
+                  Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+        } catch (EdmPrimitiveTypeException e) {
+          throw new XMLStreamException("While deserializing point coordinates as double", e);
+        }
         result.add(point);
       }
 

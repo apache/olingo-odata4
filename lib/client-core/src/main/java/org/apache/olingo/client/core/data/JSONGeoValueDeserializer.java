@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.GeoUtils;
 import org.apache.olingo.client.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -36,6 +37,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class JSONGeoValueDeserializer {
 
@@ -50,8 +52,14 @@ class JSONGeoValueDeserializer {
 
     if (itor.hasNext()) {
       point = new Point(GeoUtils.getDimension(type), crs);
-      point.setX(Double.valueOf(itor.next().asText()));
-      point.setY(Double.valueOf(itor.next().asText()));
+      try {
+        point.setX(EdmDouble.getInstance().valueOfString(itor.next().asText(), null, null,
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+        point.setY(EdmDouble.getInstance().valueOfString(itor.next().asText(), null, null,
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
+      } catch (EdmPrimitiveTypeException e) {
+        throw new IllegalArgumentException("While deserializing point coordinates as double", e);
+      }
     }
 
     return point;
@@ -217,7 +225,7 @@ class JSONGeoValueDeserializer {
 
     String crs = null;
     if (node.has(Constants.JSON_CRS)) {
-      crs = node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.NAME).asText().split(":")[1];
+      crs = node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1];
     }
 
     Geospatial value = null;

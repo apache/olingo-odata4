@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.util.Iterator;
 import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.ComposedGeospatial;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -32,21 +33,28 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class JSONGeoValueSerializer {
 
   private void crs(final JsonGenerator jgen, final String crs) throws IOException {
     jgen.writeObjectFieldStart(Constants.JSON_CRS);
-    jgen.writeStringField(Constants.ATTR_TYPE, Constants.NAME);
+    jgen.writeStringField(Constants.ATTR_TYPE, Constants.JSON_NAME);
     jgen.writeObjectFieldStart(Constants.PROPERTIES);
-    jgen.writeStringField(Constants.NAME, "EPSG:" + crs);
+    jgen.writeStringField(Constants.JSON_NAME, "EPSG:" + crs);
     jgen.writeEndObject();
     jgen.writeEndObject();
   }
 
   private void point(final JsonGenerator jgen, final Point point) throws IOException {
-    jgen.writeNumber(point.getX());
-    jgen.writeNumber(point.getY());
+    try {
+      jgen.writeNumber(EdmDouble.getInstance().valueToString(point.getX(), null, null,
+              Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+      jgen.writeNumber(EdmDouble.getInstance().valueToString(point.getY(), null, null,
+              Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+    } catch (EdmPrimitiveTypeException e) {
+      throw new IllegalArgumentException("While serializing point coordinates as double", e);
+    }
   }
 
   private void multipoint(final JsonGenerator jgen, final MultiPoint multiPoint) throws IOException {

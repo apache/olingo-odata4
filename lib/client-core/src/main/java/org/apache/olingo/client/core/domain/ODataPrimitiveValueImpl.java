@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.domain.AbstractODataValue;
 import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -96,7 +97,8 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
         try {
           // TODO: when Edm is available, set facets when calling this method
           this.instance.value = this.instance.type.valueOfString(
-                  this.instance.text, null, null, 40, 25, null, returnType);
+                  this.instance.text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+                  returnType);
         } catch (EdmPrimitiveTypeException e) {
           throw new IllegalArgumentException(e);
         }
@@ -105,7 +107,7 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
         try {
           // TODO: when Edm is available, set facets when calling this method
           this.instance.text = this.instance.type.valueToString(
-                  this.instance.value, null, null, 40, 25, null);
+                  this.instance.value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
         } catch (EdmPrimitiveTypeException e) {
           throw new IllegalArgumentException(e);
         }
@@ -153,7 +155,8 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
   @Override
   public <T> T toCastValue(final Class<T> reference) throws EdmPrimitiveTypeException {
     // TODO: when Edm is available, set facets when calling this method
-    return type.valueOfString(this.text, null, null, 40, 25, null, reference);
+    return type.valueOfString(this.text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+            reference);
   }
 
   @Override
