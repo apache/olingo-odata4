@@ -35,8 +35,8 @@ public abstract class AbstractTestITCase extends org.apache.olingo.client.core.i
 
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
-    testStaticServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc";
-    testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/large";
+    testStaticServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc";
+    testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
   }
 

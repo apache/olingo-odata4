@@ -19,11 +19,12 @@
 package org.apache.olingo.client.api.format;
 
 import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Available formats for property values.
  */
-public enum ODataValueFormat {
+public enum ODataValueFormat implements Format{
 
   /**
    * Application octet stream.
@@ -72,5 +73,10 @@ public enum ODataValueFormat {
     }
 
     return result;
+  }
+
+  @Override
+  public String toString(final ODataServiceVersion version) {
+    return this.toString();
   }
 }

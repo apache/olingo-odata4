@@ -60,7 +60,7 @@ class JSONGeoValueDeserializer {
   private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
-    MultiPoint multiPoint = null;
+    final MultiPoint multiPoint;
 
     if (itor.hasNext()) {
       final List<Point> points = new ArrayList<Point>();
@@ -79,7 +79,7 @@ class JSONGeoValueDeserializer {
   private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
-    LineString lineString = null;
+    final LineString lineString;
 
     if (itor.hasNext()) {
       final List<Point> points = new ArrayList<Point>();
@@ -98,7 +98,7 @@ class JSONGeoValueDeserializer {
   private MultiLineString multiLineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
-    MultiLineString multiLineString = null;
+    final MultiLineString multiLineString;
 
     if (itor.hasNext()) {
       final List<LineString> lineStrings = new ArrayList<LineString>();
@@ -147,7 +147,7 @@ class JSONGeoValueDeserializer {
   private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
-    MultiPolygon multiPolygon = null;
+    final MultiPolygon multiPolygon;
 
     if (itor.hasNext()) {
       final List<Polygon> polygons = new ArrayList<Polygon>();
@@ -166,7 +166,7 @@ class JSONGeoValueDeserializer {
   private GeospatialCollection collection(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
           final String crs) {
 
-    GeospatialCollection collection = null;
+    final GeospatialCollection collection;
 
     if (itor.hasNext()) {
       final List<Geospatial> geospatials = new ArrayList<Geospatial>();
@@ -262,5 +262,4 @@ class JSONGeoValueDeserializer {
 
     return value;
   }
-
 }

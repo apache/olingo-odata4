@@ -55,103 +55,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 
-public class XMLUtilities extends AbstractUtilities {
+public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
   protected static XMLInputFactory ifactory = null;
 
   protected static XMLOutputFactory ofactory = null;
 
-  public XMLUtilities(final ODataVersion version) throws Exception {
+  public AbstractXMLUtilities(final ODataVersion version) throws Exception {
     super(version);
   }
 
-  public void retrieveLinkInfoFromMetadata() throws Exception {
-
-    final MetadataLinkInfo metadataLinkInfo = new MetadataLinkInfo();
-    Commons.linkInfo.put(version, metadataLinkInfo);
-
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
-    final XMLEventReader reader = getEventReader(metadata);
-
-    int initialDepth = 0;
-    try {
-      while (true) {
-        Map.Entry<Integer, XmlElement> entityType =
-                extractElement(reader, null, Collections.<String>singletonList("EntityType"),
-                null, false, initialDepth, 4, 4);
-        initialDepth = entityType.getKey();
-
-        final String entitySetName =
-                entityType.getValue().getStart().getAttributeByName(new QName("Name")).getValue();
-
-        final XMLEventReader entityReader = getEventReader(entityType.getValue().toStream());
-        int size = 0;
-
-        try {
-          while (true) {
-            final XmlElement navProperty =
-                    extractElement(entityReader, null, Collections.<String>singletonList("NavigationProperty"),
-                    null, false, 0, -1, -1).getValue();
-
-            final String linkName = navProperty.getStart().getAttributeByName(new QName("Name")).getValue();
-            final Map.Entry<String, Boolean> target = getTargetInfo(navProperty.getStart(), linkName);
-
-            metadataLinkInfo.addLink(
-                    entitySetName,
-                    linkName,
-                    target.getKey(),
-                    target.getValue());
-
-            size++;
-          }
-        } catch (Exception e) {
-        } finally {
-          entityReader.close();
-        }
-
-        if (size == 0) {
-          metadataLinkInfo.addEntitySet(entitySetName);
-        }
-      }
-    } catch (Exception e) {
-    } finally {
-      reader.close();
-    }
-  }
-
-  private Map.Entry<String, Boolean> getTargetInfo(final StartElement element, final String linkName)
-          throws Exception {
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
-    XMLEventReader reader = getEventReader(metadata);
-
-    final String associationName = element.getAttributeByName(new QName("Relationship")).getValue();
-
-    final Map.Entry<Integer, XmlElement> association = extractElement(
-            reader, null, Collections.<String>singletonList("Association"),
-            Collections.<Map.Entry<String, String>>singleton(new SimpleEntry<String, String>(
-            "Name", associationName.substring(associationName.lastIndexOf(".") + 1))), false,
-            0, 4, 4);
-
-    reader.close();
-    IOUtils.closeQuietly(metadata);
-
-    final InputStream associationContent = association.getValue().toStream();
-    reader = getEventReader(associationContent);
-
-    final Map.Entry<Integer, XmlElement> associationEnd = extractElement(
-            reader, null, Collections.<String>singletonList("End"),
-            Collections.<Map.Entry<String, String>>singleton(new SimpleEntry<String, String>("Role", linkName)),
-            false, 0, -1, -1);
-
-    reader.close();
-    IOUtils.closeQuietly(associationContent);
-
-    final String target = associationEnd.getValue().getStart().getAttributeByName(new QName("Type")).getValue();
-    final boolean feed = associationEnd.getValue().getStart().getAttributeByName(
-            new QName("Multiplicity")).getValue().equals("*");
-
-    return new SimpleEntry<String, Boolean>(target, feed);
-  }
+  public abstract void retrieveLinkInfoFromMetadata() throws Exception;
 
   @Override
   protected Accept getDefaultFormat() {

@@ -384,7 +384,7 @@ public abstract class AbstractUtilities {
     }
 
     if (accept != null) {
-      builder.header("Content-Type", accept.toString());
+      builder.header("Content-Type", accept.toString(version));
     } else {
       builder.header("Content-Type", "*/*");
     }
@@ -423,7 +423,6 @@ public abstract class AbstractUtilities {
 
   public Response createFaultResponse(final String accept, final Exception e) {
     LOG.debug("Create fault response about .... ", e);
-    e.printStackTrace();
 
     final Response.ResponseBuilder builder = Response.serverError();
     if (version == ODataVersion.v3) {

@@ -18,34 +18,49 @@
  */
 package org.apache.olingo.client.api.format;
 
+import java.util.EnumMap;
 import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Available formats for AtomPub exchange.
  */
-public enum ODataPubFormat {
+public enum ODataPubFormat implements Format {
 
   /**
    * JSON format with no metadata.
    */
-  JSON_NO_METADATA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=nometadata"),
+  JSON_NO_METADATA(),
   /**
    * JSON format with minimal metadata (default).
    */
-  JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata=minimalmetadata"),
+  JSON(),
   /**
    * JSON format with no metadata.
    */
-  JSON_FULL_METADATA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=fullmetadata"),
+  JSON_FULL_METADATA(),
   /**
    * Atom format.
    */
-  ATOM(ContentType.APPLICATION_ATOM_XML.getMimeType());
+  ATOM();
 
-  private final String format;
+  final static EnumMap<ODataServiceVersion, EnumMap<ODataPubFormat, String>> formatPerVersion =
+          new EnumMap<ODataServiceVersion, EnumMap<ODataPubFormat, String>>(ODataServiceVersion.class);
 
-  ODataPubFormat(final String format) {
-    this.format = format;
+  static {
+    final EnumMap<ODataPubFormat, String> v3 = new EnumMap<ODataPubFormat, String>(ODataPubFormat.class);
+    v3.put(JSON_NO_METADATA, ContentType.APPLICATION_JSON.getMimeType() + ";odata=nometadata");
+    v3.put(JSON, ContentType.APPLICATION_JSON.getMimeType() + ";odata=minimalmetadata");
+    v3.put(JSON_FULL_METADATA, ContentType.APPLICATION_JSON.getMimeType() + ";odata=fullmetadata");
+    v3.put(ATOM, ContentType.APPLICATION_ATOM_XML.getMimeType());
+    formatPerVersion.put(ODataServiceVersion.V30, v3);
+
+    final EnumMap<ODataPubFormat, String> v4 = new EnumMap<ODataPubFormat, String>(ODataPubFormat.class);
+    v4.put(JSON_NO_METADATA, ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none");
+    v4.put(JSON, ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal");
+    v4.put(JSON_FULL_METADATA, ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full");
+    v4.put(ATOM, ContentType.APPLICATION_ATOM_XML.getMimeType());
+    formatPerVersion.put(ODataServiceVersion.V40, v4);
   }
 
   /**
@@ -54,8 +69,17 @@ public enum ODataPubFormat {
    * @return format as a string.
    */
   @Override
+  public String toString(final ODataServiceVersion version) {
+    if (version.ordinal() < ODataServiceVersion.V30.ordinal()) {
+      throw new IllegalArgumentException("Unsupported version " + version);
+    }
+
+    return ODataPubFormat.formatPerVersion.get(version).get(this);
+  }
+
+  @Override
   public String toString() {
-    return format;
+    throw new UnsupportedOperationException();
   }
 
   /**
@@ -72,7 +96,7 @@ public enum ODataPubFormat {
     final String[] parts = format.split(";");
     _format.append(parts[0].trim());
     if (ContentType.APPLICATION_JSON.getMimeType().equals(parts[0].trim())) {
-      if (parts.length > 1 && parts[1].startsWith("odata=")) {
+      if (parts.length > 1 && parts[1].startsWith("odata")) {
         _format.append(';').append(parts[1].trim());
       } else {
         result = ODataPubFormat.JSON;
@@ -82,7 +106,8 @@ public enum ODataPubFormat {
     if (result == null) {
       final String candidate = _format.toString();
       for (ODataPubFormat value : values()) {
-        if (candidate.equals(value.toString())) {
+        if (candidate.equals(value.toString(ODataServiceVersion.V30))
+                || candidate.equals(value.toString(ODataServiceVersion.V40))) {
           result = value;
         }
       }

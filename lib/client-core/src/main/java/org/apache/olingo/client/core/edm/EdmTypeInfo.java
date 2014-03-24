@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.slf4j.Logger;
@@ -56,12 +57,11 @@ public class EdmTypeInfo {
     }
 
     public EdmTypeInfo build() {
-      return new EdmTypeInfo(edm, typeExpression.indexOf('.') == -1
+      return new EdmTypeInfo(edm, typeExpression.indexOf('.') == -1 && StringUtils.isNotBlank(defaultNamespace)
               ? defaultNamespace + "." + typeExpression
               : typeExpression);
     }
   }
-
   private final Edm edm;
 
   private final String typeExpression;
@@ -80,7 +80,6 @@ public class EdmTypeInfo {
 
   private EdmTypeInfo(final Edm edm, final String typeExpression) {
     this.edm = edm;
-    this.typeExpression = typeExpression;
 
     String baseType;
     final int collStartIdx = typeExpression.indexOf("Collection(");
@@ -97,16 +96,30 @@ public class EdmTypeInfo {
       baseType = typeExpression.substring(collStartIdx + 11, collEndIdx);
     }
 
+
+    baseType = baseType.replaceAll("^#", "");
+
+    final String typeName;
+    final String namespace;
+
     final int lastDotIdx = baseType.lastIndexOf('.');
     if (lastDotIdx == -1) {
-      throw new IllegalArgumentException("Cannot find namespace or alias in " + typeExpression);
+      namespace = EdmPrimitiveType.EDM_NAMESPACE;
+      typeName = baseType;
+      baseType = new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, baseType).toString();
+    } else {
+      namespace = baseType.substring(0, lastDotIdx);
+      typeName = baseType.substring(lastDotIdx + 1);
     }
-    final String namespace = baseType.substring(0, lastDotIdx);
-    final String typeName = baseType.substring(lastDotIdx + 1);
+
     if (StringUtils.isBlank(typeName)) {
       throw new IllegalArgumentException("Null or empty type name in " + typeExpression);
     }
 
+    final StringBuilder exp = new StringBuilder();
+    exp.append(baseType);
+
+    this.typeExpression = (this.collection ? exp.insert(0, "Collection(").append(")") : exp).toString();
     this.fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
     try {
@@ -168,5 +181,4 @@ public class EdmTypeInfo {
   public EdmEntityType getEntityType() {
     return entityType;
   }
-
 }

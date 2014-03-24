@@ -25,24 +25,23 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
 public class EdmTypeImpl extends EdmNamedImpl implements EdmType {
 
-  protected final FullQualifiedName fqn;
+    protected final FullQualifiedName fqn;
 
-  protected final EdmTypeKind kind;
+    protected final EdmTypeKind kind;
 
-  public EdmTypeImpl(final Edm edm, final FullQualifiedName fqn, final EdmTypeKind kind) {
-    super(edm, fqn.getName());
-    this.fqn = fqn;
-    this.kind = kind;
-  }
+    public EdmTypeImpl(final Edm edm, final FullQualifiedName fqn, final EdmTypeKind kind) {
+        super(edm, fqn.getName());
+        this.fqn = fqn;
+        this.kind = kind;
+    }
 
-  @Override
-  public String getNamespace() {
-    return fqn.getNamespace();
-  }
+    @Override
+    public String getNamespace() {
+        return fqn.getNamespace();
+    }
 
-  @Override
-  public EdmTypeKind getKind() {
-    return kind;
-  }
-
+    @Override
+    public EdmTypeKind getKind() {
+        return kind;
+    }
 }

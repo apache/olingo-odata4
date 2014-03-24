@@ -21,499 +21,418 @@
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
-    <Schema Namespace="NorthwindModel" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <!-- EnumType with values -->
-      <EnumType Name="FileAccess" UnderlyingType="Edm.Int32" IsFlags="true">
-        <Member Name="Read"   Value="1" />
-        <Member Name="Write"  Value="2" />
-        <Member Name="Create" Value="4" />
-        <Member Name="Delete" Value="8" />
-      </EnumType>
-      <!-- EnumType without any values -->
-      <EnumType Name="ShippingMethod">
-        <Member Name="FirstClass" />
-        <Member Name="TwoDay" />
-        <Member Name="Overnight" />
-      </EnumType>
-      <!-- ComplexType -->
-      <ComplexType Name="Dimensions">
-        <Property Name="Height" Nullable="false" Type="Edm.Decimal" />
-        <Property Name="Weight" Nullable="false" Type="Edm.Decimal" />
-        <Property Name="Length" Nullable="false" Type="Edm.Decimal" />
+    <Schema Namespace="Microsoft.Test.OData.Services.ODataWCFService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="Address">
+        <Property Name="Street" Type="Edm.String" Nullable="false" />
+        <Property Name="City" Type="Edm.String" Nullable="false" />
+        <Property Name="PostalCode" Type="Edm.String" Nullable="false" />
       </ComplexType>
-      <!-- ComplexType with enum property -->
-      <ComplexType Name="ACL">
-        <Property Name="Filename" Nullable="false" Type="Edm.String" />
-        <Property Name="Access" Nullable="false" Type="NorthwindModel.FileAccess" />
+      <ComplexType Name="HomeAddress" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Address">
+        <Property Name="FamilyName" Type="Edm.String" />
       </ComplexType>
-      <EntityType Name="Category">
+      <ComplexType Name="CompanyAddress" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Address">
+        <Property Name="CompanyName" Type="Edm.String" Nullable="false" />
+      </ComplexType>
+      <EnumType Name="AccessLevel" IsFlags="true">
+        <Member Name="None" Value="0" />
+        <Member Name="Read" Value="1" />
+        <Member Name="Write" Value="2" />
+        <Member Name="Execute" Value="4" />
+        <Member Name="ReadWrite" Value="3" />
+      </EnumType>
+      <EnumType Name="Color">
+        <Member Name="Red" Value="1" />
+        <Member Name="Green" Value="2" />
+        <Member Name="Blue" Value="4" />
+      </EnumType>
+      <EnumType Name="CompanyCategory">
+        <Member Name="IT" Value="0" />
+        <Member Name="Communication" Value="1" />
+        <Member Name="Electronics" Value="2" />
+        <Member Name="Others" Value="4" />
+      </EnumType>
+      <EntityType Name="Person">
         <Key>
-          <PropertyRef Name="CategoryID" />
+          <PropertyRef Name="PersonID" />
         </Key>
-        <Property Name="CategoryID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
-        <Property Name="Description" Type="Edm.String" MaxLength="max" />
-        <Property Name="Picture" Type="Edm.Binary" MaxLength="max" />
-        <NavigationProperty Name="Products" Type="Collection(NorthwindModel.Product)" Partner="Category" />
+        <Property Name="PersonID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="FirstName" Type="Edm.String" Nullable="false" />
+        <Property Name="LastName" Type="Edm.String" Nullable="false" />
+        <Property Name="MiddleName" Type="Edm.String" />
+        <Property Name="HomeAddress" Type="Microsoft.Test.OData.Services.ODataWCFService.Address" />
+        <Property Name="Home" Type="Edm.GeographyPoint" SRID="4326" />
+        <Property Name="Numbers" Type="Collection(Edm.String)" Nullable="false" />
+        <Property Name="Emails" Type="Collection(Edm.String)" />
+        <NavigationProperty Name="Parent" Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
       </EntityType>
-      <EntityType Name="CustomerDemographic">
-        <Key>
-          <PropertyRef Name="CustomerTypeID" />
-        </Key>
-        <Property Name="CustomerTypeID" Type="Edm.String" Nullable="false" MaxLength="10" />
-        <Property Name="CustomerDesc" Type="Edm.String" MaxLength="max" />
-        <NavigationProperty Name="Customers" Type="Collection(NorthwindModel.Customer)" Partner="CustomerDemographics" />
+      <EntityType Name="Customer" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Person">
+        <Property Name="City" Type="Edm.String" Nullable="false" />
+        <Property Name="Birthday" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="TimeBetweenLastTwoOrders" Type="Edm.Duration" Nullable="false" />
+        <NavigationProperty Name="Orders" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Order)" />
+        <NavigationProperty Name="Company" Type="Microsoft.Test.OData.Services.ODataWCFService.Company" Nullable="false" Partner="VipCustomer" />
       </EntityType>
-      <EntityType Name="Customer">
-        <Key>
-          <PropertyRef Name="CustomerID" />
-        </Key>
-        <Property Name="CustomerID" Type="Edm.String" Nullable="false" MaxLength="5" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ContactName" Type="Edm.String" MaxLength="30" />
-        <Property Name="ContactTitle" Type="Edm.String" MaxLength="30" />
-        <Property Name="Address" Type="Edm.String" MaxLength="60" />
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="Region" Type="Edm.String" MaxLength="15" />
-        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="Country" Type="Edm.String" MaxLength="15" />
-        <Property Name="Phone" Type="Edm.String" MaxLength="24" />
-        <Property Name="Fax" Type="Edm.String" MaxLength="24" />
-        <!-- EnumType attribute -->
-        <Property Name="FileAccess" Type="NorthwindModel.FileAccess" />
-        <NavigationProperty Name="Orders" Type="Collection(NorthwindModel.Order)" Partner="Customer" />
-        <NavigationProperty Name="CustomerDemographics" Type="Collection(NorthwindModel.CustomerDemographic)" Partner="Customers" />
-      </EntityType>
-      <EntityType Name="Employee">
-        <Key>
-          <PropertyRef Name="EmployeeID" />
-        </Key>
-        <Property Name="EmployeeID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="20" />
-        <Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="10" />
-        <Property Name="Title" Type="Edm.String" MaxLength="30" />
-        <Property Name="TitleOfCourtesy" Type="Edm.String" MaxLength="25" />
-        <Property Name="BirthDate" Type="Edm.DateTimeOffset" />
-        <Property Name="HireDate" Type="Edm.DateTimeOffset" />
-        <Property Name="Address" Type="Edm.String" MaxLength="60" />
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="Region" Type="Edm.String" MaxLength="15" />
-        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="Country" Type="Edm.String" MaxLength="15" />
-        <Property Name="HomePhone" Type="Edm.String" MaxLength="24" />
-        <Property Name="Extension" Type="Edm.String" MaxLength="4" />
-        <Property Name="Photo" Type="Edm.Binary" MaxLength="max" />
-        <Property Name="Notes" Type="Edm.String" MaxLength="max" />
-        <Property Name="ReportsTo" Type="Edm.Int32" />
-        <Property Name="PhotoPath" Type="Edm.String" MaxLength="255" />
-        <NavigationProperty Name="Employees1" Type="Collection(NorthwindModel.Employee)" Partner="Employee1" />
-        <NavigationProperty Name="Employee1" Type="NorthwindModel.Employee" Partner="Employees1">
-          <ReferentialConstraint Property="ReportsTo" ReferencedProperty="EmployeeID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Orders" Type="Collection(NorthwindModel.Order)" Partner="Employee" />
-        <NavigationProperty Name="Territories" Type="Collection(NorthwindModel.Territory)" Partner="Employees" />
-      </EntityType>
-      <EntityType Name="Order_Detail">
-        <Key>
-          <PropertyRef Name="OrderID" />
-          <PropertyRef Name="ProductID" />
-        </Key>
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />
-        <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
-        <Property Name="Discount" Type="Edm.Single" Nullable="false" />
-        <NavigationProperty Name="Order" Type="NorthwindModel.Order" Nullable="false" Partner="Order_Details">
-          <ReferentialConstraint Property="OrderID" ReferencedProperty="OrderID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Product" Type="NorthwindModel.Product" Nullable="false" Partner="Order_Details">
-          <ReferentialConstraint Property="ProductID" ReferencedProperty="ProductID" />
-        </NavigationProperty>
-      </EntityType>
-      <EntityType Name="Order">
-        <Key>
-          <PropertyRef Name="OrderID" />
-        </Key>
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="CustomerID" Type="Edm.String" MaxLength="5" />
-        <Property Name="EmployeeID" Type="Edm.Int32" />
-        <Property Name="OrderDate" Type="Edm.DateTimeOffset" />
-        <Property Name="RequiredDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShipVia" Type="Edm.Int32" />
-        <Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="ShipName" Type="Edm.String" MaxLength="40" />
-        <Property Name="ShipAddress" Type="Edm.String" MaxLength="60" />
-        <Property Name="ShipCity" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipRegion" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="ShipCountry" Type="Edm.String" MaxLength="15" />
-        <NavigationProperty Name="Customer" Type="NorthwindModel.Customer" Partner="Orders">
-          <ReferentialConstraint Property="CustomerID" ReferencedProperty="CustomerID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Employee" Type="NorthwindModel.Employee" Partner="Orders">
-          <ReferentialConstraint Property="EmployeeID" ReferencedProperty="EmployeeID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Order_Details" Type="Collection(NorthwindModel.Order_Detail)" Partner="Order" />
-        <NavigationProperty Name="Shipper" Type="NorthwindModel.Shipper" Partner="Orders">
-          <ReferentialConstraint Property="ShipVia" ReferencedProperty="ShipperID" />
-        </NavigationProperty>
+      <EntityType Name="Employee" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Person">
+        <Property Name="DateHired" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Office" Type="Edm.GeographyPoint" SRID="4326" />
+        <NavigationProperty Name="Company" Type="Microsoft.Test.OData.Services.ODataWCFService.Company" Nullable="false" Partner="Employees" />
       </EntityType>
       <EntityType Name="Product">
         <Key>
           <PropertyRef Name="ProductID" />
         </Key>
-        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="SupplierID" Type="Edm.Int32" />
-        <Property Name="CategoryID" Type="Edm.Int32" />
-        <Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="UnitsInStock" Type="Edm.Int16" />
-        <Property Name="UnitsOnOrder" Type="Edm.Int16" />
-        <Property Name="ReorderLevel" Type="Edm.Int16" />
+        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" Nullable="false" />
+        <Property Name="QuantityPerUnit" Type="Edm.String" Nullable="false" />
+        <Property Name="UnitPrice" Type="Edm.Single" Nullable="false" />
+        <Property Name="QuantityInStock" Type="Edm.Int32" Nullable="false" />
         <Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />
-        <!-- ComplexType attributes -->
-        <Property Name="ProductDimensions" Type="NorthwindModel.Dimensions" />
-        <Property Name="ShippingDimensions" Type="NorthwindModel.Dimensions" />
-        <NavigationProperty Name="Category" Type="NorthwindModel.Category" Partner="Products">
-          <ReferentialConstraint Property="CategoryID" ReferencedProperty="CategoryID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Order_Details" Type="Collection(NorthwindModel.Order_Detail)" Partner="Product" />
-        <NavigationProperty Name="Supplier" Type="NorthwindModel.Supplier" Partner="Products">
-          <ReferentialConstraint Property="SupplierID" ReferencedProperty="SupplierID" />
+        <Property Name="UserAccess" Type="Microsoft.Test.OData.Services.ODataWCFService.AccessLevel" />
+        <Property Name="SkinColor" Type="Microsoft.Test.OData.Services.ODataWCFService.Color" />
+        <Property Name="CoverColors" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)" Nullable="false" />
+        <NavigationProperty Name="Details" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)">
+          <ReferentialConstraint Property="ProductID" ReferencedProperty="ProductID" />
         </NavigationProperty>
       </EntityType>
-      <EntityType Name="Region">
+      <EntityType Name="ProductDetail">
         <Key>
-          <PropertyRef Name="RegionID" />
-        </Key>
-        <Property Name="RegionID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="RegionDescription" Type="Edm.String" Nullable="false" MaxLength="50" />
-        <NavigationProperty Name="Territories" Type="Collection(NorthwindModel.Territory)" Partner="Region" />
-      </EntityType>
-      <EntityType Name="Shipper">
-        <Key>
-          <PropertyRef Name="ShipperID" />
-        </Key>
-        <Property Name="ShipperID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="Phone" Type="Edm.String" MaxLength="24" />
-        <NavigationProperty Name="Orders" Type="Collection(NorthwindModel.Order)" Partner="Shipper" />
-      </EntityType>
-      <EntityType Name="Supplier">
-        <Key>
-          <PropertyRef Name="SupplierID" />
-        </Key>
-        <Property Name="SupplierID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ContactName" Type="Edm.String" MaxLength="30" />
-        <Property Name="ContactTitle" Type="Edm.String" MaxLength="30" />
-        <Property Name="Address" Type="Edm.String" MaxLength="60" />
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="Region" Type="Edm.String" MaxLength="15" />
-        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="Country" Type="Edm.String" MaxLength="15" />
-        <Property Name="Phone" Type="Edm.String" MaxLength="24" />
-        <Property Name="Fax" Type="Edm.String" MaxLength="24" />
-        <Property Name="HomePage" Type="Edm.String" MaxLength="max" />
-        <NavigationProperty Name="Products" Type="Collection(NorthwindModel.Product)" Partner="Supplier" />
-      </EntityType>
-      <EntityType Name="Territory">
-        <Key>
-          <PropertyRef Name="TerritoryID" />
-        </Key>
-        <Property Name="TerritoryID" Type="Edm.String" Nullable="false" MaxLength="20" />
-        <Property Name="TerritoryDescription" Type="Edm.String" Nullable="false" MaxLength="50" />
-        <Property Name="RegionID" Type="Edm.Int32" Nullable="false" />
-        <NavigationProperty Name="Region" Type="NorthwindModel.Region" Nullable="false" Partner="Territories">
-          <ReferentialConstraint Property="RegionID" ReferencedProperty="RegionID" />
-        </NavigationProperty>
-        <NavigationProperty Name="Employees" Type="Collection(NorthwindModel.Employee)" Partner="Territories" />
-      </EntityType>
-      <EntityType Name="Alphabetical_list_of_product">
-        <Key>
-          <PropertyRef Name="CategoryName" />
-          <PropertyRef Name="Discontinued" />
           <PropertyRef Name="ProductID" />
-          <PropertyRef Name="ProductName" />
+          <PropertyRef Name="ProductDetailID" />
         </Key>
         <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="SupplierID" Type="Edm.Int32" />
-        <Property Name="CategoryID" Type="Edm.Int32" />
-        <Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="UnitsInStock" Type="Edm.Int16" />
-        <Property Name="UnitsOnOrder" Type="Edm.Int16" />
-        <Property Name="ReorderLevel" Type="Edm.Int16" />
-        <Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
+        <Property Name="ProductDetailID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductName" Type="Edm.String" Nullable="false" />
+        <Property Name="Description" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="RelatedProduct" Type="Microsoft.Test.OData.Services.ODataWCFService.Product" />
+        <NavigationProperty Name="Reviews" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductReview)">
+          <ReferentialConstraint Property="ProductID" ReferencedProperty="ProductID" />
+          <ReferentialConstraint Property="ProductDetailID" ReferencedProperty="ProductDetailID" />
+        </NavigationProperty>
       </EntityType>
-      <EntityType Name="Category_Sales_for_1997">
-        <Key>
-          <PropertyRef Name="CategoryName" />
-        </Key>
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
-        <Property Name="CategorySales" Type="Edm.Decimal" Precision="19" Scale="4" />
-      </EntityType>
-      <EntityType Name="Current_Product_List">
+      <EntityType Name="ProductReview">
         <Key>
           <PropertyRef Name="ProductID" />
-          <PropertyRef Name="ProductName" />
+          <PropertyRef Name="ProductDetailID" />
+          <PropertyRef Name="ReviewTitle" />
+          <PropertyRef Name="RevisionID" />
         </Key>
-        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
+        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductDetailID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ReviewTitle" Type="Edm.String" Nullable="false" />
+        <Property Name="RevisionID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Comment" Type="Edm.String" Nullable="false" />
+        <Property Name="Author" Type="Edm.String" Nullable="false" />
       </EntityType>
-      <EntityType Name="Customer_and_Suppliers_by_City">
+      <EntityType Name="Order">
         <Key>
-          <PropertyRef Name="CompanyName" />
-          <PropertyRef Name="Relationship" />
-        </Key>
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ContactName" Type="Edm.String" MaxLength="30" />
-        <Property Name="Relationship" Type="Edm.String" Nullable="false" MaxLength="9" Unicode="false" />
-      </EntityType>
-      <EntityType Name="Invoice">
-        <Key>
-          <PropertyRef Name="CustomerName" />
-          <PropertyRef Name="Discount" />
           <PropertyRef Name="OrderID" />
-          <PropertyRef Name="ProductID" />
-          <PropertyRef Name="ProductName" />
-          <PropertyRef Name="Quantity" />
-          <PropertyRef Name="Salesperson" />
-          <PropertyRef Name="ShipperName" />
-          <PropertyRef Name="UnitPrice" />
         </Key>
-        <Property Name="ShipName" Type="Edm.String" MaxLength="40" />
-        <Property Name="ShipAddress" Type="Edm.String" MaxLength="60" />
-        <Property Name="ShipCity" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipRegion" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="ShipCountry" Type="Edm.String" MaxLength="15" />
-        <Property Name="CustomerID" Type="Edm.String" MaxLength="5" />
-        <Property Name="CustomerName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="Address" Type="Edm.String" MaxLength="60" />
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="Region" Type="Edm.String" MaxLength="15" />
-        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="Country" Type="Edm.String" MaxLength="15" />
-        <Property Name="Salesperson" Type="Edm.String" Nullable="false" MaxLength="31" />
         <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="OrderDate" Type="Edm.DateTimeOffset" />
-        <Property Name="RequiredDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShipperName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />
-        <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
-        <Property Name="Discount" Type="Edm.Single" Nullable="false" />
-        <Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />
+        <Property Name="OrderDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="ShelfLife" Type="Edm.Duration" />
+        <Property Name="OrderShelfLifes" Type="Collection(Edm.Duration)" />
+        <NavigationProperty Name="LoggedInEmployee" Type="Microsoft.Test.OData.Services.ODataWCFService.Employee" Nullable="false" />
+        <NavigationProperty Name="CustomerForOrder" Type="Microsoft.Test.OData.Services.ODataWCFService.Customer" Nullable="false" />
+        <NavigationProperty Name="OrderDetails" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.OrderDetail)" />
       </EntityType>
-      <EntityType Name="Order_Details_Extended">
+      <EntityType Name="OrderDetail">
         <Key>
-          <PropertyRef Name="Discount" />
           <PropertyRef Name="OrderID" />
           <PropertyRef Name="ProductID" />
-          <PropertyRef Name="ProductName" />
-          <PropertyRef Name="Quantity" />
-          <PropertyRef Name="UnitPrice" />
         </Key>
         <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
         <Property Name="ProductID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Nullable="false" Precision="19" Scale="4" />
-        <Property Name="Quantity" Type="Edm.Int16" Nullable="false" />
-        <Property Name="Discount" Type="Edm.Single" Nullable="false" />
-        <Property Name="ExtendedPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
+        <Property Name="OrderPlaced" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Quantity" Type="Edm.Int32" Nullable="false" />
+        <Property Name="UnitPrice" Type="Edm.Single" Nullable="false" />
+        <NavigationProperty Name="ProductOrdered" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)" />
+        <NavigationProperty Name="AssociatedOrder" Type="Microsoft.Test.OData.Services.ODataWCFService.Order" Nullable="false" />
       </EntityType>
-      <EntityType Name="Order_Subtotal">
+      <EntityType Name="Department">
         <Key>
-          <PropertyRef Name="OrderID" />
+          <PropertyRef Name="DepartmentID" />
         </Key>
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />
+        <Property Name="DepartmentID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Company" Type="Microsoft.Test.OData.Services.ODataWCFService.Company" Nullable="false" Partner="Departments" />
       </EntityType>
-      <EntityType Name="Orders_Qry">
+      <EntityType Name="Company">
         <Key>
-          <PropertyRef Name="CompanyName" />
-          <PropertyRef Name="OrderID" />
+          <PropertyRef Name="CompanyID" />
         </Key>
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="CustomerID" Type="Edm.String" MaxLength="5" />
-        <Property Name="EmployeeID" Type="Edm.Int32" />
-        <Property Name="OrderDate" Type="Edm.DateTimeOffset" />
-        <Property Name="RequiredDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="ShipVia" Type="Edm.Int32" />
-        <Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="ShipName" Type="Edm.String" MaxLength="40" />
-        <Property Name="ShipAddress" Type="Edm.String" MaxLength="60" />
-        <Property Name="ShipCity" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipRegion" Type="Edm.String" MaxLength="15" />
-        <Property Name="ShipPostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="ShipCountry" Type="Edm.String" MaxLength="15" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="Address" Type="Edm.String" MaxLength="60" />
-        <Property Name="City" Type="Edm.String" MaxLength="15" />
-        <Property Name="Region" Type="Edm.String" MaxLength="15" />
-        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
-        <Property Name="Country" Type="Edm.String" MaxLength="15" />
+        <Property Name="CompanyID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CompanyCategory" Type="Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory" />
+        <Property Name="Revenue" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Address" Type="Microsoft.Test.OData.Services.ODataWCFService.Address" />
+        <NavigationProperty Name="Employees" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Employee)" Partner="Company" />
+        <NavigationProperty Name="VipCustomer" Type="Microsoft.Test.OData.Services.ODataWCFService.Customer" Nullable="false" Partner="Company" />
+        <NavigationProperty Name="Departments" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Department)" Partner="Company" />
+        <NavigationProperty Name="CoreDepartment" Type="Microsoft.Test.OData.Services.ODataWCFService.Department" Nullable="false" />
       </EntityType>
-      <EntityType Name="Product_Sales_for_1997">
+      <EntityType Name="PublicCompany" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Company">
+        <Property Name="StockExchange" Type="Edm.String" />
+        <NavigationProperty Name="Assets" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Asset)" ContainsTarget="true" />
+        <NavigationProperty Name="Club" Type="Microsoft.Test.OData.Services.ODataWCFService.Club" Nullable="false" ContainsTarget="true" />
+        <NavigationProperty Name="LabourUnion" Type="Microsoft.Test.OData.Services.ODataWCFService.LabourUnion" Nullable="false" />
+      </EntityType>
+      <EntityType Name="Asset">
         <Key>
-          <PropertyRef Name="CategoryName" />
-          <PropertyRef Name="ProductName" />
+          <PropertyRef Name="AssetID" />
         </Key>
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ProductSales" Type="Edm.Decimal" Precision="19" Scale="4" />
+        <Property Name="AssetID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Number" Type="Edm.Int32" Nullable="false" />
       </EntityType>
-      <EntityType Name="Products_Above_Average_Price">
+      <EntityType Name="Club">
         <Key>
-          <PropertyRef Name="ProductName" />
+          <PropertyRef Name="ClubID" />
         </Key>
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="UnitPrice" Type="Edm.Decimal" Precision="19" Scale="4" />
+        <Property Name="ClubID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
       </EntityType>
-      <EntityType Name="Products_by_Category">
+      <EntityType Name="LabourUnion">
         <Key>
-          <PropertyRef Name="CategoryName" />
-          <PropertyRef Name="Discontinued" />
-          <PropertyRef Name="ProductName" />
+          <PropertyRef Name="LabourUnionID" />
         </Key>
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" />
-        <Property Name="UnitsInStock" Type="Edm.Int16" />
-        <Property Name="Discontinued" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LabourUnionID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
       </EntityType>
-      <EntityType Name="Sales_by_Category">
-        <Key>
-          <PropertyRef Name="CategoryID" />
-          <PropertyRef Name="CategoryName" />
-          <PropertyRef Name="ProductName" />
-        </Key>
-        <Property Name="CategoryID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" />
-        <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ProductSales" Type="Edm.Decimal" Precision="19" Scale="4" />
-      </EntityType>
-      <EntityType Name="Sales_Totals_by_Amount">
-        <Key>
-          <PropertyRef Name="CompanyName" />
-          <PropertyRef Name="OrderID" />
-        </Key>
-        <Property Name="SaleAmount" Type="Edm.Decimal" Precision="19" Scale="4" />
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="CompanyName" Type="Edm.String" Nullable="false" MaxLength="40" />
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-      </EntityType>
-      <EntityType Name="Summary_of_Sales_by_Quarter">
-        <Key>
-          <PropertyRef Name="OrderID" />
-        </Key>
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />
-      </EntityType>
-      <EntityType Name="Summary_of_Sales_by_Year">
-        <Key>
-          <PropertyRef Name="OrderID" />
-        </Key>
-        <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
-        <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
-        <Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />
-      </EntityType>
-      <Annotations Target="ODataWebExperimental.Northwind.Model.NorthwindEntities">
-        <Annotation Term="Com.Microsoft.OData.Service.Conventions.V1.UrlConventions" String="KeyAsSegment" />
-      </Annotations>
-      <!-- Function -->
-      <Function Name="TopSellingProducts" ReturnType="Collection(NorthwindModel.Product)" IsComposable="true" EntitySetPath="ODataWebExperimental.Northwind.Model.Products">
-        <Parameter Name="Year" Type="Edm.Decimal" Precision="4" Scale="0" />
-      </Function>
-      <Function Name="TopSellingProducts2" ReturnType="Collection(NorthwindModel.Product)" IsComposable="true" EntitySetPath="ODataWebExperimental.Northwind.Model.Products" IsBound="true">
-        <Parameter Name="Product" Type="NorthwindModel.Product" />
-        <Parameter Name="Year" Type="Edm.Decimal" Precision="4" Scale="0" />
-      </Function>
-      <!-- Action -->
-      <Action Name="TopSellingProducts" EntitySetPath="ODataWebExperimental.Northwind.Model.Products" IsBound="true">
-        <Parameter Name="Product" Type="NorthwindModel.Product" />
-        <Parameter Name="Year" Type="Edm.Decimal" Precision="4" Scale="0" />
+      <Action Name="AddAccessRight" IsBound="true">
+        <Parameter Name="product" Type="Microsoft.Test.OData.Services.ODataWCFService.Product" Nullable="false" />
+        <Parameter Name="accessRight" Type="Microsoft.Test.OData.Services.ODataWCFService.AccessLevel" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.AccessLevel" />
       </Action>
-    </Schema>
-    <Schema Namespace="ODataWebExperimental.Northwind.Model" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-      <EntityContainer Name="NorthwindEntities" p4:LazyLoadingEnabled="true" xmlns:p4="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-        <EntitySet Name="Categories" EntityType="NorthwindModel.Category">
-          <NavigationPropertyBinding Path="Products" Target="Products" />
+      <Action Name="IncreaseRevenue" IsBound="true">
+        <Parameter Name="p" Type="Microsoft.Test.OData.Services.ODataWCFService.Company" Nullable="false" />
+        <Parameter Name="IncreaseValue" Type="Edm.Int64" />
+        <ReturnType Type="Edm.Int64" Nullable="false" />
+      </Action>
+      <Action Name="ResetAddress" IsBound="true" EntitySetPath="person">
+        <Parameter Name="person" Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
+        <Parameter Name="addresses" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)" Nullable="false" />
+        <Parameter Name="index" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
+      </Action>
+      <Action Name="Discount" IsBound="true" EntitySetPath="products">
+        <Parameter Name="products" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)" Nullable="false" />
+        <Parameter Name="percentage" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)" Nullable="false" />
+      </Action>
+      <Action Name="Discount">
+        <Parameter Name="percentage" Type="Edm.Int32" Nullable="false" />
+      </Action>
+      <Action Name="ResetBossEmail">
+        <Parameter Name="emails" Type="Collection(Edm.String)" Nullable="false" />
+        <ReturnType Type="Collection(Edm.String)" Nullable="false" />
+      </Action>
+      <Action Name="ResetBossAddress">
+        <Parameter Name="address" Type="Microsoft.Test.OData.Services.ODataWCFService.Address" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Address" Nullable="false" />
+      </Action>
+      <Function Name="GetEmployeesCount" IsBound="true">
+        <Parameter Name="p" Type="Microsoft.Test.OData.Services.ODataWCFService.Company" Nullable="false" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Function>
+      <Function Name="GetProductDetails" IsBound="true" EntitySetPath="product/Details" IsComposable="true">
+        <Parameter Name="product" Type="Microsoft.Test.OData.Services.ODataWCFService.Product" Nullable="false" />
+        <Parameter Name="count" Type="Edm.Int32" />
+        <ReturnType Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)" Nullable="false" />
+      </Function>
+      <Function Name="GetRelatedProduct" IsBound="true" EntitySetPath="productDetail/Products" IsComposable="true">
+        <Parameter Name="productDetail" Type="Microsoft.Test.OData.Services.ODataWCFService.ProductDetail" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Product" Nullable="false" />
+      </Function>
+      <Function Name="GetDefaultColor" IsComposable="true">
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Color" />
+      </Function>
+      <Function Name="GetPerson" IsComposable="true">
+        <Parameter Name="address" Type="Microsoft.Test.OData.Services.ODataWCFService.Address" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
+      </Function>
+      <Function Name="GetPerson2" IsComposable="true">
+        <Parameter Name="city" Type="Edm.String" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
+      </Function>
+      <Function Name="GetAllProducts" IsComposable="true">
+        <ReturnType Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)" Nullable="false" />
+      </Function>
+      <Function Name="GetBossEmails">
+        <Parameter Name="start" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="count" Type="Edm.Int32" Nullable="false" />
+        <ReturnType Type="Collection(Edm.String)" Nullable="false" />
+      </Function>
+      <Function Name="GetProductsByAccessLevel">
+        <Parameter Name="accessLevel" Type="Microsoft.Test.OData.Services.ODataWCFService.AccessLevel" />
+        <ReturnType Type="Collection(Edm.String)" Nullable="false" />
+      </Function>
+      <Function Name="GetActualAmount" IsBound="true">
+        <Parameter Name="giftcard" Type="Microsoft.Test.OData.Services.ODataWCFService.GiftCard" Nullable="false" />
+        <Parameter Name="bonusRate" Type="Edm.Double" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <Function Name="GetDefaultPI" IsBound="true" EntitySetPath="account/MyPaymentInstruments">
+        <Parameter Name="account" Type="Microsoft.Test.OData.Services.ODataWCFService.Account" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument" />
+      </Function>
+      <Action Name="RefreshDefaultPI" IsBound="true" EntitySetPath="account/MyPaymentInstruments">
+        <Parameter Name="account" Type="Microsoft.Test.OData.Services.ODataWCFService.Account" Nullable="false" />
+        <Parameter Name="newDate" Type="Edm.DateTimeOffset" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument" />
+      </Action>
+      <Function Name="GetHomeAddress" IsBound="true" IsComposable="true">
+        <Parameter Name="person" Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.HomeAddress" Nullable="false" />
+      </Function>
+      <Function Name="GetAccountInfo" IsBound="true" IsComposable="true">
+        <Parameter Name="account" Type="Microsoft.Test.OData.Services.ODataWCFService.Account" Nullable="false" />
+        <ReturnType Type="Microsoft.Test.OData.Services.ODataWCFService.AccountInfo" Nullable="false" />
+      </Function>
+      <ComplexType Name="AccountInfo" OpenType="true">
+        <Property Name="FirstName" Type="Edm.String" Nullable="false" />
+        <Property Name="LastName" Type="Edm.String" Nullable="false" />
+      </ComplexType>
+      <EntityType Name="Account">
+        <Key>
+          <PropertyRef Name="AccountID" />
+        </Key>
+        <Property Name="AccountID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Country" Type="Edm.String" Nullable="false" />
+        <Property Name="AccountInfo" Type="Microsoft.Test.OData.Services.ODataWCFService.AccountInfo" />
+        <NavigationProperty Name="MyGiftCard" Type="Microsoft.Test.OData.Services.ODataWCFService.GiftCard" ContainsTarget="true" />
+        <NavigationProperty Name="MyPaymentInstruments" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument)" ContainsTarget="true" />
+        <NavigationProperty Name="ActiveSubscriptions" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Subscription)" ContainsTarget="true" />
+        <NavigationProperty Name="AvailableSubscriptionTemplatess" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Subscription)" />
+      </EntityType>
+      <EntityType Name="GiftCard">
+        <Key>
+          <PropertyRef Name="GiftCardID" />
+        </Key>
+        <Property Name="GiftCardID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="GiftCardNO" Type="Edm.String" Nullable="false" />
+        <Property Name="Amount" Type="Edm.Double" Nullable="false" />
+        <Property Name="ExperationDate" Type="Edm.DateTimeOffset" Nullable="false" />
+      </EntityType>
+      <EntityType Name="PaymentInstrument">
+        <Key>
+          <PropertyRef Name="PaymentInstrumentID" />
+        </Key>
+        <Property Name="PaymentInstrumentID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="FriendlyName" Type="Edm.String" Nullable="false" />
+        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <NavigationProperty Name="TheStoredPI" Type="Microsoft.Test.OData.Services.ODataWCFService.StoredPI" Nullable="false" />
+        <NavigationProperty Name="BillingStatements" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.Statement)" ContainsTarget="true" />
+        <NavigationProperty Name="BackupStoredPI" Type="Microsoft.Test.OData.Services.ODataWCFService.StoredPI" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CreditCardPI" BaseType="Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument">
+        <Property Name="CardNumber" Type="Edm.String" Nullable="false" />
+        <Property Name="CVV" Type="Edm.String" Nullable="false" />
+        <Property Name="HolderName" Type="Edm.String" Nullable="false" />
+        <Property Name="Balance" Type="Edm.Double" Nullable="false" />
+        <Property Name="ExperationDate" Type="Edm.DateTimeOffset" Nullable="false" />
+        <NavigationProperty Name="CreditRecords" Type="Collection(Microsoft.Test.OData.Services.ODataWCFService.CreditRecord)" ContainsTarget="true" />
+      </EntityType>
+      <EntityType Name="StoredPI">
+        <Key>
+          <PropertyRef Name="StoredPIID" />
+        </Key>
+        <Property Name="StoredPIID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="PIName" Type="Edm.String" Nullable="false" />
+        <Property Name="PIType" Type="Edm.String" Nullable="false" />
+        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+      </EntityType>
+      <EntityType Name="Statement">
+        <Key>
+          <PropertyRef Name="StatementID" />
+        </Key>
+        <Property Name="StatementID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TransactionType" Type="Edm.String" Nullable="false" />
+        <Property Name="TransactionDescription" Type="Edm.String" Nullable="false" />
+        <Property Name="Amount" Type="Edm.Double" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CreditRecord">
+        <Key>
+          <PropertyRef Name="CreditRecordID" />
+        </Key>
+        <Property Name="CreditRecordID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="IsGood" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Reason" Type="Edm.String" Nullable="false" />
+        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+      </EntityType>
+      <EntityType Name="Subscription">
+        <Key>
+          <PropertyRef Name="SubscriptionID" />
+        </Key>
+        <Property Name="SubscriptionID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="TemplateGuid" Type="Edm.String" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" Nullable="false" />
+        <Property Name="Category" Type="Edm.String" Nullable="false" />
+        <Property Name="CreatedDate" Type="Edm.DateTimeOffset" Nullable="false" />
+      </EntityType>
+      <EntityContainer Name="InMemoryEntities">
+        <EntitySet Name="People" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Person">
+          <NavigationPropertyBinding Path="Parent" Target="People" />
         </EntitySet>
-        <EntitySet Name="CustomerDemographics" EntityType="NorthwindModel.CustomerDemographic">
-          <NavigationPropertyBinding Path="Customers" Target="Customers" />
-        </EntitySet>
-        <EntitySet Name="Customers" EntityType="NorthwindModel.Customer">
-          <NavigationPropertyBinding Path="CustomerDemographics" Target="CustomerDemographics" />
+        <Singleton Name="Boss" Type="Microsoft.Test.OData.Services.ODataWCFService.Person" />
+        <EntitySet Name="Customers" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Customer">
           <NavigationPropertyBinding Path="Orders" Target="Orders" />
         </EntitySet>
-        <EntitySet Name="Employees" EntityType="NorthwindModel.Employee">
-          <NavigationPropertyBinding Path="Employees1" Target="Employees" />
-          <NavigationPropertyBinding Path="Employee1" Target="Employees" />
+        <Singleton Name="VipCustomer" Type="Microsoft.Test.OData.Services.ODataWCFService.Customer">
           <NavigationPropertyBinding Path="Orders" Target="Orders" />
-          <NavigationPropertyBinding Path="Territories" Target="Territories" />
-        </EntitySet>
-        <EntitySet Name="Order_Details" EntityType="NorthwindModel.Order_Detail">
-          <NavigationPropertyBinding Path="Order" Target="Orders" />
-          <NavigationPropertyBinding Path="Product" Target="Products" />
-        </EntitySet>
-        <EntitySet Name="Orders" EntityType="NorthwindModel.Order">
-          <NavigationPropertyBinding Path="Customer" Target="Customers" />
-          <NavigationPropertyBinding Path="Employee" Target="Employees" />
-          <NavigationPropertyBinding Path="Order_Details" Target="Order_Details" />
-          <NavigationPropertyBinding Path="Shipper" Target="Shippers" />
-        </EntitySet>
-        <EntitySet Name="Products" EntityType="NorthwindModel.Product">
-          <NavigationPropertyBinding Path="Category" Target="Categories" />
-          <NavigationPropertyBinding Path="Order_Details" Target="Order_Details" />
-          <NavigationPropertyBinding Path="Supplier" Target="Suppliers" />
-        </EntitySet>
-        <EntitySet Name="Regions" EntityType="NorthwindModel.Region">
-          <NavigationPropertyBinding Path="Territories" Target="Territories" />
-        </EntitySet>
-        <EntitySet Name="Shippers" EntityType="NorthwindModel.Shipper">
-          <NavigationPropertyBinding Path="Orders" Target="Orders" />
-        </EntitySet>
-        <EntitySet Name="Suppliers" EntityType="NorthwindModel.Supplier">
-          <NavigationPropertyBinding Path="Products" Target="Products" />
-        </EntitySet>
-        <EntitySet Name="Territories" EntityType="NorthwindModel.Territory">
-          <NavigationPropertyBinding Path="Employees" Target="Employees" />
-          <NavigationPropertyBinding Path="Region" Target="Regions" />
-        </EntitySet>
-        <EntitySet Name="Alphabetical_list_of_products" EntityType="NorthwindModel.Alphabetical_list_of_product" />
-        <EntitySet Name="Category_Sales_for_1997" EntityType="NorthwindModel.Category_Sales_for_1997" />
-        <EntitySet Name="Current_Product_Lists" EntityType="NorthwindModel.Current_Product_List" />
-        <EntitySet Name="Customer_and_Suppliers_by_Cities" EntityType="NorthwindModel.Customer_and_Suppliers_by_City" />
-        <EntitySet Name="Invoices" EntityType="NorthwindModel.Invoice" />
-        <EntitySet Name="Order_Details_Extendeds" EntityType="NorthwindModel.Order_Details_Extended" />
-        <EntitySet Name="Order_Subtotals" EntityType="NorthwindModel.Order_Subtotal" />
-        <EntitySet Name="Orders_Qries" EntityType="NorthwindModel.Orders_Qry" />
-        <EntitySet Name="Product_Sales_for_1997" EntityType="NorthwindModel.Product_Sales_for_1997" />
-        <EntitySet Name="Products_Above_Average_Prices" EntityType="NorthwindModel.Products_Above_Average_Price" />
-        <EntitySet Name="Products_by_Categories" EntityType="NorthwindModel.Products_by_Category" />
-        <EntitySet Name="Sales_by_Categories" EntityType="NorthwindModel.Sales_by_Category" />
-        <EntitySet Name="Sales_Totals_by_Amounts" EntityType="NorthwindModel.Sales_Totals_by_Amount" />
-        <EntitySet Name="Summary_of_Sales_by_Quarters" EntityType="NorthwindModel.Summary_of_Sales_by_Quarter" />
-        <EntitySet Name="Summary_of_Sales_by_Years" EntityType="NorthwindModel.Summary_of_Sales_by_Year" />
-        <!-- Singleton -->
-        <Singleton Name="Contoso" Type="NorthwindModel.Supplier">
-          <NavigationPropertyBinding Path="Products" Target="Products"/>
+          <NavigationPropertyBinding Path="Company" Target="Company" />
         </Singleton>
-        <!-- FunctionImport -->
-        <FunctionImport Name="TopSellingProducts" EntitySet="Products" Function="NorthwindModel.TopSellingProducts"/>
+        <EntitySet Name="Employees" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Employee">
+          <NavigationPropertyBinding Path="Company" Target="Company" />
+        </EntitySet>
+        <EntitySet Name="Products" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Product">
+          <NavigationPropertyBinding Path="Details" Target="ProductDetails" />
+        </EntitySet>
+        <EntitySet Name="ProductDetails" EntityType="Microsoft.Test.OData.Services.ODataWCFService.ProductDetail">
+          <NavigationPropertyBinding Path="RelatedProduct" Target="Products" />
+          <NavigationPropertyBinding Path="Reviews" Target="ProductReviews" />
+        </EntitySet>
+        <EntitySet Name="ProductReviews" EntityType="Microsoft.Test.OData.Services.ODataWCFService.ProductReview" />
+        <EntitySet Name="Orders" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Order">
+          <NavigationPropertyBinding Path="LoggedInEmployee" Target="Employees" />
+          <NavigationPropertyBinding Path="CustomerForOrder" Target="Customers" />
+          <NavigationPropertyBinding Path="OrderDetails" Target="OrderDetails" />
+        </EntitySet>
+        <EntitySet Name="OrderDetails" EntityType="Microsoft.Test.OData.Services.ODataWCFService.OrderDetail">
+          <NavigationPropertyBinding Path="AssociatedOrder" Target="Orders" />
+          <NavigationPropertyBinding Path="ProductOrdered" Target="Products" />
+        </EntitySet>
+        <EntitySet Name="Departments" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Department">
+          <NavigationPropertyBinding Path="Company" Target="Company" />
+        </EntitySet>
+        <Singleton Name="Company" Type="Microsoft.Test.OData.Services.ODataWCFService.Company">
+          <NavigationPropertyBinding Path="Employees" Target="Employees" />
+          <NavigationPropertyBinding Path="VipCustomer" Target="VipCustomer" />
+          <NavigationPropertyBinding Path="Departments" Target="Departments" />
+          <NavigationPropertyBinding Path="CoreDepartment" Target="Departments" />
+        </Singleton>
+        <Singleton Name="PublicCompany" Type="Microsoft.Test.OData.Services.ODataWCFService.Company">
+          <NavigationPropertyBinding Path="Microsoft.Test.OData.Services.ODataWCFService.PublicCompany/LabourUnion" Target="LabourUnion" />
+        </Singleton>
+        <Singleton Name="LabourUnion" Type="Microsoft.Test.OData.Services.ODataWCFService.LabourUnion" />
+        <ActionImport Name="Discount" Action="Microsoft.Test.OData.Services.ODataWCFService.Discount" />
+        <ActionImport Name="ResetBossEmail" Action="Microsoft.Test.OData.Services.ODataWCFService.ResetBossEmail" />
+        <ActionImport Name="ResetBossAddress" Action="Microsoft.Test.OData.Services.ODataWCFService.ResetBossAddress" />
+        <FunctionImport Name="GetDefaultColor" Function="Microsoft.Test.OData.Services.ODataWCFService.GetDefaultColor" />
+        <FunctionImport Name="GetPerson" Function="Microsoft.Test.OData.Services.ODataWCFService.GetPerson" EntitySet="People" />
+        <FunctionImport Name="GetPerson2" Function="Microsoft.Test.OData.Services.ODataWCFService.GetPerson2" EntitySet="People" />
+        <FunctionImport Name="GetAllProducts" Function="Microsoft.Test.OData.Services.ODataWCFService.GetAllProducts" EntitySet="Products" />
+        <FunctionImport Name="GetBossEmails" Function="Microsoft.Test.OData.Services.ODataWCFService.GetBossEmails" />
+        <FunctionImport Name="GetProductsByAccessLevel" Function="Microsoft.Test.OData.Services.ODataWCFService.GetProductsByAccessLevel" />
+        <EntitySet Name="Accounts" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Account">
+          <NavigationPropertyBinding Path="Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument/TheStoredPI" Target="StoredPIs" />
+          <NavigationPropertyBinding Path="AvailableSubscriptionTemplatess" Target="SubscriptionTemplates" />
+          <NavigationPropertyBinding Path="Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument/BackupStoredPI" Target="DefaultStoredPI" />
+        </EntitySet>
+        <EntitySet Name="StoredPIs" EntityType="Microsoft.Test.OData.Services.ODataWCFService.StoredPI" />
+        <EntitySet Name="SubscriptionTemplates" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Subscription" />
+        <Singleton Name="DefaultStoredPI" Type="Microsoft.Test.OData.Services.ODataWCFService.StoredPI" />
       </EntityContainer>
     </Schema>
   </edmx:DataServices>
 </edmx:Edmx>
+

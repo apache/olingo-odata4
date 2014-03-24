@@ -268,7 +268,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
-
+    
     final URI next = resource.getNext();
 
     final ODataEntitySet entitySet = next == null
@@ -282,7 +282,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     for (Entry entryResource : resource.getEntries()) {
       entitySet.addEntity(getODataEntity(entryResource));
     }
-
+    
     return entitySet;
   }
 
@@ -310,11 +310,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
     }
-
+    
     if (resource.getEditLink() != null) {
       entity.setEditLink(URIUtils.getURI(base, resource.getEditLink().getHref()));
     }
-
+    
     for (Link link : resource.getAssociationLinks()) {
       entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
     }

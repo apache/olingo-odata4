@@ -48,7 +48,7 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
   public AbstractODataStreamedEntityRequest(final CommonODataClient odataClient, final HttpMethod method,
           URI uri) {
     super(odataClient, method, uri);
-    setAccept(getFormat().toString());
+    setAccept(getFormat().toString(odataClient.getServiceVersion()));
   }
 
   /**
@@ -65,6 +65,6 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
   @Override
   public final void setFormat(final ODataPubFormat format) {
     this.format = format;
-    setAccept(format.toString());
+    setAccept(format.toString(odataClient.getServiceVersion()));
   }
 }

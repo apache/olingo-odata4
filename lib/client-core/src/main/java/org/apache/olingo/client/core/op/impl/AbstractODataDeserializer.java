@@ -103,5 +103,4 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }
-
 }

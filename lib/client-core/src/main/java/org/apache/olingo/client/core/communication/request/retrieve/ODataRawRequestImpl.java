@@ -92,7 +92,7 @@ public class ODataRawRequestImpl extends ODataRequestImpl<ODataPubFormat>
           this.close();
         }
       }
-
+      
       return odataClient.getReader().read(new ByteArrayInputStream(obj), getContentType(), reference);
     }
 

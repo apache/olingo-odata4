@@ -107,7 +107,8 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertNotNull(res);
-    assertTrue(res.getContentType().replaceAll(" ", "").startsWith(ODataPubFormat.JSON.toString()));
+    assertTrue(res.getContentType().replaceAll(" ", "").
+            startsWith(ODataPubFormat.JSON.toString(client.getServiceVersion())));
   }
 
   /**

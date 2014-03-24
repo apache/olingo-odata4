@@ -19,11 +19,12 @@
 package org.apache.olingo.client.api.format;
 
 import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Available formats to be used in various contexts.
  */
-public enum ODataFormat {
+public enum ODataFormat implements Format{
 
   /**
    * JSON format with no metadata.
@@ -93,5 +94,10 @@ public enum ODataFormat {
     }
 
     return result;
+  }
+
+  @Override
+  public String toString(final ODataServiceVersion version) {
+    return this.toString();
   }
 }

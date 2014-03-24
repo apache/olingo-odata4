@@ -41,9 +41,9 @@ import javax.ws.rs.NotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class JSONUtilities extends AbstractUtilities {
+public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
-  public JSONUtilities(final ODataVersion version) throws Exception {
+  public AbstractJSONUtilities(final ODataVersion version) throws Exception {
     super(version);
   }
 

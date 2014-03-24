@@ -19,8 +19,8 @@
 package org.apache.olingo.fit;
 
 import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.XMLUtilities;
-import org.apache.olingo.fit.utils.JSONUtilities;
+import org.apache.olingo.fit.utils.AbstractXMLUtilities;
+import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.ODataVersion;
 import org.apache.olingo.fit.utils.FSManager;
 
@@ -70,13 +70,18 @@ public abstract class AbstractServices {
   private static Set<ODataVersion> initialized = EnumSet.noneOf(ODataVersion.class);
 
   protected abstract ODataVersion getVersion();
-  protected final XMLUtilities xml;
+  protected final AbstractXMLUtilities xml;
 
-  protected final JSONUtilities json;
+  protected final AbstractJSONUtilities json;
 
   public AbstractServices() throws Exception {
-    this.xml = new XMLUtilities(getVersion());
-    this.json = new JSONUtilities(getVersion());
+    if (ODataVersion.v3 == getVersion()) {
+      this.xml = new org.apache.olingo.fit.utils.v3.XMLUtilities();
+      this.json = new org.apache.olingo.fit.utils.v3.JSONUtilities();
+    } else {
+      this.xml = new org.apache.olingo.fit.utils.v4.XMLUtilities();
+      this.json = new org.apache.olingo.fit.utils.v4.JSONUtilities();
+    }
 
     if (!initialized.contains(getVersion())) {
       xml.retrieveLinkInfoFromMetadata();
@@ -135,7 +140,7 @@ public abstract class AbstractServices {
       return xml.
               createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(), e);
+      return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
     }
   }
 
@@ -547,7 +552,7 @@ public abstract class AbstractServices {
 
       return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
-      return xml.createFaultResponse(Accept.XML.toString(), e);
+      return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
     }
   }
 
@@ -749,7 +754,7 @@ public abstract class AbstractServices {
 
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(Accept.JSON.toString(), e);
+      return xml.createFaultResponse(Accept.JSON.toString(getVersion()), e);
     }
   }
 
@@ -775,7 +780,7 @@ public abstract class AbstractServices {
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
           final String changes) {
     if (xml.isMediaContent(entitySetName + "/" + path)) {
-      return replaceMediaProperty(prefer, entitySetName, entityId, path, format, changes);
+      return replaceMediaProperty(prefer, entitySetName, entityId, path, changes);
     } else {
       return replaceProperty(accept, prefer, entitySetName, entityId, path, format, changes, false);
     }
@@ -786,7 +791,6 @@ public abstract class AbstractServices {
           final String entitySetName,
           final String entityId,
           final String path,
-          final String format,
           final String value) {
     try {
       final AbstractUtilities utils = getUtilities(null);
@@ -809,7 +813,7 @@ public abstract class AbstractServices {
 
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(Accept.JSON.toString(), e);
+      return xml.createFaultResponse(Accept.JSON.toString(getVersion()), e);
     }
   }
 

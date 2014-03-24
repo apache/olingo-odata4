@@ -74,6 +74,10 @@ public abstract class Commons {
     mediaContent.put("Car/Photo", null);
   }
 
+  public static Map<ODataVersion, MetadataLinkInfo> getLinkInfo() {
+    return linkInfo;
+  }
+
   public static String getEntityURI(final String entitySetName, final String entityKey) {
     return entitySetName + "(" + entityKey + ")";
   }
@@ -230,7 +234,7 @@ public abstract class Commons {
         break;
 
       default:
-        throw new UnsupportedOperationException(target.toString());
+        throw new UnsupportedOperationException(target.name());
     }
 
     for (String field : toBeRemoved) {

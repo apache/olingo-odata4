@@ -20,7 +20,6 @@ package org.apache.olingo.client.api.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
@@ -31,11 +30,11 @@ public enum ODataLinkType {
   /**
    * Entity navigation link.
    */
-  ENTITY_NAVIGATION(ODataPubFormat.ATOM + ";type=entry"),
+  ENTITY_NAVIGATION(ContentType.APPLICATION_ATOM_XML.getMimeType() + ";type=entry"),
   /**
    * Entity set navigation link.
    */
-  ENTITY_SET_NAVIGATION(ODataPubFormat.ATOM + ";type=feed"),
+  ENTITY_SET_NAVIGATION(ContentType.APPLICATION_ATOM_XML.getMimeType() + ";type=feed"),
   /**
    * Association link.
    */
@@ -57,7 +56,8 @@ public enum ODataLinkType {
   }
 
   /**
-   * Gets <code>LinkType</code> instance from the given rel and type.
+   * Gets
+   * <code>LinkType</code> instance from the given rel and type.
    *
    * @param client OData client.
    * @param rel rel.

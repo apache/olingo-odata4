@@ -139,7 +139,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
       }
     }
 
-    ODataPropertyType type = null;
+    final ODataPropertyType type;
     if (child == null) {
       type = ODataPropertyType.PRIMITIVE;
     } else {
@@ -168,16 +168,19 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     property.setName(start.getName().getLocalPart());
 
     final Attribute typeAttr = start.getAttributeByName(this.typeQName);
-    if (typeAttr != null) {
-      property.setType(typeAttr.getValue());
-    }
 
     Value value;
     final Attribute nullAttr = start.getAttributeByName(this.nullQName);
+    final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
+
     if (nullAttr == null) {
-      final EdmTypeInfo typeInfo = StringUtils.isBlank(property.getType())
+      final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue)
               ? null
-              : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+              : new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
+
+      if (typeInfo != null) {
+        property.setType(typeInfo.getTypeExpression());
+      }
 
       final ODataPropertyType propType = typeInfo == null
               ? guessPropertyType(reader)
@@ -207,6 +210,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     } else {
       value = new NullValueImpl();
     }
+
     property.setValue(value);
 
     return property;

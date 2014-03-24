@@ -153,7 +153,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
   private void properties(final XMLEventReader reader, final StartElement start, final AtomEntryImpl entry)
           throws XMLStreamException {
-
     boolean foundEndProperties = false;
     while (reader.hasNext() && !foundEndProperties) {
       final XMLEvent event = reader.nextEvent();
@@ -316,7 +315,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
     boolean foundEndFeed = false;
     while (reader.hasNext() && !foundEndFeed) {
       final XMLEvent event = reader.nextEvent();
-
       if (event.isStartElement()) {
         if (countQName.equals(event.asStartElement().getName())) {
           count(reader, event.asStartElement(), feed);

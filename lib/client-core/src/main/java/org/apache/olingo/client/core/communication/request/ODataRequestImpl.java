@@ -42,6 +42,10 @@ import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
+import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.format.ODataPubFormat;
@@ -51,6 +55,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.data.JSONErrorImpl;
 import org.apache.olingo.client.core.data.XMLErrorImpl;
 import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.client.api.format.Format;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
@@ -66,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * @see InvokeRequestFactory
  * @see StreamedRequestFactory
  */
-public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
+public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
   /**
    * Logger.
@@ -251,7 +256,7 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
   @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
-    return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString() : acceptHead;
+    return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString(odataClient.getServiceVersion()) : acceptHead;
   }
 
   /**
@@ -284,7 +289,8 @@ public class ODataRequestImpl<T extends Enum<T>> implements ODataRequest {
   @Override
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
-    return StringUtils.isBlank(contentTypeHead) ? getDefaultFormat().toString() : contentTypeHead;
+    return StringUtils.isBlank(contentTypeHead)
+            ? getDefaultFormat().toString(odataClient.getServiceVersion()) : contentTypeHead;
   }
 
   /**

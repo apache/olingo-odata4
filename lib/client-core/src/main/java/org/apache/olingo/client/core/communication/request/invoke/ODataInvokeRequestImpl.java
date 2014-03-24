@@ -100,7 +100,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
   public void setFormat(final ODataPubFormat format) {
     final String _format = (reference.isAssignableFrom(ODataProperty.class) && format == ODataPubFormat.ATOM)
             ? ODataFormat.XML.toString()
-            : format.toString();
+            : format.toString(odataClient.getServiceVersion());
     setAccept(_format);
     setContentType(_format);
   }
@@ -163,7 +163,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
-        setContentType(ODataPubFormat.JSON.toString());
+        setContentType(ODataPubFormat.JSON.toString(odataClient.getServiceVersion()));
       }
     }
 

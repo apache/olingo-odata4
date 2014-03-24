@@ -16,24 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.fit.utils.v3;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmNamed;
+import org.apache.olingo.fit.utils.ODataVersion;
 
-public abstract class EdmNamedImpl implements EdmNamed {
+public class JSONUtilities extends org.apache.olingo.fit.utils.AbstractJSONUtilities {
 
-    protected final Edm edm;
-
-    private final String name;
-
-    public EdmNamedImpl(final Edm edm, final String name) {
-        this.edm = edm;
-        this.name = name;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
+  public JSONUtilities() throws Exception {
+    super(ODataVersion.v3);
+  }
 }

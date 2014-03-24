@@ -57,7 +57,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
   }
 
   private ODataPropertyType guessPropertyType(final JsonNode node) {
-    ODataPropertyType type = null;
+    final ODataPropertyType type;
 
     if (node.isValueNode() || node.isNull()) {
       type = ODataPropertyType.PRIMITIVE;
@@ -73,7 +73,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
   }
 
   private Value fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) {
-    Value value = null;
+    final Value value;
 
     if (node.isNull()) {
       value = new NullValueImpl();
@@ -172,5 +172,4 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
         property.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
     }
   }
-
 }

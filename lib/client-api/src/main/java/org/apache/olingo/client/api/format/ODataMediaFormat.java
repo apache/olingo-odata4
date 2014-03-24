@@ -19,11 +19,12 @@
 package org.apache.olingo.client.api.format;
 
 import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Available formats for media.
  */
-public enum ODataMediaFormat {
+public enum ODataMediaFormat implements Format{
 
   CHARSET_PARAMETER("charset"),
   MEDIA_TYPE_WILDCARD("*"),
@@ -67,5 +68,10 @@ public enum ODataMediaFormat {
     }
 
     return result;
+  }
+
+  @Override
+  public String toString(final ODataServiceVersion version) {
+    return this.toString();
   }
 }

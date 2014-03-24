@@ -16,24 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm;
+package org.apache.olingo.client.api.format;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmNamed;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public abstract class EdmNamedImpl implements EdmNamed {
+public interface Format {
 
-    protected final Edm edm;
-
-    private final String name;
-
-    public EdmNamedImpl(final Edm edm, final String name) {
-        this.edm = edm;
-        this.name = name;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
+  String toString(ODataServiceVersion version);
 }

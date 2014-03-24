@@ -20,6 +20,7 @@ package org.apache.olingo.client.api.communication.request;
 
 import java.util.concurrent.Future;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.format.Format;
 
 /**
  * Basic OData request.
@@ -27,7 +28,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
  * @param <V> OData response type corresponding to the request implementation.
  * @param <T> Accepted content-type formats by the request in object.
  */
-public interface ODataBasicRequest<V extends ODataResponse, T extends Enum<T>> extends ODataRequest {
+public interface ODataBasicRequest<V extends ODataResponse, T extends Format> extends ODataRequest {
 
   /**
    * Request execute.
