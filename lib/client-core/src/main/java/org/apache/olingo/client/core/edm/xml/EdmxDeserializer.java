@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import org.apache.olingo.client.core.edm.xml.v4.ReferenceImpl;
-import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;

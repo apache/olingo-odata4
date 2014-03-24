@@ -24,7 +24,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 

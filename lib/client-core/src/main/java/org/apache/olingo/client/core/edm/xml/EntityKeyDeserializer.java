@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op;
+package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,9 +24,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
-
-import org.apache.olingo.client.core.edm.xml.EntityKeyImpl;
-import org.apache.olingo.client.core.edm.xml.PropertyRefImpl;
 
 public class EntityKeyDeserializer extends AbstractEdmDeserializer<EntityKeyImpl> {
 

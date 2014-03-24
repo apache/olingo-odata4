@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.v4.CSDLElement;
-import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
 

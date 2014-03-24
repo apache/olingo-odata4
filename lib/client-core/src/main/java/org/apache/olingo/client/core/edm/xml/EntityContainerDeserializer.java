@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op;
+package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.edm.xml.AbstractEntityContainer;
 import org.apache.olingo.client.core.edm.xml.v3.AssociationSetImpl;
 import org.apache.olingo.client.core.edm.xml.v4.ActionImportImpl;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;

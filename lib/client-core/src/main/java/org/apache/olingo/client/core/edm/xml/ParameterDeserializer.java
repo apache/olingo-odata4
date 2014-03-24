@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.api.edm.xml.v3.ParameterMode;
-import org.apache.olingo.client.core.op.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParameter> {

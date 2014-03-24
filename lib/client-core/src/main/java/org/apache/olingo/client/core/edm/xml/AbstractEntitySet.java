@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.edm.xml;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.olingo.client.api.edm.xml.EntitySet;
-import org.apache.olingo.client.core.op.EntitySetDeserializer;
 
 @JsonDeserialize(using = EntitySetDeserializer.class)
 public abstract class AbstractEntitySet extends AbstractEdmItem implements EntitySet {

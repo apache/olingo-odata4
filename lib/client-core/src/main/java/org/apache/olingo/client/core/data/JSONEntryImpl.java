@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
@@ -38,11 +37,10 @@ public class JSONEntryImpl extends AbstractEntry {
 
   private String mediaETag;
 
-  public void setId(String id) throws ParseException {
+  public void setId(final String id) throws ParseException {
     this.setCommonProperty("id", id);
   }
 
-  @JsonIgnore
   @Override
   public URI getBaseURI() {
     URI baseURI = null;

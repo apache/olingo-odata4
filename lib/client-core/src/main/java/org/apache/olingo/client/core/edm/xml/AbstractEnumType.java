@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Member;
-import org.apache.olingo.client.core.op.EnumTypeDeserializer;
 
 @JsonDeserialize(using = EnumTypeDeserializer.class)
 public abstract class AbstractEnumType extends AbstractEdmItem implements EnumType {
