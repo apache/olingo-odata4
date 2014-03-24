@@ -20,12 +20,13 @@ package org.apache.olingo.server.core.uri.validator;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
@@ -171,7 +172,27 @@ public class SystemQueryValidator {
       }
     }
       break;
-    case action:
+    case action: {
+      UriResourceAction ura = (UriResourceAction) lastPathSegment;
+      EdmReturnType rt = ura.getAction().getReturnType();
+      switch (rt.getType().getKind()) {
+      case ENTITY:
+        if (((EdmEntityType) rt.getType()).hasStream()) {
+          idx=10;
+        } else {
+          idx = rt.isCollection() ? 7 : 9;
+        }
+        break;
+      case PRIMITIVE:
+        idx = rt.isCollection() ? 17 : 16;
+        break;
+      case COMPLEX:
+        idx = rt.isCollection() ? 14 : 13;
+        break;
+      default:
+        throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind());
+      }
+    }
       break;
     case complexProperty:
       if (lastPathSegment instanceof UriResourcePartTyped) {
@@ -197,52 +218,45 @@ public class SystemQueryValidator {
             + lastPathSegment.getClass());
       }
       break;
-    case function:
-      break;
-    case it:
-      break;
-    case lambdaAll:
-      break;
-    case lambdaAny:
-      break;
-    case lambdaVariable:
-      break;
-    case navigationProperty: {
-      int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
-      UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
-
-      EdmEntitySet entitySet = edm.getEntityContainer(null).getEntitySet(secondLastPathSegment.toString());
-      EdmNavigationProperty navProp = entitySet.getEntityType().getNavigationProperty(lastPathSegment.toString());
-      if (navProp.isCollection()) {
-        idx = 7;
-      } else {
-        idx = 9;
+    case function: {
+      UriResourceFunction urf = (UriResourceFunction) lastPathSegment;
+      EdmReturnType rt = urf.getFunction().getReturnType();
+      switch (rt.getType().getKind()) {
+      case ENTITY:
+        if (((EdmEntityType) rt.getType()).hasStream()) {
+          idx=10;
+        } else {
+          idx = rt.isCollection() ? 7 : 9;
+        }
+        break;
+      case PRIMITIVE:
+        idx = rt.isCollection() ? 17 : 16;
+        break;
+      case COMPLEX:
+        idx = rt.isCollection() ? 14 : 13;
+        break;
+      default:
+        throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind());
       }
     }
       break;
+    case navigationProperty:
+      idx = ((UriResourceNavigation) lastPathSegment).isCollection() ? 7 : 9;
+      break;
     case primitiveProperty:
       if (lastPathSegment instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
-          idx = 17;
-        } else {
-          idx = 16;
-        }
+        idx = ((UriResourcePartTyped) lastPathSegment).isCollection() ? 17 : 16;
       } else {
         throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
             + lastPathSegment.getClass());
       }
-
       break;
     case ref: {
       int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
       UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
 
       if (secondLastPathSegment instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) secondLastPathSegment).isCollection()) {
-          idx = 11;
-        } else {
-          idx = 12;
-        }
+        idx = ((UriResourcePartTyped) secondLastPathSegment).isCollection() ? 11 : 12;
       } else {
         throw new UriValidationException("secondLastPathSegment not a class of UriResourcePartTyped: "
             + lastPathSegment.getClass());

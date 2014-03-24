@@ -135,6 +135,22 @@ public class UriEdmValidatorTest {
       { URI_NAV_ENTITY_SET, QO_COUNT }, /* { URI_NAV_ENTITY_SET, QO_ORDERBY }, */
       /* { URI_NAV_ENTITY_SET, QO_SEARCH }, */{ URI_NAV_ENTITY_SET, QO_SELECT }, { URI_NAV_ENTITY_SET, QO_SKIP },
       { URI_NAV_ENTITY_SET, QO_SKIPTOKEN }, { URI_NAV_ENTITY_SET, QO_LEVELS }, { URI_NAV_ENTITY_SET, QO_TOP },
+
+      { "FINRTInt16()" },
+      { "FICRTETKeyNav()" },
+      { "FICRTESTwoKeyNavParam(ParameterInt16=1)" },
+      { "FICRTCollString()" },
+      { "FICRTCTTwoPrim()" },
+      { "FICRTCollCTTwoPrim()" },
+      { "FICRTETMedia()" },
+      
+      { "ESTwoKeyNav/com.sap.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
+      { "ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim" },
+      { "AIRTPrimCollParam" },
+      { "AIRTETParam" },
+      { "AIRTPrimParam" },
+
+      
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {
@@ -231,9 +247,8 @@ public class UriEdmValidatorTest {
       { URI_NAV_ENTITY, QO_FILTER }, { URI_NAV_ENTITY, QO_ID }, { URI_NAV_ENTITY, QO_COUNT },
       /* { URI_NAV_ENTITY, QO_ORDERBY }, *//* { URI_NAV_ENTITY, QO_SEARCH }, */{ URI_NAV_ENTITY, QO_SKIP },
       { URI_NAV_ENTITY, QO_SKIPTOKEN }, { URI_SINGLETON, QO_TOP },
-      
-      { URI_NAV_ENTITY_SET, QO_ID },
 
+      { URI_NAV_ENTITY_SET, QO_ID },
 
   };
   private Parser parser;
@@ -243,17 +258,22 @@ public class UriEdmValidatorTest {
     parser = new Parser();
   }
 
-  @Test
-//  @Ignore
-      public
-      void bla() throws Exception {
-    String[][] m = { { URI_NAV_ENTITY_SET, QO_SELECT } };
-    String[] uris = constructUri(m);
-    System.out.println(uris[0]);
-
-    parseAndValidate(uris[0]);
-  }
-
+//  @Test
+////  @Ignore
+//      public
+//      void bla() throws Exception {
+//    String[][] m = {
+//        { "" },
+//        { "" },
+//    };
+//    String[] uris = constructUri(m);
+//    for (String uri : uris) {
+//      System.out.println(uri);
+//
+//      parseAndValidate(uri);
+//    }
+//  }
+//
   @Test
   public void checkValidSystemQueryOption() throws Exception {
     String[] uris = constructUri(urisWithValidSystemQueryOptions);
