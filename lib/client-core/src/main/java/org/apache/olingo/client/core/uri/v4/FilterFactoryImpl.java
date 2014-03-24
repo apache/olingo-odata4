@@ -26,14 +26,19 @@ import org.apache.olingo.client.core.uri.AbstractFilterFactory;
 import org.apache.olingo.client.core.uri.FilterProperty;
 import org.apache.olingo.client.core.uri.HasFilter;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class FilterFactoryImpl extends AbstractFilterFactory implements FilterFactory {
 
   private static final long serialVersionUID = -5358934829490623191L;
 
+  public FilterFactoryImpl(ODataServiceVersion version) {
+    super(version);
+  }
+
   @Override
   public FilterArgFactory getArgFactory() {
-    return new FilterArgFactoryImpl();
+    return new FilterArgFactoryImpl(version);
   }
 
   @Override

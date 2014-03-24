@@ -24,8 +24,13 @@ import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
 import org.apache.olingo.client.core.uri.AbstractFilterArgFactory;
 import org.apache.olingo.client.core.uri.FilterFunction;
 import org.apache.olingo.client.core.uri.FilterLambda;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class FilterArgFactoryImpl extends AbstractFilterArgFactory implements FilterArgFactory {
+
+  public FilterArgFactoryImpl(final ODataServiceVersion version) {
+    super(version);
+  }
 
   @Override
   public FilterArg contains(final FilterArg first, final FilterArg second) {

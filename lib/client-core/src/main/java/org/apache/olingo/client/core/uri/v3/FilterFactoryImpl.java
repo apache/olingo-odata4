@@ -21,14 +21,19 @@ package org.apache.olingo.client.core.uri.v3;
 import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.client.core.uri.AbstractFilterFactory;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class FilterFactoryImpl extends AbstractFilterFactory implements FilterFactory {
 
   private static final long serialVersionUID = 1092594961118334631L;
 
+  public FilterFactoryImpl(final ODataServiceVersion version) {
+    super(version);
+  }
+
   @Override
   public FilterArgFactory getArgFactory() {
-    return new FilterArgFactoryImpl();
+    return new FilterArgFactoryImpl(version);
   }
 
 }

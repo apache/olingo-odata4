@@ -18,9 +18,31 @@
  */
 package org.apache.olingo.client.api.uri.v4;
 
+import java.util.Map;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
 
 public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
+
+  /**
+   * Appends enum key segment to the URI.
+   *
+   * @param enumType enum type
+   * @param memberName enum member name
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(EdmEnumType enumType, String memberName);
+
+  /**
+   * Appends key segment to the URI, for multiple keys.
+   *
+   * @param enumValues enum segment values.
+   * @param segmentValues segment values.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(Map<String, Pair<EdmEnumType, String>> enumValues, Map<String, Object> segmentValues);
 
   /**
    * Appends Singleton segment to the URI.
