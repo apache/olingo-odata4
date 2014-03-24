@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.op.impl.v4;
 
-import org.apache.olingo.client.core.op.AbstractODataSerializer;
+import org.apache.olingo.commons.core.op.AbstractODataSerializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataSerializerImpl extends AbstractODataSerializer {

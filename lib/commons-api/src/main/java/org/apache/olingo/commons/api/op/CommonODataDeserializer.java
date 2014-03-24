@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.op;
+package org.apache.olingo.commons.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -24,26 +24,13 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
- * Utility class for serialization.
+ * Interface for serialization.
  */
 public interface CommonODataDeserializer extends Serializable {
-
-  XMLMetadata toMetadata(InputStream input);
-
-  /**
-   * Gets the ServiceDocument object represented by the given InputStream.
-   *
-   * @param input stream to be de-serialized.
-   * @param format OData service document format.
-   * @return <tt>ServiceDocument</tt> object.
-   */
-  ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
 
   /**
    * Gets a feed object from the given InputStream.

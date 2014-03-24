@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.core.op.ResourceFactory;
+import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.junit.Test;
 

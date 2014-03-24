@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op;
+package org.apache.olingo.commons.core.op;
 
 import java.net.URI;
 import org.apache.olingo.commons.api.domain.ODataLinkType;

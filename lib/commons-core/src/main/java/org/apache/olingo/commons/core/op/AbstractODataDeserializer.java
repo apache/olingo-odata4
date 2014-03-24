@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op;
+package org.apache.olingo.commons.core.op;
 
 import java.io.InputStream;
 import org.apache.olingo.commons.api.data.Entry;
@@ -25,8 +25,8 @@ import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.CommonODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.op.CommonODataDeserializer;
 import org.apache.olingo.commons.core.data.AtomDeserializer;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;

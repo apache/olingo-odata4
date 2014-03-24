@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.op;
+package org.apache.olingo.commons.api.op;
 
 import java.io.OutputStream;
 import java.io.Serializable;

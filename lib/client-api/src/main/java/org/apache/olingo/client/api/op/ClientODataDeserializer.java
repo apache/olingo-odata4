@@ -16,17 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.op.impl.v3;
+package org.apache.olingo.client.api.op;
 
-import org.apache.olingo.commons.core.op.AbstractODataSerializer;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import java.io.InputStream;
+import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.op.CommonODataDeserializer;
 
-public class ODataSerializerImpl extends AbstractODataSerializer {
+public interface ClientODataDeserializer extends CommonODataDeserializer {
 
-  private static final long serialVersionUID = -8861908250297989806L;
+  XMLMetadata toMetadata(InputStream input);
 
-  public ODataSerializerImpl(final ODataServiceVersion version) {
-    super(version);
-  }
-
+  /**
+   * Gets the ServiceDocument object represented by the given InputStream.
+   *
+   * @param input stream to be de-serialized.
+   * @param format OData service document format.
+   * @return <tt>ServiceDocument</tt> object.
+   */
+  ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
 }

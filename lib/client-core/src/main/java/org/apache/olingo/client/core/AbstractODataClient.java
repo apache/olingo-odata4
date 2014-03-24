@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.client.api.op.ODataWriter;
 import org.apache.olingo.client.core.domain.ODataGeospatialValueImpl;
 import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;
-import org.apache.olingo.client.core.op.ODataObjectFactoryImpl;
+import org.apache.olingo.commons.core.op.ODataObjectFactoryImpl;
 import org.apache.olingo.client.core.op.ODataWriterImpl;
 
 public abstract class AbstractODataClient implements CommonODataClient {

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.op;
 
+import org.apache.olingo.commons.core.op.ResourceFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

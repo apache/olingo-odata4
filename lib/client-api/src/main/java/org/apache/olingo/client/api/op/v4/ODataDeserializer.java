@@ -21,9 +21,9 @@ package org.apache.olingo.client.api.op.v4;
 import java.io.InputStream;
 
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
-import org.apache.olingo.client.api.op.CommonODataDeserializer;
+import org.apache.olingo.client.api.op.ClientODataDeserializer;
 
-public interface ODataDeserializer extends CommonODataDeserializer {
+public interface ODataDeserializer extends ClientODataDeserializer {
 
   @Override
   XMLMetadata toMetadata(InputStream input);
