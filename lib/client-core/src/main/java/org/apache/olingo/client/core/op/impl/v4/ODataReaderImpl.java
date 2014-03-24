@@ -20,12 +20,12 @@ package org.apache.olingo.client.core.op.impl.v4;
 
 import java.io.InputStream;
 
-import org.apache.olingo.client.api.domain.ODataServiceDocument;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v4.ODataReader;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.client.core.op.impl.AbstractODataReader;
+import org.apache.olingo.client.core.op.AbstractODataReader;
 import org.apache.olingo.commons.api.edm.Edm;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {

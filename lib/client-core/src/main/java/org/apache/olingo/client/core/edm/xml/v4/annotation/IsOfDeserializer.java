@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
 

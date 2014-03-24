@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.client.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v3.FilterArgFactory;

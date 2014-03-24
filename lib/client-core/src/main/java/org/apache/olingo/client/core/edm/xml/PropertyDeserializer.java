@@ -24,7 +24,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.client.api.edm.StoreGeneratedPattern;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -39,7 +38,7 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
   protected AbstractProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractProperty property = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractProperty property = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.PropertyImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.PropertyImpl();
 

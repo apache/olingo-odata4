@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request;
 
 import java.util.concurrent.Future;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.format.Format;
+import org.apache.olingo.commons.api.format.Format;
 
 /**
  * Basic OData request.

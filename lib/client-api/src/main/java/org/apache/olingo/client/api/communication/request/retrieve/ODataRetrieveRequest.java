@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.format.Format;
+import org.apache.olingo.commons.api.format.Format;
 
 /**
  * This is an abstract representation of an OData retrieve query request returning one or more result item.

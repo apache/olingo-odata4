@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an insert link OData request.

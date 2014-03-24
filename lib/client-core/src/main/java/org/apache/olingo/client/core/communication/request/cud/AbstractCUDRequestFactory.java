@@ -29,10 +29,10 @@ import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateReq
 import org.apache.olingo.client.api.communication.request.cud.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFactory {

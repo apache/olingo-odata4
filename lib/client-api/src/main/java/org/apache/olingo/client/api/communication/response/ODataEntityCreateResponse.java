@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.client.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 
 /**
  * This class implements the response to an OData entity create request.

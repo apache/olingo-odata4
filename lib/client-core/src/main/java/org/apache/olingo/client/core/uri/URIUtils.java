@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.UUID;
 import javax.xml.datatype.Duration;
@@ -33,11 +32,15 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,19 +160,22 @@ public final class URIUtils {
                       valueToString(obj, null, null, null, null, null), Constants.UTF8) + "'"
               : (obj instanceof Calendar)
               ? "datetimeoffset'" + URLEncoder.encode(EdmDateTimeOffset.getInstance().
-                      valueToString(obj, null, null, null, null, null), Constants.UTF8)
-              + "'"
+                      valueToString(obj, null, null, null, null, null), Constants.UTF8) + "'"
               : (obj instanceof Duration)
               ? "time'" + URLEncoder.encode(EdmTime.getInstance().
                       valueToString(obj, null, null, null, null, null), Constants.UTF8) + "'"
               : (obj instanceof BigDecimal)
-              ? new DecimalFormat("#.#######################").format((BigDecimal) obj) + "M"
+              ? EdmDecimal.getInstance().valueToString(obj, null, null,
+                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null) + "M"
               : (obj instanceof Double)
-              ? new DecimalFormat("#.#######################E0").format((Double) obj) + "D"
+              ? EdmDouble.getInstance().valueToString(obj, null, null,
+                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null) + "D"
               : (obj instanceof Float)
-              ? new DecimalFormat("#.#######E0").format((Float) obj) + "f"
+              ? EdmSingle.getInstance().valueToString(obj, null, null,
+                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null) + "f"
               : (obj instanceof Long)
-              ? ((Long) obj).toString() + "L"
+              ? EdmInt64.getInstance().valueToString(obj, null, null,
+                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null) + "L"
               : (obj instanceof String)
               ? "'" + URLEncoder.encode((String) obj, Constants.UTF8) + "'"
               : obj.toString();

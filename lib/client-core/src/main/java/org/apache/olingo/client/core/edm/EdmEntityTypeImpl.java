@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

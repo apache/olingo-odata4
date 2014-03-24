@@ -19,8 +19,8 @@
 package org.apache.olingo.client.core.v3;
 
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.api.domain.ODataServiceDocument;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.core.AbstractTest;
 
 import static org.junit.Assert.assertNotNull;

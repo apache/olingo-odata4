@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.edm;
 
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -40,5 +41,4 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
     return edm.getAction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(actionImport.getAction()).
             setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(), null, null);
   }
-
 }

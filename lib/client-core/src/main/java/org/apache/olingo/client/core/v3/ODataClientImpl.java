@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
-import org.apache.olingo.client.api.op.ODataSerializer;
+import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v3.ODataDeserializer;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
 import org.apache.olingo.client.api.op.v3.ODataReader;
@@ -56,9 +56,9 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   private final FilterFactory filterFactory = new FilterFactoryImpl();
 
-  private final ODataDeserializer deserializer = new ODataDeserializerImpl(this);
+  private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
 
-  private final ODataSerializer serializer = new ODataSerializerImpl(this);
+  private final ODataSerializer serializer = new ODataSerializerImpl(getServiceVersion());
 
   private final ODataReader reader = new ODataReaderImpl(this);
 

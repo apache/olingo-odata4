@@ -29,9 +29,11 @@ import java.util.NoSuchElementException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
-import org.apache.olingo.client.core.op.impl.ComplexTypeDeserializer;
 
 @JsonDeserialize(using = ComplexTypeDeserializer.class)
 public abstract class AbstractComplexType extends AbstractEdmItem implements ComplexType {

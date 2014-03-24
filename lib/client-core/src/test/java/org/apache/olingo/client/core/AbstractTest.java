@@ -21,8 +21,8 @@ package org.apache.olingo.client.core;
 import java.util.Locale;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 

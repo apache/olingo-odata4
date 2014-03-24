@@ -19,4 +19,20 @@
     under the License.
 
 -->
-<d:GeogPolygon xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:type="Edm.GeographyPolygon"><gml:Polygon gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326"><gml:exterior><gml:LinearRing><gml:pos>5 15</gml:pos><gml:pos>10 40</gml:pos><gml:pos>20 10</gml:pos><gml:pos>10 5</gml:pos><gml:pos>5 15</gml:pos></gml:LinearRing></gml:exterior></gml:Polygon></d:GeogPolygon>
+<d:GeogPolygon xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" 
+               xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
+               xmlns:georss="http://www.georss.org/georss" 
+               xmlns:gml="http://www.opengis.net/gml" 
+               m:type="Edm.GeographyPolygon">
+  <gml:Polygon gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+    <gml:exterior>
+      <gml:LinearRing>
+        <gml:pos>5.0 15.0</gml:pos>
+        <gml:pos>10.0 40.0</gml:pos>
+        <gml:pos>20.0 10.0</gml:pos>
+        <gml:pos>10.0 5.0</gml:pos>
+        <gml:pos>5.0 15.0</gml:pos>
+      </gml:LinearRing>
+    </gml:exterior>
+  </gml:Polygon>
+</d:GeogPolygon>

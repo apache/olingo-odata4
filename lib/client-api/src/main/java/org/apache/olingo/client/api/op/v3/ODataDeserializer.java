@@ -19,11 +19,11 @@
 package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
-import org.apache.olingo.client.api.data.v3.LinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.op.CommonODataDeserializer;
+import org.apache.olingo.client.api.op.ClientODataDeserializer;
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
-public interface ODataDeserializer extends CommonODataDeserializer {
+public interface ODataDeserializer extends ClientODataDeserializer {
 
   /**
    * Gets a list of links from the given InputStream.

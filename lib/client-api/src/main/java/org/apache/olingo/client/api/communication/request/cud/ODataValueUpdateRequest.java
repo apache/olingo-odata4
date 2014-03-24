@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 
 /**
  * This class implements an OData update entity property value request.

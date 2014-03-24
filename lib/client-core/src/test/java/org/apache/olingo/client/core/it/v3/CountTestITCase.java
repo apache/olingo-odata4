@@ -23,8 +23,8 @@ import org.junit.Test;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.client.api.domain.ODataValue;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
 public class CountTestITCase extends AbstractTestITCase {

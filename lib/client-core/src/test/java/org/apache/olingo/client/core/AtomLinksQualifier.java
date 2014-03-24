@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core;
 
-import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.Constants;
 import org.custommonkey.xmlunit.ElementNameQualifier;
 import org.w3c.dom.Element;
 

@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.CommonODataReader;
 
 public interface ODataReader extends CommonODataReader {

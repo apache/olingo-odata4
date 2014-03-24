@@ -22,7 +22,7 @@ import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;

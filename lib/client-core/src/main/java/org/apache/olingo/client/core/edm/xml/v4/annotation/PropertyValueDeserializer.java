@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyValue> {
 

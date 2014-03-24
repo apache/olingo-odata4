@@ -21,10 +21,10 @@ package org.apache.olingo.client.api.communication.request.cud;
 import java.io.Serializable;
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.UpdateType;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 
 /**
  * OData request factory class.

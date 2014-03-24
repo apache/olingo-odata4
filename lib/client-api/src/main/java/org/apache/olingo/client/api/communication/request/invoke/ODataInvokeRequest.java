@@ -21,9 +21,9 @@ package org.apache.olingo.client.api.communication.request.invoke;
 import java.util.Map;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
-import org.apache.olingo.client.api.domain.ODataInvokeResult;
-import org.apache.olingo.client.api.domain.ODataValue;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData invoke operation request.

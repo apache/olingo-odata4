@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.api.edm.xml.v3.ParameterMode;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParameter> {
@@ -36,7 +35,7 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
   protected AbstractParameter doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractParameter parameter = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractParameter parameter = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.ParameterImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.ParameterImpl();
 

@@ -47,17 +47,17 @@ import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.format.ODataMediaFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.data.JSONErrorImpl;
-import org.apache.olingo.client.core.data.XMLErrorImpl;
-import org.apache.olingo.client.api.data.ODataError;
-import org.apache.olingo.client.api.format.Format;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
+import org.apache.olingo.commons.core.data.JSONErrorImpl;
+import org.apache.olingo.commons.core.data.XMLErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

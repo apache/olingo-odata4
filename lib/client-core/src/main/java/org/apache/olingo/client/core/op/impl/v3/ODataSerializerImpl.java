@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.client.core.op.impl.v3;
 
-import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.core.op.impl.AbstractODataSerializer;
+import org.apache.olingo.commons.core.op.AbstractODataSerializer;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataSerializerImpl extends AbstractODataSerializer {
 
   private static final long serialVersionUID = -8861908250297989806L;
 
-  public ODataSerializerImpl(final CommonODataClient client) {
-    super(client);
+  public ODataSerializerImpl(final ODataServiceVersion version) {
+    super(version);
   }
 
 }

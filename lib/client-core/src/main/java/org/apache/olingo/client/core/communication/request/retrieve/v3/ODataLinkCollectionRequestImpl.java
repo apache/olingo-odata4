@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractODataRetrieveRequest;
 

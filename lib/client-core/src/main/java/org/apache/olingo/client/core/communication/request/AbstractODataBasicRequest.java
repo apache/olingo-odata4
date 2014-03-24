@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.format.Format;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
