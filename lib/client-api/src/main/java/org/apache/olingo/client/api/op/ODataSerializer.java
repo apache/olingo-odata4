@@ -21,10 +21,10 @@ package org.apache.olingo.client.api.op;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Feed;
-import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.Property;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**

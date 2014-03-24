@@ -21,24 +21,24 @@ package org.apache.olingo.client.core.op.impl.v3;
 import java.io.InputStream;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.data.v3.LinkCollection;
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v3.ODataDeserializer;
-import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.core.data.v3.JSONLinkCollectionImpl;
-import org.apache.olingo.client.core.data.v3.XMLLinkCollectionImpl;
+import org.apache.olingo.commons.core.data.v3.JSONLinkCollectionImpl;
+import org.apache.olingo.commons.core.data.v3.XMLLinkCollectionImpl;
 import org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v3.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.client.core.op.AbstractODataDeserializer;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
   private static final long serialVersionUID = -8221085862548914611L;
 
-  public ODataDeserializerImpl(final ODataClient client) {
-    super(client);
+  public ODataDeserializerImpl(final ODataServiceVersion version) {
+    super(version);
   }
 
   @Override

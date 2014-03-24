@@ -35,7 +35,7 @@ public class EnumTypeDeserializer extends AbstractEdmDeserializer<AbstractEnumTy
   protected AbstractEnumType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEnumType enumType = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEnumType enumType = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EnumTypeImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl();
 

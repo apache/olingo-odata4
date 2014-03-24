@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.op;
 
 import java.io.Serializable;
 import java.net.URI;
-import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Feed;
-import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.Property;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;

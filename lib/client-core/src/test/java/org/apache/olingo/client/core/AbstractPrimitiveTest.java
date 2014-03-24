@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;

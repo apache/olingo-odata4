@@ -35,7 +35,7 @@ public class ComplexTypeDeserializer extends AbstractEdmDeserializer<AbstractCom
   protected AbstractComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractComplexType complexType = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractComplexType complexType = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.ComplexTypeImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.ComplexTypeImpl();
 

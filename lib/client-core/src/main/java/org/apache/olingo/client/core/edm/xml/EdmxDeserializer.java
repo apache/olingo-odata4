@@ -34,7 +34,7 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
   protected AbstractEdmx doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEdmx edmx = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEdmx edmx = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EdmxImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EdmxImpl();
 

@@ -24,21 +24,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Feed;
-import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.data.Property;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.ODataSerializer;
-import org.apache.olingo.client.core.data.AtomEntryImpl;
-import org.apache.olingo.client.core.data.AtomFeedImpl;
-import org.apache.olingo.client.core.data.AtomPropertyImpl;
-import org.apache.olingo.client.core.data.AtomSerializer;
-import org.apache.olingo.client.core.data.JSONEntryImpl;
-import org.apache.olingo.client.core.data.JSONFeedImpl;
-import org.apache.olingo.client.core.data.JSONPropertyImpl;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.core.data.AtomSerializer;
+import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 
 public abstract class AbstractODataSerializer extends AbstractJacksonTool implements ODataSerializer {
 
@@ -46,10 +46,10 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
 
   private final AtomSerializer atomSerializer;
 
-  public AbstractODataSerializer(final CommonODataClient client) {
-    super(client);
+  public AbstractODataSerializer(final ODataServiceVersion version) {
+    super(version);
 
-    this.atomSerializer = new AtomSerializer(client.getServiceVersion());
+    this.atomSerializer = new AtomSerializer(version);
   }
 
   @Override

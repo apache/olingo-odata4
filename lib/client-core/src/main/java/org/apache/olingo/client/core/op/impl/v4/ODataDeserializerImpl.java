@@ -24,19 +24,19 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
-import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.client.core.op.AbstractODataDeserializer;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
   private static final long serialVersionUID = 8593081342440470415L;
 
-  public ODataDeserializerImpl(final ODataClient client) {
-    super(client);
+  public ODataDeserializerImpl(final ODataServiceVersion version) {
+    super(version);
   }
 
   @Override

@@ -41,7 +41,7 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
   protected AbstractSchema doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractSchema schema = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractSchema schema = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.SchemaImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.SchemaImpl();
 
@@ -55,11 +55,11 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
         } else if ("Using".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).
-                  getUsings().add(jp.readValueAs( UsingImpl.class));
+                  getUsings().add(jp.readValueAs(UsingImpl.class));
         } else if ("Association".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).
-                  getAssociations().add(jp.readValueAs( AssociationImpl.class));
+                  getAssociations().add(jp.readValueAs(AssociationImpl.class));
         } else if ("ComplexType".equals(jp.getCurrentName())) {
           jp.nextToken();
           if (schema instanceof org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) {
@@ -96,7 +96,7 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
         } else if ("ValueTerm".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).
-                  getValueTerms().add(jp.readValueAs( ValueTermImpl.class));
+                  getValueTerms().add(jp.readValueAs(ValueTermImpl.class));
         } else if ("EntityContainer".equals(jp.getCurrentName())) {
           jp.nextToken();
 
@@ -105,8 +105,8 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
                     getEntityContainers().add(jp.readValueAs(
                                     org.apache.olingo.client.core.edm.xml.v3.EntityContainerImpl.class));
           } else {
-            org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl entityContainer
-                    = jp.readValueAs(
+            org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl entityContainer =
+                     jp.readValueAs(
                             org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl.class);
             entityContainer.setDefaultEntityContainer(true);
             ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
@@ -126,19 +126,19 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
         } else if ("Action".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getActions().
-                  add(jp.readValueAs( ActionImpl.class));
+                  add(jp.readValueAs(ActionImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotations().
-                  add(jp.readValueAs( AnnotationImpl.class));
+                  add(jp.readValueAs(AnnotationImpl.class));
         } else if ("Function".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getFunctions().
-                  add(jp.readValueAs( FunctionImpl.class));
+                  add(jp.readValueAs(FunctionImpl.class));
         } else if ("TypeDefinition".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
-                  getTypeDefinitions().add(jp.readValueAs( TypeDefinitionImpl.class));
+                  getTypeDefinitions().add(jp.readValueAs(TypeDefinitionImpl.class));
         }
       }
     }

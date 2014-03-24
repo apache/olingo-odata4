@@ -28,8 +28,9 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.Constants;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
 
 public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<AbstractServiceDocument> {
 
@@ -39,7 +40,7 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Ab
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
-    final AbstractServiceDocument serviceDocument = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractServiceDocument serviceDocument = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl()
             : new org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl();
 

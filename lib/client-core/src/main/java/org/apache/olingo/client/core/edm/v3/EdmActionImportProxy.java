@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.edm.v3;
 
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.core.edm.EdmOperationImportImpl;
-import org.apache.olingo.client.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;

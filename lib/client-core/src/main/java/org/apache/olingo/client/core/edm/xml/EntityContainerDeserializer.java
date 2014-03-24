@@ -39,7 +39,7 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<Abstrac
   protected AbstractEntityContainer doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntityContainer entityContainer = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEntityContainer entityContainer = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EntityContainerImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl();
 

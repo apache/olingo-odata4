@@ -35,7 +35,7 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
   protected AbstractParameter doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractParameter parameter = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractParameter parameter = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.ParameterImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.ParameterImpl();
 

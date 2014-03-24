@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.client.core.op;
 
-import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.Feed;
-import org.apache.olingo.client.api.data.Property;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.core.data.AtomEntryImpl;
-import org.apache.olingo.client.core.data.AtomFeedImpl;
-import org.apache.olingo.client.core.data.AtomPropertyImpl;
-import org.apache.olingo.client.core.data.JSONEntryImpl;
-import org.apache.olingo.client.core.data.JSONFeedImpl;
-import org.apache.olingo.client.core.data.JSONPropertyImpl;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 
 public class ResourceFactory {
 

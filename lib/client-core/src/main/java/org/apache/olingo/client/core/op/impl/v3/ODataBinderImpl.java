@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.op.impl.v3;
 
-import org.apache.olingo.client.api.data.v3.LinkCollection;
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
 import org.apache.olingo.client.core.op.AbstractODataBinder;

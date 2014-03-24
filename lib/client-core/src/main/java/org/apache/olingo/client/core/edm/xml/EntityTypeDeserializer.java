@@ -35,7 +35,7 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEnti
   protected AbstractEntityType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntityType entityType = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEntityType entityType = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl();
 

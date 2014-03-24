@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.op;
 
 import java.net.URI;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -32,15 +31,16 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   private static final long serialVersionUID = -3769695665946919447L;
 
-  protected final CommonODataClient client;
+  protected final ODataServiceVersion version;
 
-  public ODataObjectFactoryImpl(final CommonODataClient client) {
-    this.client = client;
+  public ODataObjectFactoryImpl(final ODataServiceVersion version) {
+    this.version = version;
   }
 
   @Override
@@ -69,76 +69,73 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
   public ODataInlineEntitySet newInlineEntitySet(final String name, final URI link,
           final ODataEntitySet entitySet) {
 
-    return new ODataInlineEntitySet(client.getServiceVersion(),
-            link, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
+    return new ODataInlineEntitySet(version, link, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
   public ODataInlineEntitySet newInlineEntitySet(final String name, final URI baseURI, final String href,
           final ODataEntitySet entitySet) {
 
-    return new ODataInlineEntitySet(client.getServiceVersion(),
-            baseURI, href, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
+    return new ODataInlineEntitySet(version, baseURI, href, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
   public ODataInlineEntity newInlineEntity(final String name, final URI link, final ODataEntity entity) {
-    return new ODataInlineEntity(client.getServiceVersion(), link, ODataLinkType.ENTITY_NAVIGATION, name, entity);
+    return new ODataInlineEntity(version, link, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 
   @Override
   public ODataInlineEntity newInlineEntity(final String name, final URI baseURI, final String href,
           final ODataEntity entity) {
 
-    return new ODataInlineEntity(client.getServiceVersion(),
-            baseURI, href, ODataLinkType.ENTITY_NAVIGATION, name, entity);
+    return new ODataInlineEntity(version, baseURI, href, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+    return new ODataLink.Builder().setVersion(version).setURI(link).
             setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newEntityNavigationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+    return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newFeedNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+    return new ODataLink.Builder().setVersion(version).setURI(link).
             setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newFeedNavigationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+    return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newAssociationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+    return new ODataLink.Builder().setVersion(version).setURI(link).
             setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newAssociationLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+    return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
   }
 
   @Override
   public ODataLink newMediaEditLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(link).
+    return new ODataLink.Builder().setVersion(version).setURI(link).
             setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 
   @Override
   public ODataLink newMediaEditLink(final String name, final URI baseURI, final String href) {
-    return new ODataLink.Builder().setVersion(client.getServiceVersion()).setURI(baseURI, href).
+    return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 

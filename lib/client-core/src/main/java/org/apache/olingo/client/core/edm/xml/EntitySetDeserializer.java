@@ -36,7 +36,7 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntit
   protected AbstractEntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEntitySet entitySet = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEntitySet entitySet = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EntitySetImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl();
 

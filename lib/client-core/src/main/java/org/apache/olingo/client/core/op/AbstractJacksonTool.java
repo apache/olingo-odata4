@@ -31,10 +31,8 @@ import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
 import java.io.IOException;
-
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,19 +40,19 @@ abstract class AbstractJacksonTool {
 
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractJacksonTool.class);
 
-  protected final CommonODataClient client;
+  protected final ODataServiceVersion version;
 
-  protected AbstractJacksonTool(final CommonODataClient client) {
-    this.client = client;
+  protected AbstractJacksonTool(final ODataServiceVersion client) {
+    this.version = client;
   }
 
   protected ObjectMapper getObjectMapper() {
     final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    mapper.setInjectableValues(new InjectableValues.Std().addValue(CommonODataClient.class, client));
+    mapper.setInjectableValues(new InjectableValues.Std().addValue(ODataServiceVersion.class, version));
 
     mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-            mapper.getSerializationConfig().withAttribute(CommonODataClient.class, client),
+            mapper.getSerializationConfig().withAttribute(ODataServiceVersion.class, version),
             mapper.getSerializerFactory()));
 
     return mapper;
@@ -64,7 +62,7 @@ abstract class AbstractJacksonTool {
     final XmlMapper xmlMapper = new XmlMapper(
             new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
-    xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(CommonODataClient.class, client));
+    xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(ODataServiceVersion.class, version));
 
     xmlMapper.addHandler(new DeserializationProblemHandler() {
 

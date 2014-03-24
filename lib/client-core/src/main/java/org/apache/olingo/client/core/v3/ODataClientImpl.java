@@ -56,9 +56,9 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   private final FilterFactory filterFactory = new FilterFactoryImpl();
 
-  private final ODataDeserializer deserializer = new ODataDeserializerImpl(this);
+  private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
 
-  private final ODataSerializer serializer = new ODataSerializerImpl(this);
+  private final ODataSerializer serializer = new ODataSerializerImpl(getServiceVersion());
 
   private final ODataReader reader = new ODataReaderImpl(this);
 

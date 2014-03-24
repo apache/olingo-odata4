@@ -38,7 +38,7 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
   protected AbstractProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractProperty property = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractProperty property = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.PropertyImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.PropertyImpl();
 

@@ -32,7 +32,7 @@ public abstract class AbstractODataClient implements CommonODataClient {
 
   private final ODataWriter writer = new ODataWriterImpl(this);
 
-  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(this);
+  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(getServiceVersion());
 
   @Override
   public ODataPrimitiveValueImpl.BuilderImpl getPrimitiveValueBuilder() {
