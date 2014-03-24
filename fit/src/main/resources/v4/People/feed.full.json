@@ -328,5 +328,6 @@
                         "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
                       }
             }
-          ]
+          ],
+  "odata.nextLink": "People?$skiptoken=5"
 }

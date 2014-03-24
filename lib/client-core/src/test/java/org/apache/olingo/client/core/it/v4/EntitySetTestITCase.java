@@ -20,8 +20,10 @@ package org.apache.olingo.client.core.it.v4;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
@@ -29,6 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.op.ResourceFactory;
@@ -105,12 +108,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
             ODataPubFormat.ATOM == format)), "Just retrieved feed");
 
     assertEquals(5, feed.getEntities().size());
-//    assertNotNull(feed.getNext());
+    assertNotNull(feed.getNext());
 
-//    final URI expected = URI.create(getServiceRoot() + "/Customer?$skiptoken=-9");
-//    final URI found = URIUtils.getURI(getServiceRoot(), feed.getNext().toASCIIString());
+    final URI expected = URI.create(getServiceRoot() + "/People?$skiptoken=5");
+    final URI found = URIUtils.getURI(getServiceRoot(), feed.getNext().toASCIIString());
 
-//    assertEquals(expected, found);
+    assertEquals(expected, found);
   }
 
   private void readODataEntitySetIterator(final ODataPubFormat format) {
@@ -133,7 +136,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
       count++;
     }
     assertEquals(5, count);
-//    assertTrue(feedIterator.getNext().toASCIIString().endsWith("Customer?$skiptoken=-9"));
+    assertTrue(feedIterator.getNext().toASCIIString().endsWith("People?$skiptoken=5"));
   }
 
   private void rawRequest(final ODataPubFormat format) {

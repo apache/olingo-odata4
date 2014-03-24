@@ -215,4 +215,5 @@
       </m:properties>
     </content>
   </entry>
+  <link rel="next" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People?$skiptoken=5"/>
 </feed>
