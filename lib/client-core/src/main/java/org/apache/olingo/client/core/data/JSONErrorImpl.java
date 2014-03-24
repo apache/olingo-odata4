@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
  * This class represents an OData error returned as JSON.

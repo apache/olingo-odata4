@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;

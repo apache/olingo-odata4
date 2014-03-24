@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 import java.util.Map;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
  * This class represents an OData error returned as JSON.

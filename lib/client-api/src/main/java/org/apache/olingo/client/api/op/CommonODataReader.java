@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataProperty;

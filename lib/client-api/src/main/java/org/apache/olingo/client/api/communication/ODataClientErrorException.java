@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.StatusLine;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
  * Represents a client error in OData.

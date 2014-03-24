@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.op;
 import java.io.InputStream;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.Entry;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;

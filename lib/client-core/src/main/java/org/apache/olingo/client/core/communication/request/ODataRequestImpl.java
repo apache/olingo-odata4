@@ -50,7 +50,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.data.JSONErrorImpl;
 import org.apache.olingo.client.core.data.XMLErrorImpl;
-import org.apache.olingo.client.api.data.ODataError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
