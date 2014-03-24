@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.client.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 
 /**
  * This class implements a response to a specific invoke request.

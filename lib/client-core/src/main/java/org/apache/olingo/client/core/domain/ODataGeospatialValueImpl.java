@@ -20,8 +20,8 @@ package org.apache.olingo.client.core.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.olingo.client.api.domain.AbstractODataValue;
-import org.apache.olingo.client.api.domain.ODataGeospatialValue;
+import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
 import org.apache.olingo.commons.api.edm.EdmGeospatialType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;

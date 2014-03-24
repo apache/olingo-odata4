@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 
 /**

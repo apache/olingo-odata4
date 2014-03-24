@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain;
+package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
- * OData in-line entity set.
+ * OData in-line entity.
  */
-public class ODataInlineEntitySet extends ODataLink {
+public class ODataInlineEntity extends ODataLink {
 
-  private static final long serialVersionUID = -77628001615355449L;
+  private static final long serialVersionUID = -4763341581843700743L;
 
-  private ODataEntitySet entitySet;
+  private final ODataEntity entity;
 
   /**
    * Constructor.
@@ -37,13 +37,13 @@ public class ODataInlineEntitySet extends ODataLink {
    * @param uri edit link.
    * @param type type.
    * @param title title.
-   * @param entitySet entity set.
+   * @param entity entity.
    */
-  public ODataInlineEntitySet(final ODataServiceVersion version, final URI uri, final ODataLinkType type,
-          final String title, final ODataEntitySet entitySet) {
+  public ODataInlineEntity(final ODataServiceVersion version,
+          final URI uri, final ODataLinkType type, final String title, final ODataEntity entity) {
 
     super(version, uri, type, title);
-    this.entitySet = entitySet;
+    this.entity = entity;
   }
 
   /**
@@ -54,21 +54,21 @@ public class ODataInlineEntitySet extends ODataLink {
    * @param href href.
    * @param type type.
    * @param title title.
-   * @param entitySet entity set.
+   * @param entity entity.
    */
-  public ODataInlineEntitySet(final ODataServiceVersion version, final URI baseURI, final String href,
-          final ODataLinkType type, final String title, final ODataEntitySet entitySet) {
+  public ODataInlineEntity(final ODataServiceVersion version, final URI baseURI, final String href,
+          final ODataLinkType type, final String title, final ODataEntity entity) {
 
     super(version, baseURI, href, type, title);
-    this.entitySet = entitySet;
+    this.entity = entity;
   }
 
   /**
-   * Gets wrapped entity set.
+   * Gets wrapped entity.
    *
-   * @return wrapped entity set.
+   * @return wrapped entity.
    */
-  public ODataEntitySet getEntitySet() {
-    return entitySet;
+  public ODataEntity getEntity() {
+    return entity;
   }
 }

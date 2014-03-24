@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.v3.LinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v3.ODataDeserializer;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.data.v3.JSONLinkCollectionImpl;

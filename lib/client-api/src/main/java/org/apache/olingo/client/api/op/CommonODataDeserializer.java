@@ -26,8 +26,8 @@ import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * Utility class for serialization.

@@ -16,52 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.format;
-
-import org.apache.http.entity.ContentType;
+package org.apache.olingo.commons.api.format;
 
 /**
- * Available formats for property values.
+ * Available formats for media.
  */
-public enum ODataValueFormat {
+public enum ODataMediaFormat {
 
-  /**
-   * Application octet stream.
-   */
-  STREAM(ContentType.APPLICATION_OCTET_STREAM.getMimeType()),
-  /**
-   * Plain text format.
-   */
-  TEXT(ContentType.TEXT_PLAIN.getMimeType());
+  CHARSET_PARAMETER("charset"),
+  MEDIA_TYPE_WILDCARD("*"),
+  WILDCARD(ContentType.WILDCARD),
+  APPLICATION_XML(ContentType.APPLICATION_XML),
+  APPLICATION_ATOM_XML(ContentType.APPLICATION_ATOM_XML),
+  APPLICATION_XHTML_XML(ContentType.APPLICATION_XHTML_XML),
+  APPLICATION_SVG_XML(ContentType.APPLICATION_SVG_XML),
+  APPLICATION_JSON(ContentType.APPLICATION_JSON),
+  APPLICATION_FORM_URLENCODED(ContentType.APPLICATION_FORM_URLENCODED),
+  MULTIPART_FORM_DATA(ContentType.MULTIPART_FORM_DATA),
+  APPLICATION_OCTET_STREAM(ContentType.APPLICATION_OCTET_STREAM),
+  TEXT_PLAIN(ContentType.TEXT_PLAIN),
+  TEXT_XML(ContentType.TEXT_XML),
+  TEXT_HTML(ContentType.TEXT_HTML);
 
   private final String format;
 
-  ODataValueFormat(final String format) {
+  private ODataMediaFormat(final String format) {
     this.format = format;
   }
 
-  /**
-   * Gets format as a string.
-   *
-   * @return format as a string.
-   */
   @Override
   public String toString() {
     return format;
   }
 
-  /**
-   * Gets format from its string representation.
-   *
-   * @param format string representation of the format.
-   * @return OData format.
-   */
-  public static ODataValueFormat fromString(final String format) {
+  public static ODataMediaFormat fromFormat(final String format) {
     final String _format = format.split(";")[0];
 
-    ODataValueFormat result = null;
+    ODataMediaFormat result = null;
 
-    for (ODataValueFormat value : values()) {
+    for (ODataMediaFormat value : values()) {
       if (_format.equals(value.toString())) {
         result = value;
       }

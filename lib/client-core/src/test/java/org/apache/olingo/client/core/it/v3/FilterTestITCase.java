@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.it.v3;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.olingo.client.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 

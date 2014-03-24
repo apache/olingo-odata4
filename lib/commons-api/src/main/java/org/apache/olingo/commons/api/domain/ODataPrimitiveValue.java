@@ -16,34 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain;
+package org.apache.olingo.commons.api.domain;
 
-import org.apache.olingo.commons.api.edm.EdmGeospatialType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
-public interface ODataGeospatialValue extends ODataValue {
+public interface ODataPrimitiveValue extends ODataValue {
 
   interface Builder {
 
     Builder setType(EdmPrimitiveTypeKind type);
 
-    Builder setValue(Geospatial value);
+    Builder setText(String text);
 
-    ODataGeospatialValue build();
+    Builder setValue(Object value);
 
+    ODataPrimitiveValue build();
   }
 
   EdmPrimitiveTypeKind getTypeKind();
 
-  EdmGeospatialType getType();
+  EdmPrimitiveType getType();
 
   /**
-   * Returns the current geospatial value.
+   * Returns the current value as generic Object.
    *
-   * @return the current geospatial value.
+   * @return an uncasted instance of this value
    */
-  Geospatial toValue();
+  Object toValue();
 
   /**
    * Returns the current value casted to the given type.
@@ -51,7 +52,16 @@ public interface ODataGeospatialValue extends ODataValue {
    * @param <T> cast type
    * @param reference class reference
    * @return the current value as typed java instance
+   * @throws EdmPrimitiveTypeException if the object is not assignable to the type T.
    */
-  <T extends Geospatial> T toCastValue(Class<T> reference);
+  <T> T toCastValue(Class<T> reference) throws EdmPrimitiveTypeException;
+
+  /**
+   * Serialize the current value as String.
+   *
+   * @return a String representation of this value
+   */
+  @Override
+  String toString();
 
 }

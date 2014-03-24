@@ -32,9 +32,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataLinkUpdateReq
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.junit.Test;

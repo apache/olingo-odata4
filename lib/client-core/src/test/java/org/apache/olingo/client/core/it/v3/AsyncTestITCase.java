@@ -35,8 +35,8 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEnt
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Ignore;
 import org.junit.Test;

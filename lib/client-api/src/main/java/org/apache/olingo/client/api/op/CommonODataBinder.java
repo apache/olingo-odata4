@@ -25,11 +25,11 @@ import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 
 public interface CommonODataBinder extends Serializable {
 

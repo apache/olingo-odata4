@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData create request.

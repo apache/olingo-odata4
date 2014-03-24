@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityUpdateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
-import org.apache.olingo.client.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;

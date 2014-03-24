@@ -30,7 +30,7 @@ import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.Property;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.ODataSerializer;
 import org.apache.olingo.client.core.data.AtomEntryImpl;
 import org.apache.olingo.client.core.data.AtomFeedImpl;

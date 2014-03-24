@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.format;
-
-import org.apache.http.entity.ContentType;
+package org.apache.olingo.commons.api.format;
 
 /**
  * Available formats to be used in various contexts.
@@ -28,19 +26,19 @@ public enum ODataFormat {
   /**
    * JSON format with no metadata.
    */
-  JSON_NO_METADATA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=nometadata"),
+  JSON_NO_METADATA(ContentType.APPLICATION_JSON + ";odata=nometadata"),
   /**
    * JSON format with minimal metadata (default).
    */
-  JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata=minimalmetadata"),
+  JSON(ContentType.APPLICATION_JSON + ";odata=minimalmetadata"),
   /**
    * JSON format with no metadata.
    */
-  JSON_FULL_METADATA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=fullmetadata"),
+  JSON_FULL_METADATA(ContentType.APPLICATION_JSON + ";odata=fullmetadata"),
   /**
    * XML format.
    */
-  XML(ContentType.APPLICATION_XML.getMimeType());
+  XML(ContentType.APPLICATION_XML);
 
   private final String format;
 
@@ -71,7 +69,7 @@ public enum ODataFormat {
 
     final String[] parts = format.split(";");
     _format.append(parts[0].trim());
-    if (ContentType.APPLICATION_JSON.getMimeType().equals(parts[0].trim())) {
+    if (ContentType.APPLICATION_JSON.equals(parts[0].trim())) {
       if (parts.length > 1) {
         _format.append(';').append(parts[1].trim());
       } else {

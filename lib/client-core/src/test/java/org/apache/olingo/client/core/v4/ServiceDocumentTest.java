@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.api.domain.ODataServiceDocument;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.junit.Test;
 

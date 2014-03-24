@@ -24,10 +24,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.olingo.client.api.CommonConfiguration;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataMediaFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;

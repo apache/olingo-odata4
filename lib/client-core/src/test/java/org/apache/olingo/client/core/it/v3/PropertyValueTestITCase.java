@@ -24,9 +24,9 @@ import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataValue;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 

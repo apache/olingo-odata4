@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.communication.request.streamed;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * Abstract class representing a request concerning a streamed entity.

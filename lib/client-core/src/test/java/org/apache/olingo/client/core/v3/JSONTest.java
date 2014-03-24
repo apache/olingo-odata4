@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 public class JSONTest extends AtomTest {
 

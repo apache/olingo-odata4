@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.client.api.op.ODataWriter;
 import org.apache.olingo.client.core.domain.ODataGeospatialValueImpl;
 import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;

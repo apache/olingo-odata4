@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Feed;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.Property;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Utility class for serialization.

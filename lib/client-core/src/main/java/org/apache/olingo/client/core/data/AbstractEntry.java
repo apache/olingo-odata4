@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.Property;
-import org.apache.olingo.client.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 
 /**
  * Abstract base for classes implementing an OData entry in Atom and JSON.

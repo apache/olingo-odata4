@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.retrieve.v3;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData link query request.

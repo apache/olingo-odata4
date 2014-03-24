@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.CollectionValue;
 import org.apache.olingo.client.api.data.ComplexValue;
 import org.apache.olingo.client.api.data.Value;
-import org.apache.olingo.client.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.client.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 

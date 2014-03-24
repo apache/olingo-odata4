@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Link;
-import org.apache.olingo.client.api.domain.ODataLinkType;
-import org.apache.olingo.client.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**

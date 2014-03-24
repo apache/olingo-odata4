@@ -31,7 +31,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.Constants;
-import org.apache.olingo.client.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

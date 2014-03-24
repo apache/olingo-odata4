@@ -25,11 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.op.ODataWriter;
 
 public class ODataWriterImpl implements ODataWriter {

@@ -20,18 +20,18 @@ package org.apache.olingo.client.core.op;
 
 import java.net.URI;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.domain.ODataLinkType;
-import org.apache.olingo.client.api.domain.ODataCollectionValue;
-import org.apache.olingo.client.api.domain.ODataComplexValue;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataEntitySet;
-import org.apache.olingo.client.api.domain.ODataGeospatialValue;
-import org.apache.olingo.client.api.domain.ODataInlineEntity;
-import org.apache.olingo.client.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataObjectFactory;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
 
 public class ODataObjectFactoryImpl implements ODataObjectFactory {
 

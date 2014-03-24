@@ -35,11 +35,11 @@ import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateRe
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
-import org.apache.olingo.client.api.domain.ODataCollectionValue;
-import org.apache.olingo.client.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;

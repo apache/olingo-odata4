@@ -36,10 +36,10 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.format.ODataMediaFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 

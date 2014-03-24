@@ -32,7 +32,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.client.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;

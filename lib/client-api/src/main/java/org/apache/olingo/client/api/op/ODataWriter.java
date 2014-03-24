@@ -21,11 +21,11 @@ package org.apache.olingo.client.api.op;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
-import org.apache.olingo.client.api.domain.ODataEntity;
-import org.apache.olingo.client.api.domain.ODataLink;
-import org.apache.olingo.client.api.domain.ODataProperty;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * OData writer.

@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.op.impl.v4;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
-import org.apache.olingo.client.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.v4.ODataClient;

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 /**
  * Constant values related to the OData protocol.
  */
-public class Constants {
+public interface Constants {
 
   // Other stuff
   public final static String UTF8 = "UTF-8";

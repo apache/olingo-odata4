@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain;
+package org.apache.olingo.commons.api.domain;
 
 /**
  * Marker interface for any OData domain object that can be returned by an operation invocation.

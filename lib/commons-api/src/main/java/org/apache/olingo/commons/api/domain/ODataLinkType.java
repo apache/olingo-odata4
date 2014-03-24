@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.domain;
+package org.apache.olingo.commons.api.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.olingo.client.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * OData link types.
@@ -39,7 +39,7 @@ public enum ODataLinkType {
   /**
    * Association link.
    */
-  ASSOCIATION(ContentType.APPLICATION_XML.getMimeType()),
+  ASSOCIATION(ContentType.APPLICATION_XML),
   /**
    * Media-edit link.
    */
@@ -59,7 +59,7 @@ public enum ODataLinkType {
   /**
    * Gets <code>LinkType</code> instance from the given rel and type.
    *
-   * @param client OData client.
+   * @param version OData protocol version.
    * @param rel rel.
    * @param type type.
    * @return <code>ODataLinkType</code> object.

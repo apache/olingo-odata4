@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;

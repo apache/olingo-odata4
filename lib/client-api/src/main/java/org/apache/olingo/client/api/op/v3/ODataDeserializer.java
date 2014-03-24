@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
 import org.apache.olingo.client.api.data.v3.LinkCollection;
-import org.apache.olingo.client.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.CommonODataDeserializer;
 
 public interface ODataDeserializer extends CommonODataDeserializer {

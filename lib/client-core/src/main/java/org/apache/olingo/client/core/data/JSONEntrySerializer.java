@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.Constants;
 import org.apache.olingo.client.api.data.Entry;
 import org.apache.olingo.client.api.data.Link;
 import org.apache.olingo.client.api.data.Property;
-import org.apache.olingo.client.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 
 /**
  * Writes out JSON string from an entry.

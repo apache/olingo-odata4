@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.Edm;
 
 /**

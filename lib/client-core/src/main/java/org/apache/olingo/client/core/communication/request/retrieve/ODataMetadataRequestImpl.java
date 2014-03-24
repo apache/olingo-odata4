@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.edm.Edm;
 
 /**
