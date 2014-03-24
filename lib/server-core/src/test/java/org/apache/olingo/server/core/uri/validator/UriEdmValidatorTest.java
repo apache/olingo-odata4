@@ -58,6 +58,8 @@ public class UriEdmValidatorTest {
       "/ESCollAllPrim/CollPropertyString/$count";
   private static final String URI_PROPERTY_PRIMITIVE_VALUE = "/ESAllPrim(1)/PropertyString/$value";
   private static final String URI_SINGLETON = "/SI";
+  private static final String URI_NAV_ENTITY = "/ESKeyNav/NavPropertyETKeyNavOne";
+  private static final String URI_NAV_ENTITY_SET = "/ESKeyNav/NavPropertyETKeyNavMany";
 
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla";
@@ -125,6 +127,14 @@ public class UriEdmValidatorTest {
 
       { URI_SINGLETON, QO_FORMAT }, { URI_SINGLETON, QO_EXPAND }, { URI_SINGLETON, QO_SELECT },
       { URI_SINGLETON, QO_LEVELS },
+
+      { URI_NAV_ENTITY, QO_FORMAT }, { URI_NAV_ENTITY, QO_EXPAND }, { URI_NAV_ENTITY, QO_SELECT },
+      { URI_NAV_ENTITY, QO_LEVELS },
+
+      { URI_NAV_ENTITY_SET, QO_FILTER, }, { URI_NAV_ENTITY_SET, QO_FORMAT }, { URI_NAV_ENTITY_SET, QO_EXPAND },
+      { URI_NAV_ENTITY_SET, QO_COUNT }, /* { URI_NAV_ENTITY_SET, QO_ORDERBY }, */
+      /* { URI_NAV_ENTITY_SET, QO_SEARCH }, */{ URI_NAV_ENTITY_SET, QO_SELECT }, { URI_NAV_ENTITY_SET, QO_SKIP },
+      { URI_NAV_ENTITY_SET, QO_SKIPTOKEN }, { URI_NAV_ENTITY_SET, QO_LEVELS }, { URI_NAV_ENTITY_SET, QO_TOP },
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {
@@ -217,6 +227,14 @@ public class UriEdmValidatorTest {
       { URI_SINGLETON, QO_FILTER }, { URI_SINGLETON, QO_ID }, { URI_SINGLETON, QO_COUNT },
       /* { URI_SINGLETON, QO_ORDERBY }, *//* { URI_SINGLETON, QO_SEARCH }, */{ URI_SINGLETON, QO_SKIP },
       { URI_SINGLETON, QO_SKIPTOKEN }, { URI_SINGLETON, QO_TOP },
+
+      { URI_NAV_ENTITY, QO_FILTER }, { URI_NAV_ENTITY, QO_ID }, { URI_NAV_ENTITY, QO_COUNT },
+      /* { URI_NAV_ENTITY, QO_ORDERBY }, *//* { URI_NAV_ENTITY, QO_SEARCH }, */{ URI_NAV_ENTITY, QO_SKIP },
+      { URI_NAV_ENTITY, QO_SKIPTOKEN }, { URI_SINGLETON, QO_TOP },
+      
+      { URI_NAV_ENTITY_SET, QO_ID },
+
+
   };
   private Parser parser;
 
@@ -229,7 +247,7 @@ public class UriEdmValidatorTest {
 //  @Ignore
       public
       void bla() throws Exception {
-    String[][] m = { { URI_SINGLETON, QO_SELECT } };
+    String[][] m = { { URI_NAV_ENTITY_SET, QO_SELECT } };
     String[] uris = constructUri(m);
     System.out.println(uris[0]);
 

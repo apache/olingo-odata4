@@ -20,6 +20,10 @@ package org.apache.olingo.server.core.uri.validator;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
@@ -146,9 +150,9 @@ public class SystemQueryValidator {
     int idx = 5;
 
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
-    UriResource lastPathSegemnt = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
+    UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
-    switch (lastPathSegemnt.getKind()) {
+    switch (lastPathSegment.getKind()) {
     case count: {
       int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
       UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
@@ -163,34 +167,34 @@ public class SystemQueryValidator {
         idx = 18;
         break;
       default:
-        throw new UriValidationException("Illegal path part kind: " + lastPathSegemnt.getKind());
+        throw new UriValidationException("Illegal path part kind: " + lastPathSegment.getKind());
       }
     }
       break;
     case action:
       break;
     case complexProperty:
-      if (lastPathSegemnt instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
+      if (lastPathSegment instanceof UriResourcePartTyped) {
+        if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
           idx = 14;
         } else {
           idx = 13;
         }
       } else {
         throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-            + lastPathSegemnt.getClass());
+            + lastPathSegment.getClass());
       }
       break;
     case entitySet:
-      if (lastPathSegemnt instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
+      if (lastPathSegment instanceof UriResourcePartTyped) {
+        if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
           idx = 7;
         } else {
           idx = 9;
         }
       } else {
         throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-            + lastPathSegemnt.getClass());
+            + lastPathSegment.getClass());
       }
       break;
     case function:
@@ -203,18 +207,29 @@ public class SystemQueryValidator {
       break;
     case lambdaVariable:
       break;
-    case navigationProperty:
+    case navigationProperty: {
+      int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
+      UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
+
+      EdmEntitySet entitySet = edm.getEntityContainer(null).getEntitySet(secondLastPathSegment.toString());
+      EdmNavigationProperty navProp = entitySet.getEntityType().getNavigationProperty(lastPathSegment.toString());
+      if (navProp.isCollection()) {
+        idx = 7;
+      } else {
+        idx = 9;
+      }
+    }
       break;
     case primitiveProperty:
-      if (lastPathSegemnt instanceof UriResourcePartTyped) {
-        if (((UriResourcePartTyped) lastPathSegemnt).isCollection()) {
+      if (lastPathSegment instanceof UriResourcePartTyped) {
+        if (((UriResourcePartTyped) lastPathSegment).isCollection()) {
           idx = 17;
         } else {
           idx = 16;
         }
       } else {
         throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-            + lastPathSegemnt.getClass());
+            + lastPathSegment.getClass());
       }
 
       break;
@@ -230,7 +245,7 @@ public class SystemQueryValidator {
         }
       } else {
         throw new UriValidationException("secondLastPathSegment not a class of UriResourcePartTyped: "
-            + lastPathSegemnt.getClass());
+            + lastPathSegment.getClass());
       }
     }
       break;
@@ -256,7 +271,7 @@ public class SystemQueryValidator {
     }
       break;
     default:
-      throw new ODataRuntimeException("Unsupported uriResource kind: " + lastPathSegemnt.getKind());
+      throw new ODataRuntimeException("Unsupported uriResource kind: " + lastPathSegment.getKind());
     }
 
     return idx;
