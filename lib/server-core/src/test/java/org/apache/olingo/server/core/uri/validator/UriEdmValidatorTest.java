@@ -30,7 +30,6 @@ import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class UriEdmValidatorTest {
@@ -143,14 +142,13 @@ public class UriEdmValidatorTest {
       { "FICRTCTTwoPrim()" },
       { "FICRTCollCTTwoPrim()" },
       { "FICRTETMedia()" },
-      
+
       { "ESTwoKeyNav/com.sap.odata.test1.BAESTwoKeyNavRTESTwoKeyNav" },
       { "ESAllPrim/com.sap.odata.test1.BAESAllPrimRTETAllPrim" },
       { "AIRTPrimCollParam" },
       { "AIRTETParam" },
       { "AIRTPrimParam" },
 
-      
   };
 
   private String[][] urisWithNonValidSystemQueryOptions = {
@@ -251,6 +249,7 @@ public class UriEdmValidatorTest {
       { URI_NAV_ENTITY_SET, QO_ID },
 
   };
+  
   private Parser parser;
 
   @Before
@@ -259,12 +258,11 @@ public class UriEdmValidatorTest {
   }
 
 //  @Test
-////  @Ignore
+//  @Ignore
 //      public
 //      void bla() throws Exception {
 //    String[][] m = {
-//        { "" },
-//        { "" },
+//        { "/ESMedia(1)/$value?$filter='1' eq '1'" },
 //    };
 //    String[] uris = constructUri(m);
 //    for (String uri : uris) {
@@ -273,7 +271,7 @@ public class UriEdmValidatorTest {
 //      parseAndValidate(uri);
 //    }
 //  }
-//
+
   @Test
   public void checkValidSystemQueryOption() throws Exception {
     String[] uris = constructUri(urisWithValidSystemQueryOptions);
@@ -321,7 +319,7 @@ public class UriEdmValidatorTest {
 
   private void parseAndValidate(String uri) throws UriParserException, UriValidationException {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
-    SystemQueryValidator validator = new SystemQueryValidator();
+    UriValidator validator = new UriValidator();
 
     System.out.print("URI: " + uri);
     validator.validate(uriInfo, edm);
