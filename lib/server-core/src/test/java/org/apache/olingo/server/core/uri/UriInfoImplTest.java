@@ -36,8 +36,8 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriInfoService;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
@@ -192,7 +192,7 @@ public class UriInfoImplTest {
   @Test
   public void testEntityTypeCast() {
     UriInfoImpl uriInfo = new UriInfoImpl();
-    EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
+    EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
     assertNotNull(entityType);
 
     uriInfo.setEntityTypeCast(entityType);

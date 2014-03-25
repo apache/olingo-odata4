@@ -36,8 +36,11 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.core.testutil.techprovider.ActionProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EnumTypeProvider;
+import org.apache.olingo.server.core.testutil.techprovider.FunctionProvider;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
@@ -94,7 +97,7 @@ public class ExpressionTest {
   @Test
   public void testEnumerationExpression() throws ExpressionVisitException, ODataApplicationException {
     EnumerationImpl expression = new EnumerationImpl();
-    EdmEnumType type = (EdmEnumType) edm.getEnumType(EdmTechProvider.nameENString);
+    EdmEnumType type = (EdmEnumType) edm.getEnumType(EnumTypeProvider.nameENString);
     assertNotNull(type);
     expression.setType(type);
 
@@ -129,10 +132,10 @@ public class ExpressionTest {
   @Test
   public void testMemberExpression() throws ExpressionVisitException, ODataApplicationException {
     MemberImpl expression = new MemberImpl();
-    EdmEntityType entityType = edm.getEntityType(EdmTechProvider.nameETKeyNav);
+    EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
 
     // UriResourceImplTyped
-    EdmAction action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
+    EdmAction action = edm.getAction(ActionProvider.nameUARTPrimParam, null, null);
     UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
     expression.setResourcePath(uriInfo);
@@ -146,29 +149,29 @@ public class ExpressionTest {
     assertEquals(false, expression.isCollection());
 
     // UriResourceImplTyped check collection = true case
-    action = edm.getAction(EdmTechProvider.nameUARTPrimCollParam, null, null);
+    action = edm.getAction(ActionProvider.nameUARTPrimCollParam, null, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
     assertEquals(true, expression.isCollection());
 
     // UriResourceImplTyped with filter
-    action = edm.getAction(EdmTechProvider.nameUARTPrimParam, null, null);
+    action = edm.getAction(ActionProvider.nameUARTPrimParam, null, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
         .asUriInfoResource());
     assertEquals(entityType, expression.getType());
 
     // UriResourceImplKeyPred
-    EdmFunction function = edm.getFunction(EdmTechProvider.nameUFCRTETKeyNav, null, null, null);
+    EdmFunction function = edm.getFunction(FunctionProvider.nameUFCRTETKeyNav, null, null, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function))
         .asUriInfoResource());
     assertEquals(function.getReturnType().getType(), expression.getType());
 
     // UriResourceImplKeyPred typeFilter on entry
-    EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
+    EdmEntityType entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
+    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityBaseType))
@@ -176,8 +179,8 @@ public class ExpressionTest {
     assertEquals(entityBaseType, expression.getType());
 
     // UriResourceImplKeyPred typeFilter on entry
-    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
+    entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
+    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setCollectionTypeFilter(entityBaseType))
@@ -185,8 +188,8 @@ public class ExpressionTest {
     assertEquals(entityBaseType, expression.getType());
 
     // no typed
-    entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(EdmTechProvider.nameUFCRTESTwoKeyNavParam, null, null,
+    entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
+    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
         Arrays.asList(("ParameterInt16")));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.all));
     assertEquals(null, expression.getType());
@@ -215,7 +218,7 @@ public class ExpressionTest {
   @Test
   public void testTypeLiteralExpression() throws ExpressionVisitException, ODataApplicationException {
     TypeLiteralImpl expression = new TypeLiteralImpl();
-    EdmEntityType entityBaseType = edm.getEntityType(EdmTechProvider.nameETBaseTwoKeyNav);
+    EdmEntityType entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
     expression.setType(entityBaseType);
 
     assertEquals(entityBaseType, expression.getType());

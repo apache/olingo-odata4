@@ -28,8 +28,8 @@ import org.apache.olingo.server.api.ODataServer;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.StringUtils;
+import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
 import org.junit.Test;
 
 public class MetadataDocumentTest {

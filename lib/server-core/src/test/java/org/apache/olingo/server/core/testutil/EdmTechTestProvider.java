@@ -23,11 +23,13 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.Property;
 import org.apache.olingo.server.api.edm.provider.PropertyRef;
+import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
 
 /**
  * Implement the EdmTechProvider and
@@ -37,6 +39,10 @@ import org.apache.olingo.server.api.edm.provider.PropertyRef;
  */
 public class EdmTechTestProvider extends EdmTechProvider {
 
+  private static final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
+  public static final String nameSpace = "com.sap.odata.test1";
+  public static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
+  
   Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
   Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
   Property propertyCInt16 = new Property().setName("c").setType(nameInt16);
