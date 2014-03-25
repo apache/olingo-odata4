@@ -59,10 +59,22 @@ public class UriValidator {
           /* propertyPrimitiveCollectionCount 18 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },
           /*           propertyPrimitiveValue 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false,    false },                    
       };
+
+  private boolean[][] decisionMatrixForHttpMethod =
+    {
+        /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-LEVELS 11-TOP */
+        /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true ,    true },
+        /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     true ,    false },
+        /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
+        /*                           DELETE  0 */ { false ,  false ,  false ,  false,   false ,  false,    false ,  false,   false ,  false ,     false,    false },
+        /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
+        /*                            MERGE  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
+    };
+  
   //CHECKSTYLE:ON
   //@formatter:on
 
-  private enum RowIndex {
+  private enum RowIndexForUriType {
     all(0),
     batch(1),
     crossjoin(2),
@@ -86,7 +98,7 @@ public class UriValidator {
 
     private int idx;
 
-    RowIndex(int i) {
+    RowIndexForUriType(int i) {
       idx = i;
     }
 
@@ -121,8 +133,29 @@ public class UriValidator {
 
   }
 
-  public void validate(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
+  private enum RowIndexForHttpMethod {
+    GET(0),
+    POST(1),
+    PUT(2),
+    DELETE(3),
+    MERGE(4),
+    PATCH(5);
 
+    private int idx;
+
+    RowIndexForHttpMethod(int i) {
+      idx = i;
+    }
+
+    public int getIndex() {
+      return idx;
+    }
+
+  }
+
+  public void validate(final UriInfo uriInfo, final Edm edm, String httpMethod) throws UriValidationException {
+
+    validateForHttpMethod(uriInfo, httpMethod);
     validateQueryOptions(uriInfo, edm);
     validateKeyPredicateTypes(uriInfo, edm);
 
@@ -174,30 +207,30 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndex(final UriInfo uriInfo, Edm edm) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForUriType(final UriInfo uriInfo, Edm edm) throws UriValidationException {
+    RowIndexForUriType idx;
 
     switch (uriInfo.getKind()) {
     case all:
-      idx = RowIndex.all;
+      idx = RowIndexForUriType.all;
       break;
     case batch:
-      idx = RowIndex.batch;
+      idx = RowIndexForUriType.batch;
       break;
     case crossjoin:
-      idx = RowIndex.crossjoin;
+      idx = RowIndexForUriType.crossjoin;
       break;
     case entityId:
-      idx = RowIndex.entityId;
+      idx = RowIndexForUriType.entityId;
       break;
     case metadata:
-      idx = RowIndex.metadata;
+      idx = RowIndexForUriType.metadata;
       break;
     case resource:
       idx = rowIndexForResourceKind(uriInfo, edm);
       break;
     case service:
-      idx = RowIndex.service;
+      idx = RowIndexForUriType.service;
       break;
     default:
       throw new ODataRuntimeException("Unsupported uriInfo kind: " + uriInfo.getKind());
@@ -206,8 +239,8 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForResourceKind(UriInfo uriInfo, Edm edm) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForResourceKind(UriInfo uriInfo, Edm edm) throws UriValidationException {
+    RowIndexForUriType idx;
 
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
@@ -229,7 +262,9 @@ public class UriValidator {
       idx = rowIndexForFunction(lastPathSegment);
       break;
     case navigationProperty:
-      idx = ((UriResourceNavigation) lastPathSegment).isCollection() ? RowIndex.entitySet : RowIndex.entity;
+      idx =
+          ((UriResourceNavigation) lastPathSegment).isCollection() ? RowIndexForUriType.entitySet
+              : RowIndexForUriType.entity;
       break;
     case primitiveProperty:
       idx = rowIndexForPrimitiveProperty(lastPathSegment);
@@ -238,10 +273,10 @@ public class UriValidator {
       idx = rowIndexForRef(uriInfo, lastPathSegment);
       break;
     case root:
-      idx = RowIndex.service;
+      idx = RowIndexForUriType.service;
       break;
     case singleton:
-      idx = RowIndex.entity;
+      idx = RowIndexForUriType.entity;
       break;
     case value:
       idx = rowIndexForValue(uriInfo);
@@ -253,16 +288,16 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForValue(UriInfo uriInfo) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForValue(UriInfo uriInfo) throws UriValidationException {
+    RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
     switch (secondLastPathSegment.getKind()) {
     case primitiveProperty:
-      idx = RowIndex.propertyPrimitiveValue;
+      idx = RowIndexForUriType.propertyPrimitiveValue;
       break;
     case entitySet:
-      idx = RowIndex.mediaStream;
+      idx = RowIndexForUriType.mediaStream;
       break;
     default:
       throw new UriValidationException("Unexpected kind in path segment before $value: "
@@ -272,14 +307,16 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForRef(UriInfo uriInfo, UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForRef(UriInfo uriInfo, UriResource lastPathSegment)
       throws UriValidationException {
-    RowIndex idx;
+    RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
 
     if (secondLastPathSegment instanceof UriResourcePartTyped) {
-      idx = ((UriResourcePartTyped) secondLastPathSegment).isCollection() ? RowIndex.references : RowIndex.reference;
+      idx =
+          ((UriResourcePartTyped) secondLastPathSegment).isCollection() ? RowIndexForUriType.references
+              : RowIndexForUriType.reference;
     } else {
       throw new UriValidationException("secondLastPathSegment not a class of UriResourcePartTyped: "
           + lastPathSegment.getClass());
@@ -288,13 +325,13 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForPrimitiveProperty(UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForPrimitiveProperty(UriResource lastPathSegment)
       throws UriValidationException {
-    RowIndex idx;
+    RowIndexForUriType idx;
     if (lastPathSegment instanceof UriResourcePartTyped) {
       idx =
-          ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndex.propertyPrimitiveCollection
-              : RowIndex.propertyPrimitive;
+          ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndexForUriType.propertyPrimitiveCollection
+              : RowIndexForUriType.propertyPrimitive;
     } else {
       throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
           + lastPathSegment.getClass());
@@ -302,23 +339,23 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForFunction(UriResource lastPathSegment) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForFunction(UriResource lastPathSegment) throws UriValidationException {
+    RowIndexForUriType idx;
     UriResourceFunction urf = (UriResourceFunction) lastPathSegment;
     EdmReturnType rt = urf.getFunction().getReturnType();
     switch (rt.getType().getKind()) {
     case ENTITY:
       if (((EdmEntityType) rt.getType()).hasStream()) {
-        idx = RowIndex.mediaStream;
+        idx = RowIndexForUriType.mediaStream;
       } else {
-        idx = rt.isCollection() ? RowIndex.entitySet : RowIndex.entity;
+        idx = rt.isCollection() ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       }
       break;
     case PRIMITIVE:
-      idx = rt.isCollection() ? RowIndex.propertyPrimitiveCollection : RowIndex.propertyPrimitive;
+      idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
-      idx = rt.isCollection() ? RowIndex.propertyComplexCollection : RowIndex.propertyComplex;
+      idx = rt.isCollection() ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
       break;
     default:
       throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind());
@@ -327,23 +364,12 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForEntitySet(UriResource lastPathSegment) throws UriValidationException {
-    RowIndex idx;
-    if (lastPathSegment instanceof UriResourcePartTyped) {
-      idx = ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndex.entitySet : RowIndex.entity;
-    } else {
-      throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass());
-    }
-    return idx;
-  }
-
-  private RowIndex rowIndexForComplexProperty(UriResource lastPathSegment) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForEntitySet(UriResource lastPathSegment) throws UriValidationException {
+    RowIndexForUriType idx;
     if (lastPathSegment instanceof UriResourcePartTyped) {
       idx =
-          ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndex.propertyComplexCollection
-              : RowIndex.propertyComplex;
+          ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndexForUriType.entitySet
+              : RowIndexForUriType.entity;
     } else {
       throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
           + lastPathSegment.getClass());
@@ -351,23 +377,36 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForAction(UriResource lastPathSegment) throws UriValidationException {
-    RowIndex idx;
+  private RowIndexForUriType rowIndexForComplexProperty(UriResource lastPathSegment) throws UriValidationException {
+    RowIndexForUriType idx;
+    if (lastPathSegment instanceof UriResourcePartTyped) {
+      idx =
+          ((UriResourcePartTyped) lastPathSegment).isCollection() ? RowIndexForUriType.propertyComplexCollection
+              : RowIndexForUriType.propertyComplex;
+    } else {
+      throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
+          + lastPathSegment.getClass());
+    }
+    return idx;
+  }
+
+  private RowIndexForUriType rowIndexForAction(UriResource lastPathSegment) throws UriValidationException {
+    RowIndexForUriType idx;
     UriResourceAction ura = (UriResourceAction) lastPathSegment;
     EdmReturnType rt = ura.getAction().getReturnType();
     switch (rt.getType().getKind()) {
     case ENTITY:
       if (((EdmEntityType) rt.getType()).hasStream()) {
-        idx = RowIndex.mediaStream;
+        idx = RowIndexForUriType.mediaStream;
       } else {
-        idx = rt.isCollection() ? RowIndex.entitySet : RowIndex.entity;
+        idx = rt.isCollection() ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       }
       break;
     case PRIMITIVE:
-      idx = rt.isCollection() ? RowIndex.propertyPrimitiveCollection : RowIndex.propertyPrimitive;
+      idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
-      idx = rt.isCollection() ? RowIndex.propertyComplexCollection : RowIndex.propertyComplex;
+      idx = rt.isCollection() ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
       break;
     default:
       throw new UriValidationException("Unsupported action return type: " + rt.getType().getKind());
@@ -376,21 +415,21 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndex rowIndexForCount(UriInfo uriInfo, UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForCount(UriInfo uriInfo, UriResource lastPathSegment)
       throws UriValidationException {
 
-    RowIndex idx;
+    RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
     switch (secondLastPathSegment.getKind()) {
     case entitySet:
-      idx = RowIndex.entitySetCount;
+      idx = RowIndexForUriType.entitySetCount;
       break;
     case complexProperty:
-      idx = RowIndex.propertyComplexCollectionCount;
+      idx = RowIndexForUriType.propertyComplexCollectionCount;
       break;
     case primitiveProperty:
-      idx = RowIndex.propertyPrimitiveCollectionCount;
+      idx = RowIndexForUriType.propertyPrimitiveCollectionCount;
       break;
     default:
       throw new UriValidationException("Illegal path part kind: " + lastPathSegment.getKind());
@@ -401,7 +440,7 @@ public class UriValidator {
 
   private void validateQueryOptions(final UriInfo uriInfo, Edm edm) throws UriValidationException {
     try {
-      RowIndex row = rowIndex(uriInfo, edm);
+      RowIndexForUriType row = rowIndexForUriType(uriInfo, edm);
 
       for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
         ColumnIndex col = colIndex(option.getKind());
@@ -416,6 +455,41 @@ public class UriValidator {
       System.out.println();
     }
 
+  }
+
+  private void validateForHttpMethod(UriInfo uriInfo, String httpMethod) throws UriValidationException {
+    RowIndexForHttpMethod row = rowIndexForHttpMethod(httpMethod);
+
+    for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
+      ColumnIndex col = colIndex(option.getKind());
+      if (!decisionMatrixForHttpMethod[row.getIndex()][col.getIndex()]) {
+        throw new UriValidationException("System query option " + option.getName() + " not allowed for method "
+            + httpMethod);
+      }
+    }
+
+  }
+
+  private RowIndexForHttpMethod rowIndexForHttpMethod(String httpMethod) throws UriValidationException {
+    RowIndexForHttpMethod idx;
+
+    if ("GET".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.GET;
+    } else if ("POST".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.POST;
+    } else if ("PUT".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.PUT;
+    } else if ("DELETE".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.DELETE;
+    } else if ("PATCH".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.PATCH;
+    } else if ("MERGE".equalsIgnoreCase(httpMethod)) {
+      idx = RowIndexForHttpMethod.MERGE;
+    } else {
+      throw new UriValidationException("HTTP method not supported: " + httpMethod);
+    }
+
+    return idx;
   }
 
   private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {}

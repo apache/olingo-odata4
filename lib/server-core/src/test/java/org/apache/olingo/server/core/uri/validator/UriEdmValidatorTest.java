@@ -322,6 +322,6 @@ public class UriEdmValidatorTest {
     UriValidator validator = new UriValidator();
 
     System.out.print("URI: " + uri);
-    validator.validate(uriInfo, edm);
+    validator.validate(uriInfo, edm, "GET");
   }
 }
