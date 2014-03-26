@@ -54,7 +54,7 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   private final Configuration configuration = new ConfigurationImpl();
 
-  private final FilterFactory filterFactory = new FilterFactoryImpl();
+  private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
   private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
 
@@ -94,7 +94,7 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   @Override
   public URIBuilder getURIBuilder(final String serviceRoot) {
-    return new URIBuilderImpl(serviceRoot);
+    return new URIBuilderImpl(getServiceVersion(), serviceRoot);
   }
 
   @Override

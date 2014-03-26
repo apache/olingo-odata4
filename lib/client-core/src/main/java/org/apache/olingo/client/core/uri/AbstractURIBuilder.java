@@ -31,6 +31,7 @@ import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,8 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       return value;
     }
   }
+  private final ODataServiceVersion version;
+
   protected final List<Segment> segments = new ArrayList<Segment>();
 
   /**
@@ -75,7 +78,8 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
    */
-  protected AbstractURIBuilder(final String serviceRoot) {
+  protected AbstractURIBuilder(final ODataServiceVersion version, final String serviceRoot) {
+    this.version = version;
     segments.add(new Segment(SegmentType.SERVICEROOT, serviceRoot));
   }
 
@@ -100,7 +104,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB appendKeySegment(final Object val) {
-    final String segValue = URIUtils.escape(val);
+    final String segValue = URIUtils.escape(version, val);
 
     segments.add(new Segment(SegmentType.KEY, "(" + segValue + ")"));
     return getThis();
@@ -285,7 +289,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       final StringBuilder keyBuilder = new StringBuilder().append('(');
       for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
         keyBuilder.append(entry.getKey()).append('=').append(
-                escape ? URIUtils.escape(entry.getValue()) : entry.getValue());
+                escape ? URIUtils.escape(version, entry.getValue()) : entry.getValue());
         keyBuilder.append(',');
       }
       keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');

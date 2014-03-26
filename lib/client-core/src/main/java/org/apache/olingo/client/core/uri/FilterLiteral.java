@@ -19,22 +19,26 @@
 package org.apache.olingo.client.core.uri;
 
 import org.apache.olingo.client.api.uri.FilterArg;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Filter value literals; obtain instances via <tt>FilterArgFactory</tt>.
  *
- * @see FilterArgFactory
+ * @see org.apache.olingo.client.api.uri.v3.FilterArgFactory
  */
 public class FilterLiteral implements FilterArg {
 
+  private final ODataServiceVersion version;
+
   private final Object value;
 
-  FilterLiteral(final Object value) {
+  FilterLiteral(final ODataServiceVersion version, final Object value) {
+    this.version = version;
     this.value = value;
   }
 
   @Override
   public String build() {
-    return URIUtils.escape(value);
+    return URIUtils.escape(version, value);
   }
 }

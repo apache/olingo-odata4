@@ -18,19 +18,41 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.uri.AbstractURIBuilder;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements URIBuilder {
 
   private static final long serialVersionUID = -3506851722447870532L;
 
-  public URIBuilderImpl(final String serviceRoot) {
-    super(serviceRoot);
+  public URIBuilderImpl(final ODataServiceVersion version, final String serviceRoot) {
+    super(version, serviceRoot);
+  }
+
+  @Override
+  public URIBuilder appendKeySegment(final EdmEnumType enumType, final String memberName) {
+    return appendKeySegment(enumType.toUriLiteral(memberName));
+  }
+
+  @Override
+  public URIBuilder appendKeySegment(final Map<String, Pair<EdmEnumType, String>> enumValues,
+          final Map<String, Object> segmentValues) {
+
+    final Map<String, Object> values = new LinkedHashMap<String, Object>();
+    for (Map.Entry<String, Pair<EdmEnumType, String>> entry : enumValues.entrySet()) {
+      values.put(entry.getKey(), entry.getValue().getKey().toUriLiteral(entry.getValue().getValue()));
+    }
+    values.putAll(segmentValues);
+
+    return appendKeySegment(values);
   }
 
   @Override

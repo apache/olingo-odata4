@@ -20,11 +20,18 @@ package org.apache.olingo.client.core.uri;
 
 import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.CommonFilterArgFactory;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * OData filter arguments factory.
  */
 public abstract class AbstractFilterArgFactory implements CommonFilterArgFactory {
+
+  private final ODataServiceVersion version;
+
+  public AbstractFilterArgFactory(final ODataServiceVersion version) {
+    this.version = version;
+  }
 
   @Override
   public FilterArg _null() {
@@ -38,7 +45,7 @@ public abstract class AbstractFilterArgFactory implements CommonFilterArgFactory
 
   @Override
   public FilterArg literal(final Object value) {
-    return new FilterLiteral(value);
+    return new FilterLiteral(version, value);
   }
 
   @Override
