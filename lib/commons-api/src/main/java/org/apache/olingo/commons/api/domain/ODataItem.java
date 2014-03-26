@@ -40,14 +40,14 @@ public abstract class ODataItem implements Serializable {
   protected static final Logger LOG = LoggerFactory.getLogger(ODataItem.class);
 
   /**
-   * OData item self link.
-   */
-  protected URI link;
-
-  /**
    * OData entity name/type.
    */
   private final String name;
+
+  /**
+   * OData item self link.
+   */
+  protected URI link;
 
   /**
    * Constructor.
@@ -56,6 +56,15 @@ public abstract class ODataItem implements Serializable {
    */
   public ODataItem(final String name) {
     this.name = name;
+  }
+
+  /**
+   * Returns OData entity name.
+   *
+   * @return entity name.
+   */
+  public String getName() {
+    return name;
   }
 
   /**
@@ -74,15 +83,6 @@ public abstract class ODataItem implements Serializable {
    */
   public void setLink(final URI link) {
     this.link = link;
-  }
-
-  /**
-   * Returns OData entity name.
-   *
-   * @return entity name.
-   */
-  public String getName() {
-    return name;
   }
 
   /**

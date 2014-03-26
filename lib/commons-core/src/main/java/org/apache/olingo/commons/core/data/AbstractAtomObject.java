@@ -31,6 +31,8 @@ abstract class AbstractAtomObject extends AbstractPayloadObject {
 
   private URI baseURI;
 
+  private URI contextURL;
+
   private String id;
 
   private String title;
@@ -47,8 +49,26 @@ abstract class AbstractAtomObject extends AbstractPayloadObject {
     this.baseURI = URI.create(baseURI);
   }
 
+  /**
+   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
+   * fragment identifying the relevant portion of the metadata document.
+   *
+   * @return context URL.
+   */
+  public URI getContextURL() {
+    return contextURL;
+  }
+
+  public void setContextURL(final URI contextURL) {
+    this.contextURL = contextURL;
+  }
+
   public String getId() {
     return id;
+  }
+
+  public void setId(final String id) {
+    this.id = id;
   }
 
   public String getTitle() {
@@ -74,5 +94,4 @@ abstract class AbstractAtomObject extends AbstractPayloadObject {
       this.updated = ISO_DATEFORMAT.parse(value);
     }
   }
-
 }

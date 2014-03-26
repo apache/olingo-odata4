@@ -88,21 +88,22 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Feed getFeed(final ODataEntitySet feed, final Class<? extends Feed> reference) {
-    final Feed feedResource = ResourceFactory.newFeed(reference);
+  public Feed getFeed(final ODataEntitySet entitySet, final Class<? extends Feed> reference) {
+    final Feed feed = ResourceFactory.newFeed(reference);
 
-    feedResource.setCount(feed.getCount());
+    feed.setContextURL(entitySet.getContextURL());
+    feed.setCount(entitySet.getCount());
 
-    final URI next = feed.getNext();
+    final URI next = entitySet.getNext();
     if (next != null) {
-      feedResource.setNext(next);
+      feed.setNext(next);
     }
 
-    for (ODataEntity entity : feed.getEntities()) {
-      feedResource.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
+    for (ODataEntity entity : entitySet.getEntities()) {
+      feed.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
     }
 
-    return feedResource;
+    return feed;
   }
 
   @Override
@@ -113,6 +114,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   @Override
   public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
+
+    entry.setContextURL(entity.getContextURL());
+    entry.setId(entity.getReference());
     entry.setType(entity.getName());
 
     // -------------------------------------------------------------
@@ -277,6 +281,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
+    entitySet.setContextURL(resource.getContextURL());
+
     if (resource.getCount() != null) {
       entitySet.setCount(resource.getCount());
     }
@@ -309,6 +315,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
             : client.getObjectFactory().newEntity(resource.getType(),
                     URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
+    entity.setContextURL(resource.getContextURL());
+    entity.setReference(resource.getId());
+
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
     }
@@ -328,7 +337,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       if (inlineEntry == null && inlineFeed == null) {
         entity.addLink(
                 client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref()));
-      } else if (inlineFeed == null) {
+      } else if (inlineEntry != null) {
         entity.addLink(client.getObjectFactory().newInlineEntity(
                 link.getTitle(), base, link.getHref(),
                 getODataEntity(inlineEntry,

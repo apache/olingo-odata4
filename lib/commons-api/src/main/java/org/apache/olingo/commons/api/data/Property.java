@@ -18,8 +18,18 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.net.URI;
+
 public interface Property {
 
+  /**
+   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
+   * fragment identifying the relevant portion of the metadata document.
+   *
+   * @return context URL.
+   */
+  URI getContextURL();
+  
   String getName();
 
   void setName(String name);

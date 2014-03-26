@@ -64,6 +64,14 @@ class AtomPropertySerializer extends AbstractAtomDealer {
 
     writer.writeStartElement(Constants.PREFIX_DATASERVICES, property.getName(),
             version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+
+    if (version == ODataServiceVersion.V40 && property.getContextURL() != null) {
+      writer.writeAttribute(
+              version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+              Constants.CONTEXT,
+              property.getContextURL().toASCIIString());
+    }
+
     if (standalone) {
       namespaces(writer);
     }

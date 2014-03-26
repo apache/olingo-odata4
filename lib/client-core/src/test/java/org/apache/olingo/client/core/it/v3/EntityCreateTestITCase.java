@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -229,11 +229,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().getEntityCreateRequest(
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").build(), original);
-    createReq.setPrefer(ODataHeaderValues.preferReturnNoContent);
+    createReq.setPrefer(new ODataPreferences(client.getServiceVersion()).returnNoContent());
 
     final ODataEntityCreateResponse createRes = createReq.execute();
     assertEquals(204, createRes.getStatusCode());
-    assertEquals(ODataHeaderValues.preferReturnNoContent,
+    assertEquals(new ODataPreferences(client.getServiceVersion()).returnNoContent(),
             createRes.getHeader(HeaderName.preferenceApplied).iterator().next());
 
     try {
@@ -260,7 +260,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
     createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
     createReq.setContentType(ContentType.APPLICATION_ATOM_XML.getMimeType());
-    createReq.setPrefer(ODataHeaderValues.preferReturnContent);
+    createReq.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
     try {
       final ODataEntityCreateResponse createRes = createReq.execute();

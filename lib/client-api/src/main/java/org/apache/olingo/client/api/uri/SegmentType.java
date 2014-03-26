@@ -34,6 +34,7 @@ public enum SegmentType {
   NAVIGATION,
   DERIVED_ENTITY_TYPE,
   VALUE("$value"),
+  COUNT("$count"),
   BOUND_OPERATION,
   UNBOUND_OPERATION,
   METADATA("$metadata"),

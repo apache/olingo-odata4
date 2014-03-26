@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -210,11 +210,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void updateReturnContent() throws EdmPrimitiveTypeException {
     final ODataEntityUpdateRequest req = buildMultiKeyUpdateReq(client.getConfiguration().getDefaultPubFormat());
-    req.setPrefer(ODataHeaderValues.preferReturnContent);
+    req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
     final ODataEntityUpdateResponse res = req.execute();
     assertEquals(200, res.getStatusCode());
-    assertEquals(ODataHeaderValues.preferReturnContent,
+    assertEquals(new ODataPreferences(client.getServiceVersion()).returnContent(),
             res.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertNotNull(res.getBody());
   }

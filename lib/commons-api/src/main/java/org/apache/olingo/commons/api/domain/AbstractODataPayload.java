@@ -16,30 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.header;
+package org.apache.olingo.commons.api.domain;
+
+import java.net.URI;
 
 /**
- * Constant header values class.
+ * OData entity.
  */
-public class ODataHeaderValues {
+public abstract class AbstractODataPayload extends ODataItem {
+
+  private static final long serialVersionUID = -8234709365887433612L;
 
   /**
-   * <code>Prefer</code> header, return content.
+   * Context URL.
+   */
+  private URI contextURL;
+
+  public AbstractODataPayload(final String name) {
+    super(name);
+  }
+
+  /**
+   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
+   * fragment identifying the relevant portion of the metadata document.
    *
-   * @see ODataHeaders.HeaderName#prefer
+   * @return context URL.
    */
-  public static final String preferReturnContent = "return-content";
+  public URI getContextURL() {
+    return contextURL;
+  }
 
-  /**
-   * <code>Prefer</code> header, return no content.
-   *
-   * @see ODataHeaders.HeaderName#prefer
-   */
-  public static final String preferReturnNoContent = "return-no-content";
-
-  /**
-   * @see ODataHeaders.HeaderName#dataServiceUrlConventions
-   */
-  public static final String keyAsSegment = "KeyAsSegment";
-
+  public void setContextURL(final URI contextURL) {
+    this.contextURL = contextURL;
+  }
 }

@@ -49,7 +49,14 @@ abstract class AbstractAtomDealer {
   protected final QName countQName;
 
   protected final QName uriQName;
+
   protected final QName nextQName;
+
+  protected final QName contextQName;
+
+  protected final QName entityRefQName;
+
+  protected final QName v4PropertyValueQName;
 
   public AbstractAtomDealer(final ODataServiceVersion version) {
     this.version = version;
@@ -72,6 +79,12 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_URI);
     this.nextQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.NEXT_LINK_REL);
+    this.contextQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.CONTEXT);
+    this.entityRefQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ENTRY_REF);
+    this.v4PropertyValueQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.VALUE);
   }
 
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
@@ -83,5 +96,4 @@ abstract class AbstractAtomDealer {
     writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
     writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
   }
-
 }

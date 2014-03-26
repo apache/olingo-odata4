@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
 
@@ -33,8 +34,10 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
 
     jgen.writeStartObject();
 
-    if (feed.getMetadata() != null) {
-      jgen.writeStringField(Constants.JSON_METADATA, feed.getMetadata().toASCIIString());
+    if (feed.getContextURL() != null) {
+      jgen.writeStringField(
+              version == ODataServiceVersion.V40 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+              feed.getContextURL().toASCIIString());
     }
     if (feed.getId() != null) {
       jgen.writeStringField(Constants.JSON_ID, feed.getId());
@@ -46,12 +49,11 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
       jgen.writeStringField(Constants.JSON_NEXT_LINK, feed.getNext().toASCIIString());
     }
 
-    jgen.writeArrayFieldStart(Constants.JSON_VALUE);
+    jgen.writeArrayFieldStart(Constants.VALUE);
     for (Entry entry : feed.getEntries()) {
       jgen.writeObject(entry);
     }
 
     jgen.writeEndArray();
   }
-
 }

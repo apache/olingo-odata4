@@ -41,16 +41,19 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
 
     final JSONPropertyImpl property = new JSONPropertyImpl();
 
-    if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      property.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
+      property.setContextURL(URI.create(tree.get(Constants.JSON_CONTEXT).textValue()));
+      tree.remove(Constants.JSON_CONTEXT);
+    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      property.setContextURL(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
       tree.remove(Constants.JSON_METADATA);
     }
 
-    if (property.getMetadata() != null) {
-      final String metadataURI = property.getMetadata().toASCIIString();
-      final int dashIdx = metadataURI.lastIndexOf('#');
+    if (property.getContextURL() != null) {
+      final String contextURL = property.getContextURL().toASCIIString();
+      final int dashIdx = contextURL.lastIndexOf('#');
       if (dashIdx != -1) {
-        property.setType(metadataURI.substring(dashIdx + 1));
+        property.setType(contextURL.substring(dashIdx + 1));
       }
     }
 
@@ -63,7 +66,7 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
     }
 
     if (property.getValue() == null) {
-      value(property, tree.has(Constants.JSON_VALUE) ? tree.get(Constants.JSON_VALUE) : tree);
+      value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree);
     }
 
     return property;

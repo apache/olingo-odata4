@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Writes out JSON string from <tt>JSONPropertyImpl</tt>.
@@ -38,16 +39,18 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
 
     jgen.writeStartObject();
 
-    if (property.getMetadata() != null) {
-      jgen.writeStringField(Constants.JSON_METADATA, property.getMetadata().toASCIIString());
+    if (property.getContextURL() != null) {
+      jgen.writeStringField(
+              version == ODataServiceVersion.V40 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+              property.getContextURL().toASCIIString());
     }
 
     if (property.getValue().isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
     } else if (property.getValue().isSimple()) {
-      jgen.writeStringField(Constants.JSON_VALUE, property.getValue().asSimple().get());
+      jgen.writeStringField(Constants.VALUE, property.getValue().asSimple().get());
     } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
-      property(jgen, property, Constants.JSON_VALUE);
+      property(jgen, property, Constants.VALUE);
     } else if (property.getValue().isComplex()) {
       for (Property cproperty : property.getValue().asComplex().get()) {
         property(jgen, cproperty, cproperty.getName());

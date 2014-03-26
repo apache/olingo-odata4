@@ -39,6 +39,21 @@ public interface Entry {
   URI getBaseURI();
 
   /**
+   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
+   * fragment identifying the relevant portion of the metadata document.
+   *
+   * @return context URL.
+   */
+  URI getContextURL();
+
+  /**
+   * Set context URL.
+   *
+   * @param contextURL context URL.
+   */
+  void setContextURL(final URI contextURL);
+
+  /**
    * Gets entry type.
    *
    * @return entry type.
@@ -53,11 +68,18 @@ public interface Entry {
   void setType(String type);
 
   /**
-   * Gest entry ID.
+   * Gets entry ID.
    *
    * @return entry ID.
    */
   String getId();
+
+  /**
+   * Sets entry ID.
+   *
+   * @param id entry ID.
+   */
+  void setId(String id);
 
   /**
    * Gets entry self link.

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.net.URI;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
@@ -163,17 +165,29 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
 
   public AtomPropertyImpl deserialize(final XMLEventReader reader, final StartElement start)
           throws XMLStreamException {
-
     final AtomPropertyImpl property = new AtomPropertyImpl();
-    property.setName(start.getName().getLocalPart());
 
-    final Attribute typeAttr = start.getAttributeByName(this.typeQName);
+    final Attribute context = start.getAttributeByName(contextQName);
+
+    property.setContextURL(context == null ? null : URI.create(context.getValue()));
+
+    final QName name = start.getName();
+
+    if (ODataServiceVersion.V40 == version && v4PropertyValueQName.equals(name)) {
+      // retrieve name from context
+      final String contextURL = property.getContextURL().toASCIIString();
+      property.setName(contextURL.substring(contextURL.lastIndexOf("/") + 1));
+    } else {
+      property.setName(name.getLocalPart());
+    }
+
+    final Attribute nullAttr = start.getAttributeByName(this.nullQName);
 
     Value value;
-    final Attribute nullAttr = start.getAttributeByName(this.nullQName);
-    final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
-
     if (nullAttr == null) {
+      final Attribute typeAttr = start.getAttributeByName(this.typeQName);
+      final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
+
       final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue)
               ? null
               : new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();

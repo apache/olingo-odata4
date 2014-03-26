@@ -104,7 +104,7 @@ public class URIBuilderTest extends AbstractTest {
   public void unboundAction() throws URISyntaxException {
     final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendOperationCallSegment("ProductsByCategoryId",
-                    Collections.<String, Object>singletonMap("categoryId", 2));
+            Collections.<String, Object>singletonMap("categoryId", 2));
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/ProductsByCategoryId(categoryId=2)").build(), uriBuilder.build());
@@ -127,5 +127,23 @@ public class URIBuilderTest extends AbstractTest {
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Customers/Model/Namespace.VipCustomer(1)").build(), uriBuilder.build());
+  }
+
+  @Test
+  public void expandMoreThenOnce() throws URISyntaxException {
+    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+            expand("Orders", "Customers").expand("Info").build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+            addParameter("$expand", "Orders,Customers,Info").build(), uri);
+  }
+
+  @Test
+  public void selectMoreThenOnce() throws URISyntaxException {
+    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Customers").appendKeySegment(5).
+            select("Name", "Surname").expand("Info").select("Gender").build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customers(5)").
+            addParameter("$select", "Name,Surname,Gender").addParameter("$expand", "Info").build(), uri);
   }
 }

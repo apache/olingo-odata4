@@ -100,11 +100,11 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     req.setAccept("application/json");
     ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    ODataEntity entitySet = res.getBody();
-    assertNotNull(entitySet);
+    ODataEntity entity = res.getBody();
+    assertNotNull(entity);
     assertEquals("fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJ"
             + "VIDx4tdmCnq55XrJh+RW9aI/b34wAogK3kcORw=",
-            entitySet.getProperties().get(0).getValue().toString());
+            entity.getProperties().get(0).getValue().toString());
   }
 
   @Test(expected = ODataClientErrorException.class)

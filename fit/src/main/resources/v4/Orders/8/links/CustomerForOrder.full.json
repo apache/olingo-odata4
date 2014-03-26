@@ -1,0 +1,4 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Orders/$links/CustomerForOrder",
+  "url": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(1)"
+}

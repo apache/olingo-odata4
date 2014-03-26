@@ -21,7 +21,6 @@ package org.apache.olingo.commons.core.data;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
-import java.text.ParseException;
 import org.apache.olingo.commons.api.Constants;
 
 /**
@@ -33,41 +32,17 @@ public class JSONEntryImpl extends AbstractEntry {
 
   private static final long serialVersionUID = -5275365545400797758L;
 
-  private URI metadata;
-
   private String mediaETag;
-
-  public void setId(final String id) throws ParseException {
-    this.setCommonProperty("id", id);
-  }
 
   @Override
   public URI getBaseURI() {
     URI baseURI = null;
-    if (metadata != null) {
-      final String metadataURI = getMetadata().toASCIIString();
+    if (getContextURL() != null) {
+      final String metadataURI = getContextURL().toASCIIString();
       baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
     }
 
     return baseURI;
-  }
-
-  /**
-   * Gets the metadata URI.
-   *
-   * @return the metadata URI
-   */
-  public URI getMetadata() {
-    return metadata;
-  }
-
-  /**
-   * Sets the metadata URI.
-   *
-   * @param metadata metadata URI.
-   */
-  public void setMetadata(final URI metadata) {
-    this.metadata = metadata;
   }
 
   /**

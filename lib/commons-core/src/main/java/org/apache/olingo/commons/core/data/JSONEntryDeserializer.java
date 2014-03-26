@@ -23,13 +23,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -84,14 +82,17 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
-    if (tree.has(Constants.JSON_VALUE) && tree.get(Constants.JSON_VALUE).isArray()) {
+    if (tree.has(Constants.VALUE) && tree.get(Constants.VALUE).isArray()) {
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
     final JSONEntryImpl entry = new JSONEntryImpl();
 
-    if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      entry.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
+      entry.setContextURL(URI.create(tree.get(Constants.JSON_CONTEXT).textValue()));
+      tree.remove(Constants.JSON_CONTEXT);
+    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      entry.setContextURL(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
       tree.remove(Constants.JSON_METADATA);
     }
 
@@ -111,11 +112,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     }
 
     if (tree.hasNonNull(Constants.JSON_ID)) {
-      try {
-        entry.setId(tree.get(Constants.JSON_ID).textValue());
-      } catch (ParseException e) {
-        throw new JsonMappingException("While parsing Atom entry or feed common elements", e);
-      }
+      entry.setId(tree.get(Constants.JSON_ID).textValue());
       tree.remove(Constants.JSON_ID);
     }
 

@@ -138,5 +138,9 @@ public class XMLUtilities extends org.apache.olingo.fit.utils.AbstractXMLUtiliti
     if (size == 0) {
       metadataLinkInfo.addEntitySet(entitySetName);
     }
+
+    if (singletons.contains(entitySetName)) {
+      metadataLinkInfo.setSingleton(entitySetName);
+    }
   }
 }

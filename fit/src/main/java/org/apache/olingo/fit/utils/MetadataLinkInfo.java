@@ -28,6 +28,14 @@ public class MetadataLinkInfo {
 
   private Map<String, EntitySet> entitySets = new HashMap<String, EntitySet>();
 
+  public void setSingleton(final String entitySetName) {
+    entitySets.get(entitySetName).setSingleton(true);
+  }
+
+  public boolean isSingleton(final String entitySetName) {
+    return entitySets.get(entitySetName).isSingleton();
+  }
+
   public Set<String> getEntitySets() {
     return entitySets.keySet();
   }
@@ -92,6 +100,8 @@ public class MetadataLinkInfo {
 
     private Set<NavigationLink> links;
 
+    private boolean singleton;
+
     public EntitySet(final String name) {
       this.name = name;
       links = new HashSet<NavigationLink>();
@@ -133,6 +143,18 @@ public class MetadataLinkInfo {
 
     public void setLinks(final Set<NavigationLink> links) {
       this.links = links;
+    }
+
+    public EntitySet(boolean singleton) {
+      this.singleton = singleton;
+    }
+
+    public boolean isSingleton() {
+      return singleton;
+    }
+
+    public void setSingleton(boolean singleton) {
+      this.singleton = singleton;
     }
 
     @Override
