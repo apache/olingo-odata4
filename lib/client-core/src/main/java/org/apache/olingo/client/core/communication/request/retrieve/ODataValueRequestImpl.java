@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.core.domain.ODataPrimitiveValueImpl;
+import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**

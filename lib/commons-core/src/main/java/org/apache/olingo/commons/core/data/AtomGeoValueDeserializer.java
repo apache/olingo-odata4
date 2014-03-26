@@ -44,7 +44,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 class AtomGeoValueDeserializer {
 
   private List<Point> points(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     final List<Point> result = new ArrayList<Point>();
 
@@ -55,7 +55,7 @@ class AtomGeoValueDeserializer {
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
         final String[] pointInfo = event.asCharacters().getData().split(" ");
 
-        final Point point = new Point(GeoUtils.getDimension(type), crs);
+        final Point point = new Point(GeoUtils.getDimension(type), srid);
         try {
           point.setX(EdmDouble.getInstance().valueOfString(pointInfo[0], null, null,
                   Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
@@ -76,7 +76,7 @@ class AtomGeoValueDeserializer {
   }
 
   private MultiPoint multipoint(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     List<Point> points = Collections.<Point>emptyList();
 
@@ -93,17 +93,17 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new MultiPoint(GeoUtils.getDimension(type), crs, points);
+    return new MultiPoint(GeoUtils.getDimension(type), srid, points);
   }
 
   private LineString lineString(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
-    return new LineString(GeoUtils.getDimension(type), crs, points(reader, start, type, null));
+    return new LineString(GeoUtils.getDimension(type), srid, points(reader, start, type, null));
   }
 
   private Polygon polygon(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     List<Point> extPoints = null;
     List<Point> intPoints = null;
@@ -126,11 +126,11 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new Polygon(GeoUtils.getDimension(type), crs, intPoints, extPoints);
+    return new Polygon(GeoUtils.getDimension(type), srid, intPoints, extPoints);
   }
 
   private MultiLineString multiLineString(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     final List<LineString> lineStrings = new ArrayList<LineString>();
 
@@ -147,11 +147,11 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new MultiLineString(GeoUtils.getDimension(type), crs, lineStrings);
+    return new MultiLineString(GeoUtils.getDimension(type), srid, lineStrings);
   }
 
   private MultiPolygon multiPolygon(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     final List<Polygon> polygons = new ArrayList<Polygon>();
 
@@ -168,11 +168,11 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new MultiPolygon(GeoUtils.getDimension(type), crs, polygons);
+    return new MultiPolygon(GeoUtils.getDimension(type), srid, polygons);
   }
 
   private GeospatialCollection collection(final XMLEventReader reader, final StartElement start,
-          final EdmPrimitiveTypeKind type, final String crs) throws XMLStreamException {
+          final EdmPrimitiveTypeKind type, final Integer srid) throws XMLStreamException {
 
     final List<Geospatial> geospatials = new ArrayList<Geospatial>();
 
@@ -201,16 +201,16 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new GeospatialCollection(GeoUtils.getDimension(type), crs, geospatials);
+    return new GeospatialCollection(GeoUtils.getDimension(type), srid, geospatials);
   }
 
   public Geospatial deserialize(final XMLEventReader reader, final StartElement start,
           final EdmPrimitiveTypeKind type) throws XMLStreamException {
 
-    String crs = null;
+    Integer srid = null;
     final Attribute srsName = start.getAttributeByName(Constants.QNAME_ATTR_SRSNAME);
     if (srsName != null) {
-      crs = StringUtils.substringAfterLast(srsName.getValue(), "/");
+      srid = Integer.valueOf(StringUtils.substringAfterLast(srsName.getValue(), "/"));
     }
 
     Geospatial value;
@@ -218,37 +218,37 @@ class AtomGeoValueDeserializer {
     switch (type) {
       case GeographyPoint:
       case GeometryPoint:
-        value = points(reader, start, type, crs).get(0);
+        value = points(reader, start, type, srid).get(0);
         break;
 
       case GeographyMultiPoint:
       case GeometryMultiPoint:
-        value = multipoint(reader, start, type, crs);
+        value = multipoint(reader, start, type, srid);
         break;
 
       case GeographyLineString:
       case GeometryLineString:
-        value = lineString(reader, start, type, crs);
+        value = lineString(reader, start, type, srid);
         break;
 
       case GeographyMultiLineString:
       case GeometryMultiLineString:
-        value = multiLineString(reader, start, type, crs);
+        value = multiLineString(reader, start, type, srid);
         break;
 
       case GeographyPolygon:
       case GeometryPolygon:
-        value = polygon(reader, start, type, crs);
+        value = polygon(reader, start, type, srid);
         break;
 
       case GeographyMultiPolygon:
       case GeometryMultiPolygon:
-        value = multiPolygon(reader, start, type, crs);
+        value = multiPolygon(reader, start, type, srid);
         break;
 
       case GeographyCollection:
       case GeometryCollection:
-        value = collection(reader, start, type, crs);
+        value = collection(reader, start, type, srid);
         break;
 
       default:

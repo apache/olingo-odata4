@@ -18,19 +18,20 @@
  */
 package org.apache.olingo.client.core.op;
 
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.data.ServiceDocumentItem;
+import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -43,8 +44,9 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.CommonODataBinder;
 import org.apache.olingo.commons.core.data.CollectionValueImpl;
 import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.GeospatialValueImpl;
@@ -52,8 +54,7 @@ import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,9 +233,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (value == null) {
       valueResource = new NullValueImpl();
     } else if (value.isPrimitive()) {
-      valueResource = new PrimitiveValueImpl(value.asPrimitive().toString());
-    } else if (value.isGeospatial()) {
-      valueResource = new GeospatialValueImpl(value.asGeospatial().toValue());
+      valueResource = value.asPrimitive().getTypeKind().isGeospatial()
+              ? new GeospatialValueImpl((Geospatial) value.asPrimitive().toValue())
+              : new PrimitiveValueImpl(value.asPrimitive().toString());
     } else if (value.isComplex()) {
       final ODataComplexValue _value = value.asComplex();
       valueResource = new ComplexValueImpl();
@@ -269,7 +270,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
-    
+
     final URI next = resource.getNext();
 
     final ODataEntitySet entitySet = next == null
@@ -283,7 +284,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     for (Entry entryResource : resource.getEntries()) {
       entitySet.addEntity(getODataEntity(entryResource));
     }
-    
+
     return entitySet;
   }
 
@@ -311,11 +312,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
     }
-    
+
     if (resource.getEditLink() != null) {
       entity.setEditLink(URIUtils.getURI(base, resource.getEditLink().getHref()));
     }
-    
+
     for (Link link : resource.getAssociationLinks()) {
       entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
     }
@@ -377,12 +378,12 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isGeospatial()) {
-      value = client.getGeospatialValueBuilder().
+      value = client.getPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(resource.getType() == null
                       || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
                       || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
-                      ? null
+                      ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isComplex()) {
       value = new ODataComplexValue(resource.getType());

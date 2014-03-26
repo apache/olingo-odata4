@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -89,35 +88,6 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
             readPrimitiveValue(getClass().getResourceAsStream(getFilename(entity, propertyName)));
 
     assertEquals(value.toString(), writePrimitiveValue(value).toString());
-
-    return value;
-  }
-
-  protected ODataGeospatialValue writeGeospatialValue(final ODataGeospatialValue value) {
-    final ODataGeospatialValue newValue = getClient().getGeospatialValueBuilder().
-            setType(value.getTypeKind()).
-            setValue(value.toValue()).
-            build();
-    final InputStream written = getClient().getWriter().writeProperty(
-            getClient().getObjectFactory().newPrimitiveProperty(Constants.ELEM_PROPERTY, newValue),
-            getFormat());
-    return readGeospatialValue(written);
-  }
-
-  protected ODataGeospatialValue readGeospatialValue(final InputStream input) {
-    final ODataProperty property = getClient().getReader().readProperty(input, getFormat());
-    assertNotNull(property);
-    assertTrue(property.hasGeospatialValue());
-    assertNotNull(property.getGeospatialValue());
-
-    return property.getGeospatialValue();
-  }
-
-  protected ODataGeospatialValue readGeospatialValue(final String entity, final String propertyName) {
-    final ODataGeospatialValue value =
-            readGeospatialValue(getClass().getResourceAsStream(getFilename(entity, propertyName)));
-
-    assertEquals(value.toValue(), writeGeospatialValue(value).toValue());
 
     return value;
   }
@@ -200,9 +170,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final Point expectedValues,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final Point point = opv.toCastValue(Point.class);
@@ -231,9 +201,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final List<Point> check,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final LineString lineString = opv.toCastValue(LineString.class);
@@ -248,9 +218,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final List<Point> check,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final MultiPoint multiPoint = opv.toCastValue(MultiPoint.class);
@@ -275,9 +245,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String propertyName,
           final List<List<Point>> check,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final MultiLineString multiLine = opv.toCastValue(MultiLineString.class);
@@ -330,9 +300,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final List<Point> checkInterior,
           final List<Point> checkExterior,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final Polygon polygon = opv.toCastValue(Polygon.class);
@@ -350,9 +320,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final List<List<Point>> checkInterior,
           final List<List<Point>> checkExterior,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final MultiPolygon multiPolygon = opv.toCastValue(MultiPolygon.class);
@@ -373,9 +343,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final GeospatialCollection collection = opv.toCastValue(GeospatialCollection.class);
@@ -402,9 +372,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
           final String entity,
           final String propertyName,
           final EdmPrimitiveTypeKind expectedType,
-          final Dimension expectedDimension) {
+          final Dimension expectedDimension) throws EdmPrimitiveTypeException {
 
-    final ODataGeospatialValue opv = readGeospatialValue(entity, propertyName);
+    final ODataPrimitiveValue opv = readPrimitiveValue(entity, propertyName);
     assertEquals(expectedType, opv.getTypeKind());
 
     final GeospatialCollection collection = opv.toCastValue(GeospatialCollection.class);

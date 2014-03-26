@@ -16,12 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.domain;
+package org.apache.olingo.commons.core.domain;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -56,12 +54,16 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
         throw new IllegalArgumentException(String.format(
                 "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
       }
-      if (type != null && type.isGeospatial()) {
-        throw new IllegalArgumentException("Don't use this for geospatial types");
+      if (type == EdmPrimitiveTypeKind.Geography || type == EdmPrimitiveTypeKind.Geometry) {
+        throw new IllegalArgumentException(
+                type + "is not an instantiable type. "
+                + "An entity can declare a property to be of type Geometry. "
+                + "An instance of an entity MUST NOT have a value of type Geometry. "
+                + "Each value MUST be of some subtype.");
       }
 
       this.instance.typeKind = type == null ? EdmPrimitiveTypeKind.String : type;
-      this.instance.type = EdmPrimitiveTypeFactory.getNonGeoInstance(this.instance.typeKind);
+      this.instance.type = EdmPrimitiveTypeFactory.getInstance(this.instance.typeKind);
 
       return this;
     }
@@ -154,24 +156,16 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
 
   @Override
   public <T> T toCastValue(final Class<T> reference) throws EdmPrimitiveTypeException {
-    // TODO: when Edm is available, set facets when calling this method
-    return type.valueOfString(this.text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-            reference);
+    return typeKind.isGeospatial()
+            ? reference.cast(this.value)
+            // TODO: when Edm is available, set facets when calling this method
+            : type.valueOfString(this.text,
+                    null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, reference);
   }
 
   @Override
   public String toString() {
     return this.text;
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
   }
 
 }

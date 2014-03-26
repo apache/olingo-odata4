@@ -29,15 +29,15 @@ import org.junit.Test;
 
 public class EdmInt64Test extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int64);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
 
   @Test
   public void compatibility() {
     assertTrue(instance.isCompatible(Uint7.getInstance()));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Byte)));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte)));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int16)));
-    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)));
+    assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)));
   }
 
   @Test

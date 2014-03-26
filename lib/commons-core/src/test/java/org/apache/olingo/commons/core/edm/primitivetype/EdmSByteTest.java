@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class EdmSByteTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte);
 
   @Test
   public void compatibility() {

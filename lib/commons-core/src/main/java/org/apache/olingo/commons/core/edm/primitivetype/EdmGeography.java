@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 
-public final class EdmGeography extends AbstractEdmGeospatialType<Geospatial> {
+public final class EdmGeography extends AbstractGeospatialType<Geospatial> {
 
   private static final EdmGeography INSTANCE = new EdmGeography();
 
@@ -33,4 +34,20 @@ public final class EdmGeography extends AbstractEdmGeospatialType<Geospatial> {
     super(Geospatial.class, Dimension.GEOGRAPHY, null);
   }
 
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+          throws EdmPrimitiveTypeException {
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+  }
 }

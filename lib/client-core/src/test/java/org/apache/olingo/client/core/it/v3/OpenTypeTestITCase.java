@@ -118,25 +118,25 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     point.setX(1.2);
     point.setY(2.1);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPoint",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
             setValue(point).build()));
     final List<Point> points = new ArrayList<Point>();
     points.add(point);
     points.add(point);
     final MultiPoint multipoint = new MultiPoint(Geospatial.Dimension.GEOMETRY, null, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPoint",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiPoint).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiPoint).
             setValue(multipoint).build()));
     final LineString lineString = new LineString(Geospatial.Dimension.GEOMETRY, null, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aLineString",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryLineString).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeometryLineString).
             setValue(lineString).build()));
     final List<LineString> lineStrings = new ArrayList<LineString>();
     lineStrings.add(lineString);
     lineStrings.add(lineString);
     final MultiLineString multiLineString = new MultiLineString(Geospatial.Dimension.GEOGRAPHY, null, lineStrings);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiLineString",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
             setValue(multiLineString).build()));
     final Point otherPoint = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     otherPoint.setX(3.4);
@@ -146,14 +146,14 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     points.add(point);
     final Polygon polygon = new Polygon(Geospatial.Dimension.GEOGRAPHY, null, points, points);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPolygon",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPolygon).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPolygon).
             setValue(polygon).build()));
     final List<Polygon> polygons = new ArrayList<Polygon>();
     polygons.add(polygon);
     polygons.add(polygon);
     final MultiPolygon multiPolygon = new MultiPolygon(Geospatial.Dimension.GEOGRAPHY, null, polygons);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPolygon",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyMultiPolygon).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyMultiPolygon).
             setValue(multiPolygon).build()));
     final List<Geospatial> geospatials = new ArrayList<Geospatial>();
     geospatials.add(otherPoint);
@@ -162,7 +162,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     geospatials.add(multiPolygon);
     final GeospatialCollection geoColl = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, null, geospatials);
     row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aCollection",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyCollection).
+            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyCollection).
             setValue(geoColl).build()));
 
     final ODataComplexValue contactDetails =

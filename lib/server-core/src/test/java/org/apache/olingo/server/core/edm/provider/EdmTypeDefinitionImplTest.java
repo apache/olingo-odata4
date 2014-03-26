@@ -47,7 +47,7 @@ public class EdmTypeDefinitionImplTest {
     assertEquals(String.class, typeDefImpl.getDefaultType());
     assertEquals(EdmTypeKind.DEFINITION, typeDefImpl.getKind());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeDefImpl.getUnderlyingType());
-    assertTrue(typeDefImpl.isCompatible(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String)));
+    assertTrue(typeDefImpl.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String)));
 
     // String validation
     assertEquals("'StringValue'", typeDefImpl.toUriLiteral("StringValue"));

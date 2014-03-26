@@ -24,10 +24,6 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 public final class GeoUtils {
 
-  private GeoUtils() {
-    // Empty private constructor for static utility classes       
-  }
-
   public static Geospatial.Dimension getDimension(final EdmPrimitiveTypeKind type) {
     Geospatial.Dimension dimension;
 
@@ -87,4 +83,9 @@ public final class GeoUtils {
 
     return type;
   }
+
+  private GeoUtils() {
+    // Empty private constructor for static utility classes       
+  }
+
 }

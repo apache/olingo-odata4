@@ -62,9 +62,9 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
     super(edm, fqn, xmlEnumType.isFlags());
 
     if (xmlEnumType.getUnderlyingType() == null) {
-      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32);
+      this.underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
-      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(
+      this.underlyingType = EdmPrimitiveTypeFactory.getInstance(
               EdmPrimitiveTypeKind.valueOfFQN(version, xmlEnumType.getUnderlyingType()));
       if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, this.underlyingType.getKind())) {
         throw new EdmException("Not allowed as underlying type: " + this.underlyingType.getKind());

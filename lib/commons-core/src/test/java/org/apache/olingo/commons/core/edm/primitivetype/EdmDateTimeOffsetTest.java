@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
 
-  final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.DateTimeOffset);
+  final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset);
 
   @Test
   public void toUriLiteral() throws Exception {

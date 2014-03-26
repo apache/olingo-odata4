@@ -37,11 +37,11 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class JSONGeoValueSerializer {
 
-  private void crs(final JsonGenerator jgen, final String crs) throws IOException {
+  private void srid(final JsonGenerator jgen, final Integer srid) throws IOException {
     jgen.writeObjectFieldStart(Constants.JSON_CRS);
     jgen.writeStringField(Constants.ATTR_TYPE, Constants.JSON_NAME);
     jgen.writeObjectFieldStart(Constants.PROPERTIES);
-    jgen.writeStringField(Constants.JSON_NAME, "EPSG:" + crs);
+    jgen.writeStringField(Constants.JSON_NAME, "EPSG:" + srid);
     jgen.writeEndObject();
     jgen.writeEndObject();
   }
@@ -175,8 +175,8 @@ class JSONGeoValueSerializer {
       default:
     }
 
-    if (value.getCrs() != null) {
-      crs(jgen, value.getCrs());
+    if (value.getSrid() != null) {
+      srid(jgen, value.getSrid());
     }
   }
 

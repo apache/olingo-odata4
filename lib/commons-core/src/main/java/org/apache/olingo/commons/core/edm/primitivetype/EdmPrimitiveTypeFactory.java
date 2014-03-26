@@ -18,27 +18,18 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmGeospatialType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmType;
 
 public final class EdmPrimitiveTypeFactory {
 
-  public static EdmType getInstance(final EdmPrimitiveTypeKind kind) {
-    return kind.isGeospatial()
-           ? getGeoInstance(kind)
-           : getNonGeoInstance(kind);
-  }
-
   /**
-   * Returns an instance for the provided {@link EdmPrimitiveTypeKind} in the form of {@link EdmPrimitiveType} (for
-   * non-geospatial types).
+   * Returns an instance for the provided {@link EdmPrimitiveTypeKind} in the form of {@link EdmPrimitiveType}.
    *
    * @param kind EdmPrimitiveTypeKind
    * @return {@link EdmPrimitiveType} instance
    */
-  public static EdmPrimitiveType getNonGeoInstance(final EdmPrimitiveTypeKind kind) {
+  public static EdmPrimitiveType getInstance(final EdmPrimitiveTypeKind kind) {
     switch (kind) {
       case Binary:
         return EdmBinary.getInstance();
@@ -79,19 +70,6 @@ public final class EdmPrimitiveTypeFactory {
       case Stream:
         return EdmStream.getInstance();
 
-      default:
-        throw new IllegalArgumentException("Wrong type: " + kind);
-    }
-  }
-
-  /**
-   * Returns an instance for the provided {@link EdmPrimitiveTypeKind} in the form of {@link EdmGeospatialType}.
-   *
-   * @param kind EdmPrimitiveTypeKind
-   * @return {@link EdmGeospatialType} instance
-   */
-  public static EdmGeospatialType getGeoInstance(final EdmPrimitiveTypeKind kind) {
-    switch (kind) {
       case Geography:
         return EdmGeography.getInstance();
       case GeographyPoint:
@@ -111,7 +89,7 @@ public final class EdmPrimitiveTypeFactory {
       case Geometry:
         return EdmGeometry.getInstance();
       case GeometryPoint:
-        return EdmGeometry.getInstance();
+        return EdmGeometryPoint.getInstance();
       case GeometryLineString:
         return EdmGeometryLineString.getInstance();
       case GeometryPolygon:
@@ -119,7 +97,7 @@ public final class EdmPrimitiveTypeFactory {
       case GeometryMultiPoint:
         return EdmGeometryMultiPoint.getInstance();
       case GeometryMultiLineString:
-        return EdmGeographyMultiLineString.getInstance();
+        return EdmGeometryMultiLineString.getInstance();
       case GeometryMultiPolygon:
         return EdmGeometryMultiPolygon.getInstance();
       case GeometryCollection:
@@ -127,7 +105,6 @@ public final class EdmPrimitiveTypeFactory {
 
       default:
         throw new IllegalArgumentException("Wrong type: " + kind);
-
     }
   }
 

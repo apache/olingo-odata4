@@ -41,6 +41,8 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -48,6 +50,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTime;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
@@ -172,14 +175,6 @@ public final class URIUtils {
 
         default:
       }
-    } else {
-      switch (typeKind) {
-        case Binary:
-          result = "binary'";
-          break;
-
-        default:
-      }
     }
 
     return result;
@@ -192,7 +187,6 @@ public final class URIUtils {
         case Guid:
         case DateTime:
         case DateTimeOffset:
-        case Binary:
           result = "'";
           break;
 
@@ -210,14 +204,6 @@ public final class URIUtils {
 
         case Int64:
           result = "L";
-          break;
-
-        default:
-      }
-    } else {
-      switch (typeKind) {
-        case Binary:
-          result = "'";
           break;
 
         default:
@@ -280,12 +266,12 @@ public final class URIUtils {
           throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
     return version == ODataServiceVersion.V30
-            ? "time'" + URLEncoder.encode(EdmTime.getInstance().
-                    valueToString(duration, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                    Constants.UTF8) + "'"
-            : "duration'" + URLEncoder.encode(EdmDuration.getInstance().
-                    valueToString(duration, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                    Constants.UTF8) + "'";
+            ? EdmTime.getInstance().toUriLiteral(URLEncoder.encode(EdmTime.getInstance().
+                            valueToString(duration, null, null,
+                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
+            : EdmDuration.getInstance().toUriLiteral(URLEncoder.encode(EdmDuration.getInstance().
+                            valueToString(duration, null, null,
+                                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
   }
 
   /**
@@ -305,9 +291,7 @@ public final class URIUtils {
               + obj.toString()
               + suffix(version, EdmPrimitiveTypeKind.Guid)
               : (obj instanceof byte[])
-              ? prefix(version, EdmPrimitiveTypeKind.Binary)
-              + Hex.encodeHexString((byte[]) obj)
-              + suffix(version, EdmPrimitiveTypeKind.Binary)
+              ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
               : (obj instanceof Timestamp)
               ? timestamp(version, (Timestamp) obj)
               : (obj instanceof Calendar)
@@ -330,6 +314,10 @@ public final class URIUtils {
               ? EdmInt64.getInstance().valueToString(obj, null, null,
                       Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
               + suffix(version, EdmPrimitiveTypeKind.Int64)
+              : (obj instanceof Geospatial)
+              ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(((Geospatial) obj).getEdmPrimitiveTypeKind()).
+                      valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                      Constants.UTF8)
               : (obj instanceof String)
               ? "'" + URLEncoder.encode((String) obj, Constants.UTF8) + "'"
               : obj.toString();
@@ -340,7 +328,7 @@ public final class URIUtils {
 
     return value;
   }
-  
+
   public static InputStreamEntity buildInputStreamEntity(final CommonODataClient client, final InputStream input) {
     InputStreamEntity entity;
     if (client.getConfiguration().isUseChuncked()) {

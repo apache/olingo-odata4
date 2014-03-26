@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class EdmStringTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String);
 
   @Test
   public void toUriLiteral() throws Exception {

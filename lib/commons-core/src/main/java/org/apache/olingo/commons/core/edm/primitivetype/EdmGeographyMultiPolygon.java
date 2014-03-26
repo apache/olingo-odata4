@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
-import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 
-public final class EdmGeographyMultiPolygon extends AbstractEdmGeospatialType<Point> {
+public final class EdmGeographyMultiPolygon extends AbstractGeospatialType<MultiPolygon> {
 
   private static final EdmGeographyMultiPolygon INSTANCE = new EdmGeographyMultiPolygon();
 
@@ -31,7 +32,32 @@ public final class EdmGeographyMultiPolygon extends AbstractEdmGeospatialType<Po
   }
 
   public EdmGeographyMultiPolygon() {
-    super(Point.class, Dimension.GEOGRAPHY, Type.MULTIPOLYGON);
+    super(MultiPolygon.class, Dimension.GEOGRAPHY, Type.MULTIPOLYGON);
   }
 
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode,
+          final Class<T> returnType) throws EdmPrimitiveTypeException {
+
+    final MultiPolygon multiPolygon = stringToMultiPolygon(value, isNullable, maxLength, precision, scale, isUnicode);
+    if (returnType.isAssignableFrom(MultiPolygon.class)) {
+      return returnType.cast(multiPolygon);
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    }
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    if (value instanceof MultiPolygon) {
+      return toString((MultiPolygon) value, isNullable, maxLength, precision, scale, isUnicode);
+    }
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+  }
 }

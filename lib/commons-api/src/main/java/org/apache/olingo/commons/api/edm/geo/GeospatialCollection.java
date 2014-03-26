@@ -28,21 +28,14 @@ public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
   private static final long serialVersionUID = -9181547636133878977L;
 
-  /**
-   * Constructor.
-   *
-   * @param dimension dimension.
-   * @param crs crs.
-   * @param geospatials geospatials info.
-   */
-  public GeospatialCollection(final Dimension dimension, final String crs, final List<Geospatial> geospatials) {
-    super(dimension, Type.GEOSPATIALCOLLECTION, crs, geospatials);
+  public GeospatialCollection(final Dimension dimension, final Integer srid, final List<Geospatial> geospatials) {
+    super(dimension, Type.GEOSPATIALCOLLECTION, srid, geospatials);
   }
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-           ? EdmPrimitiveTypeKind.GeographyCollection
-           : EdmPrimitiveTypeKind.GeometryCollection;
+            ? EdmPrimitiveTypeKind.GeographyCollection
+            : EdmPrimitiveTypeKind.GeometryCollection;
   }
 }

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class EdmBooleanTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean);
 
   @Test
   public void toUriLiteral() throws Exception {
