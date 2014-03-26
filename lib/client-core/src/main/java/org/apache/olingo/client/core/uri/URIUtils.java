@@ -27,7 +27,11 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
@@ -66,6 +70,8 @@ public final class URIUtils {
    * Logger.
    */
   private static final Logger LOG = LoggerFactory.getLogger(URIUtils.class);
+
+  private static final Pattern ENUM_VALUE = Pattern.compile("(.+\\.)?.+'.+'");
 
   private URIUtils() {
     // Empty private constructor for static utility classes
@@ -274,53 +280,102 @@ public final class URIUtils {
                                     Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
   }
 
+  private static String quoteString(final String string, final boolean singleQuoteEscape)
+          throws UnsupportedEncodingException {
+
+    final String encoded = URLEncoder.encode(string, Constants.UTF8);
+    return ENUM_VALUE.matcher(string).matches()
+            ? encoded
+            : singleQuoteEscape
+            ? "'" + encoded + "'"
+            : "\"" + encoded + "\"";
+  }
+
   /**
    * Turns primitive values into their respective URI representation.
    *
+   * @param version OData protocol version
    * @param obj primitive value
    * @return URI representation
    */
   public static String escape(final ODataServiceVersion version, final Object obj) {
+    return escape(version, obj, true);
+  }
+
+  private static String escape(final ODataServiceVersion version, final Object obj, final boolean singleQuoteEscape) {
     String value;
 
     try {
-      value = (obj instanceof Boolean)
-              ? BooleanUtils.toStringTrueFalse((Boolean) obj)
-              : (obj instanceof UUID)
-              ? prefix(version, EdmPrimitiveTypeKind.Guid)
-              + obj.toString()
-              + suffix(version, EdmPrimitiveTypeKind.Guid)
-              : (obj instanceof byte[])
-              ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
-              : (obj instanceof Timestamp)
-              ? timestamp(version, (Timestamp) obj)
-              : (obj instanceof Calendar)
-              ? calendar(version, (Calendar) obj)
-              : (obj instanceof Duration)
-              ? duration(version, (Duration) obj)
-              : (obj instanceof BigDecimal)
-              ? EdmDecimal.getInstance().valueToString(obj, null, null,
-                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-              + suffix(version, EdmPrimitiveTypeKind.Decimal)
-              : (obj instanceof Double)
-              ? EdmDouble.getInstance().valueToString(obj, null, null,
-                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-              + suffix(version, EdmPrimitiveTypeKind.Double)
-              : (obj instanceof Float)
-              ? EdmSingle.getInstance().valueToString(obj, null, null,
-                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-              + suffix(version, EdmPrimitiveTypeKind.Single)
-              : (obj instanceof Long)
-              ? EdmInt64.getInstance().valueToString(obj, null, null,
-                      Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
-              + suffix(version, EdmPrimitiveTypeKind.Int64)
-              : (obj instanceof Geospatial)
-              ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(((Geospatial) obj).getEdmPrimitiveTypeKind()).
-                      valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-                      Constants.UTF8)
-              : (obj instanceof String)
-              ? "'" + URLEncoder.encode((String) obj, Constants.UTF8) + "'"
-              : obj.toString();
+      if (obj == null) {
+        value = Constants.ATTR_NULL;
+      } else if (version == ODataServiceVersion.V40 && obj instanceof Collection) {
+        final StringBuffer buffer = new StringBuffer("[");
+        for (@SuppressWarnings("unchecked")
+                final Iterator<Object> itor = ((Collection<Object>) obj).iterator(); itor.hasNext();) {
+          buffer.append(escape(version, itor.next(), false));
+          if (itor.hasNext()) {
+            buffer.append(',');
+          }
+        }
+        buffer.append(']');
+
+        value = buffer.toString();
+      } else if (version == ODataServiceVersion.V40 && obj instanceof Map) {
+        final StringBuffer buffer = new StringBuffer("{");
+        for (@SuppressWarnings("unchecked")
+                final Iterator<Map.Entry<Object, Object>> itor =
+                ((Map<Object, Object>) obj).entrySet().iterator(); itor.hasNext();) {
+
+          final Map.Entry<Object, Object> entry = itor.next();
+          buffer.append("\"").append(URLEncoder.encode(entry.getKey().toString(), Constants.UTF8)).append("\"");
+          buffer.append(':').append(escape(version, entry.getValue(), false));
+
+          if (itor.hasNext()) {
+            buffer.append(',');
+          }
+        }
+        buffer.append('}');
+
+        value = buffer.toString();
+      } else {
+        value = (obj instanceof Boolean)
+                ? BooleanUtils.toStringTrueFalse((Boolean) obj)
+                : (obj instanceof UUID)
+                ? prefix(version, EdmPrimitiveTypeKind.Guid)
+                + obj.toString()
+                + suffix(version, EdmPrimitiveTypeKind.Guid)
+                : (obj instanceof byte[])
+                ? EdmBinary.getInstance().toUriLiteral(Hex.encodeHexString((byte[]) obj))
+                : (obj instanceof Timestamp)
+                ? timestamp(version, (Timestamp) obj)
+                : (obj instanceof Calendar)
+                ? calendar(version, (Calendar) obj)
+                : (obj instanceof Duration)
+                ? duration(version, (Duration) obj)
+                : (obj instanceof BigDecimal)
+                ? EdmDecimal.getInstance().valueToString(obj, null, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                + suffix(version, EdmPrimitiveTypeKind.Decimal)
+                : (obj instanceof Double)
+                ? EdmDouble.getInstance().valueToString(obj, null, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                + suffix(version, EdmPrimitiveTypeKind.Double)
+                : (obj instanceof Float)
+                ? EdmSingle.getInstance().valueToString(obj, null, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                + suffix(version, EdmPrimitiveTypeKind.Single)
+                : (obj instanceof Long)
+                ? EdmInt64.getInstance().valueToString(obj, null, null,
+                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
+                + suffix(version, EdmPrimitiveTypeKind.Int64)
+                : (obj instanceof Geospatial)
+                ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(((Geospatial) obj).getEdmPrimitiveTypeKind()).
+                        valueToString(obj, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
+                        Constants.UTF8)
+                : (obj instanceof String)
+                ? quoteString((String) obj, singleQuoteEscape)
+                : obj.toString();
+      }
     } catch (Exception e) {
       LOG.warn("While escaping '{}', using toString()", obj, e);
       value = obj.toString();

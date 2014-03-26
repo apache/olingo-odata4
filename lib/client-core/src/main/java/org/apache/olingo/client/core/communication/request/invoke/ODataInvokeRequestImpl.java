@@ -153,7 +153,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
             throw new IllegalArgumentException("Only primitive values can be passed via GET");
           }
 
-          uriBuilder.addParameter(param.getKey(), param.getValue().toString());
+          uriBuilder.addParameter(param.getKey(), URIUtils.escape(odataClient.getServiceVersion(), param.getValue()));
         }
         try {
           ((HttpRequestBase) this.request).setURI(uriBuilder.build());

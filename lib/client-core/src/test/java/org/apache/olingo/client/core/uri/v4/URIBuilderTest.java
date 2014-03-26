@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core.uri.v4;
 
 import java.net.URI;
 import java.net.URISyntaxException;
