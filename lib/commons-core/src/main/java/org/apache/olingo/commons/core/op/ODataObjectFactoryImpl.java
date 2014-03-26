@@ -24,7 +24,6 @@ import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -141,11 +140,6 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataProperty newPrimitiveProperty(final String name, final ODataPrimitiveValue value) {
-    return new ODataProperty(name, value);
-  }
-
-  @Override
-  public ODataProperty newPrimitiveProperty(final String name, final ODataGeospatialValue value) {
     return new ODataProperty(name, value);
   }
 

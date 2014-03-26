@@ -26,7 +26,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.CommonRetriev
 import org.apache.olingo.client.api.communication.request.streamed.CommonStreamedRequestFactory;
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
-import org.apache.olingo.commons.api.domain.ODataGeospatialValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.client.api.op.CommonODataBinder;
 import org.apache.olingo.client.api.op.CommonODataReader;
@@ -49,8 +48,6 @@ public interface CommonODataClient {
   CommonFilterFactory getFilterFactory();
 
   ODataPrimitiveValue.Builder getPrimitiveValueBuilder();
-
-  ODataGeospatialValue.Builder getGeospatialValueBuilder();
 
   ODataSerializer getSerializer();
 

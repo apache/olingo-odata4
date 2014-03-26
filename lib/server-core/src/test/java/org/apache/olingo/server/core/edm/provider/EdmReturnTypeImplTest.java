@@ -46,7 +46,7 @@ public class EdmReturnTypeImplTest {
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
     assertFalse(typeImpl.isCollection());
 
     assertNull(typeImpl.getPrecision());
@@ -61,7 +61,7 @@ public class EdmReturnTypeImplTest {
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
     assertTrue(typeImpl.isCollection());
   }
 

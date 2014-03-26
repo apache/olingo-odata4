@@ -47,11 +47,11 @@ class JSONGeoValueDeserializer {
     this.version = version;
   }
 
-  private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final String crs) {
+  private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
     Point point = null;
 
     if (itor.hasNext()) {
-      point = new Point(GeoUtils.getDimension(type), crs);
+      point = new Point(GeoUtils.getDimension(type), srid);
       try {
         point.setX(EdmDouble.getInstance().valueOfString(itor.next().asText(), null, null,
                 Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null, Double.class));
@@ -65,46 +65,42 @@ class JSONGeoValueDeserializer {
     return point;
   }
 
-  private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
-
+  private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
     final MultiPoint multiPoint;
 
     if (itor.hasNext()) {
       final List<Point> points = new ArrayList<Point>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
-        points.add(point(mpItor, type, crs));
+        points.add(point(mpItor, type, srid));
       }
-      multiPoint = new MultiPoint(GeoUtils.getDimension(type), crs, points);
+      multiPoint = new MultiPoint(GeoUtils.getDimension(type), srid, points);
     } else {
-      multiPoint = new MultiPoint(GeoUtils.getDimension(type), crs, Collections.<Point>emptyList());
+      multiPoint = new MultiPoint(GeoUtils.getDimension(type), srid, Collections.<Point>emptyList());
     }
 
     return multiPoint;
   }
 
-  private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
-
+  private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
     final LineString lineString;
 
     if (itor.hasNext()) {
       final List<Point> points = new ArrayList<Point>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
-        points.add(point(mpItor, type, crs));
+        points.add(point(mpItor, type, srid));
       }
-      lineString = new LineString(GeoUtils.getDimension(type), crs, points);
+      lineString = new LineString(GeoUtils.getDimension(type), srid, points);
     } else {
-      lineString = new LineString(GeoUtils.getDimension(type), crs, Collections.<Point>emptyList());
+      lineString = new LineString(GeoUtils.getDimension(type), srid, Collections.<Point>emptyList());
     }
 
     return lineString;
   }
 
   private MultiLineString multiLineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
+          final Integer srid) {
 
     final MultiLineString multiLineString;
 
@@ -112,18 +108,18 @@ class JSONGeoValueDeserializer {
       final List<LineString> lineStrings = new ArrayList<LineString>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mlsItor = itor.next().elements();
-        lineStrings.add(lineString(mlsItor, type, crs));
+        lineStrings.add(lineString(mlsItor, type, srid));
       }
-      multiLineString = new MultiLineString(GeoUtils.getDimension(type), crs, lineStrings);
+      multiLineString = new MultiLineString(GeoUtils.getDimension(type), srid, lineStrings);
     } else {
-      multiLineString = new MultiLineString(GeoUtils.getDimension(type), crs, Collections.<LineString>emptyList());
+      multiLineString = new MultiLineString(GeoUtils.getDimension(type), srid, Collections.<LineString>emptyList());
     }
 
     return multiLineString;
   }
 
   private Polygon polygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
+          final Integer srid) {
 
     List<Point> extPoints = null;
     if (itor.hasNext()) {
@@ -132,7 +128,7 @@ class JSONGeoValueDeserializer {
         extPoints = new ArrayList<Point>();
         while (extItor.hasNext()) {
           final Iterator<JsonNode> mpItor = extItor.next().elements();
-          extPoints.add(point(mpItor, type, crs));
+          extPoints.add(point(mpItor, type, srid));
         }
       }
     }
@@ -144,16 +140,16 @@ class JSONGeoValueDeserializer {
         intPoints = new ArrayList<Point>();
         while (intItor.hasNext()) {
           final Iterator<JsonNode> mpItor = intItor.next().elements();
-          intPoints.add(point(mpItor, type, crs));
+          intPoints.add(point(mpItor, type, srid));
         }
       }
     }
 
-    return new Polygon(GeoUtils.getDimension(type), crs, intPoints, extPoints);
+    return new Polygon(GeoUtils.getDimension(type), srid, intPoints, extPoints);
   }
 
   private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
+          final Integer srid) {
 
     final MultiPolygon multiPolygon;
 
@@ -161,18 +157,18 @@ class JSONGeoValueDeserializer {
       final List<Polygon> polygons = new ArrayList<Polygon>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
-        polygons.add(polygon(mpItor, type, crs));
+        polygons.add(polygon(mpItor, type, srid));
       }
-      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), crs, polygons);
+      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), srid, polygons);
     } else {
-      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), crs, Collections.<Polygon>emptyList());
+      multiPolygon = new MultiPolygon(GeoUtils.getDimension(type), srid, Collections.<Polygon>emptyList());
     }
 
     return multiPolygon;
   }
 
   private GeospatialCollection collection(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final String crs) {
+          final Integer srid) {
 
     final GeospatialCollection collection;
 
@@ -195,9 +191,9 @@ class JSONGeoValueDeserializer {
         geospatials.add(deserialize(geo, new EdmTypeInfo.Builder().setTypeExpression(callAsType).build()));
       }
 
-      collection = new GeospatialCollection(GeoUtils.getDimension(type), crs, geospatials);
+      collection = new GeospatialCollection(GeoUtils.getDimension(type), srid, geospatials);
     } else {
-      collection = new GeospatialCollection(GeoUtils.getDimension(type), crs, Collections.<Geospatial>emptyList());
+      collection = new GeospatialCollection(GeoUtils.getDimension(type), srid, Collections.<Geospatial>emptyList());
     }
 
     return collection;
@@ -223,46 +219,47 @@ class JSONGeoValueDeserializer {
             ? node.get(Constants.JSON_COORDINATES).elements()
             : Collections.<JsonNode>emptyList().iterator();
 
-    String crs = null;
+    Integer srid = null;
     if (node.has(Constants.JSON_CRS)) {
-      crs = node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1];
+      srid = Integer.valueOf(
+              node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
     }
 
     Geospatial value = null;
     switch (actualType) {
       case GeographyPoint:
       case GeometryPoint:
-        value = point(cooItor, actualType, crs);
+        value = point(cooItor, actualType, srid);
         break;
 
       case GeographyMultiPoint:
       case GeometryMultiPoint:
-        value = multipoint(cooItor, actualType, crs);
+        value = multipoint(cooItor, actualType, srid);
         break;
 
       case GeographyLineString:
       case GeometryLineString:
-        value = lineString(cooItor, actualType, crs);
+        value = lineString(cooItor, actualType, srid);
         break;
 
       case GeographyMultiLineString:
       case GeometryMultiLineString:
-        value = multiLineString(cooItor, actualType, crs);
+        value = multiLineString(cooItor, actualType, srid);
         break;
 
       case GeographyPolygon:
       case GeometryPolygon:
-        value = polygon(cooItor, actualType, crs);
+        value = polygon(cooItor, actualType, srid);
         break;
 
       case GeographyMultiPolygon:
       case GeometryMultiPolygon:
-        value = multiPolygon(cooItor, actualType, crs);
+        value = multiPolygon(cooItor, actualType, srid);
         break;
 
       case GeographyCollection:
       case GeometryCollection:
-        value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, crs);
+        value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, srid);
         break;
 
       default:

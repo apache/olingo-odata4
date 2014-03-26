@@ -102,7 +102,7 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLambdaVariable());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("all", impl.toString());
   }
 
@@ -118,7 +118,7 @@ public class UriResourceImplTest {
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLamdaVariable());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("any", impl.toString());
   }
 

@@ -30,6 +30,6 @@ public class UInt7Test extends PrimitiveTypeBaseTest {
   public void compatibility() {
     assertTrue(Uint7.getInstance().isCompatible(Uint7.getInstance()));
     assertFalse(Uint7.getInstance().isCompatible(
-            EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String)));
+            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String)));
   }
 }

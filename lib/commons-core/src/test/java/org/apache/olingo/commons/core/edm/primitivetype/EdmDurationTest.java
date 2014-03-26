@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class EdmDurationTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Duration);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration);
 
   @Test
   public void toUriLiteral() throws Exception {

@@ -134,7 +134,7 @@ public class MetadataTest extends AbstractTest {
             new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "ProductReview"));
     assertNotNull(entity);
     assertFalse(entity.getPropertyNames().isEmpty());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32),
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32),
             entity.getProperty("ProductId").getType());
 
     assertFalse(entity.getKeyPropertyRefs().isEmpty());
@@ -178,7 +178,7 @@ public class MetadataTest extends AbstractTest {
 
     final EdmFunctionImport getArgumentPlusOne = container.getFunctionImport("GetArgumentPlusOne");
     assertNotNull(getArgumentPlusOne);
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32),
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32),
             getArgumentPlusOne.getFunction(null).getReturnType().getType());
 
     final EdmActionImport resetDataSource = container.getActionImport("ResetDataSource");

@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.Point;
 
-public final class EdmGeometryCollection extends AbstractEdmGeospatialType<Point> {
+public final class EdmGeometryCollection extends AbstractGeospatialType<GeospatialCollection> {
 
   private static final EdmGeometryCollection INSTANCE = new EdmGeometryCollection();
 
@@ -31,7 +33,33 @@ public final class EdmGeometryCollection extends AbstractEdmGeospatialType<Point
   }
 
   public EdmGeometryCollection() {
-    super(Point.class, Dimension.GEOMETRY, Type.GEOSPATIALCOLLECTION);
+    super(GeospatialCollection.class, Dimension.GEOMETRY, Type.GEOSPATIALCOLLECTION);
   }
 
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode,
+          final Class<T> returnType) throws EdmPrimitiveTypeException {
+
+    final GeospatialCollection collection =
+            stringToCollection(value, isNullable, maxLength, precision, scale, isUnicode);
+    if (returnType.isAssignableFrom(GeospatialCollection.class)) {
+      return returnType.cast(collection);
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    }
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    if (value instanceof GeospatialCollection) {
+      return toString((GeospatialCollection) value, isNullable, maxLength, precision, scale, isUnicode);
+    }
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+  }
 }

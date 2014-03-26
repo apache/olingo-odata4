@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class EdmDateTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Date);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date);
 
   @Test
   public void toUriLiteral() throws Exception {

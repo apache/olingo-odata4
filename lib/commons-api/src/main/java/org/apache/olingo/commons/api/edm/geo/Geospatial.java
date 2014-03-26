@@ -75,23 +75,22 @@ public abstract class Geospatial implements Serializable {
 
   protected final Type type;
 
-  protected String crs;
-
   /**
    * Null value means it is expected to vary per instance.
    */
-  protected Integer srid;
+  protected final Integer srid;
 
   /**
    * Constructor.
    *
    * @param dimension dimension.
    * @param type type.
+   * @param srid SRID
    */
-  protected Geospatial(final Dimension dimension, final Type type, final String crs) {
+  protected Geospatial(final Dimension dimension, final Type type, final Integer srid) {
     this.dimension = dimension;
     this.type = type;
-    this.crs = crs;
+    this.srid = srid;
   }
 
   /**
@@ -115,15 +114,6 @@ public abstract class Geospatial implements Serializable {
   }
 
   /**
-   * Gets CRS.
-   *
-   * @return CRS
-   */
-  public String getCrs() {
-    return crs;
-  }
-
-  /**
    * Gets s-rid.
    *
    * @return s-rid.
@@ -132,36 +122,18 @@ public abstract class Geospatial implements Serializable {
     return srid;
   }
 
-  /**
-   * Sets s-rid.
-   *
-   * @param srid s-rid.
-   */
-  public void setSrid(final Integer srid) {
-    this.srid = srid;
-  }
-
   public abstract EdmPrimitiveTypeKind getEdmPrimitiveTypeKind();
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public boolean equals(final Object obj) {
     return EqualsBuilder.reflectionEquals(this, obj);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public int hashCode() {
     return HashCodeBuilder.reflectionHashCode(this);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);

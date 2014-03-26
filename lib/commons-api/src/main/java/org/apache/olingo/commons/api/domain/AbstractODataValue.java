@@ -51,26 +51,6 @@ public abstract class AbstractODataValue implements ODataValue {
   }
 
   /**
-   * Check is is a geospatail value.
-   *
-   * @return 'TRUE' if geospatail; 'FALSE' otherwise.
-   */
-  @Override
-  public boolean isGeospatial() {
-    return (this instanceof ODataGeospatialValue);
-  }
-
-  /**
-   * Casts to geospatail value.
-   *
-   * @return geospatail value.
-   */
-  @Override
-  public ODataGeospatialValue asGeospatial() {
-    return isGeospatial() ? (ODataGeospatialValue) this : null;
-  }
-
-  /**
    * Check is is a complex value.
    *
    * @return 'TRUE' if complex; 'FALSE' otherwise.

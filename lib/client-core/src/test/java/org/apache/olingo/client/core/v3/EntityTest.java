@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -88,8 +89,8 @@ public class EntityTest extends AbstractTest {
     for (ODataProperty property : entity.getProperties()) {
       if ("GeogMultiLine".equals(property.getName())) {
         found = true;
-        assertTrue(property.hasGeospatialValue());
-        assertEquals(EdmPrimitiveTypeKind.GeographyMultiLineString, property.getGeospatialValue().getTypeKind());
+        assertTrue(property.hasPrimitiveValue());
+        assertEquals(EdmPrimitiveTypeKind.GeographyMultiLineString, property.getPrimitiveValue().getTypeKind());
       }
     }
     assertTrue(found);
@@ -160,30 +161,30 @@ public class EntityTest extends AbstractTest {
     mediaEntity(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void issue128(final ODataPubFormat format) {
+  private void issue128(final ODataPubFormat format) throws EdmPrimitiveTypeException {
     final InputStream input = getClass().getResourceAsStream("AllGeoTypesSet_-5." + getSuffix(format));
     final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer().toEntry(input, format));
     assertNotNull(entity);
 
     final ODataProperty geogCollection = entity.getProperty("GeogCollection");
-    assertEquals(EdmPrimitiveTypeKind.GeographyCollection, geogCollection.getGeospatialValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyCollection, geogCollection.getPrimitiveValue().getTypeKind());
 
     int count = 0;
-    for (Geospatial g : geogCollection.getGeospatialValue().toCastValue(GeospatialCollection.class)) {
-      assertNotNull(g);
+    for (Geospatial geo : geogCollection.getPrimitiveValue().toCastValue(GeospatialCollection.class)) {
+      assertNotNull(geo);
       count++;
     }
     assertEquals(2, count);
   }
 
   @Test
-  public void issue128FromAtom() {
+  public void issue128FromAtom() throws EdmPrimitiveTypeException {
     issue128(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void issue128FromJSON() {
+  public void issue128FromJSON() throws EdmPrimitiveTypeException {
     issue128(ODataPubFormat.JSON_FULL_METADATA);
   }
 }

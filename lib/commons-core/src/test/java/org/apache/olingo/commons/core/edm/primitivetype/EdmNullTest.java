@@ -29,26 +29,22 @@ public class EdmNullTest extends PrimitiveTypeBaseTest {
   @Test
   public void checkNull() throws Exception {
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-      if (!kind.isGeospatial()) {
-        final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(kind);
-        assertNull(instance.valueToString(null, null, null, null, null, null));
-        assertNull(instance.valueToString(null, true, null, null, null, null));
+      final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
+      assertNull(instance.valueToString(null, null, null, null, null, null));
+      assertNull(instance.valueToString(null, true, null, null, null, null));
 
-        expectNullErrorInValueToString(instance);
-      }
+      expectNullErrorInValueToString(instance);
     }
   }
 
   @Test
   public void checkValueOfNull() throws Exception {
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-      if (!kind.isGeospatial()) {
-        final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(kind);
-        assertNull(instance.valueOfString(null, null, null, null, null, null, instance.getDefaultType()));
-        assertNull(instance.valueOfString(null, true, null, null, null, null, instance.getDefaultType()));
+      final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
+      assertNull(instance.valueOfString(null, null, null, null, null, null, instance.getDefaultType()));
+      assertNull(instance.valueOfString(null, true, null, null, null, null, instance.getDefaultType()));
 
-        expectNullErrorInValueOfString(instance);
-      }
+      expectNullErrorInValueOfString(instance);
     }
   }
 }

@@ -40,20 +40,6 @@ public interface ODataValue extends Serializable {
   ODataPrimitiveValue asPrimitive();
 
   /**
-   * Check is is a geospatail value.
-   *
-   * @return 'TRUE' if geospatail; 'FALSE' otherwise.
-   */
-  boolean isGeospatial();
-
-  /**
-   * Casts to geospatail value.
-   *
-   * @return geospatail value.
-   */
-  ODataGeospatialValue asGeospatial();
-
-  /**
    * Check is is a collection value.
    *
    * @return 'TRUE' if collection; 'FALSE' otherwise.

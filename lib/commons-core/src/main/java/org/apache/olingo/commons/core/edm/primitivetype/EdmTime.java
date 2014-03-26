@@ -34,6 +34,11 @@ public final class EdmTime extends SingletonPrimitiveType {
     return INSTANCE;
   }
 
+  {
+    uriPrefix = "time'";
+    uriSuffix = "'";
+  }
+
   @Override
   public Class<?> getDefaultType() {
     return Duration.class;

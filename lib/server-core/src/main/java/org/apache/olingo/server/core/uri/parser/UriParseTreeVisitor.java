@@ -878,10 +878,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     if (text.equals("false")) {
       return new LiteralImpl().setText("false").setType(
-              EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean));
+              EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
     }
     return new LiteralImpl().setText("true").setType(
-            EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean));
+            EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -1551,7 +1551,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitNaninfinity(final NaninfinityContext ctx) {
-    return new LiteralImpl().setType(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Decimal)).
+    return new LiteralImpl().setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)).
             setText(ctx.getText());
   }
 

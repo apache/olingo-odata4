@@ -31,18 +31,10 @@ public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatia
 
   protected final List<T> geospatials;
 
-  /**
-   * Constructor.
-   *
-   * @param dimension dimension.
-   * @param type type.
-   * @param crs crs.
-   * @param geospatials geospatials info.
-   */
-  protected ComposedGeospatial(final Dimension dimension, final Type type, final String crs,
+  protected ComposedGeospatial(final Dimension dimension, final Type type, final Integer srid,
           final List<T> geospatials) {
 
-    super(dimension, type, crs);
+    super(dimension, type, srid);
     this.geospatials = new ArrayList<T>();
     if (geospatials != null) {
       this.geospatials.addAll(geospatials);
@@ -64,15 +56,5 @@ public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatia
    */
   public boolean isEmpty() {
     return geospatials.isEmpty();
-  }
-
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public void setSrid(final Integer srid) {
-    for (Geospatial geospatial : this.geospatials) {
-      geospatial.setSrid(srid);
-    }
   }
 }

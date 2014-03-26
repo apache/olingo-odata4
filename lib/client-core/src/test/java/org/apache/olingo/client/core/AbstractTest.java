@@ -43,14 +43,6 @@ public abstract class AbstractTest {
     XMLUnit.setCompareUnmatched(false);
   }
 
-  /**
-   * This is needed for correct number handling (Double, for example).
-   */
-  @BeforeClass
-  public static void setEnglishLocale() {
-    Locale.setDefault(Locale.ENGLISH);
-  }
-
   @BeforeClass
   public static void setClientInstances() {
     v3Client = ODataClientFactory.getV3();

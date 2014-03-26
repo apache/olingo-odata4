@@ -78,7 +78,7 @@ public class EdmFunctionImportImplTest {
     assertEquals(functionName.getName(), function.getName());
     assertFalse(function.isBound());
     assertFalse(function.isComposable());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean),
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean),
             function.getReturnType().getType());
     assertEquals(entityContainer, functionImport.getEntityContainer());
     assertNull(functionImport.getReturnedEntitySet());

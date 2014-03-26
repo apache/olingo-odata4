@@ -44,7 +44,7 @@ public abstract class AbstractEdmParameter extends EdmElementImpl implements Edm
     if (typeImpl == null) {
       if (EdmPrimitiveType.EDM_NAMESPACE.equals(paramType.getNamespace())) {
         try {
-          typeImpl = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.valueOf(paramType.getName()));
+          typeImpl = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(paramType.getName()));
         } catch (IllegalArgumentException e) {
           throw new EdmException("Cannot find type with name: " + paramType, e);
         }

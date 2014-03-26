@@ -105,7 +105,7 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void underlyingType() throws Exception {
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte), instance.getUnderlyingType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte), instance.getUnderlyingType());
   }
 
   @Test

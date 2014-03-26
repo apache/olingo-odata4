@@ -190,15 +190,6 @@ public interface ODataObjectFactory {
   ODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
 
   /**
-   * Instantiates a new primitive property.
-   *
-   * @param name name.
-   * @param value geospatial value.
-   * @return primitive property.
-   */
-  ODataProperty newPrimitiveProperty(String name, ODataGeospatialValue value);
-
-  /**
    * Instantiates a new complex property.
    *
    * @param name name.
