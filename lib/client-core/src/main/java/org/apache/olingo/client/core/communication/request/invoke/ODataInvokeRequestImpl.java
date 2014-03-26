@@ -99,7 +99,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
   @Override
   public void setFormat(final ODataPubFormat format) {
     final String _format = (reference.isAssignableFrom(ODataProperty.class) && format == ODataPubFormat.ATOM)
-            ? ODataFormat.XML.toString()
+            ? ODataFormat.XML.toString(odataClient.getServiceVersion())
             : format.toString(odataClient.getServiceVersion());
     setAccept(_format);
     setContentType(_format);

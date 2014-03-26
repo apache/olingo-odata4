@@ -20,7 +20,6 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import java.io.Serializable;
 import java.net.URI;
-import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -50,7 +49,7 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @param changes changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  ODataEntityUpdateRequest getEntityUpdateRequest(URI targetURI, UpdateType type, ODataEntity changes);
+  <UT extends UpdateType> ODataEntityUpdateRequest getEntityUpdateRequest(URI targetURI, UT type, ODataEntity changes);
 
   /**
    * Gets an update request object instance; uses entity's edit link as endpoint.

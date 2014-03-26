@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.client.api.communication.request.UpdateType;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.domain.ODataEntity;

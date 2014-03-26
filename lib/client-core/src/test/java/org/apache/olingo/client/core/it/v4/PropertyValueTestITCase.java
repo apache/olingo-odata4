@@ -116,7 +116,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
-    req.setAccept(ODataFormat.XML.toString());
+    req.setAccept(ODataFormat.XML.toString(client.getServiceVersion()));
     req.execute().getBody();
   }
 

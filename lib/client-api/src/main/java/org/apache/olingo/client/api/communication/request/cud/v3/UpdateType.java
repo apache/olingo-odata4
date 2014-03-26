@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request;
+package org.apache.olingo.client.api.communication.request.cud.v3;
 
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
  * Update type.
  */
-public enum UpdateType {
+public enum UpdateType implements org.apache.olingo.client.api.communication.request.cud.UpdateType {
 
   /**
    * Replace all and remove missing attributes.
@@ -49,6 +49,7 @@ public enum UpdateType {
    *
    * @return HTTP request method.
    */
+  @Override
   public HttpMethod getMethod() {
     return method;
   }

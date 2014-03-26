@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.api.format;
 
-import java.util.EnumMap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
@@ -29,42 +28,24 @@ public enum ODataPubFormat implements Format {
   /**
    * JSON format with no metadata.
    */
-  JSON_NO_METADATA(),
+  JSON_NO_METADATA,
   /**
    * JSON format with minimal metadata (default).
    */
-  JSON(),
+  JSON,
   /**
    * JSON format with no metadata.
    */
-  JSON_FULL_METADATA(),
+  JSON_FULL_METADATA,
   /**
    * Atom format.
    */
-  ATOM();
-
-  final static EnumMap<ODataServiceVersion, EnumMap<ODataPubFormat, String>> formatPerVersion =
-          new EnumMap<ODataServiceVersion, EnumMap<ODataPubFormat, String>>(ODataServiceVersion.class);
-
-  static {
-    final EnumMap<ODataPubFormat, String> v3 = new EnumMap<ODataPubFormat, String>(ODataPubFormat.class);
-    v3.put(JSON_NO_METADATA, ContentType.APPLICATION_JSON + ";odata=nometadata");
-    v3.put(JSON, ContentType.APPLICATION_JSON + ";odata=minimalmetadata");
-    v3.put(JSON_FULL_METADATA, ContentType.APPLICATION_JSON + ";odata=fullmetadata");
-    v3.put(ATOM, ContentType.APPLICATION_ATOM_XML);
-    formatPerVersion.put(ODataServiceVersion.V30, v3);
-
-    final EnumMap<ODataPubFormat, String> v4 = new EnumMap<ODataPubFormat, String>(ODataPubFormat.class);
-    v4.put(JSON_NO_METADATA, ContentType.APPLICATION_JSON + ";odata.metadata=none");
-    v4.put(JSON, ContentType.APPLICATION_JSON + ";odata.metadata=minimal");
-    v4.put(JSON_FULL_METADATA, ContentType.APPLICATION_JSON + ";odata.metadata=full");
-    v4.put(ATOM, ContentType.APPLICATION_ATOM_XML);
-    formatPerVersion.put(ODataServiceVersion.V40, v4);
-  }
+  ATOM;
 
   /**
    * Gets format as a string.
    *
+   * @param version OData service version.
    * @return format as a string.
    */
   @Override
@@ -73,7 +54,7 @@ public enum ODataPubFormat implements Format {
       throw new IllegalArgumentException("Unsupported version " + version);
     }
 
-    return ODataPubFormat.formatPerVersion.get(version).get(this);
+    return ContentType.formatPerVersion.get(version).get(this.name());
   }
 
   @Override

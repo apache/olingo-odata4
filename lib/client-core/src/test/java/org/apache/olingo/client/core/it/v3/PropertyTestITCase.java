@@ -24,9 +24,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
@@ -273,7 +273,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
-                    alternativeNames);
+            alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -344,7 +344,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString());
+    req.setFormat(format.toString(client.getServiceVersion()));
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);

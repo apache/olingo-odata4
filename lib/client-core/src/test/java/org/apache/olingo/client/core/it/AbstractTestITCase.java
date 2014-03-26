@@ -41,10 +41,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
@@ -214,7 +214,7 @@ public abstract class AbstractTestITCase {
 
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Information",
             getClient().getPrimitiveValueBuilder().setText(sampleinfo).setType(
-                    EdmPrimitiveTypeKind.String).build()));
+            EdmPrimitiveTypeKind.String).build()));
 
     return entity;
   }
@@ -228,12 +228,12 @@ public abstract class AbstractTestITCase {
     // add name attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
             getClient().getPrimitiveValueBuilder().setText(sampleName).setType(
-                    EdmPrimitiveTypeKind.String).build()));
+            EdmPrimitiveTypeKind.String).build()));
 
     // add key attribute
     entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
             getClient().getPrimitiveValueBuilder().setText(String.valueOf(id)).setType(
-                    EdmPrimitiveTypeKind.Int32).build()));
+            EdmPrimitiveTypeKind.Int32).build()));
 
     // add BackupContactInfo attribute (collection)
     final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(
