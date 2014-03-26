@@ -26,9 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * OData entity.
  */
-public class ODataEntity extends ODataItem implements ODataInvokeResult {
+public class ODataEntity extends AbstractODataPayload implements ODataInvokeResult {
 
   private static final long serialVersionUID = 8360640095932811034L;
+
+  /**
+   * Entity reference.
+   */
+  private String reference;
 
   /**
    * ETag.
@@ -87,6 +92,30 @@ public class ODataEntity extends ODataItem implements ODataInvokeResult {
    */
   public ODataEntity(final String name) {
     super(name);
+  }
+
+  /**
+   * To request entity references in place of the actual entities, the client issues a GET request with /$ref appended
+   * to the resource path.
+   * <br />
+   * If the resource path does not identify an entity or a collection of entities, the service returns 404 Not Found.
+   * <br />
+   * If the resource path terminates on a collection, the response MUST be the format-specific representation of a
+   * collection of entity references pointing to the related entities. If no entities are related, the response is the
+   * format-specific representation of an empty collection.
+   * <br />
+   * If the resource path terminates on a single entity, the response MUST be the format-specific representation of an
+   * entity reference pointing to the related single entity. If the resource path terminates on a single entity and no
+   * such entity exists, the service returns 404 Not Found.
+   *
+   * @return entity reference.
+   */
+  public String getReference() {
+    return reference;
+  }
+
+  public void setReference(final String reference) {
+    this.reference = reference;
   }
 
   /**

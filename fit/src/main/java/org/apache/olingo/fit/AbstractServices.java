@@ -54,6 +54,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.fit.utils.Constants;
@@ -141,6 +142,40 @@ public abstract class AbstractServices {
               createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
+    }
+  }
+
+  /**
+   * Retrieve entity reference sample.
+   *
+   * @param accept Accept header.
+   * @param path path.
+   * @param format format query option.
+   * @return entity reference or feed of entity reference.
+   */
+  @GET
+  @Path("/{path:.*}/$ref")
+  public Response getEntityReference(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+      if (utils.getKey() == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final String filename = Base64.encodeBase64String(path.getBytes("UTF-8"));
+
+      return utils.getValue().createResponse(
+              FSManager.instance(getVersion()).readFile(Constants.REF + File.separatorChar + filename, utils.getKey()),
+              null,
+              utils.getKey());
+    } catch (Exception e) {
+      LOG.error("Error retrieving entity", e);
+      return xml.createFaultResponse(accept, e);
     }
   }
 
@@ -386,7 +421,7 @@ public abstract class AbstractServices {
         } else if (StringUtils.isNotBlank(skiptoken)) {
           builder.append(SKIP_TOKEN).append(File.separatorChar).append(skiptoken);
         } else {
-          builder.append(FEED);
+          builder.append(Commons.getLinkInfo().get(getVersion()).isSingleton(name) ? ENTITY : FEED);
         }
 
         InputStream feed = FSManager.instance(getVersion()).readFile(builder.toString(), acceptType);

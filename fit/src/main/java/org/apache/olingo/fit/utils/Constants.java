@@ -60,9 +60,13 @@ public class Constants {
 
   public final static String LINK = "link";
 
-  public final static String DATASERVICES_NS = "http://schemas.microsoft.com/ado/2007/08/dataservices";
+  public final static String V3_DATASERVICES_NS = "http://schemas.microsoft.com/ado/2007/08/dataservices";
 
-  public final static String METADATA_NS = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
+  public final static String V4_DATASERVICES_NS = "http://docs.oasis-open.org/odata/ns/dataservices";
+
+  public final static String V3_METADATA_NS = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
+
+  public final static String V4_METADATA_NS = "http://docs.oasis-open.org/odata/ns/metadata";
 
   public final static String METADATA = "metadata";
 
@@ -71,6 +75,8 @@ public class Constants {
   public final static String FEED = "feed";
 
   public final static String ENTITY = "entity";
+
+  public final static String REF = "references";
 
   public final static String MEDIA_CONTENT_FILENAME = "$value.bin";
 

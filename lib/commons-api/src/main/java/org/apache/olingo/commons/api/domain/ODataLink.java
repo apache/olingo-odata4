@@ -98,7 +98,6 @@ public class ODataLink extends ODataItem {
 
     return uri.normalize();
   }
-
   /**
    * Link type.
    */
@@ -186,5 +185,4 @@ public class ODataLink extends ODataItem {
   public String getMediaETag() {
     return mediaETag;
   }
-
 }

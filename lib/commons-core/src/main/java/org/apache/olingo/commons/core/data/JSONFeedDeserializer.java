@@ -41,15 +41,20 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
-    if (!tree.has(Constants.JSON_VALUE)) {
+    if (!tree.has(Constants.VALUE)) {
       return null;
     }
 
     final JSONFeedImpl feed = new JSONFeedImpl();
 
-    if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      feed.setMetadata(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
+      feed.setContextURL(URI.create(tree.get(Constants.JSON_CONTEXT).textValue()));
+      tree.remove(Constants.JSON_CONTEXT);
+    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      feed.setContextURL(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+      tree.remove(Constants.JSON_METADATA);
     }
+
     if (tree.hasNonNull(Constants.JSON_COUNT)) {
       feed.setCount(tree.get(Constants.JSON_COUNT).asInt());
     }
@@ -57,8 +62,8 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
       feed.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
     }
 
-    if (tree.hasNonNull(Constants.JSON_VALUE)) {
-      for (final Iterator<JsonNode> itor = tree.get(Constants.JSON_VALUE).iterator(); itor.hasNext();) {
+    if (tree.hasNonNull(Constants.VALUE)) {
+      for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {
         feed.getEntries().add(itor.next().traverse(parser.getCodec()).readValueAs(JSONEntryImpl.class));
       }
     }

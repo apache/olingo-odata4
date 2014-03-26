@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.v4;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
@@ -36,6 +37,22 @@ public class URIBuilderTest extends AbstractTest {
   @Override
   protected ODataClient getClient() {
     return v4Client;
+  }
+
+  @Test
+  public void expandWithOptions() throws URISyntaxException {
+    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+            expandWithOptions("ProductDetails", new LinkedHashMap<String, Object>() {
+      private static final long serialVersionUID = 3109256773218160485L;
+
+      {
+        put("$expand", "ProductInfo");
+        put("$select", "Price");
+      }
+    }).expand("Orders", "Customers").build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+            addParameter("$expand", "ProductDetails($expand=ProductInfo,$select=Price),Orders,Customers").build(), uri);
   }
 
   @Test
@@ -132,5 +149,4 @@ public class URIBuilderTest extends AbstractTest {
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Products").addParameter("$search", "blue OR green").build(), uriBuilder.build());
   }
-
 }

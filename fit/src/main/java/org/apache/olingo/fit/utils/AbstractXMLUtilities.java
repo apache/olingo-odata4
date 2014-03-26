@@ -1208,11 +1208,21 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     writer.add(eventFactory.createStartDocument("UTF-8", "1.0"));
     writer.add(property.getStart());
 
-    if (property.getStart().getAttributeByName(new QName(ATOM_DATASERVICE_NS)) == null) {
-      writer.add(eventFactory.createNamespace(ATOM_PROPERTY_PREFIX.substring(0, 1), DATASERVICES_NS));
-    }
-    if (property.getStart().getAttributeByName(new QName(ATOM_METADATA_NS)) == null) {
-      writer.add(eventFactory.createNamespace(ATOM_METADATA_PREFIX.substring(0, 1), METADATA_NS));
+    if (version == ODataVersion.v4) {
+
+      if (property.getStart().getAttributeByName(new QName(ATOM_DATASERVICE_NS)) == null) {
+        writer.add(eventFactory.createNamespace(ATOM_PROPERTY_PREFIX.substring(0, 1), V4_DATASERVICES_NS));
+      }
+      if (property.getStart().getAttributeByName(new QName(ATOM_METADATA_NS)) == null) {
+        writer.add(eventFactory.createNamespace(ATOM_METADATA_PREFIX.substring(0, 1), V4_METADATA_NS));
+      }
+    } else {
+      if (property.getStart().getAttributeByName(new QName(ATOM_DATASERVICE_NS)) == null) {
+        writer.add(eventFactory.createNamespace(ATOM_PROPERTY_PREFIX.substring(0, 1), V3_DATASERVICES_NS));
+      }
+      if (property.getStart().getAttributeByName(new QName(ATOM_METADATA_NS)) == null) {
+        writer.add(eventFactory.createNamespace(ATOM_METADATA_PREFIX.substring(0, 1), V3_METADATA_NS));
+      }
     }
 
     writer.add(property.getContentReader());

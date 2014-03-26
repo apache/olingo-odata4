@@ -82,8 +82,8 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
   @Override
   public ODataHeaders getVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
-    odataHeaders.setHeader(HeaderName.maxDataServiceVersion, ODataServiceVersion.V40.toString());
-    odataHeaders.setHeader(HeaderName.dataServiceVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HeaderName.odataMaxVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HeaderName.odataVersion, ODataServiceVersion.V40.toString());
     return odataHeaders;
   }
 

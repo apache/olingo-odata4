@@ -31,6 +31,21 @@ public interface Feed {
   URI getBaseURI();
 
   /**
+   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
+   * fragment identifying the relevant portion of the metadata document.
+   *
+   * @return context URL.
+   */
+  URI getContextURL();
+
+  /**
+   * Set context URL.
+   *
+   * @param contextURL context URL.
+   */
+  void setContextURL(final URI contextURL);
+
+  /**
    * Sets number of entries.
    *
    * @param count number of entries
@@ -71,5 +86,4 @@ public interface Feed {
    * @param next next link.
    */
   void setNext(URI next);
-
 }

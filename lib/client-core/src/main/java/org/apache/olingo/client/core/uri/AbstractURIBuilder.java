@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.uri;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +61,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
     public String getValue() {
       return value;
     }
-
   }
-
   protected final List<Segment> segments = new ArrayList<Segment>();
 
   /**
@@ -111,17 +110,11 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB appendKeySegment(final Map<String, Object> segmentValues) {
-    if (segmentValues == null || segmentValues.isEmpty()) {
+    final String key = buildMultiKeySegment(segmentValues, true);
+    if (StringUtils.isEmpty(key)) {
       segments.add(new Segment(SegmentType.KEY, noKeysWrapper()));
     } else {
-      final StringBuilder keyBuilder = new StringBuilder().append('(');
-      for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
-        keyBuilder.append(entry.getKey()).append('=').append(URIUtils.escape(entry.getValue()));
-        keyBuilder.append(',');
-      }
-      keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');
-
-      segments.add(new Segment(SegmentType.KEY, keyBuilder.toString()));
+      segments.add(new Segment(SegmentType.KEY, key));
     }
 
     return getThis();
@@ -179,7 +172,14 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB expand(final String... expandItems) {
-    return addQueryOption(QueryOption.EXPAND, StringUtils.join(expandItems, ","));
+    final List<String> values = new ArrayList<String>();
+    if (queryOptions.containsKey(QueryOption.EXPAND.toString())) {
+      values.add(queryOptions.get(QueryOption.EXPAND.toString()));
+    }
+
+    values.addAll(Arrays.asList(expandItems));
+
+    return addQueryOption(QueryOption.EXPAND, StringUtils.join(values, ","));
   }
 
   @Override
@@ -199,7 +199,14 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB select(final String... selectItems) {
-    return addQueryOption(QueryOption.SELECT, StringUtils.join(selectItems, ","));
+    final List<String> values = new ArrayList<String>();
+    if (queryOptions.containsKey(QueryOption.SELECT.toString())) {
+      values.add(queryOptions.get(QueryOption.SELECT.toString()));
+    }
+
+    values.addAll(Arrays.asList(selectItems));
+
+    return addQueryOption(QueryOption.SELECT, StringUtils.join(values, ","));
   }
 
   @Override
@@ -271,4 +278,19 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
     return build().toASCIIString();
   }
 
+  protected String buildMultiKeySegment(final Map<String, Object> segmentValues, final boolean escape) {
+    if (segmentValues == null || segmentValues.isEmpty()) {
+      return StringUtils.EMPTY;
+    } else {
+      final StringBuilder keyBuilder = new StringBuilder().append('(');
+      for (Map.Entry<String, Object> entry : segmentValues.entrySet()) {
+        keyBuilder.append(entry.getKey()).append('=').append(
+                escape ? URIUtils.escape(entry.getValue()) : entry.getValue());
+        keyBuilder.append(',');
+      }
+      keyBuilder.deleteCharAt(keyBuilder.length() - 1).append(')');
+
+      return keyBuilder.toString();
+    }
+  }
 }

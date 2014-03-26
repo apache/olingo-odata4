@@ -38,9 +38,9 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
 
   private static final long serialVersionUID = -3576372289800799417L;
 
-  private String id;
+  private URI contextURL;
 
-  private URI metadata;
+  private String id;
 
   private Integer count;
 
@@ -51,8 +51,8 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
   @Override
   public URI getBaseURI() {
     URI baseURI = null;
-    if (metadata != null) {
-      final String metadataURI = getMetadata().toASCIIString();
+    if (getContextURL() != null) {
+      final String metadataURI = getContextURL().toASCIIString();
       baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
     }
 
@@ -60,21 +60,15 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
   }
 
   /**
-   * Gets the metadata URI.
-   *
-   * @return the metadata URI
+   * {@inheritDoc}
    */
-  public URI getMetadata() {
-    return metadata;
+  @Override
+  public URI getContextURL() {
+    return contextURL;
   }
 
-  /**
-   * Sets the metadata URI.
-   *
-   * @param metadata metadata URI.
-   */
-  public void setMetadata(final URI metadata) {
-    this.metadata = metadata;
+  public void setContextURL(final URI context) {
+    this.contextURL = context;
   }
 
   @Override

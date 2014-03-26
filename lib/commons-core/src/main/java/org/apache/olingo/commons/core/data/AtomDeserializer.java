@@ -168,112 +168,135 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private AtomEntryImpl entry(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
-    if (!Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
-      return null;
-    }
+    final AtomEntryImpl entry;
+    if (entityRefQName.equals(start.getName())) {
+      entry = entryRef(start);
+    } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
+      entry = new AtomEntryImpl();
+      final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
+      if (xmlBase != null) {
+        entry.setBaseURI(xmlBase.getValue());
+      }
 
-    final AtomEntryImpl entry = new AtomEntryImpl();
-    final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
-    if (xmlBase != null) {
-      entry.setBaseURI(xmlBase.getValue());
-    }
-    final Attribute etag = start.getAttributeByName(etagQName);
-    if (etag != null) {
-      entry.setETag(etag.getValue());
-    }
+      entry.setContextURL(retrieveContextURL(start, entry.getBaseURI()));
 
-    boolean foundEndEntry = false;
-    while (reader.hasNext() && !foundEndEntry) {
-      final XMLEvent event = reader.nextEvent();
+      final Attribute etag = start.getAttributeByName(etagQName);
+      if (etag != null) {
+        entry.setETag(etag.getValue());
+      }
 
-      if (event.isStartElement()) {
-        if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), entry, "id");
-        } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), entry, "title");
-        } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), entry, "summary");
-        } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), entry, "updated");
-        } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
-          final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
-          if (term != null) {
-            entry.setType(term.getValue());
-          }
-        } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
-          final LinkImpl link = new LinkImpl();
-          final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
-          if (rel != null) {
-            link.setRel(rel.getValue());
-          }
-          final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
-          if (title != null) {
-            link.setTitle(title.getValue());
-          }
-          final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
-          if (href != null) {
-            link.setHref(href.getValue());
-          }
-          final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
-          if (type != null) {
-            link.setType(type.getValue());
-          }
+      boolean foundEndEntry = false;
+      while (reader.hasNext() && !foundEndEntry) {
+        final XMLEvent event = reader.nextEvent();
 
-          if (Constants.SELF_LINK_REL.equals(link.getRel())) {
-            entry.setSelfLink(link);
-          } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
-            entry.setEditLink(link);
-          } else if (link.getRel().startsWith(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
-            entry.getNavigationLinks().add(link);
-            inline(reader, event.asStartElement(), link);
-          } else if (link.getRel().startsWith(
-                  version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
-
-            entry.getAssociationLinks().add(link);
-          } else if (link.getRel().startsWith(
-                  version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
-
-            final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
-            if (metag != null) {
-              link.setMediaETag(metag.getValue());
+        if (event.isStartElement()) {
+          if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
+            common(reader, event.asStartElement(), entry, "id");
+          } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
+            common(reader, event.asStartElement(), entry, "title");
+          } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
+            common(reader, event.asStartElement(), entry, "summary");
+          } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
+            common(reader, event.asStartElement(), entry, "updated");
+          } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
+            final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
+            if (term != null) {
+              entry.setType(term.getValue());
             }
-            entry.getMediaEditLinks().add(link);
-          }
-        } else if (actionQName.equals(event.asStartElement().getName())) {
-          final ODataOperation operation = new ODataOperation();
-          final Attribute metadata = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_METADATA));
-          if (metadata != null) {
-            operation.setMetadataAnchor(metadata.getValue());
-          }
-          final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
-          if (title != null) {
-            operation.setTitle(title.getValue());
-          }
-          final Attribute target = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TARGET));
-          if (target != null) {
-            operation.setTarget(URI.create(target.getValue()));
-          }
-
-          entry.getOperations().add(operation);
-        } else if (Constants.QNAME_ATOM_ELEM_CONTENT.equals(event.asStartElement().getName())) {
-          final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
-          if (type == null || ContentType.APPLICATION_XML.equals(type.getValue())) {
-            properties(reader, skipBeforeFirstStartElement(reader), entry);
-          } else {
-            entry.setMediaContentType(type.getValue());
-            final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
-            if (src != null) {
-              entry.setMediaContentSource(src.getValue());
+          } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
+            final LinkImpl link = new LinkImpl();
+            final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
+            if (rel != null) {
+              link.setRel(rel.getValue());
             }
+            final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
+            if (title != null) {
+              link.setTitle(title.getValue());
+            }
+            final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+            if (href != null) {
+              link.setHref(href.getValue());
+            }
+            final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
+            if (type != null) {
+              link.setType(type.getValue());
+            }
+
+            if (Constants.SELF_LINK_REL.equals(link.getRel())) {
+              entry.setSelfLink(link);
+            } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
+              entry.setEditLink(link);
+            } else if (link.getRel().startsWith(
+                    version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
+              entry.getNavigationLinks().add(link);
+              inline(reader, event.asStartElement(), link);
+            } else if (link.getRel().startsWith(
+                    version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
+
+              entry.getAssociationLinks().add(link);
+            } else if (link.getRel().startsWith(
+                    version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
+
+              final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
+              if (metag != null) {
+                link.setMediaETag(metag.getValue());
+              }
+              entry.getMediaEditLinks().add(link);
+            }
+          } else if (actionQName.equals(event.asStartElement().getName())) {
+            final ODataOperation operation = new ODataOperation();
+            final Attribute metadata =
+                    event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_METADATA));
+            if (metadata != null) {
+              operation.setMetadataAnchor(metadata.getValue());
+            }
+            final Attribute title = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TITLE));
+            if (title != null) {
+              operation.setTitle(title.getValue());
+            }
+            final Attribute target = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TARGET));
+            if (target != null) {
+              operation.setTarget(URI.create(target.getValue()));
+            }
+
+            entry.getOperations().add(operation);
+          } else if (Constants.QNAME_ATOM_ELEM_CONTENT.equals(event.asStartElement().getName())) {
+            final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
+            if (type == null || ContentType.APPLICATION_XML.equals(type.getValue())) {
+              properties(reader, skipBeforeFirstStartElement(reader), entry);
+            } else {
+              entry.setMediaContentType(type.getValue());
+              final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
+              if (src != null) {
+                entry.setMediaContentSource(src.getValue());
+              }
+            }
+          } else if (propertiesQName.equals(event.asStartElement().getName())) {
+            properties(reader, event.asStartElement(), entry);
           }
-        } else if (propertiesQName.equals(event.asStartElement().getName())) {
-          properties(reader, event.asStartElement(), entry);
+        }
+
+        if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+          foundEndEntry = true;
         }
       }
 
-      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
-        foundEndEntry = true;
-      }
+      return entry;
+    } else {
+      entry = null;
+    }
+
+    return entry;
+  }
+
+  private AtomEntryImpl entryRef(final StartElement start) throws XMLStreamException {
+    final AtomEntryImpl entry = new AtomEntryImpl();
+    entry.setContextURL(retrieveContextURL(start, null));
+
+    final Attribute entryRefId = start.getAttributeByName(Constants.QNAME_ATOM_ELEM_ENTRY_REF_ID);
+
+    if (entryRefId != null) {
+      entry.setId(entryRefId.getValue());
     }
 
     return entry;
@@ -311,6 +334,8 @@ public class AtomDeserializer extends AbstractAtomDealer {
     if (xmlBase != null) {
       feed.setBaseURI(xmlBase.getValue());
     }
+
+    feed.setContextURL(retrieveContextURL(start, feed.getBaseURI()));
 
     boolean foundEndFeed = false;
     while (reader.hasNext() && !foundEndFeed) {
@@ -364,5 +389,17 @@ public class AtomDeserializer extends AbstractAtomDealer {
       return (T) linkCollection(input);
     }
     return null;
+  }
+
+  private URI retrieveContextURL(final StartElement start, final URI base) {
+    final Attribute context = start.getAttributeByName(contextQName);
+
+    if (context == null) {
+      return base == null
+              ? null
+              : URI.create(base.toASCIIString() + "/" + Constants.METADATA);
+    } else {
+      return URI.create(context.getValue());
+    }
   }
 }

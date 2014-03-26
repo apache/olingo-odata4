@@ -72,6 +72,8 @@ public interface Constants {
 
   public static final QName QNAME_ATTR_XML_BASE = new QName(XMLConstants.XML_NS_URI, ATTR_XML_BASE);
 
+  public static final String CONTEXT = "context";
+
   public static final String ATTR_REL = "rel";
 
   public static final String ATTR_TITLE = "title";
@@ -173,7 +175,7 @@ public interface Constants {
 
   public final static String JSON_NULL = "odata.null";
 
-  public final static String JSON_VALUE = "value";
+  public final static String VALUE = "value";
 
   public final static String JSON_URL = "url";
 
@@ -191,6 +193,12 @@ public interface Constants {
 
   // Atom stuff
   public final static String ATOM_ELEM_ENTRY = "entry";
+
+  public final static String ATOM_ELEM_ENTRY_REF = "ref";
+
+  public final static String ATOM_ELEM_ENTRY_REF_ID = "id";
+
+  public final static QName QNAME_ATOM_ELEM_ENTRY_REF_ID = new QName(ATOM_ELEM_ENTRY_REF_ID);
 
   public static final QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
 

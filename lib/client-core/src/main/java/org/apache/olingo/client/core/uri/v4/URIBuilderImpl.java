@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
@@ -79,11 +80,6 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
-  public URIBuilder count(final boolean value) {
-    return addQueryOption(QueryOption.COUNT, Boolean.toString(value));
-  }
-
-  @Override
   public URIBuilder appendAllSegment() {
     segments.add(new Segment(SegmentType.ALL, SegmentType.ALL.getValue()));
     return getThis();
@@ -99,4 +95,13 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
     return addQueryOption(QueryOption.SEARCH, expression);
   }
 
+  @Override
+  public URIBuilder count(final boolean value) {
+    return addQueryOption(QueryOption.COUNT, Boolean.toString(value));
+  }
+
+  @Override
+  public URIBuilder expandWithOptions(final String expandItem, final Map<String, Object> options) {
+    return expand(expandItem + buildMultiKeySegment(options, false));
+  }
 }

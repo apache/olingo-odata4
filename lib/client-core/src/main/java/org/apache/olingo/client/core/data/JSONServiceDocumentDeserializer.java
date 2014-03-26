@@ -57,7 +57,7 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Ab
               setMetadataContext(tree.get(Constants.JSON_CONTEXT).textValue());
     }
 
-    for (final Iterator<JsonNode> itor = tree.get(Constants.JSON_VALUE).elements(); itor.hasNext();) {
+    for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).elements(); itor.hasNext();) {
       final JsonNode node = itor.next();
 
       final ServiceDocumentItemImpl item = new ServiceDocumentItemImpl();

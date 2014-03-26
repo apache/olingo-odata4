@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Writes out JSON string from an entry.
@@ -44,9 +45,12 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     jgen.writeStartObject();
 
-    if (entry.getMetadata() != null) {
-      jgen.writeStringField(Constants.JSON_METADATA, entry.getMetadata().toASCIIString());
+    if (entry.getContextURL() != null) {
+      jgen.writeStringField(
+              version == ODataServiceVersion.V40 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+              entry.getContextURL().toASCIIString());
     }
+
     if (entry.getId() != null) {
       jgen.writeStringField(Constants.JSON_ID, entry.getId());
     }

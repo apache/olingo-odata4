@@ -42,8 +42,7 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    *
    * @param inlineCount value
    * @return current URIBuilder instance
-   * @see QueryOption#INLINECOUNT
+   * @see org.apache.olingo.client.api.uri.QueryOption#INLINECOUNT
    */
   URIBuilder inlineCount(InlineCount inlineCount);
-
 }

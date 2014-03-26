@@ -38,14 +38,10 @@ import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
@@ -66,10 +62,14 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Accepted content-type formats by the request in object.
  *
- * @see CUDRequestFactory
- * @see BatchRequestFactory
- * @see InvokeRequestFactory
- * @see StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
  */
 public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
@@ -254,6 +254,15 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
    * {@inheritDoc}
    */
   @Override
+  public ODataRequest addCustomHeader(final HeaderName name, final String value) {
+    odataHeaders.setHeader(name, value);
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
     return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString(odataClient.getServiceVersion()) : acceptHead;
@@ -384,7 +393,8 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     if (odataClient.getServiceVersion() == ODataServiceVersion.V30
             && ((Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
       addCustomHeader(
-              HeaderName.dataServiceUrlConventions.toString(), ODataHeaderValues.keyAsSegment);
+              HeaderName.dataServiceUrlConventions.toString(),
+              new ODataPreferences(odataClient.getServiceVersion()).keyAsSegment());
     }
 
     // Add all available headers

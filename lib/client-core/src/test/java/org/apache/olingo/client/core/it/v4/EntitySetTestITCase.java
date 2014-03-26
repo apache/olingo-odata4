@@ -104,6 +104,8 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
     assertNotNull(feed);
 
+    assertTrue(feed.getContextURL().toASCIIString().endsWith("$metadata#People"));
+
     debugFeed(client.getBinder().getFeed(feed, ResourceFactory.feedClassForFormat(
             ODataPubFormat.ATOM == format)), "Just retrieved feed");
 
@@ -151,5 +153,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
     final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNotNull(entitySet);
+    assertTrue(entitySet.getContextURL().toASCIIString().endsWith("$metadata#People"));
   }
 }

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,11 +80,14 @@ public abstract class Commons {
   }
 
   public static String getEntityURI(final String entitySetName, final String entityKey) {
-    return entitySetName + "(" + entityKey + ")";
+    // expected singleton in case of null key
+    return entitySetName + (StringUtils.isNotBlank(entityKey) ? "(" + entityKey + ")" : "");
   }
 
   public static String getEntityBasePath(final String entitySetName, final String entityKey) {
-    return entitySetName + File.separatorChar + getEntityKey(entityKey) + File.separatorChar;
+    // expected singleton in case of null key
+    return entitySetName + File.separatorChar
+            + (StringUtils.isNotBlank(entityKey) ? getEntityKey(entityKey) + File.separatorChar : "");
   }
 
   public static String getLinksURI(
@@ -266,8 +270,18 @@ public abstract class Commons {
   public static Map.Entry<String, String> parseEntityURI(final String uri) {
     final String relPath = uri.substring(uri.lastIndexOf("/"));
     final int branchIndex = relPath.indexOf('(');
-    final String es = relPath.substring(0, branchIndex);
-    final String eid = relPath.substring(branchIndex + 1, relPath.indexOf(')'));
+
+    final String es;
+    final String eid;
+
+    if (branchIndex > -1) {
+      es = relPath.substring(0, branchIndex);
+      eid = relPath.substring(branchIndex + 1, relPath.indexOf(')'));
+    } else {
+      es = relPath;
+      eid = null;
+    }
+
     return new SimpleEntry<String, String>(es, eid);
   }
 }

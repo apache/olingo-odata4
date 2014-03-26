@@ -87,21 +87,22 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Feed getFeed(final ODataEntitySet feed, final Class<? extends Feed> reference) {
-    final Feed feedResource = ResourceFactory.newFeed(reference);
+  public Feed getFeed(final ODataEntitySet entitySet, final Class<? extends Feed> reference) {
+    final Feed feed = ResourceFactory.newFeed(reference);
 
-    feedResource.setCount(feed.getCount());
+    feed.setContextURL(entitySet.getContextURL());
+    feed.setCount(entitySet.getCount());
 
-    final URI next = feed.getNext();
+    final URI next = entitySet.getNext();
     if (next != null) {
-      feedResource.setNext(next);
+      feed.setNext(next);
     }
 
-    for (ODataEntity entity : feed.getEntities()) {
-      feedResource.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
+    for (ODataEntity entity : entitySet.getEntities()) {
+      feed.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
     }
 
-    return feedResource;
+    return feed;
   }
 
   @Override
@@ -112,6 +113,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   @Override
   public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
+
+    entry.setContextURL(entity.getContextURL());
+    entry.setId(entity.getReference());
     entry.setType(entity.getName());
 
     // -------------------------------------------------------------
@@ -269,12 +273,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
-    
+
     final URI next = resource.getNext();
 
     final ODataEntitySet entitySet = next == null
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
+
+    entitySet.setContextURL(resource.getContextURL());
 
     if (resource.getCount() != null) {
       entitySet.setCount(resource.getCount());
@@ -283,7 +289,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     for (Entry entryResource : resource.getEntries()) {
       entitySet.addEntity(getODataEntity(entryResource));
     }
-    
+
     return entitySet;
   }
 
@@ -306,16 +312,19 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final ODataEntity entity = resource.getSelfLink() == null
             ? client.getObjectFactory().newEntity(resource.getType())
             : client.getObjectFactory().newEntity(resource.getType(),
-                    URIUtils.getURI(base, resource.getSelfLink().getHref()));
+            URIUtils.getURI(base, resource.getSelfLink().getHref()));
+
+    entity.setContextURL(resource.getContextURL());
+    entity.setReference(resource.getId());
 
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
     }
-    
+
     if (resource.getEditLink() != null) {
       entity.setEditLink(URIUtils.getURI(base, resource.getEditLink().getHref()));
     }
-    
+
     for (Link link : resource.getAssociationLinks()) {
       entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
     }
@@ -327,16 +336,16 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       if (inlineEntry == null && inlineFeed == null) {
         entity.addLink(
                 client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref()));
-      } else if (inlineFeed == null) {
+      } else if (inlineEntry != null) {
         entity.addLink(client.getObjectFactory().newInlineEntity(
                 link.getTitle(), base, link.getHref(),
                 getODataEntity(inlineEntry,
-                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
       } else {
         entity.addLink(client.getObjectFactory().newInlineEntitySet(
                 link.getTitle(), base, link.getHref(),
                 getODataEntitySet(inlineFeed,
-                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
       }
     }
 
@@ -374,16 +383,16 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = client.getPrimitiveValueBuilder().
               setText(resource.getValue().asSimple().get()).
               setType(resource.getType() == null
-                      ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+              ? null
+              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = client.getGeospatialValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(resource.getType() == null
-                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
-                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
-                      ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
+              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
+              ? null
+              : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isComplex()) {
       value = new ODataComplexValue(resource.getType());
 
