@@ -20,15 +20,11 @@ package org.apache.olingo.client.core.op.impl.v3;
 
 import java.io.InputStream;
 
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v3.ODataReader;
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.core.v3.ODataClientImpl;
-import org.apache.olingo.client.core.edm.EdmClientImpl;
 import org.apache.olingo.client.core.op.AbstractODataReader;
-import org.apache.olingo.commons.api.edm.Edm;
 
 public class ODataReaderImpl extends AbstractODataReader implements ODataReader {
 
@@ -36,17 +32,6 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
 
   public ODataReaderImpl(final ODataClient client) {
     super(client);
-  }
-
-  @Override
-  public Edm readMetadata(final InputStream input) {
-    return new EdmClientImpl(client.getServiceVersion(), client.getDeserializer().toMetadata(input));
-  }
-
-  @Override
-  public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
-    return ((ODataClientImpl) client).getBinder().getODataServiceDocument(
-            ((ODataClientImpl) client).getDeserializer().toServiceDocument(input, format));
   }
 
   @Override

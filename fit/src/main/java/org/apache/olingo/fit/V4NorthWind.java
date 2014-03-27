@@ -16,20 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.it;
+package org.apache.olingo.fit;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.fit.utils.ODataVersion;
+import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+import org.apache.cxf.interceptor.InInterceptors;
+import static org.apache.olingo.fit.utils.Constants.METADATA;
 
-public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
+@Path("/V40/NorthWind.svc")
+@InInterceptors(classes = XHTTPMethodInterceptor.class)
+public class V4NorthWind extends AbstractServices {
+
+  public V4NorthWind() throws Exception {
+    super();
+  }
 
   @Override
-  protected abstract CommonODataClient getClient();
-
-  protected String getTestServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";
+  protected ODataVersion getVersion() {
+    return ODataVersion.v4;
   }
 
-  protected String getNorthwindServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/NorthWind.svc";
+  @Override
+  public Response getMetadata() {
+    return getMetadata("northwind-" + METADATA);
   }
+
 }

@@ -80,7 +80,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
   protected final CommonODataClient odataClient;
 
-  protected final Class<T> formatRef;
+  private final Class<T> formatRef;
 
   /**
    * OData request method.

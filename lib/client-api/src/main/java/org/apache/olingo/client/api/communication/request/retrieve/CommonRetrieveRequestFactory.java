@@ -27,30 +27,42 @@ import java.net.URI;
 public interface CommonRetrieveRequestFactory extends Serializable {
 
   /**
-   * Gets a service document request instance.
+   * Gets a metadata request instance.
+   * <br/>
+   * Compared to {@link #getMetadataRequest(java.lang.String)}, this method returns a request instance for fetching
+   * low-level metadata representation.
    *
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
-   * @return new ODataServiceDocumentRequest instance.
+   * @return new {@link XMLMetadataRequest} instance.
    */
-  ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
+  XMLMetadataRequest getXMLMetadataRequest(String serviceRoot);
 
   /**
    * Gets a metadata request instance.
    *
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
-   * @return new ODataMetadataRequest instance.
+   * @return new {@link EdmMetadataRequest} instance.
    */
-  ODataMetadataRequest getMetadataRequest(String serviceRoot);
+  EdmMetadataRequest getMetadataRequest(String serviceRoot);
+
+  /**
+   * Gets a service document request instance.
+   *
+   * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
+   * service.
+   * @return new {@link ODataServiceDocumentRequest} instance.
+   */
+  ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
 
   /**
    * Gets a query request returning a set of one or more OData entities.
    *
-   * @param query query to be performed.
-   * @return new ODataEntitySetRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetRequest} instance.
    */
-  ODataEntitySetRequest getEntitySetRequest(URI query);
+  ODataEntitySetRequest getEntitySetRequest(URI uri);
 
   /**
    * Gets a query request returning a set of one or more OData entities.
@@ -58,48 +70,48 @@ public interface CommonRetrieveRequestFactory extends Serializable {
    * Returned request gives the possibility to consume entities iterating on them without parsing and loading in memory
    * the entire entity set.
    *
-   * @param query query to be performed.
-   * @return new ODataEntitySetIteratorRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetIteratorRequest} instance.
    */
-  ODataEntitySetIteratorRequest getEntitySetIteratorRequest(URI query);
+  ODataEntitySetIteratorRequest getEntitySetIteratorRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity.
    *
-   * @param query query to be performed.
-   * @return new ODataEntityRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataEntityRequest} instance.
    */
-  ODataEntityRequest getEntityRequest(URI query);
+  ODataEntityRequest getEntityRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity property.
    *
-   * @param query query to be performed.
-   * @return new ODataPropertyRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataPropertyRequest} instance.
    */
-  ODataPropertyRequest getPropertyRequest(URI query);
+  ODataPropertyRequest getPropertyRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity property value.
    *
-   * @param query query to be performed.
-   * @return new ODataValueRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataValueRequest} instance.
    */
-  ODataValueRequest getValueRequest(URI query);
+  ODataValueRequest getValueRequest(URI uri);
 
   /**
    * Gets a query request returning a media stream.
    *
-   * @param query query to be performed.
-   * @return new ODataMediaRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataMediaRequest} instance.
    */
-  ODataMediaRequest getMediaRequest(URI query);
+  ODataMediaRequest getMediaRequest(URI uri);
 
   /**
    * Implements a raw request request without specifying any return type.
    *
-   * @param uri query to be performed.
-   * @return new ODataRawRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataRawRequest} instance.
    */
   ODataRawRequest getRawRequest(URI uri);
 }

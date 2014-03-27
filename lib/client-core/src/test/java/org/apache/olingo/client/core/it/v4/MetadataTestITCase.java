@@ -18,11 +18,16 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.it.AbstractMetadataTestITCase;
 import org.apache.olingo.commons.api.edm.Edm;
-import static org.junit.Assert.assertNotNull;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Test;
 
 public class MetadataTestITCase extends AbstractMetadataTestITCase {
@@ -37,5 +42,20 @@ public class MetadataTestITCase extends AbstractMetadataTestITCase {
     final Edm metadata = getClient().getRetrieveRequestFactory().
             getMetadataRequest(getTestServiceRoot()).execute().getBody();
     assertNotNull(metadata);
+  }
+
+  @Test
+  public void include() {
+    final Edm metadata = getClient().getRetrieveRequestFactory().
+            getMetadataRequest(getNorthwindServiceRoot()).execute().getBody();
+    assertNotNull(metadata);
+
+    final EdmEntityContainer container = metadata.getEntityContainer(
+            new FullQualifiedName("ODataWebExperimental.Northwind.Model", "NorthwindEntities"));
+    assertNotNull(container);
+
+    final EdmEntitySet categories = container.getEntitySet("Categories");
+    assertNotNull(categories);
+    assertEquals("NorthwindModel", categories.getEntityType().getNamespace());
   }
 }

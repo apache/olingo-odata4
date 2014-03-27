@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
+import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
-import org.apache.olingo.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.core.edm.AbstractEdmServiceMetadataImpl;
-import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
@@ -44,8 +43,8 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 
   private List<EdmActionImportInfo> actionImportInfos;
 
-  public EdmServiceMetadataImpl(final XMLMetadataImpl xmlMetadata) {
-    super(xmlMetadata);
+  public EdmServiceMetadataImpl(final List<? extends Schema> xmlSchemas) {
+    super(xmlSchemas);
   }
 
   @Override
@@ -58,7 +57,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (singletonInfos == null) {
         singletonInfos = new ArrayList<EdmSingletonInfo>();
-        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
+        for (Schema schema : xmlSchemas) {
           final EntityContainer entityContainer = (EntityContainer) schema.getDefaultEntityContainer();
           for (Singleton singleton : entityContainer.getSingletons()) {
             singletonInfos.add(new EdmSingletonInfoImpl(entityContainer.getName(), singleton.getName()));
@@ -74,16 +73,17 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (functionImportInfos == null) {
         functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
-        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
-          for (EntityContainer entityContainer : schema.getEntityContainers()) {
-            for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
-              functionImportInfos.add(
-                      new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
-            }
+        for (Schema schema : xmlSchemas) {
+          final EntityContainer entityContainer = (EntityContainer) schema.getDefaultEntityContainer();
+
+          for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
+            functionImportInfos.add(
+                    new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
           }
         }
       }
     }
+
     return functionImportInfos;
   }
 
@@ -92,7 +92,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (actionImportInfos == null) {
         actionImportInfos = new ArrayList<EdmActionImportInfo>();
-        for (Schema schema : ((XMLMetadataImpl) xmlMetadata).getSchemas()) {
+        for (Schema schema : xmlSchemas) {
           final EntityContainer entityContainer = (EntityContainer) schema.getDefaultEntityContainer();
           for (ActionImport actionImport : entityContainer.getActionImports()) {
             actionImportInfos.add(new EdmActionImportInfoImpl(entityContainer.getName(), actionImport.getName()));

@@ -89,6 +89,10 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
       super(client, res);
     }
 
+    protected HttpResponse getHttpResponse() {
+      return res;
+    }
+
     /**
      * {@inheritDoc }
      */

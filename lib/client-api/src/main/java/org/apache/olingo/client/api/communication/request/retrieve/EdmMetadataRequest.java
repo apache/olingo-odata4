@@ -16,20 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.it;
+package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
-public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
-
-  @Override
-  protected abstract CommonODataClient getClient();
-
-  protected String getTestServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";
-  }
-
-  protected String getNorthwindServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/NorthWind.svc";
-  }
+/**
+ * This class implements a metadata query request.
+ */
+public interface EdmMetadataRequest extends ODataRetrieveRequest<Edm, ODataFormat> {
 }

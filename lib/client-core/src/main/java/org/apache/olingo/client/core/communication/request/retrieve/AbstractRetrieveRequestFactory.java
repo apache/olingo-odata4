@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataMetadataRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
@@ -78,8 +78,9 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
   }
 
   @Override
-  public ODataMetadataRequest getMetadataRequest(final String serviceRoot) {
-    return new ODataMetadataRequestImpl(client, client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
+  public EdmMetadataRequest getMetadataRequest(final String serviceRoot) {
+    return new EdmMetadataRequestImpl(client, serviceRoot,
+            client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
   }
 
   @Override

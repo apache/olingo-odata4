@@ -279,5 +279,4 @@ public class MetadataTest extends AbstractTest {
             readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml"));
     assertNotNull(metadata);
   }
-
 }

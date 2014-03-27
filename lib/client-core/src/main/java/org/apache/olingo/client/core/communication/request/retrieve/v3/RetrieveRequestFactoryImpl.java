@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
-import org.apache.olingo.client.core.communication.request.retrieve.v3.ODataLinkCollectionRequestImpl;
 import java.net.URI;
+import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
@@ -32,6 +32,12 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
 
   public RetrieveRequestFactoryImpl(final ODataClient client) {
     super(client);
+  }
+
+  @Override
+  public XMLMetadataRequest getXMLMetadataRequest(final String serviceRoot) {
+    return new XMLMetadataRequestImpl(((ODataClient) client),
+            client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
   }
 
   @Override
