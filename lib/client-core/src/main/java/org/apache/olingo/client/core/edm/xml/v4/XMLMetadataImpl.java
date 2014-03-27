@@ -50,6 +50,7 @@ public class XMLMetadataImpl extends AbstractXMLMetadata implements XMLMetadata 
     return (Schema) super.getSchema(key);
   }
 
+  @Override
   public List<Reference> getReferences() {
     return ((Edmx) this.edmx).getReferences();
   }

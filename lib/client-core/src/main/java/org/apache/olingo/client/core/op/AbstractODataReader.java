@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.op;
 
 import java.io.InputStream;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -26,6 +27,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
+import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -34,6 +36,8 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.op.CommonODataReader;
+import org.apache.olingo.client.core.edm.EdmClientImpl;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +55,21 @@ public abstract class AbstractODataReader implements CommonODataReader {
 
   protected AbstractODataReader(final CommonODataClient client) {
     this.client = client;
+  }
+
+  @Override
+  public Edm readMetadata(final InputStream input) {
+    return readMetadata(client.getDeserializer().toMetadata(input).getSchemas());
+  }
+
+  @Override
+  public Edm readMetadata(final List<? extends Schema> xmlSchemas) {
+    return new EdmClientImpl(client.getServiceVersion(), xmlSchemas);
+  }
+
+  @Override
+  public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
+    return client.getBinder().getODataServiceDocument(client.getDeserializer().toServiceDocument(input, format));
   }
 
   @Override

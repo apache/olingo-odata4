@@ -29,16 +29,16 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmEntitySetInfoImpl;
 
 public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetadata {
 
-  protected final XMLMetadata xmlMetadata;
+  protected final List<? extends Schema> xmlSchemas;
 
   private List<EdmEntitySetInfo> entitySetInfos;
 
@@ -46,17 +46,16 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
 
   protected List<EdmActionImportInfo> actionImportInfos;
 
-  public static EdmServiceMetadata getInstance(final XMLMetadata xmlMetadata) {
-    return xmlMetadata instanceof org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl
-            ? new org.apache.olingo.client.core.edm.v3.EdmServiceMetadataImpl(
-                    (org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl) xmlMetadata)
-            : new org.apache.olingo.client.core.edm.v4.EdmServiceMetadataImpl(
-                    (org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl) xmlMetadata);
+  public static EdmServiceMetadata getInstance(final ODataServiceVersion version,
+          final List<? extends Schema> xmlSchemas) {
 
+    return version == ODataServiceVersion.V30
+            ? new org.apache.olingo.client.core.edm.v3.EdmServiceMetadataImpl(xmlSchemas)
+            : new org.apache.olingo.client.core.edm.v4.EdmServiceMetadataImpl(xmlSchemas);
   }
 
-  public AbstractEdmServiceMetadataImpl(final XMLMetadata xmlMetadata) {
-    this.xmlMetadata = xmlMetadata;
+  public AbstractEdmServiceMetadataImpl(final List<? extends Schema> xmlSchemas) {
+    this.xmlSchemas = xmlSchemas;
   }
 
   @Override
@@ -69,11 +68,10 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
     synchronized (this) {
       if (entitySetInfos == null) {
         entitySetInfos = new ArrayList<EdmEntitySetInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
+        for (Schema schema : xmlSchemas) {
           for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (EntitySet entitySet : entityContainer.getEntitySets()) {
-              entitySetInfos.add(
-                      new EdmEntitySetInfoImpl(entityContainer.getName(), entitySet.getName()));
+              entitySetInfos.add(new EdmEntitySetInfoImpl(entityContainer.getName(), entitySet.getName()));
             }
           }
         }

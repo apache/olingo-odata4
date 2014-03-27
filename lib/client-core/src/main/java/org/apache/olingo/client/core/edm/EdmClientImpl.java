@@ -39,7 +39,6 @@ import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
@@ -64,18 +63,23 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
   private final ODataServiceVersion version;
 
-  private final XMLMetadata xmlMetadata;
+  private final List<? extends Schema> xmlSchemas;
+
+  private final Map<String, Schema> xmlSchemaByNamespace;
 
   private final EdmServiceMetadata serviceMetadata;
 
-  public EdmClientImpl(final ODataServiceVersion version, final XMLMetadata xmlMetadata) {
+  public EdmClientImpl(final ODataServiceVersion version, final List<? extends Schema> xmlSchemas) {
     this.version = version;
-    this.xmlMetadata = xmlMetadata;
-    this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(xmlMetadata);
-  }
 
-  public XMLMetadata getXMLMetadata() {
-    return xmlMetadata;
+    this.xmlSchemas = xmlSchemas;
+
+    this.xmlSchemaByNamespace = new HashMap<String, Schema>();
+    for (Schema schema : xmlSchemas) {
+      xmlSchemaByNamespace.put(schema.getNamespace(), schema);
+    }
+
+    this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(version, xmlSchemas);
   }
 
   @Override
@@ -87,7 +91,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected Map<String, String> createAliasToNamespaceInfo() {
     final Map<String, String> aliasToNamespace = new HashMap<String, String>();
 
-    for (Schema schema : xmlMetadata.getSchemas()) {
+    for (Schema schema : xmlSchemas) {
       aliasToNamespace.put(null, schema.getNamespace());
       if (StringUtils.isNotBlank(schema.getAlias())) {
         aliasToNamespace.put(schema.getAlias(), schema.getNamespace());
@@ -101,11 +105,11 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmEntityContainer createEntityContainer(final FullQualifiedName containerName) {
     EdmEntityContainer result = null;
 
-    final Schema schema = xmlMetadata.getSchema(containerName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(containerName.getNamespace());
     if (schema != null) {
       final EntityContainer xmlEntityContainer = schema.getDefaultEntityContainer();
       if (xmlEntityContainer != null) {
-        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer, xmlMetadata);
+        result = new EdmEntityContainerImpl(this, containerName, xmlEntityContainer, xmlSchemas);
       }
     }
 
@@ -116,7 +120,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmEnumType createEnumType(final FullQualifiedName enumName) {
     EdmEnumType result = null;
 
-    final Schema schema = xmlMetadata.getSchema(enumName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(enumName.getNamespace());
     if (schema != null) {
       final EnumType xmlEnumType = schema.getEnumType(enumName.getName());
       if (xmlEnumType != null) {
@@ -131,7 +135,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmTypeDefinition createTypeDefinition(final FullQualifiedName typeDefinitionName) {
     EdmTypeDefinition result = null;
 
-    final Schema schema = xmlMetadata.getSchema(typeDefinitionName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(typeDefinitionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final TypeDefinition xmlTypeDefinition = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getTypeDefinition(typeDefinitionName.getName());
@@ -149,7 +153,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmEntityType createEntityType(final FullQualifiedName entityTypeName) {
     EdmEntityType result = null;
 
-    final Schema schema = xmlMetadata.getSchema(entityTypeName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(entityTypeName.getNamespace());
     final EntityType xmlEntityType = schema.getEntityType(entityTypeName.getName());
     if (xmlEntityType != null) {
       result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlEntityType);
@@ -162,7 +166,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmComplexType createComplexType(final FullQualifiedName complexTypeName) {
     EdmComplexType result = null;
 
-    final Schema schema = xmlMetadata.getSchema(complexTypeName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(complexTypeName.getNamespace());
     final ComplexType xmlComplexType = schema.getComplexType(complexTypeName.getName());
     if (xmlComplexType != null) {
       result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlComplexType);
@@ -175,7 +179,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmAction createUnboundAction(final FullQualifiedName actionName) {
     EdmAction result = null;
 
-    final Schema schema = xmlMetadata.getSchema(actionName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(actionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final List<Action> actions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getActions(actionName.getName());
@@ -210,7 +214,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected EdmFunction createUnboundFunction(final FullQualifiedName functionName, final List<String> parameterNames) {
     EdmFunction result = null;
 
-    final Schema schema = xmlMetadata.getSchema(functionName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final List<Function> functions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getFunctions(functionName.getName());
@@ -259,7 +263,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
     EdmAction result = null;
 
-    final Schema schema = xmlMetadata.getSchema(actionName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(actionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final List<Action> actions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getActions(actionName.getName());
@@ -309,7 +313,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
 
     EdmFunction result = null;
 
-    final Schema schema = xmlMetadata.getSchema(functionName.getNamespace());
+    final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final List<Function> functions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getFunctions(functionName.getName());
@@ -382,8 +386,8 @@ public class EdmClientImpl extends AbstractEdmImpl {
   @Override
   protected List<EdmSchema> createSchemas() {
     final List<EdmSchema> schemas = new ArrayList<EdmSchema>();
-    for (Schema schema : xmlMetadata.getSchemas()) {
-      schemas.add(new EdmSchemaImpl(version, this, xmlMetadata, schema));
+    for (Schema schema : xmlSchemas) {
+      schemas.add(new EdmSchemaImpl(version, this, xmlSchemas, schema));
     }
     return schemas;
   }

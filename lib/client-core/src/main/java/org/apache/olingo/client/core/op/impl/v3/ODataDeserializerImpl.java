@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.op.impl.v3;
 import java.io.InputStream;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v3.ODataDeserializer;
@@ -42,7 +43,7 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
   }
 
   @Override
-  public XMLMetadataImpl toMetadata(final InputStream input) {
+  public XMLMetadata toMetadata(final InputStream input) {
     try {
       return new XMLMetadataImpl(getXmlMapper().readValue(input, EdmxImpl.class));
     } catch (Exception e) {

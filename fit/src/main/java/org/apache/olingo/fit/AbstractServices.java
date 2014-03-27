@@ -68,9 +68,10 @@ public abstract class AbstractServices {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
 
-  private static Set<ODataVersion> initialized = EnumSet.noneOf(ODataVersion.class);
+  private static final Set<ODataVersion> INITIALIZED = EnumSet.noneOf(ODataVersion.class);
 
   protected abstract ODataVersion getVersion();
+
   protected final AbstractXMLUtilities xml;
 
   protected final AbstractJSONUtilities json;
@@ -84,9 +85,9 @@ public abstract class AbstractServices {
       this.json = new org.apache.olingo.fit.utils.v4.JSONUtilities();
     }
 
-    if (!initialized.contains(getVersion())) {
+    if (!INITIALIZED.contains(getVersion())) {
       xml.retrieveLinkInfoFromMetadata();
-      initialized.add(getVersion());
+      INITIALIZED.add(getVersion());
     }
   }
 
@@ -136,10 +137,9 @@ public abstract class AbstractServices {
     return getMetadata("large" + StringUtils.capitalize(METADATA));
   }
 
-  private Response getMetadata(final String filename) {
+  protected Response getMetadata(final String filename) {
     try {
-      return xml.
-              createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
+      return xml.createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
     }

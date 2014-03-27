@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.core.edm.AbstractEdmServiceMetadataImpl;
-import org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl;
 import org.apache.olingo.commons.api.edm.EdmActionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmSingletonInfo;
@@ -39,8 +38,8 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 
   private static final ODataServiceVersion SERVICE_VERSION = ODataServiceVersion.V30;
 
-  public EdmServiceMetadataImpl(final XMLMetadataImpl xmlMetadata) {
-    super(xmlMetadata);
+  public EdmServiceMetadataImpl(final List<? extends Schema> xmlSchemas) {
+    super(xmlSchemas);
   }
 
   @Override
@@ -58,7 +57,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (functionImportInfos == null) {
         functionImportInfos = new ArrayList<EdmFunctionImportInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
+        for (Schema schema : xmlSchemas) {
           for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
               final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
@@ -79,7 +78,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
     synchronized (this) {
       if (actionImportInfos == null) {
         actionImportInfos = new ArrayList<EdmActionImportInfo>();
-        for (Schema schema : xmlMetadata.getSchemas()) {
+        for (Schema schema : xmlSchemas) {
           for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
               final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
