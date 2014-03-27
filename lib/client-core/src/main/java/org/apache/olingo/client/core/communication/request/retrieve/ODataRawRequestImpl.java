@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
 
 /**
  * This class implements a generic OData request.
@@ -92,10 +93,11 @@ public class ODataRawRequestImpl extends ODataRequestImpl<ODataPubFormat>
           this.close();
         }
       }
-      
-      return odataClient.getReader().read(new ByteArrayInputStream(obj), getContentType(), reference);
+
+      final Container<T> container =
+              odataClient.getReader().read(new ByteArrayInputStream(obj), getContentType(), reference);
+
+      return extractFromContainer(container);
     }
-
   }
-
 }

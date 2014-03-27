@@ -40,7 +40,7 @@ public class EntitySetTest extends AbstractTest {
   private void read(final ODataPubFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer().toFeed(input, format));
+            getClient().getDeserializer().toFeed(input, format).getObject());
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());

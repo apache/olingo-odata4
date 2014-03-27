@@ -29,5 +29,4 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
   public ODataReaderImpl(final ODataClient client) {
     super(client);
   }
-
 }

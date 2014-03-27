@@ -104,7 +104,7 @@ public class AtomSerializer extends AbstractAtomDealer {
     }
   }
 
-  private void common(final XMLStreamWriter writer, final AbstractAtomObject object) throws XMLStreamException {
+  private void common(final XMLStreamWriter writer, final AbstractODataObject object) throws XMLStreamException {
     if (StringUtils.isNotBlank(object.getTitle())) {
       writer.writeStartElement(Constants.ATOM_ELEM_TITLE);
       writer.writeAttribute(Constants.ATTR_TYPE, TYPE_TEXT);
@@ -149,8 +149,8 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.writeAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
     writer.writeEndElement();
 
-    if (entry instanceof AbstractAtomObject) {
-      common(writer, (AbstractAtomObject) entry);
+    if (entry instanceof AbstractODataObject) {
+      common(writer, (AbstractODataObject) entry);
     }
 
     links(writer, entry.getAssociationLinks());
@@ -215,8 +215,8 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeEndElement();
     }
 
-    if (feed instanceof AbstractAtomObject) {
-      common(writer, (AbstractAtomObject) feed);
+    if (feed instanceof AbstractODataObject) {
+      common(writer, (AbstractODataObject) feed);
     }
 
     for (Entry entry : feed.getEntries()) {

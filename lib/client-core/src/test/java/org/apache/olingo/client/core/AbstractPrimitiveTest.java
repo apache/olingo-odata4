@@ -75,7 +75,9 @@ public abstract class AbstractPrimitiveTest extends AbstractTest {
   }
 
   protected ODataPrimitiveValue readPrimitiveValue(final InputStream input) {
-    final ODataProperty property = getClient().getReader().readProperty(input, getFormat());
+    final ODataProperty property = getClient().getBinder().getODataProperty(
+            getClient().getDeserializer().toProperty(input, getFormat()).getObject());
+
     assertNotNull(property);
     assertTrue(property.hasPrimitiveValue());
     assertNotNull(property.getPrimitiveValue());

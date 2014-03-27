@@ -170,7 +170,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
     Entry jsonEntry = null;
     try {
-      int c = 0;
+      int c;
 
       boolean foundNewOne = false;
 
@@ -203,7 +203,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
         if (c >= 0) {
           jsonEntry = odataClient.getDeserializer().toEntry(
-                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON);
+                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON).getObject();
         }
       } else {
         while ((c = input.read()) >= 0) {
@@ -237,7 +237,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
         if (consume(input, "</entry>", entry, true) >= 0) {
           atomEntry = odataClient.getDeserializer().
-                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM);
+                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM).getObject();
         }
       }
     } catch (Exception e) {

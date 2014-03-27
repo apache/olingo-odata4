@@ -141,6 +141,8 @@ public interface Constants {
 
   public final static String JSON_METADATA = "odata.metadata";
 
+  public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
+
   public final static String JSON_TYPE = "odata.type";
 
   public final static String JSON_TYPE_SUFFIX = "@" + JSON_TYPE;
@@ -247,5 +249,7 @@ public interface Constants {
   public static final String ATOM_ATTR_SRC = "src";
 
   public static final String ATOM_ATTR_ETAG = "etag";
+
+  public static final String ATOM_ATTR_METADATAETAG = "metadata-etag";
 
 }

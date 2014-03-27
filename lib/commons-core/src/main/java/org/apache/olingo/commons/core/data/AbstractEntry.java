@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 /**
  * Abstract base for classes implementing an OData entry in Atom and JSON.
  */
-public abstract class AbstractEntry extends AbstractAtomObject implements Entry {
+public abstract class AbstractEntry extends AbstractODataObject implements Entry {
 
   private static final long serialVersionUID = 2127764552600969783L;
 

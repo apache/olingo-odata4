@@ -24,6 +24,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
@@ -83,8 +85,10 @@ public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEn
     public ODataEntity getBody() {
       if (entity == null) {
         try {
-          entity = odataClient.getReader().
-                  readEntity(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+          final Container<Entry> entry =
+                  odataClient.getDeserializer().toEntry(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+
+          entity = odataClient.getBinder().getODataEntity(extractFromContainer(entry));
         } finally {
           this.close();
         }

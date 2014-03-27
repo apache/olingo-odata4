@@ -31,6 +31,7 @@ import org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v3.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v3.XMLMetadataImpl;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -52,17 +53,16 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
   }
 
   @Override
-  public ServiceDocument toServiceDocument(final InputStream input, final ODataFormat format) {
+  public Container<ServiceDocument> toServiceDocument(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
-            ? xml(input, XMLServiceDocumentImpl.class)
-            : json(input, JSONServiceDocumentImpl.class);
+            ? this.<ServiceDocument, XMLServiceDocumentImpl>xml(input, XMLServiceDocumentImpl.class)
+            : this.<ServiceDocument, JSONServiceDocumentImpl>json(input, JSONServiceDocumentImpl.class);
   }
 
   @Override
-  public LinkCollection toLinkCollection(final InputStream input, final ODataFormat format) {
+  public Container<LinkCollection> toLinkCollection(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
-            ? atom(input, XMLLinkCollectionImpl.class)
-            : json(input, JSONLinkCollectionImpl.class);
+            ? this.<LinkCollection, XMLLinkCollectionImpl>atom(input, XMLLinkCollectionImpl.class)
+            : this.<LinkCollection, JSONLinkCollectionImpl>json(input, JSONLinkCollectionImpl.class);
   }
-
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.client.api.op;
 import java.io.InputStream;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.op.CommonODataDeserializer;
 
@@ -35,5 +36,5 @@ public interface ClientODataDeserializer extends CommonODataDeserializer {
    * @param format OData service document format.
    * @return <tt>ServiceDocument</tt> object.
    */
-  ServiceDocument toServiceDocument(InputStream input, ODataFormat format);
+  Container<ServiceDocument> toServiceDocument(InputStream input, ODataFormat format);
 }

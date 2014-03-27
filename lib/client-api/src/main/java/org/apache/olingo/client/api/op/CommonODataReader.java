@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
@@ -111,5 +112,5 @@ public interface CommonODataReader extends Serializable {
    * @param reference reference.
    * @return read object.
    */
-  <T> T read(InputStream src, String format, Class<T> reference);
+  <T> Container<T> read(InputStream src, String format, Class<T> reference);
 }

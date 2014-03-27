@@ -34,6 +34,8 @@ abstract class AbstractAtomDealer {
 
   protected final QName etagQName;
 
+  protected final QName metadataEtagQName;
+
   protected final QName inlineQName;
 
   protected final QName actionQName;
@@ -63,6 +65,8 @@ abstract class AbstractAtomDealer {
 
     this.etagQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ATTR_ETAG);
+    this.metadataEtagQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ATTR_METADATAETAG);
     this.inlineQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_INLINE);
     this.actionQName =

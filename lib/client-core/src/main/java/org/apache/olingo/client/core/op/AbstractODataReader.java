@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataEntity;
@@ -32,12 +33,15 @@ import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.api.op.CommonODataReader;
+import org.apache.olingo.client.core.edm.EdmClientImpl;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.client.api.op.CommonODataReader;
-import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,22 +73,23 @@ public abstract class AbstractODataReader implements CommonODataReader {
 
   @Override
   public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
-    return client.getBinder().getODataServiceDocument(client.getDeserializer().toServiceDocument(input, format));
+    return client.getBinder().getODataServiceDocument(
+            client.getDeserializer().toServiceDocument(input, format).getObject());
   }
 
   @Override
   public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return client.getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format));
+    return client.getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format).getObject());
   }
 
   @Override
   public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return client.getBinder().getODataEntity(client.getDeserializer().toEntry(input, format));
+    return client.getBinder().getODataEntity(client.getDeserializer().toEntry(input, format).getObject());
   }
 
   @Override
   public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    final Property property = client.getDeserializer().toProperty(input, format);
+    final Property property = client.getDeserializer().toProperty(input, format).getObject();
     return client.getBinder().getODataProperty(property);
   }
 
@@ -95,30 +100,48 @@ public abstract class AbstractODataReader implements CommonODataReader {
 
   @Override
   @SuppressWarnings("unchecked")
-  public <T> T read(final InputStream src, final String format, final Class<T> reference) {
-    Object res;
+  public <T> Container<T> read(final InputStream src, final String format, final Class<T> reference) {
+    Container<T> res;
 
     try {
       if (ODataEntitySetIterator.class.isAssignableFrom(reference)) {
-        res = new ODataEntitySetIterator(client, src, ODataPubFormat.fromString(format));
+        res = new Container<T>(
+                null, null, (T) new ODataEntitySetIterator(client, src, ODataPubFormat.fromString(format)));
       } else if (ODataEntitySet.class.isAssignableFrom(reference)) {
-        res = readEntitySet(src, ODataPubFormat.fromString(format));
+        final Container<Feed> container = client.getDeserializer().toFeed(src, ODataPubFormat.fromString(format));
+        res = new Container<T>(
+                container.getContextURL(),
+                container.getMetadataETag(),
+                (T) client.getBinder().getODataEntitySet(container.getObject()));
       } else if (ODataEntity.class.isAssignableFrom(reference)) {
-        res = readEntity(src, ODataPubFormat.fromString(format));
+        final Container<Entry> container = client.getDeserializer().toEntry(src, ODataPubFormat.fromString(format));
+        res = new Container<T>(
+                container.getContextURL(),
+                container.getMetadataETag(),
+                (T) client.getBinder().getODataEntity(container.getObject()));
       } else if (ODataProperty.class.isAssignableFrom(reference)) {
-        res = readProperty(src, ODataFormat.fromString(format));
+        final Container<Property> container = client.getDeserializer().toProperty(src, ODataFormat.fromString(format));
+        res = new Container<T>(
+                container.getContextURL(),
+                container.getMetadataETag(),
+                (T) client.getBinder().getODataProperty(container.getObject()));
       } else if (ODataValue.class.isAssignableFrom(reference)) {
-        res = client.getPrimitiveValueBuilder().
+        res = new Container<T>(null, null, (T) client.getPrimitiveValueBuilder().
                 setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
-                        ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                 setText(IOUtils.toString(src)).
-                build();
+                build());
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {
-        res = readMetadata(src);
+        res = new Container<T>(null, null, (T) readMetadata(src));
       } else if (ODataServiceDocument.class.isAssignableFrom(reference)) {
-        res = readServiceDocument(src, ODataFormat.fromString(format));
+        final Container<ServiceDocument> container =
+                client.getDeserializer().toServiceDocument(src, ODataFormat.fromString(format));
+        res = new Container<T>(
+                container.getContextURL(),
+                container.getMetadataETag(),
+                (T) client.getBinder().getODataServiceDocument(container.getObject()));
       } else if (ODataError.class.isAssignableFrom(reference)) {
-        res = readError(src, !format.toString().contains("json"));
+        res = new Container<T>(null, null, (T) readError(src, !format.toString().contains("json")));
       } else {
         throw new IllegalArgumentException("Invalid reference type " + reference);
       }
@@ -131,6 +154,6 @@ public abstract class AbstractODataReader implements CommonODataReader {
       }
     }
 
-    return (T) res;
+    return res;
   }
 }

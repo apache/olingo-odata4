@@ -192,7 +192,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     req.setFormat(ODataPubFormat.ATOM);
 
     final Entry atomEntry =
-            client.getDeserializer().toEntry(req.execute().getRawResponse(), ODataPubFormat.ATOM);
+            client.getDeserializer().toEntry(req.execute().getRawResponse(), ODataPubFormat.ATOM).getObject();
     assertEquals("remotingdestructorprinterswitcheschannelssatellitelanguageresolve",
             ((AtomEntryImpl) atomEntry).getSummary());
   }

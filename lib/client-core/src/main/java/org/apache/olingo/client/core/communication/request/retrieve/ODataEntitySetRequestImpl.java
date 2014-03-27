@@ -24,6 +24,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
@@ -33,7 +35,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODataEntitySet, ODataPubFormat>
         implements ODataEntitySetRequest {
 
-  private ODataEntitySet feed = null;
+  private ODataEntitySet entitySet = null;
 
   /**
    * Private constructor.
@@ -83,15 +85,17 @@ public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODat
     @Override
     @SuppressWarnings("unchecked")
     public ODataEntitySet getBody() {
-      if (feed == null) {
+      if (entitySet == null) {
         try {
-          feed = odataClient.getReader().
-                  readEntitySet(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+          final Container<Feed> feed =
+                  odataClient.getDeserializer().toFeed(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+
+          entitySet = odataClient.getBinder().getODataEntitySet(extractFromContainer(feed));
         } finally {
           this.close();
         }
       }
-      return feed;
+      return entitySet;
     }
   }
 }

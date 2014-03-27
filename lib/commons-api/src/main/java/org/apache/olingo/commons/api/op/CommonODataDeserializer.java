@@ -20,6 +20,7 @@ package org.apache.olingo.commons.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.Feed;
@@ -39,7 +40,7 @@ public interface CommonODataDeserializer extends Serializable {
    * @param format Atom or JSON
    * @return Feed instance.
    */
-  Feed toFeed(InputStream input, ODataPubFormat format);
+  Container<Feed> toFeed(InputStream input, ODataPubFormat format);
 
   /**
    * Gets an entry object from the given InputStream.
@@ -48,7 +49,7 @@ public interface CommonODataDeserializer extends Serializable {
    * @param format Atom or JSON
    * @return Entry instance.
    */
-  Entry toEntry(InputStream input, ODataPubFormat format);
+  Container<Entry> toEntry(InputStream input, ODataPubFormat format);
 
   /**
    * Gets a property object from the given InputStream.
@@ -57,7 +58,7 @@ public interface CommonODataDeserializer extends Serializable {
    * @param format XML or JSON
    * @return Property instance.
    */
-  Property toProperty(InputStream input, ODataFormat format);
+  Container<Property> toProperty(InputStream input, ODataFormat format);
 
   /**
    * Gets the ODataError object represented by the given InputStream.
@@ -67,5 +68,4 @@ public interface CommonODataDeserializer extends Serializable {
    * @return
    */
   ODataError toError(InputStream input, boolean isXML);
-
 }

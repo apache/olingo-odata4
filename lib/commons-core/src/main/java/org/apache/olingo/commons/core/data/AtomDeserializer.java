@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import org.apache.olingo.commons.api.data.Container;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -40,7 +41,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
   private static final Logger LOG = LoggerFactory.getLogger(AtomDeserializer.class);
 
-  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
+  public static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
 
   private final AtomPropertyDeserializer propDeserializer;
 
@@ -49,12 +50,13 @@ public class AtomDeserializer extends AbstractAtomDealer {
     this.propDeserializer = new AtomPropertyDeserializer(version);
   }
 
-  private AtomPropertyImpl property(final InputStream input) throws XMLStreamException {
+  private Container<AtomPropertyImpl> property(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = FACTORY.createXMLEventReader(input);
-    return propDeserializer.deserialize(reader, skipBeforeFirstStartElement(reader));
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, propDeserializer.deserialize(reader, start));
   }
 
-  private StartElement skipBeforeFirstStartElement(final XMLEventReader reader) throws XMLStreamException {
+  public StartElement skipBeforeFirstStartElement(final XMLEventReader reader) throws XMLStreamException {
     StartElement startEvent = null;
     while (reader.hasNext() && startEvent == null) {
       final XMLEvent event = reader.nextEvent();
@@ -70,7 +72,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private void common(final XMLEventReader reader, final StartElement start,
-          final AbstractAtomObject object, final String key) throws XMLStreamException {
+          final AbstractODataObject object, final String key) throws XMLStreamException {
 
     boolean foundEndElement = false;
     while (reader.hasNext() && !foundEndElement) {
@@ -123,8 +125,14 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
-  private XMLLinkCollectionImpl linkCollection(final InputStream input) throws XMLStreamException {
+  private Container<XMLLinkCollectionImpl> linkCollection(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, linkCollection(reader, start));
+  }
+
+  private XMLLinkCollectionImpl linkCollection(final XMLEventReader reader, final StartElement start)
+          throws XMLStreamException {
 
     final XMLLinkCollectionImpl linkCollection = new XMLLinkCollectionImpl();
 
@@ -177,8 +185,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
       if (xmlBase != null) {
         entry.setBaseURI(xmlBase.getValue());
       }
-
-      entry.setContextURL(retrieveContextURL(start, entry.getBaseURI()));
 
       final Attribute etag = start.getAttributeByName(etagQName);
       if (etag != null) {
@@ -291,7 +297,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
   private AtomEntryImpl entryRef(final StartElement start) throws XMLStreamException {
     final AtomEntryImpl entry = new AtomEntryImpl();
-    entry.setContextURL(retrieveContextURL(start, null));
 
     final Attribute entryRefId = start.getAttributeByName(Constants.QNAME_ATOM_ELEM_ENTRY_REF_ID);
 
@@ -302,9 +307,10 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return entry;
   }
 
-  private AtomEntryImpl entry(final InputStream input) throws XMLStreamException {
+  private Container<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = FACTORY.createXMLEventReader(input);
-    return entry(reader, skipBeforeFirstStartElement(reader));
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, entry(reader, start));
   }
 
   private void count(final XMLEventReader reader, final StartElement start, final AtomFeedImpl feed)
@@ -328,14 +334,11 @@ public class AtomDeserializer extends AbstractAtomDealer {
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
-
     final AtomFeedImpl feed = new AtomFeedImpl();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
       feed.setBaseURI(xmlBase.getValue());
     }
-
-    feed.setContextURL(retrieveContextURL(start, feed.getBaseURI()));
 
     boolean foundEndFeed = false;
     while (reader.hasNext() && !foundEndFeed) {
@@ -372,34 +375,34 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return feed;
   }
 
-  private AtomFeedImpl feed(final InputStream input) throws XMLStreamException {
+  private Container<AtomFeedImpl> feed(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = FACTORY.createXMLEventReader(input);
-    return feed(reader, skipBeforeFirstStartElement(reader));
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, feed(reader, start));
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T read(final InputStream input, final Class<T> reference) throws XMLStreamException {
+  public <T, V extends T> Container<T> read(final InputStream input, final Class<V> reference)
+          throws XMLStreamException {
     if (AtomFeedImpl.class.equals(reference)) {
-      return (T) feed(input);
+      return (Container<T>) feed(input);
     } else if (AtomEntryImpl.class.equals(reference)) {
-      return (T) entry(input);
+      return (Container<T>) entry(input);
     } else if (AtomPropertyImpl.class.equals(reference)) {
-      return (T) property(input);
+      return (Container<T>) property(input);
     } else if (XMLLinkCollectionImpl.class.equals(reference)) {
-      return (T) linkCollection(input);
+      return (Container<T>) linkCollection(input);
     }
     return null;
   }
 
-  private URI retrieveContextURL(final StartElement start, final URI base) {
+  public <T> Container<T> getContainer(final StartElement start, final T object) {
     final Attribute context = start.getAttributeByName(contextQName);
+    final Attribute metadataETag = start.getAttributeByName(metadataEtagQName);
 
-    if (context == null) {
-      return base == null
-              ? null
-              : URI.create(base.toASCIIString() + "/" + Constants.METADATA);
-    } else {
-      return URI.create(context.getValue());
-    }
+    return new Container<T>(
+            context == null ? null : URI.create(context.getValue()),
+            metadataETag == null ? null : metadataETag.getValue(),
+            object);
   }
 }
