@@ -18,12 +18,17 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+
 public class UriValidationException extends Exception {
+
+  private static final long serialVersionUID = -3179078078053564742L;
 
   public UriValidationException(String msg) {
     super(msg);
   }
 
-  private static final long serialVersionUID = -3179078078053564742L;
-
+  public UriValidationException(EdmPrimitiveTypeException e) {
+    super(e);
+  }
 }

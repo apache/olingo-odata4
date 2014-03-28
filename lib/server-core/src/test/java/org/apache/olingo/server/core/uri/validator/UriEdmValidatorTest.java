@@ -73,8 +73,6 @@ public class UriEdmValidatorTest {
   private static final String QO_LEVELS = "$expand=*($levels=1)";
   private static final String QO_TOP = "$top=1";
 
-  private Edm edm = new EdmProviderImpl(new EdmTechProvider());
-
   private String[][] urisWithValidSystemQueryOptions = {
       { URI_ALL, QO_FILTER, }, { URI_ALL, QO_FORMAT }, { URI_ALL, QO_EXPAND }, { URI_ALL, QO_COUNT },
       /* { URI_ALL, QO_ORDERBY }, *//* { URI_ALL, QO_SEARCH }, */{ URI_ALL, QO_SELECT }, { URI_ALL, QO_SKIP },
@@ -249,28 +247,33 @@ public class UriEdmValidatorTest {
       { URI_NAV_ENTITY_SET, QO_ID },
 
   };
-  
+
   private Parser parser;
+  private Edm edm;
 
   @Before
   public void before() {
     parser = new Parser();
+    edm = new EdmProviderImpl(new EdmTechProvider());
   }
 
-//  @Test
-//  @Ignore
-//      public
-//      void bla() throws Exception {
-//    String[][] m = {
-//        { "/ESMedia(1)/$value?$filter='1' eq '1'" },
-//    };
-//    String[] uris = constructUri(m);
-//    for (String uri : uris) {
-//      System.out.println(uri);
-//
-//      parseAndValidate(uri);
-//    }
-//  }
+  @Test(expected = UriValidationException.class)
+  public void validateKeyPredicatesWrongKey() throws Exception {
+    String uri = "ESTwoKeyNav(xxx=1, yyy='abc')";
+    parseAndValidate(uri);
+  }
+
+  @Test
+  public void validateKeyPredicates() throws Exception {
+    String uri = "ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')";
+    parseAndValidate(uri);
+  }
+
+  @Test(expected = UriValidationException.class)
+  public void validateKeyPredicatesWrongValueType() throws Exception {
+    String uri = "ESTwoKeyNav(PropertyInt16='abc', PropertyString=1)";
+    parseAndValidate(uri);
+  }
 
   @Test
   public void checkValidSystemQueryOption() throws Exception {
@@ -321,7 +324,7 @@ public class UriEdmValidatorTest {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     UriValidator validator = new UriValidator();
 
-    System.out.print("URI: " + uri);
     validator.validate(uriInfo, edm, "GET");
   }
+
 }

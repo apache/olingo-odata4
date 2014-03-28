@@ -18,14 +18,24 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
@@ -439,20 +449,14 @@ public class UriValidator {
   }
 
   private void validateQueryOptions(final UriInfo uriInfo, Edm edm) throws UriValidationException {
-    try {
-      RowIndexForUriType row = rowIndexForUriType(uriInfo, edm);
+    RowIndexForUriType row = rowIndexForUriType(uriInfo, edm);
 
-      for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
-        ColumnIndex col = colIndex(option.getKind());
+    for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
+      ColumnIndex col = colIndex(option.getKind());
 
-        System.out.print("[" + row + "][" + col + "]");
-
-        if (!decisionMatrix[row.getIndex()][col.getIndex()]) {
-          throw new UriValidationException("System query option not allowed: " + option.getName());
-        }
+      if (!decisionMatrix[row.getIndex()][col.getIndex()]) {
+        throw new UriValidationException("System query option not allowed: " + option.getName());
       }
-    } finally {
-      System.out.println();
     }
 
   }
@@ -492,6 +496,45 @@ public class UriValidator {
     return idx;
   }
 
-  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {}
+  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
+    try {
+      for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
+        if (pathSegment.getKind() == UriResourceKind.entitySet) {
+          UriResourceEntitySet pathEntitySet = (UriResourceEntitySet) pathSegment;
 
+          EdmEntityType type = pathEntitySet.getEntityType();
+          List<EdmKeyPropertyRef> keys = type.getKeyPropertyRefs();
+          List<UriParameter> keyPredicates = pathEntitySet.getKeyPredicates();
+
+          if (null != keyPredicates) {
+
+            HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
+            for (EdmKeyPropertyRef key : keys) {
+              edmKeys.put(key.getKeyPropertyName(), key);
+            }
+
+            for (UriParameter keyPredicate : keyPredicates) {
+              String name = keyPredicate.getName();
+              String value = keyPredicate.getText();
+              EdmKeyPropertyRef edmKey = edmKeys.get(name);
+
+              if (edmKey == null) {
+                throw new UriValidationException("Unknown key property: " + name);
+              }
+
+              EdmType edmType = edmKey.getProperty().getType();
+              EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmType;
+
+              String edmLiteral = edmPrimitiveType.fromUriLiteral(value);
+              edmPrimitiveType.validate(edmLiteral, edmKey.getProperty().isNullable(), edmKey.getProperty()
+                  .getMaxLength(), edmKey.getProperty().getPrecision(), edmKey.getProperty().getScale(), edmKey
+                  .getProperty().isUnicode());
+            }
+          }
+        }
+      }
+    } catch (EdmPrimitiveTypeException e) {
+      throw new UriValidationException(e);
+    }
+  }
 }
