@@ -24,6 +24,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
@@ -81,8 +83,10 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
     public ODataServiceDocument getBody() {
       if (serviceDocument == null) {
         try {
-          serviceDocument = odataClient.getReader().readServiceDocument(
+          final Container<ServiceDocument> container = odataClient.getDeserializer().toServiceDocument(
                   getRawResponse(), ODataFormat.fromString(getContentType()));
+
+          serviceDocument = odataClient.getBinder().getODataServiceDocument(extractFromContainer(container));
         } finally {
           this.close();
         }

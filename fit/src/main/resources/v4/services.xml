@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<service xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" 
+         xmlns="http://www.w3.org/2007/app" 
+         xmlns:atom="http://www.w3.org/2005/Atom" 
+         xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
+         m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata">
+  <workspace>
+    <atom:title type="text">InMemoryEntities</atom:title>
+    <collection href="People">
+      <atom:title type="text">People</atom:title>
+    </collection>
+    <collection href="Customers">
+      <atom:title type="text">Customers</atom:title>
+    </collection>
+    <collection href="Employees">
+      <atom:title type="text">Employees</atom:title>
+    </collection>
+    <collection href="Products">
+      <atom:title type="text">Products</atom:title>
+    </collection>
+    <collection href="ProductDetails">
+      <atom:title type="text">ProductDetails</atom:title>
+    </collection>
+    <collection href="ProductReviews">
+      <atom:title type="text">ProductReviews</atom:title>
+    </collection>
+    <collection href="Orders">
+      <atom:title type="text">Orders</atom:title>
+    </collection>
+    <collection href="OrderDetails">
+      <atom:title type="text">OrderDetails</atom:title>
+    </collection>
+    <collection href="Departments">
+      <atom:title type="text">Departments</atom:title>
+    </collection>
+    <collection href="Accounts">
+      <atom:title type="text">Accounts</atom:title>
+    </collection>
+    <collection href="StoredPIs">
+      <atom:title type="text">StoredPIs</atom:title>
+    </collection>
+    <collection href="SubscriptionTemplates">
+      <atom:title type="text">SubscriptionTemplates</atom:title>
+    </collection>
+    <m:singleton href="Boss">
+      <atom:title type="text">Boss</atom:title>
+    </m:singleton>
+    <m:singleton href="VipCustomer">
+      <atom:title type="text">VipCustomer</atom:title>
+    </m:singleton>
+    <m:singleton href="Company">
+      <atom:title type="text">Company</atom:title>
+    </m:singleton>
+    <m:singleton href="PublicCompany">
+      <atom:title type="text">PublicCompany</atom:title>
+    </m:singleton>
+    <m:singleton href="LabourUnion">
+      <atom:title type="text">LabourUnion</atom:title>
+    </m:singleton>
+    <m:singleton href="DefaultStoredPI">
+      <atom:title type="text">DefaultStoredPI</atom:title>
+    </m:singleton>
+    <m:function-import href="GetDefaultColor">
+      <atom:title type="text">GetDefaultColor</atom:title>
+    </m:function-import>
+    <m:function-import href="GetPerson">
+      <atom:title type="text">GetPerson</atom:title>
+    </m:function-import>
+    <m:function-import href="GetPerson2">
+      <atom:title type="text">GetPerson2</atom:title>
+    </m:function-import>
+    <m:function-import href="GetAllProducts">
+      <atom:title type="text">GetAllProducts</atom:title>
+    </m:function-import>
+    <m:function-import href="GetBossEmails">
+      <atom:title type="text">GetBossEmails</atom:title>
+    </m:function-import>
+    <m:function-import href="GetProductsByAccessLevel">
+      <atom:title type="text">GetProductsByAccessLevel</atom:title>
+    </m:function-import>
+  </workspace>
+</service>
