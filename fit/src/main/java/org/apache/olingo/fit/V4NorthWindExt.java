@@ -24,9 +24,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.InInterceptors;
 import static org.apache.olingo.fit.utils.Constants.METADATA;
+import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
 
 @Path("/V40/NorthWindExt.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
+@InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4NorthWindExt extends AbstractServices {
 
   public V4NorthWindExt() throws Exception {

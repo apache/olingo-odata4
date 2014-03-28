@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import java.net.URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -38,6 +39,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import static org.apache.olingo.client.core.it.v4.AbstractTestITCase.client;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.junit.Ignore;
@@ -252,29 +254,39 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void retrieveEntityReferenceAsAtom() {
-    retrieveEntityReference(ODataPubFormat.ATOM);
+  public void retrieveEntityViaReferenceAsAtom() {
+    retrieveEntityViaReference(ODataPubFormat.ATOM);
   }
 
   @Test
   @Ignore
-  public void retrieveEntityReferenceAsJSON() {
-    retrieveEntityReference(ODataPubFormat.JSON_FULL_METADATA);
+  public void retrieveEntityViaReferenceAsJSON() {
+    retrieveEntityViaReference(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void retrieveEntityReference(final ODataPubFormat format) {
+  private void retrieveEntityViaReference(final ODataPubFormat format) {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
             appendRefSegment();
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertNotNull(res);
 
     final ODataEntity entity = res.getBody();
     assertNotNull(entity);
     assertTrue(entity.getReference().endsWith("/StaticService/V40/Static.svc/Customers(PersonID=1)"));
+
+    final URI referenceURI =
+            client.getURIBuilder(getServiceRoot()).appendEntityIdSegment(entity.getReference()).build();
+
+    req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
+    req.setFormat(format);
+
+    res = req.execute();
+    assertNotNull(res);
+    assertNotNull(res.getBody());
   }
 }
