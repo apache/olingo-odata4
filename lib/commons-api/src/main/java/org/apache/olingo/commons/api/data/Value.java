@@ -22,9 +22,11 @@ public interface Value {
 
   boolean isNull();
 
-  boolean isSimple();
+  boolean isPrimitive();
 
   boolean isGeospatial();
+
+  boolean isEnum();
 
   boolean isComplex();
 
@@ -34,7 +36,9 @@ public interface Value {
 
   NullValue asNull();
 
-  PrimitiveValue asSimple();
+  PrimitiveValue asPrimitive();
+
+  EnumValue asEnum();
 
   GeospatialValue asGeospatial();
 

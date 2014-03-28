@@ -18,57 +18,8 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import java.net.URI;
-import java.util.List;
+public interface EnumValue extends Value {
 
-public interface Feed {
-
-  /**
-   * Gets base URI.
-   *
-   * @return base URI.
-   */
-  URI getBaseURI();
-
-  /**
-   * Sets number of entries.
-   *
-   * @param count number of entries
-   */
-  void setCount(Integer count);
-
-  /**
-   * Gets number of entries - if it was required.
-   *
-   * @return number of entries into the feed.
-   */
-  Integer getCount();
-
-  /**
-   * Gest feed ID.
-   *
-   * @return feed ID.
-   */
-  String getId();
-
-  /**
-   * Gets entries.
-   *
-   * @return entries.
-   */
-  List<Entry> getEntries();
-
-  /**
-   * Gets next link if exists.
-   *
-   * @return next link if exists; null otherwise.
-   */
-  URI getNext();
-
-  /**
-   * Sets next link.
-   *
-   * @param next next link.
-   */
-  void setNext(URI next);
+  @Override
+  String get();
 }

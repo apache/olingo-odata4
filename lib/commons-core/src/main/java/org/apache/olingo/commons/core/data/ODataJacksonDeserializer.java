@@ -30,14 +30,44 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
   protected ODataServiceVersion version;
 
+  protected String jsonType;
+
+  protected String jsonId;
+
+  protected String jsonReadLink;
+
+  protected String jsonEditLink;
+
+  protected String jsonMediaEditLink;
+
+  protected String jsonMediaReadLink;
+
+  protected String jsonAssociationLink;
+
+  protected String jsonNavigationLink;
+
   protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt)
           throws IOException, JsonProcessingException;
+
+  protected String getJSONAnnotation(final String string) {
+    return string.startsWith("@") ? string : "@" + string;
+  }
 
   @Override
   public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
+
+    jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
+    jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
+    jsonReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_READ_LINK);
+    jsonEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK);
+    jsonMediaReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK);
+    jsonMediaEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK);
+    jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
+    jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
+
     return doDeserialize(jp, ctxt);
   }
 

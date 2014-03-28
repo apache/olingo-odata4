@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Value;
@@ -95,7 +94,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
-      if (type == null && field.getKey().endsWith(Constants.JSON_TYPE_SUFFIX)) {
+      if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
         type = field.getValue().asText();
       } else {
         final JSONPropertyImpl property = new JSONPropertyImpl();
@@ -122,10 +121,14 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
       final JsonNode child = nodeItor.next();
 
       if (child.isValueNode()) {
-        value.get().add(fromPrimitive(child, type));
+        if (typeInfo == null || typeInfo.isPrimitiveType()) {
+          value.get().add(fromPrimitive(child, type));
+        } else {
+          value.get().add(new EnumValueImpl(child.asText()));
+        }
       } else if (child.isContainerNode()) {
-        if (child.has(Constants.JSON_TYPE)) {
-          ((ObjectNode) child).remove(Constants.JSON_TYPE);
+        if (child.has(jsonType)) {
+          ((ObjectNode) child).remove(jsonType);
         }
         value.get().add(fromComplex(child));
       }
@@ -145,6 +148,8 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
             ? ODataPropertyType.COLLECTION
             : typeInfo.isPrimitiveType()
             ? ODataPropertyType.PRIMITIVE
+            : node.isValueNode()
+            ? ODataPropertyType.ENUM
             : ODataPropertyType.COMPLEX;
 
     switch (propType) {
@@ -153,11 +158,15 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
         break;
 
       case COMPLEX:
-        if (node.has(Constants.JSON_TYPE)) {
-          property.setType(node.get(Constants.JSON_TYPE).asText());
-          ((ObjectNode) node).remove(Constants.JSON_TYPE);
+        if (node.has(jsonType)) {
+          property.setType(node.get(jsonType).asText());
+          ((ObjectNode) node).remove(jsonType);
         }
         property.setValue(fromComplex(node));
+        break;
+
+      case ENUM:
+        property.setValue(new EnumValueImpl(node.asText()));
         break;
 
       case PRIMITIVE:

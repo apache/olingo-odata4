@@ -75,8 +75,9 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
     this.typeQName = new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATTR_TYPE);
     this.nullQName = new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATTR_NULL);
-    this.elementQName =
-            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_ELEMENT);
+    this.elementQName = version == ODataServiceVersion.V30
+            ? new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_ELEMENT)
+            : new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ELEM_ELEMENT);
     this.countQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_COUNT);
     this.uriQName =

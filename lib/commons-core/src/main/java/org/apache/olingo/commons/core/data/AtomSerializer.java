@@ -127,13 +127,6 @@ public class AtomSerializer extends AbstractAtomDealer {
   }
 
   private void entry(final XMLStreamWriter writer, final Entry entry) throws XMLStreamException {
-    if (version == ODataServiceVersion.V40 && entry.getContextURL() != null) {
-      writer.writeAttribute(
-              version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.CONTEXT,
-              entry.getContextURL().toASCIIString());
-    }
-
     if (entry.getBaseURI() != null) {
       writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, entry.getBaseURI().toASCIIString());
     }
@@ -191,13 +184,6 @@ public class AtomSerializer extends AbstractAtomDealer {
   }
 
   private void feed(final XMLStreamWriter writer, final Feed feed) throws XMLStreamException {
-    if (version == ODataServiceVersion.V40 && feed.getContextURL() != null) {
-      writer.writeAttribute(
-              version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.CONTEXT,
-              feed.getContextURL().toASCIIString());
-    }
-
     if (feed.getBaseURI() != null) {
       writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, feed.getBaseURI().toASCIIString());
     }

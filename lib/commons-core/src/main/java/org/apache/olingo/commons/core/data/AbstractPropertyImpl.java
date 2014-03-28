@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.net.URI;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -28,28 +27,11 @@ import org.apache.olingo.commons.api.data.Value;
 
 public abstract class AbstractPropertyImpl implements Property {
 
-  private URI contextURL;
-
   private String name;
 
   private String type;
 
   private Value value;
-
-  /**
-   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
-   * fragment identifying the relevant portion of the metadata document.
-   *
-   * @return context URL.
-   */
-  @Override
-  public URI getContextURL() {
-    return contextURL;
-  }
-
-  public void setContextURL(final URI contextURL) {
-    this.contextURL = contextURL;
-  }
 
   @Override
   public String getName() {

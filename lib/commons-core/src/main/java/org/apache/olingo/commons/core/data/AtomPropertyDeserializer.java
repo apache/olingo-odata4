@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.net.URI;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
@@ -28,7 +26,6 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -73,17 +70,24 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     return value;
   }
 
-  private ComplexValue fromComplex(final XMLEventReader reader, final StartElement start)
+  private Value fromComplexOrEnum(final XMLEventReader reader, final StartElement start)
           throws XMLStreamException {
 
-    final ComplexValue value = new ComplexValueImpl();
+    Value value = null;
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
-        value.get().add(deserialize(reader, event.asStartElement()));
+        if (value == null) {
+          value = new ComplexValueImpl();
+        }
+        value.asComplex().get().add(deserialize(reader, event.asStartElement()));
+      }
+
+      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
+        value = new EnumValueImpl(event.asCharacters().getData());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -108,9 +112,10 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
-        switch (guessPropertyType(reader)) {
+        switch (guessPropertyType(reader, typeInfo)) {
           case COMPLEX:
-            value.get().add(fromComplex(reader, event.asStartElement()));
+          case ENUM:
+            value.get().add(fromComplexOrEnum(reader, event.asStartElement()));
             break;
 
           case PRIMITIVE:
@@ -130,7 +135,9 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
     return value;
   }
 
-  private ODataPropertyType guessPropertyType(final XMLEventReader reader) throws XMLStreamException {
+  private ODataPropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
+          throws XMLStreamException {
+
     XMLEvent child = null;
     while (reader.hasNext() && child == null) {
       final XMLEvent event = reader.peek();
@@ -143,7 +150,9 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
 
     final ODataPropertyType type;
     if (child == null) {
-      type = ODataPropertyType.PRIMITIVE;
+      type = typeInfo == null || typeInfo.isPrimitiveType()
+              ? ODataPropertyType.PRIMITIVE
+              : ODataPropertyType.ENUM;
     } else {
       if (child.isStartElement()) {
         if (Constants.NS_GML.equals(child.asStartElement().getName().getNamespaceURI())) {
@@ -154,7 +163,9 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
           type = ODataPropertyType.COMPLEX;
         }
       } else if (child.isCharacters()) {
-        type = ODataPropertyType.PRIMITIVE;
+        type = typeInfo == null || typeInfo.isPrimitiveType()
+                ? ODataPropertyType.PRIMITIVE
+                : ODataPropertyType.ENUM;
       } else {
         type = ODataPropertyType.EMPTY;
       }
@@ -165,20 +176,17 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
 
   public AtomPropertyImpl deserialize(final XMLEventReader reader, final StartElement start)
           throws XMLStreamException {
+
     final AtomPropertyImpl property = new AtomPropertyImpl();
 
-    final Attribute context = start.getAttributeByName(contextQName);
-
-    property.setContextURL(context == null ? null : URI.create(context.getValue()));
-
-    final QName name = start.getName();
-
-    if (ODataServiceVersion.V40 == version && v4PropertyValueQName.equals(name)) {
+    if (ODataServiceVersion.V40 == version && v4PropertyValueQName.equals(start.getName())) {
       // retrieve name from context
-      final String contextURL = property.getContextURL().toASCIIString();
-      property.setName(contextURL.substring(contextURL.lastIndexOf("/") + 1));
+      final Attribute context = start.getAttributeByName(contextQName);
+      if (context != null) {
+        property.setName(StringUtils.substringAfterLast(context.getValue(), "/"));
+      }
     } else {
-      property.setName(name.getLocalPart());
+      property.setName(start.getName().getLocalPart());
     }
 
     final Attribute nullAttr = start.getAttributeByName(this.nullQName);
@@ -197,7 +205,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
       }
 
       final ODataPropertyType propType = typeInfo == null
-              ? guessPropertyType(reader)
+              ? guessPropertyType(reader, typeInfo)
               : typeInfo.isCollection()
               ? ODataPropertyType.COLLECTION
               : typeInfo.isPrimitiveType()
@@ -210,7 +218,7 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
           break;
 
         case COMPLEX:
-          value = fromComplex(reader, start);
+          value = fromComplexOrEnum(reader, start);
           break;
 
         case PRIMITIVE:

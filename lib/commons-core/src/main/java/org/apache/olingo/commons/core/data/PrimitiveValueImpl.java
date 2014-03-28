@@ -29,7 +29,7 @@ public class PrimitiveValueImpl extends AbstractValue implements PrimitiveValue 
   }
 
   @Override
-  public boolean isSimple() {
+  public boolean isPrimitive() {
     return true;
   }
 

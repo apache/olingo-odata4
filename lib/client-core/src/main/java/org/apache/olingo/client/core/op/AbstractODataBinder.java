@@ -91,7 +91,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   public Feed getFeed(final ODataEntitySet entitySet, final Class<? extends Feed> reference) {
     final Feed feed = ResourceFactory.newFeed(reference);
 
-    feed.setContextURL(entitySet.getContextURL());
     feed.setCount(entitySet.getCount());
 
     final URI next = entitySet.getNext();
@@ -115,7 +114,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
 
-    entry.setContextURL(entity.getContextURL());
     entry.setId(entity.getReference());
     entry.setType(entity.getName());
 
@@ -281,8 +279,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
-    entitySet.setContextURL(resource.getContextURL());
-
     if (resource.getCount() != null) {
       entitySet.setCount(resource.getCount());
     }
@@ -315,7 +311,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
             : client.getObjectFactory().newEntity(resource.getType(),
                     URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
-    entity.setContextURL(resource.getContextURL());
     entity.setReference(resource.getId());
 
     if (StringUtils.isNotBlank(resource.getETag())) {
@@ -380,9 +375,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   private ODataValue getODataValue(final Property resource) {
     ODataValue value = null;
 
-    if (resource.getValue().isSimple()) {
+    if (resource.getValue().isPrimitive()) {
       value = client.getPrimitiveValueBuilder().
-              setText(resource.getValue().asSimple().get()).
+              setText(resource.getValue().asPrimitive().get()).
               setType(resource.getType() == null
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();

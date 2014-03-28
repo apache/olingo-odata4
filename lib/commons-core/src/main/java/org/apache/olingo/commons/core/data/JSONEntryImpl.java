@@ -20,8 +20,6 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.net.URI;
-import org.apache.olingo.commons.api.Constants;
 
 /**
  * A single entry, represented via JSON.
@@ -33,17 +31,6 @@ public class JSONEntryImpl extends AbstractEntry {
   private static final long serialVersionUID = -5275365545400797758L;
 
   private String mediaETag;
-
-  @Override
-  public URI getBaseURI() {
-    URI baseURI = null;
-    if (getContextURL() != null) {
-      final String metadataURI = getContextURL().toASCIIString();
-      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
-    }
-
-    return baseURI;
-  }
 
   /**
    * The odata.mediaEtag annotation MAY be included; its value MUST be the ETag of the binary stream represented by this

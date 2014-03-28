@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 class AtomPropertySerializer extends AbstractAtomDealer {
 
@@ -38,16 +39,23 @@ class AtomPropertySerializer extends AbstractAtomDealer {
 
   private void collection(final XMLStreamWriter writer, final CollectionValue value) throws XMLStreamException {
     for (Value item : value.get()) {
-      writer.writeStartElement(Constants.PREFIX_DATASERVICES, Constants.ELEM_ELEMENT,
-              version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+      if (version == ODataServiceVersion.V30) {
+        writer.writeStartElement(Constants.PREFIX_DATASERVICES, Constants.ELEM_ELEMENT,
+                version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+      } else {
+        writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ELEM_ELEMENT,
+                version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
+      }
       value(writer, item);
       writer.writeEndElement();
     }
   }
 
   private void value(final XMLStreamWriter writer, final Value value) throws XMLStreamException {
-    if (value.isSimple()) {
-      writer.writeCharacters(value.asSimple().get());
+    if (value.isPrimitive()) {
+      writer.writeCharacters(value.asPrimitive().get());
+    } else if (value.isEnum()) {
+      writer.writeCharacters(value.asEnum().get());
     } else if (value.isGeospatial()) {
       this.geoSerializer.serialize(writer, value.asGeospatial().get());
     } else if (value.isCollection()) {
@@ -62,22 +70,34 @@ class AtomPropertySerializer extends AbstractAtomDealer {
   public void property(final XMLStreamWriter writer, final Property property, final boolean standalone)
           throws XMLStreamException {
 
-    writer.writeStartElement(Constants.PREFIX_DATASERVICES, property.getName(),
-            version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
-
-    if (version == ODataServiceVersion.V40 && property.getContextURL() != null) {
-      writer.writeAttribute(
-              version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.CONTEXT,
-              property.getContextURL().toASCIIString());
+    if (version == ODataServiceVersion.V40 && standalone) {
+      writer.writeStartElement(Constants.PREFIX_METADATA, Constants.VALUE,
+              version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
+    } else {
+      writer.writeStartElement(Constants.PREFIX_DATASERVICES, property.getName(),
+              version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES));
     }
 
     if (standalone) {
       namespaces(writer);
     }
+
     if (StringUtils.isNotBlank(property.getType())) {
+      String type = property.getType();
+      if (version == ODataServiceVersion.V40) {
+        final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+        if (typeInfo.isPrimitiveType()) {
+          if (typeInfo.isCollection()) {
+            type = "#Collection(" + typeInfo.getFullQualifiedName().getName() + ")";
+          } else {
+            type = typeInfo.getFullQualifiedName().getName();
+          }
+        } else {
+          type = "#" + property.getType();
+        }
+      }
       writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.ATTR_TYPE, property.getType());
+              Constants.ATTR_TYPE, type);
     }
 
     if (property.getValue().isNull()) {

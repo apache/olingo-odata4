@@ -16,59 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data;
 
-import java.net.URI;
-import java.util.List;
+import org.apache.olingo.commons.api.data.EnumValue;
 
-public interface Feed {
+public class EnumValueImpl extends AbstractValue implements EnumValue {
 
-  /**
-   * Gets base URI.
-   *
-   * @return base URI.
-   */
-  URI getBaseURI();
+  private final String value;
 
-  /**
-   * Sets number of entries.
-   *
-   * @param count number of entries
-   */
-  void setCount(Integer count);
+  public EnumValueImpl(final String value) {
+    this.value = value;
+  }
 
-  /**
-   * Gets number of entries - if it was required.
-   *
-   * @return number of entries into the feed.
-   */
-  Integer getCount();
+  @Override
+  public boolean isEnum() {
+    return true;
+  }
 
-  /**
-   * Gest feed ID.
-   *
-   * @return feed ID.
-   */
-  String getId();
+  @Override
+  public String get() {
+    return value;
+  }
 
-  /**
-   * Gets entries.
-   *
-   * @return entries.
-   */
-  List<Entry> getEntries();
-
-  /**
-   * Gets next link if exists.
-   *
-   * @return next link if exists; null otherwise.
-   */
-  URI getNext();
-
-  /**
-   * Sets next link.
-   *
-   * @param next next link.
-   */
-  void setNext(URI next);
 }

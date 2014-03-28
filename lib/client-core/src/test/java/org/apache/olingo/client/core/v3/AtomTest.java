@@ -53,7 +53,7 @@ public class AtomTest extends AbstractTest {
 
   private String cleanup(final String input) throws Exception {
     final TransformerFactory factory = TransformerFactory.newInstance();
-    final Source xslt = new StreamSource(getClass().getResourceAsStream("../atom_cleanup.xsl"));
+    final Source xslt = new StreamSource(getClass().getResourceAsStream("atom_cleanup.xsl"));
     final Transformer transformer = factory.newTransformer(xslt);
 
     final StringWriter result = new StringWriter();

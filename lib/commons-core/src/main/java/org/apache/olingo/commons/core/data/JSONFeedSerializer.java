@@ -34,13 +34,8 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
 
     jgen.writeStartObject();
 
-    if (feed.getContextURL() != null) {
-      jgen.writeStringField(
-              version == ODataServiceVersion.V40 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-              feed.getContextURL().toASCIIString());
-    }
     if (feed.getId() != null) {
-      jgen.writeStringField(Constants.JSON_ID, feed.getId());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), feed.getId());
     }
     if (feed.getCount() != null) {
       jgen.writeNumberField(Constants.JSON_COUNT, feed.getCount());

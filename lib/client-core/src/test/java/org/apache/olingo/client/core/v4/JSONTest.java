@@ -1,5 +1,3 @@
-package org.apache.olingo.client.core.v3;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,39 +16,47 @@ package org.apache.olingo.client.core.v3;
  * specific language governing permissions and limitations
  * under the License.
  */
-import static org.junit.Assert.assertEquals;
+package org.apache.olingo.client.core.v4;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-public class JSONTest extends AtomTest {
+public class JSONTest extends AbstractTest {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Override
+  protected ODataClient getClient() {
+    return v4Client;
+  }
+
   protected ODataPubFormat getODataPubFormat() {
     return ODataPubFormat.JSON;
   }
 
-  @Override
   protected ODataFormat getODataFormat() {
     return ODataFormat.JSON;
   }
 
   private void cleanup(final ObjectNode node) {
-    if (node.has(Constants.JSON_METADATA)) {
-      node.remove(Constants.JSON_METADATA);
+    if (node.has(Constants.JSON_CONTEXT)) {
+      node.remove(Constants.JSON_CONTEXT);
     }
     if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))) {
       node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE));
@@ -99,17 +105,48 @@ public class JSONTest extends AtomTest {
     node.remove(toRemove);
   }
 
-  @Override
   protected void assertSimilar(final String filename, final String actual) throws Exception {
     final JsonNode orig = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
-            replace("Categories" + getClient().getServiceVersion().getJSONMap().
-                    get(ODataServiceVersion.JSON_NAVIGATION_LINK),
-                    "Categories" + Constants.JSON_BIND_LINK_SUFFIX).
-            replace("\"Products(0)/Categories\"", "[\"Products(0)/Categories\"]").
             replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
                     Constants.JSON_BIND_LINK_SUFFIX));
     cleanup((ObjectNode) orig);
     assertEquals(orig, OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes())));
   }
 
+  protected void entry(final String filename, final ODataPubFormat format) throws Exception {
+    final StringWriter writer = new StringWriter();
+    getClient().getSerializer().entry(getClient().getDeserializer().toEntry(
+            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
+
+    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+  }
+
+  @Test
+  public void additionalEntries() throws Exception {
+    entry("entity.minimal", getODataPubFormat());
+//    entry("entity.full", getODataPubFormat());
+    entry("entity.primitive", getODataPubFormat());
+    entry("entity.complex", getODataPubFormat());
+    entry("entity.collection.primitive", getODataPubFormat());
+    entry("entity.collection.complex", getODataPubFormat());
+  }
+
+  @Test
+  public void entries() throws Exception {
+    entry("Products_5", getODataPubFormat());
+    entry("VipCustomer", getODataPubFormat());
+  }
+
+  protected void property(final String filename, final ODataFormat format) throws Exception {
+    final StringWriter writer = new StringWriter();
+    getClient().getSerializer().property(getClient().getDeserializer().
+            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
+
+    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+  }
+
+  @Test
+  public void properties() throws Exception {
+    property("Products_5_SkinColor", getODataFormat());
+  }
 }

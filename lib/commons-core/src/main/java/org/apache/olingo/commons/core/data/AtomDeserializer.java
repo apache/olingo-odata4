@@ -384,6 +384,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   @SuppressWarnings("unchecked")
   public <T, V extends T> Container<T> read(final InputStream input, final Class<V> reference)
           throws XMLStreamException {
+
     if (AtomFeedImpl.class.equals(reference)) {
       return (Container<T>) feed(input);
     } else if (AtomEntryImpl.class.equals(reference)) {

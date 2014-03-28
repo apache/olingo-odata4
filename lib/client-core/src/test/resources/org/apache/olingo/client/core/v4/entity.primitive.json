@@ -1,0 +1,22 @@
+{
+  "NullValue": null,
+  "TrueValue": true,
+  "FalseValue": false,
+  "BinaryValue": "T0RhdGE",
+  "IntegerValue": -128,
+  "DoubleValue": 3.1415926535897931,
+  "SingleValue": "INF",
+  "DecimalValue": 34.95,
+  "StringValue": "Say \"Hello\",\nthen go",
+  "DateValue": "2012-12-03",
+  "DateTimeOffsetValue": "2012-12-03T07:16:23Z",
+  "DurationValue": "P12DT23H59M59.999999999999S",
+  "TimeOfDayValue": "07:59:59.999",
+  "GuidValue": "01234567-89ab-cdef-0123-456789abcdef",
+  "Int64Value": 0,
+  "ColorEnumValue": "Yellow",
+  "GeographyPoint": {
+    "type": "point",
+    "coordinates": [142.1, 64.1]
+  }
+}

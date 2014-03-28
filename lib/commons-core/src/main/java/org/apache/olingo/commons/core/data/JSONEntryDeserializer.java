@@ -88,12 +88,16 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
 
     final JSONEntryImpl entry = new JSONEntryImpl();
 
+    String contextURL = null;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      entry.setContextURL(URI.create(tree.get(Constants.JSON_CONTEXT).textValue()));
+      contextURL = tree.get(Constants.JSON_CONTEXT).textValue();
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      entry.setContextURL(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+      contextURL = tree.get(Constants.JSON_METADATA).textValue();
       tree.remove(Constants.JSON_METADATA);
+    }
+    if (contextURL != null) {
+      entry.setBaseURI(contextURL.substring(0, contextURL.indexOf(Constants.METADATA)));
     }
 
     if (tree.hasNonNull(Constants.JSON_MEDIA_ETAG)) {
@@ -106,40 +110,40 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       tree.remove(Constants.JSON_ETAG);
     }
 
-    if (tree.hasNonNull(Constants.JSON_TYPE)) {
-      entry.setType(tree.get(Constants.JSON_TYPE).textValue());
-      tree.remove(Constants.JSON_TYPE);
+    if (tree.hasNonNull(jsonType)) {
+      entry.setType(tree.get(jsonType).textValue());
+      tree.remove(jsonType);
     }
 
-    if (tree.hasNonNull(Constants.JSON_ID)) {
-      entry.setId(tree.get(Constants.JSON_ID).textValue());
-      tree.remove(Constants.JSON_ID);
+    if (tree.hasNonNull(jsonId)) {
+      entry.setId(tree.get(jsonId).textValue());
+      tree.remove(jsonId);
     }
 
-    if (tree.hasNonNull(Constants.JSON_READ_LINK)) {
+    if (tree.hasNonNull(jsonReadLink)) {
       final LinkImpl link = new LinkImpl();
       link.setRel(Constants.SELF_LINK_REL);
-      link.setHref(tree.get(Constants.JSON_READ_LINK).textValue());
+      link.setHref(tree.get(jsonReadLink).textValue());
       entry.setSelfLink(link);
 
-      tree.remove(Constants.JSON_READ_LINK);
+      tree.remove(jsonReadLink);
     }
 
-    if (tree.hasNonNull(Constants.JSON_EDIT_LINK)) {
+    if (tree.hasNonNull(jsonEditLink)) {
       final LinkImpl link = new LinkImpl();
       link.setRel(Constants.EDIT_LINK_REL);
-      link.setHref(tree.get(Constants.JSON_EDIT_LINK).textValue());
+      link.setHref(tree.get(jsonEditLink).textValue());
       entry.setEditLink(link);
 
-      tree.remove(Constants.JSON_EDIT_LINK);
+      tree.remove(jsonEditLink);
     }
 
-    if (tree.hasNonNull(Constants.JSON_MEDIAREAD_LINK)) {
-      entry.setMediaContentSource(tree.get(Constants.JSON_MEDIAREAD_LINK).textValue());
-      tree.remove(Constants.JSON_MEDIAREAD_LINK);
+    if (tree.hasNonNull(jsonMediaReadLink)) {
+      entry.setMediaContentSource(tree.get(jsonMediaReadLink).textValue());
+      tree.remove(jsonMediaReadLink);
     }
-    if (tree.hasNonNull(Constants.JSON_MEDIAEDIT_LINK)) {
-      tree.remove(Constants.JSON_MEDIAEDIT_LINK);
+    if (tree.hasNonNull(jsonMediaEditLink)) {
+      tree.remove(jsonMediaEditLink);
     }
     if (tree.hasNonNull(Constants.JSON_MEDIA_CONTENT_TYPE)) {
       entry.setMediaContentType(tree.get(Constants.JSON_MEDIA_CONTENT_TYPE).textValue());
@@ -150,7 +154,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
-      if (field.getKey().endsWith(Constants.JSON_NAVIGATION_LINK_SUFFIX)) {
+      if (field.getKey().endsWith(jsonNavigationLink)) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
         link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
@@ -168,8 +172,8 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         entry.getNavigationLinks().add(link);
 
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(), Constants.JSON_NAVIGATION_LINK_SUFFIX, tree, parser.getCodec(), link));
-      } else if (field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK_SUFFIX)) {
+        toRemove.add(setInline(field.getKey(), jsonNavigationLink, tree, parser.getCodec(), link));
+      } else if (field.getKey().endsWith(jsonAssociationLink)) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
         link.setRel(version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL) + getTitle(field));
@@ -178,7 +182,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         entry.getAssociationLinks().add(link);
 
         toRemove.add(field.getKey());
-      } else if (field.getKey().endsWith(Constants.JSON_MEDIAEDIT_LINK_SUFFIX)) {
+      } else if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
         link.setRel(version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + getTitle(field));
@@ -192,7 +196,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         }
 
         toRemove.add(field.getKey());
-        toRemove.add(setInline(field.getKey(), Constants.JSON_MEDIAEDIT_LINK_SUFFIX, tree, parser.getCodec(), link));
+        toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), link));
       } else if (field.getKey().endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)) {
         final String linkTitle = getTitle(field);
         for (Link link : entry.getMediaEditLinks()) {
@@ -220,7 +224,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
-      if (type == null && field.getKey().endsWith(Constants.JSON_TYPE_SUFFIX)) {
+      if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
         type = field.getValue().asText();
       } else {
         final JSONPropertyImpl property = new JSONPropertyImpl();

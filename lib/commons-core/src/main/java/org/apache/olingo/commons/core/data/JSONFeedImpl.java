@@ -51,20 +51,12 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
   @Override
   public URI getBaseURI() {
     URI baseURI = null;
-    if (getContextURL() != null) {
-      final String metadataURI = getContextURL().toASCIIString();
+    if (contextURL != null) {
+      final String metadataURI = contextURL.toASCIIString();
       baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
     }
 
     return baseURI;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public URI getContextURL() {
-    return contextURL;
   }
 
   public void setContextURL(final URI context) {

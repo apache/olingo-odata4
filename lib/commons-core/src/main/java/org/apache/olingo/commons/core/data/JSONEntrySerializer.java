@@ -45,14 +45,8 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     jgen.writeStartObject();
 
-    if (entry.getContextURL() != null) {
-      jgen.writeStringField(
-              version == ODataServiceVersion.V40 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-              entry.getContextURL().toASCIIString());
-    }
-
     if (entry.getId() != null) {
-      jgen.writeStringField(Constants.JSON_ID, entry.getId());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entry.getId());
     }
 
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
@@ -100,7 +94,7 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     for (Link link : entry.getMediaEditLinks()) {
       if (link.getTitle() == null) {
-        jgen.writeStringField(Constants.JSON_MEDIAEDIT_LINK, link.getHref());
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), link.getHref());
       }
 
       if (link.getInlineEntry() != null) {

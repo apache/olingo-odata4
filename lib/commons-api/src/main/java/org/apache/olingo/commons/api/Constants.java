@@ -137,15 +137,11 @@ public interface Constants {
   public static final String ELEM_URI = "uri";
 
   // JSON stuff
-  public final static String JSON_CONTEXT = "@odata.context";
-
   public final static String JSON_METADATA = "odata.metadata";
 
+  public final static String JSON_CONTEXT = "@odata.context";
+
   public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
-
-  public final static String JSON_TYPE = "odata.type";
-
-  public final static String JSON_TYPE_SUFFIX = "@" + JSON_TYPE;
 
   public final static String JSON_ETAG = "odata.etag";
 
@@ -153,27 +149,11 @@ public interface Constants {
 
   public final static String JSON_MEDIA_ETAG_SUFFIX = "@" + JSON_MEDIA_ETAG;
 
-  public final static String JSON_ID = "odata.id";
-
-  public final static String JSON_READ_LINK = "odata.readLink";
-
-  public final static String JSON_EDIT_LINK = "odata.editLink";
-
-  public final static String JSON_MEDIAREAD_LINK = "odata.mediaReadLink";
-
-  public final static String JSON_MEDIAEDIT_LINK = "odata.mediaEditLink";
-
-  public final static String JSON_MEDIAEDIT_LINK_SUFFIX = "@" + JSON_MEDIAEDIT_LINK;
-
   public final static String JSON_MEDIA_CONTENT_TYPE = "odata.mediaContentType";
 
   public final static String JSON_MEDIA_CONTENT_TYPE_SUFFIX = "@" + JSON_MEDIA_CONTENT_TYPE;
 
-  public final static String JSON_NAVIGATION_LINK_SUFFIX = "@odata.navigationLinkUrl";
-
   public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
-
-  public final static String JSON_ASSOCIATION_LINK_SUFFIX = "@odata.associationLinkUrl";
 
   public final static String JSON_NULL = "odata.null";
 
