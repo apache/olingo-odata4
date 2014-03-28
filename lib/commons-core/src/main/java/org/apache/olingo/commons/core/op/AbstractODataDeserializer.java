@@ -111,7 +111,7 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
 
   protected <T, V extends T> Container<T> atom(final InputStream input, final Class<V> reference) {
     try {
-      return atomDeserializer.read(input, reference);
+      return atomDeserializer.<T, V>read(input, reference);
     } catch (Exception e) {
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }

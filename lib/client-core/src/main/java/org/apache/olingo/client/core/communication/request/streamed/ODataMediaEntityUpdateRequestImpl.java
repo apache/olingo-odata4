@@ -32,6 +32,8 @@ import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
@@ -126,7 +128,8 @@ public class ODataMediaEntityUpdateRequestImpl
     public ODataEntity getBody() {
       if (entity == null) {
         try {
-          entity = odataClient.getReader().readEntity(getRawResponse(), getFormat());
+          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());
+          entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

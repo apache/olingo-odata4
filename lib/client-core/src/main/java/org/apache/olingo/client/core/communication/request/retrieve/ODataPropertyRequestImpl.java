@@ -28,6 +28,8 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Property;
 
 /**
  * This class implements an OData entity property query request.
@@ -83,8 +85,11 @@ public class ODataPropertyRequestImpl extends AbstractODataRetrieveRequest<OData
     public ODataProperty getBody() {
       if (property == null) {
         try {
-          property = odataClient.getReader().readProperty(
+          final Container<Property> container =
+                  odataClient.getDeserializer().toProperty(
                   res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
+
+          property = odataClient.getBinder().getODataProperty(extractFromContainer(container));
         } catch (IOException e) {
           throw new HttpClientException(e);
         } finally {
