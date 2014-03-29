@@ -181,7 +181,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     assertNotEquals(newMsg, oldMsg);
 
-    final ODataPrimitiveValue newVal = client.getPrimitiveValueBuilder().setText(newMsg).build();
+    final ODataPrimitiveValue newVal = client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build();
 
     final ODataValueUpdateRequest updateReq =
             client.getCUDRequestFactory().getValueUpdateRequest(uriBuilder.build(), type, newVal);
@@ -222,7 +222,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq = client.getCUDRequestFactory().
@@ -268,12 +268,12 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
-            alternativeNames);
+                    alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -315,7 +315,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertNotEquals(newMsg, oldMsg);
 
     phoneNumber = client.getObjectFactory().newPrimitiveProperty("PhoneNumber",
-            client.getPrimitiveValueBuilder().setText(newMsg).build());
+            client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build());
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uriBuilder.build(), phoneNumber);

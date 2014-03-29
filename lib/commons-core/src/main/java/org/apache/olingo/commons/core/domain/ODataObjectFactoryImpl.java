@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.op;
+package org.apache.olingo.commons.core.domain;
 
 import java.net.URI;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -44,22 +44,22 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
 
   @Override
   public ODataEntitySet newEntitySet() {
-    return new ODataEntitySet();
+    return new ODataEntitySetImpl();
   }
 
   @Override
   public ODataEntitySet newEntitySet(final URI next) {
-    return new ODataEntitySet(next);
+    return new ODataEntitySetImpl(next);
   }
 
   @Override
   public ODataEntity newEntity(final String name) {
-    return new ODataEntity(name);
+    return new ODataEntityImpl(name);
   }
 
   @Override
   public ODataEntity newEntity(final String name, final URI link) {
-    final ODataEntity result = new ODataEntity(name);
+    final ODataEntityImpl result = new ODataEntityImpl(name);
     result.setLink(link);
     return result;
   }
@@ -139,18 +139,33 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
   }
 
   @Override
+  public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
+    return new ODataPrimitiveValueImpl.BuilderImpl(version);
+  }
+
+  @Override
+  public ODataComplexValue newComplexValue(final String typeName) {
+    return new ODataComplexValueImpl(typeName);
+  }
+
+  @Override
+  public ODataCollectionValue newCollectionValue(final String typeName) {
+    return new ODataCollectionValueImpl(typeName);
+  }
+
+  @Override
   public ODataProperty newPrimitiveProperty(final String name, final ODataPrimitiveValue value) {
-    return new ODataProperty(name, value);
+    return new ODataPropertyImpl(name, value);
   }
 
   @Override
   public ODataProperty newComplexProperty(final String name, final ODataComplexValue value) {
-    return new ODataProperty(name, value);
+    return new ODataPropertyImpl(name, value);
   }
 
   @Override
   public ODataProperty newCollectionProperty(final String name, final ODataCollectionValue value) {
-    return new ODataProperty(name, value);
+    return new ODataPropertyImpl(name, value);
   }
 
 }

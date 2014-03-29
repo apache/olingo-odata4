@@ -41,7 +41,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10, 21, 45, 17);
 
-    final ODataValue value = getClient().getPrimitiveValueBuilder().
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.TimeOfDay, value.asPrimitive().getTypeKind());
 
@@ -59,7 +59,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10);
 
-    final ODataValue value = getClient().getPrimitiveValueBuilder().
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Date).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.Date, value.asPrimitive().getTypeKind());
 

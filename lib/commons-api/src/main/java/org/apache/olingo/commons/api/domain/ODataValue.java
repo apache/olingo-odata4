@@ -26,6 +26,13 @@ import java.io.Serializable;
 public interface ODataValue extends Serializable {
 
   /**
+   * Gets value type name.
+   *
+   * @return value type name.
+   */
+  String getTypeName();
+
+  /**
    * Check is is a primitive value.
    *
    * @return 'TRUE' if primitive; 'FALSE' otherwise.

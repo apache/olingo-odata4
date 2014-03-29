@@ -31,6 +31,20 @@ public abstract class AbstractODataValue implements ODataValue {
   private static final long serialVersionUID = 7445422004232581877L;
 
   /**
+   * Type name;
+   */
+  private final String typeName;
+
+  public AbstractODataValue(String typeName) {
+    this.typeName = typeName;
+  }
+
+  @Override
+  public String getTypeName() {
+    return typeName;
+  }
+
+  /**
    * Check is is a primitive value.
    *
    * @return 'TRUE' if primitive; 'FALSE' otherwise.

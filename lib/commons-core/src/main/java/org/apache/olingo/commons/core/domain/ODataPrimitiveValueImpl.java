@@ -139,6 +139,15 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
    */
   private Object value;
 
+  private ODataPrimitiveValueImpl() {
+    super(null);
+  }
+
+  @Override
+  public String getTypeName() {
+    return typeKind.getFullQualifiedName().toString();
+  }
+
   @Override
   public EdmPrimitiveTypeKind getTypeKind() {
     return typeKind;

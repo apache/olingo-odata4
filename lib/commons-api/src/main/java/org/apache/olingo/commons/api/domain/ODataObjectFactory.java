@@ -22,11 +22,6 @@ import java.net.URI;
 
 /**
  * Entry point for generating OData domain objects.
- *
- * @see ODataEntitySet
- * @see ODataEntity
- * @see ODataProperty
- * @see ODataLink
  */
 public interface ODataObjectFactory {
 
@@ -179,6 +174,12 @@ public interface ODataObjectFactory {
    * @return media-edit link.
    */
   ODataLink newMediaEditLink(String name, URI baseURI, String href);
+
+  ODataPrimitiveValue.Builder newPrimitiveValueBuilder();
+
+  ODataComplexValue newComplexValue(String typeName);
+
+  ODataCollectionValue newCollectionValue(String typeName);
 
   /**
    * Instantiates a new primitive property.

@@ -126,9 +126,9 @@ public abstract class AbstractODataReader implements CommonODataReader {
                 container.getMetadataETag(),
                 (T) client.getBinder().getODataProperty(container.getObject()));
       } else if (ODataValue.class.isAssignableFrom(reference)) {
-        res = new Container<T>(null, null, (T) client.getPrimitiveValueBuilder().
+        res = new Container<T>(null, null, (T) client.getObjectFactory().newPrimitiveValueBuilder().
                 setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
-                ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                        ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                 setText(IOUtils.toString(src)).
                 build());
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {

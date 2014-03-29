@@ -49,7 +49,7 @@ public class PropertyTest extends AbstractTest {
   public void readPropertyValue() throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_CustomerId_value.txt");
 
-    final ODataPrimitiveValue value = getClient().getPrimitiveValueBuilder().
+    final ODataPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.String).
             setText(IOUtils.toString(input)).
             build();
@@ -71,7 +71,7 @@ public class PropertyTest extends AbstractTest {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataPrimitiveValue typedValue = getClient().getPrimitiveValueBuilder().
+      final ODataPrimitiveValue typedValue = getClient().getObjectFactory().newPrimitiveValueBuilder().
               setType(property.getPrimitiveValue().getTypeKind()).
               setText(written.getPrimitiveValue().toString()).
               build();
@@ -107,7 +107,8 @@ public class PropertyTest extends AbstractTest {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataComplexValue typedValue = new ODataComplexValue(property.getComplexValue().getType());
+      final ODataComplexValue typedValue = getClient().getObjectFactory().
+              newComplexValue(property.getComplexValue().getTypeName());
       for (final Iterator<ODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
         final ODataProperty prop = itor.next();
         typedValue.add(prop);
@@ -144,7 +145,8 @@ public class PropertyTest extends AbstractTest {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataCollectionValue typedValue = new ODataCollectionValue(property.getCollectionValue().getType());
+      final ODataCollectionValue typedValue = getClient().getObjectFactory().
+              newCollectionValue(property.getCollectionValue().getTypeName());
       for (final Iterator<ODataValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {
         final ODataValue value = itor.next();
         typedValue.add(value);

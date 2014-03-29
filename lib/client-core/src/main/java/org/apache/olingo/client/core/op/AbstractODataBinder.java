@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.core.domain.ODataPropertyImpl;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -220,9 +221,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       if (property.hasPrimitiveValue()) {
         propertyResource.setType(property.getPrimitiveValue().getType().toString());
       } else if (property.hasComplexValue()) {
-        propertyResource.setType(property.getComplexValue().getType());
+        propertyResource.setType(property.getComplexValue().getTypeName());
       } else if (property.hasCollectionValue()) {
-        propertyResource.setType(property.getCollectionValue().getType());
+        propertyResource.setType(property.getCollectionValue().getTypeName());
       }
     }
 
@@ -284,7 +285,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Entry entryResource : resource.getEntries()) {
-      entitySet.addEntity(getODataEntity(entryResource));
+      entitySet.getEntities().add(getODataEntity(entryResource));
     }
 
     return entitySet;
@@ -369,20 +370,20 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
   @Override
   public ODataProperty getODataProperty(final Property property) {
-    return new ODataProperty(property.getName(), getODataValue(property));
+    return new ODataPropertyImpl(property.getName(), getODataValue(property));
   }
 
   private ODataValue getODataValue(final Property resource) {
     ODataValue value = null;
 
     if (resource.getValue().isPrimitive()) {
-      value = client.getPrimitiveValueBuilder().
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(resource.getValue().asPrimitive().get()).
               setType(resource.getType() == null
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isGeospatial()) {
-      value = client.getPrimitiveValueBuilder().
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(resource.getType() == null
                       || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
@@ -390,13 +391,13 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
                       ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
     } else if (resource.getValue().isComplex()) {
-      value = new ODataComplexValue(resource.getType());
+      value = client.getObjectFactory().newComplexValue(resource.getType());
 
       for (Property property : resource.getValue().asComplex().get()) {
         value.asComplex().add(getODataProperty(property));
       }
     } else if (resource.getValue().isCollection()) {
-      value = new ODataCollectionValue(resource.getType());
+      value = client.getObjectFactory().newCollectionValue(resource.getType());
 
       for (Value _value : resource.getValue().asCollection().get()) {
         final JSONPropertyImpl fake = new JSONPropertyImpl();

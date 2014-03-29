@@ -210,9 +210,11 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
                 client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
 
         orderEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("OrderId",
-                client.getPrimitiveValueBuilder().setValue(key).setType(EdmPrimitiveTypeKind.Int32).build()));
+                client.getObjectFactory().newPrimitiveValueBuilder().setValue(key).
+                setType(EdmPrimitiveTypeKind.Int32).build()));
         orderEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                client.getPrimitiveValueBuilder().setValue(id).setType(EdmPrimitiveTypeKind.Int32).build()));
+                client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
+                setType(EdmPrimitiveTypeKind.Int32).build()));
 
         final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().getEntityCreateRequest(
                 client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Order").build(),
@@ -268,48 +270,50 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
 
     // add name attribute
     entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Name",
-            client.getPrimitiveValueBuilder().setText(name).setType(EdmPrimitiveTypeKind.String).build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().setText(name).
+            setType(EdmPrimitiveTypeKind.String).build()));
 
     // add key attribute
     if (id != 0) {
       entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-              client.getPrimitiveValueBuilder().setText(String.valueOf(id)).
+              client.getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).
               setType(EdmPrimitiveTypeKind.Int32).build()));
     }
-    final ODataCollectionValue backupContactInfoValue = new ODataCollectionValue(
+    final ODataCollectionValue backupContactInfoValue = getClient().getObjectFactory().newCollectionValue(
             "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)");
 
-
-    final ODataComplexValue contactDetails = new ODataComplexValue(
+    final ODataComplexValue contactDetails = getClient().getObjectFactory().newComplexValue(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails");
 
-
-    final ODataCollectionValue altNamesValue = new ODataCollectionValue("Collection(Edm.String)");
-    altNamesValue.add(client.getPrimitiveValueBuilder().
+    final ODataCollectionValue altNamesValue = getClient().getObjectFactory().
+            newCollectionValue("Collection(Edm.String)");
+    altNamesValue.add(client.getObjectFactory().newPrimitiveValueBuilder().
             setText("My Alternative name").setType(EdmPrimitiveTypeKind.String).build());
     contactDetails.add(client.getObjectFactory().newCollectionProperty("AlternativeNames", altNamesValue));
 
-    final ODataCollectionValue emailBagValue = new ODataCollectionValue("Collection(Edm.String)");
-    emailBagValue.add(client.getPrimitiveValueBuilder().
+    final ODataCollectionValue emailBagValue = getClient().getObjectFactory().
+            newCollectionValue("Collection(Edm.String)");
+    emailBagValue.add(client.getObjectFactory().newPrimitiveValueBuilder().
             setText("altname@mydomain.com").setType(EdmPrimitiveTypeKind.String).build());
     contactDetails.add(client.getObjectFactory().newCollectionProperty("EmailBag", emailBagValue));
 
-    final ODataComplexValue contactAliasValue = new ODataComplexValue(
+    final ODataComplexValue contactAliasValue = getClient().getObjectFactory().newComplexValue(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases");
     contactDetails.add(client.getObjectFactory().newComplexProperty("ContactAlias", contactAliasValue));
 
-    final ODataCollectionValue aliasAltNamesValue = new ODataCollectionValue("Collection(Edm.String)");
-    aliasAltNamesValue.add(client.getPrimitiveValueBuilder().
+    final ODataCollectionValue aliasAltNamesValue = getClient().getObjectFactory().
+            newCollectionValue("Collection(Edm.String)");
+    aliasAltNamesValue.add(client.getObjectFactory().newPrimitiveValueBuilder().
             setText("myAlternativeName").setType(EdmPrimitiveTypeKind.String).build());
     contactAliasValue.add(client.getObjectFactory().newCollectionProperty("AlternativeNames", aliasAltNamesValue));
 
-    final ODataComplexValue homePhone = new ODataComplexValue(
+    final ODataComplexValue homePhone = getClient().getObjectFactory().newComplexValue(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone");
     homePhone.add(client.getObjectFactory().newPrimitiveProperty("PhoneNumber",
-            client.getPrimitiveValueBuilder().setText("8437568356834568").
+            client.getObjectFactory().newPrimitiveValueBuilder().setText("8437568356834568").
             setType(EdmPrimitiveTypeKind.String).build()));
     homePhone.add(client.getObjectFactory().newPrimitiveProperty("Extension",
-            client.getPrimitiveValueBuilder().setText("124365426534621534423ttrf").
+            client.getObjectFactory().newPrimitiveValueBuilder().setText("124365426534621534423ttrf").
             setType(EdmPrimitiveTypeKind.String).
             build()));
     contactDetails.add(client.getObjectFactory().newComplexProperty("HomePhone", homePhone));
@@ -373,7 +377,8 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     entity.setMediaEntity(true);
 
     entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Information",
-            client.getPrimitiveValueBuilder().setText(info).setType(EdmPrimitiveTypeKind.String).build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().setText(info).
+            setType(EdmPrimitiveTypeKind.String).build()));
     return entity;
   }
   // validate newly created entities

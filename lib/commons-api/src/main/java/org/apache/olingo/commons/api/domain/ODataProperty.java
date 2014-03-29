@@ -19,141 +19,73 @@
 package org.apache.olingo.commons.api.domain;
 
 import java.io.Serializable;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * OData entity property.
  */
-public class ODataProperty implements Serializable, ODataInvokeResult {
-
-  private static final long serialVersionUID = 926939448778950450L;
-
-  /**
-   * Property name.
-   */
-  private final String name;
-
-  /**
-   * Property value.
-   */
-  private ODataValue value;
-
-  /**
-   * Constructor.
-   *
-   * @param name property name.
-   * @param value property value.
-   */
-  public ODataProperty(final String name, final ODataValue value) {
-    this.name = name;
-    this.value = value;
-  }
+public interface ODataProperty extends ODataInvokeResult, Serializable {
 
   /**
    * Returns property name.
    *
    * @return property name.
    */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Returns property value.
-   *
-   * @return property value.
-   */
-  public ODataValue getValue() {
-    return value;
-  }
+  String getName();
 
   /**
    * Checks if has null value.
    *
    * @return 'TRUE' if has null value; 'FALSE' otherwise.
    */
-  public boolean hasNullValue() {
-    return this.value == null;
-  }
+  boolean hasNullValue();
 
   /**
    * Checks if has primitive value.
    *
    * @return 'TRUE' if has primitive value; 'FALSE' otherwise.
    */
-  public boolean hasPrimitiveValue() {
-    return !hasNullValue() && this.value.isPrimitive();
-  }
+  boolean hasPrimitiveValue();
 
   /**
    * Gets primitive value.
    *
    * @return primitive value if exists; null otherwise.
    */
-  public ODataPrimitiveValue getPrimitiveValue() {
-    return hasPrimitiveValue() ? this.value.asPrimitive() : null;
-  }
+  ODataPrimitiveValue getPrimitiveValue();
 
   /**
-   * Checks if has complex value.
+   * Returns property value.
    *
-   * @return 'TRUE' if has complex value; 'FALSE' otherwise.
+   * @return property value.
    */
-  public boolean hasComplexValue() {
-    return !hasNullValue() && this.value.isComplex();
-  }
-
-  /**
-   * Gets complex value.
-   *
-   * @return complex value if exists; null otherwise.
-   */
-  public ODataComplexValue getComplexValue() {
-    return hasComplexValue() ? this.value.asComplex() : null;
-  }
+  ODataValue getValue();
 
   /**
    * Checks if has collection value.
    *
    * @return 'TRUE' if has collection value; 'FALSE' otherwise.
    */
-  public boolean hasCollectionValue() {
-    return !hasNullValue() && this.value.isCollection();
-  }
+  boolean hasCollectionValue();
 
   /**
    * Gets collection value.
    *
    * @return collection value if exists; null otherwise.
    */
-  public ODataCollectionValue getCollectionValue() {
-    return hasCollectionValue() ? this.value.asCollection() : null;
-  }
+  ODataCollectionValue getCollectionValue();
 
   /**
-   * {@inheritDoc }
+   * Checks if has complex value.
+   *
+   * @return 'TRUE' if has complex value; 'FALSE' otherwise.
    */
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
+  boolean hasComplexValue();
 
   /**
-   * {@inheritDoc }
+   * Gets complex value.
+   *
+   * @return complex value if exists; null otherwise.
    */
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
+  ODataComplexValue getComplexValue();
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
 }

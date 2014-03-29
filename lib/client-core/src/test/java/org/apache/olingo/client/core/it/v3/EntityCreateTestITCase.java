@@ -291,10 +291,10 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
               client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
 
       order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("OrderId",
-              client.getPrimitiveValueBuilder().setValue(key).setType(EdmPrimitiveTypeKind.Int32)
+              client.getObjectFactory().newPrimitiveValueBuilder().setValue(key).setType(EdmPrimitiveTypeKind.Int32)
               .build()));
       order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-              client.getPrimitiveValueBuilder().setValue(id).setType(EdmPrimitiveTypeKind.Int32)
+              client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).setType(EdmPrimitiveTypeKind.Int32)
               .build()));
 
       final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().getEntityCreateRequest(
@@ -388,9 +388,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     ODataEntity order = client.getObjectFactory().newEntity(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
     order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-            client.getPrimitiveValueBuilder().setValue(id).setType(EdmPrimitiveTypeKind.Int32).build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
+            setType(EdmPrimitiveTypeKind.Int32).build()));
     order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("OrderId",
-            client.getPrimitiveValueBuilder().setValue(id).setType(EdmPrimitiveTypeKind.Int32).build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
+            setType(EdmPrimitiveTypeKind.Int32).build()));
 
     order.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Customer", URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString())));
@@ -446,22 +448,22 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Message");
 
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("MessageId",
-            client.getPrimitiveValueBuilder().setValue(1000).
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue(1000).
             setType(EdmPrimitiveTypeKind.Int32).build()));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("FromUsername",
-            client.getPrimitiveValueBuilder().setValue("1").
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue("1").
             setType(EdmPrimitiveTypeKind.String).build()));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("ToUsername",
-            client.getPrimitiveValueBuilder().setValue("xlodhxzzusxecbzptxlfxprneoxkn").
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue("xlodhxzzusxecbzptxlfxprneoxkn").
             setType(EdmPrimitiveTypeKind.String).build()));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Subject",
-            client.getPrimitiveValueBuilder().setValue("Test subject").
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue("Test subject").
             setType(EdmPrimitiveTypeKind.String).build()));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Body",
-            client.getPrimitiveValueBuilder().setValue("Test body").
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue("Test body").
             setType(EdmPrimitiveTypeKind.String).build()));
     message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("IsRead",
-            client.getPrimitiveValueBuilder().setValue(false).
+            client.getObjectFactory().newPrimitiveValueBuilder().setValue(false).
             setType(EdmPrimitiveTypeKind.Boolean).build()));
 
     final CommonURIBuilder<?> builder =
