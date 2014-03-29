@@ -41,10 +41,16 @@ public class ServiceDocumentTestITCase extends AbstractTestITCase {
 
     final ODataServiceDocument serviceDocument = res.getBody();
     assertEquals(12, serviceDocument.getEntitySetTitles().size());
+    assertEquals(6, serviceDocument.getSingletonTitles().size());
+    assertEquals(6, serviceDocument.getFunctionImportTitles().size());
 
+    assertTrue(res.getContextURL().toASCIIString().endsWith("/StaticService/V40/Static.svc/$metadata"));
     assertEquals(URI.create(testStaticServiceRootURL + "/ProductDetails"),
             serviceDocument.getEntitySetURI("ProductDetails"));
-    assertTrue(res.getContextURL().toASCIIString().endsWith("/StaticService/V40/Static.svc/$metadata"));
+    assertEquals(URI.create(testStaticServiceRootURL + "/Boss"),
+            serviceDocument.getSingletonURI("Boss"));
+    assertEquals(URI.create(testStaticServiceRootURL + "/GetPerson"),
+            serviceDocument.getFunctionImportURI("GetPerson"));
   }
 
   @Test
