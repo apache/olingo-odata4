@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory;
  * <br/>
  * <b>Please don't forget to call the <tt>close()>/<tt> method when not needed any more.</b>
  */
-public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
+public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends CommonODataEntity>
+        implements Iterator<E> {
 
   /**
    * Logger.
@@ -59,7 +60,7 @@ public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
 
   private Entry cached;
 
-  private CommonODataEntitySet entitySet;
+  private ES entitySet;
 
   private final ByteArrayOutputStream osFeed;
 
@@ -104,6 +105,7 @@ public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
    * {@inheritDoc }
    */
   @Override
+  @SuppressWarnings("unchecked")
   public boolean hasNext() {
     if (available && cached == null) {
       if (format == ODataPubFormat.ATOM) {
@@ -114,7 +116,7 @@ public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
 
       if (cached == null) {
         available = false;
-        entitySet = odataClient.getReader().
+        entitySet = (ES) odataClient.getReader().
                 readEntitySet(new ByteArrayInputStream(osFeed.toByteArray()), format);
         close();
       }
@@ -127,9 +129,10 @@ public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
    * {@inheritDoc }
    */
   @Override
-  public CommonODataEntity next() {
+  public E next() {
     if (hasNext()) {
-      final CommonODataEntity res = odataClient.getBinder().getODataEntity(cached);
+      @SuppressWarnings("unchecked")
+      final E res = (E) odataClient.getBinder().getODataEntity(cached);
       cached = null;
       return res;
     }

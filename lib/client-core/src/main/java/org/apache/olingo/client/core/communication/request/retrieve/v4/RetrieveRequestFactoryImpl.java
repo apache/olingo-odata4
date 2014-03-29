@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
@@ -27,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRe
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractRetrieveRequestFactory;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetIteratorRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataPropertyRequestImpl;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
@@ -52,6 +54,12 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
   @Override
   public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI query) {
     return new ODataEntitySetRequestImpl<ODataEntitySet>(client, query);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri) {
+    return new ODataEntitySetIteratorRequestImpl<ODataEntitySet, ODataEntity>(client, uri);
   }
 
   @SuppressWarnings("unchecked")

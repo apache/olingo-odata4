@@ -74,10 +74,13 @@ public interface CommonRetrieveRequestFactory extends Serializable {
    * Returned request gives the possibility to consume entities iterating on them without parsing and loading in memory
    * the entire entity set.
    *
+   * @param <ES> concreate ODataEntitySet implementation.
+   * @param <E> concrete ODataEntity implementation.
    * @param uri request URI.
    * @return new {@link ODataEntitySetIteratorRequest} instance.
    */
-  ODataEntitySetIteratorRequest getEntitySetIteratorRequest(URI uri);
+  <ES extends CommonODataEntitySet, E extends CommonODataEntity>
+          ODataEntitySetIteratorRequest<ES, E> getEntitySetIteratorRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity.

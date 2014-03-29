@@ -25,14 +25,16 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData EntitySet query request.
  */
-public class ODataEntitySetIteratorRequestImpl
-        extends AbstractODataRetrieveRequest<ODataEntitySetIterator, ODataPubFormat>
-        implements ODataEntitySetIteratorRequest {
+public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, E extends CommonODataEntity>
+        extends AbstractODataRetrieveRequest<ODataEntitySetIterator<ES, E>, ODataPubFormat>
+        implements ODataEntitySetIteratorRequest<ES, E> {
 
   private ODataEntitySetIterator feedIterator = null;
 
@@ -42,7 +44,7 @@ public class ODataEntitySetIteratorRequestImpl
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataEntitySetIteratorRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntitySetIteratorRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
@@ -50,7 +52,7 @@ public class ODataEntitySetIteratorRequestImpl
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<ODataEntitySetIterator> execute() {
+  public ODataRetrieveResponse<ODataEntitySetIterator<ES, E>> execute() {
     final HttpResponse res = doExecute();
     return new ODataEntitySetIteratorResponseImpl(httpClient, res);
   }
@@ -75,9 +77,9 @@ public class ODataEntitySetIteratorRequestImpl
      */
     @Override
     @SuppressWarnings("unchecked")
-    public ODataEntitySetIterator getBody() {
+    public ODataEntitySetIterator<ES, E> getBody() {
       if (feedIterator == null) {
-        feedIterator = new ODataEntitySetIterator(
+        feedIterator = new ODataEntitySetIterator<ES, E>(
                 odataClient, getRawResponse(), ODataPubFormat.fromString(getContentType()));
       }
       return feedIterator;

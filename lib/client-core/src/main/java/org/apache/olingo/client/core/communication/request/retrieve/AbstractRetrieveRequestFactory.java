@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
@@ -37,11 +36,6 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
 
   protected AbstractRetrieveRequestFactory(final CommonODataClient client) {
     this.client = client;
-  }
-
-  @Override
-  public ODataEntitySetIteratorRequest getEntitySetIteratorRequest(final URI query) {
-    return new ODataEntitySetIteratorRequestImpl(client, query);
   }
 
   @Override
