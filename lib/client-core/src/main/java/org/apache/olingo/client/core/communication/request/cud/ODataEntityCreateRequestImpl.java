@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -46,7 +46,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
   /**
    * Entity to be created.
    */
-  private final ODataEntity entity;
+  private final CommonODataEntity entity;
 
   /**
    * Constructor.
@@ -55,7 +55,9 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param targetURI entity set URI.
    * @param entity entity to be created.
    */
-  ODataEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final ODataEntity entity) {
+  ODataEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI,
+          final CommonODataEntity entity) {
+
     super(odataClient, ODataPubFormat.class, HttpMethod.POST, targetURI);
     this.entity = entity;
   }
@@ -88,7 +90,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
    */
   private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
 
-    private ODataEntity entity = null;
+    private CommonODataEntity entity = null;
 
     /**
      * Constructor.
@@ -112,12 +114,12 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
      * {@inheritDoc }
      */
     @Override
-    public ODataEntity getBody() {
+    public CommonODataEntity getBody() {
       if (entity == null) {
         try {
-          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), 
+          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(),
                   ODataPubFormat.fromString(getAccept()));
-          
+
           entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();

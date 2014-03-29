@@ -19,9 +19,7 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.commons.api.domain.ODataObjectFactory;
 import org.apache.olingo.client.api.op.ODataWriter;
-import org.apache.olingo.commons.core.domain.ODataObjectFactoryImpl;
 import org.apache.olingo.client.core.op.ODataWriterImpl;
 
 public abstract class AbstractODataClient implements CommonODataClient {
@@ -30,16 +28,9 @@ public abstract class AbstractODataClient implements CommonODataClient {
 
   private final ODataWriter writer = new ODataWriterImpl(this);
 
-  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(getServiceVersion());
-
   @Override
   public ODataWriter getWriter() {
     return writer;
-  }
-
-  @Override
-  public ODataObjectFactory getObjectFactory() {
-    return objectFactory;
   }
 
 }

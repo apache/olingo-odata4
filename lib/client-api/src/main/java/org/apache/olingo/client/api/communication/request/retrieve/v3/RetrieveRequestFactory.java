@@ -20,8 +20,26 @@ package org.apache.olingo.client.api.communication.request.retrieve.v3;
 
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
+
+  @SuppressWarnings("unchecked")
+  @Override
+  ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
+
+  @SuppressWarnings("unchecked")
+  @Override
+  ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
+
+  @SuppressWarnings("unchecked")
+  @Override
+  ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData link.

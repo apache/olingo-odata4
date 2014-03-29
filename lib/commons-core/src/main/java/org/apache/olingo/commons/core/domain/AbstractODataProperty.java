@@ -25,13 +25,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 
-/**
- * OData entity property.
- */
-public class ODataPropertyImpl implements ODataProperty {
+public abstract class AbstractODataProperty implements CommonODataProperty {
 
   private static final long serialVersionUID = 926939448778950450L;
 
@@ -43,7 +40,7 @@ public class ODataPropertyImpl implements ODataProperty {
   /**
    * Property value.
    */
-  private ODataValue value;
+  private final ODataValue value;
 
   /**
    * Constructor.
@@ -51,7 +48,7 @@ public class ODataPropertyImpl implements ODataProperty {
    * @param name property name.
    * @param value property value.
    */
-  public ODataPropertyImpl(final String name, final ODataValue value) {
+  public AbstractODataProperty(final String name, final ODataValue value) {
     this.name = name;
     this.value = value;
   }

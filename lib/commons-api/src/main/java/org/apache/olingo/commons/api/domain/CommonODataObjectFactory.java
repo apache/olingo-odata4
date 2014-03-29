@@ -23,14 +23,14 @@ import java.net.URI;
 /**
  * Entry point for generating OData domain objects.
  */
-public interface ODataObjectFactory {
+public interface CommonODataObjectFactory {
 
   /**
    * Instantiates a new entity set.
    *
    * @return entity set.
    */
-  ODataEntitySet newEntitySet();
+  CommonODataEntitySet newEntitySet();
 
   /**
    * Instantiates a new entity set.
@@ -38,7 +38,7 @@ public interface ODataObjectFactory {
    * @param next next link.
    * @return entity set.
    */
-  ODataEntitySet newEntitySet(URI next);
+  CommonODataEntitySet newEntitySet(URI next);
 
   /**
    * Instantiates a new entity.
@@ -46,7 +46,7 @@ public interface ODataObjectFactory {
    * @param name OData entity name.
    * @return entity.
    */
-  ODataEntity newEntity(String name);
+  CommonODataEntity newEntity(String name);
 
   /**
    * Instantiates a new entity.
@@ -55,7 +55,7 @@ public interface ODataObjectFactory {
    * @param link self link.
    * @return entity.
    */
-  ODataEntity newEntity(String name, URI link);
+  CommonODataEntity newEntity(String name, URI link);
 
   /**
    * Instantiates a new in-line entity set.
@@ -65,7 +65,7 @@ public interface ODataObjectFactory {
    * @param entitySet entity set.
    * @return in-line entity set.
    */
-  ODataInlineEntitySet newInlineEntitySet(String name, URI link, ODataEntitySet entitySet);
+  ODataInlineEntitySet newInlineEntitySet(String name, URI link, CommonODataEntitySet entitySet);
 
   /**
    * Instantiates a new in-line entity set.
@@ -76,7 +76,7 @@ public interface ODataObjectFactory {
    * @param entitySet entity set.
    * @return in-line entity set.
    */
-  ODataInlineEntitySet newInlineEntitySet(String name, URI baseURI, String href, ODataEntitySet entitySet);
+  ODataInlineEntitySet newInlineEntitySet(String name, URI baseURI, String href, CommonODataEntitySet entitySet);
 
   /**
    * Instantiates a new in-line entity.
@@ -86,7 +86,7 @@ public interface ODataObjectFactory {
    * @param entity entity.
    * @return in-line entity.
    */
-  ODataInlineEntity newInlineEntity(String name, URI link, ODataEntity entity);
+  ODataInlineEntity newInlineEntity(String name, URI link, CommonODataEntity entity);
 
   /**
    * Instantiates a new in-line entity.
@@ -97,7 +97,7 @@ public interface ODataObjectFactory {
    * @param entity entity.
    * @return in-line entity.
    */
-  ODataInlineEntity newInlineEntity(String name, URI baseURI, String href, ODataEntity entity);
+  ODataInlineEntity newInlineEntity(String name, URI baseURI, String href, CommonODataEntity entity);
 
   /**
    * Instantiates a new entity navigation link.
@@ -188,7 +188,7 @@ public interface ODataObjectFactory {
    * @param value primitive value.
    * @return primitive property.
    */
-  ODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
+  CommonODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
 
   /**
    * Instantiates a new complex property.
@@ -197,7 +197,7 @@ public interface ODataObjectFactory {
    * @param value value.
    * @return complex property.
    */
-  ODataProperty newComplexProperty(String name, ODataComplexValue value);
+  CommonODataProperty newComplexProperty(String name, ODataComplexValue value);
 
   /**
    * Instantiates a new collection property.
@@ -206,5 +206,5 @@ public interface ODataObjectFactory {
    * @param value value.
    * @return collection property.
    */
-  ODataProperty newCollectionProperty(String name, ODataCollectionValue value);
+  CommonODataProperty newCollectionProperty(String name, ODataCollectionValue value);
 }

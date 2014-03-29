@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,16 +32,17 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 
 /**
@@ -79,7 +80,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
       }
 
       @Override
-      public ODataEntity getBody() {
+      public CommonODataEntity getBody() {
         return odataClient.getObjectFactory().newEntity("Invalid");
       }
     }
@@ -117,7 +118,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer(154)");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     try {

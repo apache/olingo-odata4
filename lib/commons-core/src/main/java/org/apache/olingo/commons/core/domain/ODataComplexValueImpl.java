@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
 /**
  * OData complex property value.
@@ -35,7 +35,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
   /**
    * Complex type fields.
    */
-  private final Map<String, ODataProperty> fields = new LinkedHashMap<String, ODataProperty>();
+  private final Map<String, CommonODataProperty> fields = new LinkedHashMap<String, CommonODataProperty>();
 
   /**
    * Constructor.
@@ -52,7 +52,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @param field field to be added.
    */
   @Override
-  public void add(final ODataProperty field) {
+  public void add(final CommonODataProperty field) {
     fields.put(field.getName(), field);
   }
 
@@ -63,7 +63,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @return requested field.
    */
   @Override
-  public ODataProperty get(final String name) {
+  public CommonODataProperty get(final String name) {
     return fields.get(name);
   }
 
@@ -73,7 +73,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @return fields iterator.
    */
   @Override
-  public Iterator<ODataProperty> iterator() {
+  public Iterator<CommonODataProperty> iterator() {
     return fields.values().iterator();
   }
 

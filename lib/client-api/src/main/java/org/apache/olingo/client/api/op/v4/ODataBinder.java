@@ -18,8 +18,29 @@
  */
 package org.apache.olingo.client.api.op.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 
 public interface ODataBinder extends CommonODataBinder {
 
+  @Override
+  ODataEntitySet getODataEntitySet(Feed resource);
+
+  @Override
+  ODataEntitySet getODataEntitySet(Feed resource, URI defaultBaseURI);
+
+  @Override
+  ODataEntity getODataEntity(Entry resource);
+
+  @Override
+  ODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
+
+  @Override
+  ODataProperty getODataProperty(Property property);
 }

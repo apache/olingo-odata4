@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
@@ -28,13 +25,16 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.op.ResourceFactory;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -90,7 +90,8 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
-    final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
@@ -143,7 +144,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
+    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
     assertNotNull(entitySet);
   }
 }

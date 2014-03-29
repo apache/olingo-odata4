@@ -18,11 +18,33 @@
  */
 package org.apache.olingo.client.api.op.v3;
 
+import java.net.URI;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
 public interface ODataBinder extends CommonODataBinder {
+
+  @Override
+  ODataEntitySet getODataEntitySet(Feed resource);
+
+  @Override
+  ODataEntitySet getODataEntitySet(Feed resource, URI defaultBaseURI);
+
+  @Override
+  ODataEntity getODataEntity(Entry resource);
+
+  @Override
+  ODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
+
+  @Override
+  ODataProperty getODataProperty(Property property);
 
   /**
    * Gets <tt>ODataLinkCollection</tt> from the given link collection resource.

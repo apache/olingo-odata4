@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData EntitySet query request.
  */
-public interface ODataEntitySetRequest extends ODataRetrieveRequest<ODataEntitySet, ODataPubFormat> {
+public interface ODataEntitySetRequest<T extends CommonODataEntitySet>
+        extends ODataRetrieveRequest<T, ODataPubFormat> {
 }

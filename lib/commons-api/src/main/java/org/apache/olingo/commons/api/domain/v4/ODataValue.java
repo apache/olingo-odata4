@@ -16,42 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain;
+package org.apache.olingo.commons.api.domain.v4;
 
-import java.net.URI;
-import java.util.List;
-
-/**
- * OData entity collection. If pagination was used to get this instance, forward page navigation URI will be available.
- */
-public interface ODataEntitySet extends ODataInvokeResult {
+public interface ODataValue extends org.apache.olingo.commons.api.domain.ODataValue {
 
   /**
-   * Gets next page link.
+   * Check is is an enum value.
    *
-   * @return next page link; null value if single page or last page reached.
+   * @return 'TRUE' if enum; 'FALSE' otherwise.
    */
-  URI getNext();
+  boolean isEnum();
 
   /**
-   * Gets contained entities.
+   * Casts to enum value.
    *
-   * @return feed entries.
+   * @return enum value.
    */
-  List<ODataEntity> getEntities();
-
-  /**
-   * Gets in-line count.
-   *
-   * @return in-line count value.
-   */
-  int getCount();
-
-  /**
-   * Sets in-line count.
-   *
-   * @param count in-line count value.
-   */
-  void setCount(final int count);
-
+  ODataEnumValue asEnum();
 }

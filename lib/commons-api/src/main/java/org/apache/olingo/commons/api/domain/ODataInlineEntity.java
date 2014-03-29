@@ -28,7 +28,7 @@ public class ODataInlineEntity extends ODataLink {
 
   private static final long serialVersionUID = -4763341581843700743L;
 
-  private final ODataEntity entity;
+  private final CommonODataEntity entity;
 
   /**
    * Constructor.
@@ -40,7 +40,7 @@ public class ODataInlineEntity extends ODataLink {
    * @param entity entity.
    */
   public ODataInlineEntity(final ODataServiceVersion version,
-          final URI uri, final ODataLinkType type, final String title, final ODataEntity entity) {
+          final URI uri, final ODataLinkType type, final String title, final CommonODataEntity entity) {
 
     super(version, uri, type, title);
     this.entity = entity;
@@ -57,7 +57,7 @@ public class ODataInlineEntity extends ODataLink {
    * @param entity entity.
    */
   public ODataInlineEntity(final ODataServiceVersion version, final URI baseURI, final String href,
-          final ODataLinkType type, final String title, final ODataEntity entity) {
+          final ODataLinkType type, final String title, final CommonODataEntity entity) {
 
     super(version, baseURI, href, type, title);
     this.entity = entity;
@@ -68,7 +68,7 @@ public class ODataInlineEntity extends ODataLink {
    *
    * @return wrapped entity.
    */
-  public ODataEntity getEntity() {
+  public CommonODataEntity getEntity() {
     return entity;
   }
 }

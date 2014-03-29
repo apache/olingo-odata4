@@ -25,7 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.Container;
@@ -34,8 +34,8 @@ import org.apache.olingo.commons.api.data.Property;
 /**
  * This class implements an OData entity property query request.
  */
-public class ODataPropertyRequestImpl extends AbstractODataRetrieveRequest<ODataProperty, ODataFormat>
-        implements ODataPropertyRequest {
+public class ODataPropertyRequestImpl<T extends CommonODataProperty>
+        extends AbstractODataRetrieveRequest<T, ODataFormat> implements ODataPropertyRequest<T> {
 
   /**
    * Private constructor.
@@ -43,7 +43,7 @@ public class ODataPropertyRequestImpl extends AbstractODataRetrieveRequest<OData
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataPropertyRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataPropertyRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataFormat.class, query);
   }
 
@@ -51,14 +51,14 @@ public class ODataPropertyRequestImpl extends AbstractODataRetrieveRequest<OData
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<ODataProperty> execute() {
+  public ODataRetrieveResponse<T> execute() {
     final HttpResponse res = doExecute();
     return new ODataPropertyResponseImpl(httpClient, res);
   }
 
   protected class ODataPropertyResponseImpl extends ODataRetrieveResponseImpl {
 
-    private ODataProperty property = null;
+    private T property = null;
 
     /**
      * Constructor.
@@ -82,14 +82,15 @@ public class ODataPropertyRequestImpl extends AbstractODataRetrieveRequest<OData
      * {@inheritDoc }
      */
     @Override
-    public ODataProperty getBody() {
+    @SuppressWarnings("unchecked")
+    public T getBody() {
       if (property == null) {
         try {
           final Container<Property> container =
                   odataClient.getDeserializer().toProperty(
-                  res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
+                          res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
 
-          property = odataClient.getBinder().getODataProperty(extractFromContainer(container));
+          property = (T) odataClient.getBinder().getODataProperty(extractFromContainer(container));
         } catch (IOException e) {
           throw new HttpClientException(e);
         } finally {

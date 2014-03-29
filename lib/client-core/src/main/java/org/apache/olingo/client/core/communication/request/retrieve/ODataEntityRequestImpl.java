@@ -26,14 +26,14 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.
  */
-public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEntity, ODataPubFormat>
-        implements ODataEntityRequest {
+public class ODataEntityRequestImpl<T extends CommonODataEntity>
+        extends AbstractODataRetrieveRequest<T, ODataPubFormat> implements ODataEntityRequest<T> {
 
   /**
    * Private constructor.
@@ -41,7 +41,7 @@ public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEn
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataEntityRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntityRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
@@ -49,7 +49,7 @@ public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEn
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<ODataEntity> execute() {
+  public ODataRetrieveResponse<T> execute() {
     return new ODataEntityResponseImpl(httpClient, doExecute());
   }
 
@@ -58,7 +58,7 @@ public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEn
    */
   public class ODataEntityResponseImpl extends ODataRetrieveResponseImpl {
 
-    private ODataEntity entity = null;
+    private T entity = null;
 
     /**
      * Constructor.
@@ -82,13 +82,14 @@ public class ODataEntityRequestImpl extends AbstractODataRetrieveRequest<ODataEn
      * {@inheritDoc }
      */
     @Override
-    public ODataEntity getBody() {
+    @SuppressWarnings("unchecked")
+    public T getBody() {
       if (entity == null) {
         try {
           final Container<Entry> container =
                   odataClient.getDeserializer().toEntry(getRawResponse(), ODataPubFormat.fromString(getContentType()));
 
-          entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
+          entity = (T) odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

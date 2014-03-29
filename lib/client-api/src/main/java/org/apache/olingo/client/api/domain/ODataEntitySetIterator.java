@@ -32,8 +32,8 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * <br/>
  * <b>Please don't forget to call the <tt>close()>/<tt> method when not needed any more.</b>
  */
-public class ODataEntitySetIterator implements Iterator<ODataEntity> {
+public class ODataEntitySetIterator implements Iterator<CommonODataEntity> {
 
   /**
    * Logger.
@@ -59,7 +59,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
   private Entry cached;
 
-  private ODataEntitySet entitySet;
+  private CommonODataEntitySet entitySet;
 
   private final ByteArrayOutputStream osFeed;
 
@@ -127,9 +127,9 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
    * {@inheritDoc }
    */
   @Override
-  public ODataEntity next() {
+  public CommonODataEntity next() {
     if (hasNext()) {
-      final ODataEntity res = odataClient.getBinder().getODataEntity(cached);
+      final CommonODataEntity res = odataClient.getBinder().getODataEntity(cached);
       cached = null;
       return res;
     }

@@ -54,12 +54,12 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -117,10 +117,10 @@ public abstract class AbstractTestITCase {
       assertNotNull(foundActual);
 
       if (foundOriginal instanceof ODataInlineEntity && foundActual instanceof ODataInlineEntity) {
-        final ODataEntity originalInline = ((ODataInlineEntity) foundOriginal).getEntity();
+        final CommonODataEntity originalInline = ((ODataInlineEntity) foundOriginal).getEntity();
         assertNotNull(originalInline);
 
-        final ODataEntity actualInline = ((ODataInlineEntity) foundActual).getEntity();
+        final CommonODataEntity actualInline = ((ODataInlineEntity) foundActual).getEntity();
         assertNotNull(actualInline);
 
         checkProperties(originalInline.getProperties(), actualInline.getProperties());
@@ -128,23 +128,25 @@ public abstract class AbstractTestITCase {
     }
   }
 
-  protected void checkProperties(final Collection<ODataProperty> original, final Collection<ODataProperty> actual) {
+  protected void checkProperties(final Collection<? extends CommonODataProperty> original,
+          final Collection<? extends CommonODataProperty> actual) {
+
     assertTrue(original.size() <= actual.size());
 
     // re-organize actual properties into a Map<String, ODataProperty>
-    final Map<String, ODataProperty> actualProps = new HashMap<String, ODataProperty>(actual.size());
+    final Map<String, CommonODataProperty> actualProps = new HashMap<String, CommonODataProperty>(actual.size());
 
-    for (ODataProperty prop : actual) {
+    for (CommonODataProperty prop : actual) {
       assertFalse(actualProps.containsKey(prop.getName()));
       actualProps.put(prop.getName(), prop);
     }
 
     assertTrue(actual.size() <= actualProps.size());
 
-    for (ODataProperty prop : original) {
+    for (CommonODataProperty prop : original) {
       assertNotNull(prop);
       if (actualProps.containsKey(prop.getName())) {
-        final ODataProperty actualProp = actualProps.get(prop.getName());
+        final CommonODataProperty actualProp = actualProps.get(prop.getName());
         assertNotNull(actualProp);
 
         if (prop.getValue() != null && actualProp.getValue() != null) {
@@ -168,13 +170,13 @@ public abstract class AbstractTestITCase {
             original.getClass().getSimpleName(), actual.getClass().getSimpleName());
 
     if (original.isComplex()) {
-      final List<ODataProperty> originalFileds = new ArrayList<ODataProperty>();
-      for (ODataProperty prop : original.asComplex()) {
+      final List<CommonODataProperty> originalFileds = new ArrayList<CommonODataProperty>();
+      for (CommonODataProperty prop : original.asComplex()) {
         originalFileds.add(prop);
       }
 
-      final List<ODataProperty> actualFileds = new ArrayList<ODataProperty>();
-      for (ODataProperty prop : (ODataComplexValue) actual) {
+      final List<CommonODataProperty> actualFileds = new ArrayList<CommonODataProperty>();
+      for (CommonODataProperty prop : (ODataComplexValue) actual) {
         actualFileds.add(prop);
       }
 
@@ -207,39 +209,42 @@ public abstract class AbstractTestITCase {
     }
   }
 
-  protected ODataEntity getSampleCustomerInfo(final int id, final String sampleinfo) {
-    final ODataEntity entity = getClient().getObjectFactory().newEntity(
+  protected CommonODataEntity getSampleCustomerInfo(final int id, final String sampleinfo) {
+    final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo");
     entity.setMediaEntity(true);
 
-    entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Information",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleinfo).setType(
-                    EdmPrimitiveTypeKind.String).build()));
+    getClient().getBinder().add(entity,
+            getClient().getObjectFactory().newPrimitiveProperty("Information",
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleinfo).
+                    setType(EdmPrimitiveTypeKind.String).build()));
 
     return entity;
   }
 
-  protected ODataEntity getSampleCustomerProfile(
+  protected CommonODataEntity getSampleCustomerProfile(
           final int id, final String sampleName, final boolean withInlineInfo) {
 
-    final ODataEntity entity =
+    final CommonODataEntity entity =
             getClient().getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
 
     // add name attribute
-    entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleName).setType(
-                    EdmPrimitiveTypeKind.String).build()));
+    getClient().getBinder().add(entity,
+            getClient().getObjectFactory().newPrimitiveProperty("Name",
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleName).
+                    setType(EdmPrimitiveTypeKind.String).build()));
 
     // add key attribute
-    entity.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).setType(
-                    EdmPrimitiveTypeKind.Int32).build()));
+    getClient().getBinder().add(entity,
+            getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).
+                    setType(EdmPrimitiveTypeKind.Int32).build()));
 
     // add BackupContactInfo attribute (collection)
     final ODataCollectionValue backupContactInfoValue = getClient().getObjectFactory().newCollectionValue(
             "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)");
-    entity.getProperties().add(getClient().getObjectFactory().newCollectionProperty("BackupContactInfo",
-            backupContactInfoValue));
+    getClient().getBinder().add(entity,
+            getClient().getObjectFactory().newCollectionProperty("BackupContactInfo", backupContactInfoValue));
 
     // add BackupContactInfo.ContactDetails attribute (complex)
     final ODataComplexValue contactDetails = getClient().getObjectFactory().newComplexValue(
@@ -302,7 +307,7 @@ public abstract class AbstractTestITCase {
     }
   }
 
-  protected void debugODataProperty(final ODataProperty property, final String message) {
+  protected void debugODataProperty(final CommonODataProperty property, final String message) {
     LOG.debug(message + "\n{}", property.toString());
   }
 
@@ -310,7 +315,7 @@ public abstract class AbstractTestITCase {
     LOG.debug(message + "\n{}", value.toString());
   }
 
-  protected void debugODataEntity(final ODataEntity entity, final String message) {
+  protected void debugODataEntity(final CommonODataEntity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       getClient().getSerializer().entry(getClient().getBinder().getEntry(entity, AtomEntryImpl.class), writer);
@@ -337,7 +342,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected String getETag(final URI uri) {
-    final ODataRetrieveResponse<ODataEntity> res = getClient().getRetrieveRequestFactory().
+    final ODataRetrieveResponse<CommonODataEntity> res = getClient().getRetrieveRequestFactory().
             getEntityRequest(uri).execute();
     try {
       return res.getEtag();
@@ -346,12 +351,13 @@ public abstract class AbstractTestITCase {
     }
   }
 
-  protected ODataEntity read(final ODataPubFormat format, final URI editLink) {
-    final ODataEntityRequest req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
+  protected CommonODataEntity read(final ODataPubFormat format, final URI editLink) {
+    final ODataEntityRequest<CommonODataEntity> req = getClient().getRetrieveRequestFactory().
+            getEntityRequest(editLink);
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
-    final ODataEntity entity = res.getBody();
+    final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
+    final CommonODataEntity entity = res.getBody();
 
     assertNotNull(entity);
 
@@ -362,10 +368,10 @@ public abstract class AbstractTestITCase {
     return entity;
   }
 
-  protected ODataEntity createEntity(
+  protected CommonODataEntity createEntity(
           final String serviceRootURL,
           final ODataPubFormat format,
-          final ODataEntity original,
+          final CommonODataEntity original,
           final String entitySetName) {
 
     final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
@@ -381,7 +387,7 @@ public abstract class AbstractTestITCase {
     assertEquals(201, createRes.getStatusCode());
     assertEquals("Created", createRes.getStatusMessage());
 
-    final ODataEntity created = createRes.getBody();
+    final CommonODataEntity created = createRes.getBody();
     assertNotNull(created);
 
     debugODataEntity(created, "Just created");
@@ -389,9 +395,9 @@ public abstract class AbstractTestITCase {
     return created;
   }
 
-  protected ODataEntity compareEntities(final String serviceRootURL,
+  protected CommonODataEntity compareEntities(final String serviceRootURL,
           final ODataPubFormat format,
-          final ODataEntity original,
+          final CommonODataEntity original,
           final int actualObjectId,
           final Collection<String> expands) {
 
@@ -405,13 +411,14 @@ public abstract class AbstractTestITCase {
       }
     }
 
-    final ODataEntityRequest req = getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<CommonODataEntity> req = getClient().getRetrieveRequestFactory().
+            getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
 
-    final ODataEntity actual = res.getBody();
+    final CommonODataEntity actual = res.getBody();
     assertNotNull(actual);
 
     // check defined links
@@ -427,7 +434,7 @@ public abstract class AbstractTestITCase {
 
   protected void cleanAfterCreate(
           final ODataPubFormat format,
-          final ODataEntity created,
+          final CommonODataEntity created,
           final boolean includeInline,
           final String baseUri) {
 
@@ -437,15 +444,15 @@ public abstract class AbstractTestITCase {
     if (includeInline) {
       for (ODataLink link : created.getNavigationLinks()) {
         if (link instanceof ODataInlineEntity) {
-          final ODataEntity inline = ((ODataInlineEntity) link).getEntity();
+          final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
           if (inline.getEditLink() != null) {
             toBeDeleted.add(URIUtils.getURI(baseUri, inline.getEditLink().toASCIIString()));
           }
         }
 
         if (link instanceof ODataInlineEntitySet) {
-          final ODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
-          for (ODataEntity entity : inline.getEntities()) {
+          final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
+          for (CommonODataEntity entity : inline.getEntities()) {
             if (entity.getEditLink() != null) {
               toBeDeleted.add(URIUtils.getURI(baseUri, entity.getEditLink().toASCIIString()));
             }
@@ -465,7 +472,8 @@ public abstract class AbstractTestITCase {
 
       deleteRes.close();
 
-      final ODataEntityRequest retrieveReq = getClient().getRetrieveRequestFactory().getEntityRequest(link);
+      final ODataEntityRequest<CommonODataEntity> retrieveReq = getClient().getRetrieveRequestFactory().
+              getEntityRequest(link);
       // bug that needs to be fixed on the SampleService - cannot get entity not found with header
       // Accept: application/json;odata=minimalmetadata
       retrieveReq.setFormat(format == ODataPubFormat.JSON_FULL_METADATA ? ODataPubFormat.JSON : format);
@@ -483,25 +491,25 @@ public abstract class AbstractTestITCase {
   }
 
   protected void updateEntityDescription(
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type) {
+          final ODataPubFormat format, final CommonODataEntity changes, final UpdateType type) {
 
     updateEntityDescription(format, changes, type, null);
   }
 
   protected void updateEntityDescription(
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
+          final ODataPubFormat format, final CommonODataEntity changes, final UpdateType type, final String etag) {
 
     updateEntityStringProperty("Description", format, changes, type, etag);
   }
 
   protected void updateEntityStringProperty(final String propertyName,
-          final ODataPubFormat format, final ODataEntity changes, final UpdateType type, final String etag) {
+          final ODataPubFormat format, final CommonODataEntity changes, final UpdateType type, final String etag) {
 
     final URI editLink = changes.getEditLink();
 
     final String newm = "New " + propertyName + "(" + System.currentTimeMillis() + ")";
 
-    ODataProperty propertyValue = changes.getProperty(propertyName);
+    CommonODataProperty propertyValue = changes.getProperty(propertyName);
 
     final String oldm;
     if (propertyValue == null) {
@@ -513,16 +521,17 @@ public abstract class AbstractTestITCase {
 
     assertNotEquals(newm, oldm);
 
-    changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(propertyName,
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setText(newm).build()));
+    getClient().getBinder().add(changes,
+            getClient().getObjectFactory().newPrimitiveProperty(propertyName,
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(newm).build()));
 
     update(type, changes, format, etag);
 
-    final ODataEntity actual = read(format, editLink);
+    final CommonODataEntity actual = read(format, editLink);
 
     propertyValue = null;
 
-    for (ODataProperty prop : actual.getProperties()) {
+    for (CommonODataProperty prop : actual.getProperties()) {
       if (prop.getName().equals(propertyName)) {
         propertyValue = prop;
       }
@@ -533,7 +542,7 @@ public abstract class AbstractTestITCase {
   }
 
   protected void update(
-          final UpdateType type, final ODataEntity changes, final ODataPubFormat format, final String etag) {
+          final UpdateType type, final CommonODataEntity changes, final ODataPubFormat format, final String etag) {
     final ODataEntityUpdateRequest req = getClient().getCUDRequestFactory().getEntityUpdateRequest(type, changes);
 
     if (getClient().getConfiguration().isUseXHTTPMethod()) {

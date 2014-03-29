@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * OData entity property.
  */
-public interface ODataProperty extends ODataInvokeResult, Serializable {
+public interface CommonODataProperty extends ODataInvokeResult, Serializable {
 
   /**
    * Returns property name.

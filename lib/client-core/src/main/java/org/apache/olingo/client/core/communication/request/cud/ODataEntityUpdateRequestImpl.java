@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -46,7 +46,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
   /**
    * Changes to be applied.
    */
-  private final ODataEntity changes;
+  private final CommonODataEntity changes;
 
   /**
    * Constructor.
@@ -57,7 +57,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param changes changes to be applied.
    */
   ODataEntityUpdateRequestImpl(final CommonODataClient odataClient,
-          final HttpMethod method, final URI uri, final ODataEntity changes) {
+          final HttpMethod method, final URI uri, final CommonODataEntity changes) {
 
     super(odataClient, ODataPubFormat.class, method, uri);
     this.changes = changes;
@@ -94,7 +94,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
     /**
      * Changes.
      */
-    private ODataEntity entity = null;
+    private CommonODataEntity entity = null;
 
     /**
      * Constructor.
@@ -118,7 +118,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
      * {@inheritDoc ]
      */
     @Override
-    public ODataEntity getBody() {
+    public CommonODataEntity getBody() {
       if (entity == null) {
         try {
           final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), 

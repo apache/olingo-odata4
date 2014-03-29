@@ -22,70 +22,47 @@ import java.net.URI;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataObjectFactory;
+import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class ODataObjectFactoryImpl implements ODataObjectFactory {
+public abstract class AbstractODataObjectFactory implements CommonODataObjectFactory {
 
   private static final long serialVersionUID = -3769695665946919447L;
 
   protected final ODataServiceVersion version;
 
-  public ODataObjectFactoryImpl(final ODataServiceVersion version) {
+  public AbstractODataObjectFactory(final ODataServiceVersion version) {
     this.version = version;
   }
 
   @Override
-  public ODataEntitySet newEntitySet() {
-    return new ODataEntitySetImpl();
-  }
-
-  @Override
-  public ODataEntitySet newEntitySet(final URI next) {
-    return new ODataEntitySetImpl(next);
-  }
-
-  @Override
-  public ODataEntity newEntity(final String name) {
-    return new ODataEntityImpl(name);
-  }
-
-  @Override
-  public ODataEntity newEntity(final String name, final URI link) {
-    final ODataEntityImpl result = new ODataEntityImpl(name);
-    result.setLink(link);
-    return result;
-  }
-
-  @Override
   public ODataInlineEntitySet newInlineEntitySet(final String name, final URI link,
-          final ODataEntitySet entitySet) {
+          final CommonODataEntitySet entitySet) {
 
     return new ODataInlineEntitySet(version, link, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
   public ODataInlineEntitySet newInlineEntitySet(final String name, final URI baseURI, final String href,
-          final ODataEntitySet entitySet) {
+          final CommonODataEntitySet entitySet) {
 
     return new ODataInlineEntitySet(version, baseURI, href, ODataLinkType.ENTITY_SET_NAVIGATION, name, entitySet);
   }
 
   @Override
-  public ODataInlineEntity newInlineEntity(final String name, final URI link, final ODataEntity entity) {
+  public ODataInlineEntity newInlineEntity(final String name, final URI link, final CommonODataEntity entity) {
     return new ODataInlineEntity(version, link, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
 
   @Override
   public ODataInlineEntity newInlineEntity(final String name, final URI baseURI, final String href,
-          final ODataEntity entity) {
+          final CommonODataEntity entity) {
 
     return new ODataInlineEntity(version, baseURI, href, ODataLinkType.ENTITY_NAVIGATION, name, entity);
   }
@@ -151,21 +128,6 @@ public class ODataObjectFactoryImpl implements ODataObjectFactory {
   @Override
   public ODataCollectionValue newCollectionValue(final String typeName) {
     return new ODataCollectionValueImpl(typeName);
-  }
-
-  @Override
-  public ODataProperty newPrimitiveProperty(final String name, final ODataPrimitiveValue value) {
-    return new ODataPropertyImpl(name, value);
-  }
-
-  @Override
-  public ODataProperty newComplexProperty(final String name, final ODataComplexValue value) {
-    return new ODataPropertyImpl(name, value);
-  }
-
-  @Override
-  public ODataProperty newCollectionProperty(final String name, final ODataCollectionValue value) {
-    return new ODataPropertyImpl(name, value);
   }
 
 }

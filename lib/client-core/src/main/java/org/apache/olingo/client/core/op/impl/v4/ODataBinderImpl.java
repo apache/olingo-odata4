@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.op.impl.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
@@ -25,6 +26,16 @@ import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 
@@ -32,6 +43,16 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   public ODataBinderImpl(final ODataClient client) {
     super(client);
+  }
+
+  @Override
+  public boolean add(final CommonODataEntity entity, final CommonODataProperty property) {
+    return ((ODataEntity) entity).getProperties().add((ODataProperty) property);
+  }
+
+  @Override
+  protected boolean add(final CommonODataEntitySet entitySet, final CommonODataEntity entity) {
+    return ((ODataEntitySet) entitySet).getEntities().add((ODataEntity) entity);
   }
 
   @Override
@@ -56,4 +77,39 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     return serviceDocument;
   }
+
+  @Override
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
+    final Entry entry = super.getEntry(entity, reference, setType);
+    entry.setId(((ODataEntity) entity).getReference());
+    return entry;
+  }
+
+  @Override
+  public ODataEntitySet getODataEntitySet(final Feed resource) {
+    return (ODataEntitySet) super.getODataEntitySet(resource);
+  }
+
+  @Override
+  public ODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
+    return (ODataEntitySet) super.getODataEntitySet(resource, defaultBaseURI);
+  }
+
+  @Override
+  public ODataEntity getODataEntity(final Entry resource) {
+    return (ODataEntity) super.getODataEntity(resource);
+  }
+
+  @Override
+  public ODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
+    final ODataEntity entity = (ODataEntity) super.getODataEntity(resource, defaultBaseURI);
+    entity.setReference(resource.getId());
+    return entity;
+  }
+
+  @Override
+  public ODataProperty getODataProperty(final Property property) {
+    return new ODataPropertyImpl(property.getName(), getODataValue(property));
+  }
+
 }

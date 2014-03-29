@@ -25,10 +25,10 @@ import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 
 public interface CommonODataBinder extends Serializable {
@@ -40,7 +40,7 @@ public interface CommonODataBinder extends Serializable {
    * @param reference reference class.
    * @return <tt>Feed</tt> object.
    */
-  Feed getFeed(ODataEntitySet feed, Class<? extends Feed> reference);
+  Feed getFeed(CommonODataEntitySet feed, Class<? extends Feed> reference);
 
   /**
    * Gets an <tt>Entry</tt> from the given OData entity.
@@ -49,7 +49,7 @@ public interface CommonODataBinder extends Serializable {
    * @param reference reference class.
    * @return <tt>Entry</tt> object.
    */
-  Entry getEntry(ODataEntity entity, Class<? extends Entry> reference);
+  Entry getEntry(CommonODataEntity entity, Class<? extends Entry> reference);
 
   /**
    * Gets an <tt>Entry</tt> from the given OData entity.
@@ -59,7 +59,7 @@ public interface CommonODataBinder extends Serializable {
    * @param setType whether to explicitly output type information.
    * @return <tt>Entry</tt> object.
    */
-  Entry getEntry(ODataEntity entity, Class<? extends Entry> reference, boolean setType);
+  Entry getEntry(CommonODataEntity entity, Class<? extends Entry> reference, boolean setType);
 
   /**
    * Gets a <tt>Link</tt> from the given OData link.
@@ -78,7 +78,16 @@ public interface CommonODataBinder extends Serializable {
    * @param setType whether to explicitly output type information.
    * @return <tt>Property</tt> object.
    */
-  Property getProperty(ODataProperty property, Class<? extends Entry> reference, boolean setType);
+  Property getProperty(CommonODataProperty property, Class<? extends Entry> reference, boolean setType);
+
+  /**
+   * Adds the given property to the given entity.
+   *
+   * @param entity OData entity.
+   * @param property OData property.
+   * @return whether add was successful or not.
+   */
+  boolean add(CommonODataEntity entity, CommonODataProperty property);
 
   /**
    * Gets <tt>ODataServiceDocument</tt> from the given service document resource.
@@ -94,7 +103,7 @@ public interface CommonODataBinder extends Serializable {
    * @param resource feed resource.
    * @return <tt>ODataEntitySet</tt> object.
    */
-  ODataEntitySet getODataEntitySet(Feed resource);
+  CommonODataEntitySet getODataEntitySet(Feed resource);
 
   /**
    * Gets <tt>ODataEntitySet</tt> from the given feed resource.
@@ -103,7 +112,7 @@ public interface CommonODataBinder extends Serializable {
    * @param defaultBaseURI default base URI.
    * @return <tt>ODataEntitySet</tt> object.
    */
-  ODataEntitySet getODataEntitySet(Feed resource, URI defaultBaseURI);
+  CommonODataEntitySet getODataEntitySet(Feed resource, URI defaultBaseURI);
 
   /**
    * Gets <tt>ODataEntity</tt> from the given entry resource.
@@ -111,7 +120,7 @@ public interface CommonODataBinder extends Serializable {
    * @param resource entry resource.
    * @return <tt>ODataEntity</tt> object.
    */
-  ODataEntity getODataEntity(Entry resource);
+  CommonODataEntity getODataEntity(Entry resource);
 
   /**
    * Gets <tt>ODataEntity</tt> from the given entry resource.
@@ -120,7 +129,7 @@ public interface CommonODataBinder extends Serializable {
    * @param defaultBaseURI default base URI.
    * @return <tt>ODataEntity</tt> object.
    */
-  ODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
+  CommonODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
 
   /**
    * Gets an <tt>ODataProperty</tt> from the given property resource.
@@ -128,5 +137,5 @@ public interface CommonODataBinder extends Serializable {
    * @param property property resource.
    * @return <tt>ODataProperty</tt> object.
    */
-  ODataProperty getODataProperty(Property property);
+  CommonODataProperty getODataProperty(Property property);
 }

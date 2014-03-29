@@ -19,11 +19,20 @@
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
 import java.net.URI;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractRetrieveRequestFactory;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataPropertyRequestImpl;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
         implements RetrieveRequestFactory {
@@ -43,5 +52,23 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
   @Override
   public ODataLinkCollectionRequest getLinkCollectionRequest(final URI targetURI, final String linkName) {
     return new ODataLinkCollectionRequestImpl((ODataClient) client, targetURI, linkName);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI query) {
+    return new ODataEntitySetRequestImpl<ODataEntitySet>(client, query);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public ODataEntityRequest<ODataEntity> getEntityRequest(final URI query) {
+    return new ODataEntityRequestImpl<ODataEntity>(client, query);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI query) {
+    return new ODataPropertyRequestImpl<ODataProperty>(client, query);
   }
 }

@@ -18,25 +18,26 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -64,14 +65,15 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Car").filter("(VIN lt 16)");
 
     // 1. check that filtered entity set looks as expected
-    ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(5, feed.getEntities().size());
 
     // 2. extract VIN values - sorted ASC by default
     final List<Integer> vinsASC = new ArrayList<Integer>(5);
-    for (ODataEntity entity : feed.getEntities()) {
+    for (CommonODataEntity entity : feed.getEntities()) {
       final Integer vin = entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(vin < 16);
       vinsASC.add(vin);
@@ -85,7 +87,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     // 4. extract again VIN value - now they were required to be sorted DESC
     final List<Integer> vinsDESC = new ArrayList<Integer>(5);
-    for (ODataEntity entity : feed.getEntities()) {
+    for (CommonODataEntity entity : feed.getEntities()) {
       vinsDESC.add(entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class));
     }
 
@@ -102,7 +104,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).format("json");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.ATOM);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -137,7 +139,8 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").skipToken("-10");
 
-    final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(2, feed.getEntities().size());
@@ -155,7 +158,8 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
             inlineCount(InlineCount.allpages);
 
-    final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.ATOM);
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
@@ -170,7 +174,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).select("CustomerId,Orders").expand("Orders");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     final ODataEntity customer = req.execute().getBody();
     assertEquals(1, customer.getProperties().size());
     assertEquals(1, customer.getNavigationLinks().size());
@@ -182,7 +186,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-7).select("Name");
 
-    ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.ATOM);
 
     final ODataEntity customer = req.execute().getBody();

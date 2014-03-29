@@ -35,14 +35,13 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.core.domain.ODataPropertyImpl;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -89,7 +88,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Feed getFeed(final ODataEntitySet entitySet, final Class<? extends Feed> reference) {
+  public Feed getFeed(final CommonODataEntitySet entitySet, final Class<? extends Feed> reference) {
     final Feed feed = ResourceFactory.newFeed(reference);
 
     feed.setCount(entitySet.getCount());
@@ -99,7 +98,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       feed.setNext(next);
     }
 
-    for (ODataEntity entity : entitySet.getEntities()) {
+    for (CommonODataEntity entity : entitySet.getEntities()) {
       feed.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
     }
 
@@ -107,15 +106,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference) {
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
     return getEntry(entity, reference, true);
   }
 
   @Override
-  public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
 
-    entry.setId(entity.getReference());
     entry.setType(entity.getName());
 
     // -------------------------------------------------------------
@@ -176,7 +174,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entry.setMediaContentType(entity.getMediaContentType());
     }
 
-    for (ODataProperty property : entity.getProperties()) {
+    for (CommonODataProperty property : entity.getProperties()) {
       entry.getProperties().add(getProperty(property, reference, setType));
     }
 
@@ -194,13 +192,13 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     if (link instanceof ODataInlineEntity) {
       // append inline entity
-      final ODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
+      final CommonODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
       LOG.debug("Append in-line entity\n{}", inlineEntity);
 
       linkResource.setInlineEntry(getEntry(inlineEntity, ResourceFactory.entryClassForFormat(isXML)));
     } else if (link instanceof ODataInlineEntitySet) {
       // append inline feed
-      final ODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
+      final CommonODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
       LOG.debug("Append in-line feed\n{}", InlineFeed);
 
       linkResource.setInlineFeed(getFeed(InlineFeed, ResourceFactory.feedClassForFormat(isXML)));
@@ -210,7 +208,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Property getProperty(final ODataProperty property, final Class<? extends Entry> reference,
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
           final boolean setType) {
 
     final Property propertyResource = ResourceFactory.newProperty(reference);
@@ -243,7 +241,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       final ODataComplexValue _value = value.asComplex();
       valueResource = new ComplexValueImpl();
 
-      for (final Iterator<ODataProperty> itor = _value.iterator(); itor.hasNext();) {
+      for (final Iterator<CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
         valueResource.asComplex().get().add(getProperty(itor.next(), reference, setType));
       }
     } else if (value.isCollection()) {
@@ -259,12 +257,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource) {
+  public CommonODataEntitySet getODataEntitySet(final Feed resource) {
     return getODataEntitySet(resource, null);
   }
 
+  protected abstract boolean add(CommonODataEntitySet entitySet, CommonODataEntity entity);
+
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
+  public CommonODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       client.getSerializer().feed(resource, writer);
@@ -276,7 +276,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     final URI next = resource.getNext();
 
-    final ODataEntitySet entitySet = next == null
+    final CommonODataEntitySet entitySet = next == null
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
@@ -285,19 +285,19 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Entry entryResource : resource.getEntries()) {
-      entitySet.getEntities().add(getODataEntity(entryResource));
+      add(entitySet, getODataEntity(entryResource));
     }
 
     return entitySet;
   }
 
   @Override
-  public ODataEntity getODataEntity(final Entry resource) {
+  public CommonODataEntity getODataEntity(final Entry resource) {
     return getODataEntity(resource, null);
   }
 
   @Override
-  public ODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
+  public CommonODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       client.getSerializer().entry(resource, writer);
@@ -307,12 +307,10 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
 
-    final ODataEntity entity = resource.getSelfLink() == null
+    final CommonODataEntity entity = resource.getSelfLink() == null
             ? client.getObjectFactory().newEntity(resource.getType())
             : client.getObjectFactory().newEntity(resource.getType(),
                     URIUtils.getURI(base, resource.getSelfLink().getHref()));
-
-    entity.setReference(resource.getId());
 
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
@@ -362,18 +360,13 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Property property : resource.getProperties()) {
-      entity.getProperties().add(getODataProperty(property));
+      add(entity, getODataProperty(property));
     }
 
     return entity;
   }
 
-  @Override
-  public ODataProperty getODataProperty(final Property property) {
-    return new ODataPropertyImpl(property.getName(), getODataValue(property));
-  }
-
-  private ODataValue getODataValue(final Property resource) {
+  protected ODataValue getODataValue(final Property resource) {
     ODataValue value = null;
 
     if (resource.getValue().isPrimitive()) {

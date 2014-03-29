@@ -19,13 +19,10 @@
 package org.apache.olingo.commons.core.domain;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.olingo.commons.api.domain.AbstractODataPayload;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 
-public class ODataEntitySetImpl extends AbstractODataPayload implements ODataEntitySet {
+public abstract class AbstractODataEntitySet extends AbstractODataPayload implements CommonODataEntitySet {
 
   private static final long serialVersionUID = 9039605899821494024L;
 
@@ -41,14 +38,9 @@ public class ODataEntitySetImpl extends AbstractODataPayload implements ODataEnt
   private Integer count;
 
   /**
-   * OData entities contained in this feed.
-   */
-  private List<ODataEntity> entities = new ArrayList<ODataEntity>();
-
-  /**
    * Constructor.
    */
-  public ODataEntitySetImpl() {
+  public AbstractODataEntitySet() {
     super(null);
   }
 
@@ -57,46 +49,23 @@ public class ODataEntitySetImpl extends AbstractODataPayload implements ODataEnt
    *
    * @param next next link.
    */
-  public ODataEntitySetImpl(final URI next) {
+  public AbstractODataEntitySet(final URI next) {
     super(null);
     this.next = next;
   }
 
-  /**
-   * Gets next page link.
-   *
-   * @return next page link; null value if single page or last page reached.
-   */
   @Override
   public URI getNext() {
     return next;
   }
 
-  /**
-   * Gets contained entities.
-   *
-   * @return feed entries.
-   */
-  @Override
-  public List<ODataEntity> getEntities() {
-    return entities;
-  }
+  protected abstract int getEntitiesSize();
 
-  /**
-   * Gets in-line count.
-   *
-   * @return in-line count value.
-   */
   @Override
   public int getCount() {
-    return count == null ? entities.size() : count;
+    return count == null ? getEntitiesSize() : count;
   }
 
-  /**
-   * Sets in-line count.
-   *
-   * @param count in-line count value.
-   */
   @Override
   public void setCount(final int count) {
     this.count = count;

@@ -18,25 +18,26 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.List;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class PropertyRetrieveTestITCase extends AbstractTestITCase {
@@ -44,7 +45,8 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
   private void retreivePropertyTest(final ODataFormat format, String entitySegment, String structuralSegment) {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySegment).appendPropertySegment(structuralSegment);
-    final ODataPropertyRequest req = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
+            getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
     try {
       final ODataProperty property = req.execute().getBody();
@@ -210,13 +212,14 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
   public void navigationMediaLink() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
-    ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
     ODataRetrieveResponse<ODataEntitySet> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    ODataEntitySet entitySet = res.getBody();
+    CommonODataEntitySet entitySet = res.getBody();
     assertNotNull(entitySet);
-    List<ODataEntity> entity = entitySet.getEntities();
+    List<? extends CommonODataEntity> entity = entitySet.getEntities();
     assertNotNull(entity);
     assertEquals(entity.size(), 2);
     assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-3,ProductId=-3)",
@@ -233,14 +236,15 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
   public void navigationMediaLinkInvalidQuery() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photo");
-    ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/json");
     try {
       ODataRetrieveResponse<ODataEntitySet> res = req.execute();
       assertEquals(200, res.getStatusCode());
-      ODataEntitySet entitySet = res.getBody();
+      CommonODataEntitySet entitySet = res.getBody();
       assertNotNull(entitySet);
-      List<ODataEntity> entity = entitySet.getEntities();
+      List<? extends CommonODataEntity> entity = entitySet.getEntities();
       assertNotNull(entity);
       assertEquals(entity.size(), 2);
       assertEquals(testStaticServiceRootURL + "/ProductPhoto(PhotoId=-3,ProductId=-3)", entity.get(0).
@@ -256,7 +260,8 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
   public void navigationMediaLinkInvalidFormat() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
-    ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setAccept("application/atom+xml");
     try {
       ODataRetrieveResponse<ODataEntitySet> res = req.execute();

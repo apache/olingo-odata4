@@ -26,16 +26,16 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Feed;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData EntitySet query request.
  */
-public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODataEntitySet, ODataPubFormat>
-        implements ODataEntitySetRequest {
+public class ODataEntitySetRequestImpl<T extends CommonODataEntitySet>
+        extends AbstractODataRetrieveRequest<T, ODataPubFormat> implements ODataEntitySetRequest<T> {
 
-  private ODataEntitySet entitySet = null;
+  private T entitySet = null;
 
   /**
    * Private constructor.
@@ -43,7 +43,7 @@ public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODat
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataEntitySetRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntitySetRequestImpl(final CommonODataClient odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
@@ -51,7 +51,7 @@ public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODat
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<ODataEntitySet> execute() {
+  public ODataRetrieveResponse<T> execute() {
     final HttpResponse res = doExecute();
     return new ODataEntitySetResponseImpl(httpClient, res);
   }
@@ -84,13 +84,13 @@ public class ODataEntitySetRequestImpl extends AbstractODataRetrieveRequest<ODat
      */
     @Override
     @SuppressWarnings("unchecked")
-    public ODataEntitySet getBody() {
+    public T getBody() {
       if (entitySet == null) {
         try {
           final Container<Feed> container =
                   odataClient.getDeserializer().toFeed(getRawResponse(), ODataPubFormat.fromString(getContentType()));
 
-          entitySet = odataClient.getBinder().getODataEntitySet(extractFromContainer(container));
+          entitySet = (T) odataClient.getBinder().getODataEntitySet(extractFromContainer(container));
         } finally {
           this.close();
         }

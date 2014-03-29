@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,25 +33,30 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-
-import org.junit.Test;
-
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
+import org.junit.Test;
 
 public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
 
@@ -66,7 +66,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final String contentType = "application/atom+xml";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 20, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 20, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // create navigation link with JSON full metadata
@@ -76,7 +76,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final String contentType = "application/json;odata=fullmetadata";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 21, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 21, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // throws Null pointer exception when the format is JSON No metadata
@@ -86,7 +86,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_NO_METADATA;
     final String contentType = "application/json;odata=nometadata";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 22, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 22, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // test with JSON accept and atom content type
@@ -97,7 +97,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final String contentType = "application/atom+xml";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 23, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 23, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // test with JSON full metadata in format and json no metadata in content type
@@ -107,7 +107,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final String contentType = "application/json;odata=nometadata";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 24, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 24, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // test with JSON no metadata format and json no metadata in content type
@@ -117,7 +117,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_NO_METADATA;
     final String contentType = "application/json;odata=fullmetadata";
     final String prefer = "return-content";
-    final ODataEntity actual = createNavigation(format, 25, contentType, prefer);
+    final CommonODataEntity actual = createNavigation(format, 25, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // create collection navigation link with ATOM
@@ -127,7 +127,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final String contentType = "application/atom+xml";
     final String prefer = "return-content";
-    final ODataEntity actual = createCollectionNavigation(format, 55, contentType, prefer);
+    final CommonODataEntity actual = createCollectionNavigation(format, 55, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
   // create collection navigation link with JSON
@@ -137,27 +137,27 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final String contentType = "application/json;odata=fullmetadata";
     final String prefer = "return-content";
-    final ODataEntity actual = createCollectionNavigation(format, 77, contentType, prefer);
+    final CommonODataEntity actual = createCollectionNavigation(format, 77, contentType, prefer);
     delete(format, actual, false, testStaticServiceRootURL);
   }
 
   // create a navigation link
-  public ODataEntity createNavigation(final ODataPubFormat format, final int id, final String contenttype,
+  public CommonODataEntity createNavigation(final ODataPubFormat format, final int id, final String contenttype,
           final String prefer) {
     final String name = "Customer Navigation test";
 
-    final ODataEntity original = getNewCustomer(id, name, false);
+    final CommonODataEntity original = getNewCustomer(id, name, false);
     original.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Info", URI.create(testStaticServiceRootURL + "/CustomerInfo(11)")));
-    final ODataEntity created = createNav(testStaticServiceRootURL, format, original, "Customer", contenttype,
+    final CommonODataEntity created = createNav(testStaticServiceRootURL, format, original, "Customer", contenttype,
             prefer);
 
-    final ODataEntity actual = validateEntities(testStaticServiceRootURL, format, created, id, null, "Customer");
+    final CommonODataEntity actual = validateEntities(testStaticServiceRootURL, format, created, id, null, "Customer");
 
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Info");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
     req.setContentType(contenttype);
     req.setPrefer(prefer);
@@ -175,7 +175,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   }
 
   // create a navigation link
-  public ODataEntity createNav(final String url, final ODataPubFormat format, final ODataEntity original,
+  public CommonODataEntity createNav(final String url, final ODataPubFormat format, final CommonODataEntity original,
           final String entitySetName, final String contentType, final String prefer) {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(url);
     uriBuilder.appendEntitySetSegment(entitySetName);
@@ -189,32 +189,34 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
 
     assertEquals("Created", createRes.getStatusMessage());
 
-    final ODataEntity created = createRes.getBody();
+    final CommonODataEntity created = createRes.getBody();
     assertNotNull(created);
     return created;
   }
   // create collection navigation link
 
-  public ODataEntity createCollectionNavigation(final ODataPubFormat format, final int id,
+  public CommonODataEntity createCollectionNavigation(final ODataPubFormat format, final int id,
           final String contentType, final String prefer) throws EdmPrimitiveTypeException {
     {
       final String name = "Collection Navigation Key Customer";
-      final ODataEntity original = getNewCustomer(id, name, false);
+      final CommonODataEntity original = getNewCustomer(id, name, false);
 
       final Set<Integer> navigationKeys = new HashSet<Integer>();
       navigationKeys.add(-118);
       navigationKeys.add(-119);
 
       for (Integer key : navigationKeys) {
-        final ODataEntity orderEntity =
+        final CommonODataEntity orderEntity =
                 client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
 
-        orderEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("OrderId",
-                client.getObjectFactory().newPrimitiveValueBuilder().setValue(key).
-                setType(EdmPrimitiveTypeKind.Int32).build()));
-        orderEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
-                setType(EdmPrimitiveTypeKind.Int32).build()));
+        getClient().getBinder().add(orderEntity,
+                client.getObjectFactory().newPrimitiveProperty("OrderId",
+                        client.getObjectFactory().newPrimitiveValueBuilder().setValue(key).
+                        setType(EdmPrimitiveTypeKind.Int32).build()));
+        getClient().getBinder().add(orderEntity,
+                client.getObjectFactory().newPrimitiveProperty("CustomerId",
+                        client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
+                        setType(EdmPrimitiveTypeKind.Int32).build()));
 
         final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().getEntityCreateRequest(
                 client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Order").build(),
@@ -225,26 +227,27 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
                 "Orders",
                 createReq.execute().getBody().getEditLink()));
       }
-      final ODataEntity createdEntity = createNav(testStaticServiceRootURL, format, original, "Customer",
+      final CommonODataEntity createdEntity = createNav(testStaticServiceRootURL, format, original, "Customer",
               contentType, prefer);
-      final ODataEntity actualEntity =
+      final CommonODataEntity actualEntity =
               validateEntities(testStaticServiceRootURL, format, createdEntity, id, null, "Customer");
 
       final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
       uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
 
-      final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+      final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+              getEntitySetRequest(uriBuilder.build());
       req.setFormat(format);
 
       final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
       assertEquals(200, res.getStatusCode());
 
-      final ODataEntitySet entitySet = res.getBody();
+      final CommonODataEntitySet entitySet = res.getBody();
       assertNotNull(entitySet);
 
       assertEquals(2, entitySet.getCount());
 
-      for (ODataEntity entity : entitySet.getEntities()) {
+      for (CommonODataEntity entity : entitySet.getEntities()) {
         final Integer key = entity.getProperty("OrderId").getPrimitiveValue().toCastValue(Integer.class);
         final Integer customerId = entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class);
         assertTrue(navigationKeys.contains(key));
@@ -262,22 +265,24 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   }
   // get a Customer entity to be created
 
-  public ODataEntity getNewCustomer(
+  public CommonODataEntity getNewCustomer(
           final int id, final String name, final boolean withInlineInfo) {
 
-    final ODataEntity entity =
+    final CommonODataEntity entity =
             client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
 
     // add name attribute
-    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Name",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText(name).
-            setType(EdmPrimitiveTypeKind.String).build()));
+    getClient().getBinder().add(entity,
+            client.getObjectFactory().newPrimitiveProperty("Name",
+                    client.getObjectFactory().newPrimitiveValueBuilder().setText(name).
+                    setType(EdmPrimitiveTypeKind.String).build()));
 
     // add key attribute
     if (id != 0) {
-      entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
-              client.getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).
-              setType(EdmPrimitiveTypeKind.Int32).build()));
+      getClient().getBinder().add(entity,
+              client.getObjectFactory().newPrimitiveProperty("CustomerId",
+                      client.getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).
+                      setType(EdmPrimitiveTypeKind.Int32).build()));
     }
     final ODataCollectionValue backupContactInfoValue = getClient().getObjectFactory().newCollectionValue(
             "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)");
@@ -319,8 +324,8 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     contactDetails.add(client.getObjectFactory().newComplexProperty("HomePhone", homePhone));
 
     backupContactInfoValue.add(contactDetails);
-    entity.getProperties().add(client.getObjectFactory().newCollectionProperty("BackupContactInfo",
-            backupContactInfoValue));
+    getClient().getBinder().add(entity,
+            client.getObjectFactory().newCollectionProperty("BackupContactInfo", backupContactInfoValue));
     if (withInlineInfo) {
       final ODataInlineEntity inlineInfo = client.getObjectFactory().newInlineEntity("Info", URI.create(
               "Customer(" + id
@@ -333,7 +338,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   }
   //delete an entity and associated links after creation
 
-  public void delete(final ODataPubFormat format, final ODataEntity created, final boolean includeInline,
+  public void delete(final ODataPubFormat format, final CommonODataEntity created, final boolean includeInline,
           final String baseUri) {
     final Set<URI> toBeDeleted = new HashSet<URI>();
     toBeDeleted.add(created.getEditLink());
@@ -341,15 +346,15 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
     if (includeInline) {
       for (ODataLink link : created.getNavigationLinks()) {
         if (link instanceof ODataInlineEntity) {
-          final ODataEntity inline = ((ODataInlineEntity) link).getEntity();
+          final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
           if (inline.getEditLink() != null) {
             toBeDeleted.add(URIUtils.getURI(baseUri, inline.getEditLink().toASCIIString()));
           }
         }
 
         if (link instanceof ODataInlineEntitySet) {
-          final ODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
-          for (ODataEntity entity : inline.getEntities()) {
+          final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
+          for (CommonODataEntity entity : inline.getEntities()) {
             if (entity.getEditLink() != null) {
               toBeDeleted.add(URIUtils.getURI(baseUri, entity.getEditLink().toASCIIString()));
             }
@@ -371,21 +376,21 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   }
   // add Information property
 
-  public ODataEntity getInfo(final int id, final String info) {
-    final ODataEntity entity =
+  public CommonODataEntity getInfo(final int id, final String info) {
+    final CommonODataEntity entity =
             client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo");
     entity.setMediaEntity(true);
 
-    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Information",
+    getClient().getBinder().add(entity, client.getObjectFactory().newPrimitiveProperty("Information",
             client.getObjectFactory().newPrimitiveValueBuilder().setText(info).
             setType(EdmPrimitiveTypeKind.String).build()));
     return entity;
   }
   // validate newly created entities
 
-  public ODataEntity validateEntities(final String serviceRootURL,
+  public CommonODataEntity validateEntities(final String serviceRootURL,
           final ODataPubFormat format,
-          final ODataEntity original,
+          final CommonODataEntity original,
           final int actualObjectId,
           final Collection<String> expands, final String entitySetName) {
 
@@ -397,7 +402,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
         uriBuilder.expand(expand);
       }
     }
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -438,10 +443,10 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
       assertNotNull(foundActual);
 
       if (foundOriginal instanceof ODataInlineEntity && foundActual instanceof ODataInlineEntity) {
-        final ODataEntity originalInline = ((ODataInlineEntity) foundOriginal).getEntity();
+        final CommonODataEntity originalInline = ((ODataInlineEntity) foundOriginal).getEntity();
         assertNotNull(originalInline);
 
-        final ODataEntity actualInline = ((ODataInlineEntity) foundActual).getEntity();
+        final CommonODataEntity actualInline = ((ODataInlineEntity) foundActual).getEntity();
         assertNotNull(actualInline);
 
         checkProperties(originalInline.getProperties(), actualInline.getProperties());
@@ -451,22 +456,24 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
   // compares properties of the newly created entity with the properties that were originally provided
 
   @Override
-  public void checkProperties(final Collection<ODataProperty> original, final Collection<ODataProperty> actual) {
+  public void checkProperties(final Collection<? extends CommonODataProperty> original,
+          final Collection<? extends CommonODataProperty> actual) {
+
     assertTrue(original.size() <= actual.size());
 
-    final Map<String, ODataProperty> actualProperties = new HashMap<String, ODataProperty>(actual.size());
+    final Map<String, CommonODataProperty> actualProperties = new HashMap<String, CommonODataProperty>(actual.size());
 
-    for (ODataProperty prop : actual) {
+    for (CommonODataProperty prop : actual) {
       assertFalse(actualProperties.containsKey(prop.getName()));
       actualProperties.put(prop.getName(), prop);
     }
 
     assertTrue(actual.size() <= actualProperties.size());
 
-    for (ODataProperty prop : original) {
+    for (CommonODataProperty prop : original) {
       assertNotNull(prop);
       if (actualProperties.containsKey(prop.getName())) {
-        final ODataProperty actualProp = actualProperties.get(prop.getName());
+        final CommonODataProperty actualProp = actualProperties.get(prop.getName());
         assertNotNull(actualProp);
 
         if (prop.getValue() != null && actualProp.getValue() != null) {
@@ -488,13 +495,13 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
             original.getClass().getSimpleName(), actual.getClass().getSimpleName());
 
     if (original.isComplex()) {
-      final List<ODataProperty> originalPropertyValue = new ArrayList<ODataProperty>();
-      for (ODataProperty prop : original.asComplex()) {
+      final List<CommonODataProperty> originalPropertyValue = new ArrayList<CommonODataProperty>();
+      for (CommonODataProperty prop : original.asComplex()) {
         originalPropertyValue.add(prop);
       }
 
-      final List<ODataProperty> actualPropertyValue = new ArrayList<ODataProperty>();
-      for (ODataProperty prop : (ODataComplexValue) actual) {
+      final List<CommonODataProperty> actualPropertyValue = new ArrayList<CommonODataProperty>();
+      for (CommonODataProperty prop : (ODataComplexValue) actual) {
         actualPropertyValue.add(prop);
       }
 

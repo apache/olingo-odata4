@@ -19,25 +19,26 @@
 package org.apache.olingo.client.core.it.v3;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -68,14 +69,15 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     final ODataRetrieveResponse<ODataEntity> entityRes = client.getRetrieveRequestFactory().
             getEntityRequest(uri).execute();
-    final ODataEntity entity = entityRes.getBody();
+    final CommonODataEntity entity = entityRes.getBody();
     entity.getAssociationLinks().clear();
     entity.getNavigationLinks().clear();
     entity.getEditMediaLinks().clear();
 
     entity.getProperties().remove(entity.getProperty("Description"));
-    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Description",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("AsyncTest#updateEntity").build()));
+    getClient().getBinder().add(entity,
+            client.getObjectFactory().newPrimitiveProperty("Description",
+                    client.getObjectFactory().newPrimitiveValueBuilder().setText("AsyncTest#updateEntity").build()));
 
     final ODataEntityUpdateRequest updateReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.MERGE, entity);
@@ -116,7 +118,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     assertEquals(201, createRes.getStatusCode());
 
-    final ODataEntity created = createRes.getBody();
+    final CommonODataEntity created = createRes.getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperties().size());
 

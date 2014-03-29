@@ -20,6 +20,9 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.io.Serializable;
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
 /**
  * OData request factory class.
@@ -59,10 +62,11 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   /**
    * Gets a query request returning a set of one or more OData entities.
    *
+   * @param <T> concrete ODataEntitySet implementation.
    * @param uri request URI.
    * @return new {@link ODataEntitySetRequest} instance.
    */
-  ODataEntitySetRequest getEntitySetRequest(URI uri);
+  <T extends CommonODataEntitySet> ODataEntitySetRequest<T> getEntitySetRequest(URI uri);
 
   /**
    * Gets a query request returning a set of one or more OData entities.
@@ -78,18 +82,20 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   /**
    * Gets a query request returning a single OData entity.
    *
+   * @param <T> concrete ODataEntity implementation.
    * @param uri request URI.
    * @return new {@link ODataEntityRequest} instance.
    */
-  ODataEntityRequest getEntityRequest(URI uri);
+  <T extends CommonODataEntity> ODataEntityRequest<T> getEntityRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity property.
    *
+   * @param <T> concrete ODataProperty implementation.
    * @param uri request URI.
    * @return new {@link ODataPropertyRequest} instance.
    */
-  ODataPropertyRequest getPropertyRequest(URI uri);
+  <T extends CommonODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
 
   /**
    * Gets a query request returning a single OData entity property value.

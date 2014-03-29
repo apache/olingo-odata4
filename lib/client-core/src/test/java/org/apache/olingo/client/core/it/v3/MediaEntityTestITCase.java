@@ -36,8 +36,8 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
@@ -164,12 +164,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataMediaEntityCreateResponse createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
-    final ODataEntity created = createRes.getBody();
+    final CommonODataEntity created = createRes.getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperties().size());
 
     Integer id = null;
-    for (ODataProperty prop : created.getProperties()) {
+    for (CommonODataProperty prop : created.getProperties()) {
       if ("VIN".equals(prop.getName())) {
         id = prop.getPrimitiveValue().toCastValue(Integer.class);
       }

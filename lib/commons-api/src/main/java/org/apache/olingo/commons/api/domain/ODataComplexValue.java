@@ -21,14 +21,14 @@ package org.apache.olingo.commons.api.domain;
 /**
  * OData complex property value.
  */
-public interface ODataComplexValue extends ODataValue, Iterable<ODataProperty> {
+public interface ODataComplexValue extends ODataValue, Iterable<CommonODataProperty> {
 
   /**
    * Adds field to the complex type.
    *
    * @param field field to be added.
    */
-  void add(ODataProperty field);
+  void add(CommonODataProperty field);
 
   /**
    * Gets field.
@@ -36,7 +36,7 @@ public interface ODataComplexValue extends ODataValue, Iterable<ODataProperty> {
    * @param name name of the field to be retrieved.
    * @return requested field.
    */
-  ODataProperty get(String name);
+  CommonODataProperty get(String name);
 
   /**
    * Gets number of fields.

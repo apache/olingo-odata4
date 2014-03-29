@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import java.io.Serializable;
 import java.net.URI;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
 /**
  * OData request factory class.
@@ -39,17 +39,19 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @param entity entity to be created.
    * @return new ODataEntityCreateRequest instance.
    */
-  ODataEntityCreateRequest getEntityCreateRequest(URI targetURI, ODataEntity entity);
+  ODataEntityCreateRequest getEntityCreateRequest(URI targetURI, CommonODataEntity entity);
 
   /**
    * Gets an update request object instance.
    *
+   * @param <UT> concrete UpdateType.
    * @param targetURI edit link of the object to be updated.
    * @param type type of update to be performed.
    * @param changes changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  <UT extends UpdateType> ODataEntityUpdateRequest getEntityUpdateRequest(URI targetURI, UT type, ODataEntity changes);
+  <UT extends UpdateType> ODataEntityUpdateRequest getEntityUpdateRequest(URI targetURI, UT type,
+          CommonODataEntity changes);
 
   /**
    * Gets an update request object instance; uses entity's edit link as endpoint.
@@ -58,7 +60,7 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @param entity changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  ODataEntityUpdateRequest getEntityUpdateRequest(UpdateType type, ODataEntity entity);
+  ODataEntityUpdateRequest getEntityUpdateRequest(UpdateType type, CommonODataEntity entity);
 
   /**
    * Gets a create request object instance.
@@ -81,7 +83,7 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @param property value to be update.
    * @return new ODataPropertyUpdateRequest instance.
    */
-  ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(URI targetURI, ODataProperty property);
+  ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(URI targetURI, CommonODataProperty property);
 
   /**
    * Gets an update request object instance.
@@ -94,7 +96,7 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @return new ODataPropertyUpdateRequest instance.
    */
   ODataPropertyUpdateRequest getPropertyComplexValueUpdateRequest(
-          URI targetURI, UpdateType type, ODataProperty property);
+          URI targetURI, UpdateType type, CommonODataProperty property);
 
   /**
    * Gets an update request object instance.
@@ -105,7 +107,7 @@ public interface CommonCUDRequestFactory extends Serializable {
    * @param property value to be update.
    * @return new ODataPropertyUpdateRequest instance.
    */
-  ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(URI targetURI, ODataProperty property);
+  ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(URI targetURI, CommonODataProperty property);
 
   /**
    * Gets an add link request object instance.

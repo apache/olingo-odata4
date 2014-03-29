@@ -25,11 +25,11 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -78,17 +78,17 @@ public abstract class AbstractODataReader implements CommonODataReader {
   }
 
   @Override
-  public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
+  public CommonODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
     return client.getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format).getObject());
   }
 
   @Override
-  public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
+  public CommonODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
     return client.getBinder().getODataEntity(client.getDeserializer().toEntry(input, format).getObject());
   }
 
   @Override
-  public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
+  public CommonODataProperty readProperty(final InputStream input, final ODataFormat format) {
     final Property property = client.getDeserializer().toProperty(input, format).getObject();
     return client.getBinder().getODataProperty(property);
   }
@@ -107,19 +107,19 @@ public abstract class AbstractODataReader implements CommonODataReader {
       if (ODataEntitySetIterator.class.isAssignableFrom(reference)) {
         res = new Container<T>(
                 null, null, (T) new ODataEntitySetIterator(client, src, ODataPubFormat.fromString(format)));
-      } else if (ODataEntitySet.class.isAssignableFrom(reference)) {
+      } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
         final Container<Feed> container = client.getDeserializer().toFeed(src, ODataPubFormat.fromString(format));
         res = new Container<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
                 (T) client.getBinder().getODataEntitySet(container.getObject()));
-      } else if (ODataEntity.class.isAssignableFrom(reference)) {
+      } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
         final Container<Entry> container = client.getDeserializer().toEntry(src, ODataPubFormat.fromString(format));
         res = new Container<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
                 (T) client.getBinder().getODataEntity(container.getObject()));
-      } else if (ODataProperty.class.isAssignableFrom(reference)) {
+      } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
         final Container<Property> container = client.getDeserializer().toProperty(src, ODataFormat.fromString(format));
         res = new Container<T>(
                 container.getContextURL(),

@@ -18,20 +18,20 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import static org.junit.Assert.*;
 import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class PropertyValueTestITCase extends AbstractTestITCase {
@@ -124,7 +124,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   public void retrieveCollectionPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Numbers");
-    final ODataPropertyRequest req = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
+            getPropertyRequest(uriBuilder.build());
     req.setFormat(ODataFormat.XML);
     final ODataProperty property = req.execute().getBody();
     assertTrue(property.getValue().isCollection());

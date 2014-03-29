@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * OData entity.
  */
-public interface ODataEntity extends ODataInvokeResult {
+public interface CommonODataEntity extends ODataInvokeResult {
 
   String getName();
 
@@ -65,14 +65,14 @@ public interface ODataEntity extends ODataInvokeResult {
    * @param name property to look for
    * @return property if found with given name, <tt>null</tt> otherwise
    */
-  ODataProperty getProperty(String name);
+  CommonODataProperty getProperty(String name);
 
   /**
    * Returns OData entity properties.
    *
    * @return OData entity properties.
    */
-  List<ODataProperty> getProperties();
+  List<? extends CommonODataProperty> getProperties();
 
   /**
    * Puts the given link into one of available lists, based on its type.
@@ -173,25 +173,5 @@ public interface ODataEntity extends ODataInvokeResult {
    * @param mediaContentSource media content source.
    */
   void setMediaContentSource(String mediaContentSource);
-
-  /**
-   * To request entity references in place of the actual entities, the client issues a GET request with /$ref appended
-   * to the resource path.
-   * <br />
-   * If the resource path does not identify an entity or a collection of entities, the service returns 404 Not Found.
-   * <br />
-   * If the resource path terminates on a collection, the response MUST be the format-specific representation of a
-   * collection of entity references pointing to the related entities. If no entities are related, the response is the
-   * format-specific representation of an empty collection.
-   * <br />
-   * If the resource path terminates on a single entity, the response MUST be the format-specific representation of an
-   * entity reference pointing to the related single entity. If the resource path terminates on a single entity and no
-   * such entity exists, the service returns 404 Not Found.
-   *
-   * @return entity reference.
-   */
-  String getReference();
-
-  void setReference(String reference);
 
 }

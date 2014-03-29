@@ -21,12 +21,9 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
@@ -43,23 +40,8 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
   }
 
   @Override
-  public ODataEntitySetRequest getEntitySetRequest(final URI query) {
-    return new ODataEntitySetRequestImpl(client, query);
-  }
-
-  @Override
   public ODataEntitySetIteratorRequest getEntitySetIteratorRequest(final URI query) {
     return new ODataEntitySetIteratorRequestImpl(client, query);
-  }
-
-  @Override
-  public ODataEntityRequest getEntityRequest(final URI query) {
-    return new ODataEntityRequestImpl(client, query);
-  }
-
-  @Override
-  public ODataPropertyRequest getPropertyRequest(final URI query) {
-    return new ODataPropertyRequestImpl(client, query);
   }
 
   @Override

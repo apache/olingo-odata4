@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -98,7 +98,7 @@ public class ODataMediaEntityCreateRequestImpl
   private class ODataMediaEntityCreateResponseImpl extends AbstractODataResponse
           implements ODataMediaEntityCreateResponse {
 
-    private ODataEntity entity = null;
+    private CommonODataEntity entity = null;
 
     /**
      * Constructor.
@@ -122,7 +122,7 @@ public class ODataMediaEntityCreateRequestImpl
      * {@inheritDoc }
      */
     @Override
-    public ODataEntity getBody() {
+    public CommonODataEntity getBody() {
       if (entity == null) {
         try {
           final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());

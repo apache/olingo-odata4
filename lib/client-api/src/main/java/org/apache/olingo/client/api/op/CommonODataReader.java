@@ -24,9 +24,9 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -74,7 +74,7 @@ public interface CommonODataReader extends Serializable {
    * @param format de-serialize as AtomFeed or JSONFeed
    * @return de-serialized entity set.
    */
-  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+  CommonODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
@@ -83,7 +83,7 @@ public interface CommonODataReader extends Serializable {
    * @param format de-serialize as AtomEntry or JSONEntry
    * @return entity de-serialized.
    */
-  ODataEntity readEntity(InputStream input, ODataPubFormat format);
+  CommonODataEntity readEntity(InputStream input, ODataPubFormat format);
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
@@ -92,7 +92,7 @@ public interface CommonODataReader extends Serializable {
    * @param format de-serialize as XML or JSON
    * @return OData entity property de-serialized.
    */
-  ODataProperty readProperty(InputStream input, ODataFormat format);
+  CommonODataProperty readProperty(InputStream input, ODataFormat format);
 
   /**
    * Parses a stream into an OData error.

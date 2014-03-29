@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -35,10 +36,10 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -98,23 +99,20 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
    */
   @Override
   public void setFormat(final ODataPubFormat format) {
-    final String _format = (reference.isAssignableFrom(ODataProperty.class) && format == ODataPubFormat.ATOM)
+    final String _format = (reference.isAssignableFrom(CommonODataProperty.class) && format == ODataPubFormat.ATOM)
             ? ODataFormat.XML.toString(odataClient.getServiceVersion())
             : format.toString(odataClient.getServiceVersion());
     setAccept(_format);
     setContentType(_format);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
-      final ODataEntity tmp = odataClient.getObjectFactory().newEntity("");
+      final CommonODataEntity tmp = odataClient.getObjectFactory().newEntity(StringUtils.EMPTY);
       for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-        ODataProperty property = null;
+        CommonODataProperty property = null;
 
         if (param.getValue().isPrimitive()) {
           property = odataClient.getObjectFactory().
@@ -128,7 +126,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
         }
 
         if (property != null) {
-          tmp.getProperties().add(property);
+          odataClient.getBinder().add(tmp, property);
         }
       }
 
@@ -211,15 +209,15 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
         }
 
         try {
-          if (reference.isAssignableFrom(ODataEntitySet.class)) {
+          if (reference.isAssignableFrom(CommonODataEntitySet.class)) {
             invokeResult = (T) odataClient.getReader().readEntitySet(res.getEntity().getContent(),
                     ODataPubFormat.fromString(getContentType()));
           }
-          if (reference.isAssignableFrom(ODataEntity.class)) {
+          if (reference.isAssignableFrom(CommonODataEntity.class)) {
             invokeResult = (T) odataClient.getReader().readEntity(res.getEntity().getContent(),
                     ODataPubFormat.fromString(getContentType()));
           }
-          if (reference.isAssignableFrom(ODataProperty.class)) {
+          if (reference.isAssignableFrom(CommonODataProperty.class)) {
             invokeResult = (T) odataClient.getReader().readProperty(res.getEntity().getContent(),
                     ODataFormat.fromString(getContentType()));
           }
