@@ -144,7 +144,13 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
     }
   }
-
+//
+//  @GET
+//  @Path("/$entity")
+//  public Response getEntityReference(@QueryParam("$id") String id){
+//    return null;
+//  }
+          
   /**
    * Retrieve entity reference sample.
    *

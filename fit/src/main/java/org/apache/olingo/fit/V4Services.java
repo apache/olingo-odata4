@@ -22,9 +22,10 @@ import org.apache.olingo.fit.utils.ODataVersion;
 import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
 
 @Path("/V40/Static.svc")
-@InInterceptors(classes = XHTTPMethodInterceptor.class)
+@InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4Services extends AbstractServices {
 
   public V4Services() throws Exception {

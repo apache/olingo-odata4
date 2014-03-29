@@ -34,6 +34,8 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Property;
 
 /**
  * This class implements an OData update entity property request.
@@ -117,8 +119,10 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     public ODataProperty getBody() {
       if (property == null) {
         try {
-          property = odataClient.getReader().
-                  readProperty(getRawResponse(), ODataFormat.fromString(getAccept()));
+          final Container<Property> container = odataClient.getDeserializer().toProperty(getRawResponse(),
+                  ODataFormat.fromString(getAccept()));
+
+          property = odataClient.getBinder().getODataProperty(extractFromContainer(container));
         } finally {
           this.close();
         }
