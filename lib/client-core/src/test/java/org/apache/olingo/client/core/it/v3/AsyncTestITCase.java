@@ -72,8 +72,10 @@ public class AsyncTestITCase extends AbstractTestITCase {
     entity.getAssociationLinks().clear();
     entity.getNavigationLinks().clear();
     entity.getEditMediaLinks().clear();
-    entity.getProperty("Description").setValue(
-            client.getPrimitiveValueBuilder().setText("AsyncTest#updateEntity").build());
+
+    entity.getProperties().remove(entity.getProperty("Description"));
+    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Description",
+            client.getPrimitiveValueBuilder().setText("AsyncTest#updateEntity").build()));
 
     final ODataEntityUpdateRequest updateReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.MERGE, entity);

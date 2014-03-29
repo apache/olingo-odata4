@@ -71,15 +71,6 @@ public class ODataProperty implements Serializable, ODataInvokeResult {
   }
 
   /**
-   * Updates property value.
-   *
-   * @param value property value that replaces current.
-   */
-  public void setValue(final ODataValue value) {
-    this.value = value;
-  }
-
-  /**
    * Checks if has null value.
    *
    * @return 'TRUE' if has null value; 'FALSE' otherwise.
