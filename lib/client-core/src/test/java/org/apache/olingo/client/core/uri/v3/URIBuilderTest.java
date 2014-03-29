@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.client.core.uri.ParameterAlias;
 import org.junit.Test;
 
 public class URIBuilderTest extends AbstractTest {
@@ -97,6 +98,18 @@ public class URIBuilderTest extends AbstractTest {
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet").
             addParameter("$filter", "(VIN lt 16)").build(),
+            uriBuilder.build());
+  }
+
+  @Test
+  public void filterWithParameter() throws URISyntaxException {
+    // http://host/service.svc/Employees?$filter=Region eq @p1&@p1='WA'
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Employees").
+            filter(getClient().getFilterFactory().eq("Region", new ParameterAlias("p1"))).
+            addParameterAlias("p1", "'WA'");
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Employees").
+            addParameter("$filter", "(Region eq @p1)").addParameter("@p1", "'WA'").build(),
             uriBuilder.build());
   }
 
