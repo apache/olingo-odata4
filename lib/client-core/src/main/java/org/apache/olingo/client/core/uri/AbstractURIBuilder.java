@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.client.core.uri;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -73,6 +75,11 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   protected final Map<String, String> queryOptions = new LinkedHashMap<String, String>();
 
   /**
+   * Insertion-order map of parameter aliases.
+   */
+  protected final Map<String, String> parameters = new LinkedHashMap<String, String>();
+
+  /**
    * Constructor.
    *
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
@@ -93,6 +100,12 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   @Override
   public UB addQueryOption(final String option, final String value) {
     queryOptions.put(option, value);
+    return getThis();
+  }
+
+  @Override
+  public UB addParameterAlias(final String alias, final String exp) {
+    parameters.put(alias, exp);
     return getThis();
   }
 
@@ -193,7 +206,12 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB filter(final URIFilter filter) {
-    return addQueryOption(QueryOption.FILTER, filter.build());
+    try {
+      // decode in order to support @ in parameter aliases
+      return addQueryOption(QueryOption.FILTER, URLDecoder.decode(filter.build(), "UTF-8"));
+    } catch (UnsupportedEncodingException ex) {
+      return addQueryOption(QueryOption.FILTER, filter.build());
+    }
   }
 
   @Override
@@ -269,6 +287,10 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
       for (Map.Entry<String, String> option : queryOptions.entrySet()) {
         builder.addParameter("$" + option.getKey(), option.getValue());
+      }
+
+      for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+        builder.addParameter("@" + parameter.getKey(), parameter.getValue());
       }
 
       return builder.build().normalize();

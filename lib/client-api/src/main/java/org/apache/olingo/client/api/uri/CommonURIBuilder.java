@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.api.uri;
 
-
 import java.net.URI;
 import java.util.Map;
 
@@ -41,9 +40,18 @@ public interface CommonURIBuilder<UB extends CommonURIBuilder<?>> {
    *
    * @param option query option.
    * @param value query option value.
-   * @return current URIBuilder instance
+   * @return current URIBuilder instance.
    */
   UB addQueryOption(String option, String value);
+
+  /**
+   * Adds the specified (custom) parameter alias to the URI.
+   *
+   * @param alias parameter alias.
+   * @param exp expression value.
+   * @return current URIBuilder instance.
+   */
+  UB addParameterAlias(final String alias, final String exp);
 
   /**
    * Appends EntitySet segment to the URI.
@@ -220,5 +228,4 @@ public interface CommonURIBuilder<UB extends CommonURIBuilder<?>> {
    * @return OData URI.
    */
   URI build();
-
 }
