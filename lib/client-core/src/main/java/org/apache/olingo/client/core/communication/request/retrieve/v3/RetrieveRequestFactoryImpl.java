@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
+@SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
         implements RetrieveRequestFactory {
 
@@ -56,27 +57,23 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
     return new ODataLinkCollectionRequestImpl((ODataClient) client, targetURI, linkName);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI query) {
-    return new ODataEntitySetRequestImpl<ODataEntitySet>(client, query);
+  public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI uri) {
+    return new ODataEntitySetRequestImpl<ODataEntitySet>(client, uri);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri) {
+  public ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(final URI uri) {
     return new ODataEntitySetIteratorRequestImpl<ODataEntitySet, ODataEntity>(client, uri);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public ODataEntityRequest<ODataEntity> getEntityRequest(final URI query) {
-    return new ODataEntityRequestImpl<ODataEntity>(client, query);
+  public ODataEntityRequest<ODataEntity> getEntityRequest(final URI uri) {
+    return new ODataEntityRequestImpl<ODataEntity>(client, uri);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI query) {
-    return new ODataPropertyRequestImpl<ODataProperty>(client, query);
+  public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI uri) {
+    return new ODataPropertyRequestImpl<ODataProperty>(client, uri);
   }
 }

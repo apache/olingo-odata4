@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -54,6 +55,7 @@ import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,7 +230,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return propertyResource;
   }
 
-  private Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
     Value valueResource = null;
 
     if (value == null) {
@@ -329,8 +331,12 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       final Feed inlineFeed = link.getInlineFeed();
 
       if (inlineEntry == null && inlineFeed == null) {
-        entity.addLink(
-                client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref()));
+        final ODataLinkType linkType = link.getType() == null
+                ? ODataLinkType.ENTITY_NAVIGATION
+                : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+        entity.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
+                ? client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref())
+                : client.getObjectFactory().newEntitySetNavigationLink(link.getTitle(), base, link.getHref()));
       } else if (inlineEntry != null) {
         entity.addLink(client.getObjectFactory().newInlineEntity(
                 link.getTitle(), base, link.getHref(),
@@ -369,28 +375,35 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   protected ODataValue getODataValue(final Property resource) {
     ODataValue value = null;
 
+    final EdmTypeInfo typeInfo = resource.getType() == null
+            ? null
+            : new EdmTypeInfo.Builder().setTypeExpression(resource.getType()).build();
     if (resource.getValue().isPrimitive()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(resource.getValue().asPrimitive().get()).
-              setType(resource.getType() == null
+              setType(typeInfo == null
                       ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
-              setType(resource.getType() == null
-                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
-                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
+              setType(typeInfo == null
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
                       ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isComplex()) {
-      value = client.getObjectFactory().newComplexValue(resource.getType());
+      value = client.getObjectFactory().newComplexValue(typeInfo == null
+              ? null : typeInfo.getFullQualifiedName().toString());
 
       for (Property property : resource.getValue().asComplex().get()) {
         value.asComplex().add(getODataProperty(property));
       }
     } else if (resource.getValue().isCollection()) {
-      value = client.getObjectFactory().newCollectionValue(resource.getType());
+      value = client.getObjectFactory().newCollectionValue(typeInfo == null
+              ? null : "Collection(" + typeInfo.getFullQualifiedName().toString() + ")");
 
       for (Value _value : resource.getValue().asCollection().get()) {
         final JSONPropertyImpl fake = new JSONPropertyImpl();

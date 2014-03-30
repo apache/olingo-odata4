@@ -1,5 +1,3 @@
-package org.apache.olingo.client.core.v3;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,8 @@ package org.apache.olingo.client.core.v3;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.olingo.client.core.v3;
+
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;

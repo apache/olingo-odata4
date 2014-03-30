@@ -47,7 +47,7 @@ public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
   ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData link.
+   * Gets a uri request returning a single OData link.
    *
    * @param targetURI target URI.
    * @param linkName link name.

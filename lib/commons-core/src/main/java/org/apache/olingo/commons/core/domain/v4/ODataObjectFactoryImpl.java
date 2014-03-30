@@ -59,6 +59,11 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
+  public ODataEnumValue newEnumValue(final String typeName, final String value) {
+    return new ODataEnumValueImpl(typeName, value);
+  }
+
+  @Override
   public ODataProperty newPrimitiveProperty(final String name, final ODataPrimitiveValue value) {
     return new ODataPropertyImpl(name, value);
   }

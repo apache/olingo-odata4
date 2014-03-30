@@ -29,13 +29,17 @@ import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 
@@ -86,6 +90,31 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
+          final boolean setType) {
+
+    final Property propertyResource = super.getProperty(property, reference, setType);
+    if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue() && setType) {
+      propertyResource.setType(((ODataProperty) property).getEnumValue().getTypeName());
+    }
+    return propertyResource;
+  }
+
+  @Override
+  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+    Value valueResource;
+    if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
+            && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
+
+      valueResource = new EnumValueImpl(
+              ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue());
+    } else {
+      valueResource = super.getValue(value, reference, setType);
+    }
+    return valueResource;
+  }
+
+  @Override
   public ODataEntitySet getODataEntitySet(final Feed resource) {
     return (ODataEntitySet) super.getODataEntitySet(resource);
   }
@@ -112,4 +141,20 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     return new ODataPropertyImpl(property.getName(), getODataValue(property));
   }
 
+  @Override
+  protected ODataValue getODataValue(final Property resource) {
+    ODataValue value;
+    if (resource.getValue().isEnum()) {
+      final EdmTypeInfo typeInfo = resource.getType() == null
+              ? null
+              : new EdmTypeInfo.Builder().setTypeExpression(resource.getType()).build();
+      value = ((ODataClient) client).getObjectFactory().newEnumValue(
+              typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(),
+              resource.getValue().asEnum().get());
+    } else {
+      value = super.getODataValue(resource);
+    }
+
+    return value;
+  }
 }

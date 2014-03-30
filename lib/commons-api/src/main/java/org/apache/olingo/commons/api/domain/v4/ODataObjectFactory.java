@@ -38,6 +38,8 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   @Override
   ODataEntity newEntity(String name, URI link);
 
+  ODataEnumValue newEnumValue(String typeName, String value);
+
   @Override
   ODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
 

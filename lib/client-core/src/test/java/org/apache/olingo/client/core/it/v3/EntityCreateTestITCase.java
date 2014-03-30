@@ -305,7 +305,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
               client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Order").build(), order);
       createReq.setFormat(format);
 
-      original.addLink(client.getObjectFactory().newFeedNavigationLink(
+      original.addLink(client.getObjectFactory().newEntitySetNavigationLink(
               "Orders",
               createReq.execute().getBody().getEditLink()));
     }
@@ -409,7 +409,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     ODataEntity changes = client.getObjectFactory().newEntity(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
     changes.setEditLink(customer.getEditLink());
-    changes.addLink(client.getObjectFactory().newFeedNavigationLink(
+    changes.addLink(client.getObjectFactory().newEntitySetNavigationLink(
             "Orders", URIUtils.getURI(getServiceRoot(), order.getEditLink().toASCIIString())));
     update(UpdateType.PATCH, changes, format, null);
 

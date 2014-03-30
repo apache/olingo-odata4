@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -45,7 +46,7 @@ public class EntityTest extends AbstractTest {
 
   private void readAndWrite(final ODataPubFormat format) {
     final InputStream input = getClass().getResourceAsStream("Customer_-10." + getSuffix(format));
-    final CommonODataEntity entity = getClient().getBinder().getODataEntity(
+    final ODataEntity entity = getClient().getBinder().getODataEntity(
             getClient().getDeserializer().toEntry(input, format).getObject());
     assertNotNull(entity);
 
@@ -64,7 +65,7 @@ public class EntityTest extends AbstractTest {
 
     assertTrue(check);
 
-    final CommonODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
+    final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
             getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
     assertEquals(entity, written);
   }

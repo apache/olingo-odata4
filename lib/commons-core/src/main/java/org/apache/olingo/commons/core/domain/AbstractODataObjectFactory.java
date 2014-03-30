@@ -80,13 +80,13 @@ public abstract class AbstractODataObjectFactory implements CommonODataObjectFac
   }
 
   @Override
-  public ODataLink newFeedNavigationLink(final String name, final URI link) {
+  public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
     return new ODataLink.Builder().setVersion(version).setURI(link).
             setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 
   @Override
-  public ODataLink newFeedNavigationLink(final String name, final URI baseURI, final String href) {
+  public ODataLink newEntitySetNavigationLink(final String name, final URI baseURI, final String href) {
     return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }

@@ -39,13 +39,13 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
   }
 
   @Override
-  public ODataValueRequest getValueRequest(final URI query) {
-    return new ODataValueRequestImpl(client, query);
+  public ODataValueRequest getValueRequest(final URI uri) {
+    return new ODataValueRequestImpl(client, uri);
   }
 
   @Override
-  public ODataMediaRequest getMediaRequest(final URI query) {
-    return new ODataMediaRequestImpl(client, query);
+  public ODataMediaRequest getMediaRequest(final URI uri) {
+    return new ODataMediaRequestImpl(client, uri);
   }
 
   @Override

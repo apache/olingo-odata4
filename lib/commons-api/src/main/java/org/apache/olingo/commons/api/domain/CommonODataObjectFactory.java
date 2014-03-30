@@ -125,7 +125,7 @@ public interface CommonODataObjectFactory {
    * @param link link.
    * @return entity set navigation link.
    */
-  ODataLink newFeedNavigationLink(String name, URI link);
+  ODataLink newEntitySetNavigationLink(String name, URI link);
 
   /**
    * Instantiates a new entity set navigation link.
@@ -135,7 +135,7 @@ public interface CommonODataObjectFactory {
    * @param href href.
    * @return entity set navigation link.
    */
-  ODataLink newFeedNavigationLink(String name, URI baseURI, String href);
+  ODataLink newEntitySetNavigationLink(String name, URI baseURI, String href);
 
   /**
    * Instantiates a new association link.

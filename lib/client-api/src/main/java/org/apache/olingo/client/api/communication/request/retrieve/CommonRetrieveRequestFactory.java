@@ -60,7 +60,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
 
   /**
-   * Gets a query request returning a set of one or more OData entities.
+   * Gets a uri request returning a set of one or more OData entities.
    *
    * @param <T> concrete ODataEntitySet implementation.
    * @param uri request URI.
@@ -69,7 +69,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   <T extends CommonODataEntitySet> ODataEntitySetRequest<T> getEntitySetRequest(URI uri);
 
   /**
-   * Gets a query request returning a set of one or more OData entities.
+   * Gets a uri request returning a set of one or more OData entities.
    * <br/>
    * Returned request gives the possibility to consume entities iterating on them without parsing and loading in memory
    * the entire entity set.
@@ -83,7 +83,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
           ODataEntitySetIteratorRequest<ES, E> getEntitySetIteratorRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity.
+   * Gets a uri request returning a single OData entity.
    *
    * @param <T> concrete ODataEntity implementation.
    * @param uri request URI.
@@ -92,7 +92,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   <T extends CommonODataEntity> ODataEntityRequest<T> getEntityRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity property.
+   * Gets a uri request returning a single OData entity property.
    *
    * @param <T> concrete ODataProperty implementation.
    * @param uri request URI.
@@ -101,7 +101,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   <T extends CommonODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity property value.
+   * Gets a uri request returning a single OData entity property value.
    *
    * @param uri request URI.
    * @return new {@link ODataValueRequest} instance.
@@ -109,7 +109,7 @@ public interface CommonRetrieveRequestFactory extends Serializable {
   ODataValueRequest getValueRequest(URI uri);
 
   /**
-   * Gets a query request returning a media stream.
+   * Gets a uri request returning a media stream.
    *
    * @param uri request URI.
    * @return new {@link ODataMediaRequest} instance.

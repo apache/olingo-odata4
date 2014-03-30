@@ -223,7 +223,7 @@ public class NavigationLinkCreateTestITCase extends AbstractTestITCase {
                 orderEntity);
         createReq.setFormat(format);
         createReq.setContentType(contentType);
-        original.addLink(client.getObjectFactory().newFeedNavigationLink(
+        original.addLink(client.getObjectFactory().newEntitySetNavigationLink(
                 "Orders",
                 createReq.execute().getBody().getEditLink()));
       }
