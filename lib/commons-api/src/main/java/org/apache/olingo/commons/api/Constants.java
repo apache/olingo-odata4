@@ -224,4 +224,11 @@ public interface Constants {
 
   public static final String ATOM_ATTR_METADATAETAG = "metadata-etag";
 
+  // error stuff
+  public static final String ERROR_CODE = "code";
+
+  public static final String ERROR_MESSAGE = "message";
+
+  public static final String ERROR_TARGET = "target";
+
 }

@@ -39,10 +39,10 @@ import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONErrorBundle;
 import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
-import org.apache.olingo.commons.core.data.XMLErrorImpl;
+import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
 
 public abstract class AbstractODataDeserializer extends AbstractJacksonTool implements CommonODataDeserializer {
 
@@ -80,8 +80,8 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   @Override
   public ODataError toError(final InputStream input, final boolean isXML) {
     return isXML
-            ? this.<ODataError, XMLErrorImpl>xml(input, XMLErrorImpl.class).getObject()
-            : this.<JSONErrorBundle, JSONErrorBundle>json(input, JSONErrorBundle.class).getObject().getError();
+            ? this.<ODataError, XMLODataErrorImpl>atom(input, XMLODataErrorImpl.class).getObject()
+            : this.<ODataError, JSONODataErrorImpl>json(input, JSONODataErrorImpl.class).getObject();
   }
 
   /*
@@ -90,21 +90,21 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   @SuppressWarnings("unchecked")
   protected <T, V extends T> Container<T> xml(final InputStream input, final Class<V> reference) {
     try {
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
       final XMLEventReader reader = AtomDeserializer.FACTORY.createXMLEventReader(input);
       final StartElement start = atomDeserializer.skipBeforeFirstStartElement(reader);
 
-      final XMLEventWriter writer = XMLOutputFactory.newFactory().createXMLEventWriter(bos);
+      final XMLEventWriter writer = XMLOutputFactory.newFactory().createXMLEventWriter(baos);
       writer.add(start);
       writer.add(reader);
       writer.flush();
       writer.close();
 
       return (Container<T>) atomDeserializer.getContainer(
-              start, getXmlMapper().readValue(new ByteArrayInputStream(bos.toByteArray()), reference));
-
+              start, getXmlMapper().readValue(new ByteArrayInputStream(baos.toByteArray()), reference));
     } catch (Exception e) {
+      e.printStackTrace();
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }

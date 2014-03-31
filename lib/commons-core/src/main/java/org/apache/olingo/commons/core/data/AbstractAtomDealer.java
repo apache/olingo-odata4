@@ -60,6 +60,12 @@ abstract class AbstractAtomDealer {
 
   protected final QName v4PropertyValueQName;
 
+  protected final QName errorCodeQName;
+
+  protected final QName errorMessageQName;
+
+  protected final QName errorTargetQName;
+
   public AbstractAtomDealer(final ODataServiceVersion version) {
     this.version = version;
 
@@ -90,6 +96,13 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ENTRY_REF);
     this.v4PropertyValueQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.VALUE);
+
+    this.errorCodeQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_CODE);
+    this.errorMessageQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_MESSAGE);
+    this.errorTargetQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_TARGET);
   }
 
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {

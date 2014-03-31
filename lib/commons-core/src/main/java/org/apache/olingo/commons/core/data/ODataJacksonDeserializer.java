@@ -52,6 +52,8 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
   protected String jsonNavigationLink;
 
+  protected String jsonError;
+
   protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt)
           throws IOException, JsonProcessingException;
 
@@ -76,6 +78,7 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
     jsonMediaETag = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG);
     jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
     jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
+    jsonError = version.getJSONMap().get(ODataServiceVersion.JSON_ERROR);
 
     return doDeserialize(jp, ctxt);
   }

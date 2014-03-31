@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.core.data;
 
-public class AtomPropertyImpl extends AbstractPropertyImpl {
+public class AtomPropertyImpl extends AbstractProperty {
 
   private static final long serialVersionUID = 48748492242474814L;
 

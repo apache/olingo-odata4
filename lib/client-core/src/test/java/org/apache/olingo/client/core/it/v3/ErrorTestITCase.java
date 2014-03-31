@@ -99,7 +99,6 @@ public class ErrorTestITCase extends AbstractTestITCase {
     } catch (ODataClientErrorException e) {
       LOG.error("ODataClientErrorException found", e);
       assertEquals(400, e.getStatusLine().getStatusCode());
-      assertNotNull(e.getCause());
       assertNotNull(e.getODataError());
     }
   }

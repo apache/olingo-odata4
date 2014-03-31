@@ -19,15 +19,8 @@
 package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-/**
- * A single property (primitive, complex or collection) represented via JSON.
- */
-@JsonSerialize(using = JSONPropertySerializer.class)
-@JsonDeserialize(using = JSONPropertyDeserializer.class)
-public class JSONPropertyImpl extends AbstractProperty {
-
-  private static final long serialVersionUID = 553414431536637434L;
+@JsonDeserialize(using = JSONODataErrorDeserializer.class)
+public class JSONODataErrorImpl extends AbstractODataError {
 
 }

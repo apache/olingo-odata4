@@ -386,11 +386,69 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return getContainer(start, feed(reader, start));
   }
 
+  private XMLODataErrorImpl error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    final XMLODataErrorImpl error = new XMLODataErrorImpl();
+
+    boolean setCode = false;
+    boolean codeSet = false;
+    boolean setMessage = false;
+    boolean messageSet = false;
+    boolean setTarget = false;
+    boolean targetSet = false;
+
+    boolean foundEndElement = false;
+    while (reader.hasNext() && !foundEndElement) {
+      final XMLEvent event = reader.nextEvent();
+
+      if (event.isStartElement()) {
+        if (errorCodeQName.equals(event.asStartElement().getName())) {
+          setCode = true;
+        } else if (errorMessageQName.equals(event.asStartElement().getName())) {
+          setMessage = true;
+        } else if (errorTargetQName.equals(event.asStartElement().getName())) {
+          setTarget = true;
+        }
+      }
+
+      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
+        if (setCode && !codeSet) {
+          error.setCode(event.asCharacters().getData());
+          setCode = false;
+          codeSet = true;
+        }
+        if (setMessage && !messageSet) {
+          error.setMessage(event.asCharacters().getData());
+          setMessage = false;
+          messageSet = true;
+        }
+        if (setTarget && !targetSet) {
+          error.setTarget(event.asCharacters().getData());
+          setTarget = false;
+          targetSet = true;
+        }
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndElement = true;
+      }
+    }
+
+    return error;
+  }
+
+  private Container<XMLODataErrorImpl> error(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, error(reader, start));
+  }
+
   @SuppressWarnings("unchecked")
   public <T, V extends T> Container<T> read(final InputStream input, final Class<V> reference)
           throws XMLStreamException {
 
-    if (AtomFeedImpl.class.equals(reference)) {
+    if (XMLODataErrorImpl.class.equals(reference)) {
+      return (Container<T>) error(input);
+    } else if (AtomFeedImpl.class.equals(reference)) {
       return (Container<T>) feed(input);
     } else if (AtomEntryImpl.class.equals(reference)) {
       return (Container<T>) entry(input);

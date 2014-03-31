@@ -18,33 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class XMLODataErrorImpl extends AbstractODataError {
 
-/**
- * This class represents a bundle for an OData error returned as JSON.
- */
-public class JSONErrorBundle extends AbstractPayloadObject {
-
-  private static final long serialVersionUID = -4784910226259754450L;
-
-  @JsonProperty("odata.error")
-  private JSONErrorImpl error;
-
-  /**
-   * Gets error.
-   *
-   * @return OData error object.
-   */
-  public JSONErrorImpl getError() {
-    return error;
-  }
-
-  /**
-   * Sets error.
-   *
-   * @param error OData error object.
-   */
-  public void setError(final JSONErrorImpl error) {
-    this.error = error;
-  }
 }

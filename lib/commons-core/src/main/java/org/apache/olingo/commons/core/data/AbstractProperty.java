@@ -25,7 +25,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 
-public abstract class AbstractPropertyImpl implements Property {
+public abstract class AbstractProperty implements Property {
 
   private String name;
 

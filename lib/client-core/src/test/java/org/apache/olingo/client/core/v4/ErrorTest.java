@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v3;
+package org.apache.olingo.client.core.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.client.api.v3.ODataClient;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
@@ -31,7 +31,7 @@ public class ErrorTest extends AbstractTest {
 
   @Override
   protected ODataClient getClient() {
-    return v3Client;
+    return v4Client;
   }
 
   private ODataError error(final String name, final ODataPubFormat format) {
@@ -43,7 +43,9 @@ public class ErrorTest extends AbstractTest {
 
   private void simple(final ODataPubFormat format) {
     final ODataError error = error("error", format);
-    assertEquals("The URL representing the root of the service only supports GET requests.", error.getMessage());
+    assertEquals("501", error.getCode());
+    assertEquals("Unsupported functionality", error.getMessage());
+    assertEquals("query", error.getTarget());
   }
 
   @Test
@@ -54,21 +56,6 @@ public class ErrorTest extends AbstractTest {
   @Test
   public void atomSimple() {
     simple(ODataPubFormat.ATOM);
-  }
-
-  private void stacktrace(final ODataPubFormat format) {
-    final ODataError error = error("stacktrace", format);
-    assertEquals("Unsupported media type requested.", error.getMessage());
-  }
-
-  @Test
-  public void jsonStacktrace() {
-    stacktrace(ODataPubFormat.JSON);
-  }
-
-  @Test
-  public void atomStacktrace() {
-    stacktrace(ODataPubFormat.ATOM);
   }
 
 }

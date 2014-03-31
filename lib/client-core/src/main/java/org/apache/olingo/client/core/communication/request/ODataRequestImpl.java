@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -52,8 +51,8 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.commons.core.data.JSONErrorImpl;
-import org.apache.olingo.commons.core.data.XMLErrorImpl;
+import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
+import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -479,19 +478,13 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
   private ODataError getGenericError(final int code, final String errorMsg, final boolean isXML) {
     final ODataError error;
     if (isXML) {
-      error = new XMLErrorImpl();
-      final XMLErrorImpl.Message msg = new XMLErrorImpl.Message(
-              Collections.singletonMap("", (Object) errorMsg));
-
-      ((XMLErrorImpl) error).setMessage(msg);
-      ((XMLErrorImpl) error).setCode(String.valueOf(code));
+      error = new XMLODataErrorImpl();
+      ((XMLODataErrorImpl) error).setCode(String.valueOf(code));
+      ((XMLODataErrorImpl) error).setMessage(errorMsg);
     } else {
-      error = new JSONErrorImpl();
-      final JSONErrorImpl.Message msg = new JSONErrorImpl.Message();
-      msg.setValue(errorMsg);
-
-      ((JSONErrorImpl) error).setMessage(msg);
-      ((JSONErrorImpl) error).setCode(String.valueOf(code));
+      error = new JSONODataErrorImpl();
+      ((JSONODataErrorImpl) error).setCode(String.valueOf(code));
+      ((JSONODataErrorImpl) error).setMessage(errorMsg);
     }
 
     return error;

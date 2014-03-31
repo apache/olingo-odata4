@@ -31,37 +31,17 @@ public interface ODataError {
   String getCode();
 
   /**
-   * Gets error message language.
-   *
-   * @return error message language.
-   */
-  String getMessageLang();
-
-  /**
    * Gets error message.
    *
    * @return error message.
    */
-  String getMessageValue();
+  String getMessage();
 
   /**
-   * Gets inner error message.
+   * Gets error target.
    *
-   * @return inner error message.
+   * @return error message.
    */
-  String getInnerErrorMessage();
+  String getTarget();
 
-  /**
-   * Gets inner error type.
-   *
-   * @return inner error type.
-   */
-  String getInnerErrorType();
-
-  /**
-   * Gets inner error stack-trace.
-   *
-   * @return inner error stack-trace
-   */
-  String getInnerErrorStacktrace();
 }
