@@ -67,6 +67,7 @@ public abstract class Commons {
     sequence.put("Order", 1000);
     sequence.put("ComputerDetail", 1000);
     sequence.put("AllGeoTypesSet", 1000);
+    sequence.put("Orders", 1000);
 
     mediaContent.put("CustomerInfo", "CustomerinfoId");
     mediaContent.put("Car", "VIN");
