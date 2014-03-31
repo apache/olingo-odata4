@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -108,9 +107,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     assertNotNull(feed);
 
     assertTrue(res.getContextURL().toASCIIString().endsWith("$metadata#People"));
-
-    debugFeed(client.getBinder().getFeed(feed, ResourceFactory.feedClassForFormat(
-            ODataPubFormat.ATOM == format)), "Just retrieved feed");
 
     assertEquals(5, feed.getEntities().size());
     assertNotNull(feed.getNext());

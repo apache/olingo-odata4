@@ -20,6 +20,7 @@ package org.apache.olingo.commons.api.domain.v4;
 
 import java.net.URI;
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -41,14 +42,21 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   ODataEnumValue newEnumValue(String typeName, String value);
 
   @Override
+  ODataComplexValue<ODataProperty> newComplexValue(String typeName);
+
+  @Override
+  ODataCollectionValue<ODataValue> newCollectionValue(String typeName);
+
+  @Override
   ODataProperty newPrimitiveProperty(String name, ODataPrimitiveValue value);
 
   ODataProperty newEnumProperty(String name, ODataEnumValue value);
 
   @Override
-  ODataProperty newComplexProperty(String name, ODataComplexValue value);
+  ODataProperty newComplexProperty(String name, ODataComplexValue<? extends CommonODataProperty> value);
 
   @Override
-  ODataProperty newCollectionProperty(String name, ODataCollectionValue value);
+  ODataProperty newCollectionProperty(String name,
+          ODataCollectionValue<? extends org.apache.olingo.commons.api.domain.ODataValue> value);
 
 }

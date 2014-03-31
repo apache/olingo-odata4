@@ -21,11 +21,10 @@ package org.apache.olingo.client.core.op.impl.v4;
 import java.net.URI;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
@@ -33,6 +32,7 @@ import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.op.ResourceFactory;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 
@@ -93,10 +94,24 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
           final boolean setType) {
 
-    final Property propertyResource = super.getProperty(property, reference, setType);
-    if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue() && setType) {
-      propertyResource.setType(((ODataProperty) property).getEnumValue().getTypeName());
+    final ODataProperty _property = (ODataProperty) property;
+
+    final Property propertyResource = ResourceFactory.newProperty(reference);
+    propertyResource.setName(_property.getName());
+    propertyResource.setValue(getValue(_property.getValue(), reference, setType));
+
+    if (setType) {
+      if (_property.hasPrimitiveValue()) {
+        propertyResource.setType(_property.getPrimitiveValue().getTypeName());
+      } else if (_property.hasEnumValue()) {
+        propertyResource.setType(_property.getEnumValue().getTypeName());
+      } else if (_property.hasComplexValue()) {
+        propertyResource.setType(_property.getComplexValue().getTypeName());
+      } else if (_property.hasCollectionValue()) {
+        propertyResource.setType(_property.getCollectionValue().getTypeName());
+      }
     }
+
     return propertyResource;
   }
 

@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
+import org.apache.olingo.commons.core.op.ResourceFactory;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
 
@@ -51,6 +52,27 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   @Override
   protected boolean add(final CommonODataEntitySet entitySet, final CommonODataEntity entity) {
     return ((ODataEntitySet) entitySet).getEntities().add((ODataEntity) entity);
+  }
+
+  @Override
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
+          final boolean setType) {
+
+    final Property propertyResource = ResourceFactory.newProperty(reference);
+    propertyResource.setName(property.getName());
+    propertyResource.setValue(getValue(property.getValue(), reference, setType));
+
+    if (setType) {
+      if (property.hasPrimitiveValue()) {
+        propertyResource.setType(property.getPrimitiveValue().getTypeName());
+      } else if (property.hasComplexValue()) {
+        propertyResource.setType(((ODataProperty) property).getComplexValue().getTypeName());
+      } else if (property.hasCollectionValue()) {
+        propertyResource.setType(((ODataProperty) property).getCollectionValue().getTypeName());
+      }
+    }
+
+    return propertyResource;
   }
 
   @Override

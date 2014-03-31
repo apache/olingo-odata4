@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.domain.v4;
 
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -27,6 +28,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.AbstractODataObjectFactory;
 
@@ -59,8 +61,23 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
+  public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
+    return new ODataPrimitiveValueImpl.BuilderImpl(version);
+  }
+
+  @Override
   public ODataEnumValue newEnumValue(final String typeName, final String value) {
     return new ODataEnumValueImpl(typeName, value);
+  }
+
+  @Override
+  public ODataComplexValue<ODataProperty> newComplexValue(final String typeName) {
+    return new ODataComplexValueImpl(typeName);
+  }
+
+  @Override
+  public ODataCollectionValue<ODataValue> newCollectionValue(final String typeName) {
+    return new ODataCollectionValueImpl(typeName);
   }
 
   @Override
@@ -69,12 +86,16 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
-  public ODataProperty newComplexProperty(final String name, final ODataComplexValue value) {
+  public ODataProperty newComplexProperty(final String name,
+          final ODataComplexValue<? extends CommonODataProperty> value) {
+
     return new ODataPropertyImpl(name, value);
   }
 
   @Override
-  public ODataProperty newCollectionProperty(final String name, final ODataCollectionValue value) {
+  public ODataProperty newCollectionProperty(final String name,
+          final ODataCollectionValue<? extends org.apache.olingo.commons.api.domain.ODataValue> value) {
+
     return new ODataPropertyImpl(name, value);
   }
 

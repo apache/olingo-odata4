@@ -31,11 +31,13 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData EntitySet query request.
+ *
+ * @param <ES> concrete ODataEntitySet implementation
  */
-public class ODataEntitySetRequestImpl<T extends CommonODataEntitySet>
-        extends AbstractODataRetrieveRequest<T, ODataPubFormat> implements ODataEntitySetRequest<T> {
+public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
+        extends AbstractODataRetrieveRequest<ES, ODataPubFormat> implements ODataEntitySetRequest<ES> {
 
-  private T entitySet = null;
+  private ES entitySet = null;
 
   /**
    * Private constructor.
@@ -51,7 +53,7 @@ public class ODataEntitySetRequestImpl<T extends CommonODataEntitySet>
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieveResponse<T> execute() {
+  public ODataRetrieveResponse<ES> execute() {
     final HttpResponse res = doExecute();
     return new ODataEntitySetResponseImpl(httpClient, res);
   }
@@ -67,6 +69,7 @@ public class ODataEntitySetRequestImpl<T extends CommonODataEntitySet>
      * Just to create response templates to be initialized from batch.
      */
     private ODataEntitySetResponseImpl() {
+      super();
     }
 
     /**
@@ -84,13 +87,13 @@ public class ODataEntitySetRequestImpl<T extends CommonODataEntitySet>
      */
     @Override
     @SuppressWarnings("unchecked")
-    public T getBody() {
+    public ES getBody() {
       if (entitySet == null) {
         try {
           final Container<Feed> container =
                   odataClient.getDeserializer().toFeed(getRawResponse(), ODataPubFormat.fromString(getContentType()));
 
-          entitySet = (T) odataClient.getBinder().getODataEntitySet(extractFromContainer(container));
+          entitySet = (ES) odataClient.getBinder().getODataEntitySet(extractFromContainer(container));
         } finally {
           this.close();
         }

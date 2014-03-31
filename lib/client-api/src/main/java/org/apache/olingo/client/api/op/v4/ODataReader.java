@@ -18,8 +18,22 @@
  */
 package org.apache.olingo.client.api.op.v4;
 
+import java.io.InputStream;
 import org.apache.olingo.client.api.op.CommonODataReader;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 public interface ODataReader extends CommonODataReader {
 
+  @Override
+  ODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
+
+  @Override
+  ODataEntity readEntity(InputStream input, ODataPubFormat format);
+
+  @Override
+  ODataProperty readProperty(InputStream input, ODataFormat format);
 }

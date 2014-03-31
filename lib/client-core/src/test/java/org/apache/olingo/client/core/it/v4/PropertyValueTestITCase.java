@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -38,7 +38,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PersonID").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -48,7 +48,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveBooleanPropertyValueTest() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("IsRegistered").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -58,7 +58,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveStringPropertyValueTest() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("FirstName").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -68,7 +68,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveDatePropertyValueTest() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendPropertySegment("OrderDate").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -79,7 +79,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveDecimalPropertyValueTest() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Height").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -90,7 +90,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveBinaryPropertyValueTest() throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -102,7 +102,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void retrieveBinaryPropertyValueTestWithAtom() throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -112,7 +112,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void retrieveBinaryPropertyValueTestWithXML() throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -122,7 +122,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveCollectionPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Numbers");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -134,7 +134,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveNullPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("MiddleName").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());

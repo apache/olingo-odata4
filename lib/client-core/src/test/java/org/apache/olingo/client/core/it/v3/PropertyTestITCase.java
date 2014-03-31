@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
@@ -36,14 +41,11 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -218,7 +220,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final String newItem = "new item " + System.currentTimeMillis();
 
-    final ODataCollectionValue originalValue =
+    final ODataCollectionValue<ODataValue> originalValue =
             primaryContactInfo.getComplexValue().get("EmailBag").getCollectionValue();
 
     final int origSize = originalValue.size();
@@ -266,7 +268,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final String newItem = "new item " + System.currentTimeMillis();
 
-    final ODataCollectionValue originalValue = alternativeNames.getCollectionValue();
+    final ODataCollectionValue<ODataValue> originalValue = alternativeNames.getCollectionValue();
 
     final int origSize = originalValue.size();
 

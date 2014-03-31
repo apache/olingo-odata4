@@ -31,11 +31,12 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.format.ODataFormat;
+
 import org.junit.Test;
 
 public class PropertyTest extends AbstractTest {
@@ -57,15 +58,15 @@ public class PropertyTest extends AbstractTest {
     assertEquals("-10", value.toString());
   }
 
-  private CommonODataProperty primitive(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
+  private ODataProperty primitive(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_CustomerId." + getSuffix(format));
-    final CommonODataProperty property = getClient().getReader().readProperty(input, format);
+    final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasPrimitiveValue());
     assertTrue(-10 == property.getPrimitiveValue().toCastValue(Integer.class));
 
-    CommonODataProperty comparable;
-    final CommonODataProperty written = getClient().getReader().readProperty(
+    ODataProperty comparable;
+    final ODataProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     if (format == ODataFormat.XML) {
       comparable = written;
@@ -93,24 +94,24 @@ public class PropertyTest extends AbstractTest {
     primitive(ODataFormat.JSON);
   }
 
-  private CommonODataProperty complex(final ODataFormat format) throws IOException {
+  private ODataProperty complex(final ODataFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_PrimaryContactInfo." + getSuffix(format));
-    final CommonODataProperty property = getClient().getReader().readProperty(input, format);
+    final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasComplexValue());
     assertEquals(6, property.getComplexValue().size());
 
-    CommonODataProperty comparable;
-    final CommonODataProperty written = getClient().getReader().readProperty(
+    ODataProperty comparable;
+    final ODataProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     if (format == ODataFormat.XML) {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataComplexValue typedValue = getClient().getObjectFactory().
+      final ODataComplexValue<ODataProperty> typedValue = getClient().getObjectFactory().
               newComplexValue(property.getComplexValue().getTypeName());
-      for (final Iterator<CommonODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
-        final CommonODataProperty prop = itor.next();
+      for (final Iterator<ODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
+        final ODataProperty prop = itor.next();
         typedValue.add(prop);
       }
       comparable = getClient().getObjectFactory().newComplexProperty(written.getName(), typedValue);
@@ -131,21 +132,21 @@ public class PropertyTest extends AbstractTest {
     complex(ODataFormat.JSON);
   }
 
-  private CommonODataProperty collection(final ODataFormat format) throws IOException {
+  private ODataProperty collection(final ODataFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_BackupContactInfo." + getSuffix(format));
-    final CommonODataProperty property = getClient().getReader().readProperty(input, format);
+    final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasCollectionValue());
     assertEquals(9, property.getCollectionValue().size());
 
-    CommonODataProperty comparable;
-    final CommonODataProperty written = getClient().getReader().readProperty(
+    ODataProperty comparable;
+    final ODataProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     if (format == ODataFormat.XML) {
       comparable = written;
     } else {
       // This is needed because type information gets lost with JSON serialization
-      final ODataCollectionValue typedValue = getClient().getObjectFactory().
+      final ODataCollectionValue<ODataValue> typedValue = getClient().getObjectFactory().
               newCollectionValue(property.getCollectionValue().getTypeName());
       for (final Iterator<ODataValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {
         final ODataValue value = itor.next();

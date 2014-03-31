@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,7 +32,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRawReque
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import static org.apache.olingo.client.core.it.v4.AbstractTestITCase.client;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -38,12 +42,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -80,9 +78,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
       if (link instanceof ODataInlineEntity) {
         final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
         assertNotNull(inline);
-
-        debugEntry(client.getBinder().getEntry(
-                inline, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)), "Just read");
 
         final List<? extends CommonODataProperty> properties = inline.getProperties();
         assertEquals(5, properties.size());
@@ -135,9 +130,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
       if (link instanceof ODataInlineEntitySet) {
         final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
         assertNotNull(inline);
-
-        debugFeed(client.getBinder().getFeed(inline, ResourceFactory.feedClassForFormat(
-                format == ODataPubFormat.ATOM)), "Just read");
 
         found = true;
       }

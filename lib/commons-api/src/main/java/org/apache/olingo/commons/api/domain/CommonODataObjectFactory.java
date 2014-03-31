@@ -177,9 +177,9 @@ public interface CommonODataObjectFactory {
 
   ODataPrimitiveValue.Builder newPrimitiveValueBuilder();
 
-  ODataComplexValue newComplexValue(String typeName);
+  ODataComplexValue<? extends CommonODataProperty> newComplexValue(String typeName);
 
-  ODataCollectionValue newCollectionValue(String typeName);
+  ODataCollectionValue<? extends ODataValue> newCollectionValue(String typeName);
 
   /**
    * Instantiates a new primitive property.
@@ -197,7 +197,7 @@ public interface CommonODataObjectFactory {
    * @param value value.
    * @return complex property.
    */
-  CommonODataProperty newComplexProperty(String name, ODataComplexValue value);
+  CommonODataProperty newComplexProperty(String name, ODataComplexValue<? extends CommonODataProperty> value);
 
   /**
    * Instantiates a new collection property.
@@ -206,5 +206,5 @@ public interface CommonODataObjectFactory {
    * @param value value.
    * @return collection property.
    */
-  CommonODataProperty newCollectionProperty(String name, ODataCollectionValue value);
+  CommonODataProperty newCollectionProperty(String name, ODataCollectionValue<? extends ODataValue> value);
 }

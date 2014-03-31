@@ -35,11 +35,12 @@ public interface CommonCUDRequestFactory extends Serializable {
    * <br/>
    * Use this kind of request to create a new entity.
    *
+   * @param <E> concrete ODataEntity implementation
    * @param targetURI entity set URI.
    * @param entity entity to be created.
    * @return new ODataEntityCreateRequest instance.
    */
-  ODataEntityCreateRequest getEntityCreateRequest(URI targetURI, CommonODataEntity entity);
+  <E extends CommonODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(URI targetURI, E entity);
 
   /**
    * Gets an update request object instance.

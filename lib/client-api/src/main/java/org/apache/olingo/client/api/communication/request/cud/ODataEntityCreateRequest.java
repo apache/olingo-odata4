@@ -20,10 +20,14 @@ package org.apache.olingo.client.api.communication.request.cud;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
- * This class implements an OData create request.
+ * This interface describes an OData create request.
+ *
+ * @param <E> concrete ODataEntity implementation
  */
-public interface ODataEntityCreateRequest extends ODataBasicRequest<ODataEntityCreateResponse, ODataPubFormat>{
+public interface ODataEntityCreateRequest<E extends CommonODataEntity>
+        extends ODataBasicRequest<ODataEntityCreateResponse<E>, ODataPubFormat> {
 }

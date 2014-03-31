@@ -18,8 +18,11 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataProperty;
 
 public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
@@ -39,6 +42,16 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
   @Override
   public ODataEnumValue getEnumValue() {
     return hasEnumValue() ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asEnum() : null;
+  }
+
+  @Override
+  public ODataComplexValue<ODataProperty> getComplexValue() {
+    return hasComplexValue() ? getValue().<ODataProperty>asComplex() : null;
+  }
+
+  @Override
+  public ODataCollectionValue<ODataValue> getCollectionValue() {
+    return hasCollectionValue() ? getValue().<ODataValue>asCollection() : null;
   }
 
 }

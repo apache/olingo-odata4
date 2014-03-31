@@ -19,9 +19,11 @@
 package org.apache.olingo.commons.core.domain.v3;
 
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
@@ -58,17 +60,36 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
+  public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
+    return new ODataPrimitiveValueImpl.BuilderImpl(version);
+  }
+
+  @Override
+  public ODataComplexValue<ODataProperty> newComplexValue(final String typeName) {
+    return new ODataComplexValueImpl(typeName);
+  }
+
+  @Override
+  public ODataCollectionValue<ODataValue> newCollectionValue(final String typeName) {
+    return new ODataCollectionValueImpl(typeName);
+  }
+
+  @Override
   public ODataProperty newPrimitiveProperty(final String name, final ODataPrimitiveValue value) {
     return new ODataPropertyImpl(name, value);
   }
 
   @Override
-  public ODataProperty newComplexProperty(final String name, final ODataComplexValue value) {
+  public ODataProperty newComplexProperty(final String name,
+          final ODataComplexValue<? extends CommonODataProperty> value) {
+
     return new ODataPropertyImpl(name, value);
   }
 
   @Override
-  public ODataProperty newCollectionProperty(final String name, final ODataCollectionValue value) {
+  public ODataProperty newCollectionProperty(final String name,
+          final ODataCollectionValue<? extends ODataValue> value) {
+
     return new ODataPropertyImpl(name, value);
   }
 

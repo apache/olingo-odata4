@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,10 +25,11 @@ import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -43,6 +41,10 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -61,10 +63,10 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 //        assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
-  private CommonODataEntity readRow(final ODataPubFormat format, final String uuid) {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+  private ODataEntity readRow(final ODataPubFormat format, final String uuid) {
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
-    return read(format, builder.build());
+    return (ODataEntity) read(format, builder.build());
   }
 
   private void read(final ODataPubFormat format) {
@@ -91,7 +93,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   private void cud(final ODataPubFormat format) {
     final UUID guid = UUID.randomUUID();
 
-    CommonODataEntity row = client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.OpenTypesService.Row");
+    ODataEntity row = client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.OpenTypesService.Row");
     getClient().getBinder().add(row,
             client.getObjectFactory().newPrimitiveProperty("Id",
                     client.getObjectFactory().newPrimitiveValueBuilder().
@@ -192,7 +194,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
                     setType(EdmPrimitiveTypeKind.GeographyCollection).
                     setValue(geoColl).build()));
 
-    final ODataComplexValue contactDetails = client.getObjectFactory().newComplexValue(
+    final ODataComplexValue<ODataProperty> contactDetails = client.getObjectFactory().newComplexValue(
             "Microsoft.Test.OData.Services.OpenTypesService.ContactDetails");
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("FirstContacted",
             client.getObjectFactory().newPrimitiveValueBuilder().
@@ -233,11 +235,11 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     getClient().getBinder().add(row,
             client.getObjectFactory().newComplexProperty("aContact", contactDetails));
 
-    final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().
+    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(client.getURIBuilder(testStaticServiceRootURL).
                     appendEntitySetSegment("Row").build(), row);
     createReq.setFormat(format);
-    final ODataEntityCreateResponse createRes = createReq.execute();
+    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     row = readRow(format, guid.toString());

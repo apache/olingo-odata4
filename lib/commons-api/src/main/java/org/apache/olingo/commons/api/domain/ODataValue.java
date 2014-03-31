@@ -56,9 +56,10 @@ public interface ODataValue extends Serializable {
   /**
    * Casts to collection value.
    *
+   * @param <OV> The actual ODataValue interface.
    * @return collection value.
    */
-  ODataCollectionValue asCollection();
+  <OV extends ODataValue> ODataCollectionValue<OV> asCollection();
 
   /**
    * Check is is a complex value.
@@ -70,8 +71,9 @@ public interface ODataValue extends Serializable {
   /**
    * Casts to complex value.
    *
+   * @param <OP> The actual ODataProperty interface.
    * @return complex value.
    */
-  ODataComplexValue asComplex();
+  <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex();
 
 }

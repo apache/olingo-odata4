@@ -28,21 +28,18 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
+@SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
 
-  @SuppressWarnings("unchecked")
   @Override
   ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
 
-  @SuppressWarnings("unchecked")
   @Override
   ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
 
-  @SuppressWarnings("unchecked")
   @Override
   ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
 
-  @SuppressWarnings("unchecked")
   @Override
   ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
 

@@ -209,27 +209,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return linkResource;
   }
 
-  @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
-          final boolean setType) {
-
-    final Property propertyResource = ResourceFactory.newProperty(reference);
-    propertyResource.setName(property.getName());
-    propertyResource.setValue(getValue(property.getValue(), reference, setType));
-
-    if (setType) {
-      if (property.hasPrimitiveValue()) {
-        propertyResource.setType(property.getPrimitiveValue().getType().toString());
-      } else if (property.hasComplexValue()) {
-        propertyResource.setType(property.getComplexValue().getTypeName());
-      } else if (property.hasCollectionValue()) {
-        propertyResource.setType(property.getCollectionValue().getTypeName());
-      }
-    }
-
-    return propertyResource;
-  }
-
   protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
     Value valueResource = null;
 
@@ -240,17 +219,17 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
               ? new GeospatialValueImpl((Geospatial) value.asPrimitive().toValue())
               : new PrimitiveValueImpl(value.asPrimitive().toString());
     } else if (value.isComplex()) {
-      final ODataComplexValue _value = value.asComplex();
+      final ODataComplexValue<? extends CommonODataProperty> _value = value.asComplex();
       valueResource = new ComplexValueImpl();
 
-      for (final Iterator<CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
+      for (final Iterator<? extends CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
         valueResource.asComplex().get().add(getProperty(itor.next(), reference, setType));
       }
     } else if (value.isCollection()) {
-      final ODataCollectionValue _value = value.asCollection();
+      final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
       valueResource = new CollectionValueImpl();
 
-      for (final Iterator<ODataValue> itor = _value.iterator(); itor.hasNext();) {
+      for (final Iterator<? extends ODataValue> itor = _value.iterator(); itor.hasNext();) {
         valueResource.asCollection().get().add(getValue(itor.next(), reference, setType));
       }
     }

@@ -27,22 +27,25 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 
 /**
  * OData collection property value.
+ *
+ * @param <OV> The actual ODataValue interface.
  */
-public class ODataCollectionValueImpl extends AbstractODataValue implements ODataCollectionValue {
+public abstract class AbstractODataCollectionValue<OV extends ODataValue>
+        extends AbstractODataValue implements ODataCollectionValue<OV> {
 
   private static final long serialVersionUID = -3665659846001987187L;
 
   /**
    * Values.
    */
-  private final List<ODataValue> values = new ArrayList<ODataValue>();
+  private final List<OV> values = new ArrayList<OV>();
 
   /**
    * Constructor.
    *
    * @param typeName type name.
    */
-  public ODataCollectionValueImpl(final String typeName) {
+  public AbstractODataCollectionValue(final String typeName) {
     super(typeName);
   }
 
@@ -52,7 +55,7 @@ public class ODataCollectionValueImpl extends AbstractODataValue implements ODat
    * @param value value to be added.
    */
   @Override
-  public void add(final ODataValue value) {
+  public void add(final OV value) {
     if (value.isPrimitive() || value.isComplex()) {
       values.add(value);
     }
@@ -64,7 +67,7 @@ public class ODataCollectionValueImpl extends AbstractODataValue implements ODat
    * @return value iterator.
    */
   @Override
-  public Iterator<ODataValue> iterator() {
+  public Iterator<OV> iterator() {
     return values.iterator();
   }
 

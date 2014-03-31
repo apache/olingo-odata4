@@ -34,7 +34,6 @@ public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
   @Override
   ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
 
-  @SuppressWarnings("unchecked")
   @Override
   ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
 

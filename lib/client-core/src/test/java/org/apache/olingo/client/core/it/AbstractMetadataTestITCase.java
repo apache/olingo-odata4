@@ -20,9 +20,8 @@ package org.apache.olingo.client.core.it;
 
 import org.apache.olingo.client.api.CommonODataClient;
 
-public abstract class AbstractMetadataTestITCase extends AbstractTestITCase {
+public abstract class AbstractMetadataTestITCase {
 
-  @Override
   protected abstract CommonODataClient getClient();
 
   protected String getTestServiceRoot() {

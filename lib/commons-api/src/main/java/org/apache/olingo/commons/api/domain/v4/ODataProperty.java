@@ -19,8 +19,24 @@
 package org.apache.olingo.commons.api.domain.v4;
 
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 
 public interface ODataProperty extends CommonODataProperty {
+
+  /**
+   * Gets collection value.
+   *
+   * @return collection value if exists; null otherwise.
+   */
+  ODataCollectionValue<ODataValue> getCollectionValue();
+
+  /**
+   * Gets complex value.
+   *
+   * @return complex value if exists; null otherwise.
+   */
+  ODataComplexValue<ODataProperty> getComplexValue();
 
   /**
    * Checks if has enum value.

@@ -22,8 +22,10 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
- * This class implements an OData EntitySet query request.
+ * This interface describes an OData EntitySet query request.
+ *
+ * @param <ES> concrete ODataEntitySet implementation
  */
-public interface ODataEntitySetRequest<T extends CommonODataEntitySet>
-        extends ODataRetrieveRequest<T, ODataPubFormat> {
+public interface ODataEntitySetRequest<ES extends CommonODataEntitySet>
+        extends ODataRetrieveRequest<ES, ODataPubFormat> {
 }

@@ -46,8 +46,10 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
   }
 
   @Override
-  public ODataEntityCreateRequest getEntityCreateRequest(final URI targetURI, final CommonODataEntity entity) {
-    return new ODataEntityCreateRequestImpl(client, targetURI, entity);
+  public <E extends CommonODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
+          final URI targetURI, final E entity) {
+
+    return new ODataEntityCreateRequestImpl<E>(client, targetURI, entity);
   }
 
   @Override

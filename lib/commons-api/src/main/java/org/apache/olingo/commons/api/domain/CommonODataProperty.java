@@ -68,24 +68,10 @@ public interface CommonODataProperty extends ODataInvokeResult, Serializable {
   boolean hasCollectionValue();
 
   /**
-   * Gets collection value.
-   *
-   * @return collection value if exists; null otherwise.
-   */
-  ODataCollectionValue getCollectionValue();
-
-  /**
    * Checks if has complex value.
    *
    * @return 'TRUE' if has complex value; 'FALSE' otherwise.
    */
   boolean hasComplexValue();
-
-  /**
-   * Gets complex value.
-   *
-   * @return complex value if exists; null otherwise.
-   */
-  ODataComplexValue getComplexValue();
 
 }

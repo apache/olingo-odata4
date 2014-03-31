@@ -16,33 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain;
+package org.apache.olingo.commons.core.domain.v3;
 
-/**
- * OData collection property value.
- *
- * @param <OV> The actual ODataValue interface.
- */
-public interface ODataCollectionValue<OV extends ODataValue> extends ODataValue, Iterable<OV> {
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
+import org.apache.olingo.commons.core.domain.AbstractODataComplexValue;
 
-  /**
-   * Adds a value to the collection.
-   *
-   * @param value value to be added.
-   */
-  void add(OV value);
+public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> {
 
-  /**
-   * Checks if collection is empty.
-   *
-   * @return 'TRUE' if empty; 'FALSE' otherwise.
-   */
-  boolean isEmpty();
+  private static final long serialVersionUID = 1143925901934898802L;
 
-  /**
-   * Gets collection size.
-   *
-   * @return collection size.
-   */
-  int size();
+  public ODataComplexValueImpl(final String typeName) {
+    super(typeName);
+  }
+
 }

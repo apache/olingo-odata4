@@ -20,15 +20,12 @@ package org.apache.olingo.commons.core.domain;
 
 import java.net.URI;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public abstract class AbstractODataObjectFactory implements CommonODataObjectFactory {
@@ -113,21 +110,6 @@ public abstract class AbstractODataObjectFactory implements CommonODataObjectFac
   public ODataLink newMediaEditLink(final String name, final URI baseURI, final String href) {
     return new ODataLink.Builder().setVersion(version).setURI(baseURI, href).
             setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
-  }
-
-  @Override
-  public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
-    return new ODataPrimitiveValueImpl.BuilderImpl(version);
-  }
-
-  @Override
-  public ODataComplexValue newComplexValue(final String typeName) {
-    return new ODataComplexValueImpl(typeName);
-  }
-
-  @Override
-  public ODataCollectionValue newCollectionValue(final String typeName) {
-    return new ODataCollectionValueImpl(typeName);
   }
 
 }

@@ -28,9 +28,9 @@ import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
@@ -107,15 +107,15 @@ public class EntityTest extends AbstractTest {
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Color", skinColor.getEnumValue().getTypeName());
     assertEquals("Red", skinColor.getEnumValue().getValue());
 
-//    final ODataProperty coverColors = entity.getProperty("CoverColors");
-//    assertTrue(coverColors.hasCollectionValue());
-//    for (final Iterator<ODataValue> itor = coverColors.getCollectionValue().iterator(); itor.hasNext();) {
-//      final ODataValue item = itor.next();
-//      assertTrue(item.isEnum());
-//    }
+    final ODataProperty coverColors = entity.getProperty("CoverColors");
+    assertTrue(coverColors.hasCollectionValue());
+    for (final Iterator<ODataValue> itor = coverColors.getCollectionValue().iterator(); itor.hasNext();) {
+      final ODataValue item = itor.next();
+      assertTrue(item.isEnum());
+    }
 
     // operations won't get serialized
-    entity.getOperations().clear();    
+    entity.getOperations().clear();
     final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
             getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
     assertEquals(entity, written);

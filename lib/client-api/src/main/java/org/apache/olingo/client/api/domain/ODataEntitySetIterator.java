@@ -41,6 +41,9 @@ import org.slf4j.LoggerFactory;
  * OData entity set iterator class.
  * <br/>
  * <b>Please don't forget to call the <tt>close()>/<tt> method when not needed any more.</b>
+ *
+ * @param <E> concrete ODataEntity implementation
+ * @param <ES> concrete ODataEntitySet implementation
  */
 public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends CommonODataEntity>
         implements Iterator<E> {

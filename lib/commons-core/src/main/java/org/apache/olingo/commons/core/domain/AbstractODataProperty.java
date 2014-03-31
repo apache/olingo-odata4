@@ -22,8 +22,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -114,16 +112,6 @@ public abstract class AbstractODataProperty implements CommonODataProperty {
   }
 
   /**
-   * Gets complex value.
-   *
-   * @return complex value if exists; null otherwise.
-   */
-  @Override
-  public ODataComplexValue getComplexValue() {
-    return hasComplexValue() ? this.value.asComplex() : null;
-  }
-
-  /**
    * Checks if has collection value.
    *
    * @return 'TRUE' if has collection value; 'FALSE' otherwise.
@@ -131,16 +119,6 @@ public abstract class AbstractODataProperty implements CommonODataProperty {
   @Override
   public boolean hasCollectionValue() {
     return !hasNullValue() && this.value.isCollection();
-  }
-
-  /**
-   * Gets collection value.
-   *
-   * @return collection value if exists; null otherwise.
-   */
-  @Override
-  public ODataCollectionValue getCollectionValue() {
-    return hasCollectionValue() ? this.value.asCollection() : null;
   }
 
   /**

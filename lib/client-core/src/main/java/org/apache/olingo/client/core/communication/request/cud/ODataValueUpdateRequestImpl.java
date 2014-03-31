@@ -35,7 +35,6 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
@@ -101,6 +100,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
      * Just to create response templates to be initialized from batch.
      */
     private ODataValueUpdateResponseImpl() {
+      super();
     }
 
     /**
@@ -122,7 +122,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
         final ODataValueFormat format = ODataValueFormat.fromString(getAccept());
 
         try {
-          value = new ODataPrimitiveValueImpl.BuilderImpl(odataClient.getServiceVersion()).
+          value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
                   setType(format == ODataValueFormat.TEXT
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).

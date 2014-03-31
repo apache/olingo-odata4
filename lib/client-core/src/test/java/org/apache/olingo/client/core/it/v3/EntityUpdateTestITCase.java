@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -53,7 +52,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
-    final CommonODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
+    final ODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     merge.setEditLink(uri);
     updateEntityDescription(format, merge, UpdateType.MERGE, etag);
   }
@@ -64,7 +63,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
-    final CommonODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
+    final ODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     merge.setEditLink(uri);
     updateEntityDescription(format, merge, UpdateType.MERGE, etag);
   }
@@ -75,7 +74,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
-    final CommonODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
+    final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     patch.setEditLink(uri);
     updateEntityDescription(format, patch, UpdateType.PATCH, etag);
   }
@@ -86,7 +85,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
-    final CommonODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
+    final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     patch.setEditLink(uri);
     updateEntityDescription(format, patch, UpdateType.PATCH, etag);
   }
@@ -94,7 +93,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void replaceAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final CommonODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -102,7 +101,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void replaceAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final CommonODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -121,7 +120,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).build();
 
-    final CommonODataEntity patch =
+    final ODataEntity patch =
             client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
     patch.setEditLink(uri);
 
@@ -141,7 +140,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(customerInfoURI);
     req.setFormat(format);
 
-    CommonODataEntity newInfo = req.execute().getBody();
+    ODataEntity newInfo = req.execute().getBody();
 
     assertEquals(Integer.valueOf(12),
             newInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
@@ -179,7 +178,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
-    final CommonODataEntity message = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity message = read(format, client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Message").appendKeySegment(multiKey).build());
     message.getAssociationLinks().clear();
     message.getNavigationLinks().clear();
@@ -226,7 +225,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     String etag = getETag(uri);
-    final CommonODataEntity product = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
+    final ODataEntity product = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
     product.setEditLink(uri);
     updateEntityStringProperty("BaseConcurrency",
             client.getConfiguration().getDefaultPubFormat(), product, UpdateType.MERGE, etag);

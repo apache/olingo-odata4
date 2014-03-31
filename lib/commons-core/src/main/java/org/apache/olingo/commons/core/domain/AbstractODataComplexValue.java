@@ -27,22 +27,25 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
 /**
  * OData complex property value.
+ *
+ * @param <OP> The actual ODataProperty interface.
  */
-public class ODataComplexValueImpl extends AbstractODataValue implements ODataComplexValue {
+public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
+        extends AbstractODataValue implements ODataComplexValue<OP> {
 
   private static final long serialVersionUID = -1878555027714020431L;
 
   /**
    * Complex type fields.
    */
-  private final Map<String, CommonODataProperty> fields = new LinkedHashMap<String, CommonODataProperty>();
+  private final Map<String, OP> fields = new LinkedHashMap<String, OP>();
 
   /**
    * Constructor.
    *
    * @param typeName type name.
    */
-  public ODataComplexValueImpl(final String typeName) {
+  public AbstractODataComplexValue(final String typeName) {
     super(typeName);
   }
 
@@ -52,8 +55,9 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @param field field to be added.
    */
   @Override
+  @SuppressWarnings("unchecked")
   public void add(final CommonODataProperty field) {
-    fields.put(field.getName(), field);
+    fields.put(field.getName(), (OP) field);
   }
 
   /**
@@ -63,7 +67,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @return requested field.
    */
   @Override
-  public CommonODataProperty get(final String name) {
+  public OP get(final String name) {
     return fields.get(name);
   }
 
@@ -73,7 +77,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
    * @return fields iterator.
    */
   @Override
-  public Iterator<CommonODataProperty> iterator() {
+  public Iterator<OP> iterator() {
     return fields.values().iterator();
   }
 

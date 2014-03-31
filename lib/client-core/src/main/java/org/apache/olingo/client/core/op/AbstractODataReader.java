@@ -78,22 +78,6 @@ public abstract class AbstractODataReader implements CommonODataReader {
   }
 
   @Override
-  public CommonODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return client.getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format).getObject());
-  }
-
-  @Override
-  public CommonODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return client.getBinder().getODataEntity(client.getDeserializer().toEntry(input, format).getObject());
-  }
-
-  @Override
-  public CommonODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    final Property property = client.getDeserializer().toProperty(input, format).getObject();
-    return client.getBinder().getODataProperty(property);
-  }
-
-  @Override
   public ODataError readError(final InputStream inputStream, final boolean isXML) {
     return client.getDeserializer().toError(inputStream, isXML);
   }

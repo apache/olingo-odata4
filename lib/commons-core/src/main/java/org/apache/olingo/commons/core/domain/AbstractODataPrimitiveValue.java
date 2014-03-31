@@ -29,23 +29,22 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-public class ODataPrimitiveValueImpl extends AbstractODataValue implements ODataPrimitiveValue {
+public abstract class AbstractODataPrimitiveValue extends AbstractODataValue implements ODataPrimitiveValue {
 
   private static final long serialVersionUID = 8889282662298376036L;
 
-  public static class BuilderImpl implements Builder {
+  public static abstract class AbstractBuilder implements Builder {
 
     private final ODataServiceVersion version;
 
-    private final ODataPrimitiveValueImpl instance;
-
-    public BuilderImpl(final ODataServiceVersion version) {
+    public AbstractBuilder(final ODataServiceVersion version) {
       this.version = version;
-      this.instance = new ODataPrimitiveValueImpl();
     }
 
+    protected abstract AbstractODataPrimitiveValue getInstance();
+
     @Override
-    public BuilderImpl setType(final EdmPrimitiveTypeKind type) {
+    public AbstractBuilder setType(final EdmPrimitiveTypeKind type) {
       if (type != null && !type.getSupportedVersions().contains(version)) {
         throw new IllegalArgumentException(String.format(
                 "Type %s not supported by OData version %s", type.toString(), version));
@@ -62,60 +61,60 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
                 + "Each value MUST be of some subtype.");
       }
 
-      this.instance.typeKind = type == null ? EdmPrimitiveTypeKind.String : type;
-      this.instance.type = EdmPrimitiveTypeFactory.getInstance(this.instance.typeKind);
+      getInstance().typeKind = type == null ? EdmPrimitiveTypeKind.String : type;
+      getInstance().type = EdmPrimitiveTypeFactory.getInstance(getInstance().typeKind);
 
       return this;
     }
 
     @Override
-    public BuilderImpl setText(final String text) {
-      this.instance.text = text;
+    public AbstractBuilder setText(final String text) {
+      getInstance().text = text;
       return this;
     }
 
     @Override
-    public BuilderImpl setValue(final Object value) {
-      this.instance.value = value;
+    public AbstractBuilder setValue(final Object value) {
+      getInstance().value = value;
       return this;
     }
 
     @Override
-    public ODataPrimitiveValueImpl build() {
-      if (this.instance.text == null && this.instance.value == null) {
+    public AbstractODataPrimitiveValue build() {
+      if (getInstance().text == null && getInstance().value == null) {
         throw new IllegalArgumentException("Must provide either text or value");
       }
-      if (this.instance.text != null && this.instance.value != null) {
+      if (getInstance().text != null && getInstance().value != null) {
         throw new IllegalArgumentException("Cannot provide both text and value");
       }
 
-      if (this.instance.type == null) {
+      if (getInstance().type == null) {
         setType(EdmPrimitiveTypeKind.String);
       }
 
-      if (this.instance.text != null) {
-        final Class<?> returnType = this.instance.type.getDefaultType().isAssignableFrom(Calendar.class)
-                ? Timestamp.class : this.instance.type.getDefaultType();
+      if (getInstance().text != null) {
+        final Class<?> returnType = getInstance().type.getDefaultType().isAssignableFrom(Calendar.class)
+                ? Timestamp.class : getInstance().type.getDefaultType();
         try {
           // TODO: when Edm is available, set facets when calling this method
-          this.instance.value = this.instance.type.valueOfString(
-                  this.instance.text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+          getInstance().value = getInstance().type.valueOfString(
+                  getInstance().text, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
                   returnType);
         } catch (EdmPrimitiveTypeException e) {
           throw new IllegalArgumentException(e);
         }
       }
-      if (this.instance.value != null) {
+      if (getInstance().value != null) {
         try {
           // TODO: when Edm is available, set facets when calling this method
-          this.instance.text = this.instance.type.valueToString(
-                  this.instance.value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+          getInstance().text = getInstance().type.valueToString(
+                  getInstance().value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
         } catch (EdmPrimitiveTypeException e) {
           throw new IllegalArgumentException(e);
         }
       }
 
-      return this.instance;
+      return getInstance();
     }
   }
 
@@ -139,7 +138,7 @@ public class ODataPrimitiveValueImpl extends AbstractODataValue implements OData
    */
   private Object value;
 
-  private ODataPrimitiveValueImpl() {
+  protected AbstractODataPrimitiveValue() {
     super(null);
   }
 

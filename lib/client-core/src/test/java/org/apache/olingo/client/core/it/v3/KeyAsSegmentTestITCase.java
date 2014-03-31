@@ -22,7 +22,6 @@ import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.AfterClass;
@@ -68,10 +67,10 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   public void createODataEntityAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
     final int id = 1;
-    final CommonODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
+    final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     createEntity(testStaticServiceRootURL, format, original, "Customer");
-    final CommonODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
+    final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
 
     cleanAfterCreate(format, actual, false, testStaticServiceRootURL);
   }
@@ -80,10 +79,10 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   public void createODataEntityAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
     final int id = 2;
-    final CommonODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
+    final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     createEntity(testStaticServiceRootURL, format, original, "Customer");
-    final CommonODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
+    final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
 
     cleanAfterCreate(format, actual, false, testStaticServiceRootURL);
   }
@@ -91,7 +90,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void replaceODataEntityAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final CommonODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
+    final ODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -99,7 +98,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void replaceODataEntityAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final CommonODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
+    final ODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }

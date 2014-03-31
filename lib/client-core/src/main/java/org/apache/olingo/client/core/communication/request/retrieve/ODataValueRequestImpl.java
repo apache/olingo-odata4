@@ -28,7 +28,6 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
@@ -69,6 +68,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
      * Just to create response templates to be initialized from batch.
      */
     private ODataValueResponseImpl() {
+      super();
     }
 
     /**
@@ -90,7 +90,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
         final ODataValueFormat format = ODataValueFormat.fromString(getContentType());
 
         try {
-          value = new ODataPrimitiveValueImpl.BuilderImpl(odataClient.getServiceVersion()).
+          value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
                   setType(format == ODataValueFormat.TEXT
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setText(IOUtils.toString(getRawResponse())).

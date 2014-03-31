@@ -35,7 +35,7 @@ public abstract class AbstractODataValue implements ODataValue {
    */
   private final String typeName;
 
-  public AbstractODataValue(String typeName) {
+  public AbstractODataValue(final String typeName) {
     this.typeName = typeName;
   }
 
@@ -79,9 +79,10 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return complex value.
    */
+//  @SuppressWarnings("unchecked")
   @Override
-  public ODataComplexValue asComplex() {
-    return isComplex() ? (ODataComplexValue) this : null;
+  public <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex() {
+    return isComplex() ? (ODataComplexValue<OP>) this : null;
   }
 
   /**
@@ -99,9 +100,10 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return collection value.
    */
+//  @SuppressWarnings("unchecked")
   @Override
-  public ODataCollectionValue asCollection() {
-    return isCollection() ? (ODataCollectionValue) this : null;
+  public <OV extends ODataValue> ODataCollectionValue<OV> asCollection() {
+    return isCollection() ? (ODataCollectionValue<OV>) this : null;
   }
 
   @Override
