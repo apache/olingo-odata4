@@ -25,11 +25,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 
 public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODataErrorImpl> {
 
   @Override
-  protected JSONODataErrorImpl doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected Container<JSONODataErrorImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final JSONODataErrorImpl error = new JSONODataErrorImpl();
@@ -54,7 +55,6 @@ public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODa
       }
     }
 
-    return error;
+    return new Container<JSONODataErrorImpl>(null, null, error);
   }
-
 }

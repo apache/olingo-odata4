@@ -1,5 +1,6 @@
 {
   "@odata.context": "http://host/service/$metadata",
+  "@odata.metadataEtag": "W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"",
   "value": [
     {
       "name": "Orders",

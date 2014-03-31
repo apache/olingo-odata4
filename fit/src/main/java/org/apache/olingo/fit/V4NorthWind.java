@@ -23,7 +23,8 @@ import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.InInterceptors;
-import static org.apache.olingo.fit.utils.Constants.METADATA;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
 
 @Path("/V40/NorthWind.svc")
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
@@ -40,7 +41,7 @@ public class V4NorthWind extends AbstractServices {
 
   @Override
   public Response getMetadata() {
-    return getMetadata("northwind-" + METADATA);
+    return getMetadata("northwind-" + Constants.get(getVersion(), ConstantKey.METADATA));
   }
 
 }

@@ -38,20 +38,6 @@ public interface ServiceDocument {
   URI getBaseURI();
 
   /**
-   * Returns metadata context.
-   *
-   * @return metadata context
-   */
-  String getMetadataContext();
-
-  /**
-   * Returns metadata ETag.
-   *
-   * @return metadata ETag
-   */
-  String getMetadataETag();
-
-  /**
    * Gets top level entity sets.
    *
    * @return top level entity sets.
@@ -134,5 +120,4 @@ public interface ServiceDocument {
    * @return related service document with given title if found, otherwise null
    */
   ServiceDocumentItem getRelatedServiceDocumentByTitle(String title);
-
 }

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -42,7 +43,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.junit.Ignore;
+
 import org.junit.Test;
 
 /**
@@ -70,7 +71,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals(getServiceRoot() + "/Customers(PersonID=1)", entity.getEditLink().toASCIIString());
 
     assertEquals(3, entity.getNavigationLinks().size());
-    assertTrue(entity.getAssociationLinks().isEmpty());
+
+    if (ODataPubFormat.ATOM == format) {
+      assertTrue(entity.getAssociationLinks().isEmpty());
+    } else {
+      // In JSON, association links for each $ref link will exist.
+      assertFalse(entity.getAssociationLinks().isEmpty());
+    }
 
     boolean found = false;
 
@@ -106,7 +113,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void withInlineEntryFromJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
     withInlineEntry(ODataPubFormat.JSON_FULL_METADATA);
@@ -144,7 +150,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void withInlineFeedFromJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
     withInlineFeed(ODataPubFormat.JSON_FULL_METADATA);
@@ -173,7 +178,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void rawRequestAsJSON() {
     // this needs to be full, otherwise actions will not be provided
     rawRequest(ODataPubFormat.JSON_FULL_METADATA);
@@ -203,7 +207,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void multiKeyAsJSON() throws EdmPrimitiveTypeException {
     multiKey(ODataPubFormat.JSON_FULL_METADATA);
   }
@@ -214,7 +217,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void checkForETagAsJSON() {
     checkForETag(ODataPubFormat.JSON_FULL_METADATA);
   }
@@ -237,9 +239,8 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  @Ignore
   public void issue99() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Car");
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.JSON);
@@ -255,7 +256,6 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void retrieveEntityViaReferenceAsJSON() {
     retrieveEntityViaReference(ODataPubFormat.JSON_FULL_METADATA);
   }

@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import static org.apache.olingo.fit.utils.Constants.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -61,7 +59,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     IOUtils.closeQuietly(is);
 
     for (String link : links) {
-      srcNode.set(link + JSON_NAVIGATION_SUFFIX,
+      srcNode.set(link + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
               new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
     }
 
@@ -81,10 +79,10 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     while (fieldIter.hasNext()) {
       final String field = fieldIter.next();
 
-      if (field.endsWith(JSON_NAVIGATION_BIND_SUFFIX)
-              || field.endsWith(JSON_NAVIGATION_SUFFIX)
-              || field.endsWith(JSON_MEDIA_SUFFIX)
-              || field.endsWith(JSON_EDITLINK_NAME)) {
+      if (field.endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))
+              || field.endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
+              || field.endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
+              || field.endsWith(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME))) {
         if (field.indexOf('@') > 0) {
           links.add(field.substring(0, field.indexOf('@')));
         } else {
@@ -113,7 +111,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     while (fieldIter.hasNext()) {
       final Map.Entry<String, JsonNode> field = fieldIter.next();
-      if (field.getKey().endsWith(JSON_NAVIGATION_BIND_SUFFIX)) {
+      if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))) {
         final String title = field.getKey().substring(0, field.getKey().indexOf('@'));
         final List<String> hrefs = new ArrayList<String>();
         if (field.getValue().isArray()) {
@@ -148,17 +146,17 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     if (links != null) {
       for (String linkTitle : links.getLinkNames()) {
         // normalize link
-        srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
+        srcNode.remove(linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
         srcNode.set(
-                linkTitle + JSON_NAVIGATION_SUFFIX,
+                linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
                 new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
       }
 
       for (String linkTitle : links.getInlineNames()) {
         // normalize link if exist; declare a new one if missing
-        srcNode.remove(linkTitle + JSON_NAVIGATION_BIND_SUFFIX);
+        srcNode.remove(linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX));
         srcNode.set(
-                linkTitle + JSON_NAVIGATION_SUFFIX,
+                linkTitle + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX),
                 new TextNode(String.format("%s(%s)/%s", entitySetName, entityKey, linkTitle)));
 
         // remove inline
@@ -170,8 +168,8 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     }
 
     srcNode.set(
-            JSON_EDITLINK_NAME,
-            new TextNode(Constants.DEFAULT_SERVICE_URL + entitySetName + "(" + entityKey + ")"));
+            Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
+            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
     return IOUtils.toInputStream(srcNode.toString());
   }
@@ -190,8 +188,9 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
           final String entitySetName, final String entityId, final List<String> path, final String edmType)
           throws Exception {
 
-    final InputStream src =
-            fsManager.readFile(Commons.getEntityBasePath(entitySetName, entityId) + ENTITY, Accept.JSON_FULLMETA);
+    final InputStream src = fsManager.readFile(
+            Commons.getEntityBasePath(entitySetName, entityId) + Constants.get(version, ConstantKey.ENTITY),
+            Accept.JSON_FULLMETA);
 
     final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
@@ -199,7 +198,9 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final ObjectNode propertyNode = new ObjectNode(JsonNodeFactory.instance);
 
     if (StringUtils.isNotBlank(edmType)) {
-      propertyNode.put(JSON_ODATAMETADATA_NAME, ODATA_METADATA_PREFIX + edmType);
+      propertyNode.put(Constants.get(
+              version, ConstantKey.JSON_ODATAMETADATA_NAME),
+              Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + edmType);
     }
 
     JsonNode jsonNode = getProperty(srcNode, path);
@@ -241,7 +242,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
 
-    ((ObjectNode) srcNode).put(ODATA_COUNT_NAME, count);
+    ((ObjectNode) srcNode).put(Constants.get(version, ConstantKey.ODATA_COUNT_NAME), count);
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     mapper.writeValue(bos, srcNode);
@@ -258,14 +259,14 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     final ObjectNode res;
 
-    final JsonNode value = node.get(JSON_VALUE_NAME);
+    final JsonNode value = node.get(Constants.get(version, ConstantKey.JSON_VALUE_NAME));
 
     if (value.isArray()) {
       res = mapper.createObjectNode();
       res.set("value", value);
-      final JsonNode next = node.get(JSON_NEXTLINK_NAME);
+      final JsonNode next = node.get(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
       if (next != null) {
-        res.set(JSON_NEXTLINK_NAME, next);
+        res.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), next);
       }
     } else {
       res = (ObjectNode) value;
@@ -286,18 +287,18 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
 
     final Set<String> retain = new HashSet<String>();
-    retain.add(JSON_ID_NAME);
-    retain.add(JSON_TYPE_NAME);
-    retain.add(JSON_EDITLINK_NAME);
-    retain.add(JSON_NEXTLINK_NAME);
-    retain.add(JSON_ODATAMETADATA_NAME);
-    retain.add(JSON_VALUE_NAME);
+    retain.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
+    retain.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
+    retain.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
+    retain.add(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
+    retain.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
+    retain.add(Constants.get(version, ConstantKey.JSON_VALUE_NAME));
 
     for (String name : propertyNames) {
       retain.add(name);
-      retain.add(name + JSON_NAVIGATION_SUFFIX);
-      retain.add(name + JSON_MEDIA_SUFFIX);
-      retain.add(name + JSON_TYPE_SUFFIX);
+      retain.add(name + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX));
+      retain.add(name + Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX));
+      retain.add(name + Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX));
     }
 
     srcNode.retain(retain);
@@ -344,10 +345,11 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       bos.write("]".getBytes());
     }
 
-    node.set(JSON_VALUE_NAME, mapper.readTree(new ByteArrayInputStream(bos.toByteArray())));
+    node.set(Constants.get(version, ConstantKey.JSON_VALUE_NAME),
+            mapper.readTree(new ByteArrayInputStream(bos.toByteArray())));
 
     if (StringUtils.isNotBlank(next)) {
-      node.set(JSON_NEXTLINK_NAME, new TextNode(next));
+      node.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), new TextNode(next));
     }
 
     return IOUtils.toInputStream(node.toString());
@@ -362,15 +364,15 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
 
-    if (toBeChangedNode.get(linkName + JSON_NAVIGATION_SUFFIX) == null) {
+    if (toBeChangedNode.get(linkName + Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX)) == null) {
       throw new NotFoundException();
     }
 
-    toBeChangedNode.set(linkName, replacementNode.get(JSON_VALUE_NAME));
+    toBeChangedNode.set(linkName, replacementNode.get(Constants.get(version, ConstantKey.JSON_VALUE_NAME)));
 
-    final JsonNode next = replacementNode.get(linkName + JSON_NEXTLINK_NAME);
+    final JsonNode next = replacementNode.get(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
     if (next != null) {
-      toBeChangedNode.set(linkName + JSON_NEXTLINK_SUFFIX, next);
+      toBeChangedNode.set(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_SUFFIX), next);
     }
 
     return IOUtils.toInputStream(toBeChangedNode.toString());
@@ -437,7 +439,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       }
     }
 
-    final JsonNode next = srcNode.get(JSON_NEXTLINK_NAME);
+    final JsonNode next = srcNode.get(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME));
 
     return new SimpleEntry<String, List<String>>(next == null ? null : next.asText(), links);
   }
@@ -449,7 +451,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
-    srcNode.set(JSON_EDITLINK_NAME, new TextNode(href));
+    srcNode.set(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(href));
     return IOUtils.toInputStream(srcNode.toString());
   }
 

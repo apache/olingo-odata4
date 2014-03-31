@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.commons.core.op;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -101,10 +103,9 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
       writer.flush();
       writer.close();
 
-      return (Container<T>) atomDeserializer.getContainer(
-              start, getXmlMapper().readValue(new ByteArrayInputStream(baos.toByteArray()), reference));
+      final V obj = getXmlMapper().readValue(new ByteArrayInputStream(baos.toByteArray()), reference);
+      return (Container<T>) (obj instanceof Container ? obj : atomDeserializer.getContainer(start, obj));
     } catch (Exception e) {
-      e.printStackTrace();
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }
   }
@@ -119,7 +120,14 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
 
   protected <T, V extends T> Container<T> json(final InputStream input, final Class<V> reference) {
     try {
-      return new Container<T>(null, null, getObjectMapper().readValue(input, reference));
+      T obj = getObjectMapper().readValue(input, new TypeReference<V>() {
+        @Override
+        public Type getType() {
+          return reference;
+        }
+      });
+
+      return obj instanceof Container ? (Container<T>) obj : new Container<T>(null, null, obj);
     } catch (Exception e) {
       throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
     }

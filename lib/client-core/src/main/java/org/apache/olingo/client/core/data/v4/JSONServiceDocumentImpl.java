@@ -23,21 +23,6 @@ import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.net.URI;
-import org.apache.olingo.commons.api.Constants;
-
 @JsonDeserialize(using = JSONServiceDocumentDeserializer.class)
 public class JSONServiceDocumentImpl extends AbstractServiceDocument implements ServiceDocument {
-
-  @Override
-  public URI getBaseURI() {
-    URI baseURI = null;
-    if (getMetadataContext() != null) {
-      final String metadataURI = getMetadataContext();
-      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
-    }
-
-    return baseURI;
-  }
-
 }

@@ -97,7 +97,6 @@ public class AsyncTestITCase extends AbstractTestITCase {
    * @see MediaEntityTest#createMediaEntity(com.msopentech.odatajclient.engine.format.ODataPubFormat)
    */
   @Test
-  @Ignore
   public void createMediaEntity() throws Exception {
     CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 

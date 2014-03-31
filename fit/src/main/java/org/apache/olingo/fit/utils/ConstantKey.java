@@ -18,18 +18,50 @@
  */
 package org.apache.olingo.fit.utils;
 
-public enum ODataVersion {
+public enum ConstantKey {
 
-  v3("3.0"),
-  v4("4.0");
+  ODATA_SERVICE_VERSION,
+  DEFAULT_SERVICE_URL,
+  ODATA_COUNT_NAME,
+  ODATA_METADATA_PREFIX,
+  ATOM_DEF_TYPE,
+  ATOM_PROPERTY_PREFIX,
+  ATOM_METADATA_PREFIX,
+  ATOM_METADATA_NS,
+  ATOM_DATASERVICE_NS,
+  ATOM_LINK_ENTRY,
+  ATOM_LINK_FEED,
+  ATOM_LINK_REL,
+  TYPE,
+  INLINE_LOCAL,
+  INLINE_FILE_PATH,
+  LINKS_FILE_PATH,
+  INLINE,
+  CONTENT,
+  PROPERTIES,
+  LINK,
+  DATASERVICES_NS,
+  METADATA_NS,
+  METADATA,
+  SERVICES,
+  FEED,
+  ENTITY,
+  REF,
+  MEDIA_CONTENT_FILENAME,
+  SKIP_TOKEN,
+  FILTER,
+  ORDERBY,
+  JSON_VALUE_NAME,
+  JSON_NEXTLINK_NAME,
+  JSON_NEXTLINK_SUFFIX,
+  JSON_ODATAMETADATA_NAME,
+  JSON_NAVIGATION_BIND_SUFFIX,
+  JSON_NAVIGATION_SUFFIX,
+  JSON_MEDIA_SUFFIX,
+  JSON_TYPE_NAME,
+  JSON_TYPE_SUFFIX,
+  JSON_ID_NAME,
+  JSON_EDITLINK_NAME,
+  XHTTP_HEADER_NAME;
 
-  private final String version;
-
-  private ODataVersion(String version) {
-    this.version = version;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-}
+};

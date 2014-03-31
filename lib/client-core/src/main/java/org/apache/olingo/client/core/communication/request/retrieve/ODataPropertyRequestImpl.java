@@ -88,7 +88,7 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
         try {
           final Container<Property> container =
                   odataClient.getDeserializer().toProperty(
-                          res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
+                  res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
 
           property = (T) odataClient.getBinder().getODataProperty(extractFromContainer(container));
         } catch (IOException e) {

@@ -292,7 +292,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final CommonODataEntity entity = resource.getSelfLink() == null
             ? client.getObjectFactory().newEntity(resource.getType())
             : client.getObjectFactory().newEntity(resource.getType(),
-                    URIUtils.getURI(base, resource.getSelfLink().getHref()));
+            URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
@@ -321,12 +321,12 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
         entity.addLink(client.getObjectFactory().newInlineEntity(
                 link.getTitle(), base, link.getHref(),
                 getODataEntity(inlineEntry,
-                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
       } else {
         entity.addLink(client.getObjectFactory().newInlineEntitySet(
                 link.getTitle(), base, link.getHref(),
                 getODataEntitySet(inlineFeed,
-                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
       }
     }
 
@@ -363,18 +363,18 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(resource.getValue().asPrimitive().get()).
               setType(typeInfo == null
-                      ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(
-                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+              ? null
+              : EdmPrimitiveTypeKind.valueOfFQN(
+              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(typeInfo == null
-                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-                      ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-                      : EdmPrimitiveTypeKind.valueOfFQN(
-                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+              ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+              : EdmPrimitiveTypeKind.valueOfFQN(
+              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isComplex()) {
       value = client.getObjectFactory().newComplexValue(typeInfo == null
               ? null : typeInfo.getFullQualifiedName().toString());

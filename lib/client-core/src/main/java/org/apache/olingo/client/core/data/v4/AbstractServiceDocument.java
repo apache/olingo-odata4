@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.data.v4;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,49 +26,11 @@ import org.apache.olingo.client.api.data.ServiceDocumentItem;
 public abstract class AbstractServiceDocument
         extends org.apache.olingo.client.core.data.AbstractServiceDocument {
 
-  private URI baseURI;
-
-  private String metadataContext;
-
-  private String metadataETag;
-
   private List<ServiceDocumentItem> functionImports = new ArrayList<ServiceDocumentItem>();
 
   private List<ServiceDocumentItem> singletons = new ArrayList<ServiceDocumentItem>();
 
   private List<ServiceDocumentItem> relatedServiceDocuments = new ArrayList<ServiceDocumentItem>();
-
-  @Override
-  public URI getBaseURI() {
-    return this.baseURI;
-  }
-
-  /**
-   * Sets base URI.
-   *
-   * @param baseURI base URI.
-   */
-  public void setBaseURI(final URI baseURI) {
-    this.baseURI = baseURI;
-  }
-
-  @Override
-  public String getMetadataContext() {
-    return metadataContext;
-  }
-
-  public void setMetadataContext(final String metadataContext) {
-    this.metadataContext = metadataContext;
-  }
-
-  @Override
-  public String getMetadataETag() {
-    return metadataETag;
-  }
-
-  public void setMetadataETag(final String metadataETag) {
-    this.metadataETag = metadataETag;
-  }
 
   @Override
   public List<ServiceDocumentItem> getFunctionImports() {
@@ -85,5 +46,4 @@ public abstract class AbstractServiceDocument
   public List<ServiceDocumentItem> getRelatedServiceDocuments() {
     return relatedServiceDocuments;
   }
-
 }

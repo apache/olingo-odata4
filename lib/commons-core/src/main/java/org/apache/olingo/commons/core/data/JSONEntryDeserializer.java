@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -33,6 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
@@ -58,7 +60,10 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
 
       if (inline instanceof ObjectNode) {
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
-        link.setInlineEntry(inline.traverse(codec).readValuesAs(JSONEntryImpl.class).next());
+
+        link.setInlineEntry(inline.traverse(codec).<Container<JSONEntryImpl>>readValueAs(
+                new TypeReference<JSONEntryImpl>() {
+        }).getObject());
       }
 
       if (inline instanceof ArrayNode) {
@@ -67,7 +72,9 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         final JSONFeedImpl feed = new JSONFeedImpl();
         final Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
         while (entries.hasNext()) {
-          feed.getEntries().add(entries.next().traverse(codec).readValuesAs(JSONEntryImpl.class).next());
+          feed.getEntries().add(entries.next().traverse(codec).<Container<JSONEntryImpl>>readValuesAs(
+                  new TypeReference<JSONEntryImpl>() {
+          }).next().getObject());
         }
 
         link.setInlineFeed(feed);
@@ -77,7 +84,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
   }
 
   @Override
-  protected JSONEntryImpl doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected Container<JSONEntryImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -86,18 +93,30 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
+    final String metadataETag;
+    final URI contextURL;
     final JSONEntryImpl entry = new JSONEntryImpl();
 
-    String contextURL = null;
+    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
+      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
+      tree.remove(Constants.JSON_METADATA_ETAG);
+    } else {
+      metadataETag = null;
+    }
+
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      contextURL = tree.get(Constants.JSON_CONTEXT).textValue();
+      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      contextURL = tree.get(Constants.JSON_METADATA).textValue();
+      contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
       tree.remove(Constants.JSON_METADATA);
+    } else {
+      contextURL = null;
     }
+
     if (contextURL != null) {
-      entry.setBaseURI(contextURL.substring(0, contextURL.indexOf(Constants.METADATA)));
+      String url = contextURL.toASCIIString();
+      entry.setBaseURI(url.substring(0, url.indexOf(Constants.METADATA)));
     }
 
     if (tree.hasNonNull(jsonETag)) {
@@ -237,6 +256,6 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       }
     }
 
-    return entry;
+    return new Container<JSONEntryImpl>(contextURL, metadataETag, entry);
   }
 }

@@ -64,19 +64,19 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   public ODataServiceDocument getODataServiceDocument(final ServiceDocument resource) {
     final ODataServiceDocument serviceDocument = super.getODataServiceDocument(resource);
 
-    serviceDocument.setMetadataContext(URIUtils.getURI(resource.getBaseURI(), resource.getMetadataContext()));
-    serviceDocument.setMetadataETag(resource.getMetadataETag());
-
     for (ServiceDocumentItem functionImport : resource.getFunctionImports()) {
-      serviceDocument.getFunctionImports().put(functionImport.getTitle(),
+      serviceDocument.getFunctionImports().put(
+              functionImport.getName() == null ? functionImport.getHref() : functionImport.getName(),
               URIUtils.getURI(resource.getBaseURI(), functionImport.getHref()));
     }
     for (ServiceDocumentItem singleton : resource.getSingletons()) {
-      serviceDocument.getSingletons().put(singleton.getTitle(),
+      serviceDocument.getSingletons().put(
+              singleton.getName() == null ? singleton.getHref() : singleton.getName(),
               URIUtils.getURI(resource.getBaseURI(), singleton.getHref()));
     }
     for (ServiceDocumentItem sdoc : resource.getRelatedServiceDocuments()) {
-      serviceDocument.getRelatedServiceDocuments().put(sdoc.getTitle(),
+      serviceDocument.getRelatedServiceDocuments().put(
+              sdoc.getName() == null ? sdoc.getHref() : sdoc.getName(),
               URIUtils.getURI(resource.getBaseURI(), sdoc.getHref()));
     }
 

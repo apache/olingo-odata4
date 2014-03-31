@@ -26,7 +26,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceD
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServiceDocumentTestITCase extends AbstractTestITCase {
@@ -40,9 +39,9 @@ public class ServiceDocumentTestITCase extends AbstractTestITCase {
     assertEquals(200, res.getStatusCode());
 
     final ODataServiceDocument serviceDocument = res.getBody();
-    assertEquals(12, serviceDocument.getEntitySetTitles().size());
-    assertEquals(6, serviceDocument.getSingletonTitles().size());
-    assertEquals(6, serviceDocument.getFunctionImportTitles().size());
+    assertEquals(12, serviceDocument.getEntitySets().size());
+    assertEquals(6, serviceDocument.getSingletons().size());
+    assertEquals(6, serviceDocument.getFunctionImports().size());
 
     assertTrue(res.getContextURL().toASCIIString().endsWith("/StaticService/V40/Static.svc/$metadata"));
     assertEquals(URI.create(testStaticServiceRootURL + "/ProductDetails"),
@@ -59,7 +58,6 @@ public class ServiceDocumentTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void retrieveServiceDocumentAsJSON() {
     retrieveServiceDocument(ODataFormat.JSON);
   }

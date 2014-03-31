@@ -253,7 +253,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
-    uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
+    uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).
             appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
@@ -277,7 +277,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
-                    alternativeNames);
+            alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {

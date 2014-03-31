@@ -22,7 +22,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
-import org.apache.olingo.commons.api.edm.geo.Point;
 
 public final class EdmGeometryCollection extends AbstractGeospatialType<GeospatialCollection> {
 

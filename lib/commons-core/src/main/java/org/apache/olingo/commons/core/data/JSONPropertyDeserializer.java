@@ -23,8 +23,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 
 /**
  * Parse JSON string into <tt>JSONPropertyImpl</tt>.
@@ -34,27 +36,35 @@ import org.apache.olingo.commons.api.Constants;
 public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPropertyImpl> {
 
   @Override
-  protected JSONPropertyImpl doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected Container<JSONPropertyImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
 
+    final String metadataETag;
+    final URI contextURL;
     final JSONPropertyImpl property = new JSONPropertyImpl();
 
-    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      final String contextURL = tree.get(Constants.JSON_CONTEXT).textValue();
-      property.setName(StringUtils.substringAfterLast(contextURL, "/"));
-      tree.remove(Constants.JSON_CONTEXT);
-    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      final String metadata = tree.get(Constants.JSON_METADATA).textValue();
-      final int dashIdx = metadata.lastIndexOf('#');
-      if (dashIdx != -1) {
-        property.setType(metadata.substring(dashIdx + 1));
-      }
-      tree.remove(Constants.JSON_METADATA);
+    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
+      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
+      tree.remove(Constants.JSON_METADATA_ETAG);
+    } else {
+      metadataETag = null;
     }
 
-    if (tree.has(jsonType) && property.getType() == null) {
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
+      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
+      property.setName(StringUtils.substringAfterLast(contextURL.toASCIIString(), "/"));
+      tree.remove(Constants.JSON_CONTEXT);
+    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
+      property.setType(StringUtils.substringAfterLast(contextURL.toASCIIString(), "#"));
+      tree.remove(Constants.JSON_METADATA);
+    } else {
+      contextURL = null;
+    }
+
+    if (tree.has(jsonType)) {
       property.setType(tree.get(jsonType).asText());
     }
 
@@ -66,6 +76,6 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
       value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree);
     }
 
-    return property;
+    return new Container<JSONPropertyImpl>(contextURL, metadataETag, property);
   }
 }

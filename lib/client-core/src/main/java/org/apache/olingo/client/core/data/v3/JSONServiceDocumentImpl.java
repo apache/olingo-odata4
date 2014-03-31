@@ -20,11 +20,9 @@ package org.apache.olingo.client.core.data.v3;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.net.URI;
 
 import org.apache.olingo.client.core.data.AbstractServiceDocument;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
-import org.apache.olingo.commons.api.Constants;
 
 /**
  * Service document, represented via JSON.
@@ -34,34 +32,4 @@ public class JSONServiceDocumentImpl extends AbstractServiceDocument {
 
   private static final long serialVersionUID = 4195734928526398830L;
 
-  private String metadata;
-
-  @Override
-  public URI getBaseURI() {
-    URI baseURI = null;
-    if (metadata != null) {
-      final String metadataURI = getMetadata();
-      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
-    }
-
-    return baseURI;
-  }
-
-  /**
-   * Gets the metadata URI.
-   *
-   * @return the metadata URI
-   */
-  public String getMetadata() {
-    return metadata;
-  }
-
-  /**
-   * Sets the metadata URI.
-   *
-   * @param metadata metadata URI.
-   */
-  public void setMetadata(final String metadata) {
-    this.metadata = metadata;
-  }
 }

@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -54,7 +53,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void rawRequestAsJSON() throws IOException {
     rawRequest(ODataPubFormat.JSON);
   }
@@ -65,19 +63,16 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSON() {
     readODataEntitySetIterator(ODataPubFormat.JSON);
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSONFullMeta() {
     readODataEntitySetIterator(ODataPubFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSONNoMeta() {
     readODataEntitySetIterator(ODataPubFormat.JSON_NO_METADATA);
   }
@@ -88,7 +83,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetWithNextFromJSON() {
     readEntitySetWithNextLink(ODataPubFormat.JSON_FULL_METADATA);
   }
@@ -126,7 +120,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntitySetIterator<ODataEntitySet, ODataEntity>> res = req.execute();
-    final ODataEntitySetIterator feedIterator = res.getBody();
+    final ODataEntitySetIterator<ODataEntitySet, ODataEntity> feedIterator = res.getBody();
 
     assertNotNull(feedIterator);
 

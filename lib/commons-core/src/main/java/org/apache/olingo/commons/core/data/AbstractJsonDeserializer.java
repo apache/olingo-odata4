@@ -25,12 +25,13 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<T> {
+abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Container<T>> {
 
   private JSONGeoValueDeserializer geoDeserializer;
 

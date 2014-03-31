@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.fit.utils;
 
-import static org.apache.olingo.fit.utils.Constants.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -113,7 +111,8 @@ public abstract class Commons {
           throws IOException {
     try {
       return FSManager.instance(version)
-              .getAbsolutePath(basePath + LINKS_FILE_PATH + File.separatorChar + linkName, accept);
+              .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
+              + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }
@@ -147,7 +146,7 @@ public abstract class Commons {
       if (URI.create(uri).isAbsolute()) {
         builder.append(uri);
       } else {
-        builder.append(DEFAULT_SERVICE_URL).append(uri);
+        builder.append(Constants.get(ConstantKey.DEFAULT_SERVICE_URL)).append(uri);
       }
       builder.append("</uri>");
     }
@@ -162,8 +161,8 @@ public abstract class Commons {
           throws IOException {
     final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
     links.put(
-            JSON_ODATAMETADATA_NAME,
-            ODATA_METADATA_PREFIX + entitySetName + "/$links/" + link.getKey());
+            Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME),
+            Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
 
     final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
@@ -172,7 +171,7 @@ public abstract class Commons {
       if (URI.create(uri).isAbsolute()) {
         absoluteURI = uri;
       } else {
-        absoluteURI = DEFAULT_SERVICE_URL + uri;
+        absoluteURI = Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + uri;
       }
       uris.add(new ObjectNode(JsonNodeFactory.instance).put("url", absoluteURI));
     }
@@ -214,20 +213,20 @@ public abstract class Commons {
     switch (target) {
       case JSON_NOMETA:
         // nometa + minimal
-        toBeRemoved.add(JSON_ODATAMETADATA_NAME);
+        toBeRemoved.add(Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME));
 
       case JSON:
         // minimal
-        toBeRemoved.add(JSON_EDITLINK_NAME);
-        toBeRemoved.add(JSON_ID_NAME);
-        toBeRemoved.add(JSON_TYPE_NAME);
+        toBeRemoved.add(Constants.get(ConstantKey.JSON_EDITLINK_NAME));
+        toBeRemoved.add(Constants.get(ConstantKey.JSON_ID_NAME));
+        toBeRemoved.add(Constants.get(ConstantKey.JSON_TYPE_NAME));
 
         final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
         while (fields.hasNext()) {
           final Map.Entry<String, JsonNode> field = fields.next();
-          if (field.getKey().endsWith(JSON_MEDIA_SUFFIX)
-                  || field.getKey().endsWith(JSON_NAVIGATION_SUFFIX)
-                  || field.getKey().endsWith(JSON_TYPE_SUFFIX)) {
+          if (field.getKey().endsWith(Constants.get(ConstantKey.JSON_MEDIA_SUFFIX))
+                  || field.getKey().endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX))
+                  || field.getKey().endsWith(Constants.get(ConstantKey.JSON_TYPE_SUFFIX))) {
             toBeRemoved.add(field.getKey());
           } else if (field.getValue().isObject()) {
             toBeReplaced.put(field.getKey(), changeFormat((ObjectNode) field.getValue(), target));

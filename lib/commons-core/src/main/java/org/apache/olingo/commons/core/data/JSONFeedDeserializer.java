@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 
 /**
  * Reads JSON string into a feed.
@@ -36,7 +38,7 @@ import org.apache.olingo.commons.api.Constants;
 public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl> {
 
   @Override
-  protected JSONFeedImpl doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected Container<JSONFeedImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -45,15 +47,28 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
       return null;
     }
 
+    final String metadataETag;
+    final URI contextURL;
     final JSONFeedImpl feed = new JSONFeedImpl();
 
+    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
+      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
+      tree.remove(Constants.JSON_METADATA_ETAG);
+    } else {
+      metadataETag = null;
+    }
+
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      feed.setContextURL(URI.create(tree.get(Constants.JSON_CONTEXT).textValue()));
+      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      feed.setContextURL(URI.create(tree.get(Constants.JSON_METADATA).textValue()));
+      contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
       tree.remove(Constants.JSON_METADATA);
+    } else {
+      contextURL = null;
     }
+
+    feed.setMetadataContextURL(contextURL);
 
     if (tree.hasNonNull(Constants.JSON_COUNT)) {
       feed.setCount(tree.get(Constants.JSON_COUNT).asInt());
@@ -64,10 +79,13 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
 
     if (tree.hasNonNull(Constants.VALUE)) {
       for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {
-        feed.getEntries().add(itor.next().traverse(parser.getCodec()).readValueAs(JSONEntryImpl.class));
+        feed.getEntries().add(
+                itor.next().traverse(parser.getCodec()).<Container<JSONEntryImpl>>readValueAs(
+                new TypeReference<JSONEntryImpl>() {
+        }).getObject());
       }
     }
 
-    return feed;
+    return new Container<JSONFeedImpl>(contextURL, metadataETag, feed);
   }
 }

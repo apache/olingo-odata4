@@ -23,7 +23,8 @@ import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.InInterceptors;
-import static org.apache.olingo.fit.utils.Constants.METADATA;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
 
 @Path("/V40/NorthWindExt.svc")
@@ -41,7 +42,7 @@ public class V4NorthWindExt extends AbstractServices {
 
   @Override
   public Response getMetadata() {
-    return getMetadata("northwindExt-" + METADATA);
+    return getMetadata("northwindExt-" + Constants.get(getVersion(), ConstantKey.METADATA));
   }
 
 }
