@@ -66,8 +66,8 @@ class AtomPropertyDeserializer extends AbstractAtomDealer {
         foundEndProperty = true;
       }
     }
-    
-    return value == null? new PrimitiveValueImpl(StringUtils.EMPTY): value;
+
+    return value == null ? new PrimitiveValueImpl(StringUtils.EMPTY) : value;
   }
 
   private Value fromComplexOrEnum(final XMLEventReader reader, final StartElement start)

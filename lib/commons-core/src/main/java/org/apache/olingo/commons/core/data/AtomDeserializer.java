@@ -232,6 +232,11 @@ public class AtomDeserializer extends AbstractAtomDealer {
               entry.setSelfLink(link);
             } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
               entry.setEditLink(link);
+            } else if (Constants.EDITMEDIA_LINK_REL.equals(link.getRel())) {
+              final Attribute mediaETag = event.asStartElement().getAttributeByName(etagQName);
+              if (mediaETag != null) {
+                entry.setMediaETag(mediaETag.getValue());
+              }
             } else if (link.getRel().startsWith(
                     version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
               entry.getNavigationLinks().add(link);

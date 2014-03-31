@@ -52,6 +52,8 @@ public enum ODataServiceVersion {
 
   public static final String JSON_ID = "jsonId";
 
+  public static final String JSON_ETAG = "jsonETag";
+
   public static final String JSON_READ_LINK = "jsonReadLink";
 
   public static final String JSON_EDIT_LINK = "jsonEditLink";
@@ -59,6 +61,10 @@ public enum ODataServiceVersion {
   public static final String JSON_MEDIAREAD_LINK = "jsonMediaReadLink";
 
   public static final String JSON_MEDIAEDIT_LINK = "jsonMediaEditLink";
+
+  public static final String JSON_MEDIA_CONTENT_TYPE = "jsonMediaContentType";
+
+  public static final String JSON_MEDIA_ETAG = "jsonMediaETag";
 
   public static final String JSON_ASSOCIATION_LINK = "jsonAssociationLink";
 
@@ -85,10 +91,13 @@ public enum ODataServiceVersion {
     {
       put(JSON_TYPE, "odata.type");
       put(JSON_ID, "odata.id");
+      put(JSON_ETAG, "odata.etag");
       put(JSON_READ_LINK, "odata.readLink");
       put(JSON_EDIT_LINK, "odata.editLink");
       put(JSON_MEDIAREAD_LINK, "odata.mediaReadLink");
       put(JSON_MEDIAEDIT_LINK, "odata.mediaEditLink");
+      put(JSON_MEDIA_CONTENT_TYPE, "odata.mediaContentType");
+      put(JSON_MEDIA_ETAG, "odata.mediaEtag");
       put(JSON_ASSOCIATION_LINK, "@odata.associationLinkUrl");
       put(JSON_NAVIGATION_LINK, "@odata.navigationLinkUrl");
     }
@@ -115,10 +124,13 @@ public enum ODataServiceVersion {
     {
       put(JSON_TYPE, "@odata.type");
       put(JSON_ID, "@odata.id");
+      put(JSON_ETAG, "@odata.etag");
       put(JSON_READ_LINK, "@odata.readLink");
       put(JSON_EDIT_LINK, "@odata.editLink");
       put(JSON_MEDIAREAD_LINK, "@odata.mediaReadLink");
       put(JSON_MEDIAEDIT_LINK, "@odata.mediaEditLink");
+      put(JSON_MEDIA_CONTENT_TYPE, "@odata.mediaContentType");
+      put(JSON_MEDIA_ETAG, "@odata.mediaEtag");
       put(JSON_ASSOCIATION_LINK, "@odata.associationLink");
       put(JSON_NAVIGATION_LINK, "@odata.navigationLink");
     }

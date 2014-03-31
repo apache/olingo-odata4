@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.v4;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,6 +27,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
@@ -79,6 +81,12 @@ public class EntityTest extends AbstractTest {
     }
     assertEquals(3, checked);
 
+    assertEquals(2, entity.getOperations().size());
+    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
+            entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.ResetAddress").getMetadataAnchor());
+    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
+            entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress").getMetadataAnchor());
+
     // operations won't get serialized
     entity.getOperations().clear();
     final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
@@ -129,5 +137,91 @@ public class EntityTest extends AbstractTest {
   @Test
   public void jsonWithEnums() {
     withEnums(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  private void withInlineEntitySet(final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream(
+            "Accounts_101_expand_MyPaymentInstruments." + getSuffix(format));
+    final ODataEntity entity = getClient().getBinder().getODataEntity(
+            getClient().getDeserializer().toEntry(input, format).getObject());
+    assertNotNull(entity);
+
+    final ODataLink instruments = entity.getNavigationLink("MyPaymentInstruments");
+    assertNotNull(instruments);
+    assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, instruments.getType());
+
+    final ODataInlineEntitySet inline = instruments.asInlineEntitySet();
+    assertNotNull(inline);
+    assertEquals(3, inline.getEntitySet().getEntities().size());
+
+    // count shouldn't be serialized
+    inline.getEntitySet().setCount(3);
+    // operations won't get serialized
+    entity.getOperations().clear();
+    final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
+            getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
+    assertEquals(entity, written);
+  }
+
+  @Test
+  public void atomWithInlineEntitySet() {
+    withInlineEntitySet(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonWithInlineEntitySet() {
+    withInlineEntitySet(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  private void mediaEntity(final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream(
+            "Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7." + getSuffix(format));
+    final ODataEntity entity = getClient().getBinder().getODataEntity(
+            getClient().getDeserializer().toEntry(input, format).getObject());
+    assertNotNull(entity);
+
+    assertTrue(entity.isMediaEntity());
+    assertNotNull(entity.getMediaContentSource());
+    assertEquals("\"8zOOKKvgOtptr4gt8IrnapX3jds=\"", entity.getMediaETag());
+
+    final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
+            getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
+    assertEquals(entity, written);
+  }
+
+  @Test
+  public void atomMediaEntity() {
+    mediaEntity(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonMediaEntity() {
+    mediaEntity(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  private void withStream(final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream("PersonDetails_1." + getSuffix(format));
+    final ODataEntity entity = getClient().getBinder().getODataEntity(
+            getClient().getDeserializer().toEntry(input, format).getObject());
+    assertNotNull(entity);
+
+    assertFalse(entity.isMediaEntity());
+
+    final ODataLink editMedia = entity.getEditMediaLink("Photo");
+    assertNotNull(editMedia);
+
+    final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
+            getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
+    assertEquals(entity, written);
+  }
+
+  @Test
+  public void atomWithStream() {
+    withStream(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonWithStream() {
+    withStream(ODataPubFormat.JSON_FULL_METADATA);
   }
 }

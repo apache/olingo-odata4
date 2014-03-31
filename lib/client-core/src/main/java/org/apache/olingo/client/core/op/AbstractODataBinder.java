@@ -174,6 +174,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (entity.isMediaEntity()) {
       entry.setMediaContentSource(entity.getMediaContentSource());
       entry.setMediaContentType(entity.getMediaContentType());
+      entry.setMediaETag(entity.getMediaETag());
     }
 
     for (CommonODataProperty property : entity.getProperties()) {
@@ -342,6 +343,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entity.setMediaEntity(true);
       entity.setMediaContentSource(resource.getMediaContentSource());
       entity.setMediaContentType(resource.getMediaContentType());
+      entity.setMediaETag(resource.getMediaETag());
     }
 
     for (Property property : resource.getProperties()) {

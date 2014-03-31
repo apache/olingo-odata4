@@ -30,25 +30,4 @@ public class JSONEntryImpl extends AbstractEntry {
 
   private static final long serialVersionUID = -5275365545400797758L;
 
-  private String mediaETag;
-
-  /**
-   * The odata.mediaEtag annotation MAY be included; its value MUST be the ETag of the binary stream represented by this
-   * media entity or named stream property.
-   *
-   * @return odata.mediaEtag annotation value.
-   */
-  public String getMediaETag() {
-    return mediaETag;
-  }
-
-  /**
-   * The odata.mediaEtag annotation MAY be included; its value MUST be the ETag of the binary stream represented by this
-   * media entity or named stream property.
-   *
-   * @param eTag odata.mediaEtag annotation value.
-   */
-  public void setMediaETag(final String eTag) {
-    this.mediaETag = eTag;
-  }
 }

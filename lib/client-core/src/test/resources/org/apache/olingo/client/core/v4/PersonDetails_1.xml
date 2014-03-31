@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://services.odata.org/V4/OData/OData.svc/" 
+       xmlns="http://www.w3.org/2005/Atom" 
+       xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
+       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
+       xmlns:georss="http://www.georss.org/georss" 
+       xmlns:gml="http://www.opengis.net/gml" 
+       m:context="http://services.odata.org/V4/OData/OData.svc/$metadata#PersonDetails/$entity">
+  <id>http://services.odata.org/V4/OData/OData.svc/PersonDetails(1)</id>
+  <category term="#ODataDemo.PersonDetail" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <link rel="edit" title="PersonDetail" href="PersonDetails(1)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Person" type="application/xml" title="Person" href="PersonDetails(1)/Person/$ref" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Person" type="application/atom+xml;type=entry" title="Person" href="PersonDetails(1)/Person" />
+  <title />
+  <updated>2014-03-31T10:28:24Z</updated>
+  <author>
+    <name />
+  </author>
+  <link rel="http://docs.oasis-open.org/odata/ns/edit-media/Photo" title="Photo" href="PersonDetails(1)/Photo" />
+  <content type="application/xml">
+    <m:properties>
+      <d:PersonID m:type="Int32">1</d:PersonID>
+      <d:Age m:type="Byte">24</d:Age>
+      <d:Gender m:type="Boolean">true</d:Gender>
+      <d:Phone>(208) 555-8097</d:Phone>
+      <d:Address m:type="#ODataDemo.Address">
+        <d:Street>187 Suffolk Ln.</d:Street>
+        <d:City>Boise</d:City>
+        <d:State>ID</d:State>
+        <d:ZipCode>83720</d:ZipCode>
+        <d:Country>USA</d:Country>
+      </d:Address>
+    </m:properties>
+  </content>
+</entry>

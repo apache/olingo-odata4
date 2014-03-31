@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 
 /**
@@ -40,20 +41,17 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
 
     final JSONPropertyImpl property = new JSONPropertyImpl();
 
-    String contextURL = null;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      contextURL = tree.get(Constants.JSON_CONTEXT).textValue();
+      final String contextURL = tree.get(Constants.JSON_CONTEXT).textValue();
+      property.setName(StringUtils.substringAfterLast(contextURL, "/"));
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      contextURL = tree.get(Constants.JSON_METADATA).textValue();
-      tree.remove(Constants.JSON_METADATA);
-    }
-
-    if (contextURL != null) {
-      final int dashIdx = contextURL.lastIndexOf('#');
+      final String metadata = tree.get(Constants.JSON_METADATA).textValue();
+      final int dashIdx = metadata.lastIndexOf('#');
       if (dashIdx != -1) {
-        property.setType(contextURL.substring(dashIdx + 1));
+        property.setType(metadata.substring(dashIdx + 1));
       }
+      tree.remove(Constants.JSON_METADATA);
     }
 
     if (tree.has(jsonType) && property.getType() == null) {

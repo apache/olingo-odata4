@@ -1,0 +1,6 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Employees(3)/HomeAddress",
+  "Street": "1 Microsoft Way",
+  "City": "Sydney",
+  "PostalCode": "98052"
+}

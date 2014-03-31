@@ -57,6 +57,8 @@ public interface Constants {
 
   public static final String SELF_LINK_REL = "self";
 
+  public static final String EDITMEDIA_LINK_REL = "edit-media";
+
   public static final String NEXT_LINK_REL = "next";
 
   // XML elements and attributes
@@ -142,16 +144,6 @@ public interface Constants {
   public final static String JSON_CONTEXT = "@odata.context";
 
   public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
-
-  public final static String JSON_ETAG = "odata.etag";
-
-  public final static String JSON_MEDIA_ETAG = "odata.mediaETag";
-
-  public final static String JSON_MEDIA_ETAG_SUFFIX = "@" + JSON_MEDIA_ETAG;
-
-  public final static String JSON_MEDIA_CONTENT_TYPE = "odata.mediaContentType";
-
-  public final static String JSON_MEDIA_CONTENT_TYPE_SUFFIX = "@" + JSON_MEDIA_CONTENT_TYPE;
 
   public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
 

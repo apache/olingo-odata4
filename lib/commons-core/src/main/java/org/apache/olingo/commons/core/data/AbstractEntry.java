@@ -55,6 +55,8 @@ public abstract class AbstractEntry extends AbstractODataObject implements Entry
 
   private String mediaContentType;
 
+  private String mediaETag;
+
   @Override
   public String getETag() {
     return eTag;
@@ -150,6 +152,16 @@ public abstract class AbstractEntry extends AbstractODataObject implements Entry
   @Override
   public void setMediaContentSource(final String mediaContentSource) {
     this.mediaContentSource = mediaContentSource;
+  }
+
+  @Override
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
+  @Override
+  public void setMediaETag(final String eTag) {
+    this.mediaETag = eTag;
   }
 
   @Override

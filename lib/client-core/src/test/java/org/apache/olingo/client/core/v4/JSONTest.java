@@ -73,8 +73,8 @@ public class JSONTest extends AbstractTest {
     if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK))) {
       node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK));
     }
-    if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
-      node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE));
     }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
@@ -85,10 +85,12 @@ public class JSONTest extends AbstractTest {
                       getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))
               || field.getKey().endsWith(
                       getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))
-              || field.getKey().endsWith(Constants.JSON_MEDIA_CONTENT_TYPE_SUFFIX)
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))
               || field.getKey().endsWith(
                       getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK))
-              || field.getKey().endsWith(Constants.JSON_MEDIA_ETAG_SUFFIX)) {
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG))) {
 
         toRemove.add(field.getKey());
       } else if (field.getValue().isObject()) {

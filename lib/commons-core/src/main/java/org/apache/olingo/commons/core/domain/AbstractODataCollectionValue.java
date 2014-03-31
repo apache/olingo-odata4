@@ -56,9 +56,7 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
    */
   @Override
   public void add(final OV value) {
-    if (value.isPrimitive() || value.isComplex()) {
-      values.add(value);
-    }
+    values.add(value);
   }
 
   /**

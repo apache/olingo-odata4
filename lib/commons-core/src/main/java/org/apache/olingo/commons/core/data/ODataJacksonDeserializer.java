@@ -34,6 +34,8 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
   protected String jsonId;
 
+  protected String jsonETag;
+
   protected String jsonReadLink;
 
   protected String jsonEditLink;
@@ -41,6 +43,10 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
   protected String jsonMediaEditLink;
 
   protected String jsonMediaReadLink;
+
+  protected String jsonMediaContentType;
+
+  protected String jsonMediaETag;
 
   protected String jsonAssociationLink;
 
@@ -61,10 +67,13 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
     jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
     jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
+    jsonETag = version.getJSONMap().get(ODataServiceVersion.JSON_ETAG);
     jsonReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_READ_LINK);
     jsonEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK);
     jsonMediaReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK);
     jsonMediaEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK);
+    jsonMediaContentType = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE);
+    jsonMediaETag = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG);
     jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
     jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
 

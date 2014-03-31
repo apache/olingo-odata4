@@ -1,0 +1,22 @@
+{
+  "@odata.context": "http://services.odata.org/V4/OData/OData.svc/$metadata#PersonDetails/$entity",
+  "@odata.type": "#ODataDemo.PersonDetail",
+  "@odata.id": "http://services.odata.org/V4/OData/OData.svc/PersonDetails(1)",
+  "@odata.editLink": "PersonDetails(1)",
+  "PersonID": 1,
+  "Age@odata.type": "#Byte",
+  "Age": 24,
+  "Gender": true,
+  "Phone": "(208) 555-8097",
+  "Address": {
+    "@odata.type": "#ODataDemo.Address",
+    "Street": "187 Suffolk Ln.",
+    "City": "Boise",
+    "State": "ID",
+    "ZipCode": "83720",
+    "Country": "USA"
+  },
+  "Photo@odata.mediaEditLink": "PersonDetails(1)/Photo",
+  "Person@odata.associationLink": "PersonDetails(1)/Person/$ref",
+  "Person@odata.navigationLink": "PersonDetails(1)/Person"
+}

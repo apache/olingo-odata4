@@ -91,6 +91,14 @@ public interface CommonODataEntity extends ODataInvokeResult {
   boolean removeLink(ODataLink link);
 
   /**
+   * Gets association link with given name, if available, otherwise <tt>null</tt>.
+   *
+   * @param name candidate link name
+   * @return association link with given name, if available, otherwise <tt>null</tt>
+   */
+  ODataLink getAssociationLink(String name);
+
+  /**
    * Returns all entity association links.
    *
    * @return OData entity links.
@@ -98,11 +106,27 @@ public interface CommonODataEntity extends ODataInvokeResult {
   List<ODataLink> getAssociationLinks();
 
   /**
+   * Gets navigation link with given name, if available, otherwise <tt>null</tt>.
+   *
+   * @param name candidate link name
+   * @return navigation link with given name, if available, otherwise <tt>null</tt>
+   */
+  ODataLink getNavigationLink(String name);
+
+  /**
    * Returns all entity navigation links (including inline entities / feeds).
    *
    * @return OData entity links.
    */
   List<ODataLink> getNavigationLinks();
+
+  /**
+   * Gets media-edit link with given name, if available, otherwise <tt>null</tt>.
+   *
+   * @param name candidate link name
+   * @return media-edit link with given name, if available, otherwise <tt>null</tt>
+   */
+  ODataLink getEditMediaLink(String name);
 
   /**
    * Returns all entity media edit links.
@@ -173,5 +197,19 @@ public interface CommonODataEntity extends ODataInvokeResult {
    * @param mediaContentSource media content source.
    */
   void setMediaContentSource(String mediaContentSource);
+
+  /**
+   * ETag of the binary stream represented by this media entity or named stream property.
+   *
+   * @return media ETag value
+   */
+  String getMediaETag();
+
+  /**
+   * Set media ETag.
+   *
+   * @param eTag media ETag value
+   */
+  void setMediaETag(String eTag);
 
 }

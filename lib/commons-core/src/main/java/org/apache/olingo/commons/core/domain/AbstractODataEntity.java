@@ -56,6 +56,11 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   private String mediaContentSource;
 
   /**
+   * Media ETag.
+   */
+  private String mediaETag;
+
+  /**
    * Edit link.
    */
   private URI editLink;
@@ -80,41 +85,20 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
    */
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
-  /**
-   * Constructor.
-   *
-   * @param name OData entity name.
-   */
   public AbstractODataEntity(final String name) {
     super(name);
   }
 
-  /**
-   * Gets ETag.
-   *
-   * @return ETag.
-   */
   @Override
   public String getETag() {
     return eTag;
   }
 
-  /**
-   * Sets ETag.
-   *
-   * @param eTag ETag.
-   */
   @Override
   public void setETag(final String eTag) {
     this.eTag = eTag;
   }
 
-  /**
-   * Searches for operation with given title.
-   *
-   * @param title operation to look for
-   * @return operation if found with given title, <tt>null</tt> otherwise
-   */
   @Override
   public ODataOperation getOperation(final String title) {
     ODataOperation result = null;
@@ -137,12 +121,6 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
     return this.operations;
   }
 
-  /**
-   * Searches for property with given name.
-   *
-   * @param name property to look for
-   * @return property if found with given name, <tt>null</tt> otherwise
-   */
   @Override
   public CommonODataProperty getProperty(final String name) {
     CommonODataProperty result = null;
@@ -158,12 +136,6 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
     return result;
   }
 
-  /**
-   * Puts the given link into one of available lists, based on its type.
-   *
-   * @param link to be added
-   * @return <tt>true</tt> if the given link was added in one of available lists
-   */
   @Override
   public boolean addLink(final ODataLink link) {
     boolean result = false;
@@ -188,62 +160,57 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
     return result;
   }
 
-  /**
-   * Removes the given link from any list (association, navigation, edit-media).
-   *
-   * @param link to be removed
-   * @return <tt>true</tt> if the given link was contained in one of available lists
-   */
   @Override
   public boolean removeLink(final ODataLink link) {
     return associationLinks.remove(link) || navigationLinks.remove(link) || editMediaLinks.remove(link);
   }
 
-  /**
-   * Returns all entity navigation links (including inline entities / feeds).
-   *
-   * @return OData entity links.
-   */
+  private ODataLink getLink(final List<ODataLink> links, final String name) {
+    ODataLink result = null;
+    for (ODataLink link : links) {
+      if (name.equals(link.getName())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public ODataLink getNavigationLink(final String name) {
+    return getLink(navigationLinks, name);
+  }
+
   @Override
   public List<ODataLink> getNavigationLinks() {
     return navigationLinks;
   }
 
-  /**
-   * Returns all entity association links.
-   *
-   * @return OData entity links.
-   */
+  @Override
+  public ODataLink getAssociationLink(final String name) {
+    return getLink(associationLinks, name);
+  }
+
   @Override
   public List<ODataLink> getAssociationLinks() {
     return associationLinks;
   }
 
-  /**
-   * Returns all entity media edit links.
-   *
-   * @return OData entity links.
-   */
+  @Override
+  public ODataLink getEditMediaLink(final String name) {
+    return getLink(editMediaLinks, name);
+  }
+
   @Override
   public List<ODataLink> getEditMediaLinks() {
     return editMediaLinks;
   }
 
-  /**
-   * Returns OData entity edit link.
-   *
-   * @return entity edit link.
-   */
   @Override
   public URI getEditLink() {
     return editLink;
   }
 
-  /**
-   * Sets OData entity edit link.
-   *
-   * @param editLink edit link.
-   */
   @Override
   public void setEditLink(final URI editLink) {
     this.editLink = editLink;
@@ -254,73 +221,48 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
     return super.getLink() == null ? getEditLink() : super.getLink();
   }
 
-  /**
-   * TRUE if read-only entity.
-   *
-   * @return TRUE if read-only; FALSE otherwise.
-   */
   @Override
   public boolean isReadOnly() {
     return super.getLink() != null;
   }
 
-  /**
-   * Checks if the current entity is a media entity.
-   *
-   * @return 'TRUE' if media entity; 'FALSE' otherwise.
-   */
   @Override
   public boolean isMediaEntity() {
     return mediaEntity;
   }
 
-  /**
-   * Sets media entity flag.
-   *
-   * @param isMediaEntity media entity flag value.
-   */
   @Override
   public void setMediaEntity(final boolean isMediaEntity) {
     this.mediaEntity = isMediaEntity;
   }
 
-  /**
-   * Gets media content type.
-   *
-   * @return media content type.
-   */
   @Override
   public String getMediaContentType() {
     return mediaContentType;
   }
 
-  /**
-   * Sets media content type.
-   *
-   * @param mediaContentType media content type.
-   */
   @Override
   public void setMediaContentType(final String mediaContentType) {
     this.mediaContentType = mediaContentType;
   }
 
-  /**
-   * Gets media content source.
-   *
-   * @return media content source.
-   */
   @Override
   public String getMediaContentSource() {
     return mediaContentSource;
   }
 
-  /**
-   * Sets media content source.
-   *
-   * @param mediaContentSource media content source.
-   */
   @Override
   public void setMediaContentSource(final String mediaContentSource) {
     this.mediaContentSource = mediaContentSource;
+  }
+
+  @Override
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
+  @Override
+  public void setMediaETag(final String eTag) {
+    this.mediaETag = eTag;
   }
 }

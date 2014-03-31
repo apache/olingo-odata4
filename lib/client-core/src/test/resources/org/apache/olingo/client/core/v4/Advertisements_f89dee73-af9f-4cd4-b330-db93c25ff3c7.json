@@ -1,0 +1,16 @@
+{
+  "@odata.context": "http://services.odata.org/V4/OData/OData.svc/$metadata#Advertisements/$entity",
+  "@odata.type": "#ODataDemo.Advertisement",
+  "@odata.id": "http://services.odata.org/V4/OData/OData.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
+  "@odata.editLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)",
+  "@odata.mediaEditLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/$value",
+  "@odata.mediaContentType": "*/*",
+  "@odata.mediaEtag": "\"8zOOKKvgOtptr4gt8IrnapX3jds=\"",
+  "ID@odata.type": "#Guid",
+  "ID": "f89dee73-af9f-4cd4-b330-db93c25ff3c7",
+  "Name": "Old School Lemonade Store, Retro Style",
+  "AirDate@odata.type": "#DateTimeOffset",
+  "AirDate": "2012-11-07T00:00:00Z",
+  "FeaturedProduct@odata.associationLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct/$ref",
+  "FeaturedProduct@odata.navigationLink": "Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct"
+}

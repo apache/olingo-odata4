@@ -166,6 +166,20 @@ public interface Entry {
   void setMediaContentType(String mediaContentType);
 
   /**
+   * ETag of the binary stream represented by this media entity or named stream property.
+   *
+   * @return media ETag value
+   */
+  String getMediaETag();
+
+  /**
+   * Set media ETag.
+   *
+   * @param eTag media ETag value
+   */
+  void setMediaETag(String eTag);
+
+  /**
    * Checks if the current entry is a media entry.
    *
    * @return 'TRUE' if is a media entry; 'FALSE' otherwise.

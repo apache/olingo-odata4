@@ -58,7 +58,7 @@ public class PropertyTest extends AbstractTest {
     assertEquals("-10", value.toString());
   }
 
-  private ODataProperty primitive(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
+  private void primitive(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_CustomerId." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -80,8 +80,6 @@ public class PropertyTest extends AbstractTest {
     }
 
     assertEquals(property, comparable);
-
-    return property;
   }
 
   @Test
@@ -94,7 +92,7 @@ public class PropertyTest extends AbstractTest {
     primitive(ODataFormat.JSON);
   }
 
-  private ODataProperty complex(final ODataFormat format) throws IOException {
+  private void complex(final ODataFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_PrimaryContactInfo." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -118,8 +116,6 @@ public class PropertyTest extends AbstractTest {
     }
 
     assertEquals(property, comparable);
-
-    return property;
   }
 
   @Test
@@ -132,7 +128,7 @@ public class PropertyTest extends AbstractTest {
     complex(ODataFormat.JSON);
   }
 
-  private ODataProperty collection(final ODataFormat format) throws IOException {
+  private void collection(final ODataFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer_-10_BackupContactInfo." + getSuffix(format));
     final ODataProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
@@ -156,7 +152,6 @@ public class PropertyTest extends AbstractTest {
     }
 
     assertEquals(property, comparable);
-    return property;
   }
 
   @Test

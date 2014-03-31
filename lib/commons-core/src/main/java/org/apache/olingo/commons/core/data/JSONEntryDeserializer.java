@@ -100,14 +100,9 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       entry.setBaseURI(contextURL.substring(0, contextURL.indexOf(Constants.METADATA)));
     }
 
-    if (tree.hasNonNull(Constants.JSON_MEDIA_ETAG)) {
-      entry.setMediaETag(tree.get(Constants.JSON_MEDIA_ETAG).textValue());
-      tree.remove(Constants.JSON_MEDIA_ETAG);
-    }
-
-    if (tree.hasNonNull(Constants.JSON_ETAG)) {
-      entry.setETag(tree.get(Constants.JSON_ETAG).textValue());
-      tree.remove(Constants.JSON_ETAG);
+    if (tree.hasNonNull(jsonETag)) {
+      entry.setETag(tree.get(jsonETag).textValue());
+      tree.remove(jsonETag);
     }
 
     if (tree.hasNonNull(jsonType)) {
@@ -143,11 +138,16 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       tree.remove(jsonMediaReadLink);
     }
     if (tree.hasNonNull(jsonMediaEditLink)) {
+      entry.setMediaContentSource(tree.get(jsonMediaEditLink).textValue());
       tree.remove(jsonMediaEditLink);
     }
-    if (tree.hasNonNull(Constants.JSON_MEDIA_CONTENT_TYPE)) {
-      entry.setMediaContentType(tree.get(Constants.JSON_MEDIA_CONTENT_TYPE).textValue());
-      tree.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
+    if (tree.hasNonNull(jsonMediaContentType)) {
+      entry.setMediaContentType(tree.get(jsonMediaContentType).textValue());
+      tree.remove(jsonMediaContentType);
+    }
+    if (tree.hasNonNull(jsonMediaETag)) {
+      entry.setMediaETag(tree.get(jsonMediaETag).textValue());
+      tree.remove(jsonMediaETag);
     }
 
     final Set<String> toRemove = new HashSet<String>();
@@ -190,14 +190,14 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
         entry.getMediaEditLinks().add(link);
 
-        if (tree.has(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX)) {
-          link.setMediaETag(tree.get(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX).asText());
-          toRemove.add(link.getTitle() + Constants.JSON_MEDIA_ETAG_SUFFIX);
+        if (tree.has(link.getTitle() + getJSONAnnotation(jsonMediaETag))) {
+          link.setMediaETag(tree.get(link.getTitle() + getJSONAnnotation(jsonMediaETag)).asText());
+          toRemove.add(link.getTitle() + getJSONAnnotation(jsonMediaETag));
         }
 
         toRemove.add(field.getKey());
         toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), link));
-      } else if (field.getKey().endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+      } else if (field.getKey().endsWith(getJSONAnnotation(jsonMediaContentType))) {
         final String linkTitle = getTitle(field);
         for (Link link : entry.getMediaEditLinks()) {
           if (linkTitle.equals(link.getTitle())) {

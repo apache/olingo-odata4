@@ -37,6 +37,12 @@
   <author>
     <name />
   </author>
+  <m:action metadata="#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress" 
+            target="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"/>
+  <m:action metadata="#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress" 
+            target="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"/>
   <content type="application/xml">
     <m:properties>
       <d:PersonID m:type="Int32">1</d:PersonID>
