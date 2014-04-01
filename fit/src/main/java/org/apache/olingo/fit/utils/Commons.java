@@ -183,7 +183,7 @@ public abstract class Commons {
       links.set("value", uris);
     }
 
-    return IOUtils.toInputStream(links.toString());
+    return IOUtils.toInputStream(links.toString(), "UTf-8");
   }
 
   public static InputStream changeFormat(final InputStream is, final Accept target) {
@@ -197,7 +197,7 @@ public abstract class Commons {
       final JsonNode node =
               changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), target);
 
-      return IOUtils.toInputStream(node.toString());
+      return IOUtils.toInputStream(node.toString(), "UTF-8");
     } catch (Exception e) {
       LOG.error("Error changing format", e);
       return new ByteArrayInputStream(bos.toByteArray());

@@ -1017,15 +1017,17 @@ public abstract class AbstractServices {
 
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
-    InputStream stream = FSManager.instance(getVersion()).readFile(
-            basePath + Constants.get(getVersion(), ConstantKey.ENTITY), acceptType == null || acceptType == Accept.TEXT
-            ? Accept.XML : acceptType);
-
     final AbstractUtilities utils = getUtilities(acceptType);
 
     final List<String> pathElements = Arrays.asList(path.split("\\/"));
 
+    InputStream stream;
+
     if (searchForValue) {
+      stream = FSManager.instance(getVersion()).readFile(
+              basePath + Constants.get(getVersion(), ConstantKey.ENTITY),
+              acceptType == null || acceptType == Accept.TEXT ? Accept.XML : acceptType);
+
       stream = utils.getPropertyValue(stream, pathElements);
     } else {
       String edmType = xml.getEdmTypeFromAtom(entitySetName, entityId, pathElements);

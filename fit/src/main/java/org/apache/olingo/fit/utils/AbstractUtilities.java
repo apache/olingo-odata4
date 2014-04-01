@@ -387,17 +387,13 @@ public abstract class AbstractUtilities {
       builder.header("ETag", etag);
     }
 
-    if (accept != null) {
-      builder.header("Content-Type", accept.toString(version));
-    } else {
-      builder.header("Content-Type", "*/*");
-    }
-
     if (status != null) {
       builder.status(status);
     }
 
     int contentLength = 0;
+
+    String contentTypeEncoding = StringUtils.EMPTY;
 
     if (entity != null) {
       try {
@@ -415,12 +411,15 @@ public abstract class AbstractUtilities {
 
         contentLength = bos.size();
         builder.entity(new ByteArrayInputStream(bos.toByteArray()));
+
+        contentTypeEncoding = ";odata.streaming=true;charset=utf-8";
       } catch (IOException ioe) {
         LOG.error("Error streaming response entity back", ioe);
       }
     }
 
     builder.header("Content-Length", contentLength);
+    builder.header("Content-Type", (accept == null ? "*/*" : accept.toString(version)) + contentTypeEncoding);
 
     return builder.build();
   }

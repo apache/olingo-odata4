@@ -39,7 +39,6 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {

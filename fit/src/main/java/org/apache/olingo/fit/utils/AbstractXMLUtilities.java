@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       ifactory = XMLInputFactory.newInstance();
     }
     ifactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-    return ifactory.createXMLEventReader(is);
+    return ifactory.createXMLEventReader(is, "utf-8");
   }
 
   protected static XMLEventWriter getEventWriter(final OutputStream os) throws XMLStreamException {
@@ -83,7 +83,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       ofactory = XMLOutputFactory.newInstance();
     }
 
-    return ofactory.createXMLEventWriter(os);
+    return ofactory.createXMLEventWriter(os, "utf-8");
   }
 
   private void writeEvent(final XMLEvent event, final XMLEventWriter writer) {
@@ -369,7 +369,9 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     final XmlElement res = new XmlElement();
     res.setStart(start);
 
-    StringWriter content = new StringWriter();
+    final Charset encoding = Charset.forName("UTF-8");
+    final ByteArrayOutputStream content = new ByteArrayOutputStream();
+    final OutputStreamWriter writer = new OutputStreamWriter(content, encoding);
 
     int depth = 1;
 
@@ -385,14 +387,14 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       if (depth == 0) {
         res.setEnd(event.asEndElement());
       } else {
-        event.writeAsEncodedUnicode(content);
+        event.writeAsEncodedUnicode(writer);
       }
     }
 
-    content.flush();
-    content.close();
+    writer.flush();
+    writer.close();
 
-    res.setContent(new ByteArrayInputStream(content.toString().getBytes()));
+    res.setContent(new ByteArrayInputStream(content.toByteArray()));
 
     return res;
   }
@@ -851,24 +853,28 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       throw new NotFoundException();
     }
 
+    final Charset encoding = Charset.forName("UTF-8");
+
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    final OutputStreamWriter writer = new OutputStreamWriter(bos, encoding);
+
+    writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>".toCharArray());
 
     if (forceFeed || links.size() > 1) {
       // build a feed
-      bos.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>".getBytes());
 
-      bos.write(("<feed xml:base=\"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "\" "
+      writer.write(("<feed xml:base=\"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "\" "
               + "xmlns=\"http://www.w3.org/2005/Atom\" "
               + "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" "
               + "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">")
-              .getBytes());
+              .toCharArray());
 
-      bos.write(("<id>" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "entityset(entityid)/" + linkName
-              + "</id>").getBytes());
+      writer.write(("<id>" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "entityset(entityid)/" + linkName
+              + "</id>").toCharArray());
 
-      bos.write(("<title type=\"text\">" + linkName + "</title>").getBytes());
-      bos.write("<updated>2014-03-03T13:40:49Z</updated>".getBytes());
-      bos.write(("<link rel=\"self\" title=\"" + linkName + "\" href=\"" + linkName + "\" />").getBytes());
+      writer.write(("<title type=\"text\">" + linkName + "</title>").toCharArray());
+      writer.write("<updated>2014-03-03T13:40:49Z</updated>".toCharArray());
+      writer.write(("<link rel=\"self\" title=\"" + linkName + "\" href=\"" + linkName + "\" />").toCharArray());
     }
 
     for (String link : links) {
@@ -882,7 +888,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
                 Collections.<String>singletonList("entry"),
                 0, 1, 1).getValue();
 
-        IOUtils.copy(entry.toStream(), bos);
+        IOUtils.copy(entry.toStream(), writer, encoding);
       } catch (Exception e) {
         // log and ignore link
         LOG.warn("Error parsing uri {}", link, e);
@@ -892,11 +898,14 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     if (forceFeed || links.size() > 1) {
 
       if (StringUtils.isNotBlank(next)) {
-        bos.write(String.format("<link rel=\"next\" href=\"%s\" />", next).getBytes());
+        writer.write(String.format("<link rel=\"next\" href=\"%s\" />", next).toCharArray());
       }
 
-      bos.write("</feed>".getBytes());
+      writer.write("</feed>".toCharArray());
     }
+
+    writer.flush();
+    writer.close();
 
     return new ByteArrayInputStream(bos.toByteArray());
   }
@@ -1227,7 +1236,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     final XMLEventWriter writer = getEventWriter(bos);
 
     final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    writer.add(eventFactory.createStartDocument("UTF-8", "1.0"));
+    writer.add(eventFactory.createStartDocument("utf-8", "1.0"));
     writer.add(property.getStart());
 
     if (property.getStart().getAttributeByName(new QName(
