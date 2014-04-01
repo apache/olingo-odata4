@@ -34,14 +34,10 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.v3.XMLLinkCollectionImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AtomDeserializer extends AbstractAtomDealer {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AtomDeserializer.class);
-
-  public static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
+  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
 
   private final AtomPropertyDeserializer propDeserializer;
 
@@ -56,7 +52,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return getContainer(start, propDeserializer.deserialize(reader, start));
   }
 
-  public StartElement skipBeforeFirstStartElement(final XMLEventReader reader) throws XMLStreamException {
+  private StartElement skipBeforeFirstStartElement(final XMLEventReader reader) throws XMLStreamException {
     StartElement startEvent = null;
     while (reader.hasNext() && startEvent == null) {
       final XMLEvent event = reader.nextEvent();
@@ -442,6 +438,16 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return getContainer(start, error(reader, start));
   }
 
+  private <T> Container<T> getContainer(final StartElement start, final T object) {
+    final Attribute context = start.getAttributeByName(contextQName);
+    final Attribute metadataETag = start.getAttributeByName(metadataEtagQName);
+
+    return new Container<T>(
+            context == null ? null : URI.create(context.getValue()),
+            metadataETag == null ? null : metadataETag.getValue(),
+            object);
+  }
+
   @SuppressWarnings("unchecked")
   public <T, V extends T> Container<T> read(final InputStream input, final Class<V> reference)
           throws XMLStreamException {
@@ -458,15 +464,5 @@ public class AtomDeserializer extends AbstractAtomDealer {
       return (Container<T>) linkCollection(input);
     }
     return null;
-  }
-
-  public <T> Container<T> getContainer(final StartElement start, final T object) {
-    final Attribute context = start.getAttributeByName(contextQName);
-    final Attribute metadataETag = start.getAttributeByName(metadataEtagQName);
-
-    return new Container<T>(
-            context == null ? null : URI.create(context.getValue()),
-            metadataETag == null ? null : metadataETag.getValue(),
-            object);
   }
 }

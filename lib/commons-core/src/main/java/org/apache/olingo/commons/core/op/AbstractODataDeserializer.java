@@ -19,14 +19,8 @@
 package org.apache.olingo.commons.core.op;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.events.StartElement;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.data.Feed;
@@ -89,27 +83,6 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   /*
    * ------------------ Protected methods ------------------
    */
-  @SuppressWarnings("unchecked")
-  protected <T, V extends T> Container<T> xml(final InputStream input, final Class<V> reference) {
-    try {
-      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-      final XMLEventReader reader = AtomDeserializer.FACTORY.createXMLEventReader(input);
-      final StartElement start = atomDeserializer.skipBeforeFirstStartElement(reader);
-
-      final XMLEventWriter writer = XMLOutputFactory.newFactory().createXMLEventWriter(baos);
-      writer.add(start);
-      writer.add(reader);
-      writer.flush();
-      writer.close();
-
-      final V obj = getXmlMapper().readValue(new ByteArrayInputStream(baos.toByteArray()), reference);
-      return (Container<T>) (obj instanceof Container ? obj : atomDeserializer.getContainer(start, obj));
-    } catch (Exception e) {
-      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
-    }
-  }
-
   protected <T, V extends T> Container<T> atom(final InputStream input, final Class<V> reference) {
     try {
       return atomDeserializer.<T, V>read(input, reference);
@@ -118,9 +91,26 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
     }
   }
 
+  @SuppressWarnings("unchecked")
+  protected <T, V extends T> Container<T> xml(final InputStream input, final Class<V> reference) {
+    try {
+      final T obj = getXmlMapper().readValue(input, new TypeReference<V>() {
+        @Override
+        public Type getType() {
+          return reference;
+        }
+      });
+
+      return obj instanceof Container ? (Container<T>) obj : new Container<T>(null, null, obj);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("While deserializing " + reference.getName(), e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
   protected <T, V extends T> Container<T> json(final InputStream input, final Class<V> reference) {
     try {
-      T obj = getObjectMapper().readValue(input, new TypeReference<V>() {
+      final T obj = getObjectMapper().readValue(input, new TypeReference<V>() {
         @Override
         public Type getType() {
           return reference;
