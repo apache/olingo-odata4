@@ -30,7 +30,7 @@ public interface ODataCollectionValue<OV extends ODataValue> extends ODataValue,
    *
    * @param value value to be added.
    */
-  void add(OV value);
+  void add(ODataValue value);
 
   /**
    * Checks if collection is empty.

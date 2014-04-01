@@ -25,10 +25,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.domain.v3.ODataCollectionValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.junit.Test;
 
@@ -52,15 +51,14 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000001S").build());
     order.getProperties().add(shelfLife);
 
-    // TODO: this should be possible via getClient().getObjectFactory().newCollectionValue()
-    final ODataCollectionValue<ODataValue> orderShelfLifesValue =
-            new ODataCollectionValueImpl("Collection(Duration)");
+    final ODataCollectionValue<ODataValue> orderShelfLifesValue = getClient().getObjectFactory().
+            newCollectionValue("Collection(Duration)");
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000001S").build());
     orderShelfLifesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build());
-    final ODataProperty orderShelfLifes = getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
-            orderShelfLifesValue);
+    final ODataProperty orderShelfLifes = getClient().getObjectFactory().
+            newCollectionProperty("OrderShelfLifes", orderShelfLifesValue);
     order.getProperties().add(orderShelfLifes);
 
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(

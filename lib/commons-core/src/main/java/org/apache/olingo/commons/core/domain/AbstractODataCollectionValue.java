@@ -55,8 +55,9 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
    * @param value value to be added.
    */
   @Override
-  public void add(final OV value) {
-    values.add(value);
+  @SuppressWarnings("unchecked")
+  public void add(final ODataValue value) {
+    values.add((OV) value);
   }
 
   /**
