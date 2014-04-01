@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import java.io.BufferedWriter;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,14 +44,12 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   @Override
   public InputStream metadataDocument(final Edm edm) {
     CircleStreamBuffer buffer;
-    BufferedWriter writer;
     XMLStreamWriter xmlStreamWriter = null;
 
     // TODO: move stream initialization into separate method
     try {
       buffer = new CircleStreamBuffer();
-      writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
       MetadataDocumentXmlSerializer serializer = new MetadataDocumentXmlSerializer(edm);
       serializer.writeMetadataDocument(xmlStreamWriter);
       xmlStreamWriter.close();

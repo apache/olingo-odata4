@@ -42,7 +42,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
   private static final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
   public static final String nameSpace = "com.sap.odata.test1";
   public static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
-  
+
   Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
   Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
   Property propertyCInt16 = new Property().setName("c").setType(nameInt16);
@@ -70,7 +70,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
 
   @Override
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
-    if (entityContainer == nameContainer) {
+    if (nameContainer.equals(entityContainer)) {
       if (name.equals("ESabc")) {
         return new EntitySet()
             .setName("ESabc")

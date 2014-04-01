@@ -211,7 +211,7 @@ public class ContainerProvider {
       } else if (name.equals("AIRTETCollAllPrimParam")) {
         return new ActionImport()
             .setName("AIRTETCollAllPrimParam")
-            .setAction(ActionProvider.nameUARTETCollAllPrimParam);
+            .setAction(ActionProvider.nameUARTESParam);
       }
     }
 

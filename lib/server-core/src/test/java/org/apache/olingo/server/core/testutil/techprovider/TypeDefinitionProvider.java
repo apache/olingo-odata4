@@ -23,7 +23,7 @@ import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
 public class TypeDefinitionProvider {
 
-  public TypeDefinition getTypeDefinition(FullQualifiedName typeDefinitionName) {
+  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
     return null;
   }
 

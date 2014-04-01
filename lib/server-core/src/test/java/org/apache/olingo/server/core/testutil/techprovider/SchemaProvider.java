@@ -40,7 +40,7 @@ public class SchemaProvider {
 
   public static final String nameSpace = "com.sap.odata.test1";
 
-  public SchemaProvider(EdmTechProvider prov) {
+  public SchemaProvider(final EdmTechProvider prov) {
     this.prov = prov;
   }
 
@@ -105,17 +105,17 @@ public class SchemaProvider {
     // Actions
     List<Action> actions = new ArrayList<Action>();
     schema.setActions(actions);
-    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimCollParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTCompParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTCompCollParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTETParam));
-    actions.addAll(prov.getActions(ActionProvider.nameUARTETCollAllPrimParam));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESAllPrimRTETAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTPrimCollParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCompParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTCompCollParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTETParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTESParam));
 
     // Functions
     List<Function> functions = new ArrayList<Function>();
@@ -127,7 +127,6 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNavParamCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTStringTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESTwoKeyNavParam));
-    // TODO: check why it exists twice
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTString));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollStringTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollString));
@@ -140,6 +139,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTESMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETAllPrimTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTCollCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETBaseTwoKeyNavRTETTwoKeyNav));
@@ -163,11 +163,14 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETTwoKeyNavRTETTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETTwoKeyNavRTCTTwoPrim));
+
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCTNavFiveProp));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCollCTNavFiveProp));
+    
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTStringParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTETKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTETTwoKeyNavParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameBAETTwoKeyNavRTETTwoKeyNav));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
+    //functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
 
     // EntityContainer
     EntityContainer container = new EntityContainer();

@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 
@@ -33,6 +34,8 @@ public class EnumTypeProvider {
     if (enumTypeName.equals(nameENString)) {
       return new EnumType()
           .setName("ENString")
+          .setFlags(true)
+          .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
           .setMembers(Arrays.asList(
               new EnumMember().setName("String1").setValue("1"),
               new EnumMember().setName("String2").setValue("2"),

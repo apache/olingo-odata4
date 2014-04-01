@@ -31,25 +31,35 @@ import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 public class EntityTypeProvider {
 
   public static final FullQualifiedName nameETAllKey = new FullQualifiedName(SchemaProvider.nameSpace, "ETAllKey");
-  public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.nameSpace, "ETAllNullable");
+  public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETAllNullable");
   public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETAllPrim");
   public static final FullQualifiedName nameETBase = new FullQualifiedName(SchemaProvider.nameSpace, "ETBase");
-  public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(SchemaProvider.nameSpace, "ETBaseTwoKeyNav");
+  public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETBaseTwoKeyNav");
   public static final FullQualifiedName nameETBaseTwoKeyTwoPrim =
       new FullQualifiedName(SchemaProvider.nameSpace, "ETBaseTwoKeyTwoPrim");
-  public static final FullQualifiedName nameETCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETCollAllPrim");
-  public static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETCompAllPrim");
-  public static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETCompCollAllPrim");
-  public static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace, "ETCompCollComp");
+  public static final FullQualifiedName nameETCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETCollAllPrim");
+  public static final FullQualifiedName nameETCompAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETCompAllPrim");
+  public static final FullQualifiedName nameETCompCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETCompCollAllPrim");
+  public static final FullQualifiedName nameETCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETCompCollComp");
   public static final FullQualifiedName nameETCompComp = new FullQualifiedName(SchemaProvider.nameSpace, "ETCompComp");
   public static final FullQualifiedName nameETCompMixPrimCollComp =
       new FullQualifiedName(SchemaProvider.nameSpace, "ETCompMixPrimCollComp");
-  public static final FullQualifiedName nameETFourKeyAlias = new FullQualifiedName(SchemaProvider.nameSpace, "ETFourKeyAlias");
+  public static final FullQualifiedName nameETFourKeyAlias = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETFourKeyAlias");
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.nameSpace, "ETKeyNav");
-  public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.nameSpace, "ETKeyPrimNav");
-  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.nameSpace, "ETKeyTwoKeyComp");
+  public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETKeyPrimNav");
+  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETKeyTwoKeyComp");
   public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.nameSpace, "ETMedia");
-  public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace, "ETMixPrimCollComp");
+  public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETMixPrimCollComp");
   public static final FullQualifiedName nameETServerSidePaging =
       new FullQualifiedName(SchemaProvider.nameSpace, "ETServerSidePaging");
   public static final FullQualifiedName nameETTwoBase = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBase");
@@ -57,8 +67,10 @@ public class EntityTypeProvider {
       new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBaseTwoKeyNav");
   public static final FullQualifiedName nameETTwoBaseTwoKeyTwoPrim =
       new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoBaseTwoKeyTwoPrim");
-  public static final FullQualifiedName nameETTwoKeyNav = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoKeyNav");
-  public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoKeyTwoPrim");
+  public static final FullQualifiedName nameETTwoKeyNav =
+      new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoKeyNav");
+  public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "ETTwoKeyTwoPrim");
   public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace, "ETTwoPrim");
 
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
@@ -74,7 +86,9 @@ public class EntityTypeProvider {
               PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal,
               PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
               PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
-              /* TODO add propertyStream */));
+              /* TODO add propertyStream */))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETTwoPrimOne_ETTwoPrim,
+              PropertyProvider.collectionNavPropertyETTwoPrimMany_ETTwoPrim));
 
     } else if (entityTypeName.equals(nameETCollAllPrim)) {
       return new EntityType()
@@ -98,7 +112,10 @@ public class EntityTypeProvider {
           .setName("ETTwoPrim")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString));
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString))
+          .setNavigationProperties(
+              Arrays.asList(PropertyProvider.navPropertyETAllPrimOne_ETAllPrim,
+                  PropertyProvider.collectionNavPropertyETAllPrimMany_ETAllPrim));
 
     } else if (entityTypeName.equals(nameETMixPrimCollComp)) {
       return new EntityType()
@@ -163,14 +180,14 @@ public class EntityTypeProvider {
               new PropertyRef().setPropertyName("PropertyTimeOfDay")))
           .setProperties(
               Arrays.asList(
-                  PropertyProvider.propertyString, PropertyProvider.propertyBoolean,
-                  PropertyProvider.propertyByte, PropertyProvider.propertySByte,
-                  PropertyProvider.propertyInt16, PropertyProvider.propertyInt32, PropertyProvider.propertyInt64,
-                  PropertyProvider.propertyDecimal, PropertyProvider.propertyDate,
-                  PropertyProvider.propertySingle, PropertyProvider.propertyDouble,
-                  PropertyProvider.propertyDateTimeOffset,
-                  PropertyProvider.propertyDuration, PropertyProvider.propertyGuid,
-                  PropertyProvider.propertyTimeOfDay /* TODO add propertyStream */));
+                  PropertyProvider.propertyString_NotNullable, PropertyProvider.propertyBoolean_NotNullable,
+                  PropertyProvider.propertyByte_NotNullable, PropertyProvider.propertySByte_NotNullable,
+                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyInt32_NotNullable,
+                  PropertyProvider.propertyInt64_NotNullable,
+                  PropertyProvider.propertyDecimal_NotNullable, PropertyProvider.propertyDate_NotNullable,
+                  PropertyProvider.propertyDateTimeOffset_NotNullable,
+                  PropertyProvider.propertyDuration_NotNullable, PropertyProvider.propertyGuid_NotNullable,
+                  PropertyProvider.propertyTimeOfDay_NotNullable /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETCompAllPrim)) {
       return new EntityType()
@@ -181,11 +198,11 @@ public class EntityTypeProvider {
 
     } else if (entityTypeName.equals(nameETCompCollAllPrim)) {
       return new EntityType()
-          .setName("ETCompAllPrim")
+          .setName("ETCompCollAllPrim")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
 
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, 
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
                   PropertyProvider.propertyComplex_CTCollAllPrim));
 
     } else if (entityTypeName.equals(nameETCompComp)) {
@@ -205,7 +222,7 @@ public class EntityTypeProvider {
 
     } else if (entityTypeName.equals(nameETMedia)) {
       return new EntityType()
-          .setName("ETCompCollComp")
+          .setName("ETMedia")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable))
           .setHasStream(true);
@@ -232,9 +249,10 @@ public class EntityTypeProvider {
 
     } else if (entityTypeName.equals(nameETServerSidePaging)) {
       return new EntityType()
-          .setName("ETKeyTwoKeyComp")
+          .setName(nameETServerSidePaging.getName())
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
-          .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString));
+          .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
+              PropertyProvider.propertyString_NotNullable));
 
     } else if (entityTypeName.equals(nameETAllNullable)) {
       return new EntityType()
@@ -243,26 +261,32 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(
                   new Property()
-                      .setName("PropertyKey").setType(PropertyProvider.nameInt16),
-                  PropertyProvider.propertyInt16,
-                  PropertyProvider.propertyString, PropertyProvider.propertyBoolean,
-                  PropertyProvider.propertyByte, PropertyProvider.propertySByte,
-                  PropertyProvider.propertyInt32, PropertyProvider.propertyInt64,
-                  PropertyProvider.propertySingle, PropertyProvider.propertyDouble,
-                  PropertyProvider.propertyDecimal, PropertyProvider.propertyBinary, PropertyProvider.propertyDate,
-                  PropertyProvider.propertyDateTimeOffset,
-                  PropertyProvider.propertyDuration, PropertyProvider.propertyGuid,
-                  PropertyProvider.propertyTimeOfDay /* TODO add propertyStream */,
-                  PropertyProvider.collPropertyString, PropertyProvider.collPropertyBoolean,
-                  PropertyProvider.collPropertyByte, PropertyProvider.collPropertySByte,
-                  PropertyProvider.collPropertyInt16,
-                  PropertyProvider.collPropertyInt32, PropertyProvider.collPropertyInt64,
-                  PropertyProvider.collPropertySingle, PropertyProvider.collPropertyDouble,
-                  PropertyProvider.collPropertyDecimal, PropertyProvider.collPropertyBinary,
-                  PropertyProvider.collPropertyDate,
-                  PropertyProvider.collPropertyDateTimeOffset,
-                  PropertyProvider.collPropertyDuration, PropertyProvider.collPropertyGuid,
-                  PropertyProvider.collPropertyTimeOfDay /* TODO add propertyStream */));
+                      .setName("PropertyKey").setType(PropertyProvider.nameInt16).setNullable(false),
+                  PropertyProvider.propertyInt16_ExplicitNullable, PropertyProvider.propertyString_ExplicitNullable,
+                  PropertyProvider.propertyBoolean_ExplicitNullable, PropertyProvider.propertyByte_ExplicitNullable,
+                  PropertyProvider.propertySByte_ExplicitNullable, PropertyProvider.propertyInt32_ExplicitNullable,
+                  PropertyProvider.propertyInt64_ExplicitNullable, PropertyProvider.propertySingle_ExplicitNullable,
+                  PropertyProvider.propertyDouble_ExplicitNullable, PropertyProvider.propertyDecimal_ExplicitNullable,
+                  PropertyProvider.propertyBinary_ExplicitNullable, PropertyProvider.propertyDate_ExplicitNullable,
+                  PropertyProvider.propertyDateTimeOffset_ExplicitNullable,
+                  PropertyProvider.propertyDuration_ExplicitNullable, PropertyProvider.propertyGuid_ExplicitNullable,
+                  PropertyProvider.propertyTimeOfDay_ExplicitNullable /* TODO add propertyStream */,
+                  PropertyProvider.collPropertyString_ExplicitNullable,
+                  PropertyProvider.collPropertyBoolean_ExplicitNullable,
+                  PropertyProvider.collPropertyByte_ExplicitNullable,
+                  PropertyProvider.collPropertySByte_ExplicitNullable,
+                  PropertyProvider.collPropertyInt16_ExplicitNullable,
+                  PropertyProvider.collPropertyInt32_ExplicitNullable,
+                  PropertyProvider.collPropertyInt64_ExplicitNullable,
+                  PropertyProvider.collPropertySingle_ExplicitNullable,
+                  PropertyProvider.collPropertyDouble_ExplicitNullable,
+                  PropertyProvider.collPropertyDecimal_ExplicitNullable,
+                  PropertyProvider.collPropertyBinary_ExplicitNullable,
+                  PropertyProvider.collPropertyDate_ExplicitNullable,
+                  PropertyProvider.collPropertyDateTimeOffset_ExplicitNullable,
+                  PropertyProvider.collPropertyDuration_ExplicitNullable,
+                  PropertyProvider.collPropertyGuid_ExplicitNullable,
+                  PropertyProvider.collPropertyTimeOfDay_ExplicitNullable /* TODO add propertyStream */));
 
     } else if (entityTypeName.equals(nameETKeyNav)) {
       return new EntityType()
@@ -280,7 +304,7 @@ public class EntityTypeProvider {
                   ))
           .setNavigationProperties(
               Arrays.asList(
-                  PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav,
+                  PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable,
                   PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
                   PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
                   PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
@@ -289,19 +313,13 @@ public class EntityTypeProvider {
                   ));
     } else if (entityTypeName.equals(nameETKeyPrimNav)) {
       return new EntityType()
-          .setName("ETKeyNav")
+          .setName("ETKeyPrimNav")
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable))
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_ExplicitNullable))
           .setNavigationProperties(
               Arrays.asList(
-                  PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav,
-                  PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
-                  PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
-                  PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
-                  PropertyProvider.navPropertyETMediaOne_ETMedia,
-                  PropertyProvider.collectionNavPropertyETMediaMany_ETMedia
-                  ));
+                  PropertyProvider.navPropertyETKeyPrimNavOne_ETKeyPrimNav));
 
     } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new EntityType()
@@ -311,9 +329,10 @@ public class EntityTypeProvider {
               new PropertyRef().setPropertyName("PropertyString")))
           .setProperties(
               Arrays.asList(
-                  PropertyProvider.propertyInt16, PropertyProvider.propertyString,
+                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
                   PropertyProvider.propertyComplex_CTPrimComp_NotNullable,
-                  new Property().setName("PropertyComplexNav").setType(ComplexTypeProvider.nameCTBasePrimCompNav),
+                  new Property().setName("PropertyComplexNav").setType(ComplexTypeProvider.nameCTBasePrimCompNav)
+                      .setNullable(false),
                   PropertyProvider.propertyComplexEnum_CTPrimEnum_NotNullable,
                   PropertyProvider.collPropertyComplex_CTPrimComp,
                   new Property().setName("CollPropertyComplexNav").setType(ComplexTypeProvider.nameCTNavFiveProp)
@@ -337,26 +356,22 @@ public class EntityTypeProvider {
       return new EntityType()
           .setName("ETBaseTwoKeyNav")
           .setBaseType(nameETTwoKeyNav)
-          .setProperties(Arrays.asList(PropertyProvider.propertyDate))
+          .setProperties(Arrays.asList(PropertyProvider.propertyDate_ExplicitNullable))
           .setNavigationProperties(Arrays.asList(
               new NavigationProperty()
-                  .setName("NavPropertyETBaseTwoKeyNav")
+                  .setName("NavPropertyETBaseTwoKeyNavOne")
                   .setType(nameETBaseTwoKeyNav),
               new NavigationProperty()
-                  .setName("NavPropertyETTwoBaseTwoKeyNav")
-                  .setType(nameETTwoBaseTwoKeyNav)))
-          .setHasStream(true);
+                  .setName("NavPropertyETTwoBaseTwoKeyNavOne")
+                  .setType(nameETTwoBaseTwoKeyNav)));
 
     } else if (entityTypeName.equals(nameETTwoBaseTwoKeyNav)) {
       return new EntityType()
           .setName("ETTwoBaseTwoKeyNav")
           .setBaseType(nameETBaseTwoKeyNav)
           .setKey(Arrays.asList(new PropertyRef().setPropertyName("PropertyInt16")))
-          .setProperties(Arrays.asList(PropertyProvider.propertyGuid))
+          .setProperties(Arrays.asList(PropertyProvider.propertyGuid_ExplicitNullable))
           .setNavigationProperties(Arrays.asList(
-              new NavigationProperty()
-                  .setName("NavPropertyETBaseTwoKeyNavOne")
-                  .setType(nameETBaseTwoKeyNav),
               new NavigationProperty()
                   .setName("NavPropertyETBaseTwoKeyNavMany")
                   .setType(nameETBaseTwoKeyNav)
@@ -377,7 +392,7 @@ public class EntityTypeProvider {
                   .setPropertyName("PropertyComplexComplex/PropertyComplex/PropertyString")
                   .setAlias("KeyAlias3")))
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyGuid, PropertyProvider.propertyComplex_CTTwoPrim,
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTTwoPrim,
                   PropertyProvider.propertyComplexComplex_CTCompComp));
     } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
       return new EntityType()

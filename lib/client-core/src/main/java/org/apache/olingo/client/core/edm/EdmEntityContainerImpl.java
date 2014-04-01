@@ -49,10 +49,17 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
       final EntityContainer xmlEntityContainer, final XMLMetadata xmlMetadata) {
 
-    super(edm, entityContainerName);
+    super(edm, entityContainerName, getFullQualifiedName(xmlEntityContainer.getExtends()));
 
     this.xmlEntityContainer = xmlEntityContainer;
     this.xmlMetadata = xmlMetadata;
+  }
+
+  private static FullQualifiedName getFullQualifiedName(String parent) {
+    if (parent != null) {
+      return new FullQualifiedName(parent);
+    }
+    return null;
   }
 
   @Override

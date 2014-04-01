@@ -41,7 +41,7 @@ public class MetadataDocumentTest {
   }
 
   @Test
-  public void writeMetadataWithMockedEdm() {
+  public void writeMetadataWithEmptyMockedEdm() {
     ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
     Edm edm = mock(Edm.class);
     serializer.metadataDocument(edm);
@@ -52,7 +52,7 @@ public class MetadataDocumentTest {
     ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
     EdmProviderImpl edm = new EdmProviderImpl(new EdmTechProvider());
     InputStream metadata = serializer.metadataDocument(edm);
-    System.out.println(StringUtils.inputStreamToString(metadata, true));
+    String metadataString = StringUtils.inputStreamToString(metadata, false);
+    //System.out.println(metadataString);
   }
-
 }

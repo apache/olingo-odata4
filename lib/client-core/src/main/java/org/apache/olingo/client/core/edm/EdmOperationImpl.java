@@ -85,6 +85,6 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     if (bindingParam != null) {
       result = bindingParam.isCollection();
     }
-    return null;
+    return result;
   }
 }

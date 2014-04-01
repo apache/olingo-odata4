@@ -18,17 +18,21 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
+import org.apache.olingo.commons.core.edm.EdmReferentialConstraintImpl;
 import org.apache.olingo.server.api.edm.provider.NavigationProperty;
 import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   private final NavigationProperty navigationProperty;
+  private List<EdmReferentialConstraint> referentialConstraints;
 
   public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
     super(edm, navigationProperty.getName());
@@ -68,4 +72,18 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
     return null;
   }
 
+  @Override
+  public List<EdmReferentialConstraint> getReferentialConstraints() {
+    if (referentialConstraints == null) {
+      final List<ReferentialConstraint> providerConstraints = navigationProperty.getReferentialConstraints();
+      referentialConstraints = new ArrayList<EdmReferentialConstraint>();
+      if (providerConstraints != null) {
+        for (ReferentialConstraint constraint : providerConstraints) {
+          referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
+              .getReferencedProperty()));
+        }
+      }
+    }
+    return referentialConstraints;
+  }
 }

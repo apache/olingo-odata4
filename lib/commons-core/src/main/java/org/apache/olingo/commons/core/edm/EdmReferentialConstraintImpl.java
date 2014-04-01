@@ -16,36 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.edm;
+package org.apache.olingo.commons.core.edm;
 
-import java.util.List;
+import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 
-/**
- * A CSDL NavigationProperty element
- * <br/>
- * EdmNavigationProperty allows navigation from one entity type to another via a relationship.
- */
-public interface EdmNavigationProperty extends EdmElement {
+public class EdmReferentialConstraintImpl implements EdmReferentialConstraint {
 
-  /**
-   * @return true if nullable or null if not specified
-   */
-  Boolean isNullable();
+  private final String property;
+  private final String referencedProperty;
 
-  /**
-   * @return the partner navigation property
-   */
-  EdmNavigationProperty getPartner();
+  public EdmReferentialConstraintImpl(String property, String referencedProperty) {
+    this.property = property;
+    this.referencedProperty = referencedProperty;
+  }
 
-  /**
-   * @param referencedPropertyName
-   * @return propertyName for this referenced property
-   */
-  String getReferencingPropertyName(String referencedPropertyName);
+  @Override
+  public String getPropertyName() {
+    return property;
+  }
 
-  /**
-   * @return all referential constraints for this navigation property.
-   */
-  List<EdmReferentialConstraint> getReferentialConstraints();
-
+  @Override
+  public String getReferencedPropertyName() {
+    return referencedProperty;
+  }
 }

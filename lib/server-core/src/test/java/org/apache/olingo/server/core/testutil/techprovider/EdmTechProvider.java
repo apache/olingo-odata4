@@ -71,54 +71,66 @@ public class EdmTechProvider extends EdmProvider {
         );
   }
 
+  @Override
   public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
     return enumTypeProvider.getEnumType(enumTypeName);
   }
 
+  @Override
   public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
     return typeDefinitionProvider.getTypeDefinition(typeDefinitionName);
   }
 
+  @Override
   public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     return entityTypeProvider.getEntityType(entityTypeName);
   }
 
+  @Override
   public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
     return complexTypeProvider.getComplexType(complexTypeName);
   }
 
+  @Override
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
     return actionProvider.getActions(actionName);
   }
 
+  @Override
   public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
     return functionProvider.getFunctions(functionName);
   }
 
+  @Override
   public Term getTerm(final FullQualifiedName termName) throws ODataException {
     return null;
   }
 
+  @Override
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
       throws ODataException {
     return containerProvider.getEntitySet(entityContainer, entitySetName);
   }
 
+  @Override
   public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
       throws ODataException {
     return containerProvider.getSingleton(entityContainer, singletonName);
   }
 
+  @Override
   public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
       throws ODataException {
     return containerProvider.getActionImport(entityContainer, actionImportName);
   }
 
+  @Override
   public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
       throws ODataException {
     return containerProvider.getFunctionImport(entityContainer, functionImportName);
   }
 
+  @Override
   public List<Schema> getSchemas() throws ODataException {
     return schemaProvider.getSchemas();
   }

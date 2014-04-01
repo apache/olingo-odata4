@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,14 +26,17 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
+import org.apache.olingo.commons.core.edm.EdmNavigationPropertyBindingImpl;
 import org.apache.olingo.server.api.edm.provider.BindingTarget;
 import org.apache.olingo.server.api.edm.provider.NavigationPropertyBinding;
 
 public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
 
   private final BindingTarget target;
+  private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
 
   public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
     super(edm, container, target.getName(), target.getType());
@@ -73,5 +77,25 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
     }
 
     return bindingTarget;
+  }
+
+  @Override
+  public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
+    if (navigationPropertyBindings == null) {
+      List<NavigationPropertyBinding> providerBindings = target.getNavigationPropertyBindings();
+      navigationPropertyBindings = new ArrayList<EdmNavigationPropertyBinding>();
+      if (providerBindings != null) {
+        for (NavigationPropertyBinding binding : providerBindings) {
+          Target providerTarget = binding.getTarget();
+          String targetString = "";
+          if (providerTarget.getEntityContainer() != null) {
+            targetString = targetString + providerTarget.getEntityContainer().getFullQualifiedNameAsString() + "/";
+          }
+          targetString = targetString + providerTarget.getTargetName();
+          navigationPropertyBindings.add(new EdmNavigationPropertyBindingImpl(binding.getPath(), targetString));
+        }
+      }
+    }
+    return navigationPropertyBindings;
   }
 }

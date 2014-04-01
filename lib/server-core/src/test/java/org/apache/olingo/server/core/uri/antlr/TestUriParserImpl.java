@@ -593,7 +593,7 @@ public class TestUriParserImpl {
     testRes.run("FINRTInt16()")
         .isFunctionImport("FINRTInt16")
         .isFunction("UFNRTInt16")
-        .isType(PropertyProvider.nameString);
+        .isType(PropertyProvider.nameInt16);
 
     // one input
     testRes.run("FICRTETTwoKeyNavParam(ParameterInt16=1)")
@@ -614,7 +614,7 @@ public class TestUriParserImpl {
     testRes.run("FINRTInt16()")
         .isFunctionImport("FINRTInt16")
         .isFunction("UFNRTInt16")
-        .isType(PropertyProvider.nameString, false);
+        .isType(PropertyProvider.nameInt16, false);
 
     // returning collection of primitive
     testRes.run("FICRTCollStringTwoParam(ParameterString='ABC',ParameterInt16=1)")

@@ -18,34 +18,11 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-import java.util.List;
+//TODO: JavaDoc
+public interface EdmNavigationPropertyBinding {
 
-/**
- * A CSDL NavigationProperty element
- * <br/>
- * EdmNavigationProperty allows navigation from one entity type to another via a relationship.
- */
-public interface EdmNavigationProperty extends EdmElement {
-
-  /**
-   * @return true if nullable or null if not specified
-   */
-  Boolean isNullable();
-
-  /**
-   * @return the partner navigation property
-   */
-  EdmNavigationProperty getPartner();
-
-  /**
-   * @param referencedPropertyName
-   * @return propertyName for this referenced property
-   */
-  String getReferencingPropertyName(String referencedPropertyName);
-
-  /**
-   * @return all referential constraints for this navigation property.
-   */
-  List<EdmReferentialConstraint> getReferentialConstraints();
-
+  String getPath();
+  
+  String getTarget();
+  
 }

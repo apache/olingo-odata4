@@ -47,9 +47,13 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
   private boolean allFunctionImportsLoaded = false;
 
-  public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName) {
+  private final FullQualifiedName parentContainerName;
+
+  public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName,
+      final FullQualifiedName parentContainerName) {
     super(edm, entityContainerName.getName());
     this.entityContainerName = entityContainerName;
+    this.parentContainerName = parentContainerName;
   }
 
   @Override
@@ -148,4 +152,9 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   }
 
   protected abstract void loadAllActionImports();
+
+  @Override
+  public FullQualifiedName getParentContainerName() {
+    return parentContainerName;
+  }
 }

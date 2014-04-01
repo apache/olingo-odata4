@@ -30,14 +30,19 @@ public class ComplexTypeProvider {
 
   public static final FullQualifiedName nameCTAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTAllPrim");
   public static final FullQualifiedName nameCTBase = new FullQualifiedName(SchemaProvider.nameSpace, "CTBase");
-  public static final FullQualifiedName nameCTBasePrimCompNav = new FullQualifiedName(SchemaProvider.nameSpace, "CTBasePrimCompNav");
-  public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTCollAllPrim");
-  public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTCompCollComp");
+  public static final FullQualifiedName nameCTBasePrimCompNav = new FullQualifiedName(SchemaProvider.nameSpace,
+      "CTBasePrimCompNav");
+  public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "CTCollAllPrim");
+  public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "CTCompCollComp");
   public static final FullQualifiedName nameCTCompComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTCompComp");
   public static final FullQualifiedName nameCTCompNav = new FullQualifiedName(SchemaProvider.nameSpace, "CTCompNav");
 
-  public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTMixPrimCollComp");
-  public static final FullQualifiedName nameCTNavFiveProp = new FullQualifiedName(SchemaProvider.nameSpace, "CTNavFiveProp");
+  public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "CTMixPrimCollComp");
+  public static final FullQualifiedName nameCTNavFiveProp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "CTNavFiveProp");
   public static final FullQualifiedName nameCTPrim = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrim");
   public static final FullQualifiedName nameCTPrimComp = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrimComp");
   public static final FullQualifiedName nameCTPrimEnum = new FullQualifiedName(SchemaProvider.nameSpace, "CTPrimEnum");
@@ -88,7 +93,8 @@ public class ComplexTypeProvider {
     } else if (complexTypeName.equals(nameCTCompNav)) {
       return new ComplexType()
           .setName("CTCompNav")
-          .setProperties(Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.propertyComplex_CTNavFiveProp));
+          .setProperties(Arrays.asList(PropertyProvider.propertyString, 
+              PropertyProvider.propertyComplex_CTNavFiveProp));
 
     } else if (complexTypeName.equals(nameCTMixPrimCollComp)) {
       return new ComplexType()
@@ -112,7 +118,7 @@ public class ComplexTypeProvider {
           .setBaseType(nameCTBase)
           .setProperties(Arrays.asList(
               new Property()
-                  .setName("AdditionalPropString")
+                  .setName("AdditionalPropString2")
                   .setType(new FullQualifiedName("Edm", "String"))));
 
     } else if (complexTypeName.equals(nameCTCompComp)) {
@@ -122,7 +128,7 @@ public class ComplexTypeProvider {
 
     } else if (complexTypeName.equals(nameCTCompCollComp)) {
       return new ComplexType()
-          .setName("CTCompComp")
+          .setName("CTCompCollComp")
           .setProperties(Arrays.asList(PropertyProvider.collPropertyComplex_CTTwoPrim));
 
     } else if (complexTypeName.equals(nameCTPrimComp)) {
@@ -151,7 +157,9 @@ public class ComplexTypeProvider {
           .setBaseType(nameCTPrimComp)
           .setNavigationProperties(Arrays.asList(
               PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav));
+              PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav,
+              PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
+              PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav));
 
     } else if (complexTypeName.equals(nameCTPrimEnum)) {
       return new ComplexType()

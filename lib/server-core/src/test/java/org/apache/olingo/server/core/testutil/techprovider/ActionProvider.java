@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.edm.provider.ReturnType;
 
 public class ActionProvider {
 
-  //Bound Actions
+  // Bound Actions
   public static final FullQualifiedName nameBAESAllPrimRTETAllPrim =
       new FullQualifiedName(SchemaProvider.nameSpace, "BAESAllPrimRTETAllPrim");
 
@@ -45,18 +45,22 @@ public class ActionProvider {
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(SchemaProvider.nameSpace, "BAETTwoKeyNavRTETTwoKeyNav");
 
-  
-  //Unbound Actions
-  public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(SchemaProvider.nameSpace, "UARTCompCollParam");
-  public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(SchemaProvider.nameSpace, "UARTCompParam");
-  public static final FullQualifiedName nameUARTETCollAllPrimParam =
-      new FullQualifiedName(SchemaProvider.nameSpace, "UARTETCollAllPrimParam");
+  // Unbound Actions
+  public static final FullQualifiedName nameUARTCompCollParam = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UARTCompCollParam");
+  public static final FullQualifiedName nameUARTCompParam = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UARTCompParam");
+  public static final FullQualifiedName nameUARTESParam =
+      new FullQualifiedName(SchemaProvider.nameSpace, "UARTESParam");
 
-  public static final FullQualifiedName nameUARTETParam = new FullQualifiedName(SchemaProvider.nameSpace, "UARTETParam");
-  public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(SchemaProvider.nameSpace, "UARTPrimParam");
-  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(SchemaProvider.nameSpace, "UARTPrimCollParam");
+  public static final FullQualifiedName nameUARTETParam =
+      new FullQualifiedName(SchemaProvider.nameSpace, "UARTETParam");
   
-  
+  public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UARTPrimParam");
+  public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UARTPrimCollParam");
+
   public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTPrimParam)) {
       return Arrays.asList(
@@ -99,35 +103,36 @@ public class ActionProvider {
 
     } else if (actionName.equals(nameUARTETParam)) {
       return Arrays.asList(
-          new Action().setName("UARTCompCollParam")
+          new Action().setName("UARTETParam")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyTwoPrim))
           );
 
-    } else if (actionName.equals(nameUARTETCollAllPrimParam)) {
+    } else if (actionName.equals(nameUARTESParam)) {
       return Arrays.asList(
-          new Action().setName("UARTETCollAllPrimParam")
+          new Action().setName("UARTESParam")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
-
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETCollAllPrim).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setCollection(true))
           );
 
     } else if (actionName.equals(nameBAETTwoKeyNavRTETTwoKeyNav)) {
       return Arrays.asList(
           new Action().setName("BAETTwoKeyNavRTETTwoKeyNav")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav)))
+                  new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav)
+                  .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
           ,
           new Action().setName("BAETTwoKeyNavRTETTwoKeyNav")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETKeyNav").setType(EntityTypeProvider.nameETKeyNav)))
+                  new Parameter().setName("ParameterETKeyNav").setType(EntityTypeProvider.nameETKeyNav)
+                  .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
@@ -136,8 +141,10 @@ public class ActionProvider {
     } else if (actionName.equals(nameBAESAllPrimRTETAllPrim)) {
       return Arrays.asList(
           new Action().setName("BAESAllPrimRTETAllPrim")
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterESAllPrim").setType(EntityTypeProvider.nameETAllPrim).setCollection(true)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("ParameterESAllPrim").setType(EntityTypeProvider.nameETAllPrim)
+                          .setCollection(true).setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETAllPrim))
@@ -146,8 +153,10 @@ public class ActionProvider {
     } else if (actionName.equals(nameBAESTwoKeyNavRTESTwoKeyNav)) {
       return Arrays.asList(
           new Action().setName("BAESTwoKeyNavRTESTwoKeyNav")
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav)
+                          .setCollection(true).setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
@@ -157,7 +166,8 @@ public class ActionProvider {
       return Arrays.asList(
           new Action().setName("BAETBaseTwoKeyNavRTETBaseTwoKeyNav")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETBaseTwoKeyNav)))
+                  new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
+                  .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
@@ -166,8 +176,10 @@ public class ActionProvider {
     } else if (actionName.equals(nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav)) {
       return Arrays.asList(
           new Action().setName("BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav")
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterETTwoBaseTwoKeyNav").setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("ParameterETTwoBaseTwoKeyNav").setType(
+                          EntityTypeProvider.nameETTwoBaseTwoKeyNav).setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav))

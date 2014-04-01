@@ -112,21 +112,19 @@ public class FunctionProvider {
   public static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(SchemaProvider.nameSpace, "BFESTwoKeyNavRTESTwoKeyNav");
 
-  // TODO: warum BAET?
-  public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.nameSpace, "BAETTwoKeyNavRTETTwoKeyNav");
-
   // Unbound Functions
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCollCTTwoPrimParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollCTTwoPrimParam");
-  public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollString");
+  public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UFCRTCollString");
   public static final FullQualifiedName nameUFCRTCollStringTwoParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCollStringTwoParam");
   public static final FullQualifiedName nameUFCRTCTAllPrimTwoParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCTAllPrimTwoParam");
-  public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCTTwoPrim");
+  public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UFCRTCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCTTwoPrimParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTCTTwoPrimParam");
   public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam =
@@ -135,8 +133,10 @@ public class FunctionProvider {
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTESTwoKeyNavParam");
   public static final FullQualifiedName nameUFCRTETAllPrimTwoParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETAllPrimTwoParam");
-  public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETKeyNav");
-  public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETMedia");
+  public static final FullQualifiedName nameUFCRTETKeyNav = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UFCRTETKeyNav");
+  public static final FullQualifiedName nameUFCRTETMedia = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UFCRTETMedia");
 
   public static final FullQualifiedName nameUFCRTETTwoKeyNavParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETTwoKeyNavParam");
@@ -144,7 +144,8 @@ public class FunctionProvider {
   public static final FullQualifiedName nameUFCRTETTwoKeyNavParamCTTwoPrim =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTETTwoKeyNavParamCTTwoPrim");
 
-  public static final FullQualifiedName nameUFCRTString = new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTString");
+  public static final FullQualifiedName nameUFCRTString =
+      new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTString");
 
   public static final FullQualifiedName nameUFCRTStringTwoParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFCRTStringTwoParam");
@@ -154,6 +155,15 @@ public class FunctionProvider {
   public static final FullQualifiedName nameUFNRTInt16 =
       new FullQualifiedName(SchemaProvider.nameSpace, "UFNRTInt16");
 
+  public static final FullQualifiedName nameUFNRTCollCTNavFiveProp = new FullQualifiedName(SchemaProvider.nameSpace,
+      "UFNRTCollCTNavFiveProp");
+
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCTNavFiveProp = new FullQualifiedName(
+      SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCTNavFiveProp");
+
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTNavFiveProp = new FullQualifiedName(
+      SchemaProvider.nameSpace, "BFCESTwoKeyNavRTCollCTNavFiveProp");
+
   public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
 
     if (functionName.equals(nameUFNRTInt16)) {
@@ -162,7 +172,7 @@ public class FunctionProvider {
               .setName("UFNRTInt16")
               .setParameters(new ArrayList<Parameter>())
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString))
+                  new ReturnType().setType(PropertyProvider.nameInt16))
           );
 
     } else if (functionName.equals(nameUFCRTETKeyNav)) {
@@ -172,7 +182,7 @@ public class FunctionProvider {
               .setParameters(new ArrayList<Parameter>())
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTETTwoKeyNavParam)) {
@@ -180,10 +190,10 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTETTwoKeyNavParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)
               )
           );
 
@@ -192,10 +202,11 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTETTwoKeyNavParamCTTwoPrim")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterCTTwoPrim").setType(ComplexTypeProvider.nameCTTwoPrim)))
+                  new Parameter().setName("ParameterCTTwoPrim").setType(ComplexTypeProvider.nameCTTwoPrim)
+                      .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)
               )
           );
 
@@ -206,22 +217,24 @@ public class FunctionProvider {
               .setParameters(Arrays.asList(
                   new Parameter()
                       .setName("ParameterInt16")
-                      .setType(PropertyProvider.nameInt16)))
+                      .setType(PropertyProvider.nameInt16)
+                      .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString)),
+                  new ReturnType().setType(PropertyProvider.nameString).setNullable(false)),
           new Function()
               .setName("UFCRTStringTwoParam")
               .setParameters(Arrays.asList(
                   new Parameter()
                       .setName("ParameterString")
-                      .setType(PropertyProvider.nameString),
+                      .setType(PropertyProvider.nameString)
+                      .setNullable(false),
                   new Parameter()
                       .setName("ParameterInt16")
-                      .setType(PropertyProvider.nameInt16)))
+                      .setType(PropertyProvider.nameInt16)
+                      .setNullable(false)))
               .setComposable(true)
-              .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString))
+              .setReturnType(new ReturnType().setType(PropertyProvider.nameString).setNullable(false))
 
           );
 
@@ -232,10 +245,11 @@ public class FunctionProvider {
               .setParameters(Arrays.asList(
                   new Parameter()
                       .setName("ParameterInt16")
-                      .setType(PropertyProvider.nameInt16)))
+                      .setType(PropertyProvider.nameInt16)
+                      .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTString)) {
@@ -247,7 +261,7 @@ public class FunctionProvider {
               .setParameters(new ArrayList<Parameter>())
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString)
+                  new ReturnType().setType(PropertyProvider.nameString).setNullable(false)
               )
           );
 
@@ -256,11 +270,11 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTCollStringTwoParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true))
+                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTCollString)) {
@@ -270,7 +284,7 @@ public class FunctionProvider {
               .setParameters(new ArrayList<Parameter>())
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true))
+                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTCTAllPrimTwoParam)) {
@@ -278,11 +292,11 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTCTAllPrimTwoParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTAllPrim))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTCTTwoPrimParam)) {
@@ -290,22 +304,22 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTCTTwoPrimParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false),
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(true)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
           );
     } else if (functionName.equals(nameUFCRTCollCTTwoPrimParam)) {
       return Arrays.asList(
           new Function()
               .setName("UFCRTCollCTTwoPrimParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false),
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(true)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTCTTwoPrim)) {
@@ -315,36 +329,7 @@ public class FunctionProvider {
               .setParameters(new ArrayList<Parameter>())
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
-          );
-
-    } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTCTTwoPrim")
-
-              .setParameters(new ArrayList<Parameter>())
-              .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true))
-          );
-
-    } else if (functionName.equals(nameUFCRTETMedia)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTETMedia")
-              .setParameters(new ArrayList<Parameter>())
-              .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETMedia))
-          );
-
-    } else if (functionName.equals(nameUFCRTString)) {
-      return Arrays.asList(
-          new Function()
-              .setName("UFCRTString")
-              .setParameters(new ArrayList<Parameter>())
-              .setReturnType(new ReturnType()
-                  .setType(PropertyProvider.nameString)
-              )
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTCollCTTwoPrim)) {
@@ -354,7 +339,17 @@ public class FunctionProvider {
               .setComposable(true)
               .setParameters(new ArrayList<Parameter>())
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true).setNullable(false))
+          );
+
+    } else if (functionName.equals(nameUFCRTETMedia)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFCRTETMedia")
+              .setParameters(new ArrayList<Parameter>())
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(EntityTypeProvider.nameETMedia).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFNRTESMixPrimCollCompTwoParam)) {
@@ -362,11 +357,12 @@ public class FunctionProvider {
           new Function()
               .setName("UFNRTESMixPrimCollCompTwoParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
               .setComposable(false)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true)
+                      .setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTETAllPrimTwoParam)) {
@@ -374,11 +370,11 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTETAllPrimTwoParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)))
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETAllPrim))
+                  new ReturnType().setType(EntityTypeProvider.nameETAllPrim).setNullable(false))
           );
 
     } else if (functionName.equals(nameUFCRTESMixPrimCollCompTwoParam)) {
@@ -386,14 +382,22 @@ public class FunctionProvider {
           new Function()
               .setName("UFCRTESMixPrimCollCompTwoParam")
               .setParameters(Arrays.asList(
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString),
-                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
+                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(false),
+                  new Parameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(false)
                   ))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true)
+                      .setNullable(false))
           );
 
+    } else if (functionName.equals(nameUFNRTCollCTNavFiveProp)) {
+      return Arrays.asList(
+          new Function()
+              .setName("UFNRTCollCTNavFiveProp")
+              .setReturnType(
+                  new ReturnType().setType(ComplexTypeProvider.nameCTNavFiveProp).setCollection(true))
+          );
     } else if (functionName.equals(nameBFCESTwoKeyNavRTESTwoKeyNav)) {
       return Arrays
           .asList(
@@ -403,10 +407,11 @@ public class FunctionProvider {
                   .setParameters(
                       Arrays.asList(
                           new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                              .setCollection(true)))
+                              .setCollection(true).setNullable(false)))
                   .setComposable(true)
                   .setReturnType(
-                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)),
+                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+                          .setNullable(false)),
 
               new Function()
                   .setName("BFCESTwoKeyNavRTESTwoKeyNav")
@@ -414,33 +419,36 @@ public class FunctionProvider {
                   .setParameters(
                       Arrays.asList(
                           new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                              .setCollection(true),
+                              .setCollection(true).setNullable(false),
                           new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
-                              .setCollection(false)))
+                              .setCollection(false).setNullable(false)))
                   .setComposable(true)
                   .setReturnType(
-                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)),
+                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+                          .setNullable(false)),
               new Function()
                   .setName("BFCESTwoKeyNavRTESTwoKeyNav")
                   .setBound(true)
                   .setParameters(
                       Arrays.asList(
                           new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
-                              .setCollection(true)))
+                              .setCollection(true).setNullable(false)))
                   .setComposable(true)
                   .setReturnType(
-                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)),
+                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+                          .setNullable(false)),
               new Function()
                   .setName("BFCESTwoKeyNavRTESTwoKeyNav")
                   .setBound(true)
                   .setParameters(
                       Arrays.asList(new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
-                          .setCollection(true),
+                          .setCollection(true).setNullable(false),
                           new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
-                              .setCollection(false)))
+                              .setCollection(false).setNullable(false)))
                   .setComposable(true)
                   .setReturnType(
-                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+                          .setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCStringRTESTwoKeyNav)) {
@@ -448,10 +456,10 @@ public class FunctionProvider {
           new Function().setName("BFCStringRTESTwoKeyNav")
               .setBound(true)
               .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(PropertyProvider.nameString)))
+                  new Parameter().setName("BindingParam").setType(PropertyProvider.nameString).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTETTwoKeyNav)) {
@@ -460,10 +468,11 @@ public class FunctionProvider {
               .setName("BFCETBaseTwoKeyNavRTETTwoKeyNav")
               .setBound(true)
               .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)))
+                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
+                      .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)
               )
           );
 
@@ -474,10 +483,11 @@ public class FunctionProvider {
               .setBound(true)
               .setParameters(Arrays.asList(
                   new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
-                      .setCollection(true)))
+                      .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true)
+                      .setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESAllPrimRTCTAllPrim)) {
@@ -487,11 +497,11 @@ public class FunctionProvider {
               .setBound(true)
               .setParameters(
                   Arrays.asList(
-                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETAllPrim).setCollection(
-                          true)))
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETAllPrim)
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTAllPrim))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCTTwoPrim)) {
@@ -502,10 +512,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCollCTTwoPrim)) {
@@ -516,10 +526,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTString)) {
@@ -530,10 +540,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString))
+                  new ReturnType().setType(PropertyProvider.nameString).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCollString)) {
@@ -544,10 +554,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true))
+                  new ReturnType().setType(PropertyProvider.nameString).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETTwoKeyNavRTESTwoKeyNav)) {
@@ -556,10 +566,11 @@ public class FunctionProvider {
               .setName("BFCETTwoKeyNavRTESTwoKeyNav")
               .setBound(true)
               .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)))
+                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                      .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESTwoKeyNav)) {
@@ -567,11 +578,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCETBaseTwoKeyNavRTESTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCSINavRTESTwoKeyNav)) {
@@ -579,11 +592,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCSINavRTESTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(
+                          false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETBaseTwoKeyNavRTESBaseTwoKey)) {
@@ -591,11 +606,14 @@ public class FunctionProvider {
           new Function()
               .setName("BFCETBaseTwoKeyNavRTESBaseTwoKey")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true).setNullable(
+                      false))
           );
 
     } else if (functionName.equals(nameBFCCollStringRTESTwoKeyNav)) {
@@ -603,10 +621,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCCollStringRTESTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(PropertyProvider.nameString).setCollection(true)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(PropertyProvider.nameString).setCollection(true)
+                          .setNullable(false)))
               .setComposable(true)
-              .setReturnType(new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+              .setReturnType(
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCCTPrimCompRTESTwoKeyNav)) {
@@ -614,11 +635,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCCTPrimCompRTESTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp).setNullable(
+                          false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCCTPrimCompRTESBaseTwoKeyNav)) {
@@ -626,11 +649,14 @@ public class FunctionProvider {
           new Function()
               .setName("BFCCTPrimCompRTESBaseTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp).setNullable(
+                          false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true).setNullable(
+                      false))
           );
 
     } else if (functionName.equals(nameBFCCollCTPrimCompRTESAllPrim)) {
@@ -641,10 +667,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETAllPrim).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETAllPrim).setCollection(true).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTTwoKeyNav)) {
@@ -655,10 +681,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESKeyNavRTETKeyNav)) {
@@ -667,11 +693,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCESKeyNavRTETKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav).setCollection(true)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav).setCollection(
+                          true).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETKeyNavRTETKeyNav)) {
@@ -680,10 +708,10 @@ public class FunctionProvider {
               .setName("BFCETKeyNavRTETKeyNav")
               .setBound(true)
               .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)))
+                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav).setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setNullable(false))
           );
     } else if (functionName.equals(nameBFESTwoKeyNavRTESTwoKeyNav)) {
       return Arrays.asList(
@@ -693,9 +721,10 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true)))
+                          .setCollection(true).setNullable(false)))
               .setComposable(true)
-              .setReturnType(new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+              .setReturnType(
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
 
           );
 
@@ -704,11 +733,13 @@ public class FunctionProvider {
           new Function()
               .setName("BFCETTwoKeyNavRTETTwoKeyNav")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(
+                          false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCETTwoKeyNavRTCTTwoPrim)) {
@@ -716,11 +747,40 @@ public class FunctionProvider {
           new Function()
               .setName("BFCETTwoKeyNavRTCTTwoPrim")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(
+                          false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim))
+                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTCTNavFiveProp)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTCTNavFiveProp")
+              .setBound(true)
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                          .setCollection(true).setNullable(false)))
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(ComplexTypeProvider.nameCTNavFiveProp).setNullable(false))
+          );
+    } else if (functionName.equals(nameBFCESTwoKeyNavRTCollCTNavFiveProp)) {
+      return Arrays.asList(
+          new Function()
+              .setName("BFCESTwoKeyNavRTCollCTNavFiveProp")
+              .setBound(true)
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                          .setCollection(true).setNullable(false)))
+              .setComposable(true)
+              .setReturnType(
+                  new ReturnType().setType(ComplexTypeProvider.nameCTNavFiveProp).setCollection(true)
+                      .setNullable(false))
           );
     } else if (functionName.equals(nameBFCESTwoKeyNavRTStringParam)) {
       return Arrays.asList(
@@ -730,11 +790,12 @@ public class FunctionProvider {
               .setParameters(
                   Arrays.asList(
                       new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
-                          .setCollection(true),
-                      new Parameter().setName("ParameterComplex").setType(ComplexTypeProvider.nameCTTwoPrim)))
+                          .setCollection(true).setNullable(false),
+                      new Parameter().setName("ParameterComplex").setType(ComplexTypeProvider.nameCTTwoPrim)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(PropertyProvider.nameString))
+                  new ReturnType().setType(PropertyProvider.nameString).setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCESKeyNavRTETKeyNavParam)) {
@@ -742,49 +803,46 @@ public class FunctionProvider {
           new Function()
               .setName("BFCESKeyNavRTETKeyNavParam")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav).setCollection(true),
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav).setCollection(
+                          true).setNullable(false),
+                      new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav))
+                  new ReturnType().setType(EntityTypeProvider.nameETKeyNav).setNullable(false))
           );
     } else if (functionName.equals(nameBFCCTPrimCompRTETTwoKeyNavParam)) {
       return Arrays.asList(
           new Function()
               .setName("BFCCTPrimCompRTETTwoKeyNavParam")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp),
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp).setNullable(
+                          false),
+                      new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(new ReturnType()
-                  .setType(EntityTypeProvider.nameETTwoKeyNav)
+                  .setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)
               )
-          );
-    } else if (functionName.equals(nameBAETTwoKeyNavRTETTwoKeyNav)) {
-      return Arrays.asList(
-          new Function()
-              .setName("BAETTwoKeyNavRTETTwoKeyNav")
-              .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(PropertyProvider.nameInt16).setCollection(true),
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString).setNullable(true)))
-              .setComposable(true)
-              .setReturnType(
-                  new ReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true))
           );
     } else if (functionName.equals(nameBFCCTPrimCompRTESTwoKeyNavParam)) {
       return Arrays.asList(
           new Function()
               .setName("BFCCTPrimCompRTESTwoKeyNavParam")
               .setBound(true)
-              .setParameters(Arrays.asList(
-                  new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp),
-                  new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)))
+              .setParameters(
+                  Arrays.asList(
+                      new Parameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTPrimComp).setNullable(
+                          false),
+                      new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
+                          .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true))
+                  new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true).setNullable(false))
           );
     }
 
