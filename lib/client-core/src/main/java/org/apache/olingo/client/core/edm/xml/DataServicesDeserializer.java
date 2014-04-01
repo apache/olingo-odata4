@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -34,7 +33,7 @@ public class DataServicesDeserializer extends AbstractEdmDeserializer<AbstractDa
   protected AbstractDataServices doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractDataServices dataServices = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractDataServices dataServices = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.DataServicesImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.DataServicesImpl();
 

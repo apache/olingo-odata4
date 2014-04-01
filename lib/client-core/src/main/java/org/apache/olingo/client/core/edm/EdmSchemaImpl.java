@@ -41,9 +41,12 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmSchemaImpl;
 
 public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
+
+  private final ODataServiceVersion version;
 
   private final Edm edm;
 
@@ -51,8 +54,12 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
 
   private final Schema schema;
 
-  public EdmSchemaImpl(Edm edm, XMLMetadata xmlMetadata, Schema schema) {
+  public EdmSchemaImpl(final ODataServiceVersion version, final Edm edm,
+          final XMLMetadata xmlMetadata, final Schema schema) {
+
     super(schema.getNamespace(), schema.getAlias());
+
+    this.version = version;
     this.edm = edm;
     this.xmlMetadata = xmlMetadata;
     this.schema = schema;
@@ -77,7 +84,8 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
               ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getTypeDefinitions();
       if (providerTypeDefinitions != null) {
         for (TypeDefinition def : providerTypeDefinitions) {
-          typeDefinitions.add(new EdmTypeDefinitionImpl(edm, new FullQualifiedName("namespace", def.getName()), def));
+          typeDefinitions.add(
+                  new EdmTypeDefinitionImpl(version, edm, new FullQualifiedName("namespace", def.getName()), def));
         }
       }
     }
@@ -90,7 +98,8 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
     final List<EnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
       for (EnumType enumType : providerEnumTypes) {
-        enumTypes.add(new EdmEnumTypeImpl(edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
+        enumTypes.add(
+                new EdmEnumTypeImpl(version, edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
       }
     }
     return enumTypes;

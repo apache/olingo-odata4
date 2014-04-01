@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.List;
 
-import org.apache.olingo.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;

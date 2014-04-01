@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:etag="W/&quot;'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'&quot;">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)</id>
+  <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" title="Product" href="Product(-6)" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-6)/RelatedProducts" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Detail" type="application/atom+xml;type=entry" title="Detail" href="Product(-6)/Detail" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Reviews" type="application/atom+xml;type=feed" title="Reviews" href="Product(-6)/Reviews" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Photos" type="application/atom+xml;type=feed" title="Photos" href="Product(-6)/Photos" />
+  <title />
+  <updated>2014-02-17T14:02:48Z</updated>
+  <author>
+    <name />
+  </author>
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-6)/Picture" />
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions" />
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductId m:type="Edm.Int32">-6</d:ProductId>
+      <d:Description>expdybhclurfobuyvzmhkgrnrajhamqmkhqpmiypittnp</d:Description>
+      <d:Dimensions m:type="Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions">
+        <d:Width m:type="Edm.Decimal">-49157206180150400000000000000</d:Width>
+        <d:Height m:type="Edm.Decimal">-79228162514264337593543950335</d:Height>
+        <d:Depth m:type="Edm.Decimal">38.8793813628938</d:Depth>
+      </d:Dimensions>
+      <d:BaseConcurrency>uacssmuxummhtezdsnoßssrlbsßloxjsslnnayinxiksspjsssvumgduaapcfvnsseeßgpaxuaabosemßiemtufplo</d:BaseConcurrency>
+      <d:ComplexConcurrency m:type="Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo">
+        <d:Token>まﾝ裹ぁゼｦぼ歹ポぜボたゾひたソﾝタボたぺを欲弌ミソゾべ弌ダァぺべソ裹ひ暦ﾝそя欲ぺ歹ボタひせァﾝんゾﾝァポクﾝひぜ</d:Token>
+        <d:QueriedDateTime m:type="Edm.DateTime">0001-01-01T00:00:00</d:QueriedDateTime>
+      </d:ComplexConcurrency>
+      <d:NestedComplexConcurrency m:type="Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo">
+        <d:ModifiedDate m:type="Edm.DateTime">0001-01-01T00:00:00</d:ModifiedDate>
+        <d:ModifiedBy m:null="true" />
+        <d:Concurrency m:type="Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo">
+          <d:Token>zqzhnfajucmhubkegvlixzrqum</d:Token>
+          <d:QueriedDateTime m:type="Edm.DateTime">9363-08-11T05:17:31.4918312</d:QueriedDateTime>
+        </d:Concurrency>
+      </d:NestedComplexConcurrency>
+    </m:properties>
+  </content>
+</entry>

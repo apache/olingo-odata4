@@ -23,18 +23,17 @@ import org.apache.olingo.commons.api.edm.EdmNamed;
 
 public abstract class EdmNamedImpl implements EdmNamed {
 
-  protected final Edm edm;
+    protected final Edm edm;
 
-  private final String name;
+    private final String name;
 
-  public EdmNamedImpl(final Edm edm, final String name) {
-    this.edm = edm;
-    this.name = name;
-  }
+    public EdmNamedImpl(final Edm edm, final String name) {
+        this.edm = edm;
+        this.name = name;
+    }
 
-  @Override
-  public String getName() {
-    return name;
-  }
-
+    @Override
+    public String getName() {
+        return name;
+    }
 }

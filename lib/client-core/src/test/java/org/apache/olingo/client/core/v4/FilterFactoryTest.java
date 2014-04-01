@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.olingo.client.api.ODataV4Client;
-import org.apache.olingo.client.api.uri.filter.URIFilter;
-import org.apache.olingo.client.api.uri.filter.V4FilterArgFactory;
-import org.apache.olingo.client.api.uri.filter.V4FilterFactory;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
+import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.edm.EdmEnumTypeImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,21 +36,21 @@ import org.junit.Test;
 public class FilterFactoryTest extends AbstractTest {
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return v4Client;
   }
 
-  private V4FilterFactory getFilterFactory() {
+  private FilterFactory getFilterFactory() {
     return getClient().getFilterFactory();
   }
 
-  private V4FilterArgFactory getFilterArgFactory() {
+  private FilterArgFactory getFilterArgFactory() {
     return getFilterFactory().getArgFactory();
   }
 
   @Test
   public void has() {
-    final EdmEnumType pattern = new EdmEnumTypeImpl(
+    final EdmEnumType pattern = new EdmEnumTypeImpl(ODataServiceVersion.V40,
             null, new FullQualifiedName("Sales", "Pattern"), new EnumTypeImpl());
     final URIFilter filter = getFilterFactory().has(getFilterArgFactory().property("style"), pattern, "Yellow");
 

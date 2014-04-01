@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -28,7 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
-          "(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,3}?)0*)?)?");
+          "(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,}?)0*)?)?");
 
   private static final EdmTimeOfDay INSTANCE = new EdmTimeOfDay();
 
@@ -57,6 +58,10 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     dateTimeValue.set(Calendar.MINUTE, Byte.parseByte(matcher.group(2)));
     dateTimeValue.set(Calendar.SECOND, matcher.group(3) == null ? 0 : Byte.parseByte(matcher.group(3)));
 
+    // cloning the original Calendar instance to avoid vanishing the Calendar value check - triggered by any
+    // get method - empowered by the convertDateTime() method below
+    final Timestamp timestamp = new Timestamp(((Calendar) dateTimeValue.clone()).getTimeInMillis());
+
     if (matcher.group(4) != null) {
       if (matcher.group(4).length() == 1 || matcher.group(4).length() > 13) {
         throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)");
@@ -66,18 +71,28 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
         throw new EdmPrimitiveTypeException(
                 "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
-      final String milliSeconds = decimals + "000".substring(decimals.length());
+      final String milliSeconds = decimals.length() > 3
+                                  ? decimals.substring(0, 3)
+                                  : decimals + "000".substring(decimals.length());
       dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+
+      if (!decimals.isEmpty()) {
+        timestamp.setNanos(Integer.parseInt(decimals));
+      }
+    }
+
+    if (returnType.isAssignableFrom(Timestamp.class)) {
+      return returnType.cast(timestamp);
     }
 
     try {
       return EdmDateTimeOffset.convertDateTime(dateTimeValue, returnType);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value), e");
+              "EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value)", e);
     } catch (final ClassCastException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)", e);
     }
   }
 
@@ -86,9 +101,19 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value);
+    final Calendar dateTimeValue;
+    final int fractionalSecs;
+    if (value instanceof Timestamp) {
+      final Calendar tmp = Calendar.getInstance();
+      tmp.setTimeInMillis(((Timestamp) value).getTime());
+      dateTimeValue = EdmDateTimeOffset.createDateTime(tmp);
+      fractionalSecs = ((Timestamp) value).getNanos();
+    } else {
+      dateTimeValue = EdmDateTimeOffset.createDateTime(value);
+      fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
+    }
 
-    final StringBuilder result = new StringBuilder(8); // Eight characters are enough for "normal" times.
+    final StringBuilder result = new StringBuilder();
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.HOUR_OF_DAY));
     result.append(':');
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.MINUTE));
@@ -96,10 +121,14 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
     try {
-      EdmDateTimeOffset.appendMilliseconds(result, dateTimeValue.get(Calendar.MILLISECOND), precision);
+      if (value instanceof Timestamp) {
+        EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
+      } else {
+        EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
+      }
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets), e");
+              "EdmPrimitiveTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets)", e);
     }
 
     return result.toString();

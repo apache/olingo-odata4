@@ -70,12 +70,12 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
   @Override
   public FullQualifiedName getBindingParameterTypeFqn() {
-    FullQualifiedName fqn = null;
+    FullQualifiedName bpfqn = null;
     final EdmParameter bindingParam = getBindingParameter();
     if (bindingParam != null) {
-      fqn = new FullQualifiedName(bindingParam.getType().getNamespace(), bindingParam.getType().getName());
+      bpfqn = new FullQualifiedName(bindingParam.getType().getNamespace(), bindingParam.getType().getName());
     }
-    return fqn;
+    return bpfqn;
   }
 
   @Override
@@ -85,6 +85,6 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     if (bindingParam != null) {
       result = bindingParam.isCollection();
     }
-    return null;
+    return result;
   }
 }

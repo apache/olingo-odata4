@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.data;
 
+import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -69,7 +70,7 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Ser
   protected ServiceDocument doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractServiceDocument sdoc = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractServiceDocument sdoc = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.data.v3.XMLServiceDocumentImpl()
             : new org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl();
 

@@ -1,0 +1,41 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car</id><title type="text">Car</title><updated>2014-02-13T14:31:04Z</updated><link rel="self" title="Car" href="Car" /><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(11)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(11)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(11)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(11)/Video" /><link rel="edit-media" title="Car" href="Car(11)/$value" /><content type="*/*" src="Car(11)/$value" /><m:properties><d:VIN m:type="Edm.Int32">11</d:VIN><d:Description>cenbviijieljtrtdslbuiqubcvhxhzenidqdnaopplvlqc</d:Description></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(12)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(12)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(12)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(12)/Video" /><link rel="edit-media" title="Car" href="Car(12)/$value" /><content type="*/*" src="Car(12)/$value" /><m:properties><d:VIN m:type="Edm.Int32">12</d:VIN><d:Description>lx</d:Description></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(13)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(13)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(13)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(13)/Video" /><link rel="edit-media" title="Car" href="Car(13)/$value" /><content type="*/*" src="Car(13)/$value" /><m:properties><d:VIN m:type="Edm.Int32">13</d:VIN><d:Description m:null="true" /></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(14)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(14)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(14)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(14)/Video" /><link rel="edit-media" title="Car" href="Car(14)/$value" /><content type="*/*" src="Car(14)/$value" /><m:properties><d:VIN m:type="Edm.Int32">14</d:VIN><d:Description>畚チびﾝぁあяまぴひタバァﾝぴ歹チ歹歹ァまマぞ珱暦ぼ歹グ珱ボチタびゼソゼたグёま畚ａ畚歹匚畚ァゼ匚Я欲匚チチボびソァぴ暦ぺポソチバЯゼ黑ダ匚マび暦ダソク歹まあａ裹ソハ歹暦弌ａバ暦ぽﾈ</d:Description></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(15)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(15)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(15)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(15)/Video" /><link rel="edit-media" title="Car" href="Car(15)/$value" /><content type="*/*" src="Car(15)/$value" /><m:properties><d:VIN m:type="Edm.Int32">15</d:VIN><d:Description>kphszztczthjacvjnttrarxru</d:Description></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(16)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(16)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(16)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(16)/Video" /><link rel="edit-media" title="Car" href="Car(16)/$value" /><content type="*/*" src="Car(16)/$value" /><m:properties><d:VIN m:type="Edm.Int32">16</d:VIN><d:Description>ぁゼをあクびゼゼァァせマほグソバせё裹ｦぽﾝァ</d:Description></m:properties></entry><entry><id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(17)</id><category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Car" href="Car(17)" /><title /><updated>2014-02-13T14:31:04Z</updated><author><name /></author><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(17)/Photo" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(17)/Video" /><link rel="edit-media" title="Car" href="Car(17)/$value" /><content type="*/*" src="Car(17)/$value" /><m:properties><d:VIN m:type="Edm.Int32">17</d:VIN><d:Description>まァチボЯ暦マチま匚ぁそタんゼびたチほ黑ポびぁソёん欲欲ｦをァァポぴグ亜チポグｦミそハせゼ珱ゼぜせポゼゼａ裹黑そまそチ</d:Description></m:properties></entry></feed><!--
+
+    Copyright © Microsoft Open Technologies, Inc.
+
+    All Rights Reserved
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+    OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+    ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+    PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+
+    See the Apache License, Version 2.0 for the specific language
+    governing permissions and limitations under the License.
+
+-->

@@ -18,17 +18,21 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements UriResourceLambdaAll {
+
   protected EdmProperty property;
+
   private String lambdaVariable;
+
   private ExpressionImpl expression;
 
   public UriResourceLambdaAllImpl() {
@@ -37,7 +41,7 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
 
   @Override
   public EdmType getType() {
-    return EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance();
+    return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean);
   }
 
   @Override
@@ -53,7 +57,9 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
   public UriResourceLambdaAllImpl setLamdaVariable(final String lambdaVariable) {
     this.lambdaVariable = lambdaVariable;
     return this;
-  };
+  }
+
+  ;
 
   @Override
   public Expression getExpression() {
@@ -63,7 +69,9 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
   public UriResourceLambdaAllImpl setExpression(final ExpressionImpl expression) {
     this.expression = expression;
     return this;
-  };
+  }
+
+  ;
 
   @Override
   public String toString() {

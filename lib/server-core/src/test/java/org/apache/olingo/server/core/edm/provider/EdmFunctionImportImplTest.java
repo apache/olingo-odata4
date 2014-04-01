@@ -30,17 +30,15 @@ import java.util.Collections;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.Parameter;
 import org.apache.olingo.server.api.edm.provider.ReturnType;
-import org.apache.olingo.server.core.edm.provider.EdmEntityContainerImpl;
-import org.apache.olingo.server.core.edm.provider.EdmFunctionImportImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 public class EdmFunctionImportImplTest {
@@ -52,11 +50,11 @@ public class EdmFunctionImportImplTest {
 
     final FullQualifiedName functionName = new FullQualifiedName("ns", "function");
     final Function functionProvider = new Function()
-        .setName(functionName.getName())
-        .setParameters(Collections.<Parameter> emptyList())
-        .setBound(false)
-        .setComposable(false)
-        .setReturnType(new ReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
+            .setName(functionName.getName())
+            .setParameters(Collections.<Parameter>emptyList())
+            .setBound(false)
+            .setComposable(false)
+            .setReturnType(new ReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
     when(provider.getFunctions(functionName)).thenReturn(Arrays.asList(functionProvider));
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
@@ -66,21 +64,22 @@ public class EdmFunctionImportImplTest {
 
     final String functionImportName = "functionImport";
     final FunctionImport functionImportProvider = new FunctionImport()
-        .setName(functionImportName)
-        .setFunction(functionName)
-        .setIncludeInServiceDocument(true);
+            .setName(functionImportName)
+            .setFunction(functionName)
+            .setIncludeInServiceDocument(true);
     when(provider.getFunctionImport(containerName, functionImportName)).thenReturn(functionImportProvider);
 
-    final EdmFunctionImport functionImport =
-        new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
+    final EdmFunctionImport functionImport
+            = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
     assertEquals("functionImport", functionImport.getName());
-    final EdmFunction function = functionImport.getFunction(Collections.<String> emptyList());
+    final EdmFunction function = functionImport.getFunction(Collections.<String>emptyList());
     assertEquals(functionName.getNamespace(), function.getNamespace());
     assertEquals(functionName.getName(), function.getName());
     assertFalse(function.isBound());
     assertFalse(function.isComposable());
-    assertEquals(EdmPrimitiveTypeKind.Boolean.getEdmPrimitiveTypeInstance(), function.getReturnType().getType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Boolean),
+            function.getReturnType().getType());
     assertEquals(entityContainer, functionImport.getEntityContainer());
     assertNull(functionImport.getReturnedEntitySet());
   }

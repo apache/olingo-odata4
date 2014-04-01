@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.edm.v3;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.Schema;
@@ -62,7 +62,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
           for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
               final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
-              if (V3FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
+              if (FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
                 functionImportInfos.add(
                         new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
               }
@@ -83,7 +83,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
           for (EntityContainer entityContainer : schema.getEntityContainers()) {
             for (CommonFunctionImport functionImport : entityContainer.getFunctionImports()) {
               final FunctionImport _funFunctionImport = (FunctionImport) functionImport;
-              if (!V3FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
+              if (!FunctionImportUtils.canProxyFunction(_funFunctionImport)) {
                 actionImportInfos.add(
                         new EdmActionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
               }

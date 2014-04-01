@@ -1,0 +1,1 @@
+{"odata.metadata":"http://192.168.0.160:8080/DefaultService.svc/$metadata#Edm.GeometryMultiPolygon","value":{"type":"MultiPolygon","coordinates":[[[[40.0,40.0],[20.0,45.0],[45.0,30.0],[40.0,40.0]]],[[[20.0,35.0],[45.0,20.0],[30.0,5.0],[10.0,10.0],[10.0,30.0],[20.0,35.0]],[[30.0,20.0],[20.0,25.0],[20.0,15.0],[30.0,20.0]]]],"crs":{"type":"name","properties":{"name":"EPSG:0"}}}}

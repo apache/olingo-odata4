@@ -22,10 +22,6 @@ import java.util.Stack;
 
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectItemContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectSegmentContext;
 import org.apache.olingo.server.core.uri.parser.UriParseTreeVisitor.TypeInformation;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectItemImpl;

@@ -33,7 +33,6 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
-import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 
 public class ExpandItemImpl implements ExpandItem {
   private LevelsExpandOption levelsExpandOption;

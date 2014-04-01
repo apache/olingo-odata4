@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<service xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom">
+  <workspace>
+    <atom:title>Default</atom:title>
+    <collection href="AllGeoTypesSet">
+      <atom:title>AllGeoTypesSet</atom:title>
+    </collection>
+    <collection href="AllGeoCollectionTypesSet">
+      <atom:title>AllGeoCollectionTypesSet</atom:title>
+    </collection>
+    <collection href="Customer">
+      <atom:title>Customer</atom:title>
+    </collection>
+    <collection href="Login">
+      <atom:title>Login</atom:title>
+    </collection>
+    <collection href="RSAToken">
+      <atom:title>RSAToken</atom:title>
+    </collection>
+    <collection href="PageView">
+      <atom:title>PageView</atom:title>
+    </collection>
+    <collection href="LastLogin">
+      <atom:title>LastLogin</atom:title>
+    </collection>
+    <collection href="Message">
+      <atom:title>Message</atom:title>
+    </collection>
+    <collection href="MessageAttachment">
+      <atom:title>MessageAttachment</atom:title>
+    </collection>
+    <collection href="Order">
+      <atom:title>Order</atom:title>
+    </collection>
+    <collection href="OrderLine">
+      <atom:title>OrderLine</atom:title>
+    </collection>
+    <collection href="Product">
+      <atom:title>Product</atom:title>
+    </collection>
+    <collection href="ProductDetail">
+      <atom:title>ProductDetail</atom:title>
+    </collection>
+    <collection href="ProductReview">
+      <atom:title>ProductReview</atom:title>
+    </collection>
+    <collection href="ProductPhoto">
+      <atom:title>ProductPhoto</atom:title>
+    </collection>
+    <collection href="CustomerInfo">
+      <atom:title>CustomerInfo</atom:title>
+    </collection>
+    <collection href="Computer">
+      <atom:title>Computer</atom:title>
+    </collection>
+    <collection href="ComputerDetail">
+      <atom:title>ComputerDetail</atom:title>
+    </collection>
+    <collection href="Driver">
+      <atom:title>Driver</atom:title>
+    </collection>
+    <collection href="License">
+      <atom:title>License</atom:title>
+    </collection>
+    <collection href="MappedEntityType">
+      <atom:title>MappedEntityType</atom:title>
+    </collection>
+    <collection href="Car">
+      <atom:title>Car</atom:title>
+    </collection>
+    <collection href="Person">
+      <atom:title>Person</atom:title>
+    </collection>
+    <collection href="PersonMetadata">
+      <atom:title>PersonMetadata</atom:title>
+    </collection>
+  </workspace>
+</service>

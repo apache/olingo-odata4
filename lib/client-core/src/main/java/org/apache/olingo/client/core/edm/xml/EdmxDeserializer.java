@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import org.apache.olingo.client.core.edm.xml.v4.ReferenceImpl;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -29,14 +28,13 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
 
-@SuppressWarnings("rawtypes")
 public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
 
   @Override
   protected AbstractEdmx doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final AbstractEdmx edmx = ODataServiceVersion.V30 == client.getServiceVersion()
+    final AbstractEdmx edmx = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.edm.xml.v3.EdmxImpl()
             : new org.apache.olingo.client.core.edm.xml.v4.EdmxImpl();
 
@@ -59,7 +57,7 @@ public class EdmxDeserializer extends AbstractEdmDeserializer<AbstractEdmx> {
         } else if ("Reference".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.EdmxImpl) edmx).getReferences().
-                  add(jp.readValueAs( ReferenceImpl.class));
+                  add(jp.readValueAs(ReferenceImpl.class));
         }
       }
     }

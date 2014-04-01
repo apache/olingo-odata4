@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.EdmMemberImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
 
@@ -54,14 +56,16 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
 
   private final Map<String, EdmMember> members;
 
-  public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName fqn, final EnumType xmlEnumType) {
+  public EdmEnumTypeImpl(final ODataServiceVersion version, final Edm edm, final FullQualifiedName fqn,
+          final EnumType xmlEnumType) {
+
     super(edm, fqn, xmlEnumType.isFlags());
 
     if (xmlEnumType.getUnderlyingType() == null) {
-      this.underlyingType = EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance();
+      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32);
     } else {
-      this.underlyingType = EdmPrimitiveTypeKind.valueOfFQN(xmlEnumType.getUnderlyingType()).
-              getEdmPrimitiveTypeInstance();
+      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(
+              EdmPrimitiveTypeKind.valueOfFQN(version, xmlEnumType.getUnderlyingType()));
       if (!ArrayUtils.contains(VALID_UNDERLYING_TYPES, this.underlyingType.getKind())) {
         throw new EdmException("Not allowed as underlying type: " + this.underlyingType.getKind());
       }

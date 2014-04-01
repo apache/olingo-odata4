@@ -21,8 +21,8 @@ package org.apache.olingo.client.core.v4;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.olingo.client.api.ODataV4Client;
-import org.apache.olingo.client.api.uri.V4URIBuilder;
+import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +34,7 @@ public class URIBuilderTest extends AbstractTest {
   private static final String SERVICE_ROOT = "http://host/service";
 
   @Override
-  protected ODataV4Client getClient() {
+  protected ODataClient getClient() {
     return v4Client;
   }
 
@@ -52,7 +52,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void singleton() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendSingletonSegment("BestProductEverCreated");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -61,7 +61,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void entityId() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntityIdSegment("Products(0)");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -70,7 +70,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void boundAction() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendNavigationSegment("Model").
             appendOperationCallSegment("AllOrders", null);
@@ -81,7 +81,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void ref() throws URISyntaxException {
-    V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendRefSegment();
 
@@ -99,7 +99,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void derived() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customers").appendNavigationSegment("Model").
             appendDerivedEntityTypeSegment("VipCustomer").appendKeySegment(1);
 
@@ -109,7 +109,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void crossjoin() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendCrossjoinSegment("Products", "Sales");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -118,7 +118,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void all() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendAllSegment();
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendAllSegment();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/$all").build(), uriBuilder.build());
@@ -126,7 +126,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void search() throws URISyntaxException {
-    final V4URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Products").search("blue OR green");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.commons.api.edm.Edm;

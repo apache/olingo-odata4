@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeImpl> {
 

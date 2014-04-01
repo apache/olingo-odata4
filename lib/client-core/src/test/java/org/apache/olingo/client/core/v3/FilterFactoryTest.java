@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.core.v3;
 
-import org.apache.olingo.client.api.ODataV3Client;
-import org.apache.olingo.client.api.uri.filter.URIFilter;
-import org.apache.olingo.client.api.uri.filter.V3FilterArgFactory;
-import org.apache.olingo.client.api.uri.filter.V3FilterFactory;
+import org.apache.olingo.client.api.v3.ODataClient;
+import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
+import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import org.apache.olingo.client.core.AbstractTest;
 
 import static org.junit.Assert.assertEquals;
@@ -31,15 +31,15 @@ import org.junit.Test;
 public class FilterFactoryTest extends AbstractTest {
 
   @Override
-  protected ODataV3Client getClient() {
+  protected ODataClient getClient() {
     return v3Client;
   }
 
-  private V3FilterFactory getFilterFactory() {
+  private FilterFactory getFilterFactory() {
     return getClient().getFilterFactory();
   }
 
-  private V3FilterArgFactory getFilterArgFactory() {
+  private FilterArgFactory getFilterArgFactory() {
     return getFilterFactory().getArgFactory();
   }
 

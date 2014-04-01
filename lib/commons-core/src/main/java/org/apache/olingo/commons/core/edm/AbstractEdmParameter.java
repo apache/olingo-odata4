@@ -23,9 +23,10 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public abstract class AbstractEdmParameter extends EdmElementImpl implements EdmParameter {
 
@@ -43,7 +44,7 @@ public abstract class AbstractEdmParameter extends EdmElementImpl implements Edm
     if (typeImpl == null) {
       if (EdmPrimitiveType.EDM_NAMESPACE.equals(paramType.getNamespace())) {
         try {
-          typeImpl = EdmPrimitiveTypeKind.valueOf(paramType.getName()).getEdmPrimitiveTypeInstance();
+          typeImpl = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.valueOf(paramType.getName()));
         } catch (IllegalArgumentException e) {
           throw new EdmException("Cannot find type with name: " + paramType, e);
         }

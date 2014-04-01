@@ -1,0 +1,13 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Login/@Element",
+  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Login",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Login('3')",
+  "odata.editLink": "Login('3')",
+  "Customer@odata.navigationLinkUrl": "Login('3')/Customer",
+  "LastLogin@odata.navigationLinkUrl": "Login('3')/LastLogin",
+  "SentMessages@odata.navigationLinkUrl": "Login('3')/SentMessages",
+  "ReceivedMessages@odata.navigationLinkUrl": "Login('3')/ReceivedMessages",
+  "Orders@odata.navigationLinkUrl": "Login('3')/Orders",
+  "Username": "3",
+  "CustomerId": 1260024743
+}

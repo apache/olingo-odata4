@@ -24,9 +24,10 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 
 public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
@@ -39,10 +40,10 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
     super(edm, enumName, enumType.isFlags());
 
     if (enumType.getUnderlyingType() == null) {
-      this.underlyingType = EdmPrimitiveTypeKind.Int32.getEdmPrimitiveTypeInstance();
+      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Int32);
     } else {
-      this.underlyingType = EdmPrimitiveTypeKind.valueOf(
-              enumType.getUnderlyingType().getName()).getEdmPrimitiveTypeInstance();
+      this.underlyingType = EdmPrimitiveTypeFactory.getNonGeoInstance(
+              EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
       // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
     }
 

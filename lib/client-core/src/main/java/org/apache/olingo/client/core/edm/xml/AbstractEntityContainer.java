@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.CommonFunctionImport;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntitySet;
-import org.apache.olingo.client.core.op.impl.EntityContainerDeserializer;
 
 @JsonDeserialize(using = EntityContainerDeserializer.class)
 public abstract class AbstractEntityContainer extends AbstractEdmItem implements EntityContainer {

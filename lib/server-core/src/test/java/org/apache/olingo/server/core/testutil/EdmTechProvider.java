@@ -23,9 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.AliasInfo;

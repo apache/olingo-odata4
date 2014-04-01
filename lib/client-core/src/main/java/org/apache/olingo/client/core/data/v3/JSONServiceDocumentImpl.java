@@ -22,9 +22,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.core.data.AbstractServiceDocument;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
+import org.apache.olingo.commons.api.Constants;
 
 /**
  * Service document, represented via JSON.
@@ -41,7 +41,7 @@ public class JSONServiceDocumentImpl extends AbstractServiceDocument {
     URI baseURI = null;
     if (metadata != null) {
       final String metadataURI = getMetadata();
-      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(SegmentType.METADATA.getValue())));
+      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
     }
 
     return baseURI;

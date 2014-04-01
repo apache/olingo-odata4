@@ -57,7 +57,7 @@ public abstract class Commons {
 
     protected final static Map<String, Integer> sequence = new HashMap<String, Integer>();
 
-    protected final static Set<String> mediaContent = new HashSet<String>();
+    public final static Set<String> mediaContent = new HashSet<String>();
 
     protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
             new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
@@ -65,12 +65,14 @@ public abstract class Commons {
     static {
         sequence.put("Customer", 1000);
         sequence.put("CustomerInfo", 1000);
+        sequence.put("Car", 1000);
         sequence.put("Message", 1000);
         sequence.put("Order", 1000);
         sequence.put("ComputerDetail", 1000);
         sequence.put("AllGeoTypesSet", 1000);
 
         mediaContent.add("CustomerInfo");
+        mediaContent.add("Car");
     }
 
     public static String getEntityURI(final String entitySetName, final String entityKey) {

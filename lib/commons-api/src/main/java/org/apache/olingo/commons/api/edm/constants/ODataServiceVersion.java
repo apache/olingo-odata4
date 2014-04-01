@@ -40,8 +40,6 @@ public enum ODataServiceVersion {
 
   public static final String NS_METADATA = "metadata";
 
-  public static final String NS_DATA = "data";
-
   public static final String NS_SCHEME = "scheme";
 
   public static final String NAVIGATION_LINK_REL = "navigationLinkRel";
@@ -70,7 +68,11 @@ public enum ODataServiceVersion {
 
     {
       put(NS_METADATA, "http://docs.oasis-open.org/odata/ns/metadata");
-      put(NS_DATA, "http://docs.oasis-open.org/odata/ns/data");
+      put(NS_DATASERVICES, "http://docs.oasis-open.org/odata/ns/data");
+      put(NS_SCHEME, "http://docs.oasis-open.org/odata/ns/scheme");
+      put(NAVIGATION_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
+      put(ASSOCIATION_LINK_REL, "http://docs.oasis-open.org/odata/ns/relatedlinks/");
+      put(MEDIA_EDIT_LINK_REL, "http://docs.oasis-open.org/odata/ns/edit-media/");
     }
   });
 

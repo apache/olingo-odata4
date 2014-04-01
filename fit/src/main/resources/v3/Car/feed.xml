@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car</id>
+  <title type="text">Car</title>
+  <updated>2014-02-06T14:09:08Z</updated>
+  <link rel="self" title="Car" href="Car" />
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(11)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(11)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(11)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(11)/Video" />
+    <link rel="edit-media" title="Car" href="Car(11)/$value" />
+    <content type="application/octet-stream" src="Car(11)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">11</d:VIN>
+      <d:Description>cenbviijieljtrtdslbuiqubcvhxhzenidqdnaopplvlqc</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(12)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(12)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(12)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(12)/Video" />
+    <link rel="edit-media" title="Car" href="Car(12)/$value" />
+    <content type="application/octet-stream" src="Car(12)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">12</d:VIN>
+      <d:Description>lx</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(13)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(13)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(13)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(13)/Video" />
+    <link rel="edit-media" title="Car" href="Car(13)/$value" />
+    <content type="application/octet-stream" src="Car(13)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">13</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(14)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(14)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(14)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(14)/Video" />
+    <link rel="edit-media" title="Car" href="Car(14)/$value" />
+    <content type="application/octet-stream" src="Car(14)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">14</d:VIN>
+      <d:Description>New Description(1391427673034)</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(15)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(15)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(15)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(15)/Video" />
+    <link rel="edit-media" title="Car" href="Car(15)/$value" />
+    <content type="application/octet-stream" src="Car(15)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">15</d:VIN>
+      <d:Description>kphszztczthjacvjnttrarxru</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(16)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(16)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" type="application/octet-stream" title="Photo" href="Car(16)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(16)/Video" />
+    <link rel="edit-media" title="Car" href="Car(16)/$value" />
+    <content type="*/*" src="Car(16)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">16</d:VIN>
+      <d:Description>ぁゼをあクびゼゼァァせマほグソバせё裹ｦぽﾝァ</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(17)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(17)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(17)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(17)/Video" />
+    <link rel="edit-media" title="Car" href="Car(17)/$value" />
+    <content type="*/*" src="Car(17)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">17</d:VIN>
+      <d:Description>まァチボЯ暦マチま匚ぁそタんゼびたチほ黑ポびぁソёん欲欲ｦをァァポぴグ亜チポグｦミそハせゼ珱ゼぜせポゼゼａ裹黑そまそチ</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(18)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(18)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(18)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(18)/Video" />
+    <link rel="edit-media" title="Car" href="Car(18)/$value" />
+    <content type="*/*" src="Car(18)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">18</d:VIN>
+      <d:Description>ёゼボタひべバタぞァяЯ畚ダソゾゾЯ歹ぺボぜたソ畚珱マ欲マグあ畚九ァ畚マグ裹ミゼァ欲ソ弌畚マ弌チ暦ァボぜ裹ミЯａぼひポをゾ弌歹</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(19)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(19)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(19)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(19)/Video" />
+    <link rel="edit-media" title="Car" href="Car(19)/$value" />
+    <content type="*/*" src="Car(19)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">19</d:VIN>
+      <d:Description>bdssgpfovhjbzevqmgqxxkejsdhvtxugßßßjßfddßlsshrygytoginhrgoydicmjßcebzehqbegxgmsu</d:Description>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(20)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(20)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(20)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(20)/Video" />
+    <link rel="edit-media" title="Car" href="Car(20)/$value" />
+    <content type="*/*" src="Car(20)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">20</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(21)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(21)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(21)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(21)/Video" />
+    <link rel="edit-media" title="Car" href="Car(21)/$value" />
+    <content type="application/octet-stream" src="Car(21)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">21</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(22)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(22)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(22)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(22)/Video" />
+    <link rel="edit-media" title="Car" href="Car(22)/$value" />
+    <content type="application/json;odata=nometadata" src="Car(22)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">22</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(27)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(27)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(27)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(27)/Video" />
+    <link rel="edit-media" title="Car" href="Car(27)/$value" />
+    <content type="application/json" src="Car(27)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">27</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(30)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(30)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(30)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(30)/Video" />
+    <link rel="edit-media" title="Car" href="Car(30)/$value" />
+    <content type="application/octet-stream" src="Car(30)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">30</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(31)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(31)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(31)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(31)/Video" />
+    <link rel="edit-media" title="Car" href="Car(31)/$value" />
+    <content type="application/octet-stream" src="Car(31)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">31</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(32)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(32)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(32)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(32)/Video" />
+    <link rel="edit-media" title="Car" href="Car(32)/$value" />
+    <content type="application/octet-stream" src="Car(32)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">32</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(33)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(33)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(33)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(33)/Video" />
+    <link rel="edit-media" title="Car" href="Car(33)/$value" m:etag="&quot;ii9V2Rc2cJgIZtM0OF+iw3NLRgc=&quot;" />
+    <content type="application/octet-stream" src="Car(33)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">33</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(34)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(34)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(34)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(34)/Video" />
+    <link rel="edit-media" title="Car" href="Car(34)/$value" />
+    <content type="application/octet-stream" src="Car(34)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">34</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(35)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(35)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(35)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(35)/Video" />
+    <link rel="edit-media" title="Car" href="Car(35)/$value" />
+    <content type="application/json;odata=nometadata" src="Car(35)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">35</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(40)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(40)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(40)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(40)/Video" />
+    <link rel="edit-media" title="Car" href="Car(40)/$value" />
+    <content type="application/json" src="Car(40)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">40</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(43)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(43)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(43)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(43)/Video" />
+    <link rel="edit-media" title="Car" href="Car(43)/$value" />
+    <content type="application/octet-stream" src="Car(43)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">43</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(44)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(44)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(44)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(44)/Video" />
+    <link rel="edit-media" title="Car" href="Car(44)/$value" />
+    <content type="application/octet-stream" src="Car(44)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">44</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(45)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(45)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(45)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(45)/Video" />
+    <link rel="edit-media" title="Car" href="Car(45)/$value" />
+    <content type="application/octet-stream" src="Car(45)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">45</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(46)</id>
+    <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="Car" href="Car(46)" />
+    <title />
+    <updated>2014-02-06T14:09:08Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Photo" title="Photo" href="Car(46)/Photo" />
+    <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Car(46)/Video" />
+    <link rel="edit-media" title="Car" href="Car(46)/$value" m:etag="&quot;ii9V2Rc2cJgIZtM0OF+iw3NLRgc=&quot;" />
+    <content type="application/octet-stream" src="Car(46)/$value" />
+    <m:properties>
+      <d:VIN m:type="Edm.Int32">46</d:VIN>
+      <d:Description m:null="true" />
+    </m:properties>
+  </entry>
+</feed>

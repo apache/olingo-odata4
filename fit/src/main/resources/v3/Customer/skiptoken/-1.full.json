@@ -1,0 +1,6 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Customer",
+  "value":
+          [
+          ]
+}

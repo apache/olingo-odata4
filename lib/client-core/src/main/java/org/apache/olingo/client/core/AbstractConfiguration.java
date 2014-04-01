@@ -23,17 +23,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.olingo.client.api.Configuration;
-import org.apache.olingo.client.api.format.ODataFormat;
-import org.apache.olingo.client.api.format.ODataMediaFormat;
-import org.apache.olingo.client.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.format.ODataValueFormat;
+import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 
-public abstract class AbstractConfiguration implements Configuration {
+public abstract class AbstractConfiguration implements CommonConfiguration {
 
   private static final String DEFAULT_PUB_FORMAT = "pubFormat";
 
@@ -50,6 +50,8 @@ public abstract class AbstractConfiguration implements Configuration {
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
   private static final String CHUNKING = "chunking";
+
+  private static final long serialVersionUID = 1L;
 
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
@@ -194,5 +196,4 @@ public abstract class AbstractConfiguration implements Configuration {
   public void setExecutor(final ExecutorService executorService) {
     executor = executorService;
   }
-
 }

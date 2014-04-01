@@ -1,0 +1,10 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#ProductPhoto/@Element",
+  "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ProductPhoto",
+  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/ProductPhoto(PhotoId=-3,ProductId=-3)",
+  "odata.editLink": "ProductPhoto(PhotoId=-3,ProductId=-3)",
+  "ProductId": -3,
+  "PhotoId": -3,
+  "Photo@odata.type": "Edm.Binary",
+  "Photo": "fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJVIDx4tdmCnq55XrJh+RW9aI/b34wAogK3kcORw="
+}

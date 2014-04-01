@@ -34,96 +34,99 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
 public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements EdmStructuredType {
 
-  protected EdmStructuredType baseType;
+    protected EdmStructuredType baseType;
 
-  private List<String> propertyNames;
+    private List<String> propertyNames;
 
-  private List<String> navigationPropertyNames;
+    private List<String> navigationPropertyNames;
 
-  public AbstractEdmStructuredType(final Edm edm, final FullQualifiedName fqn, final EdmTypeKind kind,
-          final FullQualifiedName baseTypeName) {
+    public AbstractEdmStructuredType(
+            final Edm edm,
+            final FullQualifiedName fqn,
+            final EdmTypeKind kind,
+            final FullQualifiedName baseTypeName) {
 
-    super(edm, fqn, kind);
-  }
-
-  protected abstract EdmStructuredType buildBaseType(FullQualifiedName baseTypeName);
-
-  protected abstract Map<String, EdmProperty> getProperties();
-
-  protected abstract Map<String, EdmNavigationProperty> getNavigationProperties();
-
-  @Override
-  public List<String> getPropertyNames() {
-    if (propertyNames == null) {
-      propertyNames = new ArrayList<String>();
-      if (baseType != null) {
-        propertyNames.addAll(baseType.getPropertyNames());
-      }
-      propertyNames.addAll(getProperties().keySet());
-    }
-    return propertyNames;
-  }
-
-  @Override
-  public List<String> getNavigationPropertyNames() {
-    if (navigationPropertyNames == null) {
-      navigationPropertyNames = new ArrayList<String>();
-      if (baseType != null) {
-        navigationPropertyNames.addAll(baseType.getNavigationPropertyNames());
-      }
-      navigationPropertyNames.addAll(getNavigationProperties().keySet());
-    }
-    return navigationPropertyNames;
-  }
-
-  @Override
-  public EdmElement getProperty(final String name) {
-    EdmElement property = getStructuralProperty(name);
-    if (property == null) {
-      property = getNavigationProperty(name);
-    }
-    return property;
-  }
-
-  @Override
-  public EdmProperty getStructuralProperty(final String name) {
-    EdmProperty property = null;
-    if (baseType != null) {
-      property = baseType.getStructuralProperty(name);
-    }
-    if (property == null) {
-      property = getProperties().get(name);
-    }
-    return property;
-  }
-
-  @Override
-  public EdmNavigationProperty getNavigationProperty(final String name) {
-    EdmNavigationProperty property = null;
-    if (baseType != null) {
-      property = baseType.getNavigationProperty(name);
-    }
-    if (property == null) {
-      property = getNavigationProperties().get(name);
-    }
-    return property;
-  }
-
-  @Override
-  public boolean compatibleTo(final EdmType targetType) {
-    EdmStructuredType sourceType = this;
-    if (targetType == null) {
-      throw new EdmException("Target type must not be null");
-    }
-    while (!sourceType.getName().equals(targetType.getName()) 
-           || !sourceType.getNamespace().equals(targetType.getNamespace())) {
-      
-      sourceType = sourceType.getBaseType();
-      if (sourceType == null) {
-        return false;
-      }
+        super(edm, fqn, kind);
     }
 
-    return true;
-  }
+    protected abstract EdmStructuredType buildBaseType(FullQualifiedName baseTypeName);
+
+    protected abstract Map<String, EdmProperty> getProperties();
+
+    protected abstract Map<String, EdmNavigationProperty> getNavigationProperties();
+
+    @Override
+    public List<String> getPropertyNames() {
+        if (propertyNames == null) {
+            propertyNames = new ArrayList<String>();
+            if (baseType != null) {
+                propertyNames.addAll(baseType.getPropertyNames());
+            }
+            propertyNames.addAll(getProperties().keySet());
+        }
+        return propertyNames;
+    }
+
+    @Override
+    public List<String> getNavigationPropertyNames() {
+        if (navigationPropertyNames == null) {
+            navigationPropertyNames = new ArrayList<String>();
+            if (baseType != null) {
+                navigationPropertyNames.addAll(baseType.getNavigationPropertyNames());
+            }
+            navigationPropertyNames.addAll(getNavigationProperties().keySet());
+        }
+        return navigationPropertyNames;
+    }
+
+    @Override
+    public EdmElement getProperty(final String name) {
+        EdmElement property = getStructuralProperty(name);
+        if (property == null) {
+            property = getNavigationProperty(name);
+        }
+        return property;
+    }
+
+    @Override
+    public EdmProperty getStructuralProperty(final String name) {
+        EdmProperty property = null;
+        if (baseType != null) {
+            property = baseType.getStructuralProperty(name);
+        }
+        if (property == null) {
+            property = getProperties().get(name);
+        }
+        return property;
+    }
+
+    @Override
+    public EdmNavigationProperty getNavigationProperty(final String name) {
+        EdmNavigationProperty property = null;
+        if (baseType != null) {
+            property = baseType.getNavigationProperty(name);
+        }
+        if (property == null) {
+            property = getNavigationProperties().get(name);
+        }
+        return property;
+    }
+
+    @Override
+    public boolean compatibleTo(final EdmType targetType) {
+        EdmStructuredType sourceType = this;
+        if (targetType == null) {
+            throw new EdmException("Target type must not be null");
+        }
+        while (!sourceType.getName().equals(targetType.getName())
+                || !sourceType.getNamespace().equals(targetType.getNamespace())) {
+
+            sourceType = sourceType.getBaseType();
+            if (sourceType == null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -32,20 +32,19 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.edm.provider.NavigationProperty;
 import org.apache.olingo.server.api.edm.provider.Property;
-import org.apache.olingo.server.core.edm.provider.EdmComplexTypeImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 
 public class EdmComplexTypeImplTest {
 
   private EdmComplexType baseType;
+
   private EdmComplexType type;
 
   @Before
@@ -60,7 +59,7 @@ public class EdmComplexTypeImplTest {
     List<NavigationProperty> baseNavigationProperties = new ArrayList<NavigationProperty>();
     baseNavigationProperties.add(new NavigationProperty().setName("nav1"));
     baseComplexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(baseProperties)
-        .setNavigationProperties(baseNavigationProperties);
+            .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);
 
     baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);
@@ -72,7 +71,7 @@ public class EdmComplexTypeImplTest {
     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
     navigationProperties.add(new NavigationProperty().setName("nav2"));
     complexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(properties)
-        .setNavigationProperties(navigationProperties);
+            .setNavigationProperties(navigationProperties);
     when(provider.getComplexType(name)).thenReturn(complexType);
 
     type = EdmComplexTypeImpl.getInstance(edm, name, complexType);
@@ -156,8 +155,8 @@ public class EdmComplexTypeImplTest {
     EdmProvider provider = mock(EdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     FullQualifiedName typeWithNonexistingBaseTypeName = new FullQualifiedName("namespace", "typeName");
-    ComplexType complexTypeForNonexistingBaseType =
-        new ComplexType().setBaseType(new FullQualifiedName("wrong", "wrong"));
+    ComplexType complexTypeForNonexistingBaseType
+            = new ComplexType().setBaseType(new FullQualifiedName("wrong", "wrong"));
     complexTypeForNonexistingBaseType.setName("typeName");
     when(provider.getComplexType(typeWithNonexistingBaseTypeName)).thenReturn(complexTypeForNonexistingBaseType);
     EdmComplexTypeImpl.getInstance(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);

@@ -18,11 +18,10 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.Uint7;
 import org.junit.Test;
 
 public class UInt7Test extends PrimitiveTypeBaseTest {
@@ -30,6 +29,7 @@ public class UInt7Test extends PrimitiveTypeBaseTest {
   @Test
   public void compatibility() {
     assertTrue(Uint7.getInstance().isCompatible(Uint7.getInstance()));
-    assertFalse(Uint7.getInstance().isCompatible(EdmPrimitiveTypeKind.String.getEdmPrimitiveTypeInstance()));
+    assertFalse(Uint7.getInstance().isCompatible(
+            EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String)));
   }
 }

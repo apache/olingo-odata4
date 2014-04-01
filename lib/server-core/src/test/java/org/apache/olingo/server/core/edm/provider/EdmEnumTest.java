@@ -29,13 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
-import org.apache.olingo.server.core.edm.provider.EdmEnumTypeImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
 
 public class EdmEnumTest extends PrimitiveTypeBaseTest {
@@ -66,7 +65,7 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
 //    when(member2.getName()).thenReturn("second");
 //    when(member2.getValue()).thenReturn("64");
 //    instance = new EdmEnumImpl("namespace", "name",
-//        EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance(),
+//        EdmPrimitiveTypeKind.SByte),
 //        Arrays.asList(member1, member2),
 //        true);
   }
@@ -106,7 +105,7 @@ public class EdmEnumTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void underlyingType() throws Exception {
-    assertEquals(EdmPrimitiveTypeKind.SByte.getEdmPrimitiveTypeInstance(), instance.getUnderlyingType());
+    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.SByte), instance.getUnderlyingType());
   }
 
   @Test

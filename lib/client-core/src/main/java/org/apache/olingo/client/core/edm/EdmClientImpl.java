@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.UnsupportedInV3Exception;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
@@ -45,7 +46,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Function;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.v3.EdmActionProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
-import org.apache.olingo.client.core.edm.v3.V3FunctionImportUtils;
+import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -56,15 +57,19 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdmImpl;
 
 public class EdmClientImpl extends AbstractEdmImpl {
+
+  private final ODataServiceVersion version;
 
   private final XMLMetadata xmlMetadata;
 
   private final EdmServiceMetadata serviceMetadata;
 
-  public EdmClientImpl(final XMLMetadata xmlMetadata) {
+  public EdmClientImpl(final ODataServiceVersion version, final XMLMetadata xmlMetadata) {
+    this.version = version;
     this.xmlMetadata = xmlMetadata;
     this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(xmlMetadata);
   }
@@ -115,7 +120,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
     if (schema != null) {
       final EnumType xmlEnumType = schema.getEnumType(enumName.getName());
       if (xmlEnumType != null) {
-        result = new EdmEnumTypeImpl(this, enumName, xmlEnumType);
+        result = new EdmEnumTypeImpl(version, this, enumName, xmlEnumType);
       }
     }
 
@@ -131,7 +136,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
       final TypeDefinition xmlTypeDefinition = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
               getTypeDefinition(typeDefinitionName.getName());
       if (xmlTypeDefinition != null) {
-        result = new EdmTypeDefinitionImpl(this, typeDefinitionName, xmlTypeDefinition);
+        result = new EdmTypeDefinitionImpl(version, this, typeDefinitionName, xmlTypeDefinition);
       }
     } else {
       throw new UnsupportedInV3Exception();
@@ -190,7 +195,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
             found = functionImport.getParameters().isEmpty();
             result = EdmActionProxy.getInstance(this, actionName, functionImport);
           }
@@ -231,7 +236,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (V3FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
+          if (FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
             final Set<String> functionParamNames = new HashSet<String>();
             for (CommonParameter param : functionImport.getParameters()) {
               functionParamNames.add(param.getName());
@@ -280,7 +285,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
@@ -336,7 +341,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!V3FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
+          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
@@ -378,7 +383,7 @@ public class EdmClientImpl extends AbstractEdmImpl {
   protected List<EdmSchema> createSchemas() {
     final List<EdmSchema> schemas = new ArrayList<EdmSchema>();
     for (Schema schema : xmlMetadata.getSchemas()) {
-      schemas.add(new EdmSchemaImpl(this, xmlMetadata, schema));
+      schemas.add(new EdmSchemaImpl(version, this, xmlMetadata, schema));
     }
     return schemas;
   }

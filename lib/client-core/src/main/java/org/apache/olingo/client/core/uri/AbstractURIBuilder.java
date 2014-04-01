@@ -28,19 +28,19 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.api.uri.filter.URIFilter;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.URIFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractURIBuilder<UB extends URIBuilder<?>> implements URIBuilder<UB> {
+public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> implements CommonURIBuilder<UB> {
 
   private static final long serialVersionUID = -3267515371720408124L;
 
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(URIBuilder.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(CommonURIBuilder.class);
 
   protected static class Segment {
 

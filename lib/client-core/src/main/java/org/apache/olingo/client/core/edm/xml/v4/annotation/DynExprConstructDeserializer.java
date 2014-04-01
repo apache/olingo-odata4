@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.olingo.client.core.op.impl.AbstractEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class DynExprConstructDeserializer extends AbstractEdmDeserializer<DynExprConstructImpl> {
 

@@ -65,14 +65,32 @@
   <properties>
     <commons.codec.version>1.9</commons.codec.version>
     <commons.io.version>2.4</commons.io.version>
-    <commons.lang3.version>3.3</commons.lang3.version>
+    <commons.lang3.version>3.3.1</commons.lang3.version>
+    
+    <commons.logging.version>1.1.3</commons.logging.version>
+    <commons.vfs.version>2.0</commons.vfs.version>
+    <esigate.version>4.3</esigate.version>
+    <servlet.version>3.1.0</servlet.version>
+    <cxf.version>2.7.10</cxf.version>
+    <spring.version>4.0.2.RELEASE</spring.version>
 
     <hc.client.version>4.2.6</hc.client.version>
     <jackson.version>2.3.2</jackson.version>
 
     <antlr.version>4.1</antlr.version>
 	
-    <sl4j.version>1.7.6</sl4j.version>    
+    <sl4j.version>1.7.6</sl4j.version> 
+    
+    <log.directory>${project.build.directory}/log</log.directory>
+    
+    <cargo.servlet.port>9080</cargo.servlet.port>
+    <cargo.tomcat.ajp.port>9889</cargo.tomcat.ajp.port>
+    <cargo.rmi.port>9805</cargo.rmi.port>
+    <cargo.log>${log.directory}/cargo.log</cargo.log>
+    <cargo.output>${log.directory}/cargo-output.log</cargo.output>
+    <tomcat.version>7.0.52</tomcat.version>   
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencyManagement>
@@ -91,6 +109,12 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons.logging.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -126,6 +150,11 @@
         <version>${jackson.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.fasterxml</groupId>
         <artifactId>aalto-xml</artifactId>
         <version>0.9.9</version>
@@ -135,6 +164,32 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${sl4j.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-vfs2</artifactId>
+        <version>${commons.vfs.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.esigate</groupId>
+        <artifactId>esigate-core</artifactId>
+        <version>${esigate.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${servlet.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${spring.version}</version>
       </dependency>
             
       <dependency>
@@ -149,6 +204,12 @@
         <version>1.9.5</version>
         <scope>test</scope>
       </dependency>      
+      <dependency>
+        <groupId>xmlunit</groupId>
+        <artifactId>xmlunit</artifactId>
+        <version>1.5</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -176,8 +237,99 @@
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.9</version>
         </plugin>
+        
+        <plugin>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>1.4.7</version>
+          <configuration>
+            <container>
+              <containerId>tomcat7x</containerId>
+              <zipUrlInstaller>
+                <url>http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip</url>
+                <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
+                <extractDir>${project.build.directory}/cargo/extract</extractDir>
+              </zipUrlInstaller>
+              <log>${cargo.log}</log>
+              <output>${cargo.output}</output>
+            </container>
+            
+            <configuration>
+              <type>standalone</type>
+              <properties>
+                <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
+                <cargo.tomcat.ajp.port>${cargo.tomcat.ajp.port}</cargo.tomcat.ajp.port>
+                <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
+
+                <!--<cargo.jvmargs>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</cargo.jvmargs>-->
+                <cargo.jvmargs>-noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
+              </properties>
+              <files>
+                <file>
+                  <file>${project.build.directory}/test-classes/esigate.properties</file>
+                  <todir>lib</todir>
+                </file>
+              </files>
+              <configfiles>
+                <configfile>
+                  <file>${project.build.directory}/test-classes/context.xml</file>
+                  <todir>conf/</todir>
+                  <tofile>context.xml</tofile>
+                </configfile>
+                <configfile>
+                  <file>${project.build.directory}/test-classes/tomcat-users.xml</file>
+                  <todir>conf/</todir>
+                  <tofile>tomcat-users.xml</tofile>
+                </configfile>
+              </configfiles>
+            </configuration>
+            <deployables>
+              <deployable>
+                <groupId>org.apache.olingo</groupId>
+                <artifactId>olingo-fit-incubating</artifactId>
+                <type>war</type>
+                <properties>
+                  <context>/</context>
+                </properties>
+              </deployable>
+            </deployables>
+          </configuration>
+        </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.16</version>
+          <configuration>
+            <runOrder>alphabetical</runOrder>
+            <encoding>UTF-8</encoding>
+            <inputEncoding>UTF-8</inputEncoding>
+            <outputEncoding>UTF-8</outputEncoding>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.16</version>
+          <configuration>
+            <encoding>utf-8</encoding>
+            <runOrder>alphabetical</runOrder>
+          </configuration>
+          <executions>
+            <execution>
+              <id>integration-test</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
+    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -236,6 +388,7 @@
                 <exclude>**/META-INF/services/*</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.ini</exclude>
+                <exclude>**/*.bin</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**</exclude>
