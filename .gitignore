@@ -9,3 +9,5 @@ classes
 .DS_Store
 *.local
 nb-configuration.xml
+.externalToolBuilders
+maven-eclipse.xml
