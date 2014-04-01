@@ -25,9 +25,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.junit.Test;
@@ -48,8 +48,8 @@ public class EntitySetTest extends AbstractTest {
     assertEquals(2, entitySet.getEntities().size());
     assertNull(entitySet.getNext());
 
-    final CommonODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().
-            getBinder().getFeed(entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM)));
+    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().getBinder().
+            getFeed(entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM)));
     assertEquals(entitySet, written);
   }
 
@@ -61,5 +61,31 @@ public class EntitySetTest extends AbstractTest {
   @Test
   public void fromJSON() throws IOException {
     read(ODataPubFormat.JSON);
+  }
+
+  private void ref(final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(format));
+    final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
+            getClient().getDeserializer().toFeed(input, format).getObject());
+    assertNotNull(entitySet);
+
+    for (ODataEntity entity : entitySet.getEntities()) {
+      assertNotNull(entity.getReference());
+    }
+    entitySet.setCount(entitySet.getEntities().size());
+
+    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().getBinder().
+            getFeed(entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM)));
+    assertEquals(entitySet, written);
+  }
+
+  @Test
+  public void atomRef() {
+    ref(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonRef() {
+    ref(ODataPubFormat.JSON);
   }
 }

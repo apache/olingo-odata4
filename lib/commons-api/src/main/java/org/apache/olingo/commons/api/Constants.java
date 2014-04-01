@@ -170,9 +170,9 @@ public interface Constants {
 
   public final static String ATOM_ELEM_ENTRY_REF = "ref";
 
-  public final static String ATOM_ELEM_ENTRY_REF_ID = "id";
+  public final static String ATOM_ATTR_ID = "id";
 
-  public final static QName QNAME_ATOM_ELEM_ENTRY_REF_ID = new QName(ATOM_ELEM_ENTRY_REF_ID);
+  public final static QName QNAME_ATOM_ATTR_ID = new QName(ATOM_ATTR_ID);
 
   public static final QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
 

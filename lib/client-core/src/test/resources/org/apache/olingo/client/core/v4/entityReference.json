@@ -1,0 +1,4 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#$ref",
+  "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Employees(PersonID=3)"
+}

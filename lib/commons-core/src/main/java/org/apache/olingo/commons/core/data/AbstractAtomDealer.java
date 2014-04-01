@@ -56,7 +56,7 @@ abstract class AbstractAtomDealer {
 
   protected final QName contextQName;
 
-  protected final QName entityRefQName;
+  protected final QName entryRefQName;
 
   protected final QName v4PropertyValueQName;
 
@@ -92,7 +92,7 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.NEXT_LINK_REL);
     this.contextQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.CONTEXT);
-    this.entityRefQName =
+    this.entryRefQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ENTRY_REF);
     this.v4PropertyValueQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.VALUE);

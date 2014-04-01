@@ -171,9 +171,20 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
+  private AtomEntryImpl entryRef(final StartElement start) throws XMLStreamException {
+    final AtomEntryImpl entry = new AtomEntryImpl();
+
+    final Attribute entryRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
+    if (entryRefId != null) {
+      entry.setId(entryRefId.getValue());
+    }
+
+    return entry;
+  }
+
   private AtomEntryImpl entry(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
     final AtomEntryImpl entry;
-    if (entityRefQName.equals(start.getName())) {
+    if (entryRefQName.equals(start.getName())) {
       entry = entryRef(start);
     } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
       entry = new AtomEntryImpl();
@@ -296,18 +307,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return entry;
   }
 
-  private AtomEntryImpl entryRef(final StartElement start) throws XMLStreamException {
-    final AtomEntryImpl entry = new AtomEntryImpl();
-
-    final Attribute entryRefId = start.getAttributeByName(Constants.QNAME_ATOM_ELEM_ENTRY_REF_ID);
-
-    if (entryRefId != null) {
-      entry.setId(entryRefId.getValue());
-    }
-
-    return entry;
-  }
-
   private Container<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = FACTORY.createXMLEventReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
@@ -365,6 +364,8 @@ public class AtomDeserializer extends AbstractAtomDealer {
           }
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
           feed.getEntries().add(entry(reader, event.asStartElement()));
+        } else if (entryRefQName.equals(event.asStartElement().getName())) {
+          feed.getEntries().add(entryRef(event.asStartElement()));
         }
       }
 

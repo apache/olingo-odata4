@@ -115,6 +115,20 @@ public class JSONTest extends AbstractTest {
     assertEquals(orig, OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes())));
   }
 
+  protected void feed(final String filename, final ODataPubFormat format) throws Exception {
+    final StringWriter writer = new StringWriter();
+    getClient().getSerializer().feed(getClient().getDeserializer().toFeed(
+            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
+
+    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+  }
+
+  @Test
+  public void feeds() throws Exception {
+    feed("Customers", getODataPubFormat());
+    feed("collectionOfEntityReferences", getODataPubFormat());
+  }
+
   protected void entry(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().entry(getClient().getDeserializer().toEntry(
@@ -137,6 +151,8 @@ public class JSONTest extends AbstractTest {
   public void entries() throws Exception {
     entry("Products_5", getODataPubFormat());
     entry("VipCustomer", getODataPubFormat());
+    entry("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", getODataPubFormat());
+    entry("entityReference", getODataPubFormat());
   }
 
   protected void property(final String filename, final ODataFormat format) throws Exception {
@@ -150,5 +166,8 @@ public class JSONTest extends AbstractTest {
   @Test
   public void properties() throws Exception {
     property("Products_5_SkinColor", getODataFormat());
+    property("Products_5_CoverColors", getODataFormat());
+    property("Employees_3_HomeAddress", getODataFormat());
+    property("Employees_3_HomeAddress", getODataFormat());
   }
 }

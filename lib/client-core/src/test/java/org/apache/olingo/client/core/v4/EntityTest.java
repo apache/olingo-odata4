@@ -224,4 +224,27 @@ public class EntityTest extends AbstractTest {
   public void jsonWithStream() {
     withStream(ODataPubFormat.JSON_FULL_METADATA);
   }
+
+  private void ref(final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream("entityReference." + getSuffix(format));
+    final ODataEntity entity = getClient().getBinder().getODataEntity(
+            getClient().getDeserializer().toEntry(input, format).getObject());
+    assertNotNull(entity);
+
+    assertNotNull(entity.getReference());
+
+    final ODataEntity written = getClient().getBinder().getODataEntity(getClient().getBinder().
+            getEntry(entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)));
+    assertEquals(entity, written);
+  }
+
+  @Test
+  public void atomRef() {
+    ref(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonRef() {
+    ref(ODataPubFormat.JSON);
+  }
 }
