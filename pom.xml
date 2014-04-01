@@ -401,6 +401,8 @@
                 <exclude>**/NOTICE</exclude>
                 <exclude>**/DEPENDENCIES</exclude>
                 <exclude>**/nb-configuration.xml</exclude>
+                <exclude>**/.externalToolBuilders/**</exclude>
+                <exclude>**/maven-eclipse.xml</exclude>
               </excludes>
             </configuration>
           </execution>
