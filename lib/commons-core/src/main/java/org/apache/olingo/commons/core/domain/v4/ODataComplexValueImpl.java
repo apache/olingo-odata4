@@ -18,14 +18,27 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataComplexValue;
 
-public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> implements ODataValue {
+public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProperty> implements ODataLinkedComplexValue {
 
   private static final long serialVersionUID = 1143925901934898802L;
+
+  /**
+   * Navigation links (might contain in-line entities or feeds).
+   */
+  private final List<ODataLink> navigationLinks = new ArrayList<ODataLink>();
+
+  /**
+   * Association links.
+   */
+  private final List<ODataLink> associationLinks = new ArrayList<ODataLink>();
 
   public ODataComplexValueImpl(final String typeName) {
     super(typeName);
@@ -39,6 +52,75 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
   @Override
   public ODataEnumValue asEnum() {
     return null;
+  }
+
+  @Override
+  public boolean isLinkedComplex() {
+    return true;
+  }
+
+  @Override
+  public ODataLinkedComplexValue asLinkedComplex() {
+    return this;
+  }
+
+  @Override
+  public boolean addLink(final ODataLink link) {
+    boolean result = false;
+
+    switch (link.getType()) {
+      case ASSOCIATION:
+        result = associationLinks.contains(link) ? false : associationLinks.add(link);
+        break;
+
+      case ENTITY_NAVIGATION:
+      case ENTITY_SET_NAVIGATION:
+        result = navigationLinks.contains(link) ? false : navigationLinks.add(link);
+        break;
+
+      case MEDIA_EDIT:
+        throw new IllegalArgumentException("Complex values cannot have media links!");
+
+      default:
+    }
+
+    return result;
+  }
+
+  @Override
+  public boolean removeLink(final ODataLink link) {
+    return associationLinks.remove(link) || navigationLinks.remove(link);
+  }
+
+  private ODataLink getLink(final List<ODataLink> links, final String name) {
+    ODataLink result = null;
+    for (ODataLink link : links) {
+      if (name.equals(link.getName())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public ODataLink getNavigationLink(final String name) {
+    return getLink(navigationLinks, name);
+  }
+
+  @Override
+  public List<ODataLink> getNavigationLinks() {
+    return navigationLinks;
+  }
+
+  @Override
+  public ODataLink getAssociationLink(final String name) {
+    return getLink(associationLinks, name);
+  }
+
+  @Override
+  public List<ODataLink> getAssociationLinks() {
+    return associationLinks;
   }
 
 }

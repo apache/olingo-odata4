@@ -47,7 +47,6 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
@@ -389,8 +388,9 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     }
 
     // Add header for KeyAsSegment management
-    if (odataClient.getServiceVersion() == ODataServiceVersion.V30
+    if (odataClient.getConfiguration() instanceof Configuration
             && ((Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
+
       addCustomHeader(
               HeaderName.dataServiceUrlConventions.toString(),
               new ODataPreferences(odataClient.getServiceVersion()).keyAsSegment());

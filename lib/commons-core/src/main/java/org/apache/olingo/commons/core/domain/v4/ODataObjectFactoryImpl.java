@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -72,6 +73,11 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
 
   @Override
   public ODataComplexValue<ODataProperty> newComplexValue(final String typeName) {
+    return new ODataComplexValueImpl(typeName);
+  }
+
+  @Override
+  public ODataLinkedComplexValue newLinkedComplexValue(final String typeName) {
     return new ODataComplexValueImpl(typeName);
   }
 

@@ -16,37 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data;
 
-public interface Value {
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 
-  boolean isNull();
+public class LinkedComplexValueImpl extends ComplexValueImpl implements LinkedComplexValue {
 
-  boolean isPrimitive();
+  private final List<Link> associationLinks = new ArrayList<Link>();
 
-  boolean isGeospatial();
+  private final List<Link> navigationLinks = new ArrayList<Link>();
 
-  boolean isEnum();
+  @Override
+  public boolean isLinkedComplex() {
+    return true;
+  }
 
-  boolean isComplex();
+  @Override
+  public List<Link> getAssociationLinks() {
+    return associationLinks;
+  }
 
-  boolean isLinkedComplex();
+  @Override
+  public List<Link> getNavigationLinks() {
+    return navigationLinks;
+  }
 
-  boolean isCollection();
-
-  Object get();
-
-  NullValue asNull();
-
-  PrimitiveValue asPrimitive();
-
-  EnumValue asEnum();
-
-  GeospatialValue asGeospatial();
-
-  ComplexValue asComplex();
-
-  LinkedComplexValue asLinkedComplex();
-
-  CollectionValue asCollection();
 }

@@ -49,7 +49,7 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
   public static EdmServiceMetadata getInstance(final ODataServiceVersion version,
           final List<? extends Schema> xmlSchemas) {
 
-    return version == ODataServiceVersion.V30
+    return version.compareTo(ODataServiceVersion.V40) < 0
             ? new org.apache.olingo.client.core.edm.v3.EdmServiceMetadataImpl(xmlSchemas)
             : new org.apache.olingo.client.core.edm.v4.EdmServiceMetadataImpl(xmlSchemas);
   }

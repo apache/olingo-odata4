@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.op;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -31,6 +32,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
@@ -43,6 +45,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -112,6 +115,30 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return getEntry(entity, reference, true);
   }
 
+  protected void links(final ODataLinked odataLinked, final Linked linked, final Class<? extends Entry> reference) {
+    // -------------------------------------------------------------
+    // Append navigation links (handling inline entry / feed as well)
+    // -------------------------------------------------------------
+    // handle navigation links
+    for (ODataLink link : odataLinked.getNavigationLinks()) {
+      // append link 
+      LOG.debug("Append navigation link\n{}", link);
+      linked.getNavigationLinks().add(getLink(link,
+              ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
+    }
+    // -------------------------------------------------------------
+
+    // -------------------------------------------------------------
+    // Append association links
+    // -------------------------------------------------------------
+    for (ODataLink link : odataLinked.getAssociationLinks()) {
+      LOG.debug("Append association link\n{}", link);
+      linked.getAssociationLinks().add(getLink(link,
+              ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
+    }
+    // -------------------------------------------------------------
+  }
+
   @Override
   public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
@@ -139,17 +166,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
     // -------------------------------------------------------------
 
-    // -------------------------------------------------------------
-    // Append navigation links (handling inline entry / feed as well)
-    // -------------------------------------------------------------
-    // handle navigation links
-    for (ODataLink link : entity.getNavigationLinks()) {
-      // append link 
-      LOG.debug("Append navigation link\n{}", link);
-      entry.getNavigationLinks().add(getLink(link,
-              ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
-    }
-    // -------------------------------------------------------------
+    links(entity, entry, reference);
 
     // -------------------------------------------------------------
     // Append edit-media links
@@ -157,16 +174,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     for (ODataLink link : entity.getEditMediaLinks()) {
       LOG.debug("Append edit-media link\n{}", link);
       entry.getMediaEditLinks().add(getLink(link,
-              ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
-    }
-    // -------------------------------------------------------------
-
-    // -------------------------------------------------------------
-    // Append association links
-    // -------------------------------------------------------------
-    for (ODataLink link : entity.getAssociationLinks()) {
-      LOG.debug("Append association link\n{}", link);
-      entry.getAssociationLinks().add(getLink(link,
               ResourceFactory.formatForEntryClass(reference) == ODataPubFormat.ATOM));
     }
     // -------------------------------------------------------------
@@ -278,6 +285,34 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return getODataEntity(resource, null);
   }
 
+  protected void odataLinks(final Linked linked, final ODataLinked odataLinked, final URI base) {
+    for (Link link : linked.getNavigationLinks()) {
+      final Entry inlineEntry = link.getInlineEntry();
+      final Feed inlineFeed = link.getInlineFeed();
+
+      if (inlineEntry == null && inlineFeed == null) {
+        final ODataLinkType linkType = link.getType() == null
+                ? ODataLinkType.ENTITY_NAVIGATION
+                : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+        odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
+                ? client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref())
+                : client.getObjectFactory().newEntitySetNavigationLink(link.getTitle(), base, link.getHref()));
+      } else if (inlineEntry != null) {
+        odataLinked.addLink(client.getObjectFactory().newInlineEntity(
+                link.getTitle(), base, link.getHref(),
+                getODataEntity(inlineEntry,
+                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+      } else {
+        odataLinked.addLink(client.getObjectFactory().newInlineEntitySet(
+                link.getTitle(), base, link.getHref(),
+                getODataEntitySet(inlineFeed,
+                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+      }
+    }
+  }
+
+  protected abstract void copyProperties(List<Property> src, CommonODataEntity dst, final URI base);
+
   @Override
   public CommonODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
     if (LOG.isDebugEnabled()) {
@@ -292,7 +327,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final CommonODataEntity entity = resource.getSelfLink() == null
             ? client.getObjectFactory().newEntity(resource.getType())
             : client.getObjectFactory().newEntity(resource.getType(),
-            URIUtils.getURI(base, resource.getSelfLink().getHref()));
+                    URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
@@ -306,29 +341,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
     }
 
-    for (Link link : resource.getNavigationLinks()) {
-      final Entry inlineEntry = link.getInlineEntry();
-      final Feed inlineFeed = link.getInlineFeed();
-
-      if (inlineEntry == null && inlineFeed == null) {
-        final ODataLinkType linkType = link.getType() == null
-                ? ODataLinkType.ENTITY_NAVIGATION
-                : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
-        entity.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
-                ? client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref())
-                : client.getObjectFactory().newEntitySetNavigationLink(link.getTitle(), base, link.getHref()));
-      } else if (inlineEntry != null) {
-        entity.addLink(client.getObjectFactory().newInlineEntity(
-                link.getTitle(), base, link.getHref(),
-                getODataEntity(inlineEntry,
-                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
-      } else {
-        entity.addLink(client.getObjectFactory().newInlineEntitySet(
-                link.getTitle(), base, link.getHref(),
-                getODataEntitySet(inlineFeed,
-                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
-      }
-    }
+    odataLinks(resource, entity, base);
 
     for (Link link : resource.getMediaEditLinks()) {
       entity.addLink(client.getObjectFactory().newMediaEditLink(link.getTitle(), base, link.getHref()));
@@ -346,14 +359,12 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entity.setMediaETag(resource.getMediaETag());
     }
 
-    for (Property property : resource.getProperties()) {
-      add(entity, getODataProperty(property));
-    }
+    copyProperties(resource.getProperties(), entity, base);
 
     return entity;
   }
 
-  protected ODataValue getODataValue(final Property resource) {
+  protected ODataValue getODataValue(final Property resource, final URI base) {
     ODataValue value = null;
 
     final EdmTypeInfo typeInfo = resource.getType() == null
@@ -363,18 +374,18 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(resource.getValue().asPrimitive().get()).
               setType(typeInfo == null
-              ? null
-              : EdmPrimitiveTypeKind.valueOfFQN(
-              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+                      ? null
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(typeInfo == null
-              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-              ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-              : EdmPrimitiveTypeKind.valueOfFQN(
-              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+                      ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isComplex()) {
       value = client.getObjectFactory().newComplexValue(typeInfo == null
               ? null : typeInfo.getFullQualifiedName().toString());
@@ -389,7 +400,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       for (Value _value : resource.getValue().asCollection().get()) {
         final JSONPropertyImpl fake = new JSONPropertyImpl();
         fake.setValue(_value);
-        value.asCollection().add(getODataValue(fake));
+        value.asCollection().add(getODataValue(fake, base));
       }
     }
 

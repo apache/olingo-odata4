@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
 
-public interface Entry {
+public interface Entry extends Linked {
 
   /**
    * Gets ETag.
@@ -93,20 +93,6 @@ public interface Entry {
    * @param editLink edit link.
    */
   void setEditLink(Link editLink);
-
-  /**
-   * Gets association links.
-   *
-   * @return association links.
-   */
-  List<Link> getAssociationLinks();
-
-  /**
-   * Gets navigation links.
-   *
-   * @return links.
-   */
-  List<Link> getNavigationLinks();
 
   /**
    * Gets media entity links.

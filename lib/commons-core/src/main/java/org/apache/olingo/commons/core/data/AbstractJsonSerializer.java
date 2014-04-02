@@ -20,12 +20,22 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -38,6 +48,50 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   };
 
   private final JSONGeoValueSerializer geoSerializer = new JSONGeoValueSerializer();
+
+  protected void links(final Linked linked, final JsonGenerator jgen) throws IOException {
+    final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
+    for (Link link : linked.getNavigationLinks()) {
+      ODataLinkType type = null;
+      try {
+        type = ODataLinkType.fromString(version, link.getRel(), link.getType());
+      } catch (IllegalArgumentException e) {
+        // ignore   
+      }
+
+      if (type == ODataLinkType.ENTITY_SET_NAVIGATION) {
+        final List<String> uris;
+        if (entitySetLinks.containsKey(link.getTitle())) {
+          uris = entitySetLinks.get(link.getTitle());
+        } else {
+          uris = new ArrayList<String>();
+          entitySetLinks.put(link.getTitle(), uris);
+        }
+        uris.add(link.getHref());
+      } else {
+        if (StringUtils.isNotBlank(link.getHref())) {
+          jgen.writeStringField(link.getTitle() + Constants.JSON_BIND_LINK_SUFFIX, link.getHref());
+        }
+      }
+
+      if (link.getInlineEntry() != null) {
+        jgen.writeObjectField(link.getTitle(), link.getInlineEntry());
+      } else if (link.getInlineFeed() != null) {
+        jgen.writeArrayFieldStart(link.getTitle());
+        for (Entry subEntry : link.getInlineFeed().getEntries()) {
+          jgen.writeObject(subEntry);
+        }
+        jgen.writeEndArray();
+      }
+    }
+    for (Map.Entry<String, List<String>> entitySetLink : entitySetLinks.entrySet()) {
+      jgen.writeArrayFieldStart(entitySetLink.getKey() + Constants.JSON_BIND_LINK_SUFFIX);
+      for (String uri : entitySetLink.getValue()) {
+        jgen.writeString(uri);
+      }
+      jgen.writeEndArray();
+    }
+  }
 
   private void collection(final JsonGenerator jgen, final String itemType, final CollectionValue value)
           throws IOException {
@@ -84,6 +138,9 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       jgen.writeStartObject();
       for (Property property : value.asComplex().get()) {
         property(jgen, property, property.getName());
+      }
+      if (value.isLinkedComplex()) {
+        links(value.asLinkedComplex(), jgen);
       }
       jgen.writeEndObject();
     }

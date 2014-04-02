@@ -43,4 +43,6 @@ public interface ODataBinder extends CommonODataBinder {
 
   @Override
   ODataProperty getODataProperty(Property property);
+
+  ODataProperty getODataProperty(Property property, URI base);
 }
