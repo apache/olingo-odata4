@@ -29,8 +29,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
- * Base implementation for working with NTLM Authentication via embedded HttpClient features: needs to be subclassed in
- * order to provide all needed login information.
+ * Implementation for working with NTLM Authentication via embedded HttpClient features.
  * <br/>
  * External NTLM engine such as <a href="http://jcifs.samba.org/">JCIFS</a> library developed by the
  * <a href="http://www.samba.org/">Samba</a> project as a part of their Windows interoperability suite of programs.
@@ -38,15 +37,26 @@ import org.apache.olingo.client.api.http.HttpMethod;
  * @see NTCredentials
  * @see http://hc.apache.org/httpcomponents-client-ga/ntlm.html#Using_Samba_JCIFS_as_an_alternative_NTLM_engine
  */
-public abstract class AbstractNTLMAuthHttpClientFactory extends DefaultHttpClientFactory {
+public class NTLMAuthHttpClientFactory extends DefaultHttpClientFactory {
 
-  protected abstract String getUsername();
+  private static final long serialVersionUID = 9060120943020134668L;
 
-  protected abstract String getPassword();
+  private final String username;
 
-  protected abstract String getWorkstation();
+  private final String password;
 
-  protected abstract String getDomain();
+  private final String workstation;
+
+  private final String domain;
+
+  public NTLMAuthHttpClientFactory(final String username, final String password,
+          final String workstation, final String domain) {
+
+    this.username = username;
+    this.password = password;
+    this.workstation = workstation;
+    this.domain = domain;
+  }
 
   @Override
   public HttpClient createHttpClient(final HttpMethod method, final URI uri) {
@@ -54,7 +64,7 @@ public abstract class AbstractNTLMAuthHttpClientFactory extends DefaultHttpClien
 
     final CredentialsProvider credsProvider = new BasicCredentialsProvider();
     credsProvider.setCredentials(AuthScope.ANY,
-            new NTCredentials(getUsername(), getPassword(), getWorkstation(), getDomain()));
+            new NTCredentials(username, password, workstation, domain));
 
     httpclient.setCredentialsProvider(credsProvider);
 

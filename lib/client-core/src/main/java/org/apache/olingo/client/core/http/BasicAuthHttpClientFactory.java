@@ -27,16 +27,20 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
- * Base implementation for working with Basic Authentication: needs to be subclassed in order to provide actual username
- * and password.
+ * Implementation for working with Basic Authentication.
  */
-public abstract class AbstractBasicAuthHttpClientFactory extends DefaultHttpClientFactory {
+public class BasicAuthHttpClientFactory extends DefaultHttpClientFactory {
 
   private static final long serialVersionUID = 7985626503125490244L;
 
-  protected abstract String getUsername();
+  private final String username;
 
-  protected abstract String getPassword();
+  private final String password;
+
+  public BasicAuthHttpClientFactory(final String username, final String password) {
+    this.username = username;
+    this.password = password;
+  }
 
   @Override
   public HttpClient createHttpClient(final HttpMethod method, final URI uri) {
@@ -44,7 +48,7 @@ public abstract class AbstractBasicAuthHttpClientFactory extends DefaultHttpClie
 
     httpclient.getCredentialsProvider().setCredentials(
             new AuthScope(uri.getHost(), uri.getPort()),
-            new UsernamePasswordCredentials(getUsername(), getPassword()));
+            new UsernamePasswordCredentials(username, password));
 
     return httpclient;
   }
