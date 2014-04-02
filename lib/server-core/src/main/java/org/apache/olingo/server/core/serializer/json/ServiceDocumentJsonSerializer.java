@@ -74,8 +74,8 @@ public class ServiceDocumentJsonSerializer {
     }
   }
 
-  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws JsonGenerationException, 
-  IOException {
+  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws JsonGenerationException,
+      IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {

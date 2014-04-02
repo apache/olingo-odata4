@@ -52,7 +52,6 @@ public class MetadataDocumentTest {
     ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
     EdmProviderImpl edm = new EdmProviderImpl(new EdmTechProvider());
     InputStream metadata = serializer.metadataDocument(edm);
-    String metadataString = StringUtils.inputStreamToString(metadata, false);
-    //System.out.println(metadataString);
+    StringUtils.inputStreamToString(metadata, false);
   }
 }

@@ -160,7 +160,7 @@ public class MetadataDocumentXmlSerializer {
     writer.writeEndElement();
   }
 
-  private void appendTypeDefinitions(XMLStreamWriter writer, List<EdmTypeDefinition> typeDefinitions)
+  private void appendTypeDefinitions(final XMLStreamWriter writer, final List<EdmTypeDefinition> typeDefinitions)
       throws XMLStreamException {
     for (EdmTypeDefinition definition : typeDefinitions) {
       writer.writeEmptyElement(XML_TYPE_DEFINITION);
@@ -251,7 +251,7 @@ public class MetadataDocumentXmlSerializer {
 
   }
 
-  private void appendNavigationPropertyBindings(final XMLStreamWriter writer, EdmBindingTarget bindingTarget)
+  private void appendNavigationPropertyBindings(final XMLStreamWriter writer, final EdmBindingTarget bindingTarget)
       throws XMLStreamException {
     if (bindingTarget.getNavigationPropertyBindings() != null) {
       for (EdmNavigationPropertyBinding binding : bindingTarget.getNavigationPropertyBindings()) {
@@ -292,7 +292,7 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendOperationReturnType(final XMLStreamWriter writer, EdmOperation operation)
+  private void appendOperationReturnType(final XMLStreamWriter writer, final EdmOperation operation)
       throws XMLStreamException {
     EdmReturnType returnType = operation.getReturnType();
     if (returnType != null) {
@@ -303,7 +303,7 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendOperationParameters(final XMLStreamWriter writer, EdmOperation operation)
+  private void appendOperationParameters(final XMLStreamWriter writer, final EdmOperation operation)
       throws XMLStreamException {
     for (String parameterName : operation.getParameterNames()) {
       EdmParameter parameter = operation.getParameter(parameterName);
@@ -329,7 +329,8 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendReturnTypeFacets(XMLStreamWriter writer, EdmReturnType returnType) throws XMLStreamException {
+  private void appendReturnTypeFacets(final XMLStreamWriter writer, final EdmReturnType returnType)
+      throws XMLStreamException {
     if (returnType.isNullable() != null) {
       writer.writeAttribute(XML_NULLABLE, "" + returnType.isNullable());
     }
@@ -344,7 +345,8 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendParameterFacets(XMLStreamWriter writer, EdmParameter parameter) throws XMLStreamException {
+  private void appendParameterFacets(final XMLStreamWriter writer, final EdmParameter parameter)
+      throws XMLStreamException {
     if (parameter.isNullable() != null) {
       writer.writeAttribute(XML_NULLABLE, "" + parameter.isNullable());
     }

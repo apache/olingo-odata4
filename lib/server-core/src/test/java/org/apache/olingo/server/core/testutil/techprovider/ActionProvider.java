@@ -55,7 +55,7 @@ public class ActionProvider {
 
   public static final FullQualifiedName nameUARTETParam =
       new FullQualifiedName(SchemaProvider.nameSpace, "UARTETParam");
-  
+
   public static final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(SchemaProvider.nameSpace,
       "UARTPrimParam");
   public static final FullQualifiedName nameUARTPrimCollParam = new FullQualifiedName(SchemaProvider.nameSpace,
@@ -124,7 +124,7 @@ public class ActionProvider {
           new Action().setName("BAETTwoKeyNavRTETTwoKeyNav")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav)
-                  .setNullable(false)))
+                      .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
@@ -132,7 +132,7 @@ public class ActionProvider {
           new Action().setName("BAETTwoKeyNavRTETTwoKeyNav")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterETKeyNav").setType(EntityTypeProvider.nameETKeyNav)
-                  .setNullable(false)))
+                      .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))
@@ -167,7 +167,7 @@ public class ActionProvider {
           new Action().setName("BAETBaseTwoKeyNavRTETBaseTwoKeyNav")
               .setParameters(Arrays.asList(
                   new Parameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
-                  .setNullable(false)))
+                      .setNullable(false)))
               .setBound(true)
               .setReturnType(
                   new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav))

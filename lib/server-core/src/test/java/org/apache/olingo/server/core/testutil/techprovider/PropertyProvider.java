@@ -54,23 +54,23 @@ public class PropertyProvider {
       .setName("CollPropertyBinary")
       .setType(nameBinary)
       .setCollection(true);
-  
+
   public static final Property collPropertyBinary_ExplicitNullable = new Property()
-  .setName("CollPropertyBinary")
-  .setType(nameBinary)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyBinary")
+      .setType(nameBinary)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyBoolean = new Property()
       .setName("CollPropertyBoolean")
       .setType(nameBoolean)
       .setCollection(true);
-  
+
   public static final Property collPropertyBoolean_ExplicitNullable = new Property()
-  .setName("CollPropertyBoolean")
-  .setType(nameBoolean)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyByte = new Property()
       .setName("CollPropertyByte")
@@ -78,109 +78,109 @@ public class PropertyProvider {
       .setCollection(true);
 
   public static final Property collPropertyByte_ExplicitNullable = new Property()
-  .setName("CollPropertyByte")
-  .setType(nameByte)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertyByte")
+      .setType(nameByte)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertyDate = new Property()
       .setName("CollPropertyDate")
       .setType(nameDate)
       .setCollection(true);
-  
+
   public static final Property collPropertyDate_ExplicitNullable = new Property()
-  .setName("CollPropertyDate")
-  .setType(nameDate)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyDate")
+      .setType(nameDate)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDateTimeOffset = new Property()
       .setName("CollPropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setCollection(true);
-  
+
   public static final Property collPropertyDateTimeOffset_ExplicitNullable = new Property()
-  .setName("CollPropertyDateTimeOffset")
-  .setType(nameDateTimeOffset)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDecimal = new Property()
       .setName("CollPropertyDecimal")
       .setType(nameDecimal)
       .setCollection(true);
-  
+
   public static final Property collPropertyDecimal_ExplicitNullable = new Property()
-  .setName("CollPropertyDecimal")
-  .setType(nameDecimal)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyDecimal")
+      .setType(nameDecimal)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDouble = new Property()
       .setName("CollPropertyDouble")
       .setType(nameDouble)
       .setCollection(true);
-  
+
   public static final Property collPropertyDouble_ExplicitNullable = new Property()
-  .setName("CollPropertyDouble")
-  .setType(nameDouble)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyDouble")
+      .setType(nameDouble)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyDuration = new Property()
       .setName("CollPropertyDuration")
       .setType(nameDuration)
       .setCollection(true);
-  
+
   public static final Property collPropertyDuration_ExplicitNullable = new Property()
-  .setName("CollPropertyDuration")
-  .setType(nameDuration)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertyDuration")
+      .setType(nameDuration)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertyGuid = new Property()
       .setName("CollPropertyGuid")
       .setType(nameGuid)
       .setCollection(true);
-  
+
   public static final Property collPropertyGuid_ExplicitNullable = new Property()
-  .setName("CollPropertyGuid")
-  .setType(nameGuid)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertyGuid")
+      .setType(nameGuid)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertyInt16 = new Property()
       .setName("CollPropertyInt16")
       .setType(nameInt16)
       .setCollection(true);
-  
+
   public static final Property collPropertyInt16_ExplicitNullable = new Property()
-  .setName("CollPropertyInt16")
-  .setType(nameInt16)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertyInt16")
+      .setType(nameInt16)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertyInt32 = new Property()
       .setName("CollPropertyInt32")
       .setType(nameInt32)
       .setCollection(true);
-  
+
   public static final Property collPropertyInt32_ExplicitNullable = new Property()
-  .setName("CollPropertyInt32")
-  .setType(nameInt32)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertyInt32")
+      .setType(nameInt32)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertyInt64 = new Property()
       .setName("CollPropertyInt64")
       .setType(nameInt64)
       .setCollection(true);
-  
+
   public static final Property collPropertyInt64_ExplicitNullable = new Property()
-  .setName("CollPropertyInt64")
-  .setType(nameInt64)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyInt64")
+      .setType(nameInt64)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertySByte = new Property()
       .setName("CollPropertySByte")
@@ -188,43 +188,43 @@ public class PropertyProvider {
       .setCollection(true);
 
   public static final Property collPropertySByte_ExplicitNullable = new Property()
-  .setName("CollPropertySByte")
-  .setType(nameSByte)
-  .setNullable(true)
-  .setCollection(true);
-  
+      .setName("CollPropertySByte")
+      .setType(nameSByte)
+      .setNullable(true)
+      .setCollection(true);
+
   public static final Property collPropertySingle = new Property()
       .setName("CollPropertySingle")
       .setType(nameSingle)
       .setCollection(true);
-  
+
   public static final Property collPropertySingle_ExplicitNullable = new Property()
-  .setName("CollPropertySingle")
-  .setType(nameSingle)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertySingle")
+      .setType(nameSingle)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyString = new Property()
       .setName("CollPropertyString")
       .setType(nameString)
       .setCollection(true);
-  
+
   public static final Property collPropertyString_ExplicitNullable = new Property()
-  .setName("CollPropertyString")
-  .setType(nameString)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyString")
+      .setType(nameString)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property collPropertyTimeOfDay = new Property()
-  .setName("CollPropertyTimeOfDay")
-  .setType(nameTimeOfDay)
-  .setCollection(true);
-  
+      .setName("CollPropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setCollection(true);
+
   public static final Property collPropertyTimeOfDay_ExplicitNullable = new Property()
-  .setName("CollPropertyTimeOfDay")
-  .setType(nameTimeOfDay)
-  .setNullable(true)
-  .setCollection(true);
+      .setName("CollPropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setNullable(true)
+      .setCollection(true);
 
   public static final Property propertyBinary = new Property()
       .setName("PropertyBinary")

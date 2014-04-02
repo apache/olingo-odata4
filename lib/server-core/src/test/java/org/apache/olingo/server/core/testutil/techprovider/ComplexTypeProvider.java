@@ -93,7 +93,7 @@ public class ComplexTypeProvider {
     } else if (complexTypeName.equals(nameCTCompNav)) {
       return new ComplexType()
           .setName("CTCompNav")
-          .setProperties(Arrays.asList(PropertyProvider.propertyString, 
+          .setProperties(Arrays.asList(PropertyProvider.propertyString,
               PropertyProvider.propertyComplex_CTNavFiveProp));
 
     } else if (complexTypeName.equals(nameCTMixPrimCollComp)) {
@@ -115,11 +115,7 @@ public class ComplexTypeProvider {
     } else if (complexTypeName.equals(nameCTTwoBase)) {
       return new ComplexType()
           .setName("CTTwoBase")
-          .setBaseType(nameCTBase)
-          .setProperties(Arrays.asList(
-              new Property()
-                  .setName("AdditionalPropString2")
-                  .setType(new FullQualifiedName("Edm", "String"))));
+          .setBaseType(nameCTBase);
 
     } else if (complexTypeName.equals(nameCTCompComp)) {
       return new ComplexType()

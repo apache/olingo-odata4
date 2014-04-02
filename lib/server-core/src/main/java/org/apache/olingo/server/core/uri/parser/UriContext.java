@@ -50,8 +50,8 @@ public class UriContext {
    * #visitExpandPathExtension(final
    * ExpandPathExtensionContext ctx)} to allow nodes
    * deeper in the expand tree at
-   * {@link #visitExpandPathExtension(
-   * org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
+   * {@link 
+   * #visitExpandPathExtension(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
    * appending path
    * segments to the currently processed {@link ExpandItemImpl}.
    */
