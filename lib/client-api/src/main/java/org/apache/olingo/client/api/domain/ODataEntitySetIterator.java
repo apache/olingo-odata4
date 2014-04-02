@@ -32,8 +32,8 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +41,12 @@ import org.slf4j.LoggerFactory;
  * OData entity set iterator class.
  * <br/>
  * <b>Please don't forget to call the <tt>close()>/<tt> method when not needed any more.</b>
+ *
+ * @param <E> concrete ODataEntity implementation
+ * @param <ES> concrete ODataEntitySet implementation
  */
-public class ODataEntitySetIterator implements Iterator<ODataEntity> {
+public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends CommonODataEntity>
+        implements Iterator<E> {
 
   /**
    * Logger.
@@ -59,7 +63,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
   private Entry cached;
 
-  private ODataEntitySet entitySet;
+  private ES entitySet;
 
   private final ByteArrayOutputStream osFeed;
 
@@ -104,6 +108,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
    * {@inheritDoc }
    */
   @Override
+  @SuppressWarnings("unchecked")
   public boolean hasNext() {
     if (available && cached == null) {
       if (format == ODataPubFormat.ATOM) {
@@ -114,7 +119,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
       if (cached == null) {
         available = false;
-        entitySet = odataClient.getReader().
+        entitySet = (ES) odataClient.getReader().
                 readEntitySet(new ByteArrayInputStream(osFeed.toByteArray()), format);
         close();
       }
@@ -127,9 +132,10 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
    * {@inheritDoc }
    */
   @Override
-  public ODataEntity next() {
+  public E next() {
     if (hasNext()) {
-      final ODataEntity res = odataClient.getBinder().getODataEntity(cached);
+      @SuppressWarnings("unchecked")
+      final E res = (E) odataClient.getBinder().getODataEntity(cached);
       cached = null;
       return res;
     }
@@ -170,7 +176,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
     Entry jsonEntry = null;
     try {
-      int c = 0;
+      int c;
 
       boolean foundNewOne = false;
 
@@ -203,7 +209,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
         if (c >= 0) {
           jsonEntry = odataClient.getDeserializer().toEntry(
-                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON);
+                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON).getObject();
         }
       } else {
         while ((c = input.read()) >= 0) {
@@ -237,7 +243,7 @@ public class ODataEntitySetIterator implements Iterator<ODataEntity> {
 
         if (consume(input, "</entry>", entry, true) >= 0) {
           atomEntry = odataClient.getDeserializer().
-                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM);
+                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM).getObject();
         }
       }
     } catch (Exception e) {

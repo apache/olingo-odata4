@@ -71,5 +71,4 @@ public interface Feed {
    * @param next next link.
    */
   void setNext(URI next);
-
 }

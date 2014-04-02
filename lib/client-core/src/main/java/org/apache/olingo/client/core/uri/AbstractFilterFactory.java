@@ -21,10 +21,17 @@ package org.apache.olingo.client.core.uri;
 import org.apache.olingo.client.api.uri.FilterArg;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
 import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public abstract class AbstractFilterFactory implements CommonFilterFactory {
 
   private static final long serialVersionUID = -6141317149802621836L;
+
+  protected final ODataServiceVersion version;
+
+  public AbstractFilterFactory(final ODataServiceVersion version) {
+    this.version = version;
+  }
 
   @Override
   public URIFilter match(final FilterArg arg) {

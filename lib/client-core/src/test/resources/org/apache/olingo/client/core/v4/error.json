@@ -1,0 +1,14 @@
+{
+  "error": {
+    "code": "501",
+    "message": "Unsupported functionality",
+    "target": "query",
+    "details": [
+      {
+        "code": "301",
+        "target": "$search",
+        "message": "$search query option not supported"
+      }
+    ]
+  }
+}

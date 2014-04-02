@@ -25,8 +25,8 @@ public class LineString extends ComposedGeospatial<Point> {
 
   private static final long serialVersionUID = 3207958185407535907L;
 
-  public LineString(final Dimension dimension, final String crs, final List<Point> points) {
-    super(dimension, Type.LINESTRING, crs, points);
+  public LineString(final Dimension dimension, final Integer srid, final List<Point> points) {
+    super(dimension, Type.LINESTRING, srid, points);
   }
 
   @Override

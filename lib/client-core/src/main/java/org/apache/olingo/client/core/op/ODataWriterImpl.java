@@ -26,9 +26,9 @@ import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.op.ODataWriter;
@@ -44,17 +44,17 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntities(final Collection<ODataEntity> entities, final ODataPubFormat format) {
+  public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataPubFormat format) {
     return writeEntities(entities, format, true);
   }
 
   @Override
   public InputStream writeEntities(
-          final Collection<ODataEntity> entities, final ODataPubFormat format, final boolean outputType) {
+          final Collection<CommonODataEntity> entities, final ODataPubFormat format, final boolean outputType) {
 
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
-      for (ODataEntity entity : entities) {
+      for (CommonODataEntity entity : entities) {
         client.getSerializer().entry(client.getBinder().getEntry(
                 entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM), outputType), output);
       }
@@ -66,17 +66,19 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final ODataEntity entity, final ODataPubFormat format) {
+  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format) {
     return writeEntity(entity, format, true);
   }
 
   @Override
-  public InputStream writeEntity(final ODataEntity entity, final ODataPubFormat format, final boolean outputType) {
-    return writeEntities(Collections.<ODataEntity>singleton(entity), format, outputType);
+  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format,
+          final boolean outputType) {
+
+    return writeEntities(Collections.<CommonODataEntity>singleton(entity), format, outputType);
   }
 
   @Override
-  public InputStream writeProperty(final ODataProperty property, final ODataFormat format) {
+  public InputStream writeProperty(final CommonODataProperty property, final ODataFormat format) {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
       client.getSerializer().property(client.getBinder().getProperty(

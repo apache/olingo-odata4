@@ -28,12 +28,14 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Property;
 
 /**
  * This class implements an OData update entity property request.
@@ -44,7 +46,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   /**
    * Value to be created.
    */
-  private final ODataProperty property;
+  private final CommonODataProperty property;
 
   /**
    * Constructor.
@@ -55,7 +57,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    * @param property value to be created.
    */
   ODataPropertyUpdateRequestImpl(final CommonODataClient odataClient,
-          final HttpMethod method, final URI targetURI, final ODataProperty property) {
+          final HttpMethod method, final URI targetURI, final CommonODataProperty property) {
 
     super(odataClient, ODataFormat.class, method, targetURI);
     // set request body
@@ -90,7 +92,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    */
   private class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
 
-    private ODataProperty property = null;
+    private CommonODataProperty property = null;
 
     /**
      * Constructor.
@@ -114,11 +116,13 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
      * {@inheritDoc }
      */
     @Override
-    public ODataProperty getBody() {
+    public CommonODataProperty getBody() {
       if (property == null) {
         try {
-          property = odataClient.getReader().
-                  readProperty(getRawResponse(), ODataFormat.fromString(getAccept()));
+          final Container<Property> container = odataClient.getDeserializer().toProperty(getRawResponse(),
+                  ODataFormat.fromString(getAccept()));
+
+          property = odataClient.getBinder().getODataProperty(extractFromContainer(container));
         } finally {
           this.close();
         }

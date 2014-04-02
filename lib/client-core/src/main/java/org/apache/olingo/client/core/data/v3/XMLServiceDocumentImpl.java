@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.data.v3;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.net.URI;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.data.AbstractServiceDocument;
@@ -28,21 +27,4 @@ import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 
 @JsonDeserialize(using = XMLServiceDocumentDeserializer.class)
 public class XMLServiceDocumentImpl extends AbstractServiceDocument implements ServiceDocument {
-
-  private URI baseURI;
-
-  @Override
-  public URI getBaseURI() {
-    return this.baseURI;
-  }
-
-  /**
-   * Sets base URI.
-   *
-   * @param baseURI base URI.
-   */
-  public void setBaseURI(final URI baseURI) {
-    this.baseURI = baseURI;
-  }
-
 }

@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.data.Feed;
  *
  * @see AtomEntry
  */
-public class AtomFeedImpl extends AbstractAtomObject implements Feed {
+public class AtomFeedImpl extends AbstractODataObject implements Feed {
 
   private static final long serialVersionUID = 5466590540021319153L;
 

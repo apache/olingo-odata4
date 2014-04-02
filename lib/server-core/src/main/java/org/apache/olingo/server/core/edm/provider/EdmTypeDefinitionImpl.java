@@ -45,7 +45,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   public EdmPrimitiveType getUnderlyingType() {
     if (edmPrimitiveTypeInstance == null) {
       try {
-        edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getNonGeoInstance(
+        edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
                 EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);

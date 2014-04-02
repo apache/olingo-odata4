@@ -25,14 +25,14 @@ public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
   private static final long serialVersionUID = -160184788048512883L;
 
-  public MultiPolygon(final Dimension dimension, final String crs, final List<Polygon> polygons) {
-    super(dimension, Type.MULTIPOLYGON, crs, polygons);
+  public MultiPolygon(final Dimension dimension, final Integer srid, final List<Polygon> polygons) {
+    super(dimension, Type.MULTIPOLYGON, srid, polygons);
   }
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-           ? EdmPrimitiveTypeKind.GeographyMultiPolygon
-           : EdmPrimitiveTypeKind.GeometryMultiPolygon;
+            ? EdmPrimitiveTypeKind.GeographyMultiPolygon
+            : EdmPrimitiveTypeKind.GeometryMultiPolygon;
   }
 }

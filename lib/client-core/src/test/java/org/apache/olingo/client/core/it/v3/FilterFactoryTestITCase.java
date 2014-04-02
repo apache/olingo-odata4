@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
@@ -42,7 +42,7 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySet).filter(filter);
 
-    final ODataEntitySet feed = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
+    final CommonODataEntitySet feed = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
             execute().getBody();
     assertNotNull(feed);
     assertEquals(expected, feed.getEntities().size());

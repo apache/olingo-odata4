@@ -25,15 +25,15 @@ public class MultiLineString extends ComposedGeospatial<LineString> {
 
   private static final long serialVersionUID = -5042414471218124125L;
 
-  public MultiLineString(final Dimension dimension, final String crs, final List<LineString> lineStrings) {
-    super(dimension, Type.MULTILINESTRING, crs, lineStrings);
+  public MultiLineString(final Dimension dimension, final Integer srid, final List<LineString> lineStrings) {
+    super(dimension, Type.MULTILINESTRING, srid, lineStrings);
   }
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-           ? EdmPrimitiveTypeKind.GeographyMultiLineString
-           : EdmPrimitiveTypeKind.GeometryMultiLineString;
+            ? EdmPrimitiveTypeKind.GeographyMultiLineString
+            : EdmPrimitiveTypeKind.GeometryMultiLineString;
   }
 
 }

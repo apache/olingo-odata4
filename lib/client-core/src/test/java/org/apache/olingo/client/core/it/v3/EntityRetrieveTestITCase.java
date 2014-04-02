@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -30,16 +25,22 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.core.op.ResourceFactory;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.core.op.ResourceFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -55,7 +56,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Info");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -72,13 +73,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     for (ODataLink link : entity.getNavigationLinks()) {
       if (link instanceof ODataInlineEntity) {
-        final ODataEntity inline = ((ODataInlineEntity) link).getEntity();
+        final CommonODataEntity inline = ((ODataInlineEntity) link).getEntity();
         assertNotNull(inline);
 
         debugEntry(client.getBinder().getEntry(
                 inline, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)), "Just read");
 
-        final List<ODataProperty> properties = inline.getProperties();
+        final List<? extends CommonODataProperty> properties = inline.getProperties();
         assertEquals(2, properties.size());
 
         assertTrue(properties.get(0).getName().equals("CustomerInfoId")
@@ -108,7 +109,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).expand("Orders");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -119,7 +120,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     for (ODataLink link : entity.getNavigationLinks()) {
       if (link instanceof ODataInlineEntitySet) {
-        final ODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
+        final CommonODataEntitySet inline = ((ODataInlineEntitySet) link).getEntitySet();
         assertNotNull(inline);
 
         debugFeed(client.getBinder().getFeed(inline, ResourceFactory.feedClassForFormat(
@@ -153,10 +154,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
+    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
     assertNull(entitySet);
 
-    final ODataEntity entity = res.getBodyAs(ODataEntity.class);
+    final CommonODataEntity entity = res.getBodyAs(CommonODataEntity.class);
     assertNotNull(entity);
   }
 
@@ -179,7 +180,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Message").appendKeySegment(multiKey);
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -212,7 +213,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Product").appendKeySegment(-10);
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
@@ -221,7 +222,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final String etag = res.getEtag();
     assertTrue(StringUtils.isNotBlank(etag));
 
-    final ODataEntity product = res.getBody();
+    final CommonODataEntity product = res.getBody();
     assertEquals(etag, product.getETag());
   }
 
@@ -229,7 +230,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   public void issue99() {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Car");
 
-    final ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.JSON);
 
     // this statement should cause an IllegalArgumentException bearing JsonParseException

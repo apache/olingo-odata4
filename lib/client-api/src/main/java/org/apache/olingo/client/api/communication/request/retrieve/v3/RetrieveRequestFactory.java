@@ -20,11 +20,31 @@ package org.apache.olingo.client.api.communication.request.retrieve.v3;
 
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
+@SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
 
+  @Override
+  ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
+
+  @Override
+  ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
+
+  @Override
+  ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
+
+  @Override
+  ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
+
   /**
-   * Gets a query request returning a single OData link.
+   * Gets a uri request returning a single OData link.
    *
    * @param targetURI target URI.
    * @param linkName link name.

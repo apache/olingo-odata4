@@ -18,81 +18,31 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * OData collection property value.
+ *
+ * @param <OV> The actual ODataValue interface.
  */
-public class ODataCollectionValue extends AbstractODataValue implements Iterable<ODataValue> {
-
-  private static final long serialVersionUID = -3665659846001987187L;
-
-  /**
-   * Type name;
-   */
-  private final String typeName;
-
-  /**
-   * Values.
-   */
-  private final List<ODataValue> values = new ArrayList<ODataValue>();
-
-  /**
-   * Constructor.
-   *
-   * @param typeName type name.
-   */
-  public ODataCollectionValue(final String typeName) {
-    this.typeName = typeName;
-  }
+public interface ODataCollectionValue<OV extends ODataValue> extends ODataValue, Iterable<OV> {
 
   /**
    * Adds a value to the collection.
    *
    * @param value value to be added.
    */
-  public void add(final ODataValue value) {
-    if (value.isPrimitive() || value.isComplex()) {
-      values.add(value);
-    }
-  }
-
-  /**
-   * Value iterator.
-   *
-   * @return value iterator.
-   */
-  @Override
-  public Iterator<ODataValue> iterator() {
-    return values.iterator();
-  }
-
-  /**
-   * Gets value type name.
-   *
-   * @return value type name.
-   */
-  public String getType() {
-    return typeName;
-  }
-
-  /**
-   * Gets collection size.
-   *
-   * @return collection size.
-   */
-  public int size() {
-    return values.size();
-  }
+  void add(ODataValue value);
 
   /**
    * Checks if collection is empty.
    *
    * @return 'TRUE' if empty; 'FALSE' otherwise.
    */
-  public boolean isEmpty() {
-    return values.isEmpty();
-  }
+  boolean isEmpty();
+
+  /**
+   * Gets collection size.
+   *
+   * @return collection size.
+   */
+  int size();
 }

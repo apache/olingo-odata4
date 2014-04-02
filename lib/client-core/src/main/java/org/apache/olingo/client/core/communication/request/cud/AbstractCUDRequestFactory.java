@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.communication.request.cud;
 
 import java.net.URI;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -29,10 +28,11 @@ import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateReq
 import org.apache.olingo.client.api.communication.request.cud.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.client.api.communication.request.cud.UpdateType;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFactory {
@@ -46,13 +46,15 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
   }
 
   @Override
-  public ODataEntityCreateRequest getEntityCreateRequest(final URI targetURI, final ODataEntity entity) {
-    return new ODataEntityCreateRequestImpl(client, targetURI, entity);
+  public <E extends CommonODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
+          final URI targetURI, final E entity) {
+
+    return new ODataEntityCreateRequestImpl<E>(client, targetURI, entity);
   }
 
   @Override
   public ODataEntityUpdateRequest getEntityUpdateRequest(
-          final URI targetURI, final UpdateType type, final ODataEntity changes) {
+          final URI targetURI, final UpdateType type, final CommonODataEntity changes) {
 
     final ODataEntityUpdateRequest req;
 
@@ -67,7 +69,7 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
   }
 
   @Override
-  public ODataEntityUpdateRequest getEntityUpdateRequest(final UpdateType type, final ODataEntity entity) {
+  public ODataEntityUpdateRequest getEntityUpdateRequest(final UpdateType type, final CommonODataEntity entity) {
     if (entity.getEditLink() == null) {
       throw new IllegalArgumentException("No edit link found");
     }
@@ -102,7 +104,7 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
 
   @Override
   public ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(
-          final URI targetURI, final ODataProperty property) {
+          final URI targetURI, final CommonODataProperty property) {
 
     if (!property.hasPrimitiveValue()) {
       throw new IllegalArgumentException("A primitive value is required");
@@ -122,7 +124,7 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
 
   @Override
   public ODataPropertyUpdateRequest getPropertyComplexValueUpdateRequest(
-          final URI targetURI, final UpdateType type, final ODataProperty property) {
+          final URI targetURI, final UpdateType type, final CommonODataProperty property) {
 
     if (!property.hasComplexValue()) {
       throw new IllegalArgumentException("A complex value is required");
@@ -142,7 +144,7 @@ public abstract class AbstractCUDRequestFactory implements CommonCUDRequestFacto
 
   @Override
   public ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(
-          final URI targetURI, final ODataProperty property) {
+          final URI targetURI, final CommonODataProperty property) {
 
     if (!property.hasCollectionValue()) {
       throw new IllegalArgumentException("A collection value is required");

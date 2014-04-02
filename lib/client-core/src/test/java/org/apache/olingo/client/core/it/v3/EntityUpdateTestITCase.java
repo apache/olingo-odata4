@@ -18,23 +18,23 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.net.URI;
 import java.util.LinkedHashMap;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
-import org.apache.olingo.client.api.communication.request.UpdateType;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 /**
@@ -137,7 +137,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     customerInfoURI = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendNavigationSegment("Info").build();
 
-    ODataEntityRequest req = client.getRetrieveRequestFactory().getEntityRequest(customerInfoURI);
+    ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(customerInfoURI);
     req.setFormat(format);
 
     ODataEntity newInfo = req.execute().getBody();
@@ -185,9 +185,10 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     final boolean before = message.getProperty("IsRead").getPrimitiveValue().toCastValue(Boolean.class);
     message.getProperties().remove(message.getProperty("IsRead"));
-    message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("IsRead",
-            client.getPrimitiveValueBuilder().setValue(!before).
-            setType(EdmPrimitiveTypeKind.Boolean).build()));
+    getClient().getBinder().add(message,
+            client.getObjectFactory().newPrimitiveProperty("IsRead",
+                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(!before).
+                    setType(EdmPrimitiveTypeKind.Boolean).build()));
 
     return client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, message);
   }
@@ -210,11 +211,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void updateReturnContent() throws EdmPrimitiveTypeException {
     final ODataEntityUpdateRequest req = buildMultiKeyUpdateReq(client.getConfiguration().getDefaultPubFormat());
-    req.setPrefer(ODataHeaderValues.preferReturnContent);
+    req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
     final ODataEntityUpdateResponse res = req.execute();
     assertEquals(200, res.getStatusCode());
-    assertEquals(ODataHeaderValues.preferReturnContent,
+    assertEquals(new ODataPreferences(client.getServiceVersion()).returnContent(),
             res.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertNotNull(res.getBody());
   }

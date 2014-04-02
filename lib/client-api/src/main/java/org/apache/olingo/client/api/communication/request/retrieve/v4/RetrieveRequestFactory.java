@@ -18,7 +18,28 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 
+@SuppressWarnings("unchecked")
 public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
+
+  @Override
+  ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
+
+  @Override
+  ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
+
+  @Override
+  ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
+
+  @Override
+  ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
 }

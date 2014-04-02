@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -38,14 +37,10 @@ import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataHeaderValues;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
@@ -56,8 +51,8 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.commons.core.data.JSONErrorImpl;
-import org.apache.olingo.commons.core.data.XMLErrorImpl;
+import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
+import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,10 +61,14 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Accepted content-type formats by the request in object.
  *
- * @see CUDRequestFactory
- * @see BatchRequestFactory
- * @see InvokeRequestFactory
- * @see StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
  */
 public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
@@ -80,7 +79,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
   protected final CommonODataClient odataClient;
 
-  protected final Class<T> formatRef;
+  private final Class<T> formatRef;
 
   /**
    * OData request method.
@@ -254,6 +253,15 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
    * {@inheritDoc}
    */
   @Override
+  public ODataRequest addCustomHeader(final HeaderName name, final String value) {
+    odataHeaders.setHeader(name, value);
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
     return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toString(odataClient.getServiceVersion()) : acceptHead;
@@ -384,7 +392,8 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     if (odataClient.getServiceVersion() == ODataServiceVersion.V30
             && ((Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
       addCustomHeader(
-              HeaderName.dataServiceUrlConventions.toString(), ODataHeaderValues.keyAsSegment);
+              HeaderName.dataServiceUrlConventions.toString(),
+              new ODataPreferences(odataClient.getServiceVersion()).keyAsSegment());
     }
 
     // Add all available headers
@@ -469,19 +478,13 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
   private ODataError getGenericError(final int code, final String errorMsg, final boolean isXML) {
     final ODataError error;
     if (isXML) {
-      error = new XMLErrorImpl();
-      final XMLErrorImpl.Message msg = new XMLErrorImpl.Message(
-              Collections.singletonMap("", (Object) errorMsg));
-
-      ((XMLErrorImpl) error).setMessage(msg);
-      ((XMLErrorImpl) error).setCode(String.valueOf(code));
+      error = new XMLODataErrorImpl();
+      ((XMLODataErrorImpl) error).setCode(String.valueOf(code));
+      ((XMLODataErrorImpl) error).setMessage(errorMsg);
     } else {
-      error = new JSONErrorImpl();
-      final JSONErrorImpl.Message msg = new JSONErrorImpl.Message();
-      msg.setValue(errorMsg);
-
-      ((JSONErrorImpl) error).setMessage(msg);
-      ((JSONErrorImpl) error).setCode(String.valueOf(code));
+      error = new JSONODataErrorImpl();
+      ((JSONODataErrorImpl) error).setCode(String.valueOf(code));
+      ((JSONODataErrorImpl) error).setMessage(errorMsg);
     }
 
     return error;

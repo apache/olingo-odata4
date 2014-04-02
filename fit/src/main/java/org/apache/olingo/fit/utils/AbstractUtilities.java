@@ -19,7 +19,6 @@
 package org.apache.olingo.fit.utils;
 
 import static org.apache.olingo.fit.utils.Commons.sequence;
-import static org.apache.olingo.fit.utils.Constants.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -134,7 +133,8 @@ public abstract class AbstractUtilities {
     // 0. Get the path
     // -----------------------------------------
     final String path =
-            entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar + ENTITY;
+            entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar
+            + Constants.get(version, ConstantKey.ENTITY);
     // -----------------------------------------
 
     // -----------------------------------------
@@ -229,7 +229,7 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     final FileObject fo = fsManager.putInMemory(
             normalizedEntity,
-            fsManager.getAbsolutePath(path + ENTITY, getDefaultFormat()));
+            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), getDefaultFormat()));
     // -----------------------------------------
 
     // -----------------------------------------
@@ -282,7 +282,8 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     // 1. save the media entity value
     // -----------------------------------------
-    fsManager.putInMemory(is, fsManager.getAbsolutePath(path + MEDIA_CONTENT_FILENAME, null));
+    fsManager.putInMemory(is, fsManager.getAbsolutePath(path
+            + Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME), null));
     IOUtils.closeQuietly(is);
     // -----------------------------------------
 
@@ -291,13 +292,13 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     final String entityURI = Commons.getEntityURI(entitySetName, entityKey);
     String entity = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<entry xml:base=\"" + DEFAULT_SERVICE_URL + "\" "
+            + "<entry xml:base=\"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "\" "
             + "xmlns=\"http://www.w3.org/2005/Atom\" "
             + "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" "
             + "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
             + "xmlns:georss=\"http://www.georss.org/georss\" "
             + "xmlns:gml=\"http://www.opengis.net/gml\">"
-            + "<id>" + DEFAULT_SERVICE_URL + entityURI + "</id>"
+            + "<id>" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entityURI + "</id>"
             + "<category term=\"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\" "
             + "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />"
             + "<link rel=\"edit\" title=\"Car\" href=\"" + entityURI + "\" />"
@@ -310,16 +311,18 @@ public abstract class AbstractUtilities {
             + "</entry>";
 
     fsManager.putInMemory(
-            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + ENTITY, Accept.ATOM));
+            IOUtils.toInputStream(entity),
+            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
     // -----------------------------------------
 
     // -----------------------------------------
     // 3. save entity as json
     // -----------------------------------------
     entity = "{"
-            + "\"odata.metadata\": \"" + DEFAULT_SERVICE_URL + "/$metadata#" + entitySetName + "/@Element\","
+            + "\"odata.metadata\": \"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
+            + "/$metadata#" + entitySetName + "/@Element\","
             + "\"odata.type\": \"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\","
-            + "\"odata.id\": \"" + DEFAULT_SERVICE_URL + entityURI + "\","
+            + "\"odata.id\": \"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entityURI + "\","
             + "\"odata.editLink\": \"" + entityURI + "\","
             + "\"odata.mediaEditLink\": \"" + entityURI + "/$value\","
             + "\"odata.mediaReadLink\": \"" + entityURI + "/$value\","
@@ -328,7 +331,8 @@ public abstract class AbstractUtilities {
             + "\"Description\": null" + "}";
 
     fsManager.putInMemory(
-            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + ENTITY, Accept.JSON_FULLMETA));
+            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
+            Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -376,17 +380,11 @@ public abstract class AbstractUtilities {
           final InputStream entity, final String etag, final Accept accept, final Response.Status status) {
     final Response.ResponseBuilder builder = Response.ok();
     if (version == ODataVersion.v3) {
-      builder.header(ODATA_SERVICE_VERSION, version.getVersion() + ";");
+      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.getVersion() + ";");
     }
 
     if (StringUtils.isNotBlank(etag)) {
       builder.header("ETag", etag);
-    }
-
-    if (accept != null) {
-      builder.header("Content-Type", accept.toString(version));
-    } else {
-      builder.header("Content-Type", "*/*");
     }
 
     if (status != null) {
@@ -394,6 +392,8 @@ public abstract class AbstractUtilities {
     }
 
     int contentLength = 0;
+
+    String contentTypeEncoding = StringUtils.EMPTY;
 
     if (entity != null) {
       try {
@@ -411,12 +411,15 @@ public abstract class AbstractUtilities {
 
         contentLength = bos.size();
         builder.entity(new ByteArrayInputStream(bos.toByteArray()));
+
+        contentTypeEncoding = ";odata.streaming=true;charset=utf-8";
       } catch (IOException ioe) {
         LOG.error("Error streaming response entity back", ioe);
       }
     }
 
     builder.header("Content-Length", contentLength);
+    builder.header("Content-Type", (accept == null ? "*/*" : accept.toString(version)) + contentTypeEncoding);
 
     return builder.build();
   }
@@ -426,7 +429,7 @@ public abstract class AbstractUtilities {
 
     final Response.ResponseBuilder builder = Response.serverError();
     if (version == ODataVersion.v3) {
-      builder.header(ODATA_SERVICE_VERSION, version.getVersion() + ";");
+      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";");
     }
 
     final String ext;
@@ -498,6 +501,19 @@ public abstract class AbstractUtilities {
         try {
           final Map<String, InputStream> value =
                   getPropertyValues(entity, Collections.<String>singletonList("OrderId"));
+          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+        } catch (Exception e) {
+          if (sequence.containsKey(entitySetName)) {
+            res = String.valueOf(sequence.get(entitySetName) + 1);
+          } else {
+            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+          }
+        }
+        sequence.put(entitySetName, Integer.valueOf(res));
+      } else if ("Orders".equals(entitySetName)) {
+        try {
+          final Map<String, InputStream> value =
+                  getPropertyValues(entity, Collections.<String>singletonList("OrderID"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -612,7 +628,7 @@ public abstract class AbstractUtilities {
 
     final String basePath =
             entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
-            + LINKS_FILE_PATH + File.separatorChar;
+            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
 
     final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
     linkInfo.setEtag(Commons.getETag(basePath, version));
@@ -631,7 +647,8 @@ public abstract class AbstractUtilities {
           final String entitySetName, final String entityId, final String name, final InputStream value)
           throws IOException {
     final FileObject fo = fsManager.putInMemory(value, fsManager.getAbsolutePath(
-            Commons.getEntityBasePath(entitySetName, entityId) + (name == null ? MEDIA_CONTENT_FILENAME : name), null));
+            Commons.getEntityBasePath(entitySetName, entityId)
+            + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
 
     return fo.getContent().getInputStream();
   }
@@ -644,7 +661,7 @@ public abstract class AbstractUtilities {
           final String entitySetName, final String entityId, final String name) {
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath
-            + (name == null ? MEDIA_CONTENT_FILENAME : name)));
+            + (name == null ? Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME) : name)));
   }
 
   public Map.Entry<String, InputStream> readEntity(
@@ -654,7 +671,8 @@ public abstract class AbstractUtilities {
     }
 
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
-    return new SimpleEntry<String, InputStream>(basePath, fsManager.readFile(basePath + ENTITY, accept));
+    return new SimpleEntry<String, InputStream>(basePath,
+            fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), accept));
   }
 
   public InputStream expandEntity(
@@ -719,15 +737,16 @@ public abstract class AbstractUtilities {
             ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
 
     // read atom
-    InputStream stream = fsManager.readFile(basePath + ENTITY, acceptType);
+    InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
 
     // change atom
     stream = replaceProperty(stream, changes, path, justValue);
 
     // save atom
-    fsManager.putInMemory(stream, fsManager.getAbsolutePath(basePath + ENTITY, acceptType));
+    fsManager.putInMemory(stream,
+            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
 
-    return fsManager.readFile(basePath + ENTITY, acceptType);
+    return fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
   }
 
   public InputStream deleteProperty(
@@ -741,15 +760,16 @@ public abstract class AbstractUtilities {
             ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
 
     // read atom
-    InputStream stream = fsManager.readFile(basePath + ENTITY, acceptType);
+    InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
 
     // change atom
     stream = deleteProperty(stream, path);
 
     // save atom
-    fsManager.putInMemory(stream, fsManager.getAbsolutePath(basePath + ENTITY, acceptType));
+    fsManager.putInMemory(stream,
+            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
 
-    return fsManager.readFile(basePath + ENTITY, acceptType);
+    return fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
   }
 
   public abstract InputStream readEntities(

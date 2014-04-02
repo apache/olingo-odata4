@@ -28,10 +28,12 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityUpdateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
@@ -99,7 +101,7 @@ public class ODataMediaEntityUpdateRequestImpl
   private class ODataMediaEntityUpdateResponseImpl extends AbstractODataResponse
           implements ODataMediaEntityUpdateResponse {
 
-    private ODataEntity entity = null;
+    private CommonODataEntity entity = null;
 
     /**
      * Constructor.
@@ -123,10 +125,11 @@ public class ODataMediaEntityUpdateRequestImpl
      * {@inheritDoc }
      */
     @Override
-    public ODataEntity getBody() {
+    public CommonODataEntity getBody() {
       if (entity == null) {
         try {
-          entity = odataClient.getReader().readEntity(getRawResponse(), getFormat());
+          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());
+          entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

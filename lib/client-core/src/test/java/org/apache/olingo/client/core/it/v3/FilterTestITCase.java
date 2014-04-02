@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.it.v3;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class FilterTestITCase extends AbstractTestITCase {
   private void filterQueryTest(final String entity, final String filter, final int expected) {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entity).filter(filter);
-    final ODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
+    final CommonODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
             execute().getBody();
     assertNotNull(entitySet);
     assertEquals(expected, entitySet.getEntities().size());

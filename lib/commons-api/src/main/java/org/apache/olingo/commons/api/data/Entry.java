@@ -53,11 +53,18 @@ public interface Entry {
   void setType(String type);
 
   /**
-   * Gest entry ID.
+   * Gets entry ID.
    *
    * @return entry ID.
    */
   String getId();
+
+  /**
+   * Sets entry ID.
+   *
+   * @param id entry ID.
+   */
+  void setId(String id);
 
   /**
    * Gets entry self link.
@@ -157,6 +164,20 @@ public interface Entry {
    * @param mediaContentType media content type.
    */
   void setMediaContentType(String mediaContentType);
+
+  /**
+   * ETag of the binary stream represented by this media entity or named stream property.
+   *
+   * @return media ETag value
+   */
+  String getMediaETag();
+
+  /**
+   * Set media ETag.
+   *
+   * @param eTag media ETag value
+   */
+  void setMediaETag(String eTag);
 
   /**
    * Checks if the current entry is a media entry.

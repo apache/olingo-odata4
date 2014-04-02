@@ -32,4 +32,4 @@ public enum ODataVersion {
   public String getVersion() {
     return version;
   }
-};
+}

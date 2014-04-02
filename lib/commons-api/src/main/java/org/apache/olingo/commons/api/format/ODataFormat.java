@@ -23,39 +23,43 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 /**
  * Available formats to be used in various contexts.
  */
-public enum ODataFormat implements Format{
+public enum ODataFormat implements Format {
 
   /**
    * JSON format with no metadata.
    */
-  JSON_NO_METADATA(ContentType.APPLICATION_JSON + ";odata=nometadata"),
+  JSON_NO_METADATA,
   /**
    * JSON format with minimal metadata (default).
    */
-  JSON(ContentType.APPLICATION_JSON + ";odata=minimalmetadata"),
+  JSON,
   /**
    * JSON format with no metadata.
    */
-  JSON_FULL_METADATA(ContentType.APPLICATION_JSON + ";odata=fullmetadata"),
+  JSON_FULL_METADATA,
   /**
    * XML format.
    */
-  XML(ContentType.APPLICATION_XML);
-
-  private final String format;
-
-  ODataFormat(final String format) {
-    this.format = format;
-  }
+  XML;
 
   /**
    * Gets format as a string.
    *
+   * @param version OData service version.
    * @return format as a string.
    */
   @Override
+  public String toString(final ODataServiceVersion version) {
+    if (version.ordinal() < ODataServiceVersion.V30.ordinal()) {
+      throw new IllegalArgumentException("Unsupported version " + version);
+    }
+
+    return ContentType.formatPerVersion.get(version).get(this.name());
+  }
+
+  @Override
   public String toString() {
-    return format;
+    throw new UnsupportedOperationException();
   }
 
   /**
@@ -82,7 +86,8 @@ public enum ODataFormat implements Format{
     if (result == null) {
       final String candidate = _format.toString();
       for (ODataFormat value : values()) {
-        if (candidate.equals(value.toString())) {
+        if (candidate.equals(value.toString(ODataServiceVersion.V30))
+                || candidate.equals(value.toString(ODataServiceVersion.V40))) {
           result = value;
         }
       }
@@ -93,10 +98,5 @@ public enum ODataFormat implements Format{
     }
 
     return result;
-  }
-
-  @Override
-  public String toString(final ODataServiceVersion version) {
-    return this.toString();
   }
 }

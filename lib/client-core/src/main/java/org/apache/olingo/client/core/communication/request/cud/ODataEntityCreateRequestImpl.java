@@ -28,23 +28,28 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
 
 /**
  * This class implements an OData create request.
+ *
+ * @param <E> concrete ODataEntity implementation
  */
-public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODataEntityCreateResponse, ODataPubFormat>
-        implements ODataEntityCreateRequest, ODataBatchableRequest {
+public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
+        extends AbstractODataBasicRequest<ODataEntityCreateResponse<E>, ODataPubFormat>
+        implements ODataEntityCreateRequest<E>, ODataBatchableRequest {
 
   /**
    * Entity to be created.
    */
-  private final ODataEntity entity;
+  private final E entity;
 
   /**
    * Constructor.
@@ -53,7 +58,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param targetURI entity set URI.
    * @param entity entity to be created.
    */
-  ODataEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final ODataEntity entity) {
+  ODataEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final E entity) {
     super(odataClient, ODataPubFormat.class, HttpMethod.POST, targetURI);
     this.entity = entity;
   }
@@ -70,7 +75,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
    * {@inheritDoc }
    */
   @Override
-  public ODataEntityCreateResponse execute() {
+  public ODataEntityCreateResponse<E> execute() {
     final InputStream input = getPayload();
     ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
@@ -84,9 +89,9 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
   /**
    * Response class about an ODataEntityCreateRequest.
    */
-  private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
+  private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<E> {
 
-    private ODataEntity entity = null;
+    private E entity = null;
 
     /**
      * Constructor.
@@ -94,6 +99,7 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
      * Just to create response templates to be initialized from batch.
      */
     private ODataEntityCreateResponseImpl() {
+      super();
     }
 
     /**
@@ -110,11 +116,14 @@ public class ODataEntityCreateRequestImpl extends AbstractODataBasicRequest<ODat
      * {@inheritDoc }
      */
     @Override
-    public ODataEntity getBody() {
+    @SuppressWarnings("unchecked")
+    public E getBody() {
       if (entity == null) {
         try {
-          entity = odataClient.getReader().
-                  readEntity(getRawResponse(), ODataPubFormat.fromString(getAccept()));
+          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(),
+                  ODataPubFormat.fromString(getAccept()));
+
+          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

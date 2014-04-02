@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,10 +25,11 @@ import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -43,6 +41,10 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -62,13 +64,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   }
 
   private ODataEntity readRow(final ODataPubFormat format, final String uuid) {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
-    return read(format, builder.build());
+    return (ODataEntity) read(format, builder.build());
   }
 
   private void read(final ODataPubFormat format) {
-    ODataEntity row = readRow(format, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
+    CommonODataEntity row = readRow(format, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
     assertEquals(EdmPrimitiveTypeKind.Double, row.getProperty("Double").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.Guid, row.getProperty("Id").getPrimitiveValue().getTypeKind());
 
@@ -92,52 +94,73 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     final UUID guid = UUID.randomUUID();
 
     ODataEntity row = client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.OpenTypesService.Row");
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Id",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).setValue(guid).
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aString",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).setValue("string").
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aBoolean",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Boolean).setValue(true).
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aLong",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Int64).setValue(15L).
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aDouble",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Double).setValue(1.5D).
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aByte",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).
-            build()));
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aDate",
-            client.getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.DateTime).setValue(new Date()).
-            build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("Id",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.Guid).setValue(guid).
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aString",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.String).setValue("string").
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aBoolean",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.Boolean).setValue(true).
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aLong",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.Int64).setValue(15L).
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aDouble",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.Double).setValue(1.5D).
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aByte",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).
+                    build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aDate",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.DateTime).setValue(new Date()).
+                    build()));
 
     final Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(1.2);
     point.setY(2.1);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPoint",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
-            setValue(point).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aPoint",
+                    client.getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
+                    setValue(point).build()));
     final List<Point> points = new ArrayList<Point>();
     points.add(point);
     points.add(point);
     final MultiPoint multipoint = new MultiPoint(Geospatial.Dimension.GEOMETRY, null, points);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPoint",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiPoint).
-            setValue(multipoint).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aMultiPoint",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeometryMultiPoint).
+                    setValue(multipoint).build()));
     final LineString lineString = new LineString(Geospatial.Dimension.GEOMETRY, null, points);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aLineString",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryLineString).
-            setValue(lineString).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aLineString",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeometryLineString).
+                    setValue(lineString).build()));
     final List<LineString> lineStrings = new ArrayList<LineString>();
     lineStrings.add(lineString);
     lineStrings.add(lineString);
     final MultiLineString multiLineString = new MultiLineString(Geospatial.Dimension.GEOGRAPHY, null, lineStrings);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiLineString",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
-            setValue(multiLineString).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aMultiLineString",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
+                    setValue(multiLineString).build()));
     final Point otherPoint = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     otherPoint.setX(3.4);
     otherPoint.setY(4.3);
@@ -145,71 +168,78 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     points.add(otherPoint);
     points.add(point);
     final Polygon polygon = new Polygon(Geospatial.Dimension.GEOGRAPHY, null, points, points);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aPolygon",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPolygon).
-            setValue(polygon).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aPolygon",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeographyPolygon).
+                    setValue(polygon).build()));
     final List<Polygon> polygons = new ArrayList<Polygon>();
     polygons.add(polygon);
     polygons.add(polygon);
     final MultiPolygon multiPolygon = new MultiPolygon(Geospatial.Dimension.GEOGRAPHY, null, polygons);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aMultiPolygon",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyMultiPolygon).
-            setValue(multiPolygon).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aMultiPolygon",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeographyMultiPolygon).
+                    setValue(multiPolygon).build()));
     final List<Geospatial> geospatials = new ArrayList<Geospatial>();
     geospatials.add(otherPoint);
     geospatials.add(polygon);
     geospatials.add(multiLineString);
     geospatials.add(multiPolygon);
     final GeospatialCollection geoColl = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, null, geospatials);
-    row.getProperties().add(client.getObjectFactory().newPrimitiveProperty("aCollection",
-            client.getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyCollection).
-            setValue(geoColl).build()));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newPrimitiveProperty("aCollection",
+                    client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.GeographyCollection).
+                    setValue(geoColl).build()));
 
-    final ODataComplexValue contactDetails =
-            new ODataComplexValue("Microsoft.Test.OData.Services.OpenTypesService.ContactDetails");
+    final ODataComplexValue<ODataProperty> contactDetails = client.getObjectFactory().newComplexValue(
+            "Microsoft.Test.OData.Services.OpenTypesService.ContactDetails");
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("FirstContacted",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Binary).setValue("text".getBytes()).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("LastContacted",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2001-04-05T05:05:05.001+00:01").build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Contacted",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTime).setText("2001-04-05T05:05:04.001").build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("GUID",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Guid).setValue(UUID.randomUUID()).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("PreferedContactTime",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Time).setText("-P9DT51M10.5063807S").build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Byte",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Byte).setValue(Integer.valueOf(241)).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("SignedByte",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.SByte).setValue(Byte.MAX_VALUE).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Double",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Double).setValue(Double.MAX_VALUE).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Single",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Single).setValue(Float.MAX_VALUE).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Short",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Int16).setValue(Short.MAX_VALUE).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Int",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Int32).setValue(Integer.MAX_VALUE).build()));
     contactDetails.add(client.getObjectFactory().newPrimitiveProperty("Long",
-            client.getPrimitiveValueBuilder().
+            client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Int64).setValue(Long.MAX_VALUE).build()));
-    row.getProperties().add(client.getObjectFactory().newComplexProperty("aContact", contactDetails));
+    getClient().getBinder().add(row,
+            client.getObjectFactory().newComplexProperty("aContact", contactDetails));
 
-    final ODataEntityCreateRequest createReq = client.getCUDRequestFactory().
+    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(client.getURIBuilder(testStaticServiceRootURL).
                     appendEntitySetSegment("Row").build(), row);
     createReq.setFormat(format);
-    final ODataEntityCreateResponse createRes = createReq.execute();
+    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     row = readRow(format, guid.toString());
@@ -243,7 +273,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(EdmPrimitiveTypeKind.GeographyCollection,
             row.getProperty("aCollection").getPrimitiveValue().getTypeKind());
     assertEquals("Microsoft.Test.OData.Services.OpenTypesService.ContactDetails",
-            row.getProperty("aContact").getComplexValue().getType());
+            row.getProperty("aContact").getComplexValue().getTypeName());
     assertEquals(EdmPrimitiveTypeKind.SByte,
             row.getProperty("aContact").getComplexValue().get("SignedByte").getPrimitiveValue().getTypeKind());
 

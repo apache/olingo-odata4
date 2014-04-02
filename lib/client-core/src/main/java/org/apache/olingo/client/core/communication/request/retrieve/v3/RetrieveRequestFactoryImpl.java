@@ -18,13 +18,25 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
-import org.apache.olingo.client.core.communication.request.retrieve.v3.ODataLinkCollectionRequestImpl;
 import java.net.URI;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractRetrieveRequestFactory;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetIteratorRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataEntitySetRequestImpl;
+import org.apache.olingo.client.core.communication.request.retrieve.ODataPropertyRequestImpl;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 
+@SuppressWarnings("unchecked")
 public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
         implements RetrieveRequestFactory {
 
@@ -35,7 +47,33 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
   }
 
   @Override
+  public XMLMetadataRequest getXMLMetadataRequest(final String serviceRoot) {
+    return new XMLMetadataRequestImpl(((ODataClient) client),
+            client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
+  }
+
+  @Override
   public ODataLinkCollectionRequest getLinkCollectionRequest(final URI targetURI, final String linkName) {
     return new ODataLinkCollectionRequestImpl((ODataClient) client, targetURI, linkName);
+  }
+
+  @Override
+  public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI uri) {
+    return new ODataEntitySetRequestImpl<ODataEntitySet>(client, uri);
+  }
+
+  @Override
+  public ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(final URI uri) {
+    return new ODataEntitySetIteratorRequestImpl<ODataEntitySet, ODataEntity>(client, uri);
+  }
+
+  @Override
+  public ODataEntityRequest<ODataEntity> getEntityRequest(final URI uri) {
+    return new ODataEntityRequestImpl<ODataEntity>(client, uri);
+  }
+
+  @Override
+  public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI uri) {
+    return new ODataPropertyRequestImpl<ODataProperty>(client, uri);
   }
 }

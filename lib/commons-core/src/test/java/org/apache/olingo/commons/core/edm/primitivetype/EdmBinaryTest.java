@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class EdmBinaryTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Binary);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary);
 
   @Test
   public void validate() throws Exception {

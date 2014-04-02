@@ -30,14 +30,56 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
   protected ODataServiceVersion version;
 
+  protected String jsonType;
+
+  protected String jsonId;
+
+  protected String jsonETag;
+
+  protected String jsonReadLink;
+
+  protected String jsonEditLink;
+
+  protected String jsonMediaEditLink;
+
+  protected String jsonMediaReadLink;
+
+  protected String jsonMediaContentType;
+
+  protected String jsonMediaETag;
+
+  protected String jsonAssociationLink;
+
+  protected String jsonNavigationLink;
+
+  protected String jsonError;
+
   protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt)
           throws IOException, JsonProcessingException;
+
+  protected String getJSONAnnotation(final String string) {
+    return string.startsWith("@") ? string : "@" + string;
+  }
 
   @Override
   public T deserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
+
+    jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
+    jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
+    jsonETag = version.getJSONMap().get(ODataServiceVersion.JSON_ETAG);
+    jsonReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_READ_LINK);
+    jsonEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK);
+    jsonMediaReadLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK);
+    jsonMediaEditLink = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK);
+    jsonMediaContentType = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE);
+    jsonMediaETag = version.getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG);
+    jsonAssociationLink = version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK);
+    jsonNavigationLink = version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK);
+    jsonError = version.getJSONMap().get(ODataServiceVersion.JSON_ERROR);
+
     return doDeserialize(jp, ctxt);
   }
 

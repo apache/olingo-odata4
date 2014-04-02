@@ -96,7 +96,6 @@ public class EdmTypeInfo {
       baseType = typeExpression.substring(collStartIdx + 11, collEndIdx);
     }
 
-
     baseType = baseType.replaceAll("^#", "");
 
     final String typeName;

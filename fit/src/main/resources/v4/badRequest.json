@@ -1,0 +1,17 @@
+{
+  "odata.error":
+          {
+            "code": "",
+            "message":
+                    {
+                      "lang": "en-US",
+                      "value": "Bad request."
+                    },
+            "innererror":
+                    {
+                      "message": "Bad request.",
+                      "type": "Microsoft.Data.OData.BadRequest",
+                      "stacktrace": " at Microsoft.Data.OData.MediaTypeUtils.GetContentTypeFromSettings...."
+                    }
+          }
+}

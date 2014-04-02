@@ -1,0 +1,14 @@
+{
+  "PhoneNumbers": [
+    {
+      "Number": "425-555-1212",
+      "Type": "Home"
+    },
+    {
+      "@odata.type": "#Model.CellPhoneNumber",
+      "Number": "425-555-0178",
+      "Type": "Cell",
+      "Carrier": "Sprint"
+    }
+  ]
+}

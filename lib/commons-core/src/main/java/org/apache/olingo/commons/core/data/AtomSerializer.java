@@ -104,7 +104,7 @@ public class AtomSerializer extends AbstractAtomDealer {
     }
   }
 
-  private void common(final XMLStreamWriter writer, final AbstractAtomObject object) throws XMLStreamException {
+  private void common(final XMLStreamWriter writer, final AbstractODataObject object) throws XMLStreamException {
     if (StringUtils.isNotBlank(object.getTitle())) {
       writer.writeStartElement(Constants.ATOM_ELEM_TITLE);
       writer.writeAttribute(Constants.ATTR_TYPE, TYPE_TEXT);
@@ -142,8 +142,8 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.writeAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
     writer.writeEndElement();
 
-    if (entry instanceof AbstractAtomObject) {
-      common(writer, (AbstractAtomObject) entry);
+    if (entry instanceof AbstractODataObject) {
+      common(writer, (AbstractODataObject) entry);
     }
 
     links(writer, entry.getAssociationLinks());
@@ -171,12 +171,25 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.writeEndElement();
   }
 
+  private void entryRef(final XMLStreamWriter writer, final Entry entry) throws XMLStreamException {
+    writer.writeStartElement(Constants.ATOM_ELEM_ENTRY_REF);
+    writer.writeNamespace(StringUtils.EMPTY, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, entry.getId());
+  }
+
   private void entry(final Writer outWriter, final Entry entry) throws XMLStreamException {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
-    startDocument(writer, Constants.ATOM_ELEM_ENTRY);
+    if (entry.getType() == null && entry.getProperties().isEmpty()) {
+      writer.writeStartDocument();
+      writer.setDefaultNamespace(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
 
-    entry(writer, entry);
+      entryRef(writer, entry);
+    } else {
+      startDocument(writer, Constants.ATOM_ELEM_ENTRY);
+
+      entry(writer, entry);
+    }
 
     writer.writeEndElement();
     writer.writeEndDocument();
@@ -201,14 +214,19 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeEndElement();
     }
 
-    if (feed instanceof AbstractAtomObject) {
-      common(writer, (AbstractAtomObject) feed);
+    if (feed instanceof AbstractODataObject) {
+      common(writer, (AbstractODataObject) feed);
     }
 
     for (Entry entry : feed.getEntries()) {
-      writer.writeStartElement(Constants.ATOM_ELEM_ENTRY);
-      entry(writer, entry);
-      writer.writeEndElement();
+      if (entry.getType() == null && entry.getProperties().isEmpty()) {
+        entryRef(writer, entry);
+        writer.writeEndElement();
+      } else {
+        writer.writeStartElement(Constants.ATOM_ELEM_ENTRY);
+        entry(writer, entry);
+        writer.writeEndElement();
+      }
     }
 
     if (feed.getNext() != null) {

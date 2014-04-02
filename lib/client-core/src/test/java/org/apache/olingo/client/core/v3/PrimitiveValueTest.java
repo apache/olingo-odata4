@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -58,24 +57,25 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageInt32() throws EdmPrimitiveTypeException {
     final int primitive = -10;
-    ODataValue value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Int32).
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Int32).
             setValue(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Int32, value.asPrimitive().getTypeKind());
     assertEquals(Integer.valueOf(primitive), value.asPrimitive().toCastValue(Integer.class));
 
-    value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Int32).setText("9").build();
+    value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.Int32).setText("9").build();
     assertEquals("9", value.asPrimitive().toCastValue(Integer.class).toString());
   }
 
   @Test
   public void manageString() throws EdmPrimitiveTypeException {
     final String primitive = UUID.randomUUID().toString();
-    ODataValue value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
             setText(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.String, value.asPrimitive().getTypeKind());
     assertEquals(primitive, value.toString());
 
-    value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
+    value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
             setText("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
     assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(String.class).toString());
   }
@@ -83,12 +83,12 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageDecimal() throws EdmPrimitiveTypeException {
     final BigDecimal primitive = new BigDecimal("-79228162514264337593543950335");
-    ODataValue value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
             setValue(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Decimal, value.asPrimitive().getTypeKind());
     assertEquals(primitive, value.asPrimitive().toCastValue(BigDecimal.class));
 
-    value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
+    value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
             setText("-79228162514264337593543950335").build();
     assertEquals("-79228162514264337593543950335", value.asPrimitive().toCastValue(BigDecimal.class).toString());
   }
@@ -100,7 +100,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.set(2013, 0, 10, 2, 0, 0);
     expected.set(Calendar.MILLISECOND, 1667673);
 
-    final ODataValue value = getClient().getPrimitiveValueBuilder().
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTime).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.DateTime, value.asPrimitive().getTypeKind());
 
@@ -124,7 +124,7 @@ public class PrimitiveValueTest extends AbstractTest {
   public void manageTime() throws EdmPrimitiveTypeException {
     final String primitive = "-P9DT51M10.5063807S";
     final ODataValue value =
-            getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Time).
+            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Time).
             setText(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Time, value.asPrimitive().getTypeKind());
     // performed cast to improve the check
@@ -138,7 +138,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.setTimeZone(TimeZone.getTimeZone("GMT"));
     expected.set(2013, 0, 10, 2, 0, 0);
 
-    final ODataValue value = getClient().getPrimitiveValueBuilder().
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.DateTimeOffset, value.asPrimitive().getTypeKind());
 
@@ -156,12 +156,12 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageGuid() throws EdmPrimitiveTypeException {
     final UUID primitive = UUID.fromString("1126a28b-a4af-4bbd-bf0a-2b2c22635565");
-    ODataValue value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
             setValue(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Guid, value.asPrimitive().getTypeKind());
     assertEquals(primitive, value.asPrimitive().toCastValue(UUID.class));
 
-    value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
+    value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
             setText("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
     assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(UUID.class).toString());
   }
@@ -169,45 +169,38 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void manageBinary() throws EdmPrimitiveTypeException {
     final byte[] primitive = UUID.randomUUID().toString().getBytes();
-    ODataValue value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Binary).
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Binary).
             setValue(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Binary, value.asPrimitive().getTypeKind());
     assertEquals(
             Base64.encodeBase64String(primitive),
             Base64.encodeBase64String(value.asPrimitive().toCastValue(byte[].class)));
 
-    value = getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Binary).
+    value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.Binary).
             setText(Base64.encodeBase64String("primitive".getBytes())).build();
     assertEquals("primitive", new String(value.asPrimitive().toCastValue(byte[].class)));
   }
 
   @Test
-  public void managePoint() {
+  public void managePoint() throws EdmPrimitiveTypeException {
     final Point primitive = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     primitive.setX(52.8606);
     primitive.setY(173.334);
 
-    try {
-      getClient().getPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
-              setValue(primitive).build();
-      fail();
-    } catch (IllegalArgumentException iae) {
-      // nothing top do
-    }
-
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPoint).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeographyPoint).
             setValue(primitive).
             build();
-    assertEquals(EdmPrimitiveTypeKind.GeographyPoint, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyPoint, value.asPrimitive().getTypeKind());
     assertEquals(Double.valueOf(primitive.getX()),
-            Double.valueOf(value.asGeospatial().toCastValue(Point.class).getX()));
+            Double.valueOf(value.asPrimitive().toCastValue(Point.class).getX()));
     assertEquals(Double.valueOf(primitive.getY()),
-            Double.valueOf(value.asGeospatial().toCastValue(Point.class).getY()));
+            Double.valueOf(value.asPrimitive().toCastValue(Point.class).getY()));
   }
 
   @Test
-  public void manageLineString() {
+  public void manageLineString() throws EdmPrimitiveTypeException {
     final List<Point> points = new ArrayList<Point>();
     Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(40.5);
@@ -231,11 +224,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final LineString primitive = new LineString(Geospatial.Dimension.GEOGRAPHY, null, points);
 
-    final ODataValue value = getClient().getGeospatialValueBuilder().
-            setType(EdmPrimitiveTypeKind.GeographyLineString).setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeographyLineString, value.asGeospatial().getTypeKind());
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeographyLineString).
+            setValue(primitive).build();
+    assertEquals(EdmPrimitiveTypeKind.GeographyLineString, value.asPrimitive().getTypeKind());
 
-    final Iterator<Point> iter = value.asGeospatial().toCastValue(LineString.class).iterator();
+    final Iterator<Point> iter = value.asPrimitive().toCastValue(LineString.class).iterator();
 
     // take the third one and check the point value ...
     iter.next();
@@ -247,7 +241,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiPoint() {
+  public void manageMultiPoint() throws EdmPrimitiveTypeException {
     final List<Point> points = new ArrayList<Point>();
     Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(0);
@@ -256,11 +250,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final MultiPoint primitive = new MultiPoint(Geospatial.Dimension.GEOMETRY, null, points);
 
-    final ODataValue value = getClient().getGeospatialValueBuilder().
-            setType(EdmPrimitiveTypeKind.GeometryMultiPoint).setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPoint, value.asGeospatial().getTypeKind());
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeometryMultiPoint).
+            setValue(primitive).build();
+    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPoint, value.asPrimitive().getTypeKind());
 
-    final Iterator<Point> iter = value.asGeospatial().toCastValue(MultiPoint.class).iterator();
+    final Iterator<Point> iter = value.asPrimitive().toCastValue(MultiPoint.class).iterator();
     point = iter.next();
 
     assertEquals(Double.valueOf(points.get(0).getX()), Double.valueOf(point.getX()));
@@ -268,7 +263,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiLine() {
+  public void manageMultiLine() throws EdmPrimitiveTypeException {
     final List<LineString> lines = new ArrayList<LineString>();
 
     // line one ...
@@ -316,12 +311,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final MultiLineString primitive = new MultiLineString(Geospatial.Dimension.GEOMETRY, null, lines);
 
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeometryMultiLineString).
             setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeometryMultiLineString, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryMultiLineString, value.asPrimitive().getTypeKind());
 
-    final Iterator<LineString> lineIter = value.asGeospatial().toCastValue(MultiLineString.class).iterator();
+    final Iterator<LineString> lineIter = value.asPrimitive().toCastValue(MultiLineString.class).iterator();
 
     // take the second line and check the third point value ...
     lineIter.next();
@@ -337,7 +332,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void managePolygon() {
+  public void managePolygon() throws EdmPrimitiveTypeException {
 
     final List<Point> interior = new ArrayList<Point>();
     final List<Point> exterior = new ArrayList<Point>();
@@ -369,13 +364,13 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final Polygon primitive = new Polygon(Geospatial.Dimension.GEOGRAPHY, null, interior, exterior);
 
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyPolygon).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeographyPolygon).
             setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeographyPolygon, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyPolygon, value.asPrimitive().getTypeKind());
 
-    assertTrue(value.asGeospatial().toCastValue(Polygon.class).getInterior().isEmpty());
-    final Iterator<Point> iter = value.asGeospatial().toCastValue(Polygon.class).getExterior().iterator();
+    assertTrue(value.asPrimitive().toCastValue(Polygon.class).getInterior().isEmpty());
+    final Iterator<Point> iter = value.asPrimitive().toCastValue(Polygon.class).getExterior().iterator();
 
     // take the third one ...
     iter.next();
@@ -387,7 +382,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiPolygon() {
+  public void manageMultiPolygon() throws EdmPrimitiveTypeException {
     final List<Polygon> polygons = new ArrayList<Polygon>();
 
     List<Point> interior = new ArrayList<Point>();
@@ -475,12 +470,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final MultiPolygon primitive = new MultiPolygon(Geospatial.Dimension.GEOMETRY, null, polygons);
 
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryMultiPolygon).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeometryMultiPolygon).
             setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPolygon, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryMultiPolygon, value.asPrimitive().getTypeKind());
 
-    final Iterator<Polygon> iter = value.asGeospatial().toCastValue(MultiPolygon.class).iterator();
+    final Iterator<Polygon> iter = value.asPrimitive().toCastValue(MultiPolygon.class).iterator();
 
     // second one polygon
     iter.next();
@@ -504,7 +499,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageGeomCollection() {
+  public void manageGeomCollection() throws EdmPrimitiveTypeException {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
     Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
@@ -521,12 +516,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOMETRY, null, collection);
 
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeometryCollection).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeometryCollection).
             setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeometryCollection, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeometryCollection, value.asPrimitive().getTypeKind());
 
-    final Iterator<Geospatial> iter = value.asGeospatial().toCastValue(GeospatialCollection.class).iterator();
+    final Iterator<Geospatial> iter = value.asPrimitive().toCastValue(GeospatialCollection.class).iterator();
     iter.next();
     final Point collectedPoint = (Point) iter.next();
 
@@ -536,7 +531,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageGeogCollection() {
+  public void manageGeogCollection() throws EdmPrimitiveTypeException {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
     Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
@@ -553,12 +548,12 @@ public class PrimitiveValueTest extends AbstractTest {
 
     final GeospatialCollection primitive = new GeospatialCollection(Geospatial.Dimension.GEOGRAPHY, null, collection);
 
-    final ODataValue value =
-            getClient().getGeospatialValueBuilder().setType(EdmPrimitiveTypeKind.GeographyCollection).
+    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.GeographyCollection).
             setValue(primitive).build();
-    assertEquals(EdmPrimitiveTypeKind.GeographyCollection, value.asGeospatial().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.GeographyCollection, value.asPrimitive().getTypeKind());
 
-    final Iterator<Geospatial> iter = value.asGeospatial().toCastValue(GeospatialCollection.class).iterator();
+    final Iterator<Geospatial> iter = value.asPrimitive().toCastValue(GeospatialCollection.class).iterator();
     iter.next();
     final Point collectedPoint = (Point) iter.next();
 

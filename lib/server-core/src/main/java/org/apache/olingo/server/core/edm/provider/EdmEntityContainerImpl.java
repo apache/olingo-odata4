@@ -44,16 +44,15 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
       final EntityContainerInfo entityContainerInfo) {
-
-    super(edm, entityContainerInfo.getContainerName());
+    super(edm, entityContainerInfo.getContainerName(), entityContainerInfo.getExtendsContainer());
     this.provider = provider;
   }
 
-  public EdmEntityContainerImpl(Edm edm, EdmProvider provider, FullQualifiedName containerFQN,
-      EntityContainer entityContainer) {
-    super(edm, containerFQN);
+  public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
+      final EntityContainer entityContainer) {
+    super(edm, containerFQN, entityContainer.getExtendsContainer());
     this.provider = provider;
-    this.container = entityContainer;
+    container = entityContainer;
   }
 
   @Override
@@ -186,7 +185,7 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
         container = provider.getEntityContainer();
         if (container == null) {
           // TODO: Should we throw an exception here?
-          container = new EntityContainer().setName(this.getName());
+          container = new EntityContainer().setName(getName());
         }
       } catch (ODataException e) {
         throw new EdmException(e);

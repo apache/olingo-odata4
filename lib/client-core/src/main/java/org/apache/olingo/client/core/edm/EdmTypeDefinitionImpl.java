@@ -41,7 +41,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
     try {
-      this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getNonGeoInstance(
+      this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
               EdmPrimitiveTypeKind.valueOfFQN(version, typeDefinition.getUnderlyingType()));
     } catch (IllegalArgumentException e) {
       throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);

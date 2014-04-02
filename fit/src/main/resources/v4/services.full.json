@@ -1,0 +1,126 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata",
+  "value":
+          [
+            {
+              "name": "People",
+              "kind": "EntitySet",
+              "url": "People"
+            },
+            {
+              "name": "Customers",
+              "kind": "EntitySet",
+              "url": "Customers"
+            },
+            {
+              "name": "Employees",
+              "kind": "EntitySet",
+              "url": "Employees"
+            },
+            {
+              "name": "Products",
+              "kind": "EntitySet",
+              "url": "Products"
+            },
+            {
+              "name": "ProductDetails",
+              "kind": "EntitySet",
+              "url": "ProductDetails"
+            },
+            {
+              "name": "ProductReviews",
+              "kind": "EntitySet",
+              "url": "ProductReviews"
+            },
+            {
+              "name": "Orders",
+              "kind": "EntitySet",
+              "url": "Orders"
+            },
+            {
+              "name": "OrderDetails",
+              "kind": "EntitySet",
+              "url": "OrderDetails"
+            },
+            {
+              "name": "Departments",
+              "kind": "EntitySet",
+              "url": "Departments"
+            },
+            {
+              "name": "Accounts",
+              "kind": "EntitySet",
+              "url": "Accounts"
+            },
+            {
+              "name": "StoredPIs",
+              "kind": "EntitySet",
+              "url": "StoredPIs"
+            },
+            {
+              "name": "SubscriptionTemplates",
+              "kind": "EntitySet",
+              "url": "SubscriptionTemplates"
+            },
+            {
+              "name": "Boss",
+              "kind": "Singleton",
+              "url": "Boss"
+            },
+            {
+              "name": "VipCustomer",
+              "kind": "Singleton",
+              "url": "VipCustomer"
+            },
+            {
+              "name": "Company",
+              "kind": "Singleton",
+              "url": "Company"
+            },
+            {
+              "name": "PublicCompany",
+              "kind": "Singleton",
+              "url": "PublicCompany"
+            },
+            {
+              "name": "LabourUnion",
+              "kind": "Singleton",
+              "url": "LabourUnion"
+            },
+            {
+              "name": "DefaultStoredPI",
+              "kind": "Singleton",
+              "url": "DefaultStoredPI"
+            },
+            {
+              "name": "GetDefaultColor",
+              "kind": "FunctionImport",
+              "url": "GetDefaultColor"
+            },
+            {
+              "name": "GetPerson",
+              "kind": "FunctionImport",
+              "url": "GetPerson"
+            },
+            {
+              "name": "GetPerson2",
+              "kind": "FunctionImport",
+              "url": "GetPerson2"
+            },
+            {
+              "name": "GetAllProducts",
+              "kind": "FunctionImport",
+              "url": "GetAllProducts"
+            },
+            {
+              "name": "GetBossEmails",
+              "kind": "FunctionImport",
+              "url": "GetBossEmails"
+            },
+            {
+              "name": "GetProductsByAccessLevel",
+              "kind": "FunctionImport",
+              "url": "GetProductsByAccessLevel"
+            }
+          ]
+}

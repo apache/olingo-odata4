@@ -27,15 +27,21 @@ import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.uri.AbstractURIBuilder;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements URIBuilder {
 
   private static final long serialVersionUID = -3506851722447870532L;
 
+  private final ODataServiceVersion version;
+
   private final Configuration configuration;
 
-  public URIBuilderImpl(final Configuration configuration, final String serviceRoot) {
-    super(serviceRoot);
+  public URIBuilderImpl(final ODataServiceVersion version, final Configuration configuration,
+          final String serviceRoot) {
+
+    super(version, serviceRoot);
+    this.version = version;
     this.configuration = configuration;
   }
 
@@ -70,7 +76,7 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   @Override
   public URIBuilder appendKeySegment(final Object val) {
     if (configuration.isKeyAsSegment()) {
-      final String segValue = URIUtils.escape(val);
+      final String segValue = URIUtils.escape(version, val);
       segments.add(new Segment(SegmentType.KEY_AS_SEGMENT, segValue));
     } else {
       super.appendKeySegment(val);

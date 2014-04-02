@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v3.Association;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationSet;
 import org.apache.olingo.client.core.edm.xml.v3.EntityContainerImpl;
@@ -33,24 +32,25 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
 
 public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEntitySet {
 
-  private final XMLMetadata xmlMetadata;
+  private final List<? extends Schema> xmlSchemas;
 
   public EdmEntitySetProxy(final Edm edm, final EdmEntityContainer container, final String name,
-          final FullQualifiedName type, final XMLMetadata xmlMetadata) {
+          final FullQualifiedName type, final List<? extends Schema> xmlSchemas) {
 
     super(edm, container, name, type);
-    this.xmlMetadata = xmlMetadata;
+    this.xmlSchemas = xmlSchemas;
   }
 
   @Override
   public EdmBindingTarget getRelatedBindingTarget(final String path) {
     final List<AssociationSet> candidateAssociationSets = new ArrayList<AssociationSet>();
-    for (Schema schema : xmlMetadata.getSchemas()) {
+    for (Schema schema : xmlSchemas) {
       for (EntityContainer _entityContainer : schema.getEntityContainers()) {
         final EntityContainerImpl entityContainer = (EntityContainerImpl) _entityContainer;
         for (AssociationSet associationSet : entityContainer.getAssociationSets()) {
@@ -69,7 +69,7 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
     Schema targetSchema = null;
     String targetEntitySet = null;
     for (AssociationSet associationSet : candidateAssociationSets) {
-      for (Schema schema : xmlMetadata.getSchemas()) {
+      for (Schema schema : xmlSchemas) {
         for (Association association : ((SchemaImpl) schema).getAssociations()) {
           final FullQualifiedName associationName = new FullQualifiedName(schema.getNamespace(), association.getName());
           if (associationName.getFullQualifiedNameAsString().equals(associationSet.getAssociation())
@@ -103,6 +103,12 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
   public boolean isIncludeInServiceDocument() {
     //V3 states that all entity sets are included in the service document
     return true;
+  }
+
+  @Override
+  public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
+    //There are no navigation property bindings in V3 so we will deliver an empty list
+    return new ArrayList<EdmNavigationPropertyBinding>();
   }
 
 }

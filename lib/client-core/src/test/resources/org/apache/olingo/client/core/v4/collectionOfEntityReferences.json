@@ -1,0 +1,11 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Collection($ref)",
+  "value": [
+    {
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/OrderDetails(OrderID=7,ProductID=5)"
+    },
+    {
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/OrderDetails(OrderID=7,ProductID=6)"
+    }
+  ]
+}

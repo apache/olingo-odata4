@@ -1,0 +1,48 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Orders",
+  "value":
+          [
+            {
+              "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Order",
+              "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)",
+              "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)",
+              "OrderID": 7,
+              "OrderDate@odata.type": "#DateTimeOffset",
+              "OrderDate": "2011-05-29T14:21:12Z",
+              "ShelfLife@odata.type": "#Duration",
+              "ShelfLife": "PT0.0000001S",
+              "OrderShelfLifes@odata.type": "#Collection(Duration)",
+              "OrderShelfLifes":
+                      [
+                        "PT0.0000001S"
+                      ],
+              "LoggedInEmployee@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/LoggedInEmployee/$ref",
+              "LoggedInEmployee@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/LoggedInEmployee",
+              "CustomerForOrder@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/CustomerForOrder/$ref",
+              "CustomerForOrder@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/CustomerForOrder",
+              "OrderDetails@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/OrderDetails/$ref",
+              "OrderDetails@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(7)/OrderDetails"
+            },
+            {
+              "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Order",
+              "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)",
+              "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)",
+              "OrderID": 8,
+              "OrderDate@odata.type": "#DateTimeOffset",
+              "OrderDate": "2011-03-04T16:03:57Z",
+              "ShelfLife@odata.type": "#Duration",
+              "ShelfLife": "PT0.0000001S",
+              "OrderShelfLifes@odata.type": "#Collection(Duration)",
+              "OrderShelfLifes":
+                      [
+                        "PT0.0000001S"
+                      ],
+              "LoggedInEmployee@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee/$ref",
+              "LoggedInEmployee@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/LoggedInEmployee",
+              "CustomerForOrder@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder/$ref",
+              "CustomerForOrder@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/CustomerForOrder",
+              "OrderDetails@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/OrderDetails/$ref",
+              "OrderDetails@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(8)/OrderDetails"
+            }
+          ]
+}

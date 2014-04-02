@@ -118,9 +118,9 @@ class AtomGeoValueSerializer {
   }
 
   private void writeSrsName(final XMLStreamWriter writer, final Geospatial value) throws XMLStreamException {
-    if (value.getCrs() != null) {
+    if (value.getSrid() != null) {
       writer.writeAttribute(Constants.PREFIX_GML, Constants.NS_GML, Constants.ATTR_SRSNAME,
-              Constants.SRS_URLPREFIX + value.getCrs());
+              Constants.SRS_URLPREFIX + value.getSrid());
     }
   }
 

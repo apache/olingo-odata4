@@ -18,19 +18,20 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 /**
- * This class implements the response to an OData entity create request.
+ * This interface describes the response to an OData entity create request.
  *
+ * @param <E> concrete ODataEntity implementation
  * @see org.apache.olingo.client.core.communication.request.cud.ODataEntityCreateRequest
  */
-public interface ODataEntityCreateResponse extends ODataResponse {
+public interface ODataEntityCreateResponse<E extends CommonODataEntity> extends ODataResponse {
 
   /**
    * Gets created object.
    *
    * @return created object.
    */
-  ODataEntity getBody();
+  E getBody();
 }

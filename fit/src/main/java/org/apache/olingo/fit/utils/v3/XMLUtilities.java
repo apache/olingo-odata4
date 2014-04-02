@@ -32,6 +32,7 @@ import javax.xml.stream.events.StartElement;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.Commons;
+import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.MetadataLinkInfo;
 import org.apache.olingo.fit.utils.ODataVersion;
@@ -49,7 +50,7 @@ public class XMLUtilities extends org.apache.olingo.fit.utils.AbstractXMLUtiliti
     final MetadataLinkInfo metadataLinkInfo = new MetadataLinkInfo();
     Commons.getLinkInfo().put(version, metadataLinkInfo);
 
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
+    final InputStream metadata = fsManager.readFile(Constants.get(version, ConstantKey.METADATA), Accept.XML);
     final XMLEventReader reader = getEventReader(metadata);
 
     try {
@@ -69,7 +70,7 @@ public class XMLUtilities extends org.apache.olingo.fit.utils.AbstractXMLUtiliti
   private void retrieveLinks(final XmlElement entitySetElement, final MetadataLinkInfo metadataLinkInfo)
           throws Exception {
 
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
+    final InputStream metadata = fsManager.readFile(Constants.get(version, ConstantKey.METADATA), Accept.XML);
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(metadata, bos);
@@ -120,7 +121,7 @@ public class XMLUtilities extends org.apache.olingo.fit.utils.AbstractXMLUtiliti
 
   private Map.Entry<String, Boolean> getTargetInfo(final StartElement element, final String linkName)
           throws Exception {
-    final InputStream metadata = fsManager.readFile(Constants.METADATA, Accept.XML);
+    final InputStream metadata = fsManager.readFile(Constants.get(version, ConstantKey.METADATA), Accept.XML);
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(metadata, bos);

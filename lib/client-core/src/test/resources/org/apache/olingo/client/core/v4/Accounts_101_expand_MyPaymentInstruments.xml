@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://odatae2etest.azurewebsites.net/javatest/DefaultService/" 
+       xmlns="http://www.w3.org/2005/Atom" 
+       xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
+       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
+       xmlns:georss="http://www.georss.org/georss" 
+       xmlns:gml="http://www.opengis.net/gml" 
+       m:context="http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Accounts/$entity">
+  <id>http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)</id>
+  <category term="#Microsoft.Test.OData.Services.ODataWCFService.Account" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <link rel="edit" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/MyGiftCard" type="application/atom+xml;type=entry" title="MyGiftCard" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyGiftCard" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/MyPaymentInstruments" type="application/atom+xml;type=feed" title="MyPaymentInstruments" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments">
+    <m:inline>
+      <feed>
+        <id>http://odatae2etest.azurewebsites.net/javatest/DefaultService/MyPaymentInstruments</id>
+        <title />
+        <updated>2014-03-31T09:46:15Z</updated>
+        <entry>
+          <category term="#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato" />
+          <id />
+          <title />
+          <updated>2014-03-31T09:46:15Z</updated>
+          <author>
+            <name />
+          </author>
+          <content type="application/xml">
+            <m:properties>
+              <d:PaymentInstrumentID m:type="Int32">101901</d:PaymentInstrumentID>
+              <d:FriendlyName>101 first PI</d:FriendlyName>
+              <d:CreatedDate m:type="DateTimeOffset">2012-11-01T00:00:00Z</d:CreatedDate>
+            </m:properties>
+          </content>
+        </entry>
+        <entry>
+          <category term="#Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="potato" />
+          <id />
+          <title />
+          <updated>2014-03-31T09:46:15Z</updated>
+          <author>
+            <name />
+          </author>
+          <content type="application/xml">
+            <m:properties>
+              <d:PaymentInstrumentID m:type="Int32">101902</d:PaymentInstrumentID>
+              <d:FriendlyName>101 frist credit PI</d:FriendlyName>
+              <d:CreatedDate m:type="DateTimeOffset">2012-11-01T00:00:00Z</d:CreatedDate>
+              <d:CardNumber>6000000000000000</d:CardNumber>
+              <d:CVV>234</d:CVV>
+              <d:HolderName>Alex</d:HolderName>
+              <d:Balance m:type="Double">100</d:Balance>
+              <d:ExperationDate m:type="DateTimeOffset">2022-11-01T00:00:00Z</d:ExperationDate>
+            </m:properties>
+          </content>
+        </entry>
+        <entry>
+          <category term="#Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato" />
+          <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="potato" />
+          <id />
+          <title />
+          <updated>2014-03-31T09:46:15Z</updated>
+          <author>
+            <name />
+          </author>
+          <content type="application/xml">
+            <m:properties>
+              <d:PaymentInstrumentID m:type="Int32">101903</d:PaymentInstrumentID>
+              <d:FriendlyName>101 second credit PI</d:FriendlyName>
+              <d:CreatedDate m:type="DateTimeOffset">2012-11-01T00:00:00Z</d:CreatedDate>
+              <d:CardNumber>8000000000000000</d:CardNumber>
+              <d:CVV>012</d:CVV>
+              <d:HolderName>James</d:HolderName>
+              <d:Balance m:type="Double">300</d:Balance>
+              <d:ExperationDate m:type="DateTimeOffset">2022-10-02T00:00:00Z</d:ExperationDate>
+            </m:properties>
+          </content>
+        </entry>
+      </feed>
+    </m:inline>
+  </link>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/ActiveSubscriptions" type="application/atom+xml;type=feed" title="ActiveSubscriptions" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/ActiveSubscriptions" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/AvailableSubscriptionTemplatess" type="application/atom+xml;type=feed" title="AvailableSubscriptionTemplatess" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/AvailableSubscriptionTemplatess" />
+  <title />
+  <updated>2014-03-31T09:46:15Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:AccountID m:type="Int32">101</d:AccountID>
+      <d:Country>US</d:Country>
+      <d:AccountInfo m:type="#Microsoft.Test.OData.Services.ODataWCFService.AccountInfo">
+        <d:FirstName>Alex</d:FirstName>
+        <d:LastName>Green</d:LastName>
+        <d:MiddleName>Hood</d:MiddleName>
+      </d:AccountInfo>
+    </m:properties>
+  </content>
+</entry>

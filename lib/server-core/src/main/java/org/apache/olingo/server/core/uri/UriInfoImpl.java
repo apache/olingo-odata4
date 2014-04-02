@@ -278,8 +278,8 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public void removeResourcePart(int index) {
-    this.pathParts.remove(index);
+  public void removeResourcePart(final int index) {
+    pathParts.remove(index);
   }
 
   @Override

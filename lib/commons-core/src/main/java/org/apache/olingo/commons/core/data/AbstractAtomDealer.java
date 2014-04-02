@@ -34,6 +34,8 @@ abstract class AbstractAtomDealer {
 
   protected final QName etagQName;
 
+  protected final QName metadataEtagQName;
+
   protected final QName inlineQName;
 
   protected final QName actionQName;
@@ -49,13 +51,28 @@ abstract class AbstractAtomDealer {
   protected final QName countQName;
 
   protected final QName uriQName;
+
   protected final QName nextQName;
+
+  protected final QName contextQName;
+
+  protected final QName entryRefQName;
+
+  protected final QName v4PropertyValueQName;
+
+  protected final QName errorCodeQName;
+
+  protected final QName errorMessageQName;
+
+  protected final QName errorTargetQName;
 
   public AbstractAtomDealer(final ODataServiceVersion version) {
     this.version = version;
 
     this.etagQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ATTR_ETAG);
+    this.metadataEtagQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ATTR_METADATAETAG);
     this.inlineQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_INLINE);
     this.actionQName =
@@ -64,14 +81,28 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.PROPERTIES);
     this.typeQName = new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATTR_TYPE);
     this.nullQName = new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATTR_NULL);
-    this.elementQName =
-            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_ELEMENT);
+    this.elementQName = version == ODataServiceVersion.V30
+            ? new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_ELEMENT)
+            : new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ELEM_ELEMENT);
     this.countQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_COUNT);
     this.uriQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.ELEM_URI);
     this.nextQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_DATASERVICES), Constants.NEXT_LINK_REL);
+    this.contextQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.CONTEXT);
+    this.entryRefQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ENTRY_REF);
+    this.v4PropertyValueQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.VALUE);
+
+    this.errorCodeQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_CODE);
+    this.errorMessageQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_MESSAGE);
+    this.errorTargetQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_TARGET);
   }
 
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
@@ -83,5 +114,4 @@ abstract class AbstractAtomDealer {
     writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
     writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
   }
-
 }

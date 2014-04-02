@@ -36,8 +36,9 @@ public class XHTTPMethodInterceptor extends AbstractPhaseInterceptor<Message> {
     @SuppressWarnings("unchecked")
     final Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
 
-    if (headers.containsKey(Constants.XHTTP_HEADER_NAME)) {
-      message.put(Message.HTTP_REQUEST_METHOD, headers.get(Constants.XHTTP_HEADER_NAME).iterator().next());
+    if (headers.containsKey(Constants.get(ConstantKey.XHTTP_HEADER_NAME))) {
+      message.put(Message.HTTP_REQUEST_METHOD, headers.get(Constants.get(ConstantKey.XHTTP_HEADER_NAME))
+              .iterator().next());
     }
   }
 }

@@ -20,6 +20,7 @@ package org.apache.olingo.client.api.op.v3;
 
 import java.io.InputStream;
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
@@ -32,6 +33,6 @@ public interface ODataDeserializer extends ClientODataDeserializer {
    * @param format OData format.
    * @return de-serialized links.
    */
-  LinkCollection toLinkCollection(InputStream input, ODataFormat format);
+  Container<LinkCollection> toLinkCollection(InputStream input, ODataFormat format);
 
 }

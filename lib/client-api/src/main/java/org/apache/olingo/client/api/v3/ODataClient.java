@@ -29,8 +29,12 @@ import org.apache.olingo.client.api.op.v3.ODataDeserializer;
 import org.apache.olingo.client.api.op.v3.ODataReader;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.FilterFactory;
+import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
 
 public interface ODataClient extends CommonODataClient {
+
+  @Override
+  Configuration getConfiguration();
 
   @Override
   ODataDeserializer getDeserializer();
@@ -42,13 +46,13 @@ public interface ODataClient extends CommonODataClient {
   ODataBinder getBinder();
 
   @Override
-  Configuration getConfiguration();
-
-  @Override
   URIBuilder getURIBuilder(String serviceRoot);
 
   @Override
   FilterFactory getFilterFactory();
+
+  @Override
+  ODataObjectFactory getObjectFactory();
 
   @Override
   RetrieveRequestFactory getRetrieveRequestFactory();

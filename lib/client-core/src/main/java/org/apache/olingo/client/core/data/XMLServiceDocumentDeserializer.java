@@ -29,9 +29,11 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<ServiceDocument> {
+public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Container<ServiceDocument>> {
 
   private String getTitle(final JsonParser jp) throws IOException {
     String title = jp.nextTextValue();
@@ -67,12 +69,16 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Ser
   }
 
   @Override
-  protected ServiceDocument doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected Container<ServiceDocument> doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final AbstractServiceDocument sdoc = ODataServiceVersion.V30 == version
             ? new org.apache.olingo.client.core.data.v3.XMLServiceDocumentImpl()
             : new org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl();
+
+    URI contextURL = null;
+    String metadataETag = null;
+    String base = null;
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT
             || !"service".equals(((FromXmlParser) jp).getStaxReader().getLocalName()); jp.nextToken()) {
@@ -80,19 +86,11 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Ser
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("base".equals(jp.getCurrentName())) {
-          if (sdoc instanceof org.apache.olingo.client.core.data.v3.XMLServiceDocumentImpl) {
-            ((org.apache.olingo.client.core.data.v3.XMLServiceDocumentImpl) sdoc).
-                    setBaseURI(URI.create(jp.nextTextValue()));
-          } else {
-            ((org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl) sdoc).
-                    setBaseURI(URI.create(jp.nextTextValue()));
-          }
+          base = jp.nextTextValue();
         } else if ("context".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl) sdoc).
-                  setMetadataContext(jp.nextTextValue());
+          contextURL = URI.create(jp.nextTextValue());
         } else if ("metadata-etag".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl) sdoc).
-                  setMetadataETag(jp.nextTextValue());
+          metadataETag = jp.nextTextValue();
         } else if ("workspace".equals(jp.getCurrentName())) {
           jp.nextToken();
           jp.nextToken();
@@ -115,7 +113,12 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Ser
       }
     }
 
-    return sdoc;
-  }
+    sdoc.setMetadata((contextURL == null
+            ? URIUtils.getURI(base, "$metadata")
+            : URIUtils.getURI(base, contextURL.toASCIIString())).toASCIIString());
 
+    return new Container<ServiceDocument>(
+            contextURL == null ? null : URIUtils.getURI(sdoc.getBaseURI(), contextURL),
+            metadataETag, sdoc);
+  }
 }

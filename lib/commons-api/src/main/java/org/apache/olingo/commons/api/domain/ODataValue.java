@@ -26,6 +26,13 @@ import java.io.Serializable;
 public interface ODataValue extends Serializable {
 
   /**
+   * Gets value type name.
+   *
+   * @return value type name.
+   */
+  String getTypeName();
+
+  /**
    * Check is is a primitive value.
    *
    * @return 'TRUE' if primitive; 'FALSE' otherwise.
@@ -40,20 +47,6 @@ public interface ODataValue extends Serializable {
   ODataPrimitiveValue asPrimitive();
 
   /**
-   * Check is is a geospatail value.
-   *
-   * @return 'TRUE' if geospatail; 'FALSE' otherwise.
-   */
-  boolean isGeospatial();
-
-  /**
-   * Casts to geospatail value.
-   *
-   * @return geospatail value.
-   */
-  ODataGeospatialValue asGeospatial();
-
-  /**
    * Check is is a collection value.
    *
    * @return 'TRUE' if collection; 'FALSE' otherwise.
@@ -63,9 +56,10 @@ public interface ODataValue extends Serializable {
   /**
    * Casts to collection value.
    *
+   * @param <OV> The actual ODataValue interface.
    * @return collection value.
    */
-  ODataCollectionValue asCollection();
+  <OV extends ODataValue> ODataCollectionValue<OV> asCollection();
 
   /**
    * Check is is a complex value.
@@ -77,8 +71,9 @@ public interface ODataValue extends Serializable {
   /**
    * Casts to complex value.
    *
+   * @param <OP> The actual ODataProperty interface.
    * @return complex value.
    */
-  ODataComplexValue asComplex();
+  <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex();
 
 }

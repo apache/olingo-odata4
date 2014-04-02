@@ -25,5 +25,4 @@ import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 
 @JsonDeserialize(using = XMLServiceDocumentDeserializer.class)
 public class XMLServiceDocumentImpl extends AbstractServiceDocument implements ServiceDocument {
-
 }

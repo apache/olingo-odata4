@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 /**
  * Abstract base for classes implementing an OData entry in Atom and JSON.
  */
-public abstract class AbstractEntry extends AbstractAtomObject implements Entry {
+public abstract class AbstractEntry extends AbstractODataObject implements Entry {
 
   private static final long serialVersionUID = 2127764552600969783L;
 
@@ -54,6 +54,8 @@ public abstract class AbstractEntry extends AbstractAtomObject implements Entry 
   private String mediaContentSource;
 
   private String mediaContentType;
+
+  private String mediaETag;
 
   @Override
   public String getETag() {
@@ -150,6 +152,16 @@ public abstract class AbstractEntry extends AbstractAtomObject implements Entry 
   @Override
   public void setMediaContentSource(final String mediaContentSource) {
     this.mediaContentSource = mediaContentSource;
+  }
+
+  @Override
+  public String getMediaETag() {
+    return mediaETag;
+  }
+
+  @Override
+  public void setMediaETag(final String eTag) {
+    this.mediaETag = eTag;
   }
 
   @Override

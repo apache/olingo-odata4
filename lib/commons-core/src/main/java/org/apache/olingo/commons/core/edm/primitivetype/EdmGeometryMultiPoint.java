@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
-import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 
-public final class EdmGeometryMultiPoint extends AbstractEdmGeospatialType<Point> {
+public final class EdmGeometryMultiPoint extends AbstractGeospatialType<MultiPoint> {
 
   private static final EdmGeometryMultiPoint INSTANCE = new EdmGeometryMultiPoint();
 
@@ -31,7 +32,33 @@ public final class EdmGeometryMultiPoint extends AbstractEdmGeospatialType<Point
   }
 
   public EdmGeometryMultiPoint() {
-    super(Point.class, Dimension.GEOMETRY, Type.MULTIPOINT);
+    super(MultiPoint.class, Dimension.GEOMETRY, Type.MULTIPOINT);
   }
 
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+          throws EdmPrimitiveTypeException {
+
+    final MultiPoint point = stringToMultiPoint(value, isNullable, maxLength, precision, scale, isUnicode);
+    if (returnType.isAssignableFrom(MultiPoint.class)) {
+      return returnType.cast(point);
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    }
+
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    if (value instanceof MultiPoint) {
+      return toString((MultiPoint) value, isNullable, maxLength, precision, scale, isUnicode);
+    }
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+  }
 }

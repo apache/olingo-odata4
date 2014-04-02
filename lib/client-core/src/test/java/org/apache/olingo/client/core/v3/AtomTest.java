@@ -53,7 +53,7 @@ public class AtomTest extends AbstractTest {
 
   private String cleanup(final String input) throws Exception {
     final TransformerFactory factory = TransformerFactory.newInstance();
-    final Source xslt = new StreamSource(getClass().getResourceAsStream("../atom_cleanup.xsl"));
+    final Source xslt = new StreamSource(getClass().getResourceAsStream("atom_cleanup.xsl"));
     final Transformer transformer = factory.newTransformer(xslt);
 
     final StringWriter result = new StringWriter();
@@ -70,8 +70,7 @@ public class AtomTest extends AbstractTest {
   protected void feed(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().feed(getClient().getDeserializer().toFeed(
-            getClass().getResourceAsStream("Customer." + getSuffix(format)), format),
-            writer);
+            getClass().getResourceAsStream("Customer." + getSuffix(format)), format).getObject(), writer);
 
     assertSimilar("Customer." + getSuffix(format), writer.toString());
   }
@@ -84,7 +83,7 @@ public class AtomTest extends AbstractTest {
   protected void entry(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().entry(getClient().getDeserializer().toEntry(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format), writer);
+            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -104,7 +103,7 @@ public class AtomTest extends AbstractTest {
   protected void property(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().property(getClient().getDeserializer().
-            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format), writer);
+            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -128,5 +127,4 @@ public class AtomTest extends AbstractTest {
     property("Product_-10_ComplexConcurrency_QueriedDateTime", getODataFormat());
     property("Product_-10_Dimensions_Width", getODataFormat());
   }
-
 }

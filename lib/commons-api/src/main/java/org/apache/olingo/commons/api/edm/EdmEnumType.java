@@ -40,4 +40,9 @@ public interface EdmEnumType extends EdmPrimitiveType {
    * @return the {@link EdmPrimitiveType} this {@link EdmEnumType} is based upon
    */
   EdmPrimitiveType getUnderlyingType();
+
+  /**
+   * @return true if flags is set
+   */
+  boolean isFlags();
 }

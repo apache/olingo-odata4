@@ -46,7 +46,9 @@ import org.apache.olingo.client.core.op.impl.v4.ODataReaderImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataSerializerImpl;
 import org.apache.olingo.client.core.uri.v4.URIBuilderImpl;
 import org.apache.olingo.client.core.uri.v4.FilterFactoryImpl;
+import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.domain.v4.ODataObjectFactoryImpl;
 
 public class ODataClientImpl extends AbstractODataClient implements ODataClient {
 
@@ -54,7 +56,7 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   private final Configuration configuration = new ConfigurationImpl();
 
-  private final FilterFactory filterFactory = new FilterFactoryImpl();
+  private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
   private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
 
@@ -63,6 +65,8 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
   private final ODataReader reader = new ODataReaderImpl(this);
 
   private final ODataBinder binder = new ODataBinderImpl(this);
+
+  private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(getServiceVersion());
 
   private final RetrieveRequestFactory retrieveReqFact = new RetrieveRequestFactoryImpl(this);
 
@@ -82,8 +86,8 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
   @Override
   public ODataHeaders getVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
-    odataHeaders.setHeader(HeaderName.maxDataServiceVersion, ODataServiceVersion.V40.toString());
-    odataHeaders.setHeader(HeaderName.dataServiceVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HeaderName.odataMaxVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HeaderName.odataVersion, ODataServiceVersion.V40.toString());
     return odataHeaders;
   }
 
@@ -94,7 +98,7 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
 
   @Override
   public URIBuilder getURIBuilder(final String serviceRoot) {
-    return new URIBuilderImpl(serviceRoot);
+    return new URIBuilderImpl(getServiceVersion(), serviceRoot);
   }
 
   @Override
@@ -120,6 +124,11 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
   @Override
   public ODataBinder getBinder() {
     return binder;
+  }
+
+  @Override
+  public ODataObjectFactory getObjectFactory() {
+    return objectFactory;
   }
 
   @Override

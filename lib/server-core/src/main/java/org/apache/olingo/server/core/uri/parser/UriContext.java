@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -45,15 +45,24 @@ public class UriContext {
    */
   public Stack<TypeInformation> contextTypes;
   /**
-   * Set within method {@link #visitExpandItem(ExpandPathContext ctx)} and {@link #visitExpandPathExtension(final
+   * Set within method
+   * {@link #visitExpandItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathContext ctx)} and {@link
+   * #visitExpandPathExtension(final
    * ExpandPathExtensionContext ctx)} to allow nodes
-   * deeper in the expand tree at {@link #visitExpandPathExtension(ExpandPathExtensionContext ctx)} appending path
+   * deeper in the expand tree at
+   * {@link 
+   * #visitExpandPathExtension(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
+   * appending path
    * segments to the currently processed {@link ExpandItemImpl}.
    */
   public ExpandItemImpl contextExpandItemPath;
   /**
-   * Set within method {@link #visitSelectItem(SelectItemContext ctx)} to allow nodes
-   * deeper in the expand tree at {@link #visitSelectSegment(SelectSegmentContext ctx)} appending path segments to the
+   * Set within method
+   * {@link #visitSelectItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectItemContext ctx)} to allow
+   * nodes
+   * deeper in the expand tree at
+   * {@link #visitSelectSegment(org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectSegmentContext ctx)}
+   * appending path segments to the
    * currently processed {@link SelectItemImpl}.
    */
   public SelectItemImpl contextSelectItem;

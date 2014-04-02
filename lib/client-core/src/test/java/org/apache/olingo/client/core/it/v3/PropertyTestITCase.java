@@ -20,13 +20,14 @@ package org.apache.olingo.client.core.it.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.request.UpdateType;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
@@ -35,15 +36,16 @@ import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateRe
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import static org.junit.Assert.assertNotNull;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.junit.Test;
 
 /**
@@ -181,7 +183,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     assertNotEquals(newMsg, oldMsg);
 
-    final ODataPrimitiveValue newVal = client.getPrimitiveValueBuilder().setText(newMsg).build();
+    final ODataPrimitiveValue newVal = client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build();
 
     final ODataValueUpdateRequest updateReq =
             client.getCUDRequestFactory().getValueUpdateRequest(uriBuilder.build(), type, newVal);
@@ -206,7 +208,8 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
 
-    ODataPropertyRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
+            getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
@@ -217,12 +220,12 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final String newItem = "new item " + System.currentTimeMillis();
 
-    final ODataCollectionValue originalValue =
+    final ODataCollectionValue<ODataValue> originalValue =
             primaryContactInfo.getComplexValue().get("EmailBag").getCollectionValue();
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq = client.getCUDRequestFactory().
@@ -250,10 +253,11 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
-    uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
+    uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).
             appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
-    ODataPropertyRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
+            getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
@@ -264,16 +268,16 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final String newItem = "new item " + System.currentTimeMillis();
 
-    final ODataCollectionValue originalValue = alternativeNames.getCollectionValue();
+    final ODataCollectionValue<ODataValue> originalValue = alternativeNames.getCollectionValue();
 
     final int origSize = originalValue.size();
 
-    originalValue.add(client.getPrimitiveValueBuilder().setText(newItem).build());
+    originalValue.add(client.getObjectFactory().newPrimitiveValueBuilder().setText(newItem).build());
     assertEquals(origSize + 1, originalValue.size());
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(uriBuilder.build(),
-                    alternativeNames);
+            alternativeNames);
     if (client.getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, updateReq.getMethod());
     } else {
@@ -301,13 +305,14 @@ public class PropertyTestITCase extends AbstractTestITCase {
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
 
-    ODataPropertyRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
+            getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
-    ODataProperty phoneNumber = retrieveRes.getBody();
+    CommonODataProperty phoneNumber = retrieveRes.getBody();
 
     final String oldMsg = phoneNumber.getPrimitiveValue().toCastValue(String.class);
     final String newMsg = "new item " + System.currentTimeMillis();
@@ -315,7 +320,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertNotEquals(newMsg, oldMsg);
 
     phoneNumber = client.getObjectFactory().newPrimitiveProperty("PhoneNumber",
-            client.getPrimitiveValueBuilder().setText(newMsg).build());
+            client.getObjectFactory().newPrimitiveValueBuilder().setText(newMsg).build());
 
     final ODataPropertyUpdateRequest updateReq =
             client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uriBuilder.build(), phoneNumber);
@@ -344,12 +349,12 @@ public class PropertyTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.toString());
+    req.setFormat(format.toString(client.getServiceVersion()));
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataProperty property = res.getBodyAs(ODataProperty.class);
+    final CommonODataProperty property = res.getBodyAs(CommonODataProperty.class);
     assertNotNull(property);
   }
 }

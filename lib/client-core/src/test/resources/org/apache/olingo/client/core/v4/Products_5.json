@@ -1,0 +1,29 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Products/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+  "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)",
+  "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)",
+  "ProductID": 5,
+  "Name": "Cheetos",
+  "QuantityPerUnit": "100g Bag",
+  "UnitPrice@odata.type": "#Single",
+  "UnitPrice": 3.24,
+  "QuantityInStock": 100,
+  "Discontinued": true,
+  "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+  "UserAccess": "None",
+  "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+  "SkinColor": "Red",
+  "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+  "CoverColors": ["Green", "Blue", "Blue"],
+  "Details@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Details/$ref",
+  "Details@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Details",
+  "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+    "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+  },
+  "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+    "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+  }
+}

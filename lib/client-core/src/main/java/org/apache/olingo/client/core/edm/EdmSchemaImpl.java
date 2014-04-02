@@ -26,7 +26,6 @@ import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
@@ -50,18 +49,18 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
 
   private final Edm edm;
 
-  private final XMLMetadata xmlMetadata;
+  private final List<? extends Schema> xmlSchemas;
 
   private final Schema schema;
 
   public EdmSchemaImpl(final ODataServiceVersion version, final Edm edm,
-          final XMLMetadata xmlMetadata, final Schema schema) {
+          final List<? extends Schema> xmlSchemas, final Schema schema) {
 
     super(schema.getNamespace(), schema.getAlias());
 
     this.version = version;
     this.edm = edm;
-    this.xmlMetadata = xmlMetadata;
+    this.xmlSchemas = xmlSchemas;
     this.schema = schema;
   }
 
@@ -71,7 +70,7 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
     if (defaultContainer != null) {
       final FullQualifiedName entityContainerName =
               new FullQualifiedName(schema.getNamespace(), defaultContainer.getName());
-      return new EdmEntityContainerImpl(edm, entityContainerName, defaultContainer, xmlMetadata);
+      return new EdmEntityContainerImpl(edm, entityContainerName, defaultContainer, xmlSchemas);
     }
     return null;
   }

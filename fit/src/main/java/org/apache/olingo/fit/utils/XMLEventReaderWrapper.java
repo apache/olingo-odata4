@@ -20,6 +20,10 @@ package org.apache.olingo.fit.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -27,6 +31,8 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
 
 public class XMLEventReaderWrapper implements XMLEventReader {
+
+  private static Charset encoding = Charset.forName("UTF-8");
 
   public final static String CONTENT = "CONTENT_TAG";
 
@@ -43,12 +49,17 @@ public class XMLEventReaderWrapper implements XMLEventReader {
     factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
     factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 
+    final CharsetDecoder decoder = encoding.newDecoder();
+    decoder.onMalformedInput(CodingErrorAction.IGNORE);
+    decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
 
-    this.wrapped = factory.createXMLEventReader(
-            new ByteArrayInputStream(
-            (XMLEventReaderWrapper.CONTENT_STAG
-            + IOUtils.toString(stream).replaceAll("^<\\?xml.*\\?>", "")
-            + XMLEventReaderWrapper.CONTENT_ETAG).getBytes()));
+    InputStreamReader reader = new InputStreamReader(
+            new ByteArrayInputStream((XMLEventReaderWrapper.CONTENT_STAG
+            + IOUtils.toString(stream, encoding).replaceAll("^<\\?xml.*\\?>", "")
+            + XMLEventReaderWrapper.CONTENT_ETAG).getBytes(encoding)),
+            decoder);
+
+    this.wrapped = factory.createXMLEventReader(reader);
 
     init();
   }

@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.client.core;
 
-import java.util.Locale;
-
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -41,14 +39,6 @@ public abstract class AbstractTest {
     XMLUnit.setIgnoreWhitespace(true);
     XMLUnit.setNormalizeWhitespace(true);
     XMLUnit.setCompareUnmatched(false);
-  }
-
-  /**
-   * This is needed for correct number handling (Double, for example).
-   */
-  @BeforeClass
-  public static void setEnglishLocale() {
-    Locale.setDefault(Locale.ENGLISH);
   }
 
   @BeforeClass

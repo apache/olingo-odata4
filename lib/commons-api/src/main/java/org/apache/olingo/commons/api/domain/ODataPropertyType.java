@@ -21,11 +21,15 @@ package org.apache.olingo.commons.api.domain;
 public enum ODataPropertyType {
 
   /**
-   * Primitive (including geospatial and enum).
+   * Primitive (including geospatial).
    */
   PRIMITIVE,
   /**
-   * Collection
+   * Enum.
+   */
+  ENUM,
+  /**
+   * Collection.
    */
   COLLECTION,
   /**

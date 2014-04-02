@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.junit.BeforeClass;
 
-public abstract class AbstractTestITCase extends org.apache.olingo.client.core.it.AbstractTestITCase {
+public abstract class AbstractTestITCase {
 
   protected static ODataClient client;
 
@@ -45,7 +45,6 @@ public abstract class AbstractTestITCase extends org.apache.olingo.client.core.i
     client = ODataClientFactory.getV4();
   }
 
-  @Override
   protected ODataClient getClient() {
     return client;
   }

@@ -33,123 +33,123 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements EdmEntityContainer {
 
-    protected final FullQualifiedName entityContainerName;
+  protected final FullQualifiedName entityContainerName;
+  protected final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  private boolean allSingletonsLoaded = false;
+  protected final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  private boolean allEntitySetsLoaded = false;
+  protected final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+  private final FullQualifiedName parentContainerName;
+  private boolean allActionImportsLoaded = false;
+  protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
+  private boolean allFunctionImportsLoaded = false;
 
-    protected final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+  public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName,
+      final FullQualifiedName parentContainerName) {
+    super(edm, entityContainerName.getName());
+    this.entityContainerName = entityContainerName;
+    this.parentContainerName = parentContainerName;
+  }
 
-    private boolean allSingletonsLoaded = false;
+  @Override
+  public String getNamespace() {
+    return entityContainerName.getNamespace();
+  }
 
-    protected final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+  protected abstract EdmSingleton createSingleton(String singletonName);
 
-    private boolean allEntitySetsLoaded = false;
-
-    protected final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
-
-    private boolean allActionImportsLoaded = false;
-
-    protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
-
-    private boolean allFunctionImportsLoaded = false;
-
-    public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName) {
-        super(edm, entityContainerName.getName());
-        this.entityContainerName = entityContainerName;
+  @Override
+  public EdmSingleton getSingleton(final String singletonName) {
+    EdmSingleton singleton = singletons.get(singletonName);
+    if (singleton == null) {
+      singleton = createSingleton(singletonName);
+      singletons.put(singletonName, singleton);
     }
+    return singleton;
+  }
 
-    @Override
-    public String getNamespace() {
-        return entityContainerName.getNamespace();
+  protected abstract EdmEntitySet createEntitySet(String entitySetName);
+
+  @Override
+  public EdmEntitySet getEntitySet(final String entitySetName) {
+    EdmEntitySet entitySet = entitySets.get(entitySetName);
+    if (entitySet == null) {
+      entitySet = createEntitySet(entitySetName);
+      entitySets.put(entitySetName, entitySet);
     }
+    return entitySet;
+  }
 
-    protected abstract EdmSingleton createSingleton(String singletonName);
+  protected abstract EdmActionImport createActionImport(String actionImportName);
 
-    @Override
-    public EdmSingleton getSingleton(final String singletonName) {
-        EdmSingleton singleton = singletons.get(singletonName);
-        if (singleton == null) {
-            singleton = createSingleton(singletonName);
-            singletons.put(singletonName, singleton);
-        }
-        return singleton;
+  @Override
+  public EdmActionImport getActionImport(final String actionImportName) {
+    EdmActionImport actionImport = actionImports.get(actionImportName);
+    if (actionImport == null) {
+      actionImport = createActionImport(actionImportName);
+      actionImports.put(actionImportName, actionImport);
     }
+    return actionImport;
+  }
 
-    protected abstract EdmEntitySet createEntitySet(String entitySetName);
+  protected abstract EdmFunctionImport createFunctionImport(String functionImportName);
 
-    @Override
-    public EdmEntitySet getEntitySet(final String entitySetName) {
-        EdmEntitySet entitySet = entitySets.get(entitySetName);
-        if (entitySet == null) {
-            entitySet = createEntitySet(entitySetName);
-            entitySets.put(entitySetName, entitySet);
-        }
-        return entitySet;
+  @Override
+  public EdmFunctionImport getFunctionImport(final String functionImportName) {
+    EdmFunctionImport functionImport = functionImports.get(functionImportName);
+    if (functionImport == null) {
+      functionImport = createFunctionImport(functionImportName);
+      functionImports.put(functionImportName, functionImport);
     }
+    return functionImport;
+  }
 
-    protected abstract EdmActionImport createActionImport(String actionImportName);
-
-    @Override
-    public EdmActionImport getActionImport(final String actionImportName) {
-        EdmActionImport actionImport = actionImports.get(actionImportName);
-        if (actionImport == null) {
-            actionImport = createActionImport(actionImportName);
-            actionImports.put(actionImportName, actionImport);
-        }
-        return actionImport;
+  @Override
+  public List<EdmEntitySet> getEntitySets() {
+    if (!allEntitySetsLoaded) {
+      loadAllEntitySets();
+      allEntitySetsLoaded = true;
     }
+    return new ArrayList<EdmEntitySet>(entitySets.values());
+  }
 
-    protected abstract EdmFunctionImport createFunctionImport(String functionImportName);
+  protected abstract void loadAllEntitySets();
 
-    @Override
-    public EdmFunctionImport getFunctionImport(final String functionImportName) {
-        EdmFunctionImport functionImport = functionImports.get(functionImportName);
-        if (functionImport == null) {
-            functionImport = createFunctionImport(functionImportName);
-            functionImports.put(functionImportName, functionImport);
-        }
-        return functionImport;
+  @Override
+  public List<EdmFunctionImport> getFunctionImports() {
+    if (!allFunctionImportsLoaded) {
+      loadAllFunctionImports();
+      allFunctionImportsLoaded = true;
     }
+    return new ArrayList<EdmFunctionImport>(functionImports.values());
+  }
 
-    @Override
-    public List<EdmEntitySet> getEntitySets() {
-        if (!allEntitySetsLoaded) {
-            loadAllEntitySets();
-            allEntitySetsLoaded = true;
-        }
-        return new ArrayList<EdmEntitySet>(entitySets.values());
+  protected abstract void loadAllFunctionImports();
+
+  @Override
+  public List<EdmSingleton> getSingletons() {
+    if (!allSingletonsLoaded) {
+      loadAllSingletons();
+      allSingletonsLoaded = true;
     }
+    return new ArrayList<EdmSingleton>(singletons.values());
+  }
 
-    protected abstract void loadAllEntitySets();
+  protected abstract void loadAllSingletons();
 
-    @Override
-    public List<EdmFunctionImport> getFunctionImports() {
-        if (!allFunctionImportsLoaded) {
-            loadAllFunctionImports();
-            allFunctionImportsLoaded = true;
-        }
-        return new ArrayList<EdmFunctionImport>(functionImports.values());
+  @Override
+  public List<EdmActionImport> getActionImports() {
+    if (!allActionImportsLoaded) {
+      loadAllActionImports();
+      allActionImportsLoaded = true;
     }
+    return new ArrayList<EdmActionImport>(actionImports.values());
+  }
 
-    protected abstract void loadAllFunctionImports();
+  protected abstract void loadAllActionImports();
 
-    @Override
-    public List<EdmSingleton> getSingletons() {
-        if (!allSingletonsLoaded) {
-            loadAllSingletons();
-            allSingletonsLoaded = true;
-        }
-        return new ArrayList<EdmSingleton>(singletons.values());
-    }
-
-    protected abstract void loadAllSingletons();
-
-    @Override
-    public List<EdmActionImport> getActionImports() {
-        if (!allActionImportsLoaded) {
-            loadAllActionImports();
-            allActionImportsLoaded = true;
-        }
-        return new ArrayList<EdmActionImport>(actionImports.values());
-    }
-
-    protected abstract void loadAllActionImports();
+  @Override
+  public FullQualifiedName getParentContainerName() {
+    return parentContainerName;
+  }
 }

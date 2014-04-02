@@ -25,17 +25,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
 
-public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<AbstractServiceDocument> {
+public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Container<AbstractServiceDocument>> {
 
   @Override
-  protected AbstractServiceDocument doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected Container<AbstractServiceDocument> doDeserialize(
+          final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -44,20 +47,29 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Ab
             ? new org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl()
             : new org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl();
 
-    if (tree.hasNonNull(Constants.JSON_METADATA)
-            && serviceDocument instanceof org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl) {
+    final String metadataETag;
+    final URI contextURL;
 
-      ((org.apache.olingo.client.core.data.v3.JSONServiceDocumentImpl) serviceDocument).
-              setMetadata(tree.get(Constants.JSON_METADATA).textValue());
-    }
-    if (tree.hasNonNull(Constants.JSON_CONTEXT)
-            && serviceDocument instanceof org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl) {
-
-      ((org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl) serviceDocument).
-              setMetadataContext(tree.get(Constants.JSON_CONTEXT).textValue());
+    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
+      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
+      tree.remove(Constants.JSON_METADATA_ETAG);
+    } else {
+      metadataETag = null;
     }
 
-    for (final Iterator<JsonNode> itor = tree.get(Constants.JSON_VALUE).elements(); itor.hasNext();) {
+    if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
+      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
+      tree.remove(Constants.JSON_CONTEXT);
+    } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
+      contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
+      tree.remove(Constants.JSON_METADATA);
+    } else {
+      contextURL = null;
+    }
+
+    serviceDocument.setMetadata(contextURL == null ? null : contextURL.toASCIIString());
+
+    for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).elements(); itor.hasNext();) {
       final JsonNode node = itor.next();
 
       final ServiceDocumentItemImpl item = new ServiceDocumentItemImpl();
@@ -79,7 +91,6 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Ab
       }
     }
 
-    return serviceDocument;
+    return new Container<AbstractServiceDocument>(contextURL, metadataETag, serviceDocument);
   }
-
 }

@@ -21,16 +21,20 @@ package org.apache.olingo.client.api.communication.request;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
  *
- * @see CUDRequestFactory
- * @see RetrieveRequestFactory
- * @see BatchRequestFactory
- * @see InvokeRequestFactory
- * @see StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
+ * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
  */
 public interface ODataRequest {
 
@@ -174,6 +178,16 @@ public interface ODataRequest {
    * @return current object
    */
   ODataRequest addCustomHeader(final String name, final String value);
+
+  /**
+   * Adds a custom OData request header. The method fails in case of the header name is not supported by the current
+   * working version.
+   *
+   * @param name header name.
+   * @param value header value.
+   * @return current object
+   */
+  ODataRequest addCustomHeader(final HeaderName name, final String value);
 
   /**
    * Gets byte array representation of the full request header.

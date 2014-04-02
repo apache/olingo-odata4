@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * Writes out JSON string from an entry.
@@ -44,11 +45,8 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     jgen.writeStartObject();
 
-    if (entry.getMetadata() != null) {
-      jgen.writeStringField(Constants.JSON_METADATA, entry.getMetadata().toASCIIString());
-    }
     if (entry.getId() != null) {
-      jgen.writeStringField(Constants.JSON_ID, entry.getId());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entry.getId());
     }
 
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
@@ -96,7 +94,7 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     for (Link link : entry.getMediaEditLinks()) {
       if (link.getTitle() == null) {
-        jgen.writeStringField(Constants.JSON_MEDIAEDIT_LINK, link.getHref());
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), link.getHref());
       }
 
       if (link.getInlineEntry() != null) {

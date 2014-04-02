@@ -56,22 +56,24 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
 
     if (value.isNull()) {
       jgen.writeNull();
-    } else if (value.isSimple()) {
+    } else if (value.isPrimitive()) {
       final boolean isNumber = typeInfo == null
-              ? NumberUtils.isNumber(value.asSimple().get())
+              ? NumberUtils.isNumber(value.asPrimitive().get())
               : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveTypeKind());
       final boolean isBoolean = typeInfo == null
-              ? (value.asSimple().get().equalsIgnoreCase(Boolean.TRUE.toString())
-              || value.asSimple().get().equalsIgnoreCase(Boolean.FALSE.toString()))
+              ? (value.asPrimitive().get().equalsIgnoreCase(Boolean.TRUE.toString())
+              || value.asPrimitive().get().equalsIgnoreCase(Boolean.FALSE.toString()))
               : typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Boolean;
 
       if (isNumber) {
-        jgen.writeNumber(value.asSimple().get());
+        jgen.writeNumber(value.asPrimitive().get());
       } else if (isBoolean) {
-        jgen.writeBoolean(BooleanUtils.toBoolean(value.asSimple().get()));
+        jgen.writeBoolean(BooleanUtils.toBoolean(value.asPrimitive().get()));
       } else {
-        jgen.writeString(value.asSimple().get());
+        jgen.writeString(value.asPrimitive().get());
       }
+    } else if (value.isEnum()) {
+      jgen.writeString(value.asEnum().get());
     } else if (value.isGeospatial()) {
       jgen.writeStartObject();
       geoSerializer.serialize(jgen, value.asGeospatial().get());

@@ -18,44 +18,19 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * OData complex property value.
+ *
+ * @param <OP> The actual ODataProperty interface.
  */
-public class ODataComplexValue extends AbstractODataValue implements Iterable<ODataProperty> {
-
-  private static final long serialVersionUID = -1878555027714020431L;
-
-  /**
-   * Type name.
-   */
-  private final String typeName;
-
-  /**
-   * Complex type fields.
-   */
-  private final Map<String, ODataProperty> fields = new LinkedHashMap<String, ODataProperty>();
-
-  /**
-   * Constructor.
-   *
-   * @param type type name.
-   */
-  public ODataComplexValue(final String typeName) {
-    this.typeName = typeName;
-  }
+public interface ODataComplexValue<OP extends CommonODataProperty> extends ODataValue, Iterable<OP> {
 
   /**
    * Adds field to the complex type.
    *
    * @param field field to be added.
    */
-  public void add(final ODataProperty field) {
-    fields.put(field.getName(), field);
-  }
+  void add(OP field);
 
   /**
    * Gets field.
@@ -63,35 +38,13 @@ public class ODataComplexValue extends AbstractODataValue implements Iterable<OD
    * @param name name of the field to be retrieved.
    * @return requested field.
    */
-  public ODataProperty get(final String name) {
-    return fields.get(name);
-  }
-
-  /**
-   * Complex property fields iterator.
-   *
-   * @return fields iterator.
-   */
-  @Override
-  public Iterator<ODataProperty> iterator() {
-    return fields.values().iterator();
-  }
-
-  /**
-   * Gest value type name.
-   *
-   * @return value type name.
-   */
-  public String getType() {
-    return typeName;
-  }
+  OP get(String name);
 
   /**
    * Gets number of fields.
    *
    * @return number of fields.
    */
-  public int size() {
-    return fields.size();
-  }
+  int size();
+
 }

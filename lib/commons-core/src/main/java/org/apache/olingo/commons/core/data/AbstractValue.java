@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.EnumValue;
 import org.apache.olingo.commons.api.data.GeospatialValue;
 import org.apache.olingo.commons.api.data.NullValue;
 import org.apache.olingo.commons.api.data.PrimitiveValue;
@@ -37,12 +38,17 @@ public abstract class AbstractValue implements Value {
   }
 
   @Override
-  public boolean isSimple() {
+  public boolean isPrimitive() {
     return false;
   }
 
   @Override
   public boolean isGeospatial() {
+    return false;
+  }
+
+  @Override
+  public boolean isEnum() {
     return false;
   }
 
@@ -62,13 +68,18 @@ public abstract class AbstractValue implements Value {
   }
 
   @Override
-  public PrimitiveValue asSimple() {
-    return isSimple() ? (PrimitiveValue) this : null;
+  public PrimitiveValue asPrimitive() {
+    return isPrimitive() ? (PrimitiveValue) this : null;
   }
 
   @Override
   public GeospatialValue asGeospatial() {
     return isGeospatial() ? (GeospatialValue) this : null;
+  }
+
+  @Override
+  public EnumValue asEnum() {
+    return isEnum() ? (EnumValue) this : null;
   }
 
   @Override

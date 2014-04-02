@@ -40,8 +40,8 @@ public class Point extends Geospatial {
    */
   private double z;
 
-  public Point(final Dimension dimension, final String crs) {
-    super(dimension, Type.POINT, crs);
+  public Point(final Dimension dimension, final Integer srid) {
+    super(dimension, Type.POINT, srid);
   }
 
   public double getX() {
@@ -71,7 +71,7 @@ public class Point extends Geospatial {
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
-           ? EdmPrimitiveTypeKind.GeographyPoint
-           : EdmPrimitiveTypeKind.GeometryPoint;
+            ? EdmPrimitiveTypeKind.GeographyPoint
+            : EdmPrimitiveTypeKind.GeometryPoint;
   }
 }

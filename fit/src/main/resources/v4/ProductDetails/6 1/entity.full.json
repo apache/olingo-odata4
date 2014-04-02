@@ -1,0 +1,19 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#ProductDetails/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.ProductDetail",
+  "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)",
+  "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)",
+  "ProductID": 6,
+  "ProductDetailID": 1,
+  "ProductName": "Candy",
+  "Description": "sweet snack",
+  "RelatedProduct@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/RelatedProduct/$ref",
+  "RelatedProduct@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/RelatedProduct",
+  "Reviews@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Reviews/$ref",
+  "Reviews@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Reviews",
+  "#Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct":
+          {
+            "title": "Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct",
+            "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct"
+          }
+}

@@ -18,33 +18,36 @@
  */
 package org.apache.olingo.client.core.op;
 
-import org.apache.olingo.commons.core.op.ResourceFactory;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.data.ServiceDocumentItem;
+import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.op.CommonODataBinder;
 import org.apache.olingo.commons.core.data.CollectionValueImpl;
 import org.apache.olingo.commons.core.data.ComplexValueImpl;
 import org.apache.olingo.commons.core.data.GeospatialValueImpl;
@@ -52,8 +55,8 @@ import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,31 +90,32 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Feed getFeed(final ODataEntitySet feed, final Class<? extends Feed> reference) {
-    final Feed feedResource = ResourceFactory.newFeed(reference);
+  public Feed getFeed(final CommonODataEntitySet entitySet, final Class<? extends Feed> reference) {
+    final Feed feed = ResourceFactory.newFeed(reference);
 
-    feedResource.setCount(feed.getCount());
+    feed.setCount(entitySet.getCount());
 
-    final URI next = feed.getNext();
+    final URI next = entitySet.getNext();
     if (next != null) {
-      feedResource.setNext(next);
+      feed.setNext(next);
     }
 
-    for (ODataEntity entity : feed.getEntities()) {
-      feedResource.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
+    for (CommonODataEntity entity : entitySet.getEntities()) {
+      feed.getEntries().add(getEntry(entity, ResourceFactory.entryClassForFeed(reference)));
     }
 
-    return feedResource;
+    return feed;
   }
 
   @Override
-  public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference) {
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
     return getEntry(entity, reference, true);
   }
 
   @Override
-  public Entry getEntry(final ODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
     final Entry entry = ResourceFactory.newEntry(reference);
+
     entry.setType(entity.getName());
 
     // -------------------------------------------------------------
@@ -170,9 +174,10 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (entity.isMediaEntity()) {
       entry.setMediaContentSource(entity.getMediaContentSource());
       entry.setMediaContentType(entity.getMediaContentType());
+      entry.setMediaETag(entity.getMediaETag());
     }
 
-    for (ODataProperty property : entity.getProperties()) {
+    for (CommonODataProperty property : entity.getProperties()) {
       entry.getProperties().add(getProperty(property, reference, setType));
     }
 
@@ -190,13 +195,13 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     if (link instanceof ODataInlineEntity) {
       // append inline entity
-      final ODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
+      final CommonODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
       LOG.debug("Append in-line entity\n{}", inlineEntity);
 
       linkResource.setInlineEntry(getEntry(inlineEntity, ResourceFactory.entryClassForFormat(isXML)));
     } else if (link instanceof ODataInlineEntitySet) {
       // append inline feed
-      final ODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
+      final CommonODataEntitySet InlineFeed = ((ODataInlineEntitySet) link).getEntitySet();
       LOG.debug("Append in-line feed\n{}", InlineFeed);
 
       linkResource.setInlineFeed(getFeed(InlineFeed, ResourceFactory.feedClassForFormat(isXML)));
@@ -205,48 +210,27 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return linkResource;
   }
 
-  @Override
-  public Property getProperty(final ODataProperty property, final Class<? extends Entry> reference,
-          final boolean setType) {
-
-    final Property propertyResource = ResourceFactory.newProperty(reference);
-    propertyResource.setName(property.getName());
-    propertyResource.setValue(getValue(property.getValue(), reference, setType));
-
-    if (setType) {
-      if (property.hasPrimitiveValue()) {
-        propertyResource.setType(property.getPrimitiveValue().getType().toString());
-      } else if (property.hasComplexValue()) {
-        propertyResource.setType(property.getComplexValue().getType());
-      } else if (property.hasCollectionValue()) {
-        propertyResource.setType(property.getCollectionValue().getType());
-      }
-    }
-
-    return propertyResource;
-  }
-
-  private Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
     Value valueResource = null;
 
     if (value == null) {
       valueResource = new NullValueImpl();
     } else if (value.isPrimitive()) {
-      valueResource = new PrimitiveValueImpl(value.asPrimitive().toString());
-    } else if (value.isGeospatial()) {
-      valueResource = new GeospatialValueImpl(value.asGeospatial().toValue());
+      valueResource = value.asPrimitive().getTypeKind().isGeospatial()
+              ? new GeospatialValueImpl((Geospatial) value.asPrimitive().toValue())
+              : new PrimitiveValueImpl(value.asPrimitive().toString());
     } else if (value.isComplex()) {
-      final ODataComplexValue _value = value.asComplex();
+      final ODataComplexValue<? extends CommonODataProperty> _value = value.asComplex();
       valueResource = new ComplexValueImpl();
 
-      for (final Iterator<ODataProperty> itor = _value.iterator(); itor.hasNext();) {
+      for (final Iterator<? extends CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
         valueResource.asComplex().get().add(getProperty(itor.next(), reference, setType));
       }
     } else if (value.isCollection()) {
-      final ODataCollectionValue _value = value.asCollection();
+      final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
       valueResource = new CollectionValueImpl();
 
-      for (final Iterator<ODataValue> itor = _value.iterator(); itor.hasNext();) {
+      for (final Iterator<? extends ODataValue> itor = _value.iterator(); itor.hasNext();) {
         valueResource.asCollection().get().add(getValue(itor.next(), reference, setType));
       }
     }
@@ -255,12 +239,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource) {
+  public CommonODataEntitySet getODataEntitySet(final Feed resource) {
     return getODataEntitySet(resource, null);
   }
 
+  protected abstract boolean add(CommonODataEntitySet entitySet, CommonODataEntity entity);
+
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
+  public CommonODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       client.getSerializer().feed(resource, writer);
@@ -269,10 +255,10 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
-    
+
     final URI next = resource.getNext();
 
-    final ODataEntitySet entitySet = next == null
+    final CommonODataEntitySet entitySet = next == null
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
@@ -281,19 +267,19 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Entry entryResource : resource.getEntries()) {
-      entitySet.addEntity(getODataEntity(entryResource));
+      add(entitySet, getODataEntity(entryResource));
     }
-    
+
     return entitySet;
   }
 
   @Override
-  public ODataEntity getODataEntity(final Entry resource) {
+  public CommonODataEntity getODataEntity(final Entry resource) {
     return getODataEntity(resource, null);
   }
 
   @Override
-  public ODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
+  public CommonODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       client.getSerializer().entry(resource, writer);
@@ -303,19 +289,19 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
 
-    final ODataEntity entity = resource.getSelfLink() == null
+    final CommonODataEntity entity = resource.getSelfLink() == null
             ? client.getObjectFactory().newEntity(resource.getType())
             : client.getObjectFactory().newEntity(resource.getType(),
-                    URIUtils.getURI(base, resource.getSelfLink().getHref()));
+            URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
     if (StringUtils.isNotBlank(resource.getETag())) {
       entity.setETag(resource.getETag());
     }
-    
+
     if (resource.getEditLink() != null) {
       entity.setEditLink(URIUtils.getURI(base, resource.getEditLink().getHref()));
     }
-    
+
     for (Link link : resource.getAssociationLinks()) {
       entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
     }
@@ -325,18 +311,22 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       final Feed inlineFeed = link.getInlineFeed();
 
       if (inlineEntry == null && inlineFeed == null) {
-        entity.addLink(
-                client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref()));
-      } else if (inlineFeed == null) {
+        final ODataLinkType linkType = link.getType() == null
+                ? ODataLinkType.ENTITY_NAVIGATION
+                : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+        entity.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
+                ? client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref())
+                : client.getObjectFactory().newEntitySetNavigationLink(link.getTitle(), base, link.getHref()));
+      } else if (inlineEntry != null) {
         entity.addLink(client.getObjectFactory().newInlineEntity(
                 link.getTitle(), base, link.getHref(),
                 getODataEntity(inlineEntry,
-                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
       } else {
         entity.addLink(client.getObjectFactory().newInlineEntitySet(
                 link.getTitle(), base, link.getHref(),
                 getODataEntitySet(inlineFeed,
-                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
       }
     }
 
@@ -353,45 +343,48 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       entity.setMediaEntity(true);
       entity.setMediaContentSource(resource.getMediaContentSource());
       entity.setMediaContentType(resource.getMediaContentType());
+      entity.setMediaETag(resource.getMediaETag());
     }
 
     for (Property property : resource.getProperties()) {
-      entity.getProperties().add(getODataProperty(property));
+      add(entity, getODataProperty(property));
     }
 
     return entity;
   }
 
-  @Override
-  public ODataProperty getODataProperty(final Property property) {
-    return new ODataProperty(property.getName(), getODataValue(property));
-  }
-
-  private ODataValue getODataValue(final Property resource) {
+  protected ODataValue getODataValue(final Property resource) {
     ODataValue value = null;
 
-    if (resource.getValue().isSimple()) {
-      value = client.getPrimitiveValueBuilder().
-              setText(resource.getValue().asSimple().get()).
-              setType(resource.getType() == null
-                      ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+    final EdmTypeInfo typeInfo = resource.getType() == null
+            ? null
+            : new EdmTypeInfo.Builder().setTypeExpression(resource.getType()).build();
+    if (resource.getValue().isPrimitive()) {
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
+              setText(resource.getValue().asPrimitive().get()).
+              setType(typeInfo == null
+              ? null
+              : EdmPrimitiveTypeKind.valueOfFQN(
+              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isGeospatial()) {
-      value = client.getGeospatialValueBuilder().
+      value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
-              setType(resource.getType() == null
-                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().toString().equals(resource.getType())
-                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().toString().equals(resource.getType())
-                      ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), resource.getType())).build();
+              setType(typeInfo == null
+              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+              ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+              : EdmPrimitiveTypeKind.valueOfFQN(
+              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isComplex()) {
-      value = new ODataComplexValue(resource.getType());
+      value = client.getObjectFactory().newComplexValue(typeInfo == null
+              ? null : typeInfo.getFullQualifiedName().toString());
 
       for (Property property : resource.getValue().asComplex().get()) {
         value.asComplex().add(getODataProperty(property));
       }
     } else if (resource.getValue().isCollection()) {
-      value = new ODataCollectionValue(resource.getType());
+      value = client.getObjectFactory().newCollectionValue(typeInfo == null
+              ? null : "Collection(" + typeInfo.getFullQualifiedName().toString() + ")");
 
       for (Value _value : resource.getValue().asCollection().get()) {
         final JSONPropertyImpl fake = new JSONPropertyImpl();

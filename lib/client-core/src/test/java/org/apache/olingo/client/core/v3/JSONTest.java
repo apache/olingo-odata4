@@ -1,5 +1,3 @@
-package org.apache.olingo.client.core.v3;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,8 @@ package org.apache.olingo.client.core.v3;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.olingo.client.core.v3;
+
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
@@ -48,34 +49,42 @@ public class JSONTest extends AtomTest {
   }
 
   private void cleanup(final ObjectNode node) {
-    if (node.has(Constants.JSON_TYPE)) {
-      node.remove(Constants.JSON_TYPE);
+    if (node.has(Constants.JSON_METADATA)) {
+      node.remove(Constants.JSON_METADATA);
     }
-    if (node.has(Constants.JSON_EDIT_LINK)) {
-      node.remove(Constants.JSON_EDIT_LINK);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE));
     }
-    if (node.has(Constants.JSON_READ_LINK)) {
-      node.remove(Constants.JSON_READ_LINK);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK));
     }
-    if (node.has(Constants.JSON_MEDIAEDIT_LINK)) {
-      node.remove(Constants.JSON_MEDIAEDIT_LINK);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_READ_LINK))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_READ_LINK));
     }
-    if (node.has(Constants.JSON_MEDIAREAD_LINK)) {
-      node.remove(Constants.JSON_MEDIAREAD_LINK);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK));
     }
-    if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
-      node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK));
+    }
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE));
     }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
       if (field.getKey().charAt(0) == '#'
-              || field.getKey().endsWith(Constants.JSON_TYPE_SUFFIX)
-              || field.getKey().endsWith(Constants.JSON_MEDIAEDIT_LINK_SUFFIX)
-              || field.getKey().endsWith(Constants.JSON_MEDIA_CONTENT_TYPE_SUFFIX)
-              || field.getKey().endsWith(Constants.JSON_ASSOCIATION_LINK_SUFFIX)
-              || field.getKey().endsWith(Constants.JSON_MEDIA_ETAG_SUFFIX)) {
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK))
+              || field.getKey().endsWith(
+                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG))) {
 
         toRemove.add(field.getKey());
       } else if (field.getValue().isObject()) {
@@ -95,10 +104,12 @@ public class JSONTest extends AtomTest {
   @Override
   protected void assertSimilar(final String filename, final String actual) throws Exception {
     final JsonNode orig = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
-            replace("Categories" + Constants.JSON_NAVIGATION_LINK_SUFFIX,
+            replace("Categories" + getClient().getServiceVersion().getJSONMap().
+                    get(ODataServiceVersion.JSON_NAVIGATION_LINK),
                     "Categories" + Constants.JSON_BIND_LINK_SUFFIX).
             replace("\"Products(0)/Categories\"", "[\"Products(0)/Categories\"]").
-            replace(Constants.JSON_NAVIGATION_LINK_SUFFIX, Constants.JSON_BIND_LINK_SUFFIX));
+            replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
+                    Constants.JSON_BIND_LINK_SUFFIX));
     cleanup((ObjectNode) orig);
     assertEquals(orig, OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes())));
   }

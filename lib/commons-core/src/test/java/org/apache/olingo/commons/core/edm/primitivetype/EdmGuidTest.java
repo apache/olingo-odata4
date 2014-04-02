@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class EdmGuidTest extends PrimitiveTypeBaseTest {
 
-  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.Guid);
+  private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid);
 
   @Test
   public void toUriLiteral() {

@@ -25,10 +25,6 @@ import java.util.Map;
 
 public class ODataServiceDocument {
 
-  private URI metadataContext;
-
-  private String metadataETag;
-
   private final Map<String, URI> entitySets = new HashMap<String, URI>();
 
   private final Map<String, URI> functionImports = new HashMap<String, URI>();
@@ -36,22 +32,6 @@ public class ODataServiceDocument {
   private final Map<String, URI> singletons = new HashMap<String, URI>();
 
   private final Map<String, URI> relatedServiceDocuments = new HashMap<String, URI>();
-
-  public URI getMetadataContext() {
-    return metadataContext;
-  }
-
-  public void setMetadataContext(final URI metadataContext) {
-    this.metadataContext = metadataContext;
-  }
-
-  public String getMetadataETag() {
-    return metadataETag;
-  }
-
-  public void setMetadataETag(final String metadataETag) {
-    this.metadataETag = metadataETag;
-  }
 
   public Map<String, URI> getEntitySets() {
     return entitySets;

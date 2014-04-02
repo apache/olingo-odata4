@@ -57,6 +57,8 @@ public interface Constants {
 
   public static final String SELF_LINK_REL = "self";
 
+  public static final String EDITMEDIA_LINK_REL = "edit-media";
+
   public static final String NEXT_LINK_REL = "next";
 
   // XML elements and attributes
@@ -71,6 +73,8 @@ public interface Constants {
   public static final String ATTR_XML_BASE = "base";
 
   public static final QName QNAME_ATTR_XML_BASE = new QName(XMLConstants.XML_NS_URI, ATTR_XML_BASE);
+
+  public static final String CONTEXT = "context";
 
   public static final String ATTR_REL = "rel";
 
@@ -135,45 +139,17 @@ public interface Constants {
   public static final String ELEM_URI = "uri";
 
   // JSON stuff
-  public final static String JSON_CONTEXT = "@odata.context";
-
   public final static String JSON_METADATA = "odata.metadata";
 
-  public final static String JSON_TYPE = "odata.type";
+  public final static String JSON_CONTEXT = "@odata.context";
 
-  public final static String JSON_TYPE_SUFFIX = "@" + JSON_TYPE;
-
-  public final static String JSON_ETAG = "odata.etag";
-
-  public final static String JSON_MEDIA_ETAG = "odata.mediaETag";
-
-  public final static String JSON_MEDIA_ETAG_SUFFIX = "@" + JSON_MEDIA_ETAG;
-
-  public final static String JSON_ID = "odata.id";
-
-  public final static String JSON_READ_LINK = "odata.readLink";
-
-  public final static String JSON_EDIT_LINK = "odata.editLink";
-
-  public final static String JSON_MEDIAREAD_LINK = "odata.mediaReadLink";
-
-  public final static String JSON_MEDIAEDIT_LINK = "odata.mediaEditLink";
-
-  public final static String JSON_MEDIAEDIT_LINK_SUFFIX = "@" + JSON_MEDIAEDIT_LINK;
-
-  public final static String JSON_MEDIA_CONTENT_TYPE = "odata.mediaContentType";
-
-  public final static String JSON_MEDIA_CONTENT_TYPE_SUFFIX = "@" + JSON_MEDIA_CONTENT_TYPE;
-
-  public final static String JSON_NAVIGATION_LINK_SUFFIX = "@odata.navigationLinkUrl";
+  public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
 
   public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
 
-  public final static String JSON_ASSOCIATION_LINK_SUFFIX = "@odata.associationLinkUrl";
-
   public final static String JSON_NULL = "odata.null";
 
-  public final static String JSON_VALUE = "value";
+  public final static String VALUE = "value";
 
   public final static String JSON_URL = "url";
 
@@ -191,6 +167,12 @@ public interface Constants {
 
   // Atom stuff
   public final static String ATOM_ELEM_ENTRY = "entry";
+
+  public final static String ATOM_ELEM_ENTRY_REF = "ref";
+
+  public final static String ATOM_ATTR_ID = "id";
+
+  public final static QName QNAME_ATOM_ATTR_ID = new QName(ATOM_ATTR_ID);
 
   public static final QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
 
@@ -239,5 +221,14 @@ public interface Constants {
   public static final String ATOM_ATTR_SRC = "src";
 
   public static final String ATOM_ATTR_ETAG = "etag";
+
+  public static final String ATOM_ATTR_METADATAETAG = "metadata-etag";
+
+  // error stuff
+  public static final String ERROR_CODE = "code";
+
+  public static final String ERROR_MESSAGE = "message";
+
+  public static final String ERROR_TARGET = "target";
 
 }

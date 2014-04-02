@@ -83,7 +83,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(responseStatus);
     assertTrue(responseStatus.getNavigationPropertyNames().isEmpty());
     assertEquals("Recipient", responseStatus.getBaseType().getName());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.DateTimeOffset),
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset),
             responseStatus.getProperty("Time").getType());
 
     // 3. Entity
@@ -107,7 +107,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(move);
     assertTrue(move.isBound());
     assertEquals(2, move.getParameterNames().size());
-    assertEquals(EdmPrimitiveTypeFactory.getNonGeoInstance(EdmPrimitiveTypeKind.String),
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String),
             move.getParameter("DestinationId").getType());
 
     // 5. EntityContainer
@@ -279,5 +279,4 @@ public class MetadataTest extends AbstractTest {
             readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml"));
     assertNotNull(metadata);
   }
-
 }

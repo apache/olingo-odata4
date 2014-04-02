@@ -1,0 +1,12 @@
+{
+  "CompanyID": 0,
+  "CompanyCategory": "IT",
+  "Revenue": 100000,
+  "Name": "MS",
+  "Address": {
+    "Street": "1 Microsoft Way",
+    "City": "Redmond",
+    "PostalCode": "98052",
+    "CompanyName": "Microsoft"
+  }
+}

@@ -18,11 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
-import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 
-public final class EdmGeometryPolygon extends AbstractEdmGeospatialType<Point> {
+public final class EdmGeometryPolygon extends AbstractGeospatialType<Polygon> {
 
   private static final EdmGeometryPolygon INSTANCE = new EdmGeometryPolygon();
 
@@ -31,7 +32,32 @@ public final class EdmGeometryPolygon extends AbstractEdmGeospatialType<Point> {
   }
 
   public EdmGeometryPolygon() {
-    super(Point.class, Dimension.GEOMETRY, Type.POLYGON);
+    super(Polygon.class, Dimension.GEOMETRY, Type.POLYGON);
   }
 
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode,
+          final Class<T> returnType) throws EdmPrimitiveTypeException {
+
+    final Polygon polygon = stringToPolygon(value, isNullable, maxLength, precision, scale, isUnicode);
+    if (returnType.isAssignableFrom(Polygon.class)) {
+      return returnType.cast(polygon);
+    } else {
+      throw new EdmPrimitiveTypeException(
+              "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType)");
+    }
+  }
+
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+          final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+
+    if (value instanceof Polygon) {
+      return toString((Polygon) value, isNullable, maxLength, precision, scale, isUnicode);
+    }
+
+    throw new EdmPrimitiveTypeException(
+            "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass())");
+  }
 }

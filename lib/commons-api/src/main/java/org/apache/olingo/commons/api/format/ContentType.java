@@ -18,7 +18,12 @@
  */
 package org.apache.olingo.commons.api.format;
 
-public interface ContentType {
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+
+public abstract class ContentType {
 
   public static final String APPLICATION_ATOM_XML = "application/atom+xml";
 
@@ -44,4 +49,25 @@ public interface ContentType {
 
   public static final String WILDCARD = "*/*";
 
+  public static final EnumMap<ODataServiceVersion, Map<String, String>> formatPerVersion =
+          new EnumMap<ODataServiceVersion, Map<String, String>>(ODataServiceVersion.class);
+
+  static {
+
+    final Map<String, String> v3 = new HashMap<String, String>();
+    v3.put(ODataPubFormat.JSON_NO_METADATA.name(), ContentType.APPLICATION_JSON + ";odata=nometadata");
+    v3.put(ODataPubFormat.JSON.name(), ContentType.APPLICATION_JSON + ";odata=minimalmetadata");
+    v3.put(ODataPubFormat.JSON_FULL_METADATA.name(), ContentType.APPLICATION_JSON + ";odata=fullmetadata");
+    v3.put(ODataPubFormat.ATOM.name(), ContentType.APPLICATION_ATOM_XML);
+    v3.put(ODataFormat.XML.name(), ContentType.APPLICATION_XML);
+    formatPerVersion.put(ODataServiceVersion.V30, v3);
+
+    final Map<String, String> v4 = new HashMap<String, String>();
+    v4.put(ODataPubFormat.JSON_NO_METADATA.name(), ContentType.APPLICATION_JSON + ";odata.metadata=none");
+    v4.put(ODataPubFormat.JSON.name(), ContentType.APPLICATION_JSON + ";odata.metadata=minimal");
+    v4.put(ODataPubFormat.JSON_FULL_METADATA.name(), ContentType.APPLICATION_JSON + ";odata.metadata=full");
+    v4.put(ODataPubFormat.ATOM.name(), ContentType.APPLICATION_ATOM_XML);
+    v4.put(ODataFormat.XML.name(), ContentType.APPLICATION_XML);
+    formatPerVersion.put(ODataServiceVersion.V40, v4);
+  }
 }

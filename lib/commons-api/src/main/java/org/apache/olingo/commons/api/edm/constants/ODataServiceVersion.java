@@ -48,6 +48,29 @@ public enum ODataServiceVersion {
 
   public static final String MEDIA_EDIT_LINK_REL = "mediaEditLinkRel";
 
+  public static final String JSON_TYPE = "jsonType";
+
+  public static final String JSON_ID = "jsonId";
+
+  public static final String JSON_ETAG = "jsonETag";
+
+  public static final String JSON_READ_LINK = "jsonReadLink";
+
+  public static final String JSON_EDIT_LINK = "jsonEditLink";
+
+  public static final String JSON_MEDIAREAD_LINK = "jsonMediaReadLink";
+
+  public static final String JSON_MEDIAEDIT_LINK = "jsonMediaEditLink";
+
+  public static final String JSON_MEDIA_CONTENT_TYPE = "jsonMediaContentType";
+
+  public static final String JSON_MEDIA_ETAG = "jsonMediaETag";
+
+  public static final String JSON_ASSOCIATION_LINK = "jsonAssociationLink";
+
+  public static final String JSON_NAVIGATION_LINK = "jsonNavigationLink";
+  public static final String JSON_ERROR = "jsonError";
+
   private static final Map<String, String> V30_NAMESPACES = Collections.unmodifiableMap(new HashMap<String, String>() {
 
     private static final long serialVersionUID = 3109256773218160485L;
@@ -62,6 +85,26 @@ public enum ODataServiceVersion {
     }
   });
 
+  private static final Map<String, String> V30_JSON = Collections.unmodifiableMap(new HashMap<String, String>() {
+
+    private static final long serialVersionUID = 3109256773218160485L;
+
+    {
+      put(JSON_TYPE, "odata.type");
+      put(JSON_ID, "odata.id");
+      put(JSON_ETAG, "odata.etag");
+      put(JSON_READ_LINK, "odata.readLink");
+      put(JSON_EDIT_LINK, "odata.editLink");
+      put(JSON_MEDIAREAD_LINK, "odata.mediaReadLink");
+      put(JSON_MEDIAEDIT_LINK, "odata.mediaEditLink");
+      put(JSON_MEDIA_CONTENT_TYPE, "odata.mediaContentType");
+      put(JSON_MEDIA_ETAG, "odata.mediaEtag");
+      put(JSON_ASSOCIATION_LINK, "@odata.associationLinkUrl");
+      put(JSON_NAVIGATION_LINK, "@odata.navigationLinkUrl");
+      put(JSON_ERROR, "odata.error");
+    }
+  });
+
   private static final Map<String, String> V40_NAMESPACES = Collections.unmodifiableMap(new HashMap<String, String>() {
 
     private static final long serialVersionUID = 3109256773218160485L;
@@ -73,6 +116,26 @@ public enum ODataServiceVersion {
       put(NAVIGATION_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
       put(ASSOCIATION_LINK_REL, "http://docs.oasis-open.org/odata/ns/relatedlinks/");
       put(MEDIA_EDIT_LINK_REL, "http://docs.oasis-open.org/odata/ns/edit-media/");
+    }
+  });
+
+  private static final Map<String, String> V40_JSON = Collections.unmodifiableMap(new HashMap<String, String>() {
+
+    private static final long serialVersionUID = 3109256773218160485L;
+
+    {
+      put(JSON_TYPE, "@odata.type");
+      put(JSON_ID, "@odata.id");
+      put(JSON_ETAG, "@odata.etag");
+      put(JSON_READ_LINK, "@odata.readLink");
+      put(JSON_EDIT_LINK, "@odata.editLink");
+      put(JSON_MEDIAREAD_LINK, "@odata.mediaReadLink");
+      put(JSON_MEDIAEDIT_LINK, "@odata.mediaEditLink");
+      put(JSON_MEDIA_CONTENT_TYPE, "@odata.mediaContentType");
+      put(JSON_MEDIA_ETAG, "@odata.mediaEtag");
+      put(JSON_ASSOCIATION_LINK, "@odata.associationLink");
+      put(JSON_NAVIGATION_LINK, "@odata.navigationLink");
+      put(JSON_ERROR, "error");
     }
   });
 
@@ -133,6 +196,14 @@ public enum ODataServiceVersion {
             : this == V30
             ? V30_NAMESPACES
             : V40_NAMESPACES;
+  }
+
+  public Map<String, String> getJSONMap() {
+    return this == V10 || this == V20
+            ? Collections.<String, String>emptyMap()
+            : this == V30
+            ? V30_JSON
+            : V40_JSON;
   }
 
   @Override

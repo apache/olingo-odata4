@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.data;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
+import org.apache.olingo.commons.api.Constants;
 
 public abstract class AbstractServiceDocument implements ServiceDocument {
 
@@ -35,14 +37,35 @@ public abstract class AbstractServiceDocument implements ServiceDocument {
 
   private final List<ServiceDocumentItem> entitySets = new ArrayList<ServiceDocumentItem>();
 
-  @Override
-  public String getMetadataContext() {
-    return null;
-  }
+  private String metadata;
 
   @Override
-  public String getMetadataETag() {
-    return null;
+  public URI getBaseURI() {
+    URI baseURI = null;
+    if (metadata != null) {
+      final String metadataURI = getMetadata();
+      baseURI = URI.create(metadataURI.substring(0, metadataURI.indexOf(Constants.METADATA)));
+    }
+
+    return baseURI;
+  }
+
+  /**
+   * Gets the metadata URI.
+   *
+   * @return the metadata URI
+   */
+  public String getMetadata() {
+    return metadata;
+  }
+
+  /**
+   * Sets the metadata URI.
+   *
+   * @param metadata metadata URI.
+   */
+  public void setMetadata(final String metadata) {
+    this.metadata = metadata;
   }
 
   @Override

@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.v3;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -43,7 +43,7 @@ public class ErrorTest extends AbstractTest {
 
   private void simple(final ODataPubFormat format) {
     final ODataError error = error("error", format);
-    assertNull(error.getInnerErrorStacktrace());
+    assertEquals("The URL representing the root of the service only supports GET requests.", error.getMessage());
   }
 
   @Test
@@ -58,7 +58,7 @@ public class ErrorTest extends AbstractTest {
 
   private void stacktrace(final ODataPubFormat format) {
     final ODataError error = error("stacktrace", format);
-    assertNotNull(error.getInnerErrorStacktrace());
+    assertEquals("Unsupported media type requested.", error.getMessage());
   }
 
   @Test

@@ -38,16 +38,14 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
 
     jgen.writeStartObject();
 
-    if (property.getMetadata() != null) {
-      jgen.writeStringField(Constants.JSON_METADATA, property.getMetadata().toASCIIString());
-    }
-
     if (property.getValue().isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
-    } else if (property.getValue().isSimple()) {
-      jgen.writeStringField(Constants.JSON_VALUE, property.getValue().asSimple().get());
+    } else if (property.getValue().isPrimitive()) {
+      jgen.writeStringField(Constants.VALUE, property.getValue().asPrimitive().get());
+    } else if (property.getValue().isEnum()) {
+      jgen.writeStringField(Constants.VALUE, property.getValue().asEnum().get());
     } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
-      property(jgen, property, Constants.JSON_VALUE);
+      property(jgen, property, Constants.VALUE);
     } else if (property.getValue().isComplex()) {
       for (Property cproperty : property.getValue().asComplex().get()) {
         property(jgen, cproperty, cproperty.getName());

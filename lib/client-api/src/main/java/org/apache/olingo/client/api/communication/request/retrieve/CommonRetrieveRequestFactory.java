@@ -20,6 +20,9 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.io.Serializable;
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
 
 /**
  * OData request factory class.
@@ -27,79 +30,97 @@ import java.net.URI;
 public interface CommonRetrieveRequestFactory extends Serializable {
 
   /**
-   * Gets a service document request instance.
+   * Gets a metadata request instance.
+   * <br/>
+   * Compared to {@link #getMetadataRequest(java.lang.String)}, this method returns a request instance for fetching
+   * low-level metadata representation.
    *
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
-   * @return new ODataServiceDocumentRequest instance.
+   * @return new {@link XMLMetadataRequest} instance.
    */
-  ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
+  XMLMetadataRequest getXMLMetadataRequest(String serviceRoot);
 
   /**
    * Gets a metadata request instance.
    *
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
-   * @return new ODataMetadataRequest instance.
+   * @return new {@link EdmMetadataRequest} instance.
    */
-  ODataMetadataRequest getMetadataRequest(String serviceRoot);
+  EdmMetadataRequest getMetadataRequest(String serviceRoot);
 
   /**
-   * Gets a query request returning a set of one or more OData entities.
+   * Gets a service document request instance.
    *
-   * @param query query to be performed.
-   * @return new ODataEntitySetRequest instance.
+   * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
+   * service.
+   * @return new {@link ODataServiceDocumentRequest} instance.
    */
-  ODataEntitySetRequest getEntitySetRequest(URI query);
+  ODataServiceDocumentRequest getServiceDocumentRequest(String serviceRoot);
 
   /**
-   * Gets a query request returning a set of one or more OData entities.
+   * Gets a uri request returning a set of one or more OData entities.
+   *
+   * @param <T> concrete ODataEntitySet implementation.
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetRequest} instance.
+   */
+  <T extends CommonODataEntitySet> ODataEntitySetRequest<T> getEntitySetRequest(URI uri);
+
+  /**
+   * Gets a uri request returning a set of one or more OData entities.
    * <br/>
    * Returned request gives the possibility to consume entities iterating on them without parsing and loading in memory
    * the entire entity set.
    *
-   * @param query query to be performed.
-   * @return new ODataEntitySetIteratorRequest instance.
+   * @param <ES> concreate ODataEntitySet implementation.
+   * @param <E> concrete ODataEntity implementation.
+   * @param uri request URI.
+   * @return new {@link ODataEntitySetIteratorRequest} instance.
    */
-  ODataEntitySetIteratorRequest getEntitySetIteratorRequest(URI query);
+  <ES extends CommonODataEntitySet, E extends CommonODataEntity>
+          ODataEntitySetIteratorRequest<ES, E> getEntitySetIteratorRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity.
+   * Gets a uri request returning a single OData entity.
    *
-   * @param query query to be performed.
-   * @return new ODataEntityRequest instance.
+   * @param <T> concrete ODataEntity implementation.
+   * @param uri request URI.
+   * @return new {@link ODataEntityRequest} instance.
    */
-  ODataEntityRequest getEntityRequest(URI query);
+  <T extends CommonODataEntity> ODataEntityRequest<T> getEntityRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity property.
+   * Gets a uri request returning a single OData entity property.
    *
-   * @param query query to be performed.
-   * @return new ODataPropertyRequest instance.
+   * @param <T> concrete ODataProperty implementation.
+   * @param uri request URI.
+   * @return new {@link ODataPropertyRequest} instance.
    */
-  ODataPropertyRequest getPropertyRequest(URI query);
+  <T extends CommonODataProperty> ODataPropertyRequest<T> getPropertyRequest(URI uri);
 
   /**
-   * Gets a query request returning a single OData entity property value.
+   * Gets a uri request returning a single OData entity property value.
    *
-   * @param query query to be performed.
-   * @return new ODataValueRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataValueRequest} instance.
    */
-  ODataValueRequest getValueRequest(URI query);
+  ODataValueRequest getValueRequest(URI uri);
 
   /**
-   * Gets a query request returning a media stream.
+   * Gets a uri request returning a media stream.
    *
-   * @param query query to be performed.
-   * @return new ODataMediaRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataMediaRequest} instance.
    */
-  ODataMediaRequest getMediaRequest(URI query);
+  ODataMediaRequest getMediaRequest(URI uri);
 
   /**
    * Implements a raw request request without specifying any return type.
    *
-   * @param uri query to be performed.
-   * @return new ODataRawRequest instance.
+   * @param uri request URI.
+   * @return new {@link ODataRawRequest} instance.
    */
   ODataRawRequest getRawRequest(URI uri);
 }

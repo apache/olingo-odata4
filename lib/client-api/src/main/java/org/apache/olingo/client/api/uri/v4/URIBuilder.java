@@ -18,9 +18,30 @@
  */
 package org.apache.olingo.client.api.uri.v4;
 
+import java.util.Map;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 
 public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
+
+  /**
+   * Appends enum key segment to the URI.
+   *
+   * @param enumType enum type
+   * @param memberName enum member name
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(EdmEnumType enumType, String memberName);
+
+  /**
+   * Appends key segment to the URI, for multiple keys.
+   *
+   * @param enumValues enum segment values.
+   * @param segmentValues segment values.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendKeySegment(Map<String, Pair<EdmEnumType, String>> enumValues, Map<String, Object> segmentValues);
 
   /**
    * Appends Singleton segment to the URI.
@@ -65,7 +86,7 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    *
    * @param idValue opaque token.
    * @return current URIBuilder instance
-   * @see QueryOption#ID
+   * @see org.apache.olingo.client.api.uri.QueryOption#ID
    */
   URIBuilder id(String idValue);
 
@@ -74,7 +95,7 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    *
    * @param value true or false
    * @return current URIBuilder instance
-   * @see QueryOption#COUNT
+   * @see org.apache.olingo.client.api.uri.QueryOption#COUNT
    */
   URIBuilder count(boolean value);
 
@@ -83,7 +104,19 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    *
    * @param expression search expression
    * @return current URIBuilder instance
-   * @see QueryOption#SEARCH
+   * @see org.apache.olingo.client.api.uri.QueryOption#SEARCH
    */
   URIBuilder search(String expression);
+
+  /**
+   * The set of expanded entities can be refined through the application of expand options, expressed as a
+   * semicolon-separated list of system query options, enclosed in parentheses, see [OData-URL].
+   *
+   * @param expandItem item to be expanded.
+   * @param options System query options. Allowed query options are: $filter, $select, $orderby, $skip, $top, $count,
+   * $search, $expand, and $levels.
+   * @return current URIBuilder instance.
+   * @see org.apache.olingo.client.api.uri.QueryOption#EXPAND
+   */
+  URIBuilder expandWithOptions(String expandItem, Map<String, Object> options);
 }

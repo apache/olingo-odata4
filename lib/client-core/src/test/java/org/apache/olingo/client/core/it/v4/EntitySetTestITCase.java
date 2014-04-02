@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -32,10 +32,10 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.op.ResourceFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -53,7 +53,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void rawRequestAsJSON() throws IOException {
     rawRequest(ODataPubFormat.JSON);
   }
@@ -64,19 +63,16 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSON() {
     readODataEntitySetIterator(ODataPubFormat.JSON);
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSONFullMeta() {
     readODataEntitySetIterator(ODataPubFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetIteratorFromJSONNoMeta() {
     readODataEntitySetIterator(ODataPubFormat.JSON_NO_METADATA);
   }
@@ -87,7 +83,6 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void readODataEntitySetWithNextFromJSON() {
     readEntitySetWithNextLink(ODataPubFormat.JSON_FULL_METADATA);
   }
@@ -96,16 +91,16 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("People");
 
-    final ODataEntitySetRequest req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+            getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
-    final ODataEntitySet feed = res.getBody();
+    final CommonODataEntitySet feed = res.getBody();
 
     assertNotNull(feed);
 
-    debugFeed(client.getBinder().getFeed(feed, ResourceFactory.feedClassForFormat(
-            ODataPubFormat.ATOM == format)), "Just retrieved feed");
+    assertTrue(res.getContextURL().toASCIIString().endsWith("$metadata#People"));
 
     assertEquals(5, feed.getEntities().size());
     assertNotNull(feed.getNext());
@@ -120,12 +115,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("People");
 
-    final ODataEntitySetIteratorRequest req =
+    final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
             client.getRetrieveRequestFactory().getEntitySetIteratorRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntitySetIterator> res = req.execute();
-    final ODataEntitySetIterator feedIterator = res.getBody();
+    final ODataRetrieveResponse<ODataEntitySetIterator<ODataEntitySet, ODataEntity>> res = req.execute();
+    final ODataEntitySetIterator<ODataEntitySet, ODataEntity> feedIterator = res.getBody();
 
     assertNotNull(feedIterator);
 
@@ -149,7 +144,8 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
+    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
     assertNotNull(entitySet);
+    assertTrue(res.getContextURL().toASCIIString().endsWith("$metadata#People"));
   }
 }

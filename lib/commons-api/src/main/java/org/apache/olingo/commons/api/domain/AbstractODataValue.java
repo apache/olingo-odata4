@@ -31,6 +31,20 @@ public abstract class AbstractODataValue implements ODataValue {
   private static final long serialVersionUID = 7445422004232581877L;
 
   /**
+   * Type name;
+   */
+  private final String typeName;
+
+  public AbstractODataValue(final String typeName) {
+    this.typeName = typeName;
+  }
+
+  @Override
+  public String getTypeName() {
+    return typeName;
+  }
+
+  /**
    * Check is is a primitive value.
    *
    * @return 'TRUE' if primitive; 'FALSE' otherwise.
@@ -51,26 +65,6 @@ public abstract class AbstractODataValue implements ODataValue {
   }
 
   /**
-   * Check is is a geospatail value.
-   *
-   * @return 'TRUE' if geospatail; 'FALSE' otherwise.
-   */
-  @Override
-  public boolean isGeospatial() {
-    return (this instanceof ODataGeospatialValue);
-  }
-
-  /**
-   * Casts to geospatail value.
-   *
-   * @return geospatail value.
-   */
-  @Override
-  public ODataGeospatialValue asGeospatial() {
-    return isGeospatial() ? (ODataGeospatialValue) this : null;
-  }
-
-  /**
    * Check is is a complex value.
    *
    * @return 'TRUE' if complex; 'FALSE' otherwise.
@@ -85,9 +79,10 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return complex value.
    */
+//  @SuppressWarnings("unchecked")
   @Override
-  public ODataComplexValue asComplex() {
-    return isComplex() ? (ODataComplexValue) this : null;
+  public <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex() {
+    return isComplex() ? (ODataComplexValue<OP>) this : null;
   }
 
   /**
@@ -105,9 +100,10 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return collection value.
    */
+//  @SuppressWarnings("unchecked")
   @Override
-  public ODataCollectionValue asCollection() {
-    return isCollection() ? (ODataCollectionValue) this : null;
+  public <OV extends ODataValue> ODataCollectionValue<OV> asCollection() {
+    return isCollection() ? (ODataCollectionValue<OV>) this : null;
   }
 
   @Override

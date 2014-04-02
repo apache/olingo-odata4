@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
+import org.apache.olingo.commons.api.data.Container;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -48,6 +50,16 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Logger.
    */
   protected static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
+
+  /**
+   * Context URL.
+   */
+  private URI contextURL;
+
+  /**
+   * Metadata ETag.
+   */
+  private String metadataETag;
 
   /**
    * HTTP client.
@@ -131,6 +143,24 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
     statusCode = res.getStatusLine().getStatusCode();
     statusMessage = res.getStatusLine().getReasonPhrase();
+  }
+
+  @Override
+  public URI getContextURL() {
+    return contextURL;
+  }
+
+  protected void setContextURL(final URI contextURL) {
+    this.contextURL = contextURL;
+  }
+
+  @Override
+  public String getMetadataETag() {
+    return metadataETag;
+  }
+
+  protected void setMetadataETag(final String metadataETag) {
+    this.metadataETag = metadataETag;
   }
 
   /**
@@ -272,5 +302,15 @@ public abstract class AbstractODataResponse implements ODataResponse {
     }
 
     return payload;
+  }
+
+  protected <T> T extractFromContainer(final Container<T> container) {
+    if (container == null) {
+      return null;
+    }
+    
+    setContextURL(container.getContextURL());
+    setMetadataETag(container.getMetadataETag());
+    return container.getObject();
   }
 }

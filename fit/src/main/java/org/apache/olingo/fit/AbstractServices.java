@@ -24,8 +24,6 @@ import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.ODataVersion;
 import org.apache.olingo.fit.utils.FSManager;
 
-import static org.apache.olingo.fit.utils.Constants.*;
-
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.AbstractUtilities;
@@ -54,8 +52,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public abstract class AbstractServices {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
 
-  private static Set<ODataVersion> initialized = EnumSet.noneOf(ODataVersion.class);
+  private static final Set<ODataVersion> INITIALIZED = EnumSet.noneOf(ODataVersion.class);
 
   protected abstract ODataVersion getVersion();
   protected final AbstractXMLUtilities xml;
@@ -83,9 +83,9 @@ public abstract class AbstractServices {
       this.json = new org.apache.olingo.fit.utils.v4.JSONUtilities();
     }
 
-    if (!initialized.contains(getVersion())) {
+    if (!INITIALIZED.contains(getVersion())) {
       xml.retrieveLinkInfoFromMetadata();
-      initialized.add(getVersion());
+      INITIALIZED.add(getVersion());
     }
   }
 
@@ -105,7 +105,8 @@ public abstract class AbstractServices {
       }
 
       return xml.createResponse(
-              FSManager.instance(getVersion()).readFile(SERVICES, acceptType), null, acceptType);
+              FSManager.instance(getVersion()).readFile(Constants.get(getVersion(), ConstantKey.SERVICES), acceptType),
+              null, acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -120,7 +121,7 @@ public abstract class AbstractServices {
   @Path("/$metadata")
   @Produces("application/xml")
   public Response getMetadata() {
-    return getMetadata(METADATA);
+    return getMetadata(Constants.get(getVersion(), ConstantKey.METADATA));
   }
 
   /**
@@ -132,15 +133,55 @@ public abstract class AbstractServices {
   @Path("/large/$metadata")
   @Produces("application/xml")
   public Response getLargeMetadata() {
-    return getMetadata("large" + StringUtils.capitalize(METADATA));
+    return getMetadata("large" + StringUtils.capitalize(Constants.get(getVersion(), ConstantKey.METADATA)));
   }
 
-  private Response getMetadata(final String filename) {
+  protected Response getMetadata(final String filename) {
     try {
-      return xml.
-              createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
+      return xml.createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(getVersion()), e);
+    }
+  }
+//
+//  @GET
+//  @Path("/$entity")
+//  public Response getEntityReference(@QueryParam("$id") String id){
+//    return null;
+//  }
+
+  /**
+   * Retrieve entity reference sample.
+   *
+   * @param accept Accept header.
+   * @param path path.
+   * @param format format query option.
+   * @return entity reference or feed of entity reference.
+   */
+  @GET
+  @Path("/{path:.*}/$ref")
+  public Response getEntityReference(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("path") String path,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+      if (utils.getKey() == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final String filename = Base64.encodeBase64String(path.getBytes("UTF-8"));
+
+      return utils.getValue().createResponse(
+              FSManager.instance(getVersion()).readFile(Constants.get(getVersion(), ConstantKey.REF)
+              + File.separatorChar + filename, utils.getKey()),
+              null,
+              utils.getKey());
+    } catch (Exception e) {
+      LOG.error("Error retrieving entity", e);
+      return xml.createFaultResponse(accept, e);
     }
   }
 
@@ -378,15 +419,20 @@ public abstract class AbstractServices {
         builder.append(basePath);
 
         if (StringUtils.isNotBlank(orderby)) {
-          builder.append(ORDERBY).append(File.separatorChar).append(orderby).append(File.separatorChar);
+          builder.append(Constants.get(getVersion(), ConstantKey.ORDERBY)).append(File.separatorChar).
+                  append(orderby).append(File.separatorChar);
         }
 
         if (StringUtils.isNotBlank(filter)) {
-          builder.append(FILTER).append(File.separatorChar).append(filter.replaceAll("/", "."));
+          builder.append(Constants.get(getVersion(), ConstantKey.FILTER)).append(File.separatorChar).
+                  append(filter.replaceAll("/", "."));
         } else if (StringUtils.isNotBlank(skiptoken)) {
-          builder.append(SKIP_TOKEN).append(File.separatorChar).append(skiptoken);
+          builder.append(Constants.get(getVersion(), ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
+                  append(skiptoken);
         } else {
-          builder.append(FEED);
+          builder.append(Commons.getLinkInfo().get(getVersion()).isSingleton(name)
+                  ? Constants.get(getVersion(), ConstantKey.ENTITY)
+                  : Constants.get(getVersion(), ConstantKey.FEED));
         }
 
         InputStream feed = FSManager.instance(getVersion()).readFile(builder.toString(), acceptType);
@@ -483,7 +529,8 @@ public abstract class AbstractServices {
 
       if (keyAsSegment) {
         entity = utils.getValue().addEditLink(
-                entity, entitySetName, Constants.DEFAULT_SERVICE_URL + entitySetName + "/" + entityId);
+                entity, entitySetName,
+                Constants.get(getVersion(), ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
       }
 
       if (StringUtils.isNotBlank(select)) {
@@ -548,7 +595,7 @@ public abstract class AbstractServices {
       final String basePath =
               entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
 
-      FSManager.instance(getVersion()).deleteFile(basePath + ENTITY);
+      FSManager.instance(getVersion()).deleteFile(basePath + Constants.get(getVersion(), ConstantKey.ENTITY));
 
       return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -970,15 +1017,17 @@ public abstract class AbstractServices {
 
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
-    InputStream stream = FSManager.instance(getVersion()).readFile(
-            basePath + ENTITY, acceptType == null || acceptType == Accept.TEXT
-            ? Accept.XML : acceptType);
-
     final AbstractUtilities utils = getUtilities(acceptType);
 
     final List<String> pathElements = Arrays.asList(path.split("\\/"));
 
+    InputStream stream;
+
     if (searchForValue) {
+      stream = FSManager.instance(getVersion()).readFile(
+              basePath + Constants.get(getVersion(), ConstantKey.ENTITY),
+              acceptType == null || acceptType == Accept.TEXT ? Accept.XML : acceptType);
+
       stream = utils.getPropertyValue(stream, pathElements);
     } else {
       String edmType = xml.getEdmTypeFromAtom(entitySetName, entityId, pathElements);
