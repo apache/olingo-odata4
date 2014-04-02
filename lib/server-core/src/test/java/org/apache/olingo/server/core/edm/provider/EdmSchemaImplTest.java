@@ -322,12 +322,14 @@ public class EdmSchemaImplTest {
 
       List<EntityType> entityTypes = new ArrayList<EntityType>();
       entityTypes.add(new EntityType().setName("entityType1"));
-      entityTypes.add(new EntityType().setName("entityType2"));
+      entityTypes.add(new EntityType().setName("entityType2")
+          .setBaseType(new FullQualifiedName("namespace", "entityType1")));
       providerSchema.setEntityTypes(entityTypes);
 
       List<ComplexType> complexTypes = new ArrayList<ComplexType>();
       complexTypes.add(new ComplexType().setName("complexType1"));
-      complexTypes.add(new ComplexType().setName("complexType2"));
+      complexTypes.add(new ComplexType().setName("complexType2").setBaseType(
+          new FullQualifiedName("namespace", "complexType1")));
       providerSchema.setComplexTypes(complexTypes);
 
       List<Action> actions = new ArrayList<Action>();

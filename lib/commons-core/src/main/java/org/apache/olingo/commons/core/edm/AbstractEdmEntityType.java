@@ -34,19 +34,15 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType implements EdmEntityType {
 
   private final boolean hasStream;
-
   protected EdmEntityType entityBaseType;
-
   private final List<String> keyPredicateNames = new ArrayList<String>();
-
   private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = new LinkedHashMap<String, EdmKeyPropertyRef>();
-
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
-  protected AbstractEdmEntityType(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
+  protected AbstractEdmEntityType(final Edm edm, final FullQualifiedName typeName, final FullQualifiedName baseTypeName,
           final boolean hashStream) {
 
-    super(edm, fqn, EdmTypeKind.ENTITY, baseTypeName);
+    super(edm, typeName, EdmTypeKind.ENTITY, baseTypeName);
     this.hasStream = hashStream;
   }
 
@@ -76,11 +72,13 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
 
   @Override
   public EdmEntityType getBaseType() {
+    checkBaseType();
     return entityBaseType;
   }
 
   @Override
   public List<String> getKeyPredicateNames() {
+    checkBaseType();
     if (keyPredicateNames.isEmpty() && baseType != null) {
       return entityBaseType.getKeyPredicateNames();
     }
@@ -89,6 +87,7 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
 
   @Override
   public List<EdmKeyPropertyRef> getKeyPropertyRefs() {
+    checkBaseType();
     if (keyPropertyRefsList == null) {
       keyPropertyRefsList = new ArrayList<EdmKeyPropertyRef>(keyPropertyRefs.values());
     }
@@ -100,6 +99,7 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
 
   @Override
   public EdmKeyPropertyRef getKeyPropertyRef(final String keyPredicateName) {
+    checkBaseType();
     final EdmKeyPropertyRef edmKeyPropertyRef = keyPropertyRefs.get(keyPredicateName);
     if (edmKeyPropertyRef == null && entityBaseType != null) {
       return entityBaseType.getKeyPropertyRef(keyPredicateName);
@@ -110,5 +110,9 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
   @Override
   public boolean hasStream() {
     return hasStream;
+  }
+  
+  protected void checkBaseType() {
+    //Current Client implementation doesn`t need this so I implemented an empty body here.
   }
 }

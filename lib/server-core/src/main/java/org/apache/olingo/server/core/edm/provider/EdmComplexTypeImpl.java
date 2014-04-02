@@ -36,8 +36,6 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
       final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
 
     final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, name, complexType);
-    instance.baseType = instance.buildBaseType(complexType.getBaseType());
-
     return instance;
   }
 

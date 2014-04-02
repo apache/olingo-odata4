@@ -59,7 +59,7 @@ public class EdmComplexTypeImplTest {
     List<NavigationProperty> baseNavigationProperties = new ArrayList<NavigationProperty>();
     baseNavigationProperties.add(new NavigationProperty().setName("nav1"));
     baseComplexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(baseProperties)
-            .setNavigationProperties(baseNavigationProperties);
+        .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);
 
     baseType = EdmComplexTypeImpl.getInstance(edm, baseName, baseComplexType);
@@ -71,7 +71,7 @@ public class EdmComplexTypeImplTest {
     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
     navigationProperties.add(new NavigationProperty().setName("nav2"));
     complexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(properties)
-            .setNavigationProperties(navigationProperties);
+        .setNavigationProperties(navigationProperties);
     when(provider.getComplexType(name)).thenReturn(complexType);
 
     type = EdmComplexTypeImpl.getInstance(edm, name, complexType);
@@ -155,10 +155,12 @@ public class EdmComplexTypeImplTest {
     EdmProvider provider = mock(EdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     FullQualifiedName typeWithNonexistingBaseTypeName = new FullQualifiedName("namespace", "typeName");
-    ComplexType complexTypeForNonexistingBaseType
-            = new ComplexType().setBaseType(new FullQualifiedName("wrong", "wrong"));
+    ComplexType complexTypeForNonexistingBaseType =
+        new ComplexType().setBaseType(new FullQualifiedName("wrong", "wrong"));
     complexTypeForNonexistingBaseType.setName("typeName");
     when(provider.getComplexType(typeWithNonexistingBaseTypeName)).thenReturn(complexTypeForNonexistingBaseType);
-    EdmComplexTypeImpl.getInstance(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);
+    EdmComplexTypeImpl instance =
+        EdmComplexTypeImpl.getInstance(edm, typeWithNonexistingBaseTypeName, complexTypeForNonexistingBaseType);
+    instance.getBaseType();
   }
 }
