@@ -16,23 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.commons.core.edm;
 
-import java.io.InputStream;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataSerializer;
+public class EdmNavigationPropertyBindingImpl implements EdmNavigationPropertyBinding {
 
-public class ODataSerializerImpl implements ODataSerializer {
+  private final String path;
+  private final String target;
 
-  @Override
-  public InputStream metadata(Edm edm) {
-       return null;
+  public EdmNavigationPropertyBindingImpl(String path, String target){
+    this.path = path;
+    this.target = target;
   }
 
   @Override
-  public InputStream serviceDocument(Edm edm, String serviceRoot) {
-    return null;
+  public String getPath() {
+    return path;
   }
 
+  @Override
+  public String getTarget() {
+    return target;
+  }
+  
 }

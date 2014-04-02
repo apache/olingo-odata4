@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -22,12 +22,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.Property;
 import org.apache.olingo.server.api.edm.provider.PropertyRef;
+import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
 
 /**
  * Implement the EdmTechProvider and
@@ -36,6 +38,10 @@ import org.apache.olingo.server.api.edm.provider.PropertyRef;
  * <li>adds a <b>abc</b> entity set of type <b>ETabc</b></li>
  */
 public class EdmTechTestProvider extends EdmTechProvider {
+
+  private static final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
+  public static final String nameSpace = "com.sap.odata.test1";
+  public static final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "Container");
 
   Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
   Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
@@ -64,7 +70,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
 
   @Override
   public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
-    if (entityContainer == nameContainer) {
+    if (nameContainer.equals(entityContainer)) {
       if (name.equals("ESabc")) {
         return new EntitySet()
             .setName("ESabc")

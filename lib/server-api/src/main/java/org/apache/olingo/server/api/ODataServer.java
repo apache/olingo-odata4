@@ -19,6 +19,8 @@
 package org.apache.olingo.server.api;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.serializer.ODataFormat;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 
 
 public abstract class ODataServer {

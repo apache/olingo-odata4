@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
 
@@ -102,6 +103,12 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
   public boolean isIncludeInServiceDocument() {
     //V3 states that all entity sets are included in the service document
     return true;
+  }
+
+  @Override
+  public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
+    //There are no navigation property bindings in V3 so we will deliver an empty list
+    return new ArrayList<EdmNavigationPropertyBinding>();
   }
 
 }

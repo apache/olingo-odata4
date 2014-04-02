@@ -16,16 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.commons.api.edm;
 
-import java.io.InputStream;
+//TODO: JavaDoc
+public interface EdmNavigationPropertyBinding {
 
-import org.apache.olingo.commons.api.edm.Edm;
-
-public interface ODataSerializer {
-
-  InputStream metadata(Edm edm);
-
-  InputStream serviceDocument(Edm edm, String serviceRoot);
-
+  String getPath();
+  
+  String getTarget();
+  
 }

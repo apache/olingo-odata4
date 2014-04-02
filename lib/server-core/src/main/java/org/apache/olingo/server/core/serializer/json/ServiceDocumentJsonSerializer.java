@@ -16,34 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.core.serializer.json;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.server.api.ODataSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
-public class ODataJsonSerializer implements ODataSerializer {
-
-  private static final Logger log = LoggerFactory.getLogger(ODataJsonSerializer.class);
-
-  private static final String DEFAULT_CHARSET = "UTF-8";
-
+public class ServiceDocumentJsonSerializer {
   public static final String ODATA_CONTEXT = "@odata.context";
   public static final String METADATA = "$metadata";
   public static final String VALUE = "value";
@@ -55,58 +41,27 @@ public class ODataJsonSerializer implements ODataSerializer {
   public static final String SINGLETON = "Singleton";
   public static final String SERVICE_DOCUMENT = "ServiceDocument";
 
-  @Override
-  public InputStream metadata(Edm edm) {
-    throw new ODataRuntimeException("Metadata in JSON format not supported!");
+  private final Edm edm;
+  private final String serviceRoot;
+
+  public ServiceDocumentJsonSerializer(final Edm edm, final String serviceRoot) {
+    this.edm = edm;
+    this.serviceRoot = serviceRoot;
   }
 
-  @Override
-  public InputStream serviceDocument(Edm edm, String serviceRoot) {
-    CircleStreamBuffer buffer;
-    BufferedWriter writer;
-    JsonFactory factory;
-    JsonGenerator gen = null;
+  public void writeServiceDocument(final JsonGenerator gen) throws JsonGenerationException, IOException {
+    gen.writeStartObject();
 
-    try {
-      buffer = new CircleStreamBuffer();
-      writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      factory = new JsonFactory();
-      gen = factory.createGenerator(writer);
+    Object metadataUri = serviceRoot + "/" + METADATA;
+    gen.writeObjectField(ODATA_CONTEXT, metadataUri);
+    gen.writeArrayFieldStart(VALUE);
 
-      gen.setPrettyPrinter(new DefaultPrettyPrinter());
-
-      gen.writeStartObject();
-
-      Object metadataUri = serviceRoot + "/" + METADATA;
-      gen.writeObjectField(ODATA_CONTEXT, metadataUri);
-      gen.writeArrayFieldStart(VALUE);
-
-      writeEntitySets(gen, edm);
-      writeFunctionImports(gen, edm);
-      writeSingletons(gen, edm);
-
-      gen.close();
-
-//      writer.flush();
-//      buffer.closeWrite();
-
-      return buffer.getInputStream();
-
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      throw new ODataRuntimeException(e);
-    } finally {
-      if (gen != null) {
-        try {
-          gen.close();
-        } catch (IOException e) {
-          throw new ODataRuntimeException(e);
-        }
-      }
-    }
+    writeEntitySets(gen, edm);
+    writeFunctionImports(gen, edm);
+    writeSingletons(gen, edm);
   }
 
-  private void writeEntitySets(JsonGenerator gen, Edm edm) throws JsonGenerationException, IOException {
+  private void writeEntitySets(final JsonGenerator gen, final Edm edm) throws JsonGenerationException, IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
@@ -119,7 +74,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  private void writeFunctionImports(JsonGenerator gen, Edm edm) throws JsonGenerationException, IOException {
+  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws JsonGenerationException,
+      IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {
@@ -133,7 +89,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  private void writeSingletons(JsonGenerator gen, Edm edm) throws JsonGenerationException, IOException {
+  private void writeSingletons(final JsonGenerator gen, final Edm edm) throws JsonGenerationException, IOException {
     EdmEntityContainer container = edm.getEntityContainer(null);
 
     for (EdmSingleton edmSingleton : container.getSingletons()) {

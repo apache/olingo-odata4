@@ -32,8 +32,6 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
-import org.apache.olingo.server.core.edm.provider.EdmActionImportImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

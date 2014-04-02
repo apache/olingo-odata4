@@ -19,21 +19,23 @@
 package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.ODataFormat;
-import org.apache.olingo.server.api.ODataSerializer;
 import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.serializer.ODataFormat;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.core.serializer.ODataJsonSerializer;
+import org.apache.olingo.server.core.serializer.ODataXmlSerializerImpl;
 
 public class ODataServerImpl extends ODataServer {
 
   @Override
-  public ODataSerializer getSerializer(ODataFormat format) {
+  public ODataSerializer getSerializer(final ODataFormat format) {
     ODataSerializer serializer;
     switch (format) {
     case JSON:
       serializer = new ODataJsonSerializer();
       break;
     case XML:
-      serializer = new ODataSerializerImpl();
+      serializer = new ODataXmlSerializerImpl();
       break;
     default:
       throw new ODataRuntimeException("Unsupported format: " + format);

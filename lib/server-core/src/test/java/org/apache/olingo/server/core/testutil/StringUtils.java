@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 public class StringUtils {
-  
+
   public static String inputStreamToString(final InputStream in, final boolean preserveLineBreaks) {
     try {
       final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
@@ -48,5 +48,5 @@ public class StringUtils {
       throw new RuntimeException(e);
     }
   }
-  
+
 }

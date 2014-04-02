@@ -30,8 +30,11 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.core.testutil.techprovider.ComplexTypeProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EnumTypeProvider;
+import org.apache.olingo.server.core.testutil.techprovider.PropertyProvider;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -62,28 +65,28 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
   }
 
   @Test
@@ -94,13 +97,13 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, false)
+        .isType(ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESBaseTwoKeyNav");
 
@@ -109,16 +112,16 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, false)
+        .isType(ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESBaseTwoKeyNav")
-        .isType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isUriPathInfoKind(UriResourceKind.count);
 
@@ -134,7 +137,7 @@ public class TestFullResourcePath {
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true)
+        .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .n()
         .isFunction("BFCCollCTPrimCompRTESAllPrim");
 
@@ -147,10 +150,10 @@ public class TestFullResourcePath {
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true)
+        .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .n()
         .isFunction("BFCCollCTPrimCompRTESAllPrim")
-        .isType(EdmTechProvider.nameETAllPrim, true)
+        .isType(EntityTypeProvider.nameETAllPrim, true)
         .n()
         .isUriPathInfoKind(UriResourceKind.count);
   }
@@ -167,7 +170,7 @@ public class TestFullResourcePath {
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, false)
+        .isType(ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESTwoKeyNav");
 
@@ -181,10 +184,10 @@ public class TestFullResourcePath {
         .n()
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, false)
+        .isType(ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .n()
         .isUriPathInfoKind(UriResourceKind.count);
 
@@ -210,10 +213,10 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTESTwoKeyNav");
 
@@ -223,8 +226,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'(''2'')'")
         .n()
@@ -238,8 +241,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
 
@@ -249,12 +252,12 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey")
-        .isType(EdmTechProvider.nameETBaseTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isType(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav"
         + "/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()"
@@ -265,11 +268,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
   }
 
   @Test
@@ -280,7 +283,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESAllPrim")
         .n()
         .isFunction("BFCESAllPrimRTCTAllPrim")
-        .isType(EdmTechProvider.nameCTAllPrim);
+        .isType(ComplexTypeProvider.nameCTAllPrim);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/com.sap.odata.test1.CTBase")
         .isKind(UriInfoKind.resource).goPath()
@@ -288,8 +291,8 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTCTTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim, false)
-        .isTypeFilterOnEntry(EdmTechProvider.nameCTBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim, false)
+        .isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase);
   }
 
   @Test
@@ -300,7 +303,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTCollCTTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim, true);
+        .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -308,7 +311,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTCollCTTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim, true)
+        .isType(ComplexTypeProvider.nameCTTwoPrim, true)
         .n()
         .isUriPathInfoKind(UriResourceKind.count);
   }
@@ -322,7 +325,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTTwoKeyNav")
         .n()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false);
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTTwoKeyNav()/NavPropertyETKeyNavOne/$ref")
         .isKind(UriInfoKind.resource).goPath()
@@ -331,7 +334,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTTwoKeyNav")
         .n()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .n()
         .isUriPathInfoKind(UriResourceKind.ref);
 
@@ -342,7 +345,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
-        .isNavProperty("NavPropertyETMediaOne", EdmTechProvider.nameETMedia, false)
+        .isNavProperty("NavPropertyETMediaOne", EntityTypeProvider.nameETMedia, false)
         .n()
         .isValue();
 
@@ -355,7 +358,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyComplex")
@@ -366,10 +369,10 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp);
+        .isType(ComplexTypeProvider.nameCTPrimComp);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex")
@@ -380,13 +383,13 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp)
+        .isType(ComplexTypeProvider.nameCTPrimComp)
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTAllPrim);
+        .isType(ComplexTypeProvider.nameCTAllPrim);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavOne/PropertyString")
@@ -397,9 +400,9 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/PropertyString")
@@ -410,11 +413,11 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
   @Test
@@ -427,9 +430,9 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTTwoKeyNav")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri
         .run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')"
@@ -439,13 +442,13 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
   }
 
@@ -460,7 +463,7 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTNavFiveProp);
+        .isType(ComplexTypeProvider.nameCTNavFiveProp);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComplex/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
@@ -470,9 +473,9 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTNavFiveProp)
+        .isType(ComplexTypeProvider.nameCTNavFiveProp)
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyComplex/PropertyInt16/$value")
         .isKind(UriInfoKind.resource).goPath()
@@ -482,9 +485,9 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
         .isComplex("PropertyComplex")
-        .isType(EdmTechProvider.nameCTNavFiveProp)
+        .isType(ComplexTypeProvider.nameCTNavFiveProp)
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .n()
         .isValue();
 
@@ -503,8 +506,8 @@ public class TestFullResourcePath {
         .isParameter(0, "ParameterString", "'1'")
         .n()
         .isComplex("PropertyComplexTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isTypeFilter(EdmTechProvider.nameCTTwoBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString='1')"
         + "/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
@@ -516,13 +519,13 @@ public class TestFullResourcePath {
         .isFunction("BFCESKeyNavRTETKeyNavParam")
         .isParameter(0, "ParameterString", "'1'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isComplex("PropertyComplexTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isTypeFilter(EdmTechProvider.nameCTTwoBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
   }
 
   @Test
@@ -534,7 +537,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESKeyNavRTETKeyNav()/PropertyInt16/$value")
         .isKind(UriInfoKind.resource).goPath()
@@ -543,7 +546,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESKeyNavRTETKeyNav")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .n()
         .isValue();
 
@@ -558,7 +561,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
@@ -567,7 +570,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isParameter(0, "ParameterString", "'2'")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .isKind(UriInfoKind.resource).goPath()
@@ -575,7 +578,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     testUri.run("ESKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
         .isKind(UriInfoKind.resource).goPath()
@@ -584,7 +587,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
         .isParameter(0, "ParameterString", "'3'")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -592,7 +595,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .n()
         .isCount();
 
@@ -618,7 +621,7 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp)
+        .isType(ComplexTypeProvider.nameCTPrimComp)
         .n()
         .isFunction("BFCCollCTPrimCompRTESAllPrim")
         .n()
@@ -641,7 +644,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTString")
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .n()
         .isValue();
   }
@@ -654,7 +657,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTCollString")
-        .isType(EdmTechProvider.nameString, true);
+        .isType(PropertyProvider.nameString, true);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTCollString()/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -662,7 +665,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .n()
         .isFunction("BFCESTwoKeyNavRTCollString")
-        .isType(EdmTechProvider.nameString, true)
+        .isType(PropertyProvider.nameString, true)
         .n()
         .isCount();
   }
@@ -675,10 +678,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
         .n()
         .isFunction("BFCCollStringRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESKeyNav(1)/CollPropertyString/com.sap.odata.test1.BFCCollStringRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -686,10 +689,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
         .n()
         .isFunction("BFCCollStringRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .n()
         .isCount();
   }
@@ -703,10 +706,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .n()
         .isFunction("BFCStringRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESKeyNav(1)/PropertyString/com.sap.odata.test1.BFCStringRTESTwoKeyNav()/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -714,10 +717,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .n()
         .isFunction("BFCStringRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .n()
         .isCount();
 
@@ -727,10 +730,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .n()
         .isFunction("BFCStringRTESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .n()
         .isRef();
   }
@@ -742,7 +745,7 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isFunction("BFCSINavRTESTwoKeyNav");
   }
@@ -753,8 +756,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTESBaseTwoKey");
   }
@@ -798,20 +801,20 @@ public class TestFullResourcePath {
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETAllPrim, false)
+        .isType(EntityTypeProvider.nameETAllPrim, false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.primitiveProperty)
-        .isType(EdmTechProvider.nameString);
+        .isType(PropertyProvider.nameString);
 
     // on collection of primitive
     testUri.run("ESCollAllPrim(1)/CollPropertyString/com.sap.odata.test1.BFCCollStringRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETCollAllPrim, false)
+        .isType(EntityTypeProvider.nameETCollAllPrim, false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.primitiveProperty)
-        .isType(EdmTechProvider.nameString);
+        .isType(PropertyProvider.nameString);
 
     // on complex
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')"
@@ -819,11 +822,11 @@ public class TestFullResourcePath {
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.complexProperty)
         .at(2)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // on collection of complex
     testUri.run("ESKeyNav(1)/CollPropertyComplex/com.sap.odata.test1.BFCCollCTPrimCompRTESAllPrim()")
@@ -831,10 +834,10 @@ public class TestFullResourcePath {
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .at(1)
-        .isType(EdmTechProvider.nameCTPrimComp, true)
+        .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .at(2)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETAllPrim);
+        .isType(EntityTypeProvider.nameETAllPrim);
 
     // on entity
     testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')"
@@ -842,19 +845,19 @@ public class TestFullResourcePath {
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .at(1)
         .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // on collection of entity
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .at(1).isUriPathInfoKind(UriResourceKind.function)
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
   }
 
   @Test
@@ -867,7 +870,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isAction("BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
 
@@ -876,10 +879,10 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav)
         .n()
         .isAction("BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
   }
@@ -910,7 +913,7 @@ public class TestFullResourcePath {
         .isIdText("ESKeyNav(1)");
     testUri.run("$entity/com.sap.odata.test1.ETKeyNav?$id=ESKeyNav(1)")
         .isKind(UriInfoKind.entityId)
-        .isEntityType(EdmTechProvider.nameETKeyNav)
+        .isEntityType(EntityTypeProvider.nameETKeyNav)
         .isIdText("ESKeyNav(1)");
   }
 
@@ -929,13 +932,13 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
-        .isType(EdmTechProvider.nameETAllPrim, true);
+        .isType(EntityTypeProvider.nameETAllPrim, true);
 
     testUri.run("ESAllPrim/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllPrim")
-        .isType(EdmTechProvider.nameETAllPrim, true)
+        .isType(EntityTypeProvider.nameETAllPrim, true)
         .n()
         .isCount();
   }
@@ -988,32 +991,32 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBase);
+        .isType(EntityTypeProvider.nameETTwoPrim, true)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(-32768)/com.sap.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBase)
+        .isType(EntityTypeProvider.nameETTwoPrim, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
         .isKeyPredicate(0, "PropertyInt16", "-32768")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBase);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(-32768)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase)
+        .isType(EntityTypeProvider.nameETTwoPrim, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase)
         .isKeyPredicate(0, "PropertyInt16", "-32768");
 
     testUri.run("ESTwoPrim/Namespace1_Alias.ETTwoBase(-32768)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase)
+        .isType(EntityTypeProvider.nameETTwoPrim, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase)
         .isKeyPredicate(0, "PropertyInt16", "-32768");
 
   }
@@ -1025,26 +1028,26 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false);
+        .isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
         + "/PropertyComplex/PropertyInt16")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
   }
 
   @Test
@@ -1118,48 +1121,48 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EntityTypeProvider.nameETTwoPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBase);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBase);
 
     testUri.run("ESTwoPrim(1)/com.sap.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EntityTypeProvider.nameETTwoPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBase);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EntityTypeProvider.nameETTwoPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBase);
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EntityTypeProvider.nameETTwoPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase);
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETBase(1)/com.sap.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
+        .isType(EntityTypeProvider.nameETTwoPrim)
         .isKeyPredicate(0, "PropertyInt16", "1")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBase);
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase);
 
     testUri.run("ESTwoPrim/com.sap.odata.test1.ETTwoBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoPrim")
-        .isType(EdmTechProvider.nameETTwoPrim)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBase);
+        .isType(EntityTypeProvider.nameETTwoPrim)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
   }
 
   @Test
@@ -1168,17 +1171,17 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'");
   }
@@ -1215,27 +1218,27 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "5")
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTTwoPrim, true);
+        .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/CollPropertyComplex")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true);
+        .isType(ComplexTypeProvider.nameCTPrimComp, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/CollPropertyComplex/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true)
+        .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .n()
         .isCount();
   }
@@ -1248,8 +1251,8 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex");
 
@@ -1259,8 +1262,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
@@ -1274,15 +1277,15 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
 
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplexTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isTypeFilter(EdmTechProvider.nameCTBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim)
+        .isTypeFilter(ComplexTypeProvider.nameCTBase);
 
     testUri
         .run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
@@ -1290,14 +1293,14 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplexTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isTypeFilter(EdmTechProvider.nameCTTwoBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBase);
   }
 
   @Test
@@ -1308,7 +1311,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true);
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETKeyNavMany(2)")
         .isKind(UriInfoKind.resource).goPath()
@@ -1316,7 +1319,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2");
 
     testUri.run("ESKeyNav(PropertyInt16=1)/NavPropertyETKeyNavMany(PropertyInt16=2)")
@@ -1325,7 +1328,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2");
 
     testUri.run("ESKeyNav(1)/NavPropertyETKeyNavMany(2)/PropertyInt16")
@@ -1334,10 +1337,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav(1)/NavPropertyETKeyNavMany(2)/PropertyComplex")
         .isKind(UriInfoKind.resource).goPath()
@@ -1345,7 +1348,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .n()
         .isComplex("PropertyComplex");
@@ -1356,10 +1359,10 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .n()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false);
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
         + "/NavPropertyETKeyNavMany(4)")
@@ -1368,11 +1371,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "4");
 
     testUri.run("ESKeyNav(1)/PropertyComplex/NavPropertyETTwoKeyNavOne")
@@ -1383,7 +1386,7 @@ public class TestFullResourcePath {
         .n()
         .isComplex("PropertyComplex")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='(3)')"
         + "/PropertyComplex/PropertyComplex/PropertyInt16")
@@ -1392,7 +1395,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'(3)'")
         .n()
@@ -1400,7 +1403,7 @@ public class TestFullResourcePath {
         .n()
         .isComplex("PropertyComplex")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav(1)/NavPropertyETMediaMany(2)/$value")
         .isKind(UriInfoKind.resource).goPath()
@@ -1408,7 +1411,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETMediaMany", EdmTechProvider.nameETMedia, false)
+        .isNavProperty("NavPropertyETMediaMany", EntityTypeProvider.nameETMedia, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .n()
         .isValue();
@@ -1420,13 +1423,13 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .n()
-        .isNavProperty("NavPropertyETMediaOne", EdmTechProvider.nameETMedia, false)
+        .isNavProperty("NavPropertyETMediaOne", EntityTypeProvider.nameETMedia, false)
         .n()
         .isValue();
 
@@ -1437,11 +1440,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .n()
         .isRef();
   }
@@ -1453,24 +1456,24 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
         + "/NavPropertyETKeyNavMany(3)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "3");
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav"
@@ -1478,15 +1481,15 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "3")
         .isKeyPredicate(1, "PropertyString", "'4'")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')"
         + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')"
@@ -1496,18 +1499,18 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "4")
         .isKeyPredicate(1, "PropertyString", "'5'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETBaseTwoKeyNavMany", EdmTechProvider.nameETBaseTwoKeyNav, true);
+        .isNavProperty("NavPropertyETBaseTwoKeyNavMany", EntityTypeProvider.nameETBaseTwoKeyNav, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/"
         + "NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=4,PropertyString='5')/"
@@ -1517,16 +1520,16 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "4")
         .isKeyPredicate(1, "PropertyString", "'5'")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
   }
 
   @Test
@@ -1537,7 +1540,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicateRef(0, "PropertyInt16", "PropertyInt16")
         .isKeyPredicate(1, "PropertyString", "'2'");
 
@@ -1546,7 +1549,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicateRef(0, "PropertyInt16", "PropertyInt16")
         .isKeyPredicate(1, "PropertyString", "'2'");
 
@@ -1560,7 +1563,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyByte", EdmTechProvider.nameByte, false);
+        .isPrimitiveProperty("PropertyByte", PropertyProvider.nameByte, false);
 
     testUri.run("ESAllPrim(1)/PropertyByte/$value")
         .isKind(UriInfoKind.resource).goPath()
@@ -1568,7 +1571,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyByte", EdmTechProvider.nameByte, false)
+        .isPrimitiveProperty("PropertyByte", PropertyProvider.nameByte, false)
         .n()
         .isValue();
 
@@ -1580,7 +1583,7 @@ public class TestFullResourcePath {
         .n()
         .isComplex("PropertyComplex")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
   @Test
@@ -1591,7 +1594,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESCollAllPrim")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true);
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/CollPropertyString")
         .isKind(UriInfoKind.resource).goPath()
@@ -1599,9 +1602,9 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true);
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=2,PropertyString='3')/CollPropertyString/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -1609,11 +1612,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
         .n()
         .isCount();
 
@@ -1641,7 +1644,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n()
         .isRef();
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='2')/$ref")
@@ -1650,7 +1653,7 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
@@ -1673,8 +1676,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTETTwoKeyNav");
 
@@ -1686,8 +1689,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
@@ -1702,7 +1705,7 @@ public class TestFullResourcePath {
         .first()
         .isFunctionImport("FICRTETKeyNav")
         .isFunction("UFCRTETKeyNav")
-        .isType(EdmTechProvider.nameETKeyNav);
+        .isType(EntityTypeProvider.nameETKeyNav);
 
     testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')")
         .isKind(UriInfoKind.resource).goPath()
@@ -1741,8 +1744,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')"
         + "/com.sap.odata.test1.ETBaseTwoKeyNav")
@@ -1753,8 +1756,8 @@ public class TestFullResourcePath {
         .isParameter(0, "ParameterInt16", "1")
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)"
         + "/com.sap.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')")
@@ -1763,8 +1766,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'");
   }
@@ -1779,7 +1782,7 @@ public class TestFullResourcePath {
         .isFunction("UFCRTESMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
-        .isType(EdmTechProvider.nameETMixPrimCollComp);
+        .isType(EntityTypeProvider.nameETMixPrimCollComp);
 
     testUri.run("FINRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
@@ -1788,7 +1791,7 @@ public class TestFullResourcePath {
         .isFunction("UFNRTESMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
-        .isType(EdmTechProvider.nameETMixPrimCollComp);
+        .isType(EntityTypeProvider.nameETMixPrimCollComp);
 
     testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -1797,7 +1800,7 @@ public class TestFullResourcePath {
         .isFunction("UFCRTESMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
-        .isType(EdmTechProvider.nameETMixPrimCollComp)
+        .isType(EntityTypeProvider.nameETMixPrimCollComp)
         .n()
         .isCount();
   }
@@ -1825,8 +1828,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTESTwoKeyNavParam(ParameterInt16=1)/com.sap.odata.test1.ETBaseTwoKeyNav/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -1834,8 +1837,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isCount();
 
@@ -1846,8 +1849,8 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'");
 
@@ -1859,11 +1862,11 @@ public class TestFullResourcePath {
         .isFunctionImport("FICRTESTwoKeyNavParam")
         .isFunction("UFCRTESTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
-        .isTypeFilterOnEntry(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
   }
 
@@ -1882,19 +1885,19 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany(1)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1");
 
   }
@@ -1905,8 +1908,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex");
 
@@ -1914,8 +1917,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplex")
         .n()
@@ -1925,12 +1928,12 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
         .isComplex("PropertyComplexTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim)
-        .isTypeFilter(EdmTechProvider.nameCTBase);
+        .isType(ComplexTypeProvider.nameCTTwoPrim)
+        .isTypeFilter(ComplexTypeProvider.nameCTBase);
 
   }
 
@@ -1940,20 +1943,20 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("SINav/com.sap.odata.test1.ETBaseTwoKeyNav/CollPropertyString")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilter(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilter(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
-        .isType(EdmTechProvider.nameString, true);
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
+        .isType(PropertyProvider.nameString, true);
 
   }
 
@@ -1964,14 +1967,14 @@ public class TestFullResourcePath {
         .first()
         .isSingleton("SINav")
         .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("SINav/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'");
 
@@ -2005,7 +2008,7 @@ public class TestFullResourcePath {
         .isSingleton("SINav")
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true);
+        .isType(ComplexTypeProvider.nameCTPrimComp, true);
 
     testUri.run("SINav/CollPropertyComplex/$count")
         .isKind(UriInfoKind.resource).goPath()
@@ -2013,7 +2016,7 @@ public class TestFullResourcePath {
         .isSingleton("SINav")
         .n()
         .isComplex("CollPropertyComplex")
-        .isType(EdmTechProvider.nameCTPrimComp, true)
+        .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .n()
         .isCount();
   }
@@ -2025,7 +2028,7 @@ public class TestFullResourcePath {
         .first()
         .isSingleton("SINav")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
   @Test
@@ -2036,13 +2039,13 @@ public class TestFullResourcePath {
         .first()
         .isSingleton("SINav")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true);
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
     testUri.run("SINav/CollPropertyString/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isSingleton("SINav")
         .n()
-        .isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
         .n()
         .isCount();
   }
@@ -2067,7 +2070,7 @@ public class TestFullResourcePath {
         .isSegmentStar(0).isSegmentRef(1)
         .next()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESKeyNav(1)?$expand=*($levels=3)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
@@ -2085,24 +2088,24 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef();
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav, false)
         .n().isRef();
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($filter=PropertyInt16 eq 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator().isFilterSerialized("<<PropertyInt16> eq <1>>");
 
@@ -2110,19 +2113,19 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isSortOrder(0, false)
-        .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref($skip=1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isSkipText("1");
@@ -2131,8 +2134,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isTopText("2");
@@ -2141,8 +2144,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isInlineCountText("true");
@@ -2151,8 +2154,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isSkipText("1")
@@ -2162,8 +2165,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .isSkipText("1")
@@ -2173,24 +2176,24 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isCount();
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne/$count")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav, false)
         .n().isCount();
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$count($filter=PropertyInt16 gt 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .n().isCount()
         .goUpExpandValidator()
         .isFilterSerialized("<<PropertyInt16> gt <1>>");
@@ -2199,8 +2202,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isFilterSerialized("<<PropertyInt16> eq <1>>");
 
@@ -2208,18 +2211,18 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSortOrder(0, false)
-        .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .goOrder(0).goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($skip=1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSkipText("1");
 
@@ -2227,8 +2230,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isTopText("2");
 
@@ -2236,8 +2239,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isInlineCountText("true");
 
@@ -2245,40 +2248,40 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSelectText("PropertyString")
-        .goSelectItem(0).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .goExpand()
         .goPath().first()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany($expand=NavPropertyETKeyNavMany)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .goExpand()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=5)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpExpandValidator()
         .isLevelText("5");
 
@@ -2286,18 +2289,18 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSelectText("PropertyString")
-        .goSelectItem(0).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavOne($levels=max)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpExpandValidator()
         .isLevelText("max");
 
@@ -2305,8 +2308,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSkipText("1")
         .isTopText("2");
@@ -2315,8 +2318,8 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
         .isSkipText("1")
         .isTopText("2");
@@ -2329,19 +2332,19 @@ public class TestFullResourcePath {
         .goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav?"
         + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')?"
         + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
@@ -2349,12 +2352,12 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'Hugo'")
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true);
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?"
         + "$expand=com.sap.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany")
@@ -2362,12 +2365,12 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true);
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$expand=com.sap.odata.test1.ETBaseTwoKeyNav"
         + "/NavPropertyETTwoKeyNavMany/com.sap.odata.test1.ETTwoBaseTwoKeyNav")
@@ -2375,52 +2378,52 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav);
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
         .isComplex("PropertyComplexNav")
-        .isType(EdmTechProvider.nameCTBasePrimCompNav)
+        .isType(ComplexTypeProvider.nameCTBasePrimCompNav)
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     testUri.run("ESTwoKeyNav?$expand=com.sap.odata.test1.ETBaseTwoKeyNav/PropertyComplexNav"
         + "/com.sap.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         // .n()
         .isComplex("PropertyComplexNav")
-        .isType(EdmTechProvider.nameCTBasePrimCompNav)
+        .isType(ComplexTypeProvider.nameCTBasePrimCompNav)
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false);
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     testUri.run("ESKeyNav(1)?$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
         .goPath()
         .first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
         .n().isRef()
         .goUpExpandValidator()
         .next()
         .goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .goUpExpandValidator()
         .isSkipText("2")
         .isTopText("1");
@@ -2432,16 +2435,16 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .goExpand().first()
-        .isExpandStartType(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
         // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EdmTechProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
-        // .n().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnCollection(EdmTechProvider.nameETTwoBaseTwoKeyNav)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav)
+        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
+        // .n().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav)
         .goUpExpandValidator()
-        .goSelectItem(0).isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($expand=NavPropertyETKeyNavMany("
         + "$expand=NavPropertyETKeyNavOne))")
@@ -2449,18 +2452,18 @@ public class TestFullResourcePath {
         .goPath().first()
         .goExpand().first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .goExpand().first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, true)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .goExpand().first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav);
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')?$select=com.sap.odata.test1.ETBaseTwoKeyNav"
         + "/PropertyInt16")
@@ -2468,29 +2471,29 @@ public class TestFullResourcePath {
         .first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isSelectStartType(0, EdmTechProvider.nameETBaseTwoKeyNav)
+        .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav)
         .goSelectItem(0)
         .first()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyInt16)")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .goExpand().first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .isSelectText("PropertyInt16")
-        .goSelectItem(0).isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .goSelectItem(0).isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav?$expand=NavPropertyETKeyNavOne($select=PropertyComplex/PropertyInt16)")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .goExpand().first()
         .goPath().first()
-        .isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .isType(EdmTechProvider.nameETKeyNav)
+        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .isSelectText("PropertyComplex/PropertyInt16");
   }
@@ -2610,7 +2613,7 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource)
         .goPath()
         .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
-        .isType(EdmTechProvider.nameETMixPrimCollComp)
+        .isType(EntityTypeProvider.nameETMixPrimCollComp)
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'");
 
@@ -2618,19 +2621,19 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isFunctionImport("FICRTETKeyNav")
-        .isType(EdmTechProvider.nameETKeyNav);
+        .isType(EntityTypeProvider.nameETKeyNav);
 
     testUri.run("FICRTCollCTTwoPrim()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isFunctionImport("FICRTCollCTTwoPrim")
-        .isType(EdmTechProvider.nameCTTwoPrim);
+        .isType(ComplexTypeProvider.nameCTTwoPrim);
 
     testUri.run("FICRTCTAllPrimTwoParam(ParameterInt16=1,ParameterString='2')")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isFunctionImport("FICRTCTAllPrimTwoParam")
-        .isType(EdmTechProvider.nameCTAllPrim)
+        .isType(ComplexTypeProvider.nameCTAllPrim)
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'");
 
@@ -2638,7 +2641,7 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isFunctionImport("FICRTCollStringTwoParam")
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'");
 
@@ -2647,7 +2650,7 @@ public class TestFullResourcePath {
         .goPath().first()
         .isFunctionImport("FICRTStringTwoParam")
         .isFunction("UFCRTStringTwoParam")
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .isParameter(0, "ParameterInt16", "1");
 
     testUri.run("FICRTStringTwoParam(ParameterInt16=1,ParameterString='2')")
@@ -2655,7 +2658,7 @@ public class TestFullResourcePath {
         .goPath().first()
         .isFunctionImport("FICRTStringTwoParam")
         .isFunction("UFCRTStringTwoParam")
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .isParameter(0, "ParameterInt16", "1");
 
     testUri.run("AIRTETParam")
@@ -2708,7 +2711,7 @@ public class TestFullResourcePath {
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav/$count")
         .isKind(UriInfoKind.resource)
@@ -2763,8 +2766,8 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$ref")
         .isKind(UriInfoKind.resource)
@@ -2772,8 +2775,8 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isRef();
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/com.sap.odata.test1.ETBaseTwoKeyNav/$value")
@@ -2781,8 +2784,8 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .isType(EdmTechProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isValue();
 
   }
@@ -2792,40 +2795,40 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("PropertyString")
         .is("<PropertyString>")
-        .isType(EdmTechProvider.nameString);
+        .isType(PropertyProvider.nameString);
 
     testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyInt16")
         .is("<PropertyComplex/PropertyInt16>")
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
 
     testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate")
         .is("<PropertyComplex/PropertyComplex/PropertyDate>")
-        .isType(EdmTechProvider.nameDate);
+        .isType(PropertyProvider.nameDate);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne")
         .is("<NavPropertyETTwoKeyNavOne>")
-        .isType(EdmTechProvider.nameETTwoKeyNav);
+        .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString")
         .is("<NavPropertyETTwoKeyNavOne/PropertyString>")
-        .isType(EdmTechProvider.nameString);
+        .isType(PropertyProvider.nameString);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex")
         .is("<NavPropertyETTwoKeyNavOne/PropertyComplex>")
-        .isType(EdmTechProvider.nameCTPrimComp);
+        .isType(ComplexTypeProvider.nameCTPrimComp);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex")
         .is("<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyComplex>")
-        .isType(EdmTechProvider.nameCTAllPrim);
+        .isType(ComplexTypeProvider.nameCTAllPrim);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16")
         .is("<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16>")
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16 eq 1")
         .is("<<NavPropertyETTwoKeyNavOne/PropertyComplex/PropertyInt16> eq <1>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
         .isLiteral("1");
 
@@ -2833,29 +2836,29 @@ public class TestFullResourcePath {
         + "PropertyString eq 'SomeString'")
         .is("<<NavPropertyETKeyNavMany/NavPropertyETTwoKeyNavMany/PropertyString> eq <'SomeString'>>")
         .root().left()
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .isMember().goPath()
         .first()
-        .isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
+        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicateRef(0, "PropertyInt16", "PropertyInt16")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right();
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
         .is("<<PropertyDate> eq <2013-11-12>>")
         .root().left()
-        .isType(EdmTechProvider.nameDate)
-        .isMember().isMemberStartType(EdmTechProvider.nameETBaseTwoKeyNav).goPath()
+        .isType(PropertyProvider.nameDate)
+        .isMember().isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         // .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EdmTechProvider.nameETTwoKeyNav).isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
-        // .n().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
-        .first().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
+        // .isType(EntityTypeProvider.nameETTwoKeyNav).isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
+        // .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
+        .first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .root().right()
         .isLiteral("2013-11-12");
@@ -2863,12 +2866,12 @@ public class TestFullResourcePath {
     testFilter.runOnCTTwoPrim("com.sap.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
         .is("<<AdditionalPropString> eq <'SomeString'>>")
         .root().left()
-        .isType(EdmTechProvider.nameString)
-        .isMember().isMemberStartType(EdmTechProvider.nameCTBase).goPath()
+        .isType(PropertyProvider.nameString)
+        .isMember().isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         // .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EdmTechProvider.nameCTTwoPrim).isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
-        // .n().isPrimitiveProperty("AdditionalPropString", EdmTechProvider.nameString, false)
-        .first().isPrimitiveProperty("AdditionalPropString", EdmTechProvider.nameString, false)
+        // .isType(EntityTypeProvider.nameCTTwoPrim).isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase)
+        // .n().isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
+        .first().isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right()
         .isLiteral("'SomeString'");
@@ -2877,7 +2880,7 @@ public class TestFullResourcePath {
         .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
         .is("<<NavPropertyETTwoKeyNavOne/com.sap.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
         .root().left()
-        .isType(EdmTechProvider.nameDate)
+        .isType(PropertyProvider.nameDate)
         .root().right()
         .isLiteral("2013-11-12");
 
@@ -2885,7 +2888,7 @@ public class TestFullResourcePath {
         .runOnETTwoKeyNav("PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
         .is("<<PropertyComplexTwoPrim/com.sap.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
         .root().left()
-        .isType(EdmTechProvider.nameString)
+        .isType(PropertyProvider.nameString)
         .root().right()
         .isLiteral("'SomeString'");
 
@@ -2902,332 +2905,332 @@ public class TestFullResourcePath {
         .is("<<PropertySByte> eq <PropertySByte>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
 
     testFilter.runOnETAllPrim("PropertySByte ne PropertySByte")
         .is("<<PropertySByte> ne <PropertySByte>>")
         .isBinary(BinaryOperatorKind.NE)
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
 
     testFilter.runOnETAllPrim("PropertySByte add PropertySByte")
         .is("<<PropertySByte> add <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
 
     testFilter.runOnETAllPrim("PropertyByte add PropertyByte")
         .is("<<PropertyByte> add <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyInt16 add PropertyInt16")
         .is("<<PropertyInt16> add <PropertyInt16>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
     testFilter.runOnETAllPrim("PropertyInt32 add PropertyInt32")
         .is("<<PropertyInt32> add <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt32)
+        .isType(PropertyProvider.nameInt32)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
 
     testFilter.runOnETAllPrim("PropertyInt64 add PropertyInt64")
         .is("<<PropertyInt64> add <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertySingle add PropertySingle")
         .is("<<PropertySingle> add <PropertySingle>>")
         .root().left()
-        .isType(EdmTechProvider.nameSingle)
+        .isType(PropertyProvider.nameSingle)
         .root().right()
-        .isType(EdmTechProvider.nameSingle);
+        .isType(PropertyProvider.nameSingle);
     testFilter.runOnETAllPrim("PropertyDouble add PropertyDouble")
         .is("<<PropertyDouble> add <PropertyDouble>>")
         .root().left()
-        .isType(EdmTechProvider.nameDouble)
+        .isType(PropertyProvider.nameDouble)
         .root().right()
-        .isType(EdmTechProvider.nameDouble);
+        .isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal add PropertyDecimal")
         .is("<<PropertyDecimal> add <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertySByte add PropertyDecimal")
         .is("<<PropertySByte> add <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertySByte add PropertyInt32")
         .is("<<PropertySByte> add <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertySByte add PropertyInt64")
         .is("<<PropertySByte> add <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertyDateTimeOffset add PropertyDuration")
         .is("<<PropertyDateTimeOffset> add <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDateTimeOffset)
+        .isType(PropertyProvider.nameDateTimeOffset)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertyDuration add PropertyDuration")
         .is("<<PropertyDuration> add <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDuration)
+        .isType(PropertyProvider.nameDuration)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertyDate add PropertyDuration")
         .is("<<PropertyDate> add <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDate)
+        .isType(PropertyProvider.nameDate)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertySByte sub PropertySByte")
         .is("<<PropertySByte> sub <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
     testFilter.runOnETAllPrim("PropertyByte sub PropertyByte")
         .is("<<PropertyByte> sub <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyInt16 sub PropertyInt16")
         .is("<<PropertyInt16> sub <PropertyInt16>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
     testFilter.runOnETAllPrim("PropertyInt32 sub PropertyInt32")
         .is("<<PropertyInt32> sub <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt32)
+        .isType(PropertyProvider.nameInt32)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyInt64 sub PropertyInt64")
         .is("<<PropertyInt64> sub <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertySingle sub PropertySingle")
         .is("<<PropertySingle> sub <PropertySingle>>")
         .root().left()
-        .isType(EdmTechProvider.nameSingle)
+        .isType(PropertyProvider.nameSingle)
         .root().right()
-        .isType(EdmTechProvider.nameSingle);
+        .isType(PropertyProvider.nameSingle);
     testFilter.runOnETAllPrim("PropertyDouble sub PropertyDouble")
         .is("<<PropertyDouble> sub <PropertyDouble>>")
         .root().left()
-        .isType(EdmTechProvider.nameDouble)
+        .isType(PropertyProvider.nameDouble)
         .root().right()
-        .isType(EdmTechProvider.nameDouble);
+        .isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal sub PropertyDecimal")
         .is("<<PropertyDecimal> sub <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt32")
         .is("<<PropertyDecimal> sub <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt64")
         .is("<<PropertyDecimal> sub <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertyDecimal sub PropertyByte")
         .is("<<PropertyDecimal> sub <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDuration")
         .is("<<PropertyDateTimeOffset> sub <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDateTimeOffset)
+        .isType(PropertyProvider.nameDateTimeOffset)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertyDuration sub PropertyDuration")
         .is("<<PropertyDuration> sub <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDuration)
+        .isType(PropertyProvider.nameDuration)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDateTimeOffset")
         .is("<<PropertyDateTimeOffset> sub <PropertyDateTimeOffset>>")
         .root().left()
-        .isType(EdmTechProvider.nameDateTimeOffset)
+        .isType(PropertyProvider.nameDateTimeOffset)
         .root().right()
-        .isType(EdmTechProvider.nameDateTimeOffset);
+        .isType(PropertyProvider.nameDateTimeOffset);
     testFilter.runOnETAllPrim("PropertyDate sub PropertyDuration")
         .is("<<PropertyDate> sub <PropertyDuration>>")
         .root().left()
-        .isType(EdmTechProvider.nameDate)
+        .isType(PropertyProvider.nameDate)
         .root().right()
-        .isType(EdmTechProvider.nameDuration);
+        .isType(PropertyProvider.nameDuration);
     testFilter.runOnETAllPrim("PropertyDate sub PropertyDate")
         .is("<<PropertyDate> sub <PropertyDate>>")
         .root().left()
-        .isType(EdmTechProvider.nameDate)
+        .isType(PropertyProvider.nameDate)
         .root().right()
-        .isType(EdmTechProvider.nameDate);
+        .isType(PropertyProvider.nameDate);
     testFilter.runOnETAllPrim("PropertySByte mul PropertySByte")
         .is("<<PropertySByte> mul <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
     testFilter.runOnETAllPrim("PropertyByte mul PropertyByte")
         .is("<<PropertyByte> mul <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyInt16 mul PropertyInt16")
         .is("<<PropertyInt16> mul <PropertyInt16>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
     testFilter.runOnETAllPrim("PropertyInt32 mul PropertyInt32")
         .is("<<PropertyInt32> mul <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt32)
+        .isType(PropertyProvider.nameInt32)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt64")
         .is("<<PropertyInt64> mul <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertySingle mul PropertySingle")
         .is("<<PropertySingle> mul <PropertySingle>>")
         .root().left()
-        .isType(EdmTechProvider.nameSingle)
+        .isType(PropertyProvider.nameSingle)
         .root().right()
-        .isType(EdmTechProvider.nameSingle);
+        .isType(PropertyProvider.nameSingle);
     testFilter.runOnETAllPrim("PropertyDouble mul PropertyDouble")
         .is("<<PropertyDouble> mul <PropertyDouble>>")
         .root().left()
-        .isType(EdmTechProvider.nameDouble)
+        .isType(PropertyProvider.nameDouble)
         .root().right()
-        .isType(EdmTechProvider.nameDouble);
+        .isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal mul PropertyDecimal")
         .is("<<PropertyDecimal> mul <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt32")
         .is("<<PropertyInt64> mul <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyInt64 mul PropertySByte")
         .is("<<PropertyInt64> mul <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
     testFilter.runOnETAllPrim("PropertyInt64 mul PropertyDecimal")
         .is("<<PropertyInt64> mul <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertySByte div PropertySByte")
         .is("<<PropertySByte> div <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
     testFilter.runOnETAllPrim("PropertyByte div PropertyByte")
         .is("<<PropertyByte> div <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyInt16 div PropertyInt16")
         .is("<<PropertyInt16> div <PropertyInt16>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
     testFilter.runOnETAllPrim("PropertyInt32 div PropertyInt32")
         .is("<<PropertyInt32> div <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt32)
+        .isType(PropertyProvider.nameInt32)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyInt64 div PropertyInt64")
         .is("<<PropertyInt64> div <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertySingle div PropertySingle")
         .is("<<PropertySingle> div <PropertySingle>>")
         .root().left()
-        .isType(EdmTechProvider.nameSingle)
+        .isType(PropertyProvider.nameSingle)
         .root().right()
-        .isType(EdmTechProvider.nameSingle);
+        .isType(PropertyProvider.nameSingle);
     testFilter.runOnETAllPrim("PropertyDouble div PropertyDouble")
         .is("<<PropertyDouble> div <PropertyDouble>>")
         .root().left()
-        .isType(EdmTechProvider.nameDouble)
+        .isType(PropertyProvider.nameDouble)
         .root().right()
-        .isType(EdmTechProvider.nameDouble);
+        .isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal div PropertyDecimal")
         .is("<<PropertyDecimal> div <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyByte div PropertyInt32")
         .is("<<PropertyByte> div <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyByte div PropertyDecimal")
         .is("<<PropertyByte> div <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyByte div PropertySByte")
         .is("<<PropertyByte> div <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
 
     testFilter.runOnETAllPrim("PropertyByte div 0")
         .is("<<PropertyByte> div <0>>");
@@ -3238,81 +3241,81 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertySByte mod PropertySByte")
         .is("<<PropertySByte> mod <PropertySByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameSByte)
+        .isType(PropertyProvider.nameSByte)
         .root().right()
-        .isType(EdmTechProvider.nameSByte);
+        .isType(PropertyProvider.nameSByte);
     testFilter.runOnETAllPrim("PropertyByte mod PropertyByte")
         .is("<<PropertyByte> mod <PropertyByte>>")
         .root().left()
-        .isType(EdmTechProvider.nameByte)
+        .isType(PropertyProvider.nameByte)
         .root().right()
-        .isType(EdmTechProvider.nameByte);
+        .isType(PropertyProvider.nameByte);
     testFilter.runOnETAllPrim("PropertyInt16 mod PropertyInt16")
         .is("<<PropertyInt16> mod <PropertyInt16>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt16)
+        .isType(PropertyProvider.nameInt16)
         .root().right()
-        .isType(EdmTechProvider.nameInt16);
+        .isType(PropertyProvider.nameInt16);
     testFilter.runOnETAllPrim("PropertyInt32 mod PropertyInt32")
         .is("<<PropertyInt32> mod <PropertyInt32>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt32)
+        .isType(PropertyProvider.nameInt32)
         .root().right()
-        .isType(EdmTechProvider.nameInt32);
+        .isType(PropertyProvider.nameInt32);
     testFilter.runOnETAllPrim("PropertyInt64 mod PropertyInt64")
         .is("<<PropertyInt64> mod <PropertyInt64>>")
         .root().left()
-        .isType(EdmTechProvider.nameInt64)
+        .isType(PropertyProvider.nameInt64)
         .root().right()
-        .isType(EdmTechProvider.nameInt64);
+        .isType(PropertyProvider.nameInt64);
     testFilter.runOnETAllPrim("PropertySingle mod PropertySingle")
         .is("<<PropertySingle> mod <PropertySingle>>")
         .root().left()
-        .isType(EdmTechProvider.nameSingle)
+        .isType(PropertyProvider.nameSingle)
         .root().right()
-        .isType(EdmTechProvider.nameSingle);
+        .isType(PropertyProvider.nameSingle);
     testFilter.runOnETAllPrim("PropertyDouble mod PropertyDouble")
         .is("<<PropertyDouble> mod <PropertyDouble>>")
         .root().left()
-        .isType(EdmTechProvider.nameDouble)
+        .isType(PropertyProvider.nameDouble)
         .root().right()
-        .isType(EdmTechProvider.nameDouble);
+        .isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal mod PropertyDecimal")
         .is("<<PropertyDecimal> mod <PropertyDecimal>>")
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
 
     //
     testFilter.runOnETAllPrim("PropertyDecimal ge PropertyDecimal")
         .is("<<PropertyDecimal> ge <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.GE)
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal lt PropertyDecimal")
         .is("<<PropertyDecimal> lt <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.LT)
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal le PropertyDecimal")
         .is("<<PropertyDecimal> le <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.LE)
         .root().left()
-        .isType(EdmTechProvider.nameDecimal)
+        .isType(PropertyProvider.nameDecimal)
         .root().right()
-        .isType(EdmTechProvider.nameDecimal);
+        .isType(PropertyProvider.nameDecimal);
 
     testFilter.runOnETAllPrim("PropertyDecimal sub NaN")
-        .right().isLiteral("NaN").isType(EdmTechProvider.nameDecimal);
+        .right().isLiteral("NaN").isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal sub -INF")
-        .right().isLiteral("-INF").isType(EdmTechProvider.nameDecimal);
+        .right().isLiteral("-INF").isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal sub INF")
-        .right().isLiteral("INF").isType(EdmTechProvider.nameDecimal);
+        .right().isLiteral("INF").isType(PropertyProvider.nameDecimal);
   }
 
   @Test
@@ -3334,7 +3337,7 @@ public class TestFullResourcePath {
         .is("<<PropertyComplex/BFCCTPrimCompRTESTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESTwoKeyNavParam")
         .isParameter(0, "ParameterString", "PropertyComplex/PropertyComplex/PropertyString")
@@ -3343,33 +3346,33 @@ public class TestFullResourcePath {
         .goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .goUpToResourceValidator()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("PropertyComplex/com.sap.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
         + "(ParameterString=null)/PropertyString eq 'SomeString'")
         .is("<<PropertyComplex/BFCCTPrimCompRTETTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTETTwoKeyNavParam")
         .goParameter(0)
         .isNull()
         .goUpToResourceValidator()
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavMany/com.sap.odata.test1.BFCESTwoKeyNavRTString()"
         + " eq 'SomeString'")
         .is("<<NavPropertyETTwoKeyNavMany/BFCESTwoKeyNavRTString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
-        .isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n()
         .isFunction("BFCESTwoKeyNavRTString");
 
@@ -3381,7 +3384,7 @@ public class TestFullResourcePath {
         .n()
         .isFunction("BFESTwoKeyNavRTESTwoKeyNav")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
         .is("<<BFESTwoKeyNavRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
@@ -3389,7 +3392,7 @@ public class TestFullResourcePath {
         .first()
         .isFunction("BFESTwoKeyNavRTESTwoKeyNav")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/com.sap.odata.test1.BFCETTwoKeyNavRTETTwoKeyNav()"
         + "/PropertyComplex/PropertyComplex/PropertyString eq 'Walldorf'")
@@ -3397,15 +3400,15 @@ public class TestFullResourcePath {
             + "eq <'Walldorf'>>")
         .root().left().goPath()
         .first()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n()
         .isFunction("BFCETTwoKeyNavRTETTwoKeyNav")
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("PropertyComplex/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
         + "(ParameterString='1')"
@@ -3415,14 +3418,14 @@ public class TestFullResourcePath {
             + "eq <'SomeString'>>")
         .root().left().goPath()
         .first()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTESTwoKeyNavParam")
-        .isTypeFilterOnCollection(EdmTechProvider.nameETBaseTwoKeyNav)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNavSingle("$it/com.sap.odata.test1.BFCETTwoKeyNavRTCTTwoPrim()/com.sap.odata.test1.CTBase"
         + "/PropertyString eq 'SomeString'")
@@ -3432,9 +3435,9 @@ public class TestFullResourcePath {
         .isIt()
         .n()
         .isFunction("BFCETTwoKeyNavRTCTTwoPrim")
-        .isTypeFilterOnEntry(EdmTechProvider.nameCTBase)
+        .isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase)
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)/PropertyInt16 eq 2")
         .is("<<UFCRTETTwoKeyNavParam/PropertyInt16> eq <2>>")
@@ -3443,7 +3446,7 @@ public class TestFullResourcePath {
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=@Param1Alias)"
         + "/PropertyInt16 eq 2")
@@ -3452,7 +3455,7 @@ public class TestFullResourcePath {
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameterAlias(0, "ParameterInt16", "Param1Alias")
         .n()
-        .isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=1)"
         + "/PropertyComplex/PropertyComplex/PropertyString eq 'SomeString'")
@@ -3461,11 +3464,11 @@ public class TestFullResourcePath {
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("com.sap.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=PropertyInt16)"
         + "/PropertyComplex/PropertyComplex/PropertyString eq 'SomeString'")
@@ -3474,11 +3477,11 @@ public class TestFullResourcePath {
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "PropertyInt16")
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
-        .isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
+        .isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
         .n()
-        .isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
   }
 
@@ -3895,23 +3898,23 @@ public class TestFullResourcePath {
         .root().left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnCTTwoPrim("$it/PropertyString eq 'SomeString'")
         .is("<<$it/PropertyString> eq <'SomeString'>>")
         .root().left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameCTTwoPrim, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isType(ComplexTypeProvider.nameCTTwoPrim, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnString("$it eq 'Walldorf'")
         .is("<<$it> eq <'Walldorf'>>")
         .root().left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameString, false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnString("endswith($it,'sap.com')")
         .is("<endswith(<$it>,<'sap.com'>)>")
@@ -3921,7 +3924,7 @@ public class TestFullResourcePath {
         .goParameter(0)
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameString, false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnString("endswith($it,'sap.com') eq false")
         .is("<<endswith(<$it>,<'sap.com'>)> eq <false>>")
@@ -3932,7 +3935,7 @@ public class TestFullResourcePath {
         .goParameter(0)
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameString, false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("endswith($it/CollPropertyString,'sap.com')")
         .is("<endswith(<$it/CollPropertyString>,<'sap.com'>)>")
@@ -3942,17 +3945,17 @@ public class TestFullResourcePath {
         .goParameter(0)
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EdmTechProvider.nameETTwoKeyNav, true)
-        .n().isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
     testFilter.runOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyInt16 eq $root"
         + "/ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16")
         .is("<<PropertyComplex/PropertyComplex/PropertyInt16> eq <$root/ESTwoKeyNav/PropertyInt16>>")
         .root().left()
         .goPath()
-        .first().isComplex("PropertyComplex").isType(EdmTechProvider.nameCTPrimComp, false)
-        .n().isComplex("PropertyComplex").isType(EdmTechProvider.nameCTAllPrim, false)
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .first().isComplex("PropertyComplex").isType(ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplex("PropertyComplex").isType(ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .root().right()
         .goPath()
@@ -3960,7 +3963,7 @@ public class TestFullResourcePath {
         .n().isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETKeyNav("cast(com.sap.odata.test1.ETBaseTwoKeyNav)")
         .is("<cast(<com.sap.odata.test1.ETBaseTwoKeyNav>)>")
@@ -3968,7 +3971,7 @@ public class TestFullResourcePath {
         .isMethod(MethodKind.CAST, 1)
         .isParameterText(0, "<com.sap.odata.test1.ETBaseTwoKeyNav>")
         .goParameter(0)
-        .isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
+        .isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testFilter.runOnETKeyNav("cast(PropertyComplexTwoPrim,com.sap.odata.test1.CTBase)")
         .is("<cast(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTBase>)>")
@@ -3977,11 +3980,11 @@ public class TestFullResourcePath {
         .isParameterText(0, "<PropertyComplexTwoPrim>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
-        .isComplex("PropertyComplexTwoPrim").isType(EdmTechProvider.nameCTTwoPrim, false)
+        .isComplex("PropertyComplexTwoPrim").isType(ComplexTypeProvider.nameCTTwoPrim, false)
         .goUpFilterValidator()
         .root()
         .goParameter(1)
-        .isTypedLiteral(EdmTechProvider.nameCTBase);
+        .isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
     testFilter.runOnETKeyNav("cast($it,com.sap.odata.test1.CTBase)")
         .is("<cast(<$it>,<com.sap.odata.test1.CTBase>)>")
@@ -3990,10 +3993,10 @@ public class TestFullResourcePath {
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
-        .isIt().isType(EdmTechProvider.nameETKeyNav, false)
+        .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameCTBase);
+        .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
     testFilter.runOnETKeyNav("cast($it,com.sap.odata.test1.CTBase) eq cast($it,com.sap.odata.test1.CTBase)"
         )
@@ -4003,86 +4006,86 @@ public class TestFullResourcePath {
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
-        .isIt().isType(EdmTechProvider.nameETKeyNav, false)
+        .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root().left()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameCTBase)
+        .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase)
         .root().right()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<com.sap.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
-        .isIt().isType(EdmTechProvider.nameETKeyNav, false)
+        .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
         .root().right()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameCTBase);
+        .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
     testFilter.runOnInt32("cast(Edm.Int32)")
         .is("<cast(<Edm.Int32>)>")
         .isMethod(MethodKind.CAST, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameInt32);
+        .goParameter(0).isTypedLiteral(PropertyProvider.nameInt32);
 
     testFilter.runOnDateTimeOffset("cast(Edm.DateTimeOffset)")
         .is("<cast(<Edm.DateTimeOffset>)>")
         .isMethod(MethodKind.CAST, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameDateTimeOffset);
+        .goParameter(0).isTypedLiteral(PropertyProvider.nameDateTimeOffset);
 
     testFilter.runOnDuration("cast(Edm.Duration)")
         .is("<cast(<Edm.Duration>)>")
         .isMethod(MethodKind.CAST, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameDuration);
+        .goParameter(0).isTypedLiteral(PropertyProvider.nameDuration);
 
     testFilter.runOnTimeOfDay("cast(Edm.TimeOfDay)")
         .is("<cast(<Edm.TimeOfDay>)>")
         .isMethod(MethodKind.CAST, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameTimeOfDay);
+        .goParameter(0).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
     testFilter.runOnETKeyNav("cast(CollPropertyInt16,Edm.Int32)")
         .is("<cast(<CollPropertyInt16>,<Edm.Int32>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath().first()
-        .isPrimitiveProperty("CollPropertyInt16", EdmTechProvider.nameInt16, true)
+        .isPrimitiveProperty("CollPropertyInt16", PropertyProvider.nameInt16, true)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameInt32);
+        .goParameter(1).isTypedLiteral(PropertyProvider.nameInt32);
 
     testFilter.runOnETTwoKeyNav(
         "cast(PropertyComplex/PropertyComplex/PropertyDateTimeOffset,Edm.DateTimeOffset)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
-        .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
-        .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
-        .n().isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset, false)
+        .first().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameDateTimeOffset);
+        .goParameter(1).isTypedLiteral(PropertyProvider.nameDateTimeOffset);
 
     testFilter.runOnETTwoKeyNav("cast(PropertyComplex/PropertyComplex/PropertyDuration,Edm.Duration)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyDuration>,<Edm.Duration>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
-        .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
-        .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
-        .n().isPrimitiveProperty("PropertyDuration", EdmTechProvider.nameDuration, false)
+        .first().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameDuration);
+        .goParameter(1).isTypedLiteral(PropertyProvider.nameDuration);
 
     testFilter.runOnETTwoKeyNav("cast(PropertyComplex/PropertyComplex/PropertyTimeOfDay,Edm.TimeOfDay)")
         .is("<cast(<PropertyComplex/PropertyComplex/PropertyTimeOfDay>,<Edm.TimeOfDay>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
-        .first().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTPrimComp, false)
-        .n().isComplexProperty("PropertyComplex", EdmTechProvider.nameCTAllPrim, false)
-        .n().isPrimitiveProperty("PropertyTimeOfDay", EdmTechProvider.nameTimeOfDay, false)
+        .first().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComplex", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameTimeOfDay);
+        .goParameter(1).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
     testFilter.runOnETKeyNav("cast(PropertyComplexAllPrim,com.sap.odata.test1.CTTwoPrim)")
         .is("<cast(<PropertyComplexAllPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
-        .first().isComplexProperty("PropertyComplexAllPrim", EdmTechProvider.nameCTAllPrim, false)
+        .first().isComplexProperty("PropertyComplexAllPrim", ComplexTypeProvider.nameCTAllPrim, false)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
+        .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
     // testFilter.runOnETKeyNav(" Xcast(PropertyComplexTwoPrim,com.sap.odata.test1.CTAllPrim)");
 
@@ -4090,9 +4093,9 @@ public class TestFullResourcePath {
         .is("<cast(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyPrimNav>)>")
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
-        .first().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator().root()
-        .goParameter(1).isTypedLiteral(EdmTechProvider.nameETKeyPrimNav);
+        .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,com.sap.odata.test1.ETKeyNav)").isExSemantic(0);
     testFilter.runOnETKeyNav("any()")
@@ -4111,20 +4114,20 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETKeyNav, false)
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .isType(EntityTypeProvider.nameETKeyNav, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString')")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<d/PropertyString> eq <'SomeString'>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // TODO planned: lambda does not check if the previous path segment is a collection
     // testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavOne/any(d:d/PropertyString eq 'SomeString')");
@@ -4135,36 +4138,36 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavOne/CollPropertyString/any(d:d eq 'SomeString')")
         .is("<NavPropertyETTwoKeyNavOne/CollPropertyString/<ANY;<<d> eq <'SomeString'>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameString, false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnETKeyNav(" NavPropertyETTwoKeyNavOne/com.sap.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()"
         + "/any(d:d/PropertyComplex/PropertyInt16 eq 6)")
         .is("<NavPropertyETTwoKeyNavOne/BFCETTwoKeyNavRTESTwoKeyNav/<ANY;<<d/PropertyComplex/PropertyInt16> eq <6>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EdmTechProvider.nameETTwoKeyNav, false)
+        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isFunction("BFCETTwoKeyNavRTESTwoKeyNav")
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or d/any"
         + "(e:e/CollPropertyString eq 'SomeString'))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>> or "
             + "<d/<ANY;<<e/CollPropertyString> eq <'SomeString'>>>>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().isBinary(BinaryOperatorKind.OR)
@@ -4173,26 +4176,26 @@ public class TestFullResourcePath {
         .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .root().right()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("CollPropertyString", EdmTechProvider.nameString, true);
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or d/CollPropertyString/any"
         + "(e:e eq 'SomeString'))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>> or "
             + "<d/CollPropertyString/<ANY;<<e> eq <'SomeString'>>>>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().isBinary(BinaryOperatorKind.OR)
@@ -4201,19 +4204,19 @@ public class TestFullResourcePath {
         .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .root().right()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isType(EdmTechProvider.nameString, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isType(PropertyProvider.nameString, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameString, false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter
         .runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString' and d/CollPropertyString/any"
@@ -4221,7 +4224,7 @@ public class TestFullResourcePath {
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyString> eq <'SomeString'>> and "
             + "<d/CollPropertyString/<ANY;<<e> eq <d/PropertyString>>>>>>>")
         .root().goPath()
-        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, true)
+        .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().isBinary(BinaryOperatorKind.AND)
@@ -4230,23 +4233,23 @@ public class TestFullResourcePath {
         .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isType(EdmTechProvider.nameString, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isType(PropertyProvider.nameString, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmTechProvider.nameString, false)
+        .isType(PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
   }
 
@@ -4257,14 +4260,14 @@ public class TestFullResourcePath {
         .is("<isof(<com.sap.odata.test1.ETTwoKeyNav>)>")
         .root()
         .isMethod(MethodKind.ISOF, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameETTwoKeyNav);
+        .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETTwoKeyNav);
 
     testFilter.runOnETKeyNav("isof(com.sap.odata.test1.ETBaseTwoKeyNav) eq true")
         .is("<<isof(<com.sap.odata.test1.ETBaseTwoKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left()
         .isMethod(MethodKind.ISOF, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
+        .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testFilter
         .runOnETKeyNav("isof(com.sap.odata.test1.ETBaseTwoKeyNav) eq true and PropertyComplex/PropertyInt16 eq 1")
@@ -4272,40 +4275,40 @@ public class TestFullResourcePath {
         .root().isBinary(BinaryOperatorKind.AND)
         .left().isBinary(BinaryOperatorKind.EQ)
         .left().isMethod(MethodKind.ISOF, 1)
-        .goParameter(0).isTypedLiteral(EdmTechProvider.nameETBaseTwoKeyNav);
+        .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne, com.sap.odata.test1.ETKeyNav) eq true")
         .is("<<isof(<NavPropertyETKeyNavOne>,<com.sap.odata.test1.ETKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left().isMethod(MethodKind.ISOF, 2)
-        .goParameter(0).goPath().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .goParameter(0).goPath().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
-        .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameETKeyNav);
+        .root().left().goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyNav);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoPrim)")
         .is("<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)>")
         .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
+        .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoBase)")
         .is("<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoBase>)>")
         .root().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoBase);
+        .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoBase);
 
     testFilter.runOnETKeyNav("isof(PropertyComplexTwoPrim,com.sap.odata.test1.CTTwoPrim) eq true")
         .is("<<isof(<PropertyComplexTwoPrim>,<com.sap.odata.test1.CTTwoPrim>)> eq <true>>")
         .root().left().isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isComplex("PropertyComplexTwoPrim").goUpFilterValidator()
-        .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
+        .root().left().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
     testFilter.runOnETKeyNav("isof($it,com.sap.odata.test1.CTTwoPrim)")
         .is("<isof(<$it>,<com.sap.odata.test1.CTTwoPrim>)>")
         .root()
         .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isIt().goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoPrim);
+        .root().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
     testFilter.runOnETKeyNav("isof($it,com.sap.odata.test1.CTTwoBase) eq false")
         .is("<<isof(<$it>,<com.sap.odata.test1.CTTwoBase>)> eq <false>>")
@@ -4313,7 +4316,7 @@ public class TestFullResourcePath {
         .root().left()
         .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath().isIt().goUpFilterValidator()
-        .root().left().goParameter(1).isTypedLiteral(EdmTechProvider.nameCTTwoBase);
+        .root().left().goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoBase);
 
     testFilter.runOnETKeyNav("isof(PropertyComplex/PropertyInt16,Edm.Int32)")
         .is("<isof(<PropertyComplex/PropertyInt16>,<Edm.Int32>)>")
@@ -4321,9 +4324,9 @@ public class TestFullResourcePath {
         .isMethod(MethodKind.ISOF, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameInt32);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameInt32);
 
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyDateTimeOffset,Edm.DateTimeOffset)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)>")
@@ -4332,9 +4335,9 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset, false)
+        .n().isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameDateTimeOffset);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameDateTimeOffset);
 
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyTimeOfDay,Edm.TimeOfDay)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyTimeOfDay>,<Edm.TimeOfDay>)>")
@@ -4343,9 +4346,9 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyTimeOfDay", EdmTechProvider.nameTimeOfDay, false)
+        .n().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameTimeOfDay);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
     testFilter.runOnETTwoKeyNav(" isof(PropertyComplex/PropertyComplex/PropertyDuration,Edm.Duration)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyDuration>,<Edm.Duration>)>")
@@ -4354,9 +4357,9 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDuration", EdmTechProvider.nameDuration, false)
+        .n().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameDuration);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameDuration);
 
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyString,Edm.String)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyString>,<Edm.String>)>")
@@ -4365,9 +4368,9 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameString);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameString);
 
     testFilter.runOnETTwoKeyNav("isof(PropertyComplex/PropertyComplex/PropertyString,Edm.Guid)")
         .is("<isof(<PropertyComplex/PropertyComplex/PropertyString>,<Edm.Guid>)>")
@@ -4376,9 +4379,9 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
-        .root().goParameter(1).isTypedLiteral(EdmTechProvider.nameGuid);
+        .root().goParameter(1).isTypedLiteral(PropertyProvider.nameGuid);
   }
 
   @Test
@@ -4387,19 +4390,19 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.HAS)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
+        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String1"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOnETTwoKeyNav("PropertyComplexEnum/PropertyEnumString has com.sap.odata.test1.ENString'String2'")
         .is("<<PropertyComplexEnum/PropertyEnumString> has <com.sap.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isComplex("PropertyComplexEnum")
-        .n().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
-        .isType(EdmTechProvider.nameENString)
+        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String2"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
     testFilter.runOnETTwoKeyNav(
         "PropertyComplexEnum/PropertyEnumString has com.sap.odata.test1.ENString'String2' eq true")
@@ -4409,34 +4412,34 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().left().goPath()
         .first().isComplex("PropertyComplexEnum")
-        .n().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
+        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().left().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String2"));
+        .root().left().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
     testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String3'")
         .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
-        .isType(EdmTechProvider.nameENString)
+        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String3"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
     testFilter.runOnETTwoKeyNav("PropertyEnumString has com.sap.odata.test1.ENString'String,String3'")
         .is("<<PropertyEnumString> has <com.sap.odata.test1.ENString<String,String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
-        .isType(EdmTechProvider.nameENString)
+        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String", "String3"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String", "String3"));
 
     testFilter.runOnETTwoKeyNav("PropertyEnumString has null")
         .is("<<PropertyEnumString> has <null>>")
         .root()
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString).goUpFilterValidator()
+        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
         .root().right().isNull();
 
     testFilter.runOnETTwoKeyNav("endswith(PropertyComplex/PropertyComplex/PropertyString,'dorf')")
@@ -4445,7 +4448,7 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().goParameter(1).isLiteral("'dorf'");
 
     testFilter.runOnETTwoKeyNav("endswith(PropertyComplex/PropertyComplex/PropertyString,'dorf') eq true")
@@ -4455,7 +4458,7 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().left().goParameter(1).isLiteral("'dorf'");
 
     testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf')")
@@ -4476,7 +4479,7 @@ public class TestFullResourcePath {
         .isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplexAllPrim")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETKeyNav("startswith(PropertyComplexAllPrim/PropertyString,'Wall') eq true")
@@ -4485,7 +4488,7 @@ public class TestFullResourcePath {
         .left().isMethod(MethodKind.STARTSWITH, 2)
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplexAllPrim")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().left().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETKeyNav("startswith('Walldorf','Wall')")
@@ -4507,7 +4510,7 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETTwoKeyNav("contains(PropertyComplex/PropertyComplex/PropertyString,'Wall') eq true")
@@ -4517,7 +4520,7 @@ public class TestFullResourcePath {
         .goParameter(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .root().left().goParameter(1).isLiteral("'Wall'");
 
     testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall')")
@@ -4542,7 +4545,7 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyBoolean eq true")
         .is("<<PropertyBoolean> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyBoolean", EdmTechProvider.nameBoolean, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
         .root().right().isTrue();
 
@@ -4552,28 +4555,28 @@ public class TestFullResourcePath {
     testFilter.runOnETAllPrim("PropertyDecimal eq 1.25")
         .is("<<PropertyDecimal> eq <1.25>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDecimal", EdmTechProvider.nameDecimal, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyDecimal", PropertyProvider.nameDecimal, false)
         .goUpFilterValidator()
         .root().right().isLiteral("1.25");
 
     testFilter.runOnETAllPrim("PropertyDouble eq 1.5")
         .is("<<PropertyDouble> eq <1.5>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDouble", EdmTechProvider.nameDouble, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
         .goUpFilterValidator()
         .root().right().isLiteral("1.5");
 
     testFilter.runOnETAllPrim("PropertySingle eq 1.5")
         .is("<<PropertySingle> eq <1.5>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertySingle", EdmTechProvider.nameSingle, false)
+        .root().left().goPath().isPrimitiveProperty("PropertySingle", PropertyProvider.nameSingle, false)
         .goUpFilterValidator()
         .root().right().isLiteral("1.5");
 
     testFilter.runOnETAllPrim("PropertySByte eq -128")
         .is("<<PropertySByte> eq <-128>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertySByte", EdmTechProvider.nameSByte, false)
+        .root().left().goPath().isPrimitiveProperty("PropertySByte", PropertyProvider.nameSByte, false)
         .goUpFilterValidator()
         .root().right().isLiteral("-128");
 
@@ -4581,34 +4584,34 @@ public class TestFullResourcePath {
         .is("<<PropertyByte> eq <255>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isPrimitiveProperty("PropertyByte",
-            EdmTechProvider.nameByte, false).goUpFilterValidator()
+            PropertyProvider.nameByte, false).goUpFilterValidator()
         .root().right().isLiteral("255");
 
     testFilter.runOnETAllPrim("PropertyInt16 eq 32767")
         .is("<<PropertyInt16> eq <32767>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .root().right().isLiteral("32767");
 
     testFilter.runOnETAllPrim("PropertyInt32 eq 2147483647")
         .is("<<PropertyInt32> eq <2147483647>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt32", EdmTechProvider.nameInt32, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt32", PropertyProvider.nameInt32, false)
         .goUpFilterValidator()
         .root().right().isLiteral("2147483647");
 
     testFilter.runOnETAllPrim("PropertyInt64 eq 9223372036854775807")
         .is("<<PropertyInt64> eq <9223372036854775807>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt64", EdmTechProvider.nameInt64, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt64", PropertyProvider.nameInt64, false)
         .goUpFilterValidator()
         .root().right().isLiteral("9223372036854775807");
 
     testFilter.runOnETAllPrim("PropertyDate eq 2013-09-25")
         .is("<<PropertyDate> eq <2013-09-25>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .root().right().isLiteral("2013-09-25");
 
@@ -4616,69 +4619,69 @@ public class TestFullResourcePath {
         .is("<<PropertyDateTimeOffset> eq <2013-09-25T12:34:56.123456789012-10:24>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
-        .isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset, false)
+        .isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
         .goUpFilterValidator()
         .root().right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
 
     testFilter.runOnETAllPrim("PropertyDuration eq duration'P10DT5H34M21.123456789012S'")
         .is("<<PropertyDuration> eq <duration'P10DT5H34M21.123456789012S'>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDuration", EdmTechProvider.nameDuration, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
         .goUpFilterValidator()
         .root().right().isLiteral("duration'P10DT5H34M21.123456789012S'");
 
     testFilter.runOnETAllPrim("PropertyGuid eq 005056A5-09B1-1ED3-89BD-FB81372CCB33")
         .is("<<PropertyGuid> eq <005056A5-09B1-1ED3-89BD-FB81372CCB33>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyGuid", EdmTechProvider.nameGuid, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyGuid", PropertyProvider.nameGuid, false)
         .goUpFilterValidator()
         .root().right().isLiteral("005056A5-09B1-1ED3-89BD-FB81372CCB33");
 
     testFilter.runOnETAllPrim("PropertyString eq 'somestring'")
         .is("<<PropertyString> eq <'somestring'>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right().isLiteral("'somestring'");
 
     testFilter.runOnETAllPrim("PropertyTimeOfDay eq 12:34:55.12345678901")
         .is("<<PropertyTimeOfDay> eq <12:34:55.12345678901>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyTimeOfDay", EdmTechProvider.nameTimeOfDay, false)
+        .root().left().goPath().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
         .goUpFilterValidator()
         .root().right().isLiteral("12:34:55.12345678901");
 
     testFilter.runOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> eq <com.sap.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
+        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String1"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String2'")
         .is("<<PropertyEnumString> eq <com.sap.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString)
+        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
         .goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String2"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
     testFilter.runOnETTwoKeyNav("PropertyComplexEnum/PropertyEnumString eq com.sap.odata.test1.ENString'String3'")
         .is("<<PropertyComplexEnum/PropertyEnumString> eq <com.sap.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
         .first().isComplex("PropertyComplexEnum")
-        .n().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString).goUpFilterValidator()
-        .root().right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String3"));
+        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
     testFilter.runOnETTwoKeyNav("PropertyComplexEnum/PropertyEnumString eq PropertyComplexEnum/PropertyEnumString")
         .is("<<PropertyComplexEnum/PropertyEnumString> eq <PropertyComplexEnum/PropertyEnumString>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
         .first().isComplex("PropertyComplexEnum")
-        .n().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString).goUpFilterValidator()
+        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
         .root().right().goPath()
         .first().isComplex("PropertyComplexEnum")
-        .n().isComplex("PropertyEnumString").isType(EdmTechProvider.nameENString).goUpFilterValidator();
+        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator();
 
   }
 
@@ -4715,7 +4718,7 @@ public class TestFullResourcePath {
         .goOrder(0).right().isLiteral("'SomeString'")
         .isSortOrder(1, false)
         .goOrder(1).isBinary(BinaryOperatorKind.EQ).left().goPath()
-        .first().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .goOrder(1).right().isLiteral("'1'");
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate eq "
@@ -4724,26 +4727,26 @@ public class TestFullResourcePath {
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .goOrder(0).right().goPath()
         .first().isUriPathInfoKind(UriResourceKind.root)
         .n().isEntitySet("ESTwoKeyNav")
         .n().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false);
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyString")
         .isSortOrder(0, false)
         .goOrder(0).goPath()
-        .first().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate")
         .isSortOrder(0, false)
         .goOrder(0).goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false);
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyDate "
         + "eq 2013-11-12 desc, PropertyString eq 'SomeString' desc")
@@ -4752,10 +4755,10 @@ public class TestFullResourcePath {
         .left().goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false).goUpFilterValidator()
         .goOrder(0).right().isLiteral("2013-11-12")
         .isSortOrder(1, true)
-        .goOrder(1).left().goPath().first().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .goOrder(1).left().goPath().first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .goOrder(1).right().isLiteral("'SomeString'");
 
@@ -4777,235 +4780,235 @@ public class TestFullResourcePath {
         .goOrder(1).isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
         .first().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false).goUpFilterValidator()
         .goOrder(1).right().isLiteral("1");
 
     testFilter.runOrderByOnETTwoKeyNav("NavPropertyETKeyNavOne")
         .isSortOrder(0, false).goOrder(0).goPath()
-        .first().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false);
+        .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     testFilter.runOrderByOnETTwoKeyNav("NavPropertyETKeyNavOne/PropertyString")
         .isSortOrder(0, false).goOrder(0).goPath()
-        .first().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOrderByOnETTwoKeyNav("NavPropertyETKeyNavOne/PropertyComplex")
         .isSortOrder(0, false).goOrder(0).goPath()
-        .first().isNavProperty("NavPropertyETKeyNavOne", EdmTechProvider.nameETKeyNav, false)
+        .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .n().isComplex("PropertyComplex");
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyComplex/PropertyComplex/PropertyInt16 eq 1")
         .isSortOrder(0, false).goOrder(0).left().goPath()
         .first().isComplex("PropertyComplex")
         .n().isComplex("PropertyComplex")
-        .n().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false);
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOrderByOnETTwoKeyNav("NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')"
         + "/PropertyString eq 'SomeString'")
         .isSortOrder(0, false).goOrder(0).left().goPath()
-        .first().isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
-        .n().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .first().isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+        .n().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOrderByOnETTwoKeyNav("NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')"
         + "/PropertyString eq 'SomeString1' desc,PropertyString eq 'SomeString2' asc")
         .isSortOrder(0, true).goOrder(0).left().goPath()
-        .first().isNavProperty("NavPropertyETKeyNavMany", EdmTechProvider.nameETKeyNav, false)
-        .n().isNavProperty("NavPropertyETTwoKeyNavMany", EdmTechProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false).goUpFilterValidator()
+        .first().isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+        .n().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
         .isSortOrder(1, false).goOrder(1).left().goPath()
-        .first().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false);
+        .first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOrderByOnETAllPrim("PropertyBoolean eq true")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", EdmTechProvider.nameBoolean, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
         .goOrder(0).right().isTrue();
 
     testFilter.runOrderByOnETAllPrim("PropertyBoolean eq true desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", EdmTechProvider.nameBoolean, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
         .goOrder(0).right().isTrue();
 
     testFilter.runOrderByOnETAllPrim(encode("PropertyDouble eq 3.5E+38"))
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", EdmTechProvider.nameDouble, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("3.5E+38");
 
     testFilter.runOrderByOnETAllPrim(encode("PropertyDouble eq 3.5E+38 desc")).isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", EdmTechProvider.nameDouble, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("3.5E+38");
 
     testFilter.runOrderByOnETAllPrim("PropertySingle eq 1.5")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySingle", EdmTechProvider.nameSingle, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySingle", PropertyProvider.nameSingle, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("1.5");
 
     testFilter.runOrderByOnETAllPrim("PropertySingle eq 1.5 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySingle", EdmTechProvider.nameSingle, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySingle", PropertyProvider.nameSingle, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("1.5");
 
     testFilter.runOrderByOnETAllPrim("PropertySByte eq -128")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySByte", EdmTechProvider.nameSByte, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySByte", PropertyProvider.nameSByte, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("-128");
 
     testFilter.runOrderByOnETAllPrim("PropertySByte eq -128 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySByte", EdmTechProvider.nameSByte, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertySByte", PropertyProvider.nameSByte, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("-128");
 
     testFilter.runOrderByOnETAllPrim("PropertyByte eq 255")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyByte", EdmTechProvider.nameByte, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyByte", PropertyProvider.nameByte, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("255");
 
     testFilter.runOrderByOnETAllPrim("PropertyByte eq 255 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyByte", EdmTechProvider.nameByte, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyByte", PropertyProvider.nameByte, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("255");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt16 eq 32767")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("32767");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt16 eq 32767 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt16", EdmTechProvider.nameInt16, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("32767");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt32 eq 2147483647")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt32", EdmTechProvider.nameInt32, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt32", PropertyProvider.nameInt32, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2147483647");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt32 eq 2147483647 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt32", EdmTechProvider.nameInt32, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt32", PropertyProvider.nameInt32, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2147483647");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt64 eq 9223372036854775807")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt64", EdmTechProvider.nameInt64, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt64", PropertyProvider.nameInt64, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("9223372036854775807");
 
     testFilter.runOrderByOnETAllPrim("PropertyInt64 eq 9223372036854775807 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt64", EdmTechProvider.nameInt64, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyInt64", PropertyProvider.nameInt64, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("9223372036854775807");
 
     testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'0FAB7B'")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", EdmTechProvider.nameBinary, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", PropertyProvider.nameBinary, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("binary'0FAB7B'");
 
     testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'0FAB7B' desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", EdmTechProvider.nameBinary, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", PropertyProvider.nameBinary, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("binary'0FAB7B'");
 
     testFilter.runOrderByOnETAllPrim("PropertyDate eq 2013-09-25")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2013-09-25");
 
     testFilter.runOrderByOnETAllPrim("PropertyDate eq 2013-09-25 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDate", EdmTechProvider.nameDate, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2013-09-25");
 
     testFilter.runOrderByOnETAllPrim("PropertyDateTimeOffset eq 2013-09-25T12:34:56.123456789012-10:24")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset,
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset,
             false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
 
     testFilter.runOrderByOnETAllPrim("PropertyDateTimeOffset eq 2013-09-25T12:34:56.123456789012-10:24 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDateTimeOffset", EdmTechProvider.nameDateTimeOffset,
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset,
             false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
 
     testFilter.runOrderByOnETAllPrim("PropertyDuration eq duration'P10DT5H34M21.123456789012S'")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDuration", EdmTechProvider.nameDuration, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("duration'P10DT5H34M21.123456789012S'");
 
     testFilter.runOrderByOnETAllPrim("PropertyDuration eq duration'P10DT5H34M21.123456789012S' desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDuration", EdmTechProvider.nameDuration, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("duration'P10DT5H34M21.123456789012S'");
 
     testFilter.runOrderByOnETAllPrim("PropertyGuid eq 005056A5-09B1-1ED3-89BD-FB81372CCB33")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyGuid", EdmTechProvider.nameGuid, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyGuid", PropertyProvider.nameGuid, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("005056A5-09B1-1ED3-89BD-FB81372CCB33");
 
     testFilter.runOrderByOnETAllPrim("PropertyGuid eq 005056A5-09B1-1ED3-89BD-FB81372CCB33 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyGuid", EdmTechProvider.nameGuid, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyGuid", PropertyProvider.nameGuid, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("005056A5-09B1-1ED3-89BD-FB81372CCB33");
 
     testFilter.runOrderByOnETAllPrim("PropertyString eq 'somestring'")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("'somestring'");
 
     testFilter.runOrderByOnETAllPrim("PropertyString eq 'somestring' desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyString", EdmTechProvider.nameString, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("'somestring'");
 
     testFilter.runOrderByOnETAllPrim("PropertyTimeOfDay eq 12:34:55.123456789012")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyTimeOfDay", EdmTechProvider.nameTimeOfDay, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("12:34:55.123456789012");
 
     testFilter.runOrderByOnETAllPrim("PropertyTimeOfDay eq 12:34:55.123456789012 desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyTimeOfDay", EdmTechProvider.nameTimeOfDay, false)
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("12:34:55.123456789012");
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1'")
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
-        .goOrder(0).right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String1"));
+        .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyEnumString eq com.sap.odata.test1.ENString'String1' desc")
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
-        .goOrder(0).right().isEnum(EdmTechProvider.nameENString, Arrays.asList("String1"));
+        .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 1").isExSyntax(0);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16, PropertyInt32 PropertyDuration").isExSyntax(0);

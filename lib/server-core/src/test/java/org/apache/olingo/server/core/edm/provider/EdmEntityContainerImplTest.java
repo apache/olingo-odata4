@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -44,8 +44,6 @@ import org.apache.olingo.server.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.Singleton;
-import org.apache.olingo.server.core.edm.provider.EdmEntityContainerImpl;
-import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,107 +59,107 @@ public class EdmEntityContainerImplTest {
         new EntityContainerInfo().setContainerName(new FullQualifiedName("space", "name"));
     container = new EdmEntityContainerImpl(edm, provider, entityContainerInfo);
   }
-  
+
   @Test
-  public void getAllEntitySetInitial(){
+  public void getAllEntitySetInitial() {
     List<EdmEntitySet> entitySets = container.getEntitySets();
     assertNotNull(entitySets);
     assertEquals(2, entitySets.size());
   }
-  
+
   @Test
-  public void getAllEntitySetsAfterOneWasAlreadyLoaded(){
+  public void getAllEntitySetsAfterOneWasAlreadyLoaded() {
     EdmEntitySet entitySet = container.getEntitySet("entitySetName");
     List<EdmEntitySet> entitySets = container.getEntitySets();
     assertNotNull(entitySets);
     assertEquals(2, entitySets.size());
     boolean contained = false;
-    for(EdmEntitySet es: entitySets){
-      //Already loaded entity set must be the same 
-      if(es.getName().equals("entitySetName")){
+    for (EdmEntitySet es : entitySets) {
+      // Already loaded entity set must be the same
+      if (es.getName().equals("entitySetName")) {
         assertTrue(entitySet == es);
         contained = true;
       }
     }
-    if(!contained){
+    if (!contained) {
       fail("Should have found entity set in this list.");
     }
   }
-  
+
   @Test
-  public void getAllSingletonsInitial(){
+  public void getAllSingletonsInitial() {
     List<EdmSingleton> singletons = container.getSingletons();
     assertNotNull(singletons);
     assertEquals(2, singletons.size());
   }
-  
+
   @Test
-  public void getAllSingletonsAfterOneWasAlreadyLoaded(){
+  public void getAllSingletonsAfterOneWasAlreadyLoaded() {
     EdmSingleton singleton = container.getSingleton("singletonName");
     List<EdmSingleton> singletons = container.getSingletons();
     assertNotNull(singletons);
     assertEquals(2, singletons.size());
     boolean contained = false;
-    for(EdmSingleton s: singletons){
-      //Already loaded singleton must be the same 
-      if(s.getName().equals("singletonName")){
+    for (EdmSingleton s : singletons) {
+      // Already loaded singleton must be the same
+      if (s.getName().equals("singletonName")) {
         assertTrue(singleton == s);
         contained = true;
       }
     }
-    if(!contained){
+    if (!contained) {
       fail("Should have found singleton in this list.");
     }
   }
-  
+
   @Test
-  public void getAllActionImportsInitial(){
+  public void getAllActionImportsInitial() {
     List<EdmActionImport> actionImports = container.getActionImports();
     assertNotNull(actionImports);
     assertEquals(2, actionImports.size());
   }
-  
+
   @Test
-  public void getAllActionImportsAfterOneWasAlreadyLoaded(){
+  public void getAllActionImportsAfterOneWasAlreadyLoaded() {
     EdmActionImport actionImport = container.getActionImport("actionImportName");
     List<EdmActionImport> actionImports = container.getActionImports();
     assertNotNull(actionImports);
     assertEquals(2, actionImports.size());
     boolean contained = false;
-    for(EdmActionImport ai: actionImports){
-      //Already loaded action import must be the same 
-      if(ai.getName().equals("actionImportName")){
+    for (EdmActionImport ai : actionImports) {
+      // Already loaded action import must be the same
+      if (ai.getName().equals("actionImportName")) {
         assertTrue(actionImport == ai);
         contained = true;
       }
     }
-    if(!contained){
+    if (!contained) {
       fail("Should have found action import in this list.");
     }
   }
-  
+
   @Test
-  public void getAllFunctionImportsInitial(){
+  public void getAllFunctionImportsInitial() {
     List<EdmFunctionImport> functionImports = container.getFunctionImports();
     assertNotNull(functionImports);
     assertEquals(2, functionImports.size());
   }
-  
+
   @Test
-  public void getAllFunctionImportsAfterOneWasAlreadyLoaded(){
+  public void getAllFunctionImportsAfterOneWasAlreadyLoaded() {
     EdmFunctionImport functionImport = container.getFunctionImport("functionImportName");
     List<EdmFunctionImport> functionImports = container.getFunctionImports();
     assertNotNull(functionImports);
     assertEquals(2, functionImports.size());
     boolean contained = false;
-    for(EdmFunctionImport fi: functionImports){
-      //Already loaded function import must be the same 
-      if(fi.getName().equals("functionImportName")){
+    for (EdmFunctionImport fi : functionImports) {
+      // Already loaded function import must be the same
+      if (fi.getName().equals("functionImportName")) {
         assertTrue(functionImport == fi);
         contained = true;
       }
     }
-    if(!contained){
+    if (!contained) {
       fail("Should have found function import in this list.");
     }
   }
@@ -311,30 +309,30 @@ public class EdmEntityContainerImplTest {
       }
       return null;
     }
-    
+
     @Override
     public EntityContainer getEntityContainer() throws ODataException {
       EntityContainer container = new EntityContainer();
       List<EntitySet> entitySets = new ArrayList<EntitySet>();
       entitySets.add(new EntitySet().setName("entitySetName"));
       entitySets.add(new EntitySet().setName("entitySetName2"));
-      container.setEntitySets(entitySets );
-      
+      container.setEntitySets(entitySets);
+
       List<Singleton> singletons = new ArrayList<Singleton>();
       singletons.add(new Singleton().setName("singletonName"));
       singletons.add(new Singleton().setName("singletonName2"));
-      container.setSingletons(singletons );
-      
+      container.setSingletons(singletons);
+
       List<ActionImport> actionImports = new ArrayList<ActionImport>();
       actionImports.add(new ActionImport().setName("actionImportName"));
       actionImports.add(new ActionImport().setName("actionImportName2"));
-      container.setActionImports(actionImports );
-      
+      container.setActionImports(actionImports);
+
       List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
       functionImports.add(new FunctionImport().setName("functionImportName"));
       functionImports.add(new FunctionImport().setName("functionImportName2"));
-      container.setFunctionImports(functionImports );
-      
+      container.setFunctionImports(functionImports);
+
       return container;
     }
   }

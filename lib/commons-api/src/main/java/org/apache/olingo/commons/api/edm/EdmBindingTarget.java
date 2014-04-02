@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import java.util.List;
+
 /**
  * Entity Sets or Singletons can be bound to each other using a navigation property binding so an
  * {@link EdmBindingTarget} can either be an {@link EdmEntitySet} or an {@link EdmSingleton}.
@@ -32,6 +34,11 @@ public interface EdmBindingTarget extends EdmNamed {
    */
   EdmBindingTarget getRelatedBindingTarget(String path);
 
+  /**
+   * @return all navigation property bindings
+   */
+  List<EdmNavigationPropertyBinding> getNavigationPropertyBindings();
+  
   /**
    * Returns the entity container this target is contained in.
    *

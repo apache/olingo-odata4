@@ -73,7 +73,7 @@ public class EdmSchemaImplTest {
     schema = edm.getSchemas().get(0);
 
   }
-  
+
   @Test
   public void initialSchemaTest() {
     EdmProvider provider = mock(EdmProvider.class);
@@ -85,26 +85,26 @@ public class EdmSchemaImplTest {
   public void emptySchemaTest() throws Exception {
     ArrayList<Schema> schemas = new ArrayList<Schema>();
     Schema providerSchema = new Schema();
-    schemas.add(providerSchema );
+    schemas.add(providerSchema);
     EdmProvider provider = mock(EdmProvider.class);
     when(provider.getSchemas()).thenReturn(schemas);
     edm = new EdmProviderImpl(provider);
     edm.getSchemas();
   }
-  
+
   @Test
   public void basicGetters() {
     assertEquals("namespace", schema.getNamespace());
     assertEquals("alias", schema.getAlias());
   }
-  
+
   @Test
-  public void getTypeDefinitions(){
+  public void getTypeDefinitions() {
     List<EdmTypeDefinition> typeDefinitions = schema.getTypeDefinitions();
     assertNotNull(typeDefinitions);
     assertEquals(2, typeDefinitions.size());
-    
-    for(EdmTypeDefinition def : typeDefinitions){
+
+    for (EdmTypeDefinition def : typeDefinitions) {
       assertTrue(def == edm.getTypeDefinition(new FullQualifiedName("namespace", def.getName())));
     }
   }
@@ -197,70 +197,84 @@ public class EdmSchemaImplTest {
     for (EdmFunctionImport obj : functionImports) {
       assertNotNull(obj.getFunctionFqn());
     }
-    
+
     assertTrue(container == edm.getEntityContainer(new FullQualifiedName(schema.getNamespace(), container.getName())));
     assertTrue(container == edm.getEntityContainer(null));
   }
 
   private class LocalProvider extends EdmProvider {
 
+    @Override
     public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public Term getTerm(final FullQualifiedName termName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public List<AliasInfo> getAliasInfos() throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
+    @Override
     public List<Schema> getSchemas() throws ODataException {
       Schema providerSchema = new Schema();
       providerSchema.setNamespace("namespace");
@@ -300,7 +314,7 @@ public class EdmSchemaImplTest {
       typeDefinitions.add(new TypeDefinition().setName("typeDefinition1"));
       typeDefinitions.add(new TypeDefinition().setName("typeDefinition2"));
       providerSchema.setTypeDefinitions(typeDefinitions);
-      
+
       List<EnumType> enumTypes = new ArrayList<EnumType>();
       enumTypes.add(new EnumType().setName("enumType1"));
       enumTypes.add(new EnumType().setName("enumType2"));
@@ -330,6 +344,7 @@ public class EdmSchemaImplTest {
       return schemas;
     }
 
+    @Override
     public EntityContainer getEntityContainer() throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }

@@ -46,7 +46,7 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
   private final Edm edm;
   private final EdmProvider provider;
 
-  public EdmSchemaImpl(Edm edm, EdmProvider provider, Schema schema) {
+  public EdmSchemaImpl(final Edm edm, final EdmProvider provider, final Schema schema) {
     super(schema.getNamespace(), schema.getAlias());
     this.edm = edm;
     this.provider = provider;

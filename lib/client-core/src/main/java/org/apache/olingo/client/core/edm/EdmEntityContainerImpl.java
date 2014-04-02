@@ -50,10 +50,17 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
           final EntityContainer xmlEntityContainer, final List<? extends Schema> xmlSchemas) {
 
-    super(edm, entityContainerName);
+    super(edm, entityContainerName, getFullQualifiedName(xmlEntityContainer.getExtends()));
 
     this.xmlEntityContainer = xmlEntityContainer;
     this.xmlSchemas = xmlSchemas;
+  }
+
+  private static FullQualifiedName getFullQualifiedName(String parent) {
+    if (parent != null) {
+      return new FullQualifiedName(parent);
+    }
+    return null;
   }
 
   @Override
