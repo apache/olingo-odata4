@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-parent-incubating</artifactId>
+  <artifactId>olingo-parent</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -291,7 +291,7 @@
             <deployables>
               <deployable>
                 <groupId>org.apache.olingo</groupId>
-                <artifactId>olingo-fit-incubating</artifactId>
+                <artifactId>olingo-fit</artifactId>
                 <type>war</type>
                 <properties>
                   <context>/</context>
