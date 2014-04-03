@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.domain.v4;
 
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 
 public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumValue {
@@ -47,4 +48,13 @@ public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumV
     return this;
   }
 
+  @Override
+  public boolean isLinkedComplex() {
+    return false;
+  }
+
+  @Override
+  public ODataLinkedComplexValue asLinkedComplex() {
+    return null;
+  }
 }

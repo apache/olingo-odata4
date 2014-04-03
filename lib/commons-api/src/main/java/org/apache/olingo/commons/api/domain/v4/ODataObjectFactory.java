@@ -44,6 +44,8 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   @Override
   ODataComplexValue<ODataProperty> newComplexValue(String typeName);
 
+  ODataLinkedComplexValue newLinkedComplexValue(String typeName);
+
   @Override
   ODataCollectionValue<ODataValue> newCollectionValue(String typeName);
 

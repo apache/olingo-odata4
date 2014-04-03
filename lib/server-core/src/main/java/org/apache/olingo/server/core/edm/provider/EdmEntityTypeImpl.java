@@ -37,33 +37,20 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   private final EdmStructuredTypeHelper helper;
 
+  private EntityType entityType;
+
+  private boolean baseTypeChecked = false;
+
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
-      final EntityType entityType) {
+          final EntityType entityType) {
 
     final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
-    instance.baseType = instance.buildBaseType(entityType.getBaseType());
-
-    if (instance.baseType == null) {
-      instance.entityBaseType = null;
-
-      final List<PropertyRef> key = entityType.getKey();
-      if (key != null) {
-        final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
-        for (PropertyRef ref : key) {
-          edmKey.add(new EdmKeyPropertyRefImpl(instance, ref));
-        }
-        instance.setEdmKeyPropertyRef(edmKey);
-      }
-    } else {
-      instance.entityBaseType = (EdmEntityType) instance.baseType;
-    }
-
     return instance;
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
     super(edm, name, entityType.getBaseType(), entityType.hasStream());
-
+    this.entityType = entityType;
     helper = new EdmStructuredTypeHelperImpl(edm, entityType);
   }
 
@@ -75,6 +62,35 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   @Override
   protected Map<String, EdmNavigationProperty> getNavigationProperties() {
     return helper.getNavigationProperties();
+  }
+
+  @Override
+  protected void checkBaseType() {
+    if (!baseTypeChecked) {
+      if (baseTypeName != null) {
+        baseType = buildBaseType(baseTypeName);
+      }
+      if (baseType == null) {
+        entityBaseType = null;
+
+        final List<PropertyRef> key = entityType.getKey();
+        if (key != null) {
+          final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
+          for (PropertyRef ref : key) {
+            edmKey.add(new EdmKeyPropertyRefImpl(this, ref));
+          }
+          setEdmKeyPropertyRef(edmKey);
+        }
+      } else {
+        entityBaseType = (EdmEntityType) baseType;
+      }
+      baseTypeChecked = true;
+    }
+  }
+
+  @Override
+  public boolean isOpenType() {
+    return helper.isOpenType();
   }
 
 }

@@ -19,7 +19,9 @@
 package org.apache.olingo.client.core.edm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
@@ -41,9 +43,9 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.edm.AbstractEdmSchemaImpl;
+import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 
-public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
+public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private final ODataServiceVersion version;
 
@@ -52,6 +54,10 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
   private final List<? extends Schema> xmlSchemas;
 
   private final Schema schema;
+
+  private Map<FullQualifiedName, EdmEntityContainer> entityContainerByName;
+
+  private List<EdmEntityContainer> entityContainers;
 
   public EdmSchemaImpl(final ODataServiceVersion version, final Edm edm,
           final List<? extends Schema> xmlSchemas, final Schema schema) {
@@ -65,12 +71,49 @@ public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
   }
 
   @Override
-  protected EdmEntityContainer createEntityContainer() {
-    final EntityContainer defaultContainer = schema.getDefaultEntityContainer();
+  public List<EdmEntityContainer> getEntityContainers() {
+    if (entityContainers == null) {
+      if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+        entityContainers = super.getEntityContainers();
+        entityContainerByName = new HashMap<FullQualifiedName, EdmEntityContainer>();
+        entityContainerByName.put(
+                new FullQualifiedName(getEntityContainer().getNamespace(), getEntityContainer().getName()),
+                getEntityContainer());
+      } else {
+        entityContainers = new ArrayList<EdmEntityContainer>(schema.getEntityContainers().size());
+        for (EntityContainer entityContainer : schema.getEntityContainers()) {
+          final EdmEntityContainer edmContainer = createEntityContainer(entityContainer.getName());
+          final FullQualifiedName fqn = new FullQualifiedName(edmContainer.getNamespace(), edmContainer.getName());
+
+          entityContainers.add(edmContainer);
+          entityContainerByName.put(fqn, edmContainer);
+        }
+      }
+    }
+
+    return entityContainers;
+  }
+
+  @Override
+  public EdmEntityContainer getEntityContainer(final FullQualifiedName name) {
+    return entityContainerByName.get(name);
+  }
+
+  private EdmEntityContainer createEntityContainer(final String name) {
+    final EntityContainer defaultContainer = schema.getEntityContainer(name);
     if (defaultContainer != null) {
       final FullQualifiedName entityContainerName =
               new FullQualifiedName(schema.getNamespace(), defaultContainer.getName());
       return new EdmEntityContainerImpl(edm, entityContainerName, defaultContainer, xmlSchemas);
+    }
+    return null;
+  }
+
+  @Override
+  protected EdmEntityContainer createEntityContainer() {
+    final EntityContainer defaultContainer = schema.getDefaultEntityContainer();
+    if (defaultContainer != null) {
+      return createEntityContainer(defaultContainer.getName());
     }
     return null;
   }

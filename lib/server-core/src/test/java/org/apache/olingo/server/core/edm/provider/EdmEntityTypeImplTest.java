@@ -96,21 +96,21 @@ public class EdmEntityTypeImplTest {
     typeWithComplexKeyProvider.setName(typeWithComplexKeyName.getName());
     List<Property> typeWithComplexKeyProperties = new ArrayList<Property>();
     typeWithComplexKeyProperties.add(new Property().setName("Id").setType(
-            EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+        EdmPrimitiveTypeKind.String.getFullQualifiedName()));
 
     List<Property> complexTypeProperties = new ArrayList<Property>();
     complexTypeProperties.add(new Property().setName("ComplexPropName").setType(
-            EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+        EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     FullQualifiedName complexTypeName = new FullQualifiedName("namespace", "complexTypeName");
     when(provider.getComplexType(complexTypeName)).thenReturn(
-            new ComplexType().setName("complexTypeName").setProperties(complexTypeProperties));
+        new ComplexType().setName("complexTypeName").setProperties(complexTypeProperties));
 
     typeWithComplexKeyProperties.add(new Property().setName("Comp").setType(complexTypeName));
     typeWithComplexKeyProvider.setProperties(typeWithComplexKeyProperties);
     List<PropertyRef> keyForTypeWithComplexKey = new ArrayList<PropertyRef>();
     keyForTypeWithComplexKey.add(new PropertyRef().setPropertyName("Id"));
     keyForTypeWithComplexKey.add(new PropertyRef().setPropertyName("ComplexPropName").setAlias("alias").setPath(
-            "Comp/ComplexPropName"));
+        "Comp/ComplexPropName"));
     typeWithComplexKeyProvider.setKey(keyForTypeWithComplexKey);
     when(provider.getEntityType(typeWithComplexKeyName)).thenReturn(typeWithComplexKeyProvider);
 
@@ -255,7 +255,8 @@ public class EdmEntityTypeImplTest {
   public void invalidBaseType() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     EntityType entityType = new EntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
-    EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
+    EdmEntityTypeImpl instance = EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName("n", "n"), entityType);
+    instance.getBaseType();
   }
 
   @Test

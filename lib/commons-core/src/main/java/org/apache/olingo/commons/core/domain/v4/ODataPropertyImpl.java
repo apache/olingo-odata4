@@ -21,6 +21,7 @@ package org.apache.olingo.commons.core.domain.v4;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataProperty;
@@ -41,7 +42,9 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
 
   @Override
   public ODataEnumValue getEnumValue() {
-    return hasEnumValue() ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asEnum() : null;
+    return hasEnumValue()
+            ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asEnum()
+            : null;
   }
 
   @Override
@@ -50,8 +53,17 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
   }
 
   @Override
+  public ODataLinkedComplexValue getLinkedComplexValue() {
+    return hasComplexValue() && getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
+            ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asLinkedComplex()
+            : null;
+  }
+
+  @Override
   public ODataCollectionValue<ODataValue> getCollectionValue() {
-    return hasCollectionValue() ? getValue().<ODataValue>asCollection() : null;
+    return hasCollectionValue()
+            ? getValue().<ODataValue>asCollection()
+            : null;
   }
 
 }

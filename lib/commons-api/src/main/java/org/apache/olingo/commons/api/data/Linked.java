@@ -18,35 +18,21 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Value {
+import java.util.List;
 
-  boolean isNull();
+public interface Linked {
 
-  boolean isPrimitive();
+  /**
+   * Gets association links.
+   *
+   * @return association links.
+   */
+  List<Link> getAssociationLinks();
 
-  boolean isGeospatial();
-
-  boolean isEnum();
-
-  boolean isComplex();
-
-  boolean isLinkedComplex();
-
-  boolean isCollection();
-
-  Object get();
-
-  NullValue asNull();
-
-  PrimitiveValue asPrimitive();
-
-  EnumValue asEnum();
-
-  GeospatialValue asGeospatial();
-
-  ComplexValue asComplex();
-
-  LinkedComplexValue asLinkedComplex();
-
-  CollectionValue asCollection();
+  /**
+   * Gets navigation links.
+   *
+   * @return links.
+   */
+  List<Link> getNavigationLinks();
 }

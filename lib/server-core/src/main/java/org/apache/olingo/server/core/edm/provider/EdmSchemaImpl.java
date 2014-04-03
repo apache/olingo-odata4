@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.AbstractEdmSchemaImpl;
+import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
@@ -40,7 +40,7 @@ import org.apache.olingo.server.api.edm.provider.Function;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
-public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
+public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private final Schema schema;
   private final Edm edm;

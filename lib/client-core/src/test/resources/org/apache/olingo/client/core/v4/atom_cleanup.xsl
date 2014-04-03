@@ -27,6 +27,7 @@
 
   <xsl:template match="atom:updated"/>
   <xsl:template match="atom:author"/>
+  <xsl:template match="atom:summary"/>
   <xsl:template match="atom:title">
     <xsl:if test="string-length(.) &gt; 0">
       <title type="{@type}">
@@ -38,7 +39,7 @@
   
   <xsl:template match="m:action"/>
 
-  <xsl:template match="@*[name() = 'm:etag' or name() = 'm:context']"/>
+  <xsl:template match="@*[name() = 'm:etag' or name() = 'm:context' or name() = 'm:metadata-etag']"/>
 
   <xsl:template match="node()|@*">
     <xsl:copy>

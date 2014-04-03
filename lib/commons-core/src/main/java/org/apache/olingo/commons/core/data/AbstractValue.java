@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.EnumValue;
 import org.apache.olingo.commons.api.data.GeospatialValue;
+import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.NullValue;
 import org.apache.olingo.commons.api.data.PrimitiveValue;
 import org.apache.olingo.commons.api.data.Value;
@@ -58,6 +59,11 @@ public abstract class AbstractValue implements Value {
   }
 
   @Override
+  public boolean isLinkedComplex() {
+    return false;
+  }
+
+  @Override
   public boolean isCollection() {
     return false;
   }
@@ -85,6 +91,11 @@ public abstract class AbstractValue implements Value {
   @Override
   public ComplexValue asComplex() {
     return isComplex() ? (ComplexValue) this : null;
+  }
+
+  @Override
+  public LinkedComplexValue asLinkedComplex() {
+    return isLinkedComplex() ? (LinkedComplexValue) this : null;
   }
 
   @Override

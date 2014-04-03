@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.op.impl.v3;
 
 import java.net.URI;
+import java.util.List;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
@@ -86,6 +87,13 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
+  protected void copyProperties(final List<Property> src, final CommonODataEntity dst, final URI base) {
+    for (Property property : src) {
+      add(dst, getODataProperty(property));
+    }
+  }
+
+  @Override
   public ODataEntity getODataEntity(final Entry resource) {
     return (ODataEntity) super.getODataEntity(resource);
   }
@@ -97,7 +105,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataProperty getODataProperty(final Property property) {
-    return new ODataPropertyImpl(property.getName(), getODataValue(property));
+    return new ODataPropertyImpl(property.getName(), getODataValue(property, null));
   }
 
   @Override

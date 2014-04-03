@@ -21,6 +21,20 @@ package org.apache.olingo.commons.api.domain.v4;
 public interface ODataValue extends org.apache.olingo.commons.api.domain.ODataValue {
 
   /**
+   * Check is is a linked complex value.
+   *
+   * @return 'TRUE' if linked complex; 'FALSE' otherwise.
+   */
+  boolean isLinkedComplex();
+
+  /**
+   * Casts to complex value with link information (if available).
+   *
+   * @return complex value with link information.
+   */
+  ODataLinkedComplexValue asLinkedComplex();
+
+  /**
    * Check is is an enum value.
    *
    * @return 'TRUE' if enum; 'FALSE' otherwise.

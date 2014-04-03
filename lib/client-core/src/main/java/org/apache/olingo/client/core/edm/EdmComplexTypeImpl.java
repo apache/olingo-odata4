@@ -64,4 +64,9 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
     return helper.getNavigationProperties();
   }
 
+  @Override
+  public boolean isOpenType() {
+    return helper.isOpenType();
+  }
+
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -50,6 +51,16 @@ public class ODataPrimitiveValueImpl extends AbstractODataPrimitiveValue impleme
 
   @Override
   public ODataEnumValue asEnum() {
+    return null;
+  }
+
+  @Override
+  public boolean isLinkedComplex() {
+    return false;
+  }
+
+  @Override
+  public ODataLinkedComplexValue asLinkedComplex() {
     return null;
   }
 

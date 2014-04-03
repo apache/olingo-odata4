@@ -73,7 +73,7 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
     }
 
     if (property.getValue() == null) {
-      value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree);
+      value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree, parser.getCodec());
     }
 
     return new Container<JSONPropertyImpl>(contextURL, metadataETag, property);

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -28,20 +29,29 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public abstract class AbstractEdmSchemaImpl implements EdmSchema {
+public abstract class AbstractEdmSchema implements EdmSchema {
 
   protected final String namespace;
+
   private final String alias;
+
   private List<EdmTypeDefinition> typeDefinitions;
+
   private List<EdmEnumType> enumTypes;
+
   private List<EdmEntityType> entityTypes;
+
   private List<EdmComplexType> complexTypes;
+
   private List<EdmAction> actions;
+
   private List<EdmFunction> functions;
+
   private EdmEntityContainer entityContainer;
 
-  public AbstractEdmSchemaImpl(String namespace, String alias) {
+  public AbstractEdmSchema(String namespace, String alias) {
     this.namespace = namespace;
     this.alias = alias;
   }
@@ -114,6 +124,22 @@ public abstract class AbstractEdmSchemaImpl implements EdmSchema {
       entityContainer = createEntityContainer();
     }
     return entityContainer;
+  }
+
+  @Override
+  public List<EdmEntityContainer> getEntityContainers() {
+    return Collections.singletonList(getEntityContainer());
+  }
+
+  @Override
+  public EdmEntityContainer getEntityContainer(final FullQualifiedName name) {
+    return getEntityContainer() == null
+            ? null
+            : name == null
+            ? getEntityContainer()
+            : name.equals(new FullQualifiedName(getEntityContainer().getNamespace(), getEntityContainer().getName()))
+            ? getEntityContainer()
+            : null;
   }
 
   @Override

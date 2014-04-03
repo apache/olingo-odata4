@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.AbstractEdmImpl;
+import org.apache.olingo.commons.core.edm.AbstractEdm;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -158,7 +158,7 @@ public class EdmImplCallCreateTest {
     edm = new LocalEdm();
   }
 
-  private class LocalEdm extends AbstractEdmImpl {
+  private class LocalEdm extends AbstractEdm {
 
     @Override
     public EdmEntityContainer createEntityContainer(final FullQualifiedName fqn) {

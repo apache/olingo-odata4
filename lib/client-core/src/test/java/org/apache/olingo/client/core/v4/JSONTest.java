@@ -58,6 +58,9 @@ public class JSONTest extends AbstractTest {
     if (node.has(Constants.JSON_CONTEXT)) {
       node.remove(Constants.JSON_CONTEXT);
     }
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ETAG))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ETAG));
+    }
     if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))) {
       node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE));
     }
@@ -140,7 +143,6 @@ public class JSONTest extends AbstractTest {
   @Test
   public void additionalEntries() throws Exception {
     entry("entity.minimal", getODataPubFormat());
-//    entry("entity.full", getODataPubFormat());
     entry("entity.primitive", getODataPubFormat());
     entry("entity.complex", getODataPubFormat());
     entry("entity.collection.primitive", getODataPubFormat());
@@ -153,6 +155,7 @@ public class JSONTest extends AbstractTest {
     entry("VipCustomer", getODataPubFormat());
     entry("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", getODataPubFormat());
     entry("entityReference", getODataPubFormat());
+    entry("entity.withcomplexnavigation", getODataPubFormat());
   }
 
   protected void property(final String filename, final ODataFormat format) throws Exception {

@@ -100,21 +100,10 @@
         <version>${war.maven.plugin.version}</version>
         <configuration>
           <webResources>
-            <!--
-                 HACK: Include legal files explicity, otherwise they will end up in the wrong path
-                       or in another jar file in the war.
-            -->
             <resource>
               <directory>${project.build.outputDirectory}</directory>
               <includes>
                 <include>META-INF/DEPENDENCIES*</include>
-              </includes>
-            </resource>
-            <resource>
-              <directory>${basedir}/../</directory>
-              <targetPath>META-INF</targetPath>
-              <includes>
-                <include>LICENSE</include>
               </includes>
             </resource>
           </webResources>
@@ -162,13 +151,6 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>LICENSE</include>
-        </includes>
       </resource>
     </resources>
   </build>

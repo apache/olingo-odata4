@@ -78,4 +78,9 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     return helper.getNavigationProperties();
   }
 
+  @Override
+  public boolean isOpenType() {
+    return helper.isOpenType();
+  }
+
 }

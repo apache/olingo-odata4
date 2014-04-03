@@ -150,10 +150,9 @@ public final class URIUtils {
           final EdmEntityContainer entityContainer, final EdmFunctionImport functionImport) {
 
     final StringBuilder result = new StringBuilder();
-    // TODO: https://issues.apache.org/jira/browse/OLINGO-209
-    // if (!entityContainer.isDefaultEntityContainer()) {
-    //  result.append(entityContainer.getName()).append('.');
-    // }
+    if (!entityContainer.isDefault()) {
+      result.append(entityContainer.getName()).append('.');
+    }
     result.append(functionImport.getName());
 
     return result.toString();
@@ -161,7 +160,7 @@ public final class URIUtils {
 
   private static String prefix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {
     String result = StringUtils.EMPTY;
-    if (version == ODataServiceVersion.V30) {
+    if (version.compareTo(ODataServiceVersion.V40) < 0) {
       switch (typeKind) {
         case Guid:
           result = "guid'";
@@ -188,7 +187,7 @@ public final class URIUtils {
 
   private static String suffix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {
     String result = StringUtils.EMPTY;
-    if (version == ODataServiceVersion.V30) {
+    if (version.compareTo(ODataServiceVersion.V40) < 0) {
       switch (typeKind) {
         case Guid:
         case DateTime:
@@ -222,7 +221,7 @@ public final class URIUtils {
   private static String timestamp(final ODataServiceVersion version, final Timestamp timestamp)
           throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    return version == ODataServiceVersion.V30
+    return version.compareTo(ODataServiceVersion.V40) < 0
             ? prefix(version, EdmPrimitiveTypeKind.DateTime)
             + URLEncoder.encode(EdmDateTime.getInstance().
                     valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
@@ -238,7 +237,7 @@ public final class URIUtils {
 
     String result;
     if (calendar.get(Calendar.ZONE_OFFSET) == 0) {
-      if (version == ODataServiceVersion.V30) {
+      if (version.compareTo(ODataServiceVersion.V40) < 0) {
         result = prefix(version, EdmPrimitiveTypeKind.DateTime)
                 + URLEncoder.encode(EdmDateTime.getInstance().
                         valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
@@ -271,7 +270,7 @@ public final class URIUtils {
   private static String duration(final ODataServiceVersion version, final Duration duration)
           throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    return version == ODataServiceVersion.V30
+    return version.compareTo(ODataServiceVersion.V40) < 0
             ? EdmTime.getInstance().toUriLiteral(URLEncoder.encode(EdmTime.getInstance().
                             valueToString(duration, null, null,
                                     Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8))
@@ -308,7 +307,7 @@ public final class URIUtils {
     try {
       if (obj == null) {
         value = Constants.ATTR_NULL;
-      } else if (version == ODataServiceVersion.V40 && obj instanceof Collection) {
+      } else if (version.compareTo(ODataServiceVersion.V40) >= 0 && obj instanceof Collection) {
         final StringBuffer buffer = new StringBuffer("[");
         for (@SuppressWarnings("unchecked")
                 final Iterator<Object> itor = ((Collection<Object>) obj).iterator(); itor.hasNext();) {
@@ -320,7 +319,7 @@ public final class URIUtils {
         buffer.append(']');
 
         value = buffer.toString();
-      } else if (version == ODataServiceVersion.V40 && obj instanceof Map) {
+      } else if (version.compareTo(ODataServiceVersion.V40) >= 0 && obj instanceof Map) {
         final StringBuffer buffer = new StringBuffer("{");
         for (@SuppressWarnings("unchecked")
                 final Iterator<Map.Entry<Object, Object>> itor =

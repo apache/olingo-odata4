@@ -16,37 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.commons.api.data;
 
-public interface Value {
-
-  boolean isNull();
-
-  boolean isPrimitive();
-
-  boolean isGeospatial();
-
-  boolean isEnum();
-
-  boolean isComplex();
-
-  boolean isLinkedComplex();
-
-  boolean isCollection();
-
-  Object get();
-
-  NullValue asNull();
-
-  PrimitiveValue asPrimitive();
-
-  EnumValue asEnum();
-
-  GeospatialValue asGeospatial();
-
-  ComplexValue asComplex();
-
-  LinkedComplexValue asLinkedComplex();
-
-  CollectionValue asCollection();
+public interface LinkedComplexValue extends ComplexValue, Linked {
+  
 }

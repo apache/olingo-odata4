@@ -28,4 +28,7 @@ public interface EdmStructuredTypeHelper {
   Map<String, EdmProperty> getProperties();
 
   Map<String, EdmNavigationProperty> getNavigationProperties();
+
+  boolean isOpenType();
+
 }

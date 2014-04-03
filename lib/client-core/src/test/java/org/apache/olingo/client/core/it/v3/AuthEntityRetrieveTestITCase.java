@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.client.core.http.AbstractBasicAuthHttpClientFactory;
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,19 +27,7 @@ public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
 
   @BeforeClass
   public static void enableBasicAuth() {
-    client.getConfiguration().setHttpClientFactory(new AbstractBasicAuthHttpClientFactory() {
-      private static final long serialVersionUID = 1L;
-
-      @Override
-      protected String getUsername() {
-        return "odatajclient";
-      }
-
-      @Override
-      protected String getPassword() {
-        return "odatajclient";
-      }
-    });
+    client.getConfiguration().setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
   }
 
   @AfterClass

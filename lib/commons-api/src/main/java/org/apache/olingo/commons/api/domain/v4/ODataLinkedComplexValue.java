@@ -16,37 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.api.domain.v4;
 
-public interface Value {
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLinked;
 
-  boolean isNull();
+public interface ODataLinkedComplexValue extends ODataValue, ODataLinked, ODataComplexValue<ODataProperty> {
 
-  boolean isPrimitive();
-
-  boolean isGeospatial();
-
-  boolean isEnum();
-
-  boolean isComplex();
-
-  boolean isLinkedComplex();
-
-  boolean isCollection();
-
-  Object get();
-
-  NullValue asNull();
-
-  PrimitiveValue asPrimitive();
-
-  EnumValue asEnum();
-
-  GeospatialValue asGeospatial();
-
-  ComplexValue asComplex();
-
-  LinkedComplexValue asLinkedComplex();
-
-  CollectionValue asCollection();
 }

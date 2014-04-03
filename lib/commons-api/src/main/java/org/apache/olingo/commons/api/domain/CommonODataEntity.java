@@ -24,11 +24,25 @@ import java.util.List;
 /**
  * OData entity.
  */
-public interface CommonODataEntity extends ODataInvokeResult {
+public interface CommonODataEntity extends ODataLinked, ODataInvokeResult {
 
   String getName();
 
   URI getLink();
+
+  /**
+   * Returns OData entity edit link.
+   *
+   * @return entity edit link.
+   */
+  URI getEditLink();
+
+  /**
+   * Sets OData entity edit link.
+   *
+   * @param editLink edit link.
+   */
+  void setEditLink(URI editLink);
 
   /**
    * Gets ETag.
@@ -75,52 +89,6 @@ public interface CommonODataEntity extends ODataInvokeResult {
   List<? extends CommonODataProperty> getProperties();
 
   /**
-   * Puts the given link into one of available lists, based on its type.
-   *
-   * @param link to be added
-   * @return <tt>true</tt> if the given link was added in one of available lists
-   */
-  boolean addLink(ODataLink link);
-
-  /**
-   * Removes the given link from any list (association, navigation, edit-media).
-   *
-   * @param link to be removed
-   * @return <tt>true</tt> if the given link was contained in one of available lists
-   */
-  boolean removeLink(ODataLink link);
-
-  /**
-   * Gets association link with given name, if available, otherwise <tt>null</tt>.
-   *
-   * @param name candidate link name
-   * @return association link with given name, if available, otherwise <tt>null</tt>
-   */
-  ODataLink getAssociationLink(String name);
-
-  /**
-   * Returns all entity association links.
-   *
-   * @return OData entity links.
-   */
-  List<ODataLink> getAssociationLinks();
-
-  /**
-   * Gets navigation link with given name, if available, otherwise <tt>null</tt>.
-   *
-   * @param name candidate link name
-   * @return navigation link with given name, if available, otherwise <tt>null</tt>
-   */
-  ODataLink getNavigationLink(String name);
-
-  /**
-   * Returns all entity navigation links (including inline entities / feeds).
-   *
-   * @return OData entity links.
-   */
-  List<ODataLink> getNavigationLinks();
-
-  /**
    * Gets media-edit link with given name, if available, otherwise <tt>null</tt>.
    *
    * @param name candidate link name
@@ -134,20 +102,6 @@ public interface CommonODataEntity extends ODataInvokeResult {
    * @return OData entity links.
    */
   List<ODataLink> getEditMediaLinks();
-
-  /**
-   * Returns OData entity edit link.
-   *
-   * @return entity edit link.
-   */
-  URI getEditLink();
-
-  /**
-   * Sets OData entity edit link.
-   *
-   * @param editLink edit link.
-   */
-  void setEditLink(URI editLink);
 
   /**
    * TRUE if read-only entity.

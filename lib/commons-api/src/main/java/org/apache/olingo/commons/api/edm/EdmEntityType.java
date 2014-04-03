@@ -28,14 +28,14 @@ public interface EdmEntityType extends EdmStructuredType {
   /**
    * Gets all key predicate names. In case an alias is defined for a key predicate this will be returned.
    *
-   * @return collection of key property names of type List<String>
+   * @return collection of key property names of type List&lt;String&gt;
    */
   List<String> getKeyPredicateNames();
 
   /**
    * Get all key properties references as list of {@link EdmKeyPropertyRef}.
    *
-   * @return collection of key properties of type List<EdmKeyPropertyRef>
+   * @return collection of key properties of type List&lt;EdmKeyPropertyRef&gt;
    */
   List<EdmKeyPropertyRef> getKeyPropertyRefs();
 

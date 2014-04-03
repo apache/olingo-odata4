@@ -33,11 +33,9 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   private final EdmStructuredTypeHelper helper;
 
   public static EdmComplexTypeImpl getInstance(
-      final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+          final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
 
     final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, name, complexType);
-    instance.baseType = instance.buildBaseType(complexType.getBaseType());
-
     return instance;
   }
 
@@ -54,6 +52,11 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   @Override
   protected Map<String, EdmNavigationProperty> getNavigationProperties() {
     return helper.getNavigationProperties();
+  }
+
+  @Override
+  public boolean isOpenType() {
+    return helper.isOpenType();
   }
 
 }
