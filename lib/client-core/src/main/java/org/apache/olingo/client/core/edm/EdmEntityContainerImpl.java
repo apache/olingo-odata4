@@ -50,17 +50,18 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   public EdmEntityContainerImpl(final Edm edm, final FullQualifiedName entityContainerName,
           final EntityContainer xmlEntityContainer, final List<? extends Schema> xmlSchemas) {
 
-    super(edm, entityContainerName, getFullQualifiedName(xmlEntityContainer.getExtends()));
+    super(edm, entityContainerName, xmlEntityContainer.getExtends() == null
+            ? null : new FullQualifiedName(xmlEntityContainer.getExtends()));
 
     this.xmlEntityContainer = xmlEntityContainer;
     this.xmlSchemas = xmlSchemas;
   }
 
-  private static FullQualifiedName getFullQualifiedName(String parent) {
-    if (parent != null) {
-      return new FullQualifiedName(parent);
-    }
-    return null;
+  @Override
+  public boolean isDefault() {
+    return xmlEntityContainer instanceof org.apache.olingo.client.api.edm.xml.v4.EntityContainer
+            ? true
+            : xmlEntityContainer.isDefaultEntityContainer();
   }
 
   @Override

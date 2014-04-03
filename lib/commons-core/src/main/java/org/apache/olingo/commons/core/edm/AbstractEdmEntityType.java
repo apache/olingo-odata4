@@ -34,9 +34,13 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType implements EdmEntityType {
 
   private final boolean hasStream;
+
   protected EdmEntityType entityBaseType;
+
   private final List<String> keyPredicateNames = new ArrayList<String>();
+
   private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = new LinkedHashMap<String, EdmKeyPropertyRef>();
+
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
   protected AbstractEdmEntityType(final Edm edm, final FullQualifiedName typeName, final FullQualifiedName baseTypeName,
@@ -111,7 +115,8 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
   public boolean hasStream() {
     return hasStream;
   }
-  
+
+  @Override
   protected void checkBaseType() {
     //Current Client implementation doesn`t need this so I implemented an empty body here.
   }

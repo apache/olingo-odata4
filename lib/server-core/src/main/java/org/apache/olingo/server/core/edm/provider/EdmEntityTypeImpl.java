@@ -36,11 +36,13 @@ import org.apache.olingo.server.api.edm.provider.PropertyRef;
 public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   private final EdmStructuredTypeHelper helper;
+
   private EntityType entityType;
+
   private boolean baseTypeChecked = false;
 
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
-      final EntityType entityType) {
+          final EntityType entityType) {
 
     final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
     return instance;
@@ -85,5 +87,10 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
       baseTypeChecked = true;
     }
   }
-  
+
+  @Override
+  public boolean isOpenType() {
+    return entityType.isOpenType();
+  }
+
 }

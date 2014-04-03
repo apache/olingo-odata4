@@ -24,47 +24,65 @@ import java.util.List;
  * A csdl schema element
  */
 public interface EdmSchema {
-  
+
   /**
    * @return the namespace for this schema
    */
   String getNamespace();
-  
+
   /**
    * @return the alias for this schema. May be null.
    */
   String getAlias();
-  
+
   /**
    * @return all enum types for this schema
    */
   List<EdmEnumType> getEnumTypes();
-  
+
   /**
    * @return all entity types for this schema
    */
   List<EdmEntityType> getEntityTypes();
-  
+
   /**
    * @return all complex types for this schema
    */
   List<EdmComplexType> getComplexTypes();
-  
+
   /**
    * @return all actions for this schema
    */
   List<EdmAction> getActions();
-  
+
   /**
    * @return all functions for this schema
    */
   List<EdmFunction> getFunctions();
-  
+
   /**
    * @return the entity container for this schema. May be null.
    */
   EdmEntityContainer getEntityContainer();
 
+  /**
+   * Returns the list of entity containers for this schema.
+   * <br/>
+   * According to CSDL specifications, this method will always return a singleton list for OData 4.0, containing the
+   * same container as returned by {@link #getEntityContainer()}.
+   *
+   * @return the list of entity containers for this schema; singleton list for OData 4.0
+   */
+  List<EdmEntityContainer> getEntityContainers();
+
+  /**
+   * Returns the entity container for the given name, or null if not found.
+   *
+   * @param name entity container full qualified name
+   * @return the entity container for the given name, or null if not found
+   */
+  EdmEntityContainer getEntityContainer(FullQualifiedName name);
+
   List<EdmTypeDefinition> getTypeDefinitions();
-  
+
 }
