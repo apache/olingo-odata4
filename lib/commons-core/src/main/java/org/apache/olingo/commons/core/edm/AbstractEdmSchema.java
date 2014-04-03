@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public abstract class AbstractEdmSchemaImpl implements EdmSchema {
+public abstract class AbstractEdmSchema implements EdmSchema {
 
   protected final String namespace;
 
@@ -51,7 +51,7 @@ public abstract class AbstractEdmSchemaImpl implements EdmSchema {
 
   private EdmEntityContainer entityContainer;
 
-  public AbstractEdmSchemaImpl(String namespace, String alias) {
+  public AbstractEdmSchema(String namespace, String alias) {
     this.namespace = namespace;
     this.alias = alias;
   }

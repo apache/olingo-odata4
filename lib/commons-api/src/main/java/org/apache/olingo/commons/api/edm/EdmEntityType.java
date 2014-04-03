@@ -54,13 +54,6 @@ public interface EdmEntityType extends EdmStructuredType {
    */
   boolean hasStream();
 
-  /**
-   * Indicates if the entity type is an open type.
-   *
-   * @return <code>true</code> if the entity type is open
-   */
-  boolean isOpenType();
-
   /*
    * (non-Javadoc)
    *

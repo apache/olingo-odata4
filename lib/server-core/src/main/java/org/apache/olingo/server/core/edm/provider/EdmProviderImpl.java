@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.AbstractEdmImpl;
+import org.apache.olingo.commons.core.edm.AbstractEdm;
 import org.apache.olingo.server.api.edm.provider.Action;
 import org.apache.olingo.server.api.edm.provider.AliasInfo;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
@@ -49,7 +49,7 @@ import org.apache.olingo.server.api.edm.provider.Parameter;
 import org.apache.olingo.server.api.edm.provider.Schema;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 
-public class EdmProviderImpl extends AbstractEdmImpl {
+public class EdmProviderImpl extends AbstractEdm {
 
   private final EdmProvider provider;
 

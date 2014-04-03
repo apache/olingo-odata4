@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
+import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -69,4 +70,14 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     }
     return navigationProperties;
   }
+
+  @Override
+  public boolean isOpenType() {
+    return complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType
+            ? ((org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType).isOpenType()
+            : complexType instanceof EntityType
+            ? ((EntityType) complexType).isOpenType()
+            : false;
+  }
+
 }

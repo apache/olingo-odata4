@@ -61,14 +61,11 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     return instance;
   }
 
-  private final EntityType entityType;
-
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
           final EntityType entityType) {
 
     super(edm, fqn, baseTypeName, entityType.isHasStream());
     this.helper = new EdmStructuredTypeHelperImpl(edm, entityType);
-    this.entityType = entityType;
   }
 
   @Override
@@ -83,7 +80,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   @Override
   public boolean isOpenType() {
-    return entityType.isOpenType();
+    return helper.isOpenType();
   }
 
 }

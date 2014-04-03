@@ -43,9 +43,9 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.edm.AbstractEdmSchemaImpl;
+import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
 
-public class EdmSchemaImpl extends AbstractEdmSchemaImpl {
+public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private final ODataServiceVersion version;
 

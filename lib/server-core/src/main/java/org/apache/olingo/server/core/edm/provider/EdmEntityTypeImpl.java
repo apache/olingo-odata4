@@ -90,7 +90,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   @Override
   public boolean isOpenType() {
-    return entityType.isOpenType();
+    return helper.isOpenType();
   }
 
 }

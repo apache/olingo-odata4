@@ -34,7 +34,7 @@ import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public abstract class AbstractEdmImpl implements Edm {
+public abstract class AbstractEdm implements Edm {
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
       new HashMap<FullQualifiedName, EdmEntityContainer>();
