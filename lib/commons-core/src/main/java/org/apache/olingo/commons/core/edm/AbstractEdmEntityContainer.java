@@ -34,21 +34,35 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements EdmEntityContainer {
 
   protected final FullQualifiedName entityContainerName;
+
   protected final Map<String, EdmSingleton> singletons = new HashMap<String, EdmSingleton>();
+
   private boolean allSingletonsLoaded = false;
+
   protected final Map<String, EdmEntitySet> entitySets = new HashMap<String, EdmEntitySet>();
+
   private boolean allEntitySetsLoaded = false;
+
   protected final Map<String, EdmActionImport> actionImports = new HashMap<String, EdmActionImport>();
+
   private final FullQualifiedName parentContainerName;
+
   private boolean allActionImportsLoaded = false;
+
   protected final Map<String, EdmFunctionImport> functionImports = new HashMap<String, EdmFunctionImport>();
+
   private boolean allFunctionImportsLoaded = false;
 
   public AbstractEdmEntityContainer(final Edm edm, final FullQualifiedName entityContainerName,
-      final FullQualifiedName parentContainerName) {
+          final FullQualifiedName parentContainerName) {
     super(edm, entityContainerName.getName());
     this.entityContainerName = entityContainerName;
     this.parentContainerName = parentContainerName;
+  }
+
+  @Override
+  public boolean isDefault() {
+    return true;
   }
 
   @Override

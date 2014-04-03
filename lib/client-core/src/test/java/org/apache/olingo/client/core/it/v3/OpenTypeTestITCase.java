@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +37,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -42,9 +47,6 @@ import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -53,14 +55,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   @Test
   public void checkOpenTypeEntityTypesExist() {
     final Edm metadata = client.getRetrieveRequestFactory().
-            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
+            getMetadataRequest(testOpenTypeServiceRootURL).execute().getBody();
 
     final EdmSchema schema = metadata.getSchemas().get(0);
 
-    // TODO: https://issues.apache.org/jira/browse/OLINGO-209
-//        assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "Row")).isOpenType());
-//        assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "IndexedRow")).isOpenType());
-//        assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
+    assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "Row")).isOpenType());
+    assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "IndexedRow")).isOpenType());
+    assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
   private ODataEntity readRow(final ODataPubFormat format, final String uuid) {

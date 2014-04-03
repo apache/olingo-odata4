@@ -150,10 +150,9 @@ public final class URIUtils {
           final EdmEntityContainer entityContainer, final EdmFunctionImport functionImport) {
 
     final StringBuilder result = new StringBuilder();
-    // TODO: https://issues.apache.org/jira/browse/OLINGO-209
-    // if (!entityContainer.isDefaultEntityContainer()) {
-    //  result.append(entityContainer.getName()).append('.');
-    // }
+    if (!entityContainer.isDefault()) {
+      result.append(entityContainer.getName()).append('.');
+    }
     result.append(functionImport.getName());
 
     return result.toString();

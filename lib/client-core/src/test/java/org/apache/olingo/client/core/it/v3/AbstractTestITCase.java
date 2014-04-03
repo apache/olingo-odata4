@@ -83,12 +83,11 @@ public abstract class AbstractTestITCase {
 
   protected static final String TEST_PRODUCT_TYPE = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product";
 
-  protected static final String servicesODataServiceRootURL =
-          "http://services.odata.org/V3/(S(csquyjnoaywmz5xcdbfhlc1p))/OData/OData.svc/";
-
   protected static ODataClient client;
 
   protected static String testStaticServiceRootURL;
+
+  protected static String testOpenTypeServiceRootURL;
 
   protected static String testLargeModelServiceRootURL;
 
@@ -97,6 +96,7 @@ public abstract class AbstractTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc";
+    testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/openType";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
   }

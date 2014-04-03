@@ -124,18 +124,6 @@ public abstract class AbstractServices {
     return getMetadata(Constants.get(getVersion(), ConstantKey.METADATA));
   }
 
-  /**
-   * Provide sample lartge metadata.
-   *
-   * @return metadata.
-   */
-  @GET
-  @Path("/large/$metadata")
-  @Produces("application/xml")
-  public Response getLargeMetadata() {
-    return getMetadata("large" + StringUtils.capitalize(Constants.get(getVersion(), ConstantKey.METADATA)));
-  }
-
   protected Response getMetadata(final String filename) {
     try {
       return xml.createResponse(FSManager.instance(getVersion()).readFile(filename, Accept.XML), null, Accept.XML);
@@ -176,7 +164,7 @@ public abstract class AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(getVersion()).readFile(Constants.get(getVersion(), ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
