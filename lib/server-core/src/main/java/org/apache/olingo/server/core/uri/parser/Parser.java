@@ -98,6 +98,7 @@ public class Parser {
             (BatchEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Batch);
 
         uriParseTreeVisitor.visitBatchEOF(ctxBatchEOF);
+        readQueryParameter = true;
       } else if (firstSegment.startsWith("$metadata")) {
         MetadataEOFContext ctxMetadataEOF =
             (MetadataEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Metadata);
@@ -206,7 +207,7 @@ public class Parser {
 
             context.contextUriInfo.setSystemQueryOption(filterOption);
           } else if (option.name.equals("$search")) {
-            // TODO $search is not supported yet
+            throw new RuntimeException("System query option '$search' not implemented!");
           } else if (option.name.equals("$select")) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);

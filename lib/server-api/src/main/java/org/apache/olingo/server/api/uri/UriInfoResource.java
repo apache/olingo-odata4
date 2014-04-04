@@ -114,5 +114,5 @@ public interface UriInfoResource {
    * @return List of resource parts.
    */
   List<UriResource> getUriResourceParts();
-
+  
 }

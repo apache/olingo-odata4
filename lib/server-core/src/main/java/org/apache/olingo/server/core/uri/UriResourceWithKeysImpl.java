@@ -47,8 +47,10 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
 
   public List<UriParameter> getKeyPredicates() {
     List<UriParameter> retList = new ArrayList<UriParameter>();
-    for (UriParameterImpl item : keyPredicates) {
-      retList.add(item);
+    if (keyPredicates != null) {
+      for (UriParameterImpl item : keyPredicates) {
+        retList.add(item);
+      }
     }
     return retList;
   }
