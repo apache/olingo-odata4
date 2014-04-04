@@ -45,6 +45,11 @@
       <artifactId>olingo-commons-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+        <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet.version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
