@@ -40,6 +40,7 @@
   <jaxrs:server id="services" address="/">
     <jaxrs:serviceBeans>
       <bean class="org.apache.olingo.fit.V3Services"/>
+      <bean class="org.apache.olingo.fit.V3KeyAsSegment"/>
       <bean class="org.apache.olingo.fit.V4Services"/>
       <bean class="org.apache.olingo.fit.V4NorthWind"/>
       <bean class="org.apache.olingo.fit.V4NorthWindExt"/>

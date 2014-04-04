@@ -23,17 +23,14 @@ import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
+import org.springframework.stereotype.Service;
 
+@Service
 @Path("/V40/Static.svc")
 @InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4Services extends AbstractServices {
 
   public V4Services() throws Exception {
-    super();
-  }
-
-  @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v4;
+    super(ODataVersion.v4);
   }
 }

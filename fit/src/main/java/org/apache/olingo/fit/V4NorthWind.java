@@ -25,23 +25,20 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
+import org.springframework.stereotype.Service;
 
+@Service
 @Path("/V40/NorthWind.svc")
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V4NorthWind extends AbstractServices {
 
   public V4NorthWind() throws Exception {
-    super();
-  }
-
-  @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v4;
+    super(ODataVersion.v4);
   }
 
   @Override
   public Response getMetadata() {
-    return getMetadata("northwind-" + Constants.get(getVersion(), ConstantKey.METADATA));
+    return getMetadata("northwind-" + Constants.get(version, ConstantKey.METADATA));
   }
 
 }

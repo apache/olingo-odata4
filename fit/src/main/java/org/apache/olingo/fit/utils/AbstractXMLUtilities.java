@@ -192,7 +192,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       while (true) {
         final Map.Entry<Integer, XmlElement> linkInfo =
                 extractElement(reader, null,
-                Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)), startDepth, 2, 2);
+                        Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)), startDepth, 2, 2);
 
         startDepth = linkInfo.getKey();
 
@@ -243,7 +243,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
         try {
           final XmlElement inlineElement =
                   extractElement(link.getContentReader(), null,
-                  Collections.<String>singletonList(Constants.get(version, ConstantKey.INLINE)), 0, -1, -1).
+                          Collections.<String>singletonList(Constants.get(version, ConstantKey.INLINE)), 0, -1, -1).
                   getValue();
           final XMLEventReader inlineReader = inlineElement.getContentReader();
 
@@ -434,7 +434,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
     final ByteArrayOutputStream copy = new ByteArrayOutputStream();
     IOUtils.copy(content, copy);
-
     IOUtils.closeQuietly(content);
 
     XMLEventReader reader = getEventReader(new ByteArrayInputStream(copy.toByteArray()));
@@ -448,7 +447,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       // check edit link existence
       extractElement(reader, writer, Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)),
               Collections.<Map.Entry<String, String>>singletonList(
-              new AbstractMap.SimpleEntry<String, String>("rel", "edit")), false, 0, -1, -1);
+                      new AbstractMap.SimpleEntry<String, String>("rel", "edit")), false, 0, -1, -1);
 
       addAtomElement(IOUtils.toInputStream(editLinkElement), writer);
       writer.add(reader);
@@ -479,6 +478,21 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     }
 
     return new ByteArrayInputStream(bos.toByteArray());
+  }
+
+  @Override
+  public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
+          final String href) throws Exception {
+
+    final ByteArrayOutputStream copy = new ByteArrayOutputStream();
+    IOUtils.copy(content, copy);
+    IOUtils.closeQuietly(content);
+
+    final String action = String.format("<m:action metadata=\"%s%s\" title=\"%s\" target=\"%s\"/>",
+            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL), metaAnchor, name, href);
+    final String newContent = new String(copy.toByteArray(), "UTF-8").replaceAll("\\<content ", action + "\\<content ");
+
+    return IOUtils.toInputStream(newContent, "UTF-8");
   }
 
   public InputStream addAtomContent(
@@ -526,7 +540,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
         try {
           final XmlElement entryElement =
                   extractElement(reader, writer, Collections.<String>singletonList(
-                  Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3).getValue();
+                                  Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3).getValue();
 
           addAtomElement(
                   IOUtils.toInputStream("<content type=\"application/xml\">"),
@@ -578,7 +592,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     final String skipTokenDirPath = fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.SKIP_TOKEN),
             null);
 
-
     try {
       final FileObject skipToken = fsManager.resolve(skipTokenDirPath);
       final FileObject[] files = fsManager.findByExtension(skipToken, Accept.XML.getExtension().substring(1));
@@ -591,7 +604,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     } catch (FileSystemException fse) {
       LOG.debug("Resource path '{}' not found", skipTokenDirPath);
     }
-
 
     return count;
   }
@@ -783,7 +795,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       if (event.getEventType() == XMLStreamConstants.START_ELEMENT
               && Constants.get(version, ConstantKey.LINK).equals(event.asStartElement().getName().getLocalPart())
               && !fieldToBeSaved.contains(
-              event.asStartElement().getAttributeByName(new QName("title")).getValue())
+                      event.asStartElement().getAttributeByName(new QName("title")).getValue())
               && !"edit".equals(event.asStartElement().getAttributeByName(new QName("rel")).getValue())) {
         writeCurrent = false;
       } else if (event.getEventType() == XMLStreamConstants.END_ELEMENT
@@ -791,13 +803,13 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
         writeNext = true;
       } else if (event.getEventType() == XMLStreamConstants.START_ELEMENT
               && (Constants.get(version, ConstantKey.PROPERTIES)).equals(
-              event.asStartElement().getName().getLocalPart())) {
+                      event.asStartElement().getName().getLocalPart())) {
         writeCurrent = true;
         writeNext = false;
         inProperties = true;
       } else if (event.getEventType() == XMLStreamConstants.END_ELEMENT
               && (Constants.get(version, ConstantKey.PROPERTIES)).equals(
-              event.asEndElement().getName().getLocalPart())) {
+                      event.asEndElement().getName().getLocalPart())) {
         writeCurrent = true;
       } else if (inProperties) {
         if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {
@@ -814,7 +826,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
         } else if (event.getEventType() == XMLStreamConstants.END_ELEMENT
                 && StringUtils.isNotBlank(currentName)
                 && (Constants.get(version, ConstantKey.ATOM_PROPERTY_PREFIX) + currentName.trim()).equals(
-                event.asEndElement().getName().getLocalPart())) {
+                        event.asEndElement().getName().getLocalPart())) {
           writeNext = false;
           currentName = null;
         }
@@ -840,7 +852,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     // if (!found.isEmpty()) {
     //     throw new Exception(String.format("Could not find a properties '%s'", found));
     // }
-
     return new ByteArrayInputStream(bos.toByteArray());
   }
 
@@ -883,10 +894,10 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
         final XmlElement entry =
                 extractElement(
-                getEventReader(readEntity(uri.getKey(), uri.getValue(), Accept.ATOM).getValue()),
-                null,
-                Collections.<String>singletonList("entry"),
-                0, 1, 1).getValue();
+                        getEventReader(readEntity(uri.getKey(), uri.getValue(), Accept.ATOM).getValue()),
+                        null,
+                        Collections.<String>singletonList("entry"),
+                        0, 1, 1).getValue();
 
         IOUtils.copy(entry.toStream(), writer, encoding);
       } catch (Exception e) {
@@ -923,7 +934,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
     final Map.Entry<Integer, XmlElement> propertyElement =
             extractElement(reader, null,
-            Collections.<String>singletonList(Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3);
+                    Collections.<String>singletonList(Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3);
     reader.close();
 
     reader = propertyElement.getValue().getContentReader();
@@ -947,7 +958,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       while (true) {
         final Map.Entry<Integer, XmlElement> linkElement =
                 extractElement(reader, null,
-                Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)), pos, 2, 2);
+                        Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)), pos, 2, 2);
 
         res.put("[Constants.get(version, ConstantKey.LINK)]"
                 + linkElement.getValue().getStart().getAttributeByName(new QName("title")).getValue(),
@@ -977,7 +988,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     // ---------------------------------
     Map.Entry<Integer, XmlElement> propertyElement =
             extractElement(reader, writer,
-            Collections.<String>singletonList(Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3);
+                    Collections.<String>singletonList(Constants.get(version, ConstantKey.PROPERTIES)), 0, 2, 3);
 
     writer.flush();
 
@@ -1030,7 +1041,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     // ---------------------------------
     // add navigationm changes
     // ---------------------------------
-
     // remove existent links
     for (Map.Entry<String, InputStream> remains : properties.entrySet()) {
 
@@ -1111,9 +1121,9 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     try {
       final XmlElement linkElement =
               extractElement(reader, writer,
-              Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)),
-              Collections.<Map.Entry<String, String>>singletonList(new SimpleEntry<String, String>("title", linkName)),
-              false, 0, -1, -1).getValue();
+                      Collections.<String>singletonList(Constants.get(version, ConstantKey.LINK)),
+                      Collections.<Map.Entry<String, String>>singletonList(
+                              new SimpleEntry<String, String>("title", linkName)), false, 0, -1, -1).getValue();
       writer.add(linkElement.getStart());
 
       // ------------------------------------------
@@ -1154,7 +1164,6 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
     final Map.Entry<Integer, XmlElement> prop = extractElement(getEventReader(src), null, atomPathElements, 0, 3, 4);
     IOUtils.closeQuietly(src);
-
 
     final Attribute type =
             prop.getValue().getStart().getAttributeByName(new QName(Constants.get(version, ConstantKey.TYPE)));
@@ -1216,6 +1225,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
   public InputStream getProperty(
           final String entitySetName, final String entityId, final List<String> path, final String edmType)
           throws Exception {
+
     final List<String> pathElements = new ArrayList<String>();
 
     for (String element : path) {
@@ -1224,7 +1234,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
 
     final InputStream src =
             fsManager.readFile(Commons.getEntityBasePath(entitySetName, entityId)
-            + Constants.get(version, ConstantKey.ENTITY), Accept.XML);
+                    + Constants.get(version, ConstantKey.ENTITY), Accept.XML);
 
     final XMLEventReader reader = getEventReader(src);
     final XmlElement property = extractElement(reader, null, pathElements, 0, 3, 4).getValue();

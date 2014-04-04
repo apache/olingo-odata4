@@ -68,6 +68,7 @@ public abstract class Commons {
     sequence.put("ComputerDetail", 1000);
     sequence.put("AllGeoTypesSet", 1000);
     sequence.put("Orders", 1000);
+    sequence.put("Person", 1000);
 
     mediaContent.put("CustomerInfo", "CustomerinfoId");
     mediaContent.put("Car", "VIN");
@@ -113,7 +114,7 @@ public abstract class Commons {
     try {
       return FSManager.instance(version)
               .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-              + File.separatorChar + linkName, accept);
+                      + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }
@@ -138,6 +139,7 @@ public abstract class Commons {
 
   public static InputStream getLinksAsATOM(final Map.Entry<String, Collection<String>> link)
           throws IOException {
+
     final StringBuilder builder = new StringBuilder();
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     builder.append("<links xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">");
@@ -160,6 +162,7 @@ public abstract class Commons {
   public static InputStream getLinksAsJSON(
           final String entitySetName, final Map.Entry<String, Collection<String>> link)
           throws IOException {
+
     final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
     links.put(
             Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME),

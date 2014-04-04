@@ -1,0 +1,137 @@
+{
+  "odata.metadata": "http://192.168.0.160:8080/DefaultService.svc/$metadata#Customer",
+  "value": [{
+      "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer",
+      "odata.id": "http://192.168.0.160:8080/DefaultService.svc/Customer(-8)",
+      "odata.editLink": "Customer(-8)",
+      "Orders@odata.navigationLinkUrl": "Customer(-8)/Orders",
+      "Logins@odata.navigationLinkUrl": "Customer(-8)/Logins",
+      "Husband@odata.navigationLinkUrl": "Customer(-8)/Husband",
+      "Wife@odata.navigationLinkUrl": "Customer(-8)/Wife",
+      "Info@odata.navigationLinkUrl": "Customer(-8)/Info",
+      "Thumbnail@odata.mediaEditLink": "Customer(-8)/Thumbnail",
+      "Video@odata.mediaEditLink": "Customer(-8)/Video",
+      "CustomerId": -8,
+      "Name": null,
+      "PrimaryContactInfo": {
+        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails",
+        "EmailBag@odata.type": "Collection(Edm.String)",
+        "EmailBag": ["\uff66\u307e\u30dd\u30de\u307b\u044f\u3072\u3093\u307e\u305e\u3073\u3041\u30be\u30a1\u4e9c\u30df\uff88\u5f0c\u3074\u30c0\u3041\u3093\u30bd\u305b\u30bf\u6b79\u044f\u30c1\u30df\u30dc\u7e37\u30be\u305b\u531a\u6b79\u30bc\u30bd\uff88\u307c\u30bc\u30df\u30bd\u305d\u30dc\u30bc\u5f0c\u30dc\u305b\u307d\u305d\u30de\u9ed1\u30bd\u305e\u7e37\u30dd\u73f1\u30c1\u3073\u30bc\u042f\u30cf\u30d0\u30dd\u307c\u30de\uff66\u30df\u30bf\u30b0\u307c\u042f\u30c0\u531a\u6b32\u30c1\u3079\u66a6\u30de\u30df\u3074\uff5a\u3093\u30cf\uff5a\uff66\u0451\uff66\u88f9\u3073\u30c0\u7e37\u5f0c", "ylhsxzpyyshr", "exjbedardqaufugbqgrrshzxdghrcngpnskzgpfuusieu", "kkqdn", "\u88f9\u30c0\uff41\u30de\u73f1\u307e\u30bd\u30df\u307e\u30af\u307b\u30cf\u30a1\u30bc\u73f1\u3041\u0451\u755a\u755a\uff88\u30a1\uff5a\u305b\u3079\u305e\u30af\u307b\u4e5d\u88f9\u305c\u3041\uff9d\u044f\u7e37\u305c\u66a6\u30de\u30dd\uff9d\u30c1\u307e\u30b0\u4e9c\u30bd\u6b79\u30dd\u30df\u305c\u30dc\u30dc\u307b\u30df\u30df\u30df\u307e\uff5a\u30bd\u30df\u30c1\u30be\u0451\u30df", "cmjdeggvfryupgkpoocvfddnogzik", "pupidvpdyyjaguxhixzpng\u00df\u00dfdyoshdhvohqkvhhgn\u00dfalxdcjmqarqssa"],
+        "AlternativeNames@odata.type": "Collection(Edm.String)",
+        "AlternativeNames": ["jryzplqzssohptlnepfmoaqtuudtuuhhdbn\u00dfrrij\u00dfchfdoaduezkssslvusssofuktpuohulzjlymzqgla", "odyjmrsbryzobtprkapiqokyeumujjqgdbfjpgmqjduklsdozpaaixv"],
+        "ContactAlias": {
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases",
+          "AlternativeNames@odata.type": "Collection(Edm.String)",
+          "AlternativeNames": []
+        },
+        "HomePhone": {
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+          "PhoneNumber": "\u307d\u30cf\u73f1\u044f\u30bd\u307a\u305b\u305d\u30bd\uff66\u30de\u30b0\uff88\u042f\u30bc\u307e\u7e37\u30bd\u3074\u6b32\u30bd\u30dd\u307e\u30bc\u30a1\u30af\u30dc\u30dc",
+          "Extension": "nybsszdsunynocm\u00dfvpimshzxpflsipkodkvvivljqtjdniuuvhxayrvlqepqjnpuiudsjszaosy\u00dfssrfmufytuk"
+        },
+        "WorkPhone": {
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+          "PhoneNumber": "buze",
+          "Extension": "ujsojuxutvlzsikiqvhpkqeelvudruurjlrqmsdyleusuudigvhcvmdogqnmapkzaumchtmxnjijufcf"
+        },
+        "MobilePhoneBag@odata.type": "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Phone)",
+        "MobilePhoneBag": [{
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "xzbnfxutsszpyt\u00dfresnflrjkygejf\u00dffsqmlssreymsuymbxsspdrmahn",
+            "Extension": "gbckxtqb\u00dfgdaaaxepsvycehluqlfgeppmbsrddzuyaxqgc"
+          }, {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "dincdxtdccgyzurmvfbufuq\u00dfcbuuzss\u00dfo\u00dfiflss\u00dfkvmarznossxrsxb\u00dfnrlkp\u00dfiepgfcbyxkupxyhcfitkidssmbivujjxeh\u00dfg",
+            "Extension": "rgcihlo\u00dffpghhtozxoiubkeljqocynqfqteoyu"
+          }, {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": null,
+            "Extension": null
+          }, {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "jfc",
+            "Extension": null
+          }, {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "cdurugzoussatrsaar",
+            "Extension": "ylghuuzta"
+          }, {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "xilvsb\u00dftpefvqcexaxkifuhdpmzftssppoyussuvgyibzgihbuub\u00dfpskmitccudsarkssteorcln\u00dfixeb",
+            "Extension": "lyaxpgibymunjbcvhrjrplsiokhcqeauiokrjtegzxrqfymxnbtlxjxa"
+          }]
+      },
+      "BackupContactInfo@odata.type": "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails)",
+      "BackupContactInfo": [{
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails",
+          "EmailBag@odata.type": "Collection(Edm.String)",
+          "EmailBag": ["\u30c1\u88f9\u30c0\u30af\u30be\u3092\u30df\u30c0\u30bc\u30dc\u30dd\u3041\u30df\u4e5d\u66a6\u3041\u531a\u3073\uff41\u30bf\u30dd\u30bd\u307c\u30bf\u7e37\u30dd\u3079\u30bd\u30be\u30bf\u042f\u7e37\u30bd\u305e\u30a1\u6b32\u305e\uff66\u30bd\u307c\u3072\u0451\u531a\u3072\u73f1\u755a\u30df\u3073\u3074\u305f\u305f\u30cf\u307b\u30bc\u3073\u305c\u30dd\u0451\u30be\u6b79\u305c\u307c\u3041\u7e37\u30d0\u531a\u30dc\u30d0\u30bc\uff9d\uff41\u6b32\u30df\u30dd\u30af\u30dc\u30de\u305b\u30dd\u044f\uff41\u044f\u307d\u30a1", "asscuilquz\u00dfynicoubcgynenjnhkzi\u00dftmboprbxxgomkrvmpuvdeoeni\u00dfjxpsasi", "gypknhgzsenxnauqitxnjpepcgbufhjlhhopof", "\u3041\u66a6\u0451\u30af\u30bf\u307a\u30c1\u7e37\u30a1\u30d0\u307d\u044f\u30dd\uff41\u4e5d\u88f9\u042f\u307b\u307a\u3073\u3074\u30dd\u30a1\u30d0\u305b\u30be\u3074\u7e37\u3074\u30c1\u531a\u305d\u307b\u6b32\u30bc\u66a6\u044f\u307d\u30df\u305e\u30dd\u307d\u042f\u66a6\u3072\u30be\u30df\u30be\u30bc\u30df\u305e\u305b\u30bd\u30be\u30c1\u30bc\u30be\u30bd\u307e\u042f\u044f\u30de\u30de\u531a\u6b32\u3072\u531a\u6b79\u30bf\uff5a\u7e37\u30df\u30bf\u305b\u30bf\uff41\u30dd", "uslljsrtd\u00dfgp\u00dfto\u00dfpc\u00dfasy\u00dfkxjph\u00dfqtssarcgbcgumapmqftv\u00dfngjnjyztaq", "spcgnfkttfvulqdjvmqthjdfhntf", "febdzdcrhdbsamrxbnduiffvffyyzluuprmtdhfunuckbqdtrqnrdzlzsgypf", "\u305f\u042f\u305f\u307e\u042f\u9ed1\u30dc\u66a6\u307d\u305e\u30c1\u307d\u305b\u6b79\u30dd\u30dd\u3042\u3072\u307b\u30a1\uff5a\u30bd\u7e37\u30dc\u3079\u30c0\u3041\uff41\u30bd\u30de\u66a6\u30a1\u305c\u30b0\u30a1\u3074\u30bf\uff9d\u531a\u66a6\u0451\u531a\u30bd\u3072\u30bc\u307c\u9ed1\u88f9\u30de\u307e\u30c1\u3073\u3041\u30bc\uff41\u30df\u305e\u30bf\u305b\u30bd\u73f1\u30de\u30a1\u30c1\u30a1\u307b\u3073\u30de\u30be\u30bd\u305e\u3042\u30bc\u30bd\u3092\u3073\uff88\u30df\u3079\uff5a\u30dc\u3072\u307c\u3073\u305e\u30dc\u307d\u30de"],
+          "AlternativeNames@odata.type": "Collection(Edm.String)",
+          "AlternativeNames": ["", "fjvuuibhbuktpisshdourjujqzkcxhouekzsivavhseapupnrvqrtlcvdjobpzltefrooaplddhyhuuvfvmashhmcikqruc", "zfoljqcojkifkipdxsjlepyuxe", "\u30bd\u0451\uff5a\u30dd\u305f\u3074\u30be\u30df\u5f0c\u30bc\u73f1\u4e5d\u30dc\uff9d\u88f9\u30bd\uff41\u30d0\u30a1\u3041\u30bc\uff41\u30be\u042f\u4e5d\u307a\u30a1\u30bc\uff5a\u30dc\u30bc\u305e\u3093\u3093\uff88\u30bd\u3072\u30dc\u30a1\uff41\u305e\u30c1\u305d\u3093\u30c1\u4e9c\u30bc\u30dc\u044f\u30df\uff66\u30bd\u3079\u7e37\u30bc\u30bf\u30bf\uff5a\u9ed1\uff41\u6b79\u305c\u531a\u3072\u0451\u30df\u30bd\u3093\u042f\u30bd\u307e\u307e\u307d\u30bc\uff41\u73f1\u6b32\u3074\u30bd\uff9d\u66a6"],
+          "ContactAlias": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases",
+            "AlternativeNames@odata.type": "Collection(Edm.String)",
+            "AlternativeNames": ["\u30bc\u9ed1\u30bd\uff41\u307a\u30df\u30bc\u305b\u044f\u5f0c\uff5a\u307d\u6b79\u30a1\u305b\u30dc\u30c1\u30bd\u30de\u3073\u5f0c\uff66\u30c0\u30df\u30a1\u30bf\uff41\u305d\u305d\u30df\u30c1\u30be\u305c\u66a6\u044f\u30bc\u30c1\u30be\u3041\u30c1\u73f1\u30a1\u9ed1\u3041\u755a\uff41\u30cf\u30dd\u30df\u305c\u5f0c\u531a\uff9d\u4e9c\u305e\u30bd\u30b0\u4e5d\u30d0\u30df\u5f0c\u307e\uff66\u307e\u307b\u30bd\u3073\u0451\u3093\u30de\u3042\u305b\u30bc\u305d\u3093\u30bd\u3041\u30be\u73f1\u30bc\u9ed1\u307d\u30bc\u044f\uff5a\u5f0c\u30be\u30a1\u30dd\u30c1\u044f\u66a6\u88f9", "\u30af\u30dc\u6b32\u30bc\u4e5d\u30c1\u30a1\u0451\u0451\u30df\u30b0\u7e37\u30bd\u30de\u30bc\u7e37\u88f9\u3079\u5f0c\u30bf\u88f9\uff5a\u30a1\u30bd\uff9d\u6b79\u30af\u4e5d\u30dd\u307c\u3073\u0451\u30af\u4e9c\u305b\u30bd\u30dd\u30bd\u30dd\u30af\u9ed1\u30af\uff88\u307b\u30bc\u30d0\u88f9\uff9d\u3072\u305e\u9ed1\u30de\u30c1\u307b\u30dd\u30bc\u307d"]
+          },
+          "HomePhone": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "vmgmsp\u00dfcknjqn\u00dfoahsshpmglloirufeuuf\u00dfbsi",
+            "Extension": null
+          },
+          "WorkPhone": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "oqokuga\u00dfxaxlexj",
+            "Extension": "\u30af\u5f0c\u307c\u3092\u30c1\u5f0c\u30bc\uff5a\u3092\u30df\uff88\u30bc\u30d0\u6b79\u30a1\u30af\u30be\uff5a\u307a\uff9d\uff41\u3042\u5f0c\u30a1\u3093\u305e\u30df\u30dd\u307a\u30de\u30dc\u30bd\u30af\uff9d\u305e\u30b0\u755a\u3093\u30c1\u30dd\u4e9c\u30bc\u30de\u307c\u73f1\u30c1\u307c\u30dc\u30df\u30be\u88f9\u30dd\u30df\u6b32\uff9d\u3092\uff9d\u9ed1\uff9d\u30bc\u3042\u4e9c\u30df\u30dc\u305b\u30bf\u3041\u30d0\u30df\uff66\u30be\u3073\u30af\u30c1\u307a\u30bf\u30af\u30bf\u30be\u30df\u755a\u305b\uff41\u30df\u5f0c\uff88\u4e5d\u30bf\uff9d\u6b32\u30b0\uff66\u30a1"
+          },
+          "MobilePhoneBag@odata.type": "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Phone)",
+          "MobilePhoneBag": [{
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+              "PhoneNumber": null,
+              "Extension": "lpxsardonkyjhcmzuzuislpxnlvbzbudgo"
+            }]
+        }, {
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails",
+          "EmailBag@odata.type": "Collection(Edm.String)",
+          "EmailBag": ["ernylxxlennurcenaaaukveogppiceftqcshoniaqztpheoefmbbuzcbpjmvcucadtlkkpjhxa", "kugmpusyi"],
+          "AlternativeNames@odata.type": "Collection(Edm.String)",
+          "AlternativeNames": ["\u531a\u30de\u0451\u307b\u4e9c\u6b79\u30df\u4e5d\u30a1\u30cf\u30bf\u30dd\u30c1\u30dd\u305f\u531a\u3092\u305f\u30bd\u531a\u305d\u3074\u30de\u307a\u30a1\u30dd\u3041\u30c1\u3072\u3073\u3072\u6b79\u30be\u88f9\u7e37\u4e5d\u30b0\u30de\u307c\u30de\u4e5d\u30a1\u305d\u3073\u66a6\u755a\u042f\u305d\u30c1\u305b\u66a6\u30be\u307a\u3079\u30bd\u30c1", "\u305c\u531a\u3072\u30cf\u3072\u30bc\u30de\u3073\u30dd\u531a\u30bc\u30bc\u30dc\u7e37\u5f0c\u0451\u4e9c\u3042\u30bf\u30bc\u30be\u30dc\uff5a\u044f\u3042\u30b0\u30dd\u30dc\u307e\u30bd\u3092\u4e9c\u30c1\u66a6\u305f\u88f9\u30c1\u4e5d\uff66\u4e5d\u305c\u30de\u30a1\u30a1\u3072\u30dd\u3073\u30d0\u30bd\u3072\u30de\u30be\u30bd\u30bc\u30bc\u30bd\u6b79\u305f\u30bf\u531a\u4e9c\u3042\u88f9\u307a\u30be\u30dc\u6b79\u66a6\u30df\u7e37\u30bd\u044f\u305d\u531a\u3093\u5f0c\u3093\u30d0\u73f1\u30bc\u3074\u3041\u3074\u305d\u4e9c\u5f0c\u3092\u3073", "\u30bd\u307a\u3073\uff88\u0451", "lugvmrqhqenocdonrxtjqfqheuatytdzbsfmuuphihniumuoindoapuuuzurqvjxtpylymsmcggdsmnkavrflo", "ujxgsstcsstgbpfbnxtzrfykphgsvuohqrhssuozcfrogacjysromvcfd", "\u30bd\uff9d\u307b\u88f9\u305b\u6b32\u30a1\u30de\u30bf\u307b\u30b0\u30bc\u30bd\u9ed1\u30bf\u30c1\u042f\u3074\u30c0\u30bc\u30af\uff9d\u30bd\uff88\u305f\u044f\u30dc\u30c1\u30bc\u30a1\u305d\u307c\u3041\u3092\u30bd\u307a\u3042\u4e9c\u044f\u30bf\u30dd\u30bf\u755a\u30dd\u30a1\u307c\u30de\u30c1\u307e\u30dd\u3092\u305b\u305e\u3093\u30bd\u30be\u30bf\u307c\u4e5d\u3042\u3074\u5f0c\u3093\u3073\u305d\u305d\u30af\u305e\u30bd\u307e\u30bf\u307b\u3072\u044f\u4e5d\u6b32\u305e\u5f0c\u30dd\u88f9\u3093\u0451\u307d", "os"],
+          "ContactAlias": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases",
+            "AlternativeNames@odata.type": "Collection(Edm.String)",
+            "AlternativeNames": ["fvbqlbxmiauexompgsnusolnoizndlnrbbqvnjcjasycmziaubnybubugpmjbddnhkurjqaxkuuzbcaozzjexpkezllyxubsk", "\u3072\u30b0\u30c1\u30be\u3074\u30de\u30bd\u044f\u30a1", "\u30d0\u30bc\u30bd\u307a\u73f1\u3074\u30df\u4e9c\uff88\u531a\u4e5d\u9ed1", "", "\u30be\u88f9\u30bc\uff41\uff9d\u30d0\u30bc\uff41\u7e37", "rsmgglgzxdniogppforsecserqhvtydlmliagtrkfzbbdft", "\u30d0\u531a\u30be\u30bc\u30bc\u30bd\u042f\u30be\u30dd\u30dd\u305d\u30bf\u3074\uff66\uff88\u305b\u30bf\u30dc\u307e\u30dc\u307e\u30be\u30bc\u3074\u30bd\u305b\u3041\u30bf\u531a\u30bc\u7e37\u531a\u755a\u044f\u3093\u30bf\u0451\u305f\u305c\u30dc\u042f\u7e37\u305f\u3041\u30b0\u6b32\u5f0c\u307c\u307b\u3079\u5f0c\u3073\u30a1\u30a1\u30be\u305c\u30b0\u3092\uff9d\u3093\u30bc\u30be\u30de\u307b\u531a\u30a1\u30dc\u3072\u30dc\u30bd\u3041\u30b0\u30bf\u30dd\u30dc\u30bc\u30af\u30a1"]
+          },
+          "HomePhone": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "prjllbusotcluxdeupntuhqqrisakganuopixipjdfbrjibjetjqblhbas",
+            "Extension": "dvuqgedbuiaum"
+          },
+          "WorkPhone": {
+            "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+            "PhoneNumber": "f\u00dfszgjssjeofussuekssvuuuyqgraapaimbnuunyjcrgxuavxbguu\u00dfkysooipshsojssqiqv\u00dfmpmnixfsqnxvrvd",
+            "Extension": "eekdsvzbjbhqbhgcujxsvuhjavmafoumtssyadtropvlbvnhdliqumabpacxdyvdgvxkqhcvqupbyxcucurteug"
+          },
+          "MobilePhoneBag@odata.type": "Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Phone)",
+          "MobilePhoneBag": [{
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+              "PhoneNumber": "xj",
+              "Extension": "gssotzfba\u00dfzvdtu"
+            }, {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone",
+              "PhoneNumber": "bukrso",
+              "Extension": "\u4e5d\u30bd\u30bd\u30af\u4e5d\u88f9\u3079\u305d\u30bd\u6b32\u30bf\u73f1\u3072\u30bc\u307e\uff41\u307b\u30c0\u307b\u9ed1\u307b\u30a1\uff5a\u30de\u30af\uff88\u755a\u307c\u30b0\u30c1\u5f0c\u305b\u30af\u307b\u307a\u30bd\u30a1\u9ed1\u042f\u755a\u9ed1\u30c0\u30dc\u30bc\u30c1\u30b0\u042f\u3042\u30bc\u6b32\u88f9\u30c1\uff88\uff41\u30bf\u30bc\u30be\u4e5d\u042f\u531a\u044f\uff5a\u4e5d\u88f9\u0451\u30bc\u30be\uff41\u3073\u6b32\u30cf\u3093\u30c0\u30b0\u042f\u30de\u30df"
+            }]
+        }],
+      "Auditing": {
+        "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo",
+        "ModifiedDate@odata.type": "Edm.DateTime",
+        "ModifiedDate": "2014-07-02T05:26:37.3447573",
+        "ModifiedBy": "jruznxbvzt",
+        "Concurrency": {
+          "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo",
+          "Token": "nbnanxuqynaubibbtfebfvzhflexabaivxdfibllvuaavhpvnlmtuvmscuqevyqsmyyfuvonumfuuzlxxudkpbczfmi",
+          "QueriedDateTime@odata.type": "Edm.DateTime",
+          "QueriedDateTime": "2013-01-11T03:38:30.0434315"
+        }
+      }
+    }]
+}

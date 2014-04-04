@@ -140,6 +140,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected InputStream normalizeLinks(
           final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
           throws Exception {
+
     final ObjectMapper mapper = new ObjectMapper();
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
@@ -169,7 +170,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     srcNode.set(
             Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
-            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
+                    Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
     return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
   }
@@ -326,9 +327,9 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     for (String link : links) {
       try {
-        final Map.Entry<String, String> uri = Commons.parseEntityURI(link);
+        final Map.Entry<String, String> uriMap = Commons.parseEntityURI(link);
         final Map.Entry<String, InputStream> entity =
-                readEntity(uri.getKey(), uri.getValue(), Accept.JSON_FULLMETA);
+                readEntity(uriMap.getKey(), uriMap.getValue(), Accept.JSON_FULLMETA);
 
         if (bos.size() > 1) {
           bos.write(",".getBytes());
@@ -452,7 +453,23 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     IOUtils.closeQuietly(content);
 
     srcNode.set(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(href));
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+  }
+
+  @Override
+  public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
+          final String href) throws Exception {
+
+    final ObjectMapper mapper = new ObjectMapper();
+    final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
+    IOUtils.closeQuietly(content);
+
+    final ObjectNode action = mapper.createObjectNode();
+    action.set("title", new TextNode(name));
+    action.set("target", new TextNode(href));
+
+    srcNode.set(metaAnchor, action);
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 
   @Override

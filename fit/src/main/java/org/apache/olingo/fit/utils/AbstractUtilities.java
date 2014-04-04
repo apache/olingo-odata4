@@ -120,6 +120,7 @@ public abstract class AbstractUtilities {
           final String key,
           final String entitySetName,
           final InputStream is) throws Exception {
+
     return saveSingleEntity(key, entitySetName, is, null);
   }
 
@@ -154,6 +155,7 @@ public abstract class AbstractUtilities {
 
   public InputStream addOrReplaceEntity(
           final String entitySetName, final InputStream is) throws Exception {
+
     return addOrReplaceEntity(null, entitySetName, is);
   }
 
@@ -332,7 +334,7 @@ public abstract class AbstractUtilities {
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-            Accept.JSON_FULLMETA));
+                    Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -344,6 +346,7 @@ public abstract class AbstractUtilities {
           final String entityKey,
           final String linkName,
           final Collection<String> links) throws IOException {
+
     final HashSet<String> uris = new HashSet<String>();
 
     if (Commons.linkInfo.get(version).isFeed(entitySetName, linkName)) {
@@ -362,6 +365,7 @@ public abstract class AbstractUtilities {
   public void putLinksInMemory(
           final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
           throws IOException {
+
     fsManager.putInMemory(
             Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
             Commons.getLinksPath(version, basePath, linkName, Accept.JSON_FULLMETA));
@@ -527,6 +531,19 @@ public abstract class AbstractUtilities {
         try {
           final Map<String, InputStream> value =
                   getPropertyValues(entity, Collections.<String>singletonList("CustomerId"));
+          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+        } catch (Exception e) {
+          if (sequence.containsKey(entitySetName)) {
+            res = String.valueOf(sequence.get(entitySetName) + 1);
+          } else {
+            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+          }
+        }
+        sequence.put(entitySetName, Integer.valueOf(res));
+      } else if ("Person".equals(entitySetName)) {
+        try {
+          final Map<String, InputStream> value =
+                  getPropertyValues(entity, Collections.<String>singletonList("PersonId"));
           res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
         } catch (Exception e) {
           if (sequence.containsKey(entitySetName)) {
@@ -713,6 +730,7 @@ public abstract class AbstractUtilities {
           final Accept accept,
           final String ifMatch)
           throws Exception {
+
     final Map.Entry<String, InputStream> entityInfo = readEntity(entitySetName, entityId, accept);
 
     final String etag = Commons.getETag(entityInfo.getKey(), version);
@@ -790,6 +808,9 @@ public abstract class AbstractUtilities {
 
   public abstract InputStream addEditLink(
           final InputStream content, final String title, final String href) throws Exception;
+
+  public abstract InputStream addOperation(
+          final InputStream content, final String name, final String metaAnchor, final String href) throws Exception;
 
   protected abstract InputStream replaceProperty(
           final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)

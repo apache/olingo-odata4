@@ -28,18 +28,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
+import org.springframework.stereotype.Service;
 
+@Service
 @Path("/V30/Static.svc")
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
 public class V3Services extends AbstractServices {
 
   public V3Services() throws Exception {
-    super();
-  }
-
-  @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v3;
+    super(ODataVersion.v3);
   }
 
   /**
@@ -51,7 +48,7 @@ public class V3Services extends AbstractServices {
   @Path("/large/$metadata")
   @Produces("application/xml")
   public Response getLargeMetadata() {
-    return getMetadata("large" + StringUtils.capitalize(Constants.get(getVersion(), ConstantKey.METADATA)));
+    return getMetadata("large" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }
 
   /**
@@ -63,7 +60,7 @@ public class V3Services extends AbstractServices {
   @Path("/openType/$metadata")
   @Produces("application/xml")
   public Response getOpenTypeMetadata() {
-    return getMetadata("openType" + StringUtils.capitalize(Constants.get(getVersion(), ConstantKey.METADATA)));
+    return getMetadata("openType" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }
 
 }

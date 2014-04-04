@@ -26,23 +26,20 @@ import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
+import org.springframework.stereotype.Service;
 
+@Service
 @Path("/V40/NorthWindExt.svc")
 @InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4NorthWindExt extends AbstractServices {
 
   public V4NorthWindExt() throws Exception {
-    super();
-  }
-
-  @Override
-  protected ODataVersion getVersion() {
-    return ODataVersion.v4;
+    super(ODataVersion.v4);
   }
 
   @Override
   public Response getMetadata() {
-    return getMetadata("northwindExt-" + Constants.get(getVersion(), ConstantKey.METADATA));
+    return getMetadata("northwindExt-" + Constants.get(version, ConstantKey.METADATA));
   }
 
 }
