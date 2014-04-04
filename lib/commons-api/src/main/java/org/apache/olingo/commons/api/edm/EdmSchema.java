@@ -83,6 +83,9 @@ public interface EdmSchema {
    */
   EdmEntityContainer getEntityContainer(FullQualifiedName name);
 
+  /**
+   * @return all {@link EdmTypeDefinition} for this schema.
+   */
   List<EdmTypeDefinition> getTypeDefinitions();
 
 }

@@ -23,5 +23,5 @@ package org.apache.olingo.commons.api.edm;
  * {@link EdmParameter}.
  */
 public interface EdmElement extends EdmNamed, EdmTyped {
-//Should we introduce an element kind?
+
 }

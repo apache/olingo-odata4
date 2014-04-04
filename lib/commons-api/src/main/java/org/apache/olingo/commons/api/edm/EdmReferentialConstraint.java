@@ -18,11 +18,19 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-//TODO: Document
+/**
+ * A referential constraint of a navigation property.
+ */
 public interface EdmReferentialConstraint {
 
+  /**
+   * @return property name of the property inside this entity type or complex type.
+   */
   String getPropertyName();
 
+  /**
+   * @return property name of the referenced entity type or complex type.
+   */
   String getReferencedPropertyName();
 
 }

@@ -28,7 +28,7 @@ import java.util.List;
 public interface Edm {
 
     /**
-     * This method DOES NOT support lazy loading. All schemas are loaded completely!
+     * This method <b>DOES NOT</b> support lazy loading. All schemas are loaded completely!
      *
      * @return all schemas defined for this EDM
      */

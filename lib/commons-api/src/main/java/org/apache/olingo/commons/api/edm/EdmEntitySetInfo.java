@@ -25,7 +25,6 @@ import java.net.URI;
  */
 public interface EdmEntitySetInfo {
 
-  // TODO: Either make this a class or alias info an interface!
   /**
    * @return the entity container name which contains this entity set.
    */

@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+/**
+ * A key property reference element.
+ */
 public interface EdmKeyPropertyRef {
 
   /**

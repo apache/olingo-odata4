@@ -19,7 +19,7 @@
 package org.apache.olingo.commons.api.edm;
 
 /**
- * An EdmActionImport.
+ * An EdmActionImport element.
  */
 public interface EdmActionImport extends EdmOperationImport {
 
