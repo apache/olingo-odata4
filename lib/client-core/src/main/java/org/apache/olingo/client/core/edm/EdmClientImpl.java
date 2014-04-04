@@ -265,8 +265,8 @@ public class EdmClientImpl extends AbstractEdm {
 
     final Schema schema = xmlSchemaByNamespace.get(actionName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
-      final List<Action> actions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
-              getActions(actionName.getName());
+      final List<Action> actions =
+              ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getActions(actionName.getName());
       boolean found = false;
       for (final Iterator<Action> itor = actions.iterator(); itor.hasNext() && !found;) {
         final Action action = itor.next();
@@ -284,8 +284,8 @@ public class EdmClientImpl extends AbstractEdm {
     } else {
       for (EntityContainer entityContainer : schema.getEntityContainers()) {
         @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
-                getFunctionImports(actionName.getName());
+        final List<FunctionImport> functionImports =
+                (List<FunctionImport>) entityContainer.getFunctionImports(actionName.getName());
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();

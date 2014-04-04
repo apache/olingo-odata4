@@ -231,7 +231,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmActionImport actionImport : actionImports) {
       writer.writeStartElement(XML_ACTION_IMPORT);
       writer.writeAttribute(XML_NAME, actionImport.getName());
-      writer.writeAttribute(XML_ACTION, getFullQualifiedName(actionImport.getAction(), false));
+      writer.writeAttribute(XML_ACTION, getFullQualifiedName(actionImport.getUnboundAction(), false));
       // TODO: Annotations
       writer.writeEndElement();
     }

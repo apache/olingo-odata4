@@ -39,7 +39,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   private void read(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -69,10 +69,10 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     final int id = 1;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
-    createEntity(testStaticServiceRootURL, format, original, "Customer");
-    final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
+    createEntity(testKeyAsSegmentServiceRootURL, format, original, "Customer");
+    final ODataEntity actual = compareEntities(testKeyAsSegmentServiceRootURL, format, original, id, null);
 
-    cleanAfterCreate(format, actual, false, testStaticServiceRootURL);
+    cleanAfterCreate(format, actual, false, testKeyAsSegmentServiceRootURL);
   }
 
   @Test
@@ -81,16 +81,16 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     final int id = 2;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
-    createEntity(testStaticServiceRootURL, format, original, "Customer");
-    final ODataEntity actual = compareEntities(testStaticServiceRootURL, format, original, id, null);
+    createEntity(testKeyAsSegmentServiceRootURL, format, original, "Customer");
+    final ODataEntity actual = compareEntities(testKeyAsSegmentServiceRootURL, format, original, id, null);
 
-    cleanAfterCreate(format, actual, false, testStaticServiceRootURL);
+    cleanAfterCreate(format, actual, false, testKeyAsSegmentServiceRootURL);
   }
 
   @Test
   public void replaceODataEntityAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final ODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
+    final ODataEntity changes = read(format, client.getURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -98,7 +98,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void replaceODataEntityAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final ODataEntity changes = read(format, client.getURIBuilder(testStaticServiceRootURL).
+    final ODataEntity changes = read(format, client.getURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }

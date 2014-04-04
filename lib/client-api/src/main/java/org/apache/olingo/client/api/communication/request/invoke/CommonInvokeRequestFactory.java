@@ -20,11 +20,10 @@ package org.apache.olingo.client.api.communication.request.invoke;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 
 /**
  * OData request factory class.
@@ -36,26 +35,20 @@ public interface CommonInvokeRequestFactory extends Serializable {
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
-   * @param edm Edm metadata
-   * @param container Entity container
-   * @param functionImport function import to be invoked
+   * @param operation operation to be invoked
    * @return new ODataInvokeRequest instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          URI uri, Edm edm, FullQualifiedName container, String functionImport);
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(URI uri, EdmOperation operation);
 
   /**
    * Gets an invoke request instance.
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
-   * @param edm Edm metadata
-   * @param container Entity container
-   * @param functionImport function import to be invoked
+   * @param operation operation to be invoked
    * @param parameters parameters to pass to function import invocation
    * @return new ODataInvokeRequest instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          URI uri, Edm edm, FullQualifiedName container, String functionImport,
-          LinkedHashMap<String, ODataValue> parameters);
+          URI uri, EdmOperation operation, Map<String, ODataValue> parameters);
 }

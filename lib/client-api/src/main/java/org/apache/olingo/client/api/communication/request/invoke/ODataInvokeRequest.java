@@ -27,6 +27,8 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
  * This class implements an OData invoke operation request.
+ *
+ * @param <T> the actual invoke result
  */
 public interface ODataInvokeRequest<T extends ODataInvokeResult>
         extends ODataBasicRequest<ODataInvokeResponse<T>, ODataPubFormat> {

@@ -86,10 +86,10 @@ public class UriResourceImplTest {
     EdmActionImport actionImport = edm.getEntityContainer(null).getActionImport("AIRTPrimParam");
     impl.setActionImport(actionImport);
     assertEquals(actionImport, impl.getActionImport());
-    assertEquals(actionImport.getAction(), impl.getAction());
+    assertEquals(actionImport.getUnboundAction(), impl.getAction());
     assertEquals(false, impl.isCollection());
     assertEquals("AIRTPrimParam", impl.toString());
-    assertEquals(actionImport.getAction().getReturnType().getType(), impl.getType());
+    assertEquals(actionImport.getUnboundAction().getReturnType().getType(), impl.getType());
   }
 
   @Test
@@ -201,7 +201,7 @@ public class UriResourceImplTest {
 
     // function
     EdmFunction function = (EdmFunction) edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
-            .getFunction(new ArrayList<String>());
+            .getUnboundFunction(new ArrayList<String>());
     assertNotNull(function);
     impl.setFunction(function);
 
@@ -225,7 +225,7 @@ public class UriResourceImplTest {
     impl.setFunctionImport(functionImport, Arrays.asList(parameter));
     assertEquals("FICRTESTwoKeyNavParam", impl.toString());
 
-    impl.setFunction(functionImport.getFunction(Arrays.asList("ParameterInt16")));
+    impl.setFunction(functionImport.getUnboundFunction(Arrays.asList("ParameterInt16")));
     assertEquals(true, impl.isCollection());
     impl.setKeyPredicates(new ArrayList<UriParameterImpl>());
     assertEquals(false, impl.isCollection());

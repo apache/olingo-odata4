@@ -336,7 +336,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
 
         // get function from function import
-        EdmFunction function = edmFunctionImport.getFunction(names);
+        EdmFunction function = edmFunctionImport.getUnboundFunction(names);
         if (function == null) {
           String tmp = "";
           for (String name : names) {
@@ -346,7 +346,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
                   + "' with parameters [" + tmp + "] not found"));
         }
 
-        uriResource.setFunction(edmFunctionImport.getFunction(names));
+        uriResource.setFunction(edmFunctionImport.getUnboundFunction(names));
         context.contextUriInfo.addResourcePart(uriResource);
         return null;
       }

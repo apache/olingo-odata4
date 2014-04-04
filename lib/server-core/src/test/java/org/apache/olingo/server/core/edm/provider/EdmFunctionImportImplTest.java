@@ -73,7 +73,7 @@ public class EdmFunctionImportImplTest {
             = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
     assertEquals("functionImport", functionImport.getName());
-    final EdmFunction function = functionImport.getFunction(Collections.<String>emptyList());
+    final EdmFunction function = functionImport.getUnboundFunction(Collections.<String>emptyList());
     assertEquals(functionName.getNamespace(), function.getNamespace());
     assertEquals(functionName.getName(), function.getName());
     assertFalse(function.isBound());

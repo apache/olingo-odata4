@@ -111,11 +111,13 @@ public class JSONTest extends AbstractTest {
   }
 
   protected void assertSimilar(final String filename, final String actual) throws Exception {
-    final JsonNode orig = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
             replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
                     Constants.JSON_BIND_LINK_SUFFIX));
-    cleanup((ObjectNode) orig);
-    assertEquals(orig, OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes())));
+    cleanup((ObjectNode) expected);
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup(actualNode);
+    assertEquals(expected, actualNode);
   }
 
   protected void feed(final String filename, final ODataPubFormat format) throws Exception {

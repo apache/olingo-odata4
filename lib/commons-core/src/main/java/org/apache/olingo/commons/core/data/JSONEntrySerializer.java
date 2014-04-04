@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
@@ -37,6 +38,10 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
           throws IOException, JsonProcessingException {
 
     jgen.writeStartObject();
+
+    if (StringUtils.isNotBlank(entry.getType())) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), entry.getType());
+    }
 
     if (entry.getId() != null) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entry.getId());

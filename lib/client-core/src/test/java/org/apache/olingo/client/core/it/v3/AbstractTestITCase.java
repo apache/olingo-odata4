@@ -87,6 +87,8 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testKeyAsSegmentServiceRootURL;
+
   protected static String testOpenTypeServiceRootURL;
 
   protected static String testLargeModelServiceRootURL;
@@ -96,6 +98,7 @@ public abstract class AbstractTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc";
+    testKeyAsSegmentServiceRootURL = "http://localhost:9080/StaticService/V30/KeyAsSegment.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/openType";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";

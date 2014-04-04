@@ -26,6 +26,8 @@ import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
@@ -42,6 +44,18 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     }
 
     protected abstract AbstractODataPrimitiveValue getInstance();
+
+    @Override
+    public AbstractBuilder setType(final EdmType type) {
+      EdmPrimitiveTypeKind primitiveTypeKind = null;
+      if (type != null) {
+        if (type.getKind() != EdmTypeKind.PRIMITIVE) {
+          throw new IllegalArgumentException(String.format("Provided type %s is not primitive", type));
+        }
+        primitiveTypeKind = EdmPrimitiveTypeKind.valueOf(type.getName());
+      }
+      return setType(primitiveTypeKind);
+    }
 
     @Override
     public AbstractBuilder setType(final EdmPrimitiveTypeKind type) {

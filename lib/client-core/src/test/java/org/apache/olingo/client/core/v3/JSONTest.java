@@ -103,15 +103,17 @@ public class JSONTest extends AtomTest {
 
   @Override
   protected void assertSimilar(final String filename, final String actual) throws Exception {
-    final JsonNode orig = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
             replace("Categories" + getClient().getServiceVersion().getJSONMap().
                     get(ODataServiceVersion.JSON_NAVIGATION_LINK),
                     "Categories" + Constants.JSON_BIND_LINK_SUFFIX).
             replace("\"Products(0)/Categories\"", "[\"Products(0)/Categories\"]").
             replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
                     Constants.JSON_BIND_LINK_SUFFIX));
-    cleanup((ObjectNode) orig);
-    assertEquals(orig, OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes())));
+    cleanup((ObjectNode) expected);
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup(actualNode);
+    assertEquals(expected, actualNode);
   }
 
 }

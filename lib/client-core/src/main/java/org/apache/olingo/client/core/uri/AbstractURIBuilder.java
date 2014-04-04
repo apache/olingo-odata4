@@ -163,6 +163,13 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   }
 
   @Override
+  public UB appendOperationCallSegment(final String operation) {
+    segments.add(new Segment(
+            segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
+    return getThis();
+  }
+
+  @Override
   public UB appendOperationCallSegment(final String operation, final Map<String, Object> arguments) {
     segments.add(new Segment(
             segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));

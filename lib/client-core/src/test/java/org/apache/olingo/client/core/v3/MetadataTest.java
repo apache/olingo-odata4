@@ -179,12 +179,12 @@ public class MetadataTest extends AbstractTest {
     final EdmFunctionImport getArgumentPlusOne = container.getFunctionImport("GetArgumentPlusOne");
     assertNotNull(getArgumentPlusOne);
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32),
-            getArgumentPlusOne.getFunction(null).getReturnType().getType());
+            getArgumentPlusOne.getUnboundFunction(null).getReturnType().getType());
 
     final EdmActionImport resetDataSource = container.getActionImport("ResetDataSource");
     assertNotNull(resetDataSource);
-    assertTrue(resetDataSource.getAction().getParameterNames().isEmpty());
-    assertNull(resetDataSource.getAction().getReturnType());
+    assertTrue(resetDataSource.getUnboundAction().getParameterNames().isEmpty());
+    assertNull(resetDataSource.getUnboundAction().getReturnType());
 
     final EdmEntityType computer = metadata.getEntityType(new FullQualifiedName(container.getNamespace(), "Computer"));
     assertNotNull(computer);

@@ -213,13 +213,13 @@ public class MetadataTest extends AbstractTest {
             new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"),
             null, Boolean.FALSE, null);
     assertNotNull(function);
-    assertEquals(function.getName(), fi.getFunction(null).getName());
-    assertEquals(function.getNamespace(), fi.getFunction(null).getNamespace());
-    assertEquals(function.getParameterNames(), fi.getFunction(null).getParameterNames());
+    assertEquals(function.getName(), fi.getUnboundFunction(null).getName());
+    assertEquals(function.getNamespace(), fi.getUnboundFunction(null).getNamespace());
+    assertEquals(function.getParameterNames(), fi.getUnboundFunction(null).getParameterNames());
     assertEquals(function.getReturnType().getType().getName(),
-            fi.getFunction(null).getReturnType().getType().getName());
+            fi.getUnboundFunction(null).getReturnType().getType().getName());
     assertEquals(function.getReturnType().getType().getNamespace(),
-            fi.getFunction(null).getReturnType().getType().getNamespace());
+            fi.getUnboundFunction(null).getReturnType().getType().getNamespace());
   }
 
   /**

@@ -41,9 +41,17 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
   }
 
   @Override
-  public EdmFunction getFunction(final List<String> parameterNames) {
+  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
+    return getBoundFunction(parameterNames, null, null);
+  }
+
+  @Override
+  public EdmFunction getBoundFunction(final List<String> parameterNames,
+          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+
     return edm.getFunction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(), null, null, parameterNames);
+            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
+            bindingParameterTypeName, isBindingParameterCollection, parameterNames);
   }
 
   @Override

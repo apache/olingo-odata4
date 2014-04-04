@@ -23,14 +23,14 @@ import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 /**
  * This class implements a response to a specific invoke request.
  *
- * @see org.apache.olingo.client.core.communication.request.invoke.ODataInvokeRequest
+ * @param <T> the actual invoke result
  */
 public interface ODataInvokeResponse<T extends ODataInvokeResult> extends ODataResponse {
 
-    /**
-     * Gets operation return value if exists.
-     *
-     * @return operation return value.
-     */
-    T getBody();
+  /**
+   * Gets operation return value if exists.
+   *
+   * @return operation return value.
+   */
+  T getBody();
 }

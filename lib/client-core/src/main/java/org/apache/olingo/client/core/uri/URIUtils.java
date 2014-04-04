@@ -41,7 +41,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmOperationImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -140,20 +140,20 @@ public final class URIUtils {
   }
 
   /**
-   * Gets function import URI segment.
+   * Gets operation import URI segment.
    *
    * @param entityContainer entity container.
-   * @param functionImport function import.
+   * @param operationImport function import.
    * @return URI segment.
    */
-  public static String rootFunctionImportURISegment(
-          final EdmEntityContainer entityContainer, final EdmFunctionImport functionImport) {
+  public static String operationImportURISegment(
+          final EdmEntityContainer entityContainer, final EdmOperationImport operationImport) {
 
     final StringBuilder result = new StringBuilder();
     if (!entityContainer.isDefault()) {
       result.append(entityContainer.getName()).append('.');
     }
-    result.append(functionImport.getName());
+    result.append(operationImport.getName());
 
     return result.toString();
   }

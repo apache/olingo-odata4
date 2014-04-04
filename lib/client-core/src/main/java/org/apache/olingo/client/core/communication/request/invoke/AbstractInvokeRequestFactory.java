@@ -23,8 +23,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.CommonInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 
 public abstract class AbstractInvokeRequestFactory implements CommonInvokeRequestFactory {
 
@@ -37,10 +36,10 @@ public abstract class AbstractInvokeRequestFactory implements CommonInvokeReques
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(final URI uri, final Edm edm,
-          final FullQualifiedName container, final String functionImport) {
+  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
+          final URI uri, final EdmOperation operation) {
 
-    return getInvokeRequest(uri, edm, container, functionImport, null);
+    return getInvokeRequest(uri, operation, null);
   }
 
 }

@@ -325,8 +325,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try {
       final StringBuilder requestBuilder = new StringBuilder();
-      requestBuilder.append(getMethod().toString()).append(" ").
-              append(uri.toString()).append(" ").append("HTTP/1.1");
+      requestBuilder.append(getMethod().toString()).append(' ').append(uri.toString()).append(' ').append("HTTP/1.1");
 
       baos.write(requestBuilder.toString().getBytes());
 
@@ -425,9 +424,8 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
         if (httpEntity == null) {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
-          final boolean isXML = getAccept().indexOf("json") == -1;
+          final boolean isXML = getAccept().contains("json");
           ODataError error;
-
           try {
             error = odataClient.getReader().readError(httpEntity.getContent(), isXML);
           } catch (IllegalArgumentException e) {

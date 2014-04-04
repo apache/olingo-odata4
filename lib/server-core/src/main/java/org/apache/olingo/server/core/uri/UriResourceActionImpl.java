@@ -50,7 +50,7 @@ public class UriResourceActionImpl extends UriResourceTypedImpl implements UriRe
 
   public UriResourceActionImpl setActionImport(final EdmActionImport actionImport) {
     this.actionImport = actionImport;
-    setAction(actionImport.getAction());
+    setAction(actionImport.getUnboundAction());
     return this;
   }
 

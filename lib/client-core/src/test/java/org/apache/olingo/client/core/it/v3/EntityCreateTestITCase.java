@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,7 +35,7 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.NoContentException;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -50,6 +45,11 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -255,7 +255,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final int id = 2;
     final ODataEntity original = (ODataEntity) getSampleCustomerProfile(id, "Sample customer for issue 135", false);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
     createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
@@ -312,7 +312,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = (ODataEntity) compareEntities(getServiceRoot(), format, created, id, null);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -354,7 +354,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Info");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -477,7 +477,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
                     client.getObjectFactory().newPrimitiveValueBuilder().setValue(false).
                     setType(EdmPrimitiveTypeKind.Boolean).build()));
 
-    final CommonURIBuilder<?> builder =
+    final URIBuilder builder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Message");
     final ODataEntityCreateRequest<ODataEntity> req = client.getCUDRequestFactory().
             getEntityCreateRequest(builder.build(), message);

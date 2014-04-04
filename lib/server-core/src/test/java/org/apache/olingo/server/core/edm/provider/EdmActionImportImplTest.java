@@ -68,7 +68,7 @@ public class EdmActionImportImplTest {
   public void simpleActionTest() {
     assertEquals("actionImportName", actionImport.getName());
     assertTrue(container == actionImport.getEntityContainer());
-    assertTrue(action == actionImport.getAction());
+    assertTrue(action == actionImport.getUnboundAction());
   }
 
   @Test

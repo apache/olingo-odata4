@@ -188,7 +188,7 @@ public class EdmSchemaImplTest {
     assertNotNull(actionImports);
     assertEquals(2, actionImports.size());
     for (EdmActionImport obj : actionImports) {
-      assertNotNull(obj.getAction());
+      assertNotNull(obj.getUnboundAction());
     }
 
     List<EdmFunctionImport> functionImports = container.getFunctionImports();

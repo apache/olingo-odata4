@@ -112,6 +112,14 @@ public interface CommonURIBuilder<UB extends CommonURIBuilder<?>> {
    * Appends operation (action or function) segment to the URI.
    *
    * @param operation Operation (action or function) name
+   * @return current URIBuilder instance
+   */
+  UB appendOperationCallSegment(String operation);
+
+  /**
+   * Appends operation (action or function) segment to the URI.
+   *
+   * @param operation Operation (action or function) name
    * @param arguments Operation arguments
    * @return current URIBuilder instance
    */

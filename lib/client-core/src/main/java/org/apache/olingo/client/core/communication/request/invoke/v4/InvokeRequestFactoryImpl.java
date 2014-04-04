@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.communication.request.invoke.v4;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -27,8 +27,7 @@ import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeReques
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractInvokeRequestFactory;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 
 public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory implements InvokeRequestFactory {
 
@@ -39,9 +38,8 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory imple
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(final URI uri, final Edm edm,
-          final FullQualifiedName container, final String functionImport,
-          final LinkedHashMap<String, ODataValue> parameters) {
+  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
+          final URI uri, final EdmOperation operation, final Map<String, ODataValue> parameters) {
 
     throw new NotImplementedException("Not available yet.");
   }
