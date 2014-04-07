@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,19 +113,9 @@ public class URIBuilderTest extends AbstractTest {
   }
 
   @Test
-  public void unboundAction() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
-            appendOperationCallSegment("ProductsByCategoryId",
-            Collections.<String, Object>singletonMap("categoryId", 2));
-
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
-            SERVICE_ROOT + "/ProductsByCategoryId(categoryId=2)").build(), uriBuilder.build());
-  }
-
-  @Test
   public void boundAction() throws URISyntaxException {
     final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
-            appendEntitySetSegment("Products").appendOperationCallSegment("MostExpensive", null);
+            appendEntitySetSegment("Products").appendOperationCallSegment("MostExpensive");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Products/MostExpensive").build(), uriBuilder.build());

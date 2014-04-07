@@ -43,13 +43,13 @@ public class URIBuilderTest extends AbstractTest {
   public void expandWithOptions() throws URISyntaxException {
     URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
             expandWithOptions("ProductDetails", new LinkedHashMap<String, Object>() {
-      private static final long serialVersionUID = 3109256773218160485L;
+              private static final long serialVersionUID = 3109256773218160485L;
 
-      {
-        put("$expand", "ProductInfo");
-        put("$select", "Price");
-      }
-    }).expand("Orders", "Customers").build();
+              {
+                put("$expand", "ProductInfo");
+                put("$select", "Price");
+              }
+            }).expand("Orders", "Customers").build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
             addParameter("$expand", "ProductDetails($expand=ProductInfo,$select=Price),Orders,Customers").build(), uri);
@@ -90,7 +90,7 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Categories").appendKeySegment(1).
             appendNavigationSegment("Products").appendNavigationSegment("Model").
-            appendOperationCallSegment("AllOrders", null);
+            appendOperationCallSegment("AllOrders");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders()").build(), uriBuilder.build());

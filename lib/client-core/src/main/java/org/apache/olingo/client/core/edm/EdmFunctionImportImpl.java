@@ -49,7 +49,8 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
           final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     return edm.getFunction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getFunction()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(), null, null, parameterNames);
+            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
+            bindingParameterTypeName, isBindingParameterCollection, parameterNames);
   }
 
   @Override

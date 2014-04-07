@@ -76,6 +76,11 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
+  protected String getOperationInvokeMarker() {
+    return "()";
+  }
+
+  @Override
   public URIBuilder appendSingletonSegment(final String segmentValue) {
     segments.add(new Segment(SegmentType.SINGLETON, segmentValue));
     return getThis();
@@ -95,7 +100,7 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
 
   @Override
   public URIBuilder appendCrossjoinSegment(final String... segmentValues) {
-    StringBuilder segValue = new StringBuilder(SegmentType.CROSS_JOIN.getValue()).
+    final StringBuilder segValue = new StringBuilder(SegmentType.CROSS_JOIN.getValue()).
             append('(').append(StringUtils.join(segmentValues, ",")).append(')');
     segments.add(new Segment(SegmentType.CROSS_JOIN, segValue.toString()));
     return getThis();

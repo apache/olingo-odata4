@@ -61,6 +61,11 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
+  protected String getOperationInvokeMarker() {
+    return StringUtils.EMPTY;
+  }
+
+  @Override
   public URIBuilder appendLinksSegment(final String segmentValue) {
     segments.add(new Segment(SegmentType.LINKS, SegmentType.LINKS.getValue()));
     segments.add(new Segment(SegmentType.ENTITYSET, segmentValue));

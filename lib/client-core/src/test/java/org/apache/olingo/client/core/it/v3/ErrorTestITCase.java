@@ -30,15 +30,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -148,16 +152,15 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
     final EdmEntityContainer container = metadata.getSchemas().get(0).getEntityContainer();
     final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp), null);
-    // TODO: review invoke
-//        final ODataInvokeRequest<ODataEntitySet> req =
-//                client.getInvokeRequestFactory().getInvokeRequest(builder.build(), metadata, funcImp);
-//        req.setFormat(format);
-//
-//        final ODataInvokeResponse<ODataEntitySet> res = req.execute();
-//        res.getBody();
-    throw new IllegalArgumentException();
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+    final ODataInvokeRequest<ODataEntitySet> req =
+            client.getInvokeRequestFactory().getInvokeRequest(builder.build(), funcImp.getUnboundFunction(null));
+    req.setFormat(format);
+
+    final ODataInvokeResponse<ODataEntitySet> res = req.execute();
+    res.getBody();
+    fail("Shouldn't get here");
   }
 
   @Test(expected = IllegalArgumentException.class)

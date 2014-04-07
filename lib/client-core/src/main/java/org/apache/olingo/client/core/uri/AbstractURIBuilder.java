@@ -170,13 +170,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   }
 
   @Override
-  public UB appendOperationCallSegment(final String operation, final Map<String, Object> arguments) {
-    segments.add(new Segment(
-            segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
-    return appendKeySegment(arguments);
-  }
-
-  @Override
   public UB appendMetadataSegment() {
     segments.add(new Segment(SegmentType.METADATA, SegmentType.METADATA.getValue()));
     return getThis();
@@ -262,6 +255,8 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   protected abstract char getDerivedEntityTypeSeparator();
 
+  protected abstract String getOperationInvokeMarker();
+
   @Override
   public URI build() {
     final StringBuilder segmentsBuilder = new StringBuilder();
@@ -285,6 +280,9 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
         segmentsBuilder.append(seg.getType().getValue());
       } else {
         segmentsBuilder.append(seg.getValue());
+      }
+      if (seg.getType() == SegmentType.BOUND_OPERATION || seg.getType() == SegmentType.UNBOUND_OPERATION) {
+        segmentsBuilder.append(getOperationInvokeMarker());
       }
     }
 
