@@ -22,8 +22,10 @@ import java.util.List;
 
 public interface EntityContainer extends org.apache.olingo.client.api.edm.xml.EntityContainer {
 
+  @Override
   EntitySet getEntitySet(String name);
 
+  @Override
   List<EntitySet> getEntitySets();
 
   List<Singleton> getSingletons();
@@ -36,9 +38,12 @@ public interface EntityContainer extends org.apache.olingo.client.api.edm.xml.En
 
   List<ActionImport> getActionImports();
 
+  @Override
   FunctionImport getFunctionImport(String name);
 
+  @Override
   List<FunctionImport> getFunctionImports(String name);
 
+  @Override
   List<FunctionImport> getFunctionImports();
 }
