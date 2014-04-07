@@ -287,11 +287,6 @@ public abstract class AbstractEdm implements Edm {
       function = createUnboundFunction(functionFqn, parameterNames);
       if (function != null) {
         unboundFunctionsByKey.put(key, function);
-
-        if (!unboundFunctionsByName.containsKey(functionFqn)) {
-          unboundFunctionsByName.put(functionFqn, new ArrayList<EdmFunction>());
-        }
-        unboundFunctionsByName.get(functionFqn).add(function);
       }
     }
 
