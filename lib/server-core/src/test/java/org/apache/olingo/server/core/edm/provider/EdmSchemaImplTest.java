@@ -149,7 +149,7 @@ public class EdmSchemaImplTest {
     assertEquals(2, actions.size());
 
     for (EdmAction action : actions) {
-      assertTrue(action == edm.getAction(new FullQualifiedName("namespace", action.getName()), null, null));
+      assertTrue(action == edm.getUnboundAction(new FullQualifiedName("namespace", action.getName())));
     }
   }
 
@@ -161,7 +161,7 @@ public class EdmSchemaImplTest {
 
     for (EdmFunction function : functions) {
       FullQualifiedName functionName = new FullQualifiedName("namespace", function.getName());
-      assertTrue(function == edm.getFunction(functionName, null, null, null));
+      assertTrue(function == edm.getUnboundFunction(functionName, null));
     }
   }
 

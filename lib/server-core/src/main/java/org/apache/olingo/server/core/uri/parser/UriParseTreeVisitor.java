@@ -558,7 +558,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       FullQualifiedName fullBindingTypeName = new FullQualifiedName(source.type.getNamespace(), source.type.getName());
 
       // check for action
-      EdmAction action = edm.getAction(fullFilterName, fullBindingTypeName, source.isCollection);
+      EdmAction action = edm.getBoundAction(fullFilterName, fullBindingTypeName, source.isCollection);
       if (action != null) {
         UriResourceActionImpl pathInfoAction = new UriResourceActionImpl();
         pathInfoAction.setAction(action);
@@ -583,7 +583,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         names.add(item.getName());
       }
 
-      EdmFunction function = edm.getFunction(fullFilterName, fullBindingTypeName, source.isCollection, names);
+      EdmFunction function = edm.getBoundFunction(fullFilterName, fullBindingTypeName, source.isCollection, names);
 
       if (function != null) {
         UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
@@ -597,7 +597,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       // check for unbound function in the $filter case ( where the previous resource segment is a $it)
-      function = edm.getFunction(fullFilterName, null, null, names);
+      function = edm.getUnboundFunction(fullFilterName, names);
 
       if (function != null) {
         UriResourceFunctionImpl pathInfoFunction = new UriResourceFunctionImpl()
@@ -1972,7 +1972,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       FullQualifiedName finalTypeName = new FullQualifiedName(prevType.getNamespace(), prevType.getName());
 
       // check for action
-      EdmAction action = edm.getAction(fullName, finalTypeName, null);
+      EdmAction action = edm.getBoundAction(fullName, finalTypeName, null);
 
       if (action != null) {
         UriResourceActionImpl uriAction = new UriResourceActionImpl();
@@ -1983,7 +1983,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       // check for function
-      EdmFunction function = edm.getFunction(fullName, finalTypeName, null, null);
+      EdmFunction function = edm.getBoundFunction(fullName, finalTypeName, null, null);
 
       if (function != null) {
         UriResourceFunctionImpl uriFunction = new UriResourceFunctionImpl();

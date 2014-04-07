@@ -135,7 +135,7 @@ public class ExpressionTest {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
 
     // UriResourceImplTyped
-    EdmAction action = edm.getAction(ActionProvider.nameUARTPrimParam, null, null);
+    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTPrimParam);
     UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
     expression.setResourcePath(uriInfo);
@@ -149,21 +149,21 @@ public class ExpressionTest {
     assertEquals(false, expression.isCollection());
 
     // UriResourceImplTyped check collection = true case
-    action = edm.getAction(ActionProvider.nameUARTPrimCollParam, null, null);
+    action = edm.getUnboundAction(ActionProvider.nameUARTPrimCollParam);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
     assertEquals(true, expression.isCollection());
 
     // UriResourceImplTyped with filter
-    action = edm.getAction(ActionProvider.nameUARTPrimParam, null, null);
+    action = edm.getUnboundAction(ActionProvider.nameUARTPrimParam);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
         .asUriInfoResource());
     assertEquals(entityType, expression.getType());
 
     // UriResourceImplKeyPred
-    EdmFunction function = edm.getFunction(FunctionProvider.nameUFCRTETKeyNav, null, null, null);
+    EdmFunction function = edm.getUnboundFunction(FunctionProvider.nameUFCRTETKeyNav, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function))
         .asUriInfoResource());
@@ -171,8 +171,7 @@ public class ExpressionTest {
 
     // UriResourceImplKeyPred typeFilter on entry
     EdmEntityType entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
-        Arrays.asList(("ParameterInt16")));
+    function = edm.getUnboundFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, Arrays.asList("ParameterInt16"));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityBaseType))
         .asUriInfoResource());
@@ -180,8 +179,7 @@ public class ExpressionTest {
 
     // UriResourceImplKeyPred typeFilter on entry
     entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
-        Arrays.asList(("ParameterInt16")));
+    function = edm.getUnboundFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, Arrays.asList("ParameterInt16"));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function).setCollectionTypeFilter(entityBaseType))
         .asUriInfoResource());
@@ -189,8 +187,7 @@ public class ExpressionTest {
 
     // no typed
     entityBaseType = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
-    function = edm.getFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, null, null,
-        Arrays.asList(("ParameterInt16")));
+    function = edm.getUnboundFunction(FunctionProvider.nameUFCRTESTwoKeyNavParam, Arrays.asList("ParameterInt16"));
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.all));
     assertEquals(null, expression.getType());
 

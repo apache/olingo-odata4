@@ -48,13 +48,13 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.junit.Test;
@@ -244,10 +244,10 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertNotNull(edm);
 
     final EdmEntityContainer container = edm.getSchemas().get(0).getEntityContainer();
-    final EdmActionImport actImp = container.getActionImport(operation.getTitle());
     final EdmTypeInfo createdTypeInfo =
             new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(created.getName()).build();
-    final EdmAction action = actImp.getBoundAction(
+    final EdmAction action = edm.getBoundAction(
+            new FullQualifiedName(container.getNamespace(), operation.getTitle()),
             createdTypeInfo.getFullQualifiedName(), createdTypeInfo.isCollection());
 
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().
@@ -294,11 +294,11 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertNotNull(edm);
 
     final EdmEntityContainer container = edm.getSchemas().get(0).getEntityContainer();
-    final EdmActionImport actImp = container.getActionImport("IncreaseSalaries");
 
     final EdmTypeInfo employeesTypeInfo = new EdmTypeInfo.Builder().setEdm(edm).
             setTypeExpression("Collection(Microsoft.Test.OData.Services.AstoriaDefaultService.Employee)").build();
-    final EdmAction action = actImp.getBoundAction(
+    final EdmAction action = edm.getBoundAction(
+            new FullQualifiedName(container.getNamespace(), "IncreaseSalaries"),
             employeesTypeInfo.getFullQualifiedName(), employeesTypeInfo.isCollection());
 
     final EdmParameter param = action.getParameter(action.getParameterNames().get(1));
@@ -308,7 +308,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
             build();
 
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().getInvokeRequest(
-            builder.appendOperationCallSegment(actImp.getName()).build(), action,
+            builder.appendOperationCallSegment(action.getName()).build(), action,
             Collections.<String, ODataValue>singletonMap(param.getName(), paramValue));
     final ODataInvokeResponse<ODataNoContent> res = req.execute();
     assertNotNull(res);

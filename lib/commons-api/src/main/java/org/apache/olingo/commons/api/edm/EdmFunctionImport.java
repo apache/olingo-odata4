@@ -26,23 +26,19 @@ import java.util.List;
 public interface EdmFunctionImport extends EdmOperationImport {
 
   /**
+   * Gets unbound functions.
+   *
+   * @return unbound functions
+   */
+  List<EdmFunction> getUnboundFunctions();
+
+  /**
    * Gets unbound function with given parameter names.
    *
    * @param parameterNames parameter names
    * @return unbound function with given parameter names
    */
   EdmFunction getUnboundFunction(List<String> parameterNames);
-
-  /**
-   * Gets bound function with given parameter names.
-   *
-   * @param parameterNames parameter names
-   * @param bindingParameterTypeName may be null if it is an unbound function
-   * @param isBindingParameterCollection may be null if it is an unbound function
-   * @return bound function with given parameter names
-   */
-  EdmFunction getBoundFunction(List<String> parameterNames,
-          FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection);
 
   /**
    * @return the Full qualified name for the function as specified in the metadata

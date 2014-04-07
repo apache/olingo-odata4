@@ -76,7 +76,7 @@ public class UriResourceImplTest {
     assertEquals("", impl.toString());
 
     // action
-    EdmAction action = edm.getAction(ActionProvider.nameUARTETParam, null, null);
+    EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTETParam);
     impl.setAction(action);
     assertEquals(action, impl.getAction());
     assertEquals(ActionProvider.nameUARTETParam.getName(), impl.toString());

@@ -38,17 +38,18 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   }
 
   @Override
-  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
-    return getBoundFunction(parameterNames, null, null);
+  public FullQualifiedName getFunctionFqn() {
+    return functionImport.getFunction();
   }
 
   @Override
-  public EdmFunction getBoundFunction(final List<String> parameterNames,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
+    return edm.getUnboundFunction(getFunctionFqn(), parameterNames);
+  }
 
-    return edm.getFunction(functionImport.getFunction(),
-            bindingParameterTypeName, isBindingParameterCollection, parameterNames);
-
+  @Override
+  public List<EdmFunction> getUnboundFunctions() {
+    return edm.getUnboundFunctions(getFunctionFqn());
   }
 
   @Override
@@ -56,8 +57,4 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
     return functionImport.isIncludeInServiceDocument();
   }
 
-  @Override
-  public FullQualifiedName getFunctionFqn() {
-    return functionImport.getFunction();
-  }
 }

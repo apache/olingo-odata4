@@ -26,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,6 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.AbstractEdm;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class EdmImplCallCreateTest {
     List<EdmSchema> schemas = edm.getSchemas();
     assertNotNull(schemas);
   }
-  
+
   @Test
   public void callCreateEntityContainer() {
     EdmEntityContainer entityContainer = edm.getEntityContainer(FQN);
@@ -116,36 +116,36 @@ public class EdmImplCallCreateTest {
 
   @Test
   public void callCreateAction() {
-    EdmAction action = edm.getAction(FQN, null, null);
+    EdmAction action = edm.getUnboundAction(FQN);
     assertNotNull(action);
     assertEquals(FQN.getNamespace(), action.getNamespace());
     assertEquals(FQN.getName(), action.getName());
 
-    EdmAction action2 = edm.getAction(FQN, FQN, true);
+    EdmAction action2 = edm.getBoundAction(FQN, FQN, true);
     assertNotNull(action2);
     assertEquals(FQN.getNamespace(), action2.getNamespace());
     assertEquals(FQN.getName(), action2.getName());
 
     assertNotSame(action, action2);
 
-    assertNull(edm.getAction(WRONG_FQN, null, null));
+    assertNull(edm.getUnboundAction(WRONG_FQN));
   }
 
   @Test
   public void callCreateFunction() {
-    EdmFunction function = edm.getFunction(FQN, null, null, null);
+    EdmFunction function = edm.getUnboundFunction(FQN, null);
     assertNotNull(function);
     assertEquals(FQN.getNamespace(), function.getNamespace());
     assertEquals(FQN.getName(), function.getName());
 
-    EdmFunction function2 = edm.getFunction(FQN, FQN, true, new ArrayList<String>());
+    EdmFunction function2 = edm.getBoundFunction(FQN, FQN, true, new ArrayList<String>());
     assertNotNull(function2);
     assertEquals(FQN.getNamespace(), function2.getNamespace());
     assertEquals(FQN.getName(), function2.getName());
 
     assertNotSame(function, function2);
 
-    assertNull(edm.getFunction(WRONG_FQN, null, null, null));
+    assertNull(edm.getUnboundFunction(WRONG_FQN, null));
   }
 
   @Test
@@ -259,6 +259,17 @@ public class EdmImplCallCreateTest {
         return action;
       }
       return null;
+    }
+
+    @Override
+    protected List<EdmFunction> createUnboundFunctions(final FullQualifiedName fqn) {
+      if (FQN.getNamespace().equals(fqn.getNamespace()) && FQN.getName().equals(fqn.getName())) {
+        EdmFunction function = mock(EdmFunction.class);
+        when(function.getNamespace()).thenReturn(fqn.getNamespace());
+        when(function.getName()).thenReturn(fqn.getName());
+        return Collections.singletonList(function);
+      }
+      return Collections.emptyList();
     }
 
     @Override

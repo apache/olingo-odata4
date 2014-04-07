@@ -57,7 +57,7 @@ public class EdmActionImportImplTest {
     container = mock(EdmEntityContainer.class);
     when(edm.getEntityContainer(entityContainerFqn)).thenReturn(container);
     action = mock(EdmAction.class);
-    when(edm.getAction(actionFqn, null, null)).thenReturn(action);
+    when(edm.getUnboundAction(actionFqn)).thenReturn(action);
 
     entitySet = mock(EdmEntitySet.class);
     when(container.getEntitySet("entitySetName")).thenReturn(entitySet);

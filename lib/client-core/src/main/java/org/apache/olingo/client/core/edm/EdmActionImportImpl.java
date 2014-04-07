@@ -30,6 +30,8 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
 
   private final ActionImport actionImport;
 
+  private FullQualifiedName actionFQN;
+
   public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
           final ActionImport actionImport) {
 
@@ -37,18 +39,17 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
     this.actionImport = actionImport;
   }
 
-  @Override
-  public EdmAction getUnboundAction() {
-    return getBoundAction(null, null);
+  public FullQualifiedName getActionFQN() {
+    if (actionFQN == null) {
+      actionFQN = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(actionImport.getAction()).
+              setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName();
+    }
+    return actionFQN;
   }
 
   @Override
-  public EdmAction getBoundAction(
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
-
-    return edm.getAction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(actionImport.getAction()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
-            bindingParameterTypeName, isBindingParameterCollection);
+  public EdmAction getUnboundAction() {
+    return edm.getUnboundAction(getActionFQN());
   }
 
 }

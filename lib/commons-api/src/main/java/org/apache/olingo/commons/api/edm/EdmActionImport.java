@@ -29,13 +29,4 @@ public interface EdmActionImport extends EdmOperationImport {
    * @return unbound action.
    */
   EdmAction getUnboundAction();
-
-  /**
-   * Gets bound action.
-   *
-   * @param bindingParameterTypeName may be null if it is an unbound function
-   * @param isBindingParameterCollection may be null if it is an unbound function
-   * @return bound action with given parameter names
-   */
-  EdmAction getBoundAction(FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection);
 }

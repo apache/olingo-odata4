@@ -89,10 +89,10 @@ public class EdmProviderImplTest {
     when(localProvider.getActions(FQN)).thenReturn(null);
     when(localProvider.getFunctions(FQN)).thenReturn(null);
     Edm localEdm = new EdmProviderImpl(localProvider);
-    localEdm.getAction(FQN, null, null);
-    localEdm.getFunction(FQN, null, null, null);
-    localEdm.getAction(FQN, FQN, true);
-    localEdm.getFunction(FQN, FQN, true, null);
+    localEdm.getUnboundAction(FQN);
+    localEdm.getUnboundFunction(FQN, null);
+    localEdm.getBoundAction(FQN, FQN, true);
+    localEdm.getBoundFunction(FQN, FQN, true, null);
     localEdm.getComplexType(FQN);
     localEdm.getEntityContainer(FQN);
     localEdm.getEntityType(FQN);
@@ -123,24 +123,24 @@ public class EdmProviderImplTest {
 
     // seperate because of signature
     try {
-      localEdm.getAction(fqn, null, null);
+      localEdm.getUnboundAction(fqn);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
     }
 
     try {
-      localEdm.getFunction(fqn, null, null, null);
+      localEdm.getUnboundFunction(fqn, null);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
     }
     try {
-      localEdm.getAction(fqn, fqn, true);
+      localEdm.getBoundAction(fqn, fqn, true);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
     }
 
     try {
-      localEdm.getFunction(fqn, fqn, true, null);
+      localEdm.getBoundFunction(fqn, fqn, true, null);
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
     }

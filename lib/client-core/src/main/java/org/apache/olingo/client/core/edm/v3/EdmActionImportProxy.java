@@ -31,6 +31,8 @@ public class EdmActionImportProxy extends EdmOperationImportImpl implements EdmA
 
   private final FunctionImport functionImport;
 
+  private FullQualifiedName actionFQN;
+
   public EdmActionImportProxy(final Edm edm, final EdmEntityContainer container, final String name,
           final FunctionImport functionImport) {
 
@@ -38,19 +40,17 @@ public class EdmActionImportProxy extends EdmOperationImportImpl implements EdmA
     this.functionImport = functionImport;
   }
 
-  @Override
-  public EdmAction getUnboundAction() {
-    return edm.getAction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(), null, null);
+  public FullQualifiedName getActionFQN() {
+    if (actionFQN == null) {
+      actionFQN = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
+              setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName();
+    }
+    return actionFQN;
   }
 
   @Override
-  public EdmAction getBoundAction(
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
-
-    return edm.getAction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
-            bindingParameterTypeName, isBindingParameterCollection);
+  public EdmAction getUnboundAction() {
+    return edm.getUnboundAction(getActionFQN());
   }
 
 }

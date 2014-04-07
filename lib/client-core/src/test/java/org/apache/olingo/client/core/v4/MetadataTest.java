@@ -100,7 +100,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals(folder, user.getNavigationProperty("Inbox").getType());
 
     // 4. Action
-    final EdmAction move = edm.getAction(
+    final EdmAction move = edm.getBoundAction(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Move"),
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"),
             false);
@@ -209,9 +209,8 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(fi);
     assertEquals(demoService.getEntitySet("Products"), fi.getReturnedEntitySet());
 
-    final EdmFunction function = edm.getFunction(
-            new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"),
-            null, Boolean.FALSE, null);
+    final EdmFunction function = edm.getUnboundFunction(
+            new FullQualifiedName(metadata.getSchema(0).getNamespace(), "ProductsByRating"), null);
     assertNotNull(function);
     assertEquals(function.getName(), fi.getUnboundFunction(null).getName());
     assertEquals(function.getNamespace(), fi.getUnboundFunction(null).getNamespace());

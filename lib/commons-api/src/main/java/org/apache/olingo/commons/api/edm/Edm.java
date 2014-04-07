@@ -27,92 +27,117 @@ import java.util.List;
  */
 public interface Edm {
 
-    /**
-     * This method <b>DOES NOT</b> support lazy loading. All schemas are loaded completely!
-     *
-     * @return all schemas defined for this EDM
-     */
-    List<EdmSchema> getSchemas();
+  /**
+   * This method <b>DOES NOT</b> support lazy loading. All schemas are loaded completely!
+   *
+   * @return all schemas defined for this EDM
+   */
+  List<EdmSchema> getSchemas();
 
-    /**
-     * Get entity container by full qualified name.
-     * <br/>
-     * See {@link EdmEntityContainer} for more information.
-     *
-     * @param name
-     * @return {@link EdmEntityContainer}
-     */
-    EdmEntityContainer getEntityContainer(FullQualifiedName name);
+  /**
+   * Get entity container by full qualified name.
+   * <br/>
+   * See {@link EdmEntityContainer} for more information.
+   *
+   * @param name
+   * @return {@link EdmEntityContainer}
+   */
+  EdmEntityContainer getEntityContainer(FullQualifiedName name);
 
-    /**
-     * Get enum type by full qualified name.
-     * <br/>
-     * See {@link EdmEnumType} for more information
-     *
-     * @param name
-     * @return {@link EdmEnumType}
-     */
-    EdmEnumType getEnumType(FullQualifiedName name);
+  /**
+   * Get enum type by full qualified name.
+   * <br/>
+   * See {@link EdmEnumType} for more information
+   *
+   * @param name
+   * @return {@link EdmEnumType}
+   */
+  EdmEnumType getEnumType(FullQualifiedName name);
 
-    /**
-     * Get a type definition by full qualified name.
-     * <br/>
-     * See {@link EdmTypeDefinition} for more information
-     *
-     * @param name
-     * @return {@link EdmTypeDefinition}
-     */
-    EdmTypeDefinition getTypeDefinition(FullQualifiedName name);
+  /**
+   * Get a type definition by full qualified name.
+   * <br/>
+   * See {@link EdmTypeDefinition} for more information
+   *
+   * @param name
+   * @return {@link EdmTypeDefinition}
+   */
+  EdmTypeDefinition getTypeDefinition(FullQualifiedName name);
 
-    /**
-     * Get entity type by full qualified name.
-     * <br/>
-     * See {@link EdmEntityType} for more information.
-     *
-     * @param name
-     * @return {@link EdmEntityType}
-     */
-    EdmEntityType getEntityType(FullQualifiedName name);
+  /**
+   * Get entity type by full qualified name.
+   * <br/>
+   * See {@link EdmEntityType} for more information.
+   *
+   * @param name
+   * @return {@link EdmEntityType}
+   */
+  EdmEntityType getEntityType(FullQualifiedName name);
 
-    /**
-     * Get complex type by full qualified name..
-     * <br/>
-     * See {@link EdmComplexType} for more information.
-     *
-     * @param name
-     * @return {@link EdmComplexType}
-     */
-    EdmComplexType getComplexType(FullQualifiedName name);
+  /**
+   * Get complex type by full qualified name..
+   * <br/>
+   * See {@link EdmComplexType} for more information.
+   *
+   * @param name
+   * @return {@link EdmComplexType}
+   */
+  EdmComplexType getComplexType(FullQualifiedName name);
 
-    /**
-     * Get Action by full qualified name and binding parameter type.
-     *
-     * @param actionName must not be null
-     * @param bindingParameterTypeName may be null if it is an unbound action
-     * @param isBindingParameterCollection may be null if it is an unbound action
-     * @return {@link EdmAction}
-     */
-    EdmAction getAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
-            Boolean isBindingParameterCollection);
+  /**
+   * Get unbound Action by full qualified name.
+   *
+   * @param actionName must not be null
+   * @return {@link EdmAction}
+   */
+  EdmAction getUnboundAction(FullQualifiedName actionName);
 
-    /**
-     * Get Function by full qualified name and binding parameter type and binding parameter names.
-     *
-     * @param functionName
-     * @param bindingParameterTypeName may be null if it is an unbound function
-     * @param isBindingParameterCollection may be null if it is an unbound function
-     * @param parameterNames may be null if it is an unbound function
-     * @return {@link EdmFunction}
-     */
-    EdmFunction getFunction(FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
-            Boolean isBindingParameterCollection, List<String> parameterNames);
+  /**
+   * Get Action by full qualified name and binding parameter type.
+   *
+   * @param actionName must not be null
+   * @param bindingParameterTypeName must not be null
+   * @param isBindingParameterCollection may be null
+   * @return {@link EdmAction}
+   */
+  EdmAction getBoundAction(FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection);
 
-    /**
-     * Get service metadata.
-     * <br/>
-     * See {@link EdmServiceMetadata} for more information.
-     *
-     * @return {@link EdmServiceMetadata}
-     */
-    EdmServiceMetadata getServiceMetadata();
+  /**
+   * Get Function by full qualified name.
+   *
+   * @param functionName must not be null
+   * @return {@link EdmFunction}
+   */
+  List<EdmFunction> getUnboundFunctions(FullQualifiedName functionName);
+
+  /**
+   * Get Function by full qualified name.
+   *
+   * @param functionName must not be null
+   * @param parameterNames may be null: in this case it is considered as empty
+   * @return {@link EdmFunction}
+   */
+  EdmFunction getUnboundFunction(FullQualifiedName functionName, List<String> parameterNames);
+
+  /**
+   * Get Function by full qualified name and binding parameter type and binding parameter names.
+   *
+   * @param functionName must not be null
+   * @param bindingParameterTypeName must not be null
+   * @param isBindingParameterCollection may be null
+   * @param parameterNames may be null: in this case it is considered as empty
+   * @return {@link EdmFunction}
+   */
+  EdmFunction getBoundFunction(FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
+          Boolean isBindingParameterCollection, List<String> parameterNames);
+
+  /**
+   * Get service metadata.
+   * <br/>
+   * See {@link EdmServiceMetadata} for more information.
+   *
+   * @return {@link EdmServiceMetadata}
+   */
+  EdmServiceMetadata getServiceMetadata();
 }

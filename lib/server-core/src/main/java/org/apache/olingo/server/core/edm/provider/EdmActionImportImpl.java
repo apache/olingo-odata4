@@ -22,7 +22,6 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
 
 public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmActionImport {
@@ -37,14 +36,7 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
 
   @Override
   public EdmAction getUnboundAction() {
-    return getBoundAction(null, null);
-  }
-
-  @Override
-  public EdmAction getBoundAction(
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
-
-    return edm.getAction(actionImport.getAction(), bindingParameterTypeName, isBindingParameterCollection);
+    return edm.getUnboundAction(actionImport.getAction());
   }
 
 }

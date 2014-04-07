@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.core.edm.EdmOperationImportImpl;
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -33,6 +32,8 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
 
   private final FunctionImport functionImport;
 
+  private FullQualifiedName functionFQN;
+
   public EdmFunctionImportProxy(final Edm edm, final EdmEntityContainer container, final String name,
           final FunctionImport functionImport) {
 
@@ -41,27 +42,27 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
   }
 
   @Override
-  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
-    return getBoundFunction(parameterNames, null, null);
+  public FullQualifiedName getFunctionFqn() {
+    if (functionFQN == null) {
+      functionFQN = new FullQualifiedName(container.getNamespace(), getName());
+    }
+    return functionFQN;
   }
 
   @Override
-  public EdmFunction getBoundFunction(final List<String> parameterNames,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+  public List<EdmFunction> getUnboundFunctions() {
+    return edm.getUnboundFunctions(getFunctionFqn());
+  }
 
-    return edm.getFunction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getName()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
-            bindingParameterTypeName, isBindingParameterCollection, parameterNames);
+  @Override
+  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
+    return edm.getUnboundFunction(getFunctionFqn(), parameterNames);
   }
 
   @Override
   public boolean isIncludeInServiceDocument() {
-    //V3 states that all function imports are included in the service document
+    // V3 states that all function imports are included in the service document
     return true;
   }
 
-  @Override
-  public FullQualifiedName getFunctionFqn() {
-    return new FullQualifiedName(container.getNamespace(), getName());
-  }
 }

@@ -32,6 +32,8 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
 
   private final FunctionImport functionImport;
 
+  private FullQualifiedName functionFQN;
+
   public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container, final String name,
           final FunctionImport functionImport) {
 
@@ -40,17 +42,22 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   }
 
   @Override
-  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
-    return getBoundFunction(parameterNames, null, null);
+  public FullQualifiedName getFunctionFqn() {
+    if (functionFQN == null) {
+      functionFQN = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getFunction()).
+              setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName();
+    }
+    return functionFQN;
   }
 
   @Override
-  public EdmFunction getBoundFunction(final List<String> parameterNames,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+  public List<EdmFunction> getUnboundFunctions() {
+    return edm.getUnboundFunctions(getFunctionFqn());
+  }
 
-    return edm.getFunction(new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(functionImport.getFunction()).
-            setDefaultNamespace(container.getNamespace()).build().getFullQualifiedName(),
-            bindingParameterTypeName, isBindingParameterCollection, parameterNames);
+  @Override
+  public EdmFunction getUnboundFunction(final List<String> parameterNames) {
+    return edm.getUnboundFunction(getFunctionFqn(), parameterNames);
   }
 
   @Override
@@ -58,8 +65,4 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
     return functionImport.isIncludeInServiceDocument();
   }
 
-  @Override
-  public FullQualifiedName getFunctionFqn() {
-    return new FullQualifiedName(functionImport.getFunction());
-  }
 }

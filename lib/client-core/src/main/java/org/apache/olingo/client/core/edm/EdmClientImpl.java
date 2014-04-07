@@ -211,6 +211,37 @@ public class EdmClientImpl extends AbstractEdm {
   }
 
   @Override
+  protected List<EdmFunction> createUnboundFunctions(final FullQualifiedName functionName) {
+    final List<EdmFunction> result = new ArrayList<EdmFunction>();
+
+    final Schema schema = xmlSchemaByNamespace.get(functionName.getNamespace());
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final List<Function> functions = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).
+              getFunctions(functionName.getName());
+      for (final Iterator<Function> itor = functions.iterator(); itor.hasNext();) {
+        final Function function = itor.next();
+        if (!function.isBound()) {
+          result.add(EdmFunctionImpl.getInstance(this, functionName, function));
+        }
+      }
+    } else {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> functionImports =
+                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
+        for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext();) {
+          final FunctionImport functionImport = itor.next();
+          if (FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()) {
+            result.add(EdmFunctionProxy.getInstance(this, functionName, functionImport));
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  @Override
   protected EdmFunction createUnboundFunction(final FullQualifiedName functionName, final List<String> parameterNames) {
     EdmFunction result = null;
 
@@ -235,8 +266,8 @@ public class EdmClientImpl extends AbstractEdm {
     } else {
       for (EntityContainer entityContainer : schema.getEntityContainers()) {
         @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
-                getFunctionImports(functionName.getName());
+        final List<FunctionImport> functionImports =
+                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();

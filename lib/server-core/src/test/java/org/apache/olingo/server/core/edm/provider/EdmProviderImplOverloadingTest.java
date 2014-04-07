@@ -104,46 +104,46 @@ public class EdmProviderImplOverloadingTest {
 
   @Test
   public void simpleActionGet() {
-    EdmAction action = edm.getAction(operationName1, null, null);
+    EdmAction action = edm.getUnboundAction(operationName1);
     assertNotNull(action);
     assertEquals(operationName1.getNamespace(), action.getNamespace());
     assertEquals(operationName1.getName(), action.getName());
 
-    assertNull(edm.getAction(wrongOperationName, null, null));
+    assertNull(edm.getUnboundAction(wrongOperationName));
   }
 
   @Test
   public void boundActionOverloading() {
-    EdmAction action = edm.getAction(operationName1, operationType1, false);
+    EdmAction action = edm.getBoundAction(operationName1, operationType1, false);
     assertNotNull(action);
     assertEquals(operationName1.getNamespace(), action.getNamespace());
     assertEquals(operationName1.getName(), action.getName());
-    assertTrue(action == edm.getAction(operationName1, operationType1, false));
+    assertTrue(action == edm.getBoundAction(operationName1, operationType1, false));
 
-    EdmAction action2 = edm.getAction(operationName1, operationType1, true);
+    EdmAction action2 = edm.getBoundAction(operationName1, operationType1, true);
     assertNotNull(action2);
     assertEquals(operationName1.getNamespace(), action2.getNamespace());
     assertEquals(operationName1.getName(), action2.getName());
-    assertTrue(action2 == edm.getAction(operationName1, operationType1, true));
+    assertTrue(action2 == edm.getBoundAction(operationName1, operationType1, true));
 
     assertNotSame(action, action2);
   }
 
   @Test
   public void simpleFunctionGet() {
-    EdmFunction function = edm.getFunction(operationName1, null, null, null);
+    EdmFunction function = edm.getUnboundFunction(operationName1, null);
     assertNotNull(function);
     assertEquals(operationName1.getNamespace(), function.getNamespace());
     assertEquals(operationName1.getName(), function.getName());
 
-    EdmFunction function2 = edm.getFunction(operationName1, null, null, new ArrayList<String>());
+    EdmFunction function2 = edm.getUnboundFunction(operationName1, new ArrayList<String>());
     assertNotNull(function2);
     assertEquals(operationName1.getNamespace(), function2.getNamespace());
     assertEquals(operationName1.getName(), function2.getName());
 
     assertEquals(function, function2);
 
-    assertNull(edm.getFunction(wrongOperationName, null, null, new ArrayList<String>()));
+    assertNull(edm.getUnboundFunction(wrongOperationName, new ArrayList<String>()));
   }
 
   @Test
@@ -152,28 +152,28 @@ public class EdmProviderImplOverloadingTest {
     parameter1Names.add("a");
     List<String> parameter2Names = new ArrayList<String>();
     parameter2Names.add("b");
-    EdmFunction function = edm.getFunction(operationName1, null, null, new ArrayList<String>());
+    EdmFunction function = edm.getUnboundFunction(operationName1, new ArrayList<String>());
     assertNotNull(function);
     assertFalse(function.isBound());
 
-    EdmFunction function1 = edm.getFunction(operationName1, null, null, parameter1Names);
+    EdmFunction function1 = edm.getUnboundFunction(operationName1, parameter1Names);
     assertNotNull(function1);
     assertFalse(function1.isBound());
 
     assertFalse(function == function1);
     assertNotSame(function, function1);
 
-    EdmFunction function2 = edm.getFunction(operationName1, null, null, parameter2Names);
+    EdmFunction function2 = edm.getUnboundFunction(operationName1, parameter2Names);
     assertNotNull(function2);
     assertFalse(function2.isBound());
 
     assertFalse(function1 == function2);
     assertNotSame(function1, function2);
 
-    EdmFunction function3 = edm.getFunction(operationName1, operationType1, false, parameter2Names);
+    EdmFunction function3 = edm.getBoundFunction(operationName1, operationType1, false, parameter2Names);
     assertNotNull(function3);
     assertTrue(function3.isBound());
-    EdmFunction function4 = edm.getFunction(operationName1, operationType2, false, parameter2Names);
+    EdmFunction function4 = edm.getBoundFunction(operationName1, operationType2, false, parameter2Names);
     assertNotNull(function4);
     assertTrue(function4.isBound());
 
@@ -192,7 +192,7 @@ public class EdmProviderImplOverloadingTest {
 
   @Test(expected = EdmException.class)
   public void noParametersAtBoundFunctionReslutsInException() {
-    edm.getFunction(badOperationName, operationType1, true, null);
+    edm.getBoundFunction(badOperationName, operationType1, true, null);
   }
 
 }
