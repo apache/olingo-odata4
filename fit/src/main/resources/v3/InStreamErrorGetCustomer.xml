@@ -20,8 +20,8 @@
 
 -->
 <feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom"
-  xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
-  xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+      xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+      xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
   <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/InStreamErrorGetCustomer</id>
   <title type="text">InStreamErrorGetCustomer</title>
   <updated>2014-02-12T14:03:09Z</updated>
@@ -31,15 +31,15 @@
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Customer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Customer" href="Customer(-10)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Orders" type="application/atom+xml;type=feed"
-      title="Orders" href="Customer(-10)/Orders" />
+          title="Orders" href="Customer(-10)/Orders" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Logins" type="application/atom+xml;type=feed"
-      title="Logins" href="Customer(-10)/Logins" />
+          title="Logins" href="Customer(-10)/Logins" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Husband" type="application/atom+xml;type=entry"
-      title="Husband" href="Customer(-10)/Husband" />
+          title="Husband" href="Customer(-10)/Husband" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Wife" type="application/atom+xml;type=entry"
-      title="Wife" href="Customer(-10)/Wife" />
+          title="Wife" href="Customer(-10)/Wife" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Info" type="application/atom+xml;type=entry"
-      title="Info" href="Customer(-10)/Info" />
+          title="Info" href="Customer(-10)/Info" />
     <title />
     <summary type="text">commastartedtotalnormaloffsetsregisteredgroupcelestialexposureconventionsimportcastclass
     </summary>
@@ -48,7 +48,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Thumbnail" title="Thumbnail"
-      href="Customer(-10)/Thumbnail" />
+          href="Customer(-10)/Thumbnail" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Video" title="Video" href="Customer(-10)/Video" />
     <content type="application/xml">
       <m:properties>

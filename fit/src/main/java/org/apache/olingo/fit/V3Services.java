@@ -27,6 +27,7 @@ import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
@@ -81,7 +82,7 @@ public class V3Services extends AbstractServices {
    */
   @GET
   @Path("/large/$metadata")
-  @Produces("application/xml")
+  @Produces(MediaType.APPLICATION_XML)
   public Response getLargeMetadata() {
     return getMetadata("large" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }
@@ -93,7 +94,7 @@ public class V3Services extends AbstractServices {
    */
   @GET
   @Path("/openType/$metadata")
-  @Produces("application/xml")
+  @Produces(MediaType.APPLICATION_XML)
   public Response getOpenTypeMetadata() {
     return getMetadata("openType" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }

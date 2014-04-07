@@ -130,7 +130,7 @@ public abstract class AbstractServices {
    */
   @GET
   @Path("/$metadata")
-  @Produces("application/xml")
+  @Produces(MediaType.APPLICATION_XML)
   public Response getMetadata() {
     return getMetadata(Constants.get(version, ConstantKey.METADATA));
   }
@@ -1363,7 +1363,7 @@ public abstract class AbstractServices {
     }
   }
 
-  private Map.Entry<Accept, AbstractUtilities> getUtilities(final String accept, final String format) {
+  public Map.Entry<Accept, AbstractUtilities> getUtilities(final String accept, final String format) {
     final Accept acceptType;
     if (StringUtils.isNotBlank(format)) {
       acceptType = Accept.valueOf(format.toUpperCase());
