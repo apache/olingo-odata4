@@ -88,39 +88,35 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
-    final Entry entry = super.getEntry(entity, reference, setType);
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
+    final Entry entry = super.getEntry(entity, reference);
     entry.setId(((ODataEntity) entity).getReference());
     return entry;
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
-          final boolean setType) {
-
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference) {
     final ODataProperty _property = (ODataProperty) property;
 
     final Property propertyResource = ResourceFactory.newProperty(reference);
     propertyResource.setName(_property.getName());
-    propertyResource.setValue(getValue(_property.getValue(), reference, setType));
+    propertyResource.setValue(getValue(_property.getValue(), reference));
 
-    if (setType) {
-      if (_property.hasPrimitiveValue()) {
-        propertyResource.setType(_property.getPrimitiveValue().getTypeName());
-      } else if (_property.hasEnumValue()) {
-        propertyResource.setType(_property.getEnumValue().getTypeName());
-      } else if (_property.hasComplexValue()) {
-        propertyResource.setType(_property.getComplexValue().getTypeName());
-      } else if (_property.hasCollectionValue()) {
-        propertyResource.setType(_property.getCollectionValue().getTypeName());
-      }
+    if (_property.hasPrimitiveValue()) {
+      propertyResource.setType(_property.getPrimitiveValue().getTypeName());
+    } else if (_property.hasEnumValue()) {
+      propertyResource.setType(_property.getEnumValue().getTypeName());
+    } else if (_property.hasComplexValue()) {
+      propertyResource.setType(_property.getComplexValue().getTypeName());
+    } else if (_property.hasCollectionValue()) {
+      propertyResource.setType(_property.getCollectionValue().getTypeName());
     }
 
     return propertyResource;
   }
 
   @Override
-  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference) {
     Value valueResource;
     if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
             && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
@@ -128,7 +124,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       valueResource = new EnumValueImpl(
               ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum().getValue());
     } else {
-      valueResource = super.getValue(value, reference, setType);
+      valueResource = super.getValue(value, reference);
 
       if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
               && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isLinkedComplex()) {

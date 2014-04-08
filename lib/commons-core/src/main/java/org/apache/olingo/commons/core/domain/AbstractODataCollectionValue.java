@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
@@ -38,7 +39,7 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
   /**
    * Values.
    */
-  private final List<OV> values = new ArrayList<OV>();
+  protected final List<OV> values = new ArrayList<OV>();
 
   /**
    * Constructor.
@@ -89,4 +90,21 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
   public boolean isEmpty() {
     return values.isEmpty();
   }
+
+  @Override
+  public Collection<Object> asJavaCollection() {
+    final List<Object> result = new ArrayList<Object>();
+    for (OV value : values) {
+      if (value.isPrimitive()) {
+        result.add(value.asPrimitive().toValue());
+      } else if (value.isComplex()) {
+        result.add(value.asComplex().asJavaMap());
+      } else if (value.isCollection()) {
+        result.add(value.asCollection().asJavaCollection());
+      }
+    }
+
+    return result;
+  }
+
 }

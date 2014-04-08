@@ -52,16 +52,6 @@ public interface CommonODataBinder extends Serializable {
   Entry getEntry(CommonODataEntity entity, Class<? extends Entry> reference);
 
   /**
-   * Gets an <tt>Entry</tt> from the given OData entity.
-   *
-   * @param entity OData entity.
-   * @param reference reference class.
-   * @param setType whether to explicitly output type information.
-   * @return <tt>Entry</tt> object.
-   */
-  Entry getEntry(CommonODataEntity entity, Class<? extends Entry> reference, boolean setType);
-
-  /**
    * Gets a <tt>Link</tt> from the given OData link.
    *
    * @param link OData link.
@@ -75,10 +65,9 @@ public interface CommonODataBinder extends Serializable {
    *
    * @param property OData property.
    * @param reference reference class.
-   * @param setType whether to explicitly output type information.
    * @return <tt>Property</tt> object.
    */
-  Property getProperty(CommonODataProperty property, Class<? extends Entry> reference, boolean setType);
+  Property getProperty(CommonODataProperty property, Class<? extends Entry> reference);
 
   /**
    * Adds the given property to the given entity.

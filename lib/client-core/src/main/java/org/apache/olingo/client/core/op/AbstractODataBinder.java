@@ -110,11 +110,6 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return feed;
   }
 
-  @Override
-  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
-    return getEntry(entity, reference, true);
-  }
-
   protected void links(final ODataLinked odataLinked, final Linked linked, final Class<? extends Entry> reference) {
     // -------------------------------------------------------------
     // Append navigation links (handling inline entry / feed as well)
@@ -140,7 +135,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   }
 
   @Override
-  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference, final boolean setType) {
+  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
     final Entry entry = ResourceFactory.newEntry(reference);
 
     entry.setType(entity.getName());
@@ -185,7 +180,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (CommonODataProperty property : entity.getProperties()) {
-      entry.getProperties().add(getProperty(property, reference, setType));
+      entry.getProperties().add(getProperty(property, reference));
     }
 
     return entry;
@@ -217,7 +212,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return linkResource;
   }
 
-  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference, final boolean setType) {
+  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference) {
     Value valueResource = null;
 
     if (value == null) {
@@ -231,14 +226,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       valueResource = new ComplexValueImpl();
 
       for (final Iterator<? extends CommonODataProperty> itor = _value.iterator(); itor.hasNext();) {
-        valueResource.asComplex().get().add(getProperty(itor.next(), reference, setType));
+        valueResource.asComplex().get().add(getProperty(itor.next(), reference));
       }
     } else if (value.isCollection()) {
       final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
       valueResource = new CollectionValueImpl();
 
       for (final Iterator<? extends ODataValue> itor = _value.iterator(); itor.hasNext();) {
-        valueResource.asCollection().get().add(getValue(itor.next(), reference, setType));
+        valueResource.asCollection().get().add(getValue(itor.next(), reference));
       }
     }
 

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.domain;
 
+import java.util.Map;
+
 /**
  * OData complex property value.
  *
@@ -47,4 +49,10 @@ public interface ODataComplexValue<OP extends CommonODataProperty> extends OData
    */
   int size();
 
+  /**
+   * Converts this instance as POJO collection.
+   *
+   * @return this instance as POJO collection
+   */
+  Map<String, Object> asJavaMap();
 }

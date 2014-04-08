@@ -21,4 +21,7 @@ package org.apache.olingo.commons.api.domain.v4;
 public interface ODataEnumValue extends ODataValue {
 
   String getValue();
+
+  @Override
+  String toString();
 }

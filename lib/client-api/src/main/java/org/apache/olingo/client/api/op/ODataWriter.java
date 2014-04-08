@@ -46,16 +46,6 @@ public interface ODataWriter extends Serializable {
   InputStream writeEntities(Collection<CommonODataEntity> entities, ODataPubFormat format);
 
   /**
-   * Writes a collection of OData entities.
-   *
-   * @param entities entities to be serialized.
-   * @param format serialization format.
-   * @param outputType whether to explicitly output type information.
-   * @return stream of serialized objects.
-   */
-  InputStream writeEntities(Collection<CommonODataEntity> entities, ODataPubFormat format, boolean outputType);
-
-  /**
    * Serializes a single OData entity.
    *
    * @param entity entity to be serialized.
@@ -63,16 +53,6 @@ public interface ODataWriter extends Serializable {
    * @return stream of serialized object.
    */
   InputStream writeEntity(CommonODataEntity entity, ODataPubFormat format);
-
-  /**
-   * Serializes a single OData entity.
-   *
-   * @param entity entity to be serialized.
-   * @param format serialization format.
-   * @param outputType whether to explicitly output type information.
-   * @return stream of serialized object.
-   */
-  InputStream writeEntity(CommonODataEntity entity, ODataPubFormat format, boolean outputType);
 
   /**
    * Writes a single OData entity property.

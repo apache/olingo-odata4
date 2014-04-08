@@ -56,21 +56,17 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference,
-          final boolean setType) {
-
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference) {
     final Property propertyResource = ResourceFactory.newProperty(reference);
     propertyResource.setName(property.getName());
-    propertyResource.setValue(getValue(property.getValue(), reference, setType));
+    propertyResource.setValue(getValue(property.getValue(), reference));
 
-    if (setType) {
-      if (property.hasPrimitiveValue()) {
-        propertyResource.setType(property.getPrimitiveValue().getTypeName());
-      } else if (property.hasComplexValue()) {
-        propertyResource.setType(((ODataProperty) property).getComplexValue().getTypeName());
-      } else if (property.hasCollectionValue()) {
-        propertyResource.setType(((ODataProperty) property).getCollectionValue().getTypeName());
-      }
+    if (property.hasPrimitiveValue()) {
+      propertyResource.setType(property.getPrimitiveValue().getTypeName());
+    } else if (property.hasComplexValue()) {
+      propertyResource.setType(((ODataProperty) property).getComplexValue().getTypeName());
+    } else if (property.hasCollectionValue()) {
+      propertyResource.setType(((ODataProperty) property).getCollectionValue().getTypeName());
     }
 
     return propertyResource;

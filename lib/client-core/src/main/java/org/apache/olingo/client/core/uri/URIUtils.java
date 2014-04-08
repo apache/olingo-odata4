@@ -41,7 +41,6 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmOperationImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -143,17 +142,17 @@ public final class URIUtils {
    * Gets operation import URI segment.
    *
    * @param entityContainer entity container.
-   * @param operationImport function import.
+   * @param operationImportName action / function import name.
    * @return URI segment.
    */
   public static String operationImportURISegment(
-          final EdmEntityContainer entityContainer, final EdmOperationImport operationImport) {
+          final EdmEntityContainer entityContainer, final String operationImportName) {
 
     final StringBuilder result = new StringBuilder();
     if (!entityContainer.isDefault()) {
       result.append(entityContainer.getName()).append('.');
     }
-    result.append(operationImport.getName());
+    result.append(operationImportName);
 
     return result.toString();
   }
@@ -282,12 +281,11 @@ public final class URIUtils {
   private static String quoteString(final String string, final boolean singleQuoteEscape)
           throws UnsupportedEncodingException {
 
-    final String encoded = URLEncoder.encode(string, Constants.UTF8);
     return ENUM_VALUE.matcher(string).matches()
-            ? encoded
+            ? string
             : singleQuoteEscape
-            ? "'" + encoded + "'"
-            : "\"" + encoded + "\"";
+            ? "'" + string + "'"
+            : "\"" + string + "\"";
   }
 
   /**
@@ -322,11 +320,11 @@ public final class URIUtils {
       } else if (version.compareTo(ODataServiceVersion.V40) >= 0 && obj instanceof Map) {
         final StringBuffer buffer = new StringBuffer("{");
         for (@SuppressWarnings("unchecked")
-                final Iterator<Map.Entry<Object, Object>> itor =
-                ((Map<Object, Object>) obj).entrySet().iterator(); itor.hasNext();) {
+                final Iterator<Map.Entry<String, Object>> itor =
+                ((Map<String, Object>) obj).entrySet().iterator(); itor.hasNext();) {
 
-          final Map.Entry<Object, Object> entry = itor.next();
-          buffer.append("\"").append(URLEncoder.encode(entry.getKey().toString(), Constants.UTF8)).append("\"");
+          final Map.Entry<String, Object> entry = itor.next();
+          buffer.append("\"").append(entry.getKey()).append("\"");
           buffer.append(':').append(escape(version, entry.getValue(), false));
 
           if (itor.hasNext()) {

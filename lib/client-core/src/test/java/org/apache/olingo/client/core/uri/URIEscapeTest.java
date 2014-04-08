@@ -51,8 +51,7 @@ public class URIEscapeTest {
     final EdmEnumType pattern = new EdmEnumTypeImpl(ODataServiceVersion.V40,
             null, new FullQualifiedName("Sales", "Pattern"), new EnumTypeImpl());
 
-    assertEquals(URLEncoder.encode("Sales.Pattern'Yellow'", Constants.UTF8),
-            URIUtils.escape(ODataServiceVersion.V40, pattern.toUriLiteral("Yellow")));
+    assertEquals("Sales.Pattern'Yellow'", URIUtils.escape(ODataServiceVersion.V40, pattern.toUriLiteral("Yellow")));
   }
 
   @Test

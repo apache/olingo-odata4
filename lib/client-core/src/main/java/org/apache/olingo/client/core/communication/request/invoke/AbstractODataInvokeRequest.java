@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.communication.request.invoke;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +29,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -45,6 +43,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -52,7 +51,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 /**
  * This class implements an OData invoke operation request.
  */
-public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
+public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
         extends AbstractODataBasicRequest<ODataInvokeResponse<T>, ODataPubFormat>
         implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
@@ -61,7 +60,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
   /**
    * Function parameters.
    */
-  private Map<String, ODataValue> parameters;
+  protected Map<String, ODataValue> parameters;
 
   /**
    * Constructor.
@@ -71,7 +70,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
    * @param method HTTP method of the request.
    * @param uri URI that identifies the operation.
    */
-  public ODataInvokeRequestImpl(
+  public AbstractODataInvokeRequest(
           final CommonODataClient odataClient,
           final Class<T> reference,
           final HttpMethod method,
@@ -94,17 +93,23 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
     }
   }
 
+  private String getActualFormat(final ODataPubFormat format) {
+    return (CommonODataProperty.class.isAssignableFrom(reference) && format == ODataPubFormat.ATOM)
+            ? ODataFormat.XML.toString(odataClient.getServiceVersion())
+            : format.toString(odataClient.getServiceVersion());
+  }
+
   /**
    * {@inheritDoc }
    */
   @Override
   public void setFormat(final ODataPubFormat format) {
-    final String _format = (reference.isAssignableFrom(CommonODataProperty.class) && format == ODataPubFormat.ATOM)
-            ? ODataFormat.XML.toString(odataClient.getServiceVersion())
-            : format.toString(odataClient.getServiceVersion());
+    final String _format = getActualFormat(format);
     setAccept(_format);
     setContentType(_format);
   }
+
+  protected abstract ODataPubFormat getPOSTParameterFormat();
 
   @Override
   protected InputStream getPayload() {
@@ -123,6 +128,12 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
         } else if (param.getValue().isCollection()) {
           property = odataClient.getObjectFactory().
                   newCollectionProperty(param.getKey(), param.getValue().asCollection());
+        } else if (param.getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
+                && ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).isEnum()) {
+
+          property = ((ODataClient) odataClient).getObjectFactory().
+                  newEnumProperty(param.getKey(),
+                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) param.getValue()).asEnum());
         }
 
         if (property != null) {
@@ -130,11 +141,13 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
         }
       }
 
-      return odataClient.getWriter().writeEntity(tmp, ODataPubFormat.JSON, false);
+      return odataClient.getWriter().writeEntity(tmp, getPOSTParameterFormat());
     }
 
     return null;
   }
+
+  protected abstract URI buildGETURI();
 
   /**
    * {@inheritDoc }
@@ -145,23 +158,11 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
 
     if (!this.parameters.isEmpty()) {
       if (this.method == HttpMethod.GET) {
-        final URIBuilder uriBuilder = new URIBuilder(this.uri);
-        for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-          if (!param.getValue().isPrimitive()) {
-            throw new IllegalArgumentException("Only primitive values can be passed via GET");
-          }
-
-          uriBuilder.addParameter(param.getKey(), URIUtils.escape(odataClient.getServiceVersion(), param.getValue()));
-        }
-        try {
-          ((HttpRequestBase) this.request).setURI(uriBuilder.build());
-        } catch (URISyntaxException e) {
-          throw new IllegalArgumentException("While adding GET parameters", e);
-        }
+        ((HttpRequestBase) this.request).setURI(buildGETURI());
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
-        setContentType(ODataPubFormat.JSON.toString(odataClient.getServiceVersion()));
+        setContentType(getActualFormat(getPOSTParameterFormat()));
       }
     }
 
@@ -201,25 +202,24 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult>
      * {@inheritDoc }
      */
     @Override
-    @SuppressWarnings("unchecked")
     public T getBody() {
       if (invokeResult == null) {
-        if (reference.isAssignableFrom(ODataNoContent.class)) {
-          invokeResult = (T) new ODataNoContent();
+        if (ODataNoContent.class.isAssignableFrom(reference)) {
+          invokeResult = reference.cast(new ODataNoContent());
         }
 
         try {
-          if (reference.isAssignableFrom(CommonODataEntitySet.class)) {
-            invokeResult = (T) odataClient.getReader().readEntitySet(res.getEntity().getContent(),
-                    ODataPubFormat.fromString(getContentType()));
+          if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+            invokeResult = reference.cast(odataClient.getReader().readEntitySet(res.getEntity().getContent(),
+                    ODataPubFormat.fromString(getContentType())));
           }
-          if (reference.isAssignableFrom(CommonODataEntity.class)) {
-            invokeResult = (T) odataClient.getReader().readEntity(res.getEntity().getContent(),
-                    ODataPubFormat.fromString(getContentType()));
+          if (CommonODataEntity.class.isAssignableFrom(reference)) {
+            invokeResult = reference.cast(odataClient.getReader().readEntity(res.getEntity().getContent(),
+                    ODataPubFormat.fromString(getContentType())));
           }
-          if (reference.isAssignableFrom(CommonODataProperty.class)) {
-            invokeResult = (T) odataClient.getReader().readProperty(res.getEntity().getContent(),
-                    ODataFormat.fromString(getContentType()));
+          if (CommonODataProperty.class.isAssignableFrom(reference)) {
+            invokeResult = reference.cast(odataClient.getReader().readProperty(res.getEntity().getContent(),
+                    ODataFormat.fromString(getContentType())));
           }
         } catch (IOException e) {
           throw new HttpClientException(e);

@@ -57,4 +57,11 @@ public class ODataEnumValueImpl extends AbstractODataValue implements ODataEnumV
   public ODataLinkedComplexValue asLinkedComplex() {
     return null;
   }
+
+  @Override
+  public String toString() {
+    return getTypeName() + "'" + getValue() + "'";
+
+  }
+
 }

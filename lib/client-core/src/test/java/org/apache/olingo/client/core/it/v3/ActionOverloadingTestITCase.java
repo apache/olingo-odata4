@@ -62,7 +62,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
         assertEquals(EdmInt32.getInstance(), unbound.getReturnType().getType());
 
         final URIBuilder unboundBuilder = getClient().getURIBuilder(testActionOverloadingServiceRootURL).
-                appendOperationCallSegment(URIUtils.operationImportURISegment(container, actImp));
+                appendOperationCallSegment(URIUtils.operationImportURISegment(container, actImp.getName()));
         final ODataInvokeResponse<ODataProperty> unboundRes = getClient().getInvokeRequestFactory().
                 <ODataProperty>getInvokeRequest(unboundBuilder.build(), unbound).execute();
         assertNotNull(unboundRes);

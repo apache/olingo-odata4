@@ -45,18 +45,11 @@ public class ODataWriterImpl implements ODataWriter {
 
   @Override
   public InputStream writeEntities(final Collection<CommonODataEntity> entities, final ODataPubFormat format) {
-    return writeEntities(entities, format, true);
-  }
-
-  @Override
-  public InputStream writeEntities(
-          final Collection<CommonODataEntity> entities, final ODataPubFormat format, final boolean outputType) {
-
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
       for (CommonODataEntity entity : entities) {
         client.getSerializer().entry(client.getBinder().getEntry(
-                entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM), outputType), output);
+                entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)), output);
       }
 
       return new ByteArrayInputStream(output.toByteArray());
@@ -67,14 +60,7 @@ public class ODataWriterImpl implements ODataWriter {
 
   @Override
   public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format) {
-    return writeEntity(entity, format, true);
-  }
-
-  @Override
-  public InputStream writeEntity(final CommonODataEntity entity, final ODataPubFormat format,
-          final boolean outputType) {
-
-    return writeEntities(Collections.<CommonODataEntity>singleton(entity), format, outputType);
+    return writeEntities(Collections.<CommonODataEntity>singleton(entity), format);
   }
 
   @Override
@@ -82,7 +68,7 @@ public class ODataWriterImpl implements ODataWriter {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
       client.getSerializer().property(client.getBinder().getProperty(
-              property, ResourceFactory.entryClassForFormat(format == ODataFormat.XML), true), output);
+              property, ResourceFactory.entryClassForFormat(format == ODataFormat.XML)), output);
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

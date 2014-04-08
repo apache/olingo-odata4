@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.domain;
 
+import java.util.Collection;
+
 /**
  * OData collection property value.
  *
@@ -45,4 +47,11 @@ public interface ODataCollectionValue<OV extends ODataValue> extends ODataValue,
    * @return collection size.
    */
   int size();
+
+  /**
+   * Converts this instance as POJO collection.
+   *
+   * @return this instance as POJO collection
+   */
+  Collection<Object> asJavaCollection();
 }

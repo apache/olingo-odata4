@@ -49,7 +49,9 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
 
   @Override
   public ODataComplexValue<ODataProperty> getComplexValue() {
-    return hasComplexValue() ? getValue().<ODataProperty>asComplex() : null;
+    return hasComplexValue()
+            ? getValue().<ODataProperty>asComplex()
+            : null;
   }
 
   @Override

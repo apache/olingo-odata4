@@ -73,7 +73,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     EdmFunction func = funcImp.getUnboundFunction(null);
 
     URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
 
     ODataInvokeRequest<ODataProperty> req = getClient().getInvokeRequestFactory().
             getInvokeRequest(builder.build(), func);
@@ -90,7 +90,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     func = funcImp.getUnboundFunction(null);
 
     builder = getClient().getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
 
     req = getClient().getInvokeRequestFactory().getInvokeRequest(builder.build(), func);
     req.setFormat(format);
@@ -123,7 +123,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     EdmFunctionImport funcImp = container.getFunctionImport("GetArgumentPlusOne");
 
     URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
 
     EdmFunction function = funcImp.getUnboundFunction(Collections.singletonList("arg1"));
     EdmParameter param = function.getParameter(function.getParameterNames().get(0));
@@ -148,7 +148,7 @@ public class InvokeTestITCase extends AbstractTestITCase {
     funcImp = container.getFunctionImport("GetSpecificCustomer");
 
     builder = getClient().getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
 
     function = funcImp.getUnboundFunction(Collections.singletonList("Name"));
     param = function.getParameter(function.getParameterNames().get(0));

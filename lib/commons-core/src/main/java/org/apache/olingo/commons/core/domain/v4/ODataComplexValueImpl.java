@@ -19,7 +19,9 @@
 package org.apache.olingo.commons.core.domain.v4;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
@@ -121,6 +123,27 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
   @Override
   public List<ODataLink> getAssociationLinks() {
     return associationLinks;
+  }
+
+  @Override
+  public Map<String, Object> asJavaMap() {
+    final Map<String, Object> result = new LinkedHashMap<String, Object>();
+    for (Map.Entry<String, ODataProperty> entry : fields.entrySet()) {
+      Object value = null;
+      if (entry.getValue().hasPrimitiveValue()) {
+        value = entry.getValue().getPrimitiveValue().toValue();
+      } else if (entry.getValue().hasComplexValue()) {
+        value = entry.getValue().getComplexValue().asJavaMap();
+      } else if (entry.getValue().hasCollectionValue()) {
+        value = entry.getValue().getCollectionValue().asJavaCollection();
+      } else if (entry.getValue().hasEnumValue()) {
+        value = entry.getValue().getEnumValue().toString();
+      }
+
+      result.put(entry.getKey(), value);
+    }
+
+    return result;
   }
 
 }

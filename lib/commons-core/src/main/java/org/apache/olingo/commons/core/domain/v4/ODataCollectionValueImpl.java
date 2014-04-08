@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
@@ -49,5 +52,23 @@ public class ODataCollectionValueImpl extends AbstractODataCollectionValue<OData
   @Override
   public ODataLinkedComplexValue asLinkedComplex() {
     return null;
+  }
+
+  @Override
+  public Collection<Object> asJavaCollection() {
+    final List<Object> result = new ArrayList<Object>();
+    for (ODataValue value : values) {
+      if (value.isPrimitive()) {
+        result.add(value.asPrimitive().toValue());
+      } else if (value.isComplex()) {
+        result.add(value.asComplex().asJavaMap());
+      } else if (value.isCollection()) {
+        result.add(value.asCollection().asJavaCollection());
+      } else if (value.isEnum()) {
+        result.add(value.asEnum().toString());
+      }
+    }
+
+    return result;
   }
 }

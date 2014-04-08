@@ -38,7 +38,7 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
   /**
    * Complex type fields.
    */
-  private final Map<String, OP> fields = new LinkedHashMap<String, OP>();
+  protected final Map<String, OP> fields = new LinkedHashMap<String, OP>();
 
   /**
    * Constructor.
@@ -90,4 +90,24 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
   public int size() {
     return fields.size();
   }
+
+  @Override
+  public Map<String, Object> asJavaMap() {
+    final Map<String, Object> result = new LinkedHashMap<String, Object>();
+    for (Map.Entry<String, OP> entry : fields.entrySet()) {
+      Object value = null;
+      if (entry.getValue().hasPrimitiveValue()) {
+        value = entry.getValue().getPrimitiveValue().toValue();
+      } else if (entry.getValue().hasComplexValue()) {
+        value = entry.getValue().getValue().asComplex().asJavaMap();
+      } else if (entry.getValue().hasCollectionValue()) {
+        value = entry.getValue().getValue().asCollection().asJavaCollection();
+      }
+
+      result.put(entry.getKey(), value);
+    }
+
+    return result;
+  }
+
 }

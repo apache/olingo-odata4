@@ -24,14 +24,13 @@ import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractInvokeRequestFactory;
-import org.apache.olingo.client.core.communication.request.invoke.ODataInvokeRequestImpl;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
@@ -61,14 +60,14 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory imple
               client, ODataNoContent.class, method, uri);
     } else {
       if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<CommonODataEntitySet>(
-                client, CommonODataEntitySet.class, method, uri);
+        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataEntitySet>(
+                client, ODataEntitySet.class, method, uri);
       } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<CommonODataEntity>(
-                client, CommonODataEntity.class, method, uri);
+        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataEntity>(
+                client, ODataEntity.class, method, uri);
       } else {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<CommonODataProperty>(
-                client, CommonODataProperty.class, method, uri);
+        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataProperty>(
+                client, ODataProperty.class, method, uri);
       }
     }
     if (parameters != null) {

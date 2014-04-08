@@ -153,7 +153,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
     final EdmEntityContainer container = metadata.getSchemas().get(0).getEntityContainer();
     final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
     final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp));
+            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
     final ODataInvokeRequest<ODataEntitySet> req =
             client.getInvokeRequestFactory().getInvokeRequest(builder.build(), funcImp.getUnboundFunction(null));
     req.setFormat(format);
