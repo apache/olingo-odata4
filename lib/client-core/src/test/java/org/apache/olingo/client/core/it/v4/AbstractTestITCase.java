@@ -22,8 +22,12 @@ import java.io.IOException;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTestITCase {
+
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
 
   protected static ODataClient client;
 
