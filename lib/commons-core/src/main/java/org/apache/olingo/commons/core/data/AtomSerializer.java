@@ -94,21 +94,10 @@ public class AtomSerializer extends AbstractAtomDealer {
     }
 
     if (StringUtils.isNotBlank(property.getType())) {
-      String type = property.getType();
-      if (version.compareTo(ODataServiceVersion.V40) >= 0) {
-        final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
-        if (typeInfo.isPrimitiveType()) {
-          if (typeInfo.isCollection()) {
-            type = "#Collection(" + typeInfo.getFullQualifiedName().getName() + ")";
-          } else {
-            type = typeInfo.getFullQualifiedName().getName();
-          }
-        } else {
-          type = "#" + property.getType();
-        }
-      }
+      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
       writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.ATTR_TYPE, type);
+              Constants.ATTR_TYPE,
+              new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
     }
 
     if (property.getValue().isNull()) {
@@ -223,7 +212,8 @@ public class AtomSerializer extends AbstractAtomDealer {
 
     writer.writeStartElement(Constants.ATOM_ELEM_CATEGORY);
     writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, version.getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
-    writer.writeAttribute(Constants.ATOM_ATTR_TERM, entry.getType());
+    writer.writeAttribute(Constants.ATOM_ATTR_TERM,
+            new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
     writer.writeEndElement();
 
     if (entry instanceof AbstractODataObject) {

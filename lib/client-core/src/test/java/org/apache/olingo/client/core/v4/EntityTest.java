@@ -53,7 +53,7 @@ public class EntityTest extends AbstractTest {
             getClient().getDeserializer().toEntry(input, format).getObject());
     assertNotNull(entity);
 
-    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
 
     final ODataProperty birthday = entity.getProperty("Birthday");
     assertTrue(birthday.hasPrimitiveValue());

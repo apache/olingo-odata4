@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,8 +138,47 @@ public class EdmTypeInfo {
     }
   }
 
-  public String getTypeExpression() {
-    return typeExpression;
+  public String internal() {
+    final StringBuilder deserialize = new StringBuilder();
+
+    if (isCollection()) {
+      deserialize.append("Collection(");
+    }
+
+    deserialize.append(getFullQualifiedName().toString());
+
+    if (isCollection()) {
+      deserialize.append(")");
+    }
+
+    return deserialize.toString();
+  }
+
+  public String external(final ODataServiceVersion version) {
+    final StringBuilder serialize = new StringBuilder();
+
+    if (isCollection()) {
+      if (version.compareTo(ODataServiceVersion.V40) >= 0) {
+        serialize.append('#');
+      }
+      serialize.append("Collection(");
+    }
+
+    if (isPrimitiveType() && version.compareTo(ODataServiceVersion.V40) >= 0) {
+      serialize.append(getFullQualifiedName().getName());
+    } else {
+      serialize.append(getFullQualifiedName().toString());
+    }
+
+    if (isCollection()) {
+      serialize.append(")");
+    }
+
+    if (version.compareTo(ODataServiceVersion.V40) >= 0 && !isPrimitiveType() && !isCollection()) {
+      serialize.insert(0, '#');
+    }
+
+    return serialize.toString();
   }
 
   public boolean isCollection() {

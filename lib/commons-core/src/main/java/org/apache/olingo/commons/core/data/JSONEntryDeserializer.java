@@ -35,8 +35,8 @@ import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
  * Reads JSON string into an entry.
@@ -87,7 +87,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     }
 
     if (tree.hasNonNull(jsonType)) {
-      entry.setType(tree.get(jsonType).textValue());
+      entry.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
       tree.remove(jsonType);
     }
 
@@ -183,7 +183,9 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       } else {
         final JSONPropertyImpl property = new JSONPropertyImpl();
         property.setName(field.getKey());
-        property.setType(type);
+        property.setType(type == null
+                ? null
+                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
         type = null;
 
         value(property, field.getValue(), parser.getCodec());

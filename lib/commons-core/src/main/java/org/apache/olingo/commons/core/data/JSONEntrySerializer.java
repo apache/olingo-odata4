@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
  * Writes out JSON string from an entry.
@@ -40,7 +41,8 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
     jgen.writeStartObject();
 
     if (StringUtils.isNotBlank(entry.getType())) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), entry.getType());
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
+              new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
     }
 
     if (entry.getId() != null) {

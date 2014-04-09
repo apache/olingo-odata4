@@ -27,6 +27,7 @@ import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
  * Parse JSON string into <tt>JSONPropertyImpl</tt>.
@@ -58,14 +59,15 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
       contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
-      property.setType(StringUtils.substringAfterLast(contextURL.toASCIIString(), "#"));
+      property.setType(new EdmTypeInfo.Builder().
+              setTypeExpression(StringUtils.substringAfterLast(contextURL.toASCIIString(), "#")).build().internal());
       tree.remove(Constants.JSON_METADATA);
     } else {
       contextURL = null;
     }
 
     if (tree.has(jsonType)) {
-      property.setType(tree.get(jsonType).asText());
+      property.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
     }
 
     if (tree.has(Constants.JSON_NULL) && tree.get(Constants.JSON_NULL).asBoolean()) {

@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.v3.XMLLinkCollectionImpl;
@@ -247,7 +246,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
               : new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
 
       if (typeInfo != null) {
-        property.setType(typeInfo.getTypeExpression());
+        property.setType(typeInfo.internal());
       }
 
       final ODataPropertyType propType = typeInfo == null
@@ -452,7 +451,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
           } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
             final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
             if (term != null) {
-              entry.setType(term.getValue());
+              entry.setType(new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal());
             }
           } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
             final LinkImpl link = new LinkImpl();
