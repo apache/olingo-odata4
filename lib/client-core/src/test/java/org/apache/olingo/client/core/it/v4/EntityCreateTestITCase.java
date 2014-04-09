@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import org.junit.Test;
@@ -34,7 +35,8 @@ import org.junit.Test;
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   private void createOrder(final ODataPubFormat format, final int id) {
-    final ODataEntity order = new ODataEntityImpl("Microsoft.Test.OData.Services.ODataWCFService.Order");
+    final ODataEntity order = new ODataEntityImpl(
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     final ODataProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id));

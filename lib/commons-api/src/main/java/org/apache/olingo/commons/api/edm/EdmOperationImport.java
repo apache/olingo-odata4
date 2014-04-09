@@ -24,6 +24,11 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmOperationImport extends EdmNamed {
 
   /**
+   * @return {@link FullQualifiedName} of this OperationImport
+   */
+  FullQualifiedName getFullQualifiedName();
+  
+  /**
    * @return {@link EdmEntitySet} of this OperationImport
    */
   EdmEntitySet getReturnedEntitySet();

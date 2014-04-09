@@ -20,14 +20,21 @@ package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
 import java.util.List;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * OData entity.
  */
 public interface CommonODataEntity extends ODataLinked, ODataInvokeResult {
 
-  String getName();
+  /**
+   * @return the type name of this entity.
+   */
+  FullQualifiedName getTypeName();
 
+  /**
+   * @return self link.
+   */
   URI getLink();
 
   /**

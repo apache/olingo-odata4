@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * A full qualified name of any element in the EDM consists of a name and a namespace.
  */
@@ -77,19 +80,12 @@ public class FullQualifiedName {
 
   @Override
   public int hashCode() {
-    return toString().hashCode();
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || !(obj instanceof FullQualifiedName)) {
-      return false;
-    }
-    final FullQualifiedName other = (FullQualifiedName) obj;
-    return namespace.equals(other.getNamespace()) && name.equals(other.getName());
+    return EqualsBuilder.reflectionEquals(this, obj);
   }
 
   @Override

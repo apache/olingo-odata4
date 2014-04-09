@@ -49,7 +49,7 @@ public class EntityTest extends AbstractTest {
             getClient().getDeserializer().toEntry(input, format).getObject());
     assertNotNull(entity);
 
-    assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", entity.getName());
+    assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", entity.getTypeName().toString());
     assertTrue(entity.getEditLink().toASCIIString().endsWith("/Customer(-10)"));
     assertEquals(5, entity.getNavigationLinks().size());
     assertEquals(2, entity.getEditMediaLinks().size());

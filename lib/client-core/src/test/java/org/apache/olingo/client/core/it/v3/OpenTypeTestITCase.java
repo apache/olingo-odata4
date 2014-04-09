@@ -94,7 +94,8 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   private void cud(final ODataPubFormat format) {
     final UUID guid = UUID.randomUUID();
 
-    ODataEntity row = client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.OpenTypesService.Row");
+    ODataEntity row = client.getObjectFactory().newEntity(
+            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesService.Row"));
     getClient().getBinder().add(row,
             client.getObjectFactory().newPrimitiveProperty("Id",
                     client.getObjectFactory().newPrimitiveValueBuilder().

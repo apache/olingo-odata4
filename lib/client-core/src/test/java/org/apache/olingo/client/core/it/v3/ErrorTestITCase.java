@@ -46,6 +46,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 
@@ -85,7 +86,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
 
       @Override
       public CommonODataEntity getBody() {
-        return odataClient.getObjectFactory().newEntity("Invalid");
+        return odataClient.getObjectFactory().newEntity(new FullQualifiedName("Invalid.Invalid"));
       }
     }
   }

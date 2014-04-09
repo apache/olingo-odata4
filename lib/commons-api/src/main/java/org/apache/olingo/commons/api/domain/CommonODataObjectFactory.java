@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.api.domain;
 
 import java.net.URI;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * Entry point for generating OData domain objects.
@@ -43,19 +44,19 @@ public interface CommonODataObjectFactory {
   /**
    * Instantiates a new entity.
    *
-   * @param name OData entity name.
+   * @param typeName OData entity type name.
    * @return entity.
    */
-  CommonODataEntity newEntity(String name);
+  CommonODataEntity newEntity(FullQualifiedName typeName);
 
   /**
    * Instantiates a new entity.
    *
-   * @param name OData entity name.
+   * @param typeName OData entity type name.
    * @param link self link.
    * @return entity.
    */
-  CommonODataEntity newEntity(String name, URI link);
+  CommonODataEntity newEntity(FullQualifiedName typeName, URI link);
 
   /**
    * Instantiates a new in-line entity set.

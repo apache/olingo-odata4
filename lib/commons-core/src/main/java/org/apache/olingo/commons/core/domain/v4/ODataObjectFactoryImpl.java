@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.AbstractODataObjectFactory;
 
@@ -50,13 +51,13 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
-  public ODataEntity newEntity(final String name) {
-    return new ODataEntityImpl(name);
+  public ODataEntity newEntity(final FullQualifiedName typeName) {
+    return new ODataEntityImpl(typeName);
   }
 
   @Override
-  public ODataEntity newEntity(final String name, final URI link) {
-    final ODataEntityImpl result = new ODataEntityImpl(name);
+  public ODataEntity newEntity(final FullQualifiedName typeName, final URI link) {
+    final ODataEntityImpl result = new ODataEntityImpl(typeName);
     result.setLink(link);
     return result;
   }

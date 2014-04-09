@@ -113,7 +113,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     person2Req.setFormat(format);
     final ODataEntity person2 = person2Req.execute().getBody();
     assertNotNull(person2);
-    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.Customer", person2.getName());
+    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.Customer", person2.getTypeName().toString());
     assertEquals(1, person2.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetPerson

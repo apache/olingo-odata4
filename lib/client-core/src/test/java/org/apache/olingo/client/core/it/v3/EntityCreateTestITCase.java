@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,11 +48,8 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -286,8 +288,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     keys.add(-101);
 
     for (Integer key : keys) {
-      final ODataEntity order =
-              client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
+      final ODataEntity order = client.getObjectFactory().
+              newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Order"));
 
       getClient().getBinder().add(order,
               client.getObjectFactory().newPrimitiveProperty("OrderId",
@@ -385,8 +387,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     ODataEntity customer = (ODataEntity) getSampleCustomerProfile(id, sampleName, false);
     customer = (ODataEntity) createEntity(getServiceRoot(), format, customer, "Customer");
 
-    ODataEntity order = client.getObjectFactory().newEntity(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
+    ODataEntity order = client.getObjectFactory().newEntity(new FullQualifiedName(
+            "Microsoft.Test.OData.Services.AstoriaDefaultService.Order"));
     getClient().getBinder().add(order,
             client.getObjectFactory().newPrimitiveProperty("CustomerId",
                     client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
@@ -399,8 +401,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     order = (ODataEntity) createEntity(getServiceRoot(), format, order, "Order");
 
-    ODataEntity changes = client.getObjectFactory().newEntity(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
+    ODataEntity changes = client.getObjectFactory().newEntity(new FullQualifiedName(
+            "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer"));
     changes.setEditLink(customer.getEditLink());
     changes.addLink(client.getObjectFactory().newEntitySetNavigationLink(
             "Orders", URIUtils.getURI(getServiceRoot(), order.getEditLink().toASCIIString())));
@@ -444,8 +446,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   private void multiKey(final ODataPubFormat format) {
-    final ODataEntity message = client.getObjectFactory().newEntity(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.Message");
+    final ODataEntity message = client.getObjectFactory().newEntity(new FullQualifiedName(
+            "Microsoft.Test.OData.Services.AstoriaDefaultService.Message"));
 
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("MessageId",

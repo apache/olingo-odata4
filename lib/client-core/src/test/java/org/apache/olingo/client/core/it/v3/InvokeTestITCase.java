@@ -185,8 +185,8 @@ public class InvokeTestITCase extends AbstractTestITCase {
   }
 
   private ODataEntity createEmployee(final ODataPubFormat format) {
-    final ODataEntity employee = getClient().getObjectFactory().newEntity(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
+    final ODataEntity employee = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+            "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee"));
 
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("PersonId",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1244)));
@@ -238,11 +238,9 @@ public class InvokeTestITCase extends AbstractTestITCase {
     assertNotNull(edm);
 
     final EdmEntityContainer container = edm.getSchemas().get(0).getEntityContainer();
-    final EdmTypeInfo createdTypeInfo =
-            new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(created.getName()).build();
     final EdmAction action = edm.getBoundAction(
             new FullQualifiedName(container.getNamespace(), operation.getTitle()),
-            createdTypeInfo.getFullQualifiedName(), createdTypeInfo.isCollection());
+            created.getTypeName(), false);
 
     final ODataInvokeRequest<ODataNoContent> req = getClient().getInvokeRequestFactory().
             getInvokeRequest(operation.getTarget(), action);

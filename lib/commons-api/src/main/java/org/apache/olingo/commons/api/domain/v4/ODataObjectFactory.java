@@ -24,6 +24,7 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public interface ODataObjectFactory extends CommonODataObjectFactory {
 
@@ -34,10 +35,10 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   ODataEntitySet newEntitySet(URI next);
 
   @Override
-  ODataEntity newEntity(String name);
+  ODataEntity newEntity(FullQualifiedName typeName);
 
   @Override
-  ODataEntity newEntity(String name, URI link);
+  ODataEntity newEntity(FullQualifiedName typeName, URI link);
 
   ODataEnumValue newEnumValue(String typeName, String value);
 

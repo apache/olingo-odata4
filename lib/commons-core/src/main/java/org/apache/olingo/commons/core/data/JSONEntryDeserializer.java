@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**

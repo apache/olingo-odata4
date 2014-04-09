@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -59,16 +66,10 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -81,7 +82,8 @@ public abstract class AbstractTestITCase {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
 
-  protected static final String TEST_PRODUCT_TYPE = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product";
+  protected static final FullQualifiedName TEST_PRODUCT_TYPE =
+          new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Product");
 
   protected static ODataClient client;
 
@@ -232,8 +234,8 @@ public abstract class AbstractTestITCase {
   }
 
   protected ODataEntity getSampleCustomerInfo(final int id, final String sampleinfo) {
-    final ODataEntity entity = getClient().getObjectFactory().newEntity(
-            "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo");
+    final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+            "Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo"));
     entity.setMediaEntity(true);
 
     getClient().getBinder().add(entity,
@@ -246,8 +248,8 @@ public abstract class AbstractTestITCase {
   protected ODataEntity getSampleCustomerProfile(
           final int id, final String sampleName, final boolean withInlineInfo) {
 
-    final ODataEntity entity =
-            getClient().getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
+    final ODataEntity entity = getClient().getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer"));
 
     // add name attribute
     getClient().getBinder().add(entity,

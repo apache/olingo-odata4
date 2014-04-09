@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.net.URI;
 import java.util.LinkedHashMap;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -29,10 +33,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -119,8 +121,8 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).build();
 
-    final ODataEntity patch =
-            client.getObjectFactory().newEntity("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer");
+    final ODataEntity patch = client.getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer"));
     patch.setEditLink(uri);
 
     // ---------------------------------------

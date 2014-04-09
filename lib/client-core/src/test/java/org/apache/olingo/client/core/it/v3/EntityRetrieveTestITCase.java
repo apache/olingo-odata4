@@ -63,7 +63,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final ODataEntity entity = res.getBody();
 
     assertNotNull(entity);
-    assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", entity.getName());
+    assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", entity.getTypeName().toString());
     assertEquals(getServiceRoot() + "/Customer(-10)", entity.getEditLink().toASCIIString());
 
     assertEquals(5, entity.getNavigationLinks().size());

@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -102,7 +102,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     EdmFunction func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false, null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataProperty> getEmployeesCountReq =
@@ -124,7 +125,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false, null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataPrimitiveValue count = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1);
@@ -152,8 +154,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false,
-            null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataEntity> getRelatedProductReq =
@@ -163,7 +165,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     try {
       final ODataEntity getRelatedProductRes = getRelatedProductReq.execute().getBody();
       assertNotNull(getRelatedProductRes);
-      assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.Product", getRelatedProductRes.getName());
+      assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.Product",
+              getRelatedProductRes.getTypeName().toString());
       assertEquals(6, getRelatedProductRes.getProperty("ProductID").getPrimitiveValue().toCastValue(Integer.class), 0);
     } catch (Exception e) {
       // ignore
@@ -181,7 +184,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false, null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataEntity> getDefaultPIReq =
@@ -189,7 +193,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     getDefaultPIReq.setFormat(format);
     final ODataEntity getDefaultPIRes = getDefaultPIReq.execute().getBody();
     assertNotNull(getDefaultPIRes);
-    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", getDefaultPIRes.getName());
+    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument",
+            getDefaultPIRes.getTypeName().toString());
     assertEquals(101901,
             getDefaultPIRes.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
@@ -198,7 +203,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false, null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataProperty> getAccountInfoReq =
@@ -223,7 +229,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false, null);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false, null);
     assertNotNull(func);
 
     final ODataPrimitiveValue bonusRate = getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(1.1);
@@ -264,7 +271,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     EdmAction act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false);
     assertNotNull(act);
 
     final ODataPrimitiveValue increaseValue = getClient().getObjectFactory().newPrimitiveValueBuilder().
@@ -289,7 +297,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false);
     assertNotNull(act);
 
     final ODataEnumValue accessRight = getClient().getObjectFactory().
@@ -314,7 +323,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()),
-            edm.getEntityType(new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().
+            edm.getEntityType(new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().
                     getFullQualifiedName()).getBaseType().getFullQualifiedName(), false);
     assertNotNull(act);
 
@@ -353,7 +362,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(boundOp);
 
     act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()),
-            new EdmTypeInfo.Builder().setTypeExpression(entity.getName()).build().getFullQualifiedName(), false);
+            new EdmTypeInfo.Builder().setTypeExpression(entity.getTypeName().toString()).build().getFullQualifiedName(),
+            false);
     assertNotNull(act);
 
     final ODataPrimitiveValue newDate = getClient().getObjectFactory().newPrimitiveValueBuilder().
@@ -364,7 +374,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     getDefaultPIReq.setFormat(format);
     final ODataEntity getDefaultPIRes = getDefaultPIReq.execute().getBody();
     assertNotNull(getDefaultPIRes);
-    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", getDefaultPIRes.getName());
+    assertEquals("#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument",
+            getDefaultPIRes.getTypeName().toString());
     assertEquals(101901,
             getDefaultPIRes.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
   }

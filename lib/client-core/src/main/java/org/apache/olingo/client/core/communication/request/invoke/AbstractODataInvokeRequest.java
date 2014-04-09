@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -115,7 +114,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   protected InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
-      final CommonODataEntity tmp = odataClient.getObjectFactory().newEntity(StringUtils.EMPTY);
+      final CommonODataEntity tmp = odataClient.getObjectFactory().newEntity(null);
       for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
         CommonODataProperty property = null;
 

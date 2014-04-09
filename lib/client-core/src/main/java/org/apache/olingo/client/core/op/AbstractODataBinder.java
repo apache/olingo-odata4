@@ -49,6 +49,7 @@ import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.data.CollectionValueImpl;
@@ -138,7 +139,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
   public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
     final Entry entry = ResourceFactory.newEntry(reference);
 
-    entry.setType(entity.getName());
+    entry.setType(entity.getTypeName() == null ? null : entity.getTypeName().toString());
 
     // -------------------------------------------------------------
     // Add edit and self link
@@ -146,7 +147,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final URI editLink = entity.getEditLink();
     if (editLink != null) {
       final LinkImpl entryEditLink = new LinkImpl();
-      entryEditLink.setTitle(entity.getName());
+      entryEditLink.setTitle(entry.getType());
       entryEditLink.setHref(editLink.toASCIIString());
       entryEditLink.setRel(Constants.EDIT_LINK_REL);
       entry.setEditLink(entryEditLink);
@@ -154,7 +155,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     if (entity.isReadOnly()) {
       final LinkImpl entrySelfLink = new LinkImpl();
-      entrySelfLink.setTitle(entity.getName());
+      entrySelfLink.setTitle(entry.getType());
       entrySelfLink.setHref(entity.getLink().toASCIIString());
       entrySelfLink.setRel(Constants.SELF_LINK_REL);
       entry.setSelfLink(entrySelfLink);
@@ -319,9 +320,12 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
 
+    final FullQualifiedName entityTypeName = resource.getType() == null
+            ? null
+            : new FullQualifiedName(resource.getType());
     final CommonODataEntity entity = resource.getSelfLink() == null
-            ? client.getObjectFactory().newEntity(resource.getType())
-            : client.getObjectFactory().newEntity(resource.getType(),
+            ? client.getObjectFactory().newEntity(entityTypeName)
+            : client.getObjectFactory().newEntity(entityTypeName,
                     URIUtils.getURI(base, resource.getSelfLink().getHref()));
 
     if (StringUtils.isNotBlank(resource.getETag())) {

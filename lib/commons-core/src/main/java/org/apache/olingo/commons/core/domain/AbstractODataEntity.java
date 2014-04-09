@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * OData entity.
@@ -34,6 +35,8 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 public abstract class AbstractODataEntity extends AbstractODataPayload implements CommonODataEntity {
 
   private static final long serialVersionUID = 8360640095932811034L;
+
+  private final FullQualifiedName typeName;
 
   /**
    * ETag.
@@ -85,8 +88,14 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
    */
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
-  public AbstractODataEntity(final String name) {
-    super(name);
+  public AbstractODataEntity(final FullQualifiedName typeName) {
+    super(typeName == null? null: typeName.toString());
+    this.typeName = typeName;
+  }
+
+  @Override
+  public FullQualifiedName getTypeName() {
+    return this.typeName;
   }
 
   @Override
