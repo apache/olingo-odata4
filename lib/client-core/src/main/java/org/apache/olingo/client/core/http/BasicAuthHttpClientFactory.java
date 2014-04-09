@@ -22,7 +22,6 @@ import java.net.URI;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.olingo.client.api.http.HttpMethod;
 
@@ -43,8 +42,8 @@ public class BasicAuthHttpClientFactory extends DefaultHttpClientFactory {
   }
 
   @Override
-  public HttpClient createHttpClient(final HttpMethod method, final URI uri) {
-    final DefaultHttpClient httpclient = (DefaultHttpClient) super.createHttpClient(method, uri);
+  public DefaultHttpClient createHttpClient(final HttpMethod method, final URI uri) {
+    final DefaultHttpClient httpclient = super.createHttpClient(method, uri);
 
     httpclient.getCredentialsProvider().setCredentials(
             new AuthScope(uri.getHost(), uri.getPort()),
