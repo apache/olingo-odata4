@@ -305,7 +305,8 @@ public class EdmClientImpl extends AbstractEdm {
           final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                   setTypeExpression(action.getParameters().get(0).getType()).build();
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                  && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+                  && (isBindingParameterCollection == null
+                  || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
             found = true;
             result = EdmActionImpl.getInstance(this, actionName, action);
@@ -324,7 +325,8 @@ public class EdmClientImpl extends AbstractEdm {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                    && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+                    && (isBindingParameterCollection == null
+                    || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
               found = true;
               result = EdmActionProxy.getInstance(this, actionName, functionImport);
@@ -355,7 +357,8 @@ public class EdmClientImpl extends AbstractEdm {
           final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                   setTypeExpression(function.getParameters().get(0).getType()).build();
           if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                  && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+                  && (isBindingParameterCollection == null
+                  || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
             final Set<String> functionParamNames = new HashSet<String>();
             for (CommonParameter param : function.getParameters()) {
@@ -380,7 +383,8 @@ public class EdmClientImpl extends AbstractEdm {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())
-                    && isBindingParameterCollection.booleanValue() == boundParam.isCollection()) {
+                    && (isBindingParameterCollection == null
+                    || isBindingParameterCollection.booleanValue() == boundParam.isCollection())) {
 
               final Set<String> functionParamNames = new HashSet<String>();
               for (CommonParameter param : functionImport.getParameters()) {

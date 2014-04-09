@@ -29,7 +29,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -187,8 +186,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     message.getProperties().remove(message.getProperty("IsRead"));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("IsRead",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(!before).
-                    setType(EdmPrimitiveTypeKind.Boolean).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildBoolean(!before)));
 
     return client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.MERGE, message);
   }

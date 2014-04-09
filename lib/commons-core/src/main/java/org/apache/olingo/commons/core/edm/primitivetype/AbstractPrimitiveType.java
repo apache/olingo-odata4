@@ -32,6 +32,11 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
   protected String uriSuffix = "";
 
   @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return new FullQualifiedName(getNamespace(), getName());
+  }
+
+  @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return equals(primitiveType);
   }
@@ -88,10 +93,10 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
   @Override
   public String toUriLiteral(final String literal) {
     return literal == null
-           ? null
-           : uriPrefix.isEmpty() && uriSuffix.isEmpty()
-             ? literal
-             : uriPrefix + literal + uriSuffix;
+            ? null
+            : uriPrefix.isEmpty() && uriSuffix.isEmpty()
+            ? literal
+            : uriPrefix + literal + uriSuffix;
   }
 
   @Override
@@ -101,7 +106,7 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
     } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
       return literal;
     } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-               && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+            && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
 
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {

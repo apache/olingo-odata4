@@ -57,8 +57,6 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
     String baseURI = this.uri.toASCIIString();
     if (baseURI.endsWith("()")) {
       baseURI = baseURI.substring(0, baseURI.length() - 2);
-    } else if (!baseURI.endsWith("(")) {
-      baseURI = baseURI.substring(0, baseURI.length() - 1);
     }
 
     final StringBuilder inlineParams = new StringBuilder();

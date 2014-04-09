@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.domain;
 
+import java.util.UUID;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -36,6 +37,18 @@ public interface ODataPrimitiveValue extends ODataValue {
     Builder setValue(Object value);
 
     ODataPrimitiveValue build();
+
+    ODataPrimitiveValue buildBoolean(Boolean value);
+
+    ODataPrimitiveValue buildInt32(Integer value);
+
+    ODataPrimitiveValue buildSingle(Float value);
+
+    ODataPrimitiveValue buildDouble(Double value);
+
+    ODataPrimitiveValue buildString(String value);
+
+    ODataPrimitiveValue buildGuid(UUID value);
   }
 
   EdmPrimitiveTypeKind getTypeKind();

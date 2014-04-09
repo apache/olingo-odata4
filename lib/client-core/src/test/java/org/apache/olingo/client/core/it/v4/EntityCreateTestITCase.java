@@ -37,8 +37,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final ODataEntity order = new ODataEntityImpl("Microsoft.Test.OData.Services.ODataWCFService.Order");
 
     final ODataProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int32).setValue(id).build());
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id));
     order.getProperties().add(orderId);
 
     final ODataProperty orderDate = getClient().getObjectFactory().newPrimitiveProperty("OrderDate",

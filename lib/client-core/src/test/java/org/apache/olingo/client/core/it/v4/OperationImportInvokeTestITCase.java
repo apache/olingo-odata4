@@ -58,7 +58,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
   // TODO: remove once fit provides function / action imports
   @BeforeClass
   public static void checkServerIsOnline() throws IOException {
-    Socket socket = new Socket();
+    final Socket socket = new Socket();
     boolean reachable = false;
     try {
       socket.connect(new InetSocketAddress("odatae2etest.azurewebsites.net", 80), 2000);
@@ -72,7 +72,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     Assume.assumeTrue(reachable);
   }
 
-  public Edm getEdm() {
+  private Edm getEdm() {
     final Edm edm = getClient().getRetrieveRequestFactory().
             getMetadataRequest(serviceRoot).execute().getBody();
     assertNotNull(edm);
@@ -103,7 +103,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     funcImp = container.getFunctionImport("GetPerson2");
 
     final ODataPrimitiveValue city =
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setText("London").build();
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("London");
 
     final ODataInvokeRequest<ODataEntity> person2Req = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
@@ -122,11 +122,11 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
             newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("1 Microsoft Way").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("1 Microsoft Way")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("London").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("London")));
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("98052").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("98052")));
 
     final ODataInvokeRequest<ODataEntity> personReq = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
@@ -191,8 +191,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     // Discount
     EdmActionImport actImp = container.getActionImport("Discount");
 
-    final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int32).setValue(22).build();
+    final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
     final ODataInvokeRequest<ODataNoContent> discountReq = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
                     appendOperationCallSegment(actImp.getName()).build(),
@@ -208,11 +207,11 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
             newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("Via Le Mani Dal Naso, 666").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Via Le Mani Dal Naso, 123")));
     address.add(client.getObjectFactory().newPrimitiveProperty("City",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("Tollo").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Tollo")));
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
-            client.getObjectFactory().newPrimitiveValueBuilder().setText("66010").build()));
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("66010")));
 
     final ODataInvokeRequest<ODataProperty> resetBossAddressReq = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
@@ -250,8 +249,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> emails =
             getClient().getObjectFactory().newCollectionValue(
                     EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
-    emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().setValue("first@olingo.apache.org").build());
-    emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().setValue("second@olingo.apache.org").build());
+    emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("first@olingo.apache.org"));
+    emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("second@olingo.apache.org"));
     ODataInvokeRequest<ODataProperty> bossEmailsReq = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
                     appendOperationCallSegment(actImp.getName()).build(),
@@ -266,10 +265,8 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     EdmFunctionImport funcImp = container.getFunctionImport("GetBossEmails");
 
     final Map<String, ODataValue> params = new LinkedHashMap<String, ODataValue>(2);
-    params.put("start", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int32).setValue(0).build());
-    params.put("count", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int32).setValue(100).build());
+    params.put("start", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(0));
+    params.put("count", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(100));
     bossEmailsReq = getClient().getInvokeRequestFactory().
             getInvokeRequest(getClient().getURIBuilder(serviceRoot).
                     appendOperationCallSegment(funcImp.getName()).build(),

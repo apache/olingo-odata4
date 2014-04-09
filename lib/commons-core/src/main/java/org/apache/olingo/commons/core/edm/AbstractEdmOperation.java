@@ -35,83 +35,83 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
 public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOperation {
 
-    private final Map<String, EdmParameter> parameters = new LinkedHashMap<String, EdmParameter>();
+  private final Map<String, EdmParameter> parameters = new LinkedHashMap<String, EdmParameter>();
 
-    private String entitySetPath;
+  private String entitySetPath;
 
-    private boolean isBound;
+  private boolean isBound;
 
-    private EdmReturnType returnType;
+  private EdmReturnType returnType;
 
-    private List<String> parameterNames;
+  private List<String> parameterNames;
 
-    protected AbstractEdmOperation(
-            final Edm edm,
-            final FullQualifiedName fqn,
-            final EdmTypeKind kind) {
-        super(edm, fqn, kind);
+  protected AbstractEdmOperation(
+          final Edm edm,
+          final FullQualifiedName fqn,
+          final EdmTypeKind kind) {
+    super(edm, fqn, kind);
+  }
+
+  protected void setParameters(final List<EdmParameter> _parameters) {
+    for (EdmParameter parameter : _parameters) {
+      parameters.put(parameter.getName(), parameter);
     }
+  }
 
-    protected void setParameters(final List<EdmParameter> _parameters) {
-        for (EdmParameter parameter : _parameters) {
-            parameters.put(parameter.getName(), parameter);
-        }
-    }
+  protected void setEntitySetPath(final String entitySetPath) {
+    this.entitySetPath = entitySetPath;
+  }
 
-    protected void setEntitySetPath(final String entitySetPath) {
-        this.entitySetPath = entitySetPath;
-    }
+  protected void setIsBound(final boolean isBound) {
+    this.isBound = isBound;
+  }
 
-    protected void setIsBound(final boolean isBound) {
-        this.isBound = isBound;
-    }
+  protected void setReturnType(final EdmReturnType returnType) {
+    this.returnType = returnType;
+  }
 
-    protected void setReturnType(final EdmReturnType returnType) {
-        this.returnType = returnType;
-    }
+  @Override
+  public EdmParameter getParameter(final String name) {
+    return parameters.get(name);
+  }
 
-    @Override
-    public EdmParameter getParameter(final String name) {
-        return parameters.get(name);
+  @Override
+  public List<String> getParameterNames() {
+    if (parameterNames == null) {
+      parameterNames = new ArrayList<String>(parameters.size());
+      for (String parameterName : parameters.keySet()) {
+        parameterNames.add(parameterName);
+      }
     }
+    return parameterNames;
+  }
 
-    @Override
-    public List<String> getParameterNames() {
-        if (parameterNames == null) {
-            parameterNames = new ArrayList<String>(parameters.size());
-            for (String parameterName : parameters.keySet()) {
-                parameterNames.add(parameterName);
-            }
-        }
-        return parameterNames;
+  @Override
+  public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
+    EdmEntitySet returnedEntitySet = null;
+    if (bindingParameterEntitySet != null && entitySetPath != null) {
+      final EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.
+              getRelatedBindingTarget(entitySetPath);
+      if (relatedBindingTarget == null) {
+        throw new EdmException("Cannot find entity set with path: " + entitySetPath);
+      }
+      if (relatedBindingTarget instanceof EdmEntitySet) {
+        returnedEntitySet = (EdmEntitySet) relatedBindingTarget;
+      } else {
+        throw new EdmException("BindingTarget with name: " + relatedBindingTarget.getName()
+                + " must be an entity set");
+      }
     }
+    return returnedEntitySet;
+  }
 
-    @Override
-    public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
-        EdmEntitySet returnedEntitySet = null;
-        if (bindingParameterEntitySet != null && entitySetPath != null) {
-            final EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.
-                    getRelatedBindingTarget(entitySetPath);
-            if (relatedBindingTarget == null) {
-                throw new EdmException("Cannot find entity set with path: " + entitySetPath);
-            }
-            if (relatedBindingTarget instanceof EdmEntitySet) {
-                returnedEntitySet = (EdmEntitySet) relatedBindingTarget;
-            } else {
-                throw new EdmException("BindingTarget with name: " + relatedBindingTarget.getName()
-                        + " must be an entity set");
-            }
-        }
-        return returnedEntitySet;
-    }
+  @Override
+  public EdmReturnType getReturnType() {
+    return returnType;
+  }
 
-    @Override
-    public EdmReturnType getReturnType() {
-        return returnType;
-    }
-
-    @Override
-    public boolean isBound() {
-        return isBound;
-    }
+  @Override
+  public boolean isBound() {
+    return isBound;
+  }
 }

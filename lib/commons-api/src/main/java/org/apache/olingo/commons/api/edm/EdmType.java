@@ -26,6 +26,11 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 public interface EdmType extends EdmNamed {
 
   /**
+   * @return full qualified name
+   */
+  FullQualifiedName getFullQualifiedName();
+
+  /**
    * Namespace of this {@link EdmType}.
    *
    * @return namespace as String

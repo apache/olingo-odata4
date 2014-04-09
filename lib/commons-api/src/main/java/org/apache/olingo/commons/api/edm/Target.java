@@ -37,15 +37,11 @@ public class Target {
 
       instance = new Target();
       if (bindingTargetParts.length == 1) {
-        instance.
-            setEntityContainer(new FullQualifiedName(defaultContainer.getNamespace(), defaultContainer.getName())).
-            setTargetName(bindingTargetParts[0]);
+        instance.setEntityContainer(defaultContainer.getFullQualifiedName()).
+                setTargetName(bindingTargetParts[0]);
       } else {
-        final int idx = bindingTargetParts[0].lastIndexOf('.');
-        instance.
-            setEntityContainer(new FullQualifiedName(
-                bindingTargetParts[0].substring(0, idx), bindingTargetParts[0].substring(idx))).
-            setTargetName(bindingTargetParts[1]);
+        instance.setEntityContainer(new FullQualifiedName(bindingTargetParts[0])).
+                setTargetName(bindingTargetParts[1]);
       }
     }
 

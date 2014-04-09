@@ -137,7 +137,7 @@ public abstract class AbstractEdmSchema implements EdmSchema {
             ? null
             : name == null
             ? getEntityContainer()
-            : name.equals(new FullQualifiedName(getEntityContainer().getNamespace(), getEntityContainer().getName()))
+            : name.equals(getEntityContainer().getFullQualifiedName())
             ? getEntityContainer()
             : null;
   }

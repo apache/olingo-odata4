@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.junit.Test;
@@ -132,8 +131,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     for (EdmActionImport actImp : container.getActionImports()) {
       if ("IncreaseSalaries".equals(actImp.getName())) {
         final Map<String, ODataValue> parameters = new LinkedHashMap<String, ODataValue>(1);
-        parameters.put("n", getClient().getObjectFactory().newPrimitiveValueBuilder().
-                setType(EdmPrimitiveTypeKind.Int32).setValue(5).build());
+        parameters.put("n", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(5));
 
         // 1. bound to employees
         final EdmAction employeeBound = edm.getBoundAction(

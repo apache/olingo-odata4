@@ -238,8 +238,7 @@ public abstract class AbstractTestITCase {
 
     getClient().getBinder().add(entity,
             getClient().getObjectFactory().newPrimitiveProperty("Information",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleinfo).
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(sampleinfo)));
 
     return entity;
   }
@@ -253,14 +252,12 @@ public abstract class AbstractTestITCase {
     // add name attribute
     getClient().getBinder().add(entity,
             getClient().getObjectFactory().newPrimitiveProperty("Name",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(sampleName).
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(sampleName)));
 
     // add key attribute
     getClient().getBinder().add(entity,
             getClient().getObjectFactory().newPrimitiveProperty("CustomerId",
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(String.valueOf(id)).
-                    setType(EdmPrimitiveTypeKind.Int32).build()));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
     // add BackupContactInfo attribute (collection)
     final ODataCollectionValue<ODataValue> backupContactInfoValue = getClient().getObjectFactory().newCollectionValue(
@@ -276,15 +273,13 @@ public abstract class AbstractTestITCase {
     // add BackupContactInfo.ContactDetails.AlternativeNames attribute (collection)
     final ODataCollectionValue<ODataValue> altNamesValue = getClient().getObjectFactory().
             newCollectionValue("Collection(Edm.String)");
-    altNamesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("myname").setType(EdmPrimitiveTypeKind.String).build());
+    altNamesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("myname"));
     contactDetails.add(getClient().getObjectFactory().newCollectionProperty("AlternativeNames", altNamesValue));
 
     // add BackupContactInfo.ContactDetails.EmailBag attribute (collection)
     final ODataCollectionValue<ODataValue> emailBagValue = getClient().getObjectFactory().
             newCollectionValue("Collection(Edm.String)");
-    emailBagValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("myname@mydomain.com").setType(EdmPrimitiveTypeKind.String).build());
+    emailBagValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("myname@mydomain.com"));
     contactDetails.add(getClient().getObjectFactory().newCollectionProperty("EmailBag", emailBagValue));
 
     // add BackupContactInfo.ContactDetails.ContactAlias attribute (complex)
@@ -295,8 +290,7 @@ public abstract class AbstractTestITCase {
     // add BackupContactInfo.ContactDetails.ContactAlias.AlternativeNames attribute (collection)
     final ODataCollectionValue<ODataValue> aliasAltNamesValue = getClient().getObjectFactory().
             newCollectionValue("Collection(Edm.String)");
-    aliasAltNamesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("myAlternativeName").setType(EdmPrimitiveTypeKind.String).build());
+    aliasAltNamesValue.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("myAlternativeName"));
     contactAliasValue.add(getClient().getObjectFactory().newCollectionProperty("AlternativeNames", aliasAltNamesValue));
 
     if (withInlineInfo) {
@@ -545,7 +539,7 @@ public abstract class AbstractTestITCase {
 
     getClient().getBinder().add(changes,
             getClient().getObjectFactory().newPrimitiveProperty(propertyName,
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().setText(newm).build()));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(newm)));
 
     update(type, changes, format, etag);
 

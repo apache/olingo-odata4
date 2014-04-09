@@ -76,17 +76,13 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
       if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
         entityContainers = super.getEntityContainers();
         entityContainerByName = new HashMap<FullQualifiedName, EdmEntityContainer>();
-        entityContainerByName.put(
-                new FullQualifiedName(getEntityContainer().getNamespace(), getEntityContainer().getName()),
-                getEntityContainer());
+        entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
       } else {
         entityContainers = new ArrayList<EdmEntityContainer>(schema.getEntityContainers().size());
         for (EntityContainer entityContainer : schema.getEntityContainers()) {
           final EdmEntityContainer edmContainer = createEntityContainer(entityContainer.getName());
-          final FullQualifiedName fqn = new FullQualifiedName(edmContainer.getNamespace(), edmContainer.getName());
-
           entityContainers.add(edmContainer);
-          entityContainerByName.put(fqn, edmContainer);
+          entityContainerByName.put(edmContainer.getFullQualifiedName(), edmContainer);
         }
       }
     }
@@ -127,7 +123,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
       if (providerTypeDefinitions != null) {
         for (TypeDefinition def : providerTypeDefinitions) {
           typeDefinitions.add(
-                  new EdmTypeDefinitionImpl(version, edm, new FullQualifiedName("namespace", def.getName()), def));
+                  new EdmTypeDefinitionImpl(version, edm, new FullQualifiedName(namespace, def.getName()), def));
         }
       }
     }

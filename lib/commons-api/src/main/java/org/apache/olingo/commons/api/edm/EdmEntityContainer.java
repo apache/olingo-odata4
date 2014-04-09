@@ -34,6 +34,11 @@ public interface EdmEntityContainer extends EdmNamed {
   String getNamespace();
 
   /**
+   * @return full qualified name of this entity container
+   */
+  FullQualifiedName getFullQualifiedName();
+  
+  /**
    * Returns whether this container is the default container in the current schema.
    * <br/>
    * According to CSDL specifications, this method will always return <tt>true</tt> for OData 4.0.

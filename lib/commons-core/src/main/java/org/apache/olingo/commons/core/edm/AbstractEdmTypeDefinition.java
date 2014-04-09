@@ -83,6 +83,11 @@ public abstract class AbstractEdmTypeDefinition extends EdmNamedImpl implements 
   }
 
   @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return new FullQualifiedName(getNamespace(), getName());
+  }
+
+  @Override
   public String getNamespace() {
     return namespace;
   }

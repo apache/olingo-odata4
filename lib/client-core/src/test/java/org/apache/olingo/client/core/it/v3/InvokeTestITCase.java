@@ -53,7 +53,6 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -190,20 +189,15 @@ public class InvokeTestITCase extends AbstractTestITCase {
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
 
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("PersonId",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("1244").setType(EdmPrimitiveTypeKind.Int32).build()));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1244)));
+    employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test employee")));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "Name", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("Test employee").build()));
+            "ManagersPersonId", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(3777)));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "ManagersPersonId", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("3777").setType(EdmPrimitiveTypeKind.Int32).build()));
+            "Salary", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1000)));
     employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "Salary", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("1000").setType(EdmPrimitiveTypeKind.Int32).build()));
-    employee.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty(
-            "Title", getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setText("CEO").build()));
+            "Title", getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("CEO")));
 
     final URIBuilder uriBuilder = getClient().getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Person");
 

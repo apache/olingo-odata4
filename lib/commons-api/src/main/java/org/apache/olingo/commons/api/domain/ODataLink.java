@@ -70,7 +70,7 @@ public class ODataLink extends ODataItem {
     }
 
     public ODataLink build() {
-      ODataLink instance = new ODataLink(version, uri, type, title);
+      final ODataLink instance = new ODataLink(version, uri, type, title);
       instance.mediaETag = this.mediaETag;
       return instance;
     }

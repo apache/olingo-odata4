@@ -70,6 +70,11 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     return entityContainerName.getNamespace();
   }
 
+  @Override
+  public FullQualifiedName getFullQualifiedName() {
+    return new FullQualifiedName(getNamespace(), getName());
+  }
+
   protected abstract EdmSingleton createSingleton(String singletonName);
 
   @Override

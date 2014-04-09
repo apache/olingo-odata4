@@ -43,7 +43,6 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -292,12 +291,10 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
       getClient().getBinder().add(order,
               client.getObjectFactory().newPrimitiveProperty("OrderId",
-                      client.getObjectFactory().newPrimitiveValueBuilder().setValue(key).
-                      setType(EdmPrimitiveTypeKind.Int32).build()));
+                      client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(key)));
       getClient().getBinder().add(order,
               client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                      client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
-                      setType(EdmPrimitiveTypeKind.Int32).build()));
+                      client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
       final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
               client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Order").build(), order);
@@ -392,12 +389,10 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Order");
     getClient().getBinder().add(order,
             client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
-                    setType(EdmPrimitiveTypeKind.Int32).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
     getClient().getBinder().add(order,
             client.getObjectFactory().newPrimitiveProperty("OrderId",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(id).
-                    setType(EdmPrimitiveTypeKind.Int32).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
     order.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Customer", URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString())));
@@ -454,28 +449,22 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("MessageId",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(1000).
-                    setType(EdmPrimitiveTypeKind.Int32).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(1000)));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("FromUsername",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue("1").
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildString("1")));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("ToUsername",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue("xlodhxzzusxecbzptxlfxprneoxkn").
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildString("xlodhxzzusxecbzptxlfxprneoxkn")));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("Subject",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue("Test subject").
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test subject")));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("Body",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue("Test body").
-                    setType(EdmPrimitiveTypeKind.String).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test body")));
     getClient().getBinder().add(message,
             client.getObjectFactory().newPrimitiveProperty("IsRead",
-                    client.getObjectFactory().newPrimitiveValueBuilder().setValue(false).
-                    setType(EdmPrimitiveTypeKind.Boolean).build()));
+                    client.getObjectFactory().newPrimitiveValueBuilder().buildBoolean(false)));
 
     final URIBuilder builder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Message");

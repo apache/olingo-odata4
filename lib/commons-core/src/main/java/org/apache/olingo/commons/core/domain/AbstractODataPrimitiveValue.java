@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.domain;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.UUID;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.domain.AbstractODataValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -130,6 +131,37 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
 
       return getInstance();
     }
+
+    @Override
+    public ODataPrimitiveValue buildBoolean(final Boolean value) {
+      return setType(EdmPrimitiveTypeKind.Boolean).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildInt32(final Integer value) {
+      return setType(EdmPrimitiveTypeKind.Int32).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildSingle(final Float value) {
+      return setType(EdmPrimitiveTypeKind.Single).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildDouble(final Double value) {
+      return setType(EdmPrimitiveTypeKind.Double).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildString(final String value) {
+      return setType(EdmPrimitiveTypeKind.String).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildGuid(final UUID value) {
+      return setType(EdmPrimitiveTypeKind.Guid).setValue(value).build();
+    }
+
   }
 
   /**

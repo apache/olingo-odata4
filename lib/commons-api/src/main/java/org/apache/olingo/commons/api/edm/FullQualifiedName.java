@@ -36,17 +36,22 @@ public class FullQualifiedName {
   public FullQualifiedName(final String namespace, final String name) {
     this.namespace = namespace;
     this.name = name;
-    fqn = namespace + "." + name;
+    this.fqn = namespace + "." + name;
   }
 
   /**
-   * @param namespace.name
+   * @param namespaceAndName
    */
   public FullQualifiedName(final String namespaceAndName) {
-    fqn = namespaceAndName;
-    String[] split = namespaceAndName.split(".");
-    namespace = split[0];
-    name = split[1];
+    final int dotIdx = namespaceAndName.lastIndexOf('.');
+    if (dotIdx == -1 || dotIdx == 0 || dotIdx == namespaceAndName.length() - 1) {
+      throw new IllegalArgumentException(
+              "Malformed " + FullQualifiedName.class.getSimpleName() + ": " + namespaceAndName);
+    }
+
+    this.fqn = namespaceAndName;
+    this.namespace = this.fqn.substring(0, dotIdx);
+    this.name = this.fqn.substring(dotIdx + 1);
   }
 
   /**

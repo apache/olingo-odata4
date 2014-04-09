@@ -52,32 +52,28 @@ public abstract class ODataItem implements Serializable {
   /**
    * Constructor.
    *
-   * @param name OData entity name.
+   * @param name ODataItem name (it's entity type for {@link CommonODataEntity}).
    */
   public ODataItem(final String name) {
     this.name = name;
   }
 
   /**
-   * Returns OData entity name.
-   *
-   * @return entity name.
+   * @return ODataItem name (it's entity type for {@link CommonODataEntity}).
    */
   public String getName() {
     return name;
   }
 
   /**
-   * Returns self link.
-   *
-   * @return entity edit link.
+   * @return ODataItem link (it's edit link for {@link CommonODataEntity}).
    */
   public URI getLink() {
     return link;
   }
 
   /**
-   * Sets self link.
+   * Sets ODataItem link (it's edit link for {@link CommonODataEntity}).
    *
    * @param link link.
    */
