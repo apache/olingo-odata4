@@ -31,6 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
@@ -56,6 +57,16 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void rawRequestAsJSON() throws IOException {
     rawRequest(ODataPubFormat.JSON);
+  }
+
+  @Test
+  public void readWithInlineCountAsJSON() throws IOException {
+    readWithInlineCount(ODataPubFormat.JSON);
+  }
+
+  @Test
+  public void readWithInlineCountAsAtom() throws IOException {
+    readWithInlineCount(ODataPubFormat.ATOM);
   }
 
   @Test
@@ -134,6 +145,20 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     }
     assertEquals(2, count);
     assertTrue(feedIterator.getNext().toASCIIString().endsWith("Customer?$skiptoken=-9"));
+  }
+
+  private void readWithInlineCount(final ODataPubFormat format) {
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    uriBuilder.appendEntitySetSegment("Product").inlineCount(URIBuilder.InlineCount.allpages);
+
+    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
+    req.setFormat(format.toString(client.getServiceVersion()));
+
+    final ODataRawResponse res = req.execute();
+    assertNotNull(res);
+
+    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
+    assertEquals(10, entitySet.getCount());
   }
 
   private void rawRequest(final ODataPubFormat format) {

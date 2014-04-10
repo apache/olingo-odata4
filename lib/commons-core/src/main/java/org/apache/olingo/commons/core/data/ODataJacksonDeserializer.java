@@ -24,11 +24,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
   protected ODataServiceVersion version;
+
+  protected boolean serverMode;
 
   protected String jsonType;
 
@@ -58,7 +61,7 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
           throws IOException, JsonProcessingException;
 
   protected String getJSONAnnotation(final String string) {
-    return string.startsWith("@") ? string : "@" + string;
+    return StringUtils.prependIfMissing(string, "@");
   }
 
   @Override
@@ -66,6 +69,7 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
           throws IOException, JsonProcessingException {
 
     version = (ODataServiceVersion) ctxt.findInjectableValue(ODataServiceVersion.class.getName(), null, null);
+    serverMode = (Boolean) ctxt.findInjectableValue(Boolean.class.getName(), null, null);
 
     jsonType = version.getJSONMap().get(ODataServiceVersion.JSON_TYPE);
     jsonId = version.getJSONMap().get(ODataServiceVersion.JSON_ID);
@@ -82,5 +86,4 @@ public abstract class ODataJacksonDeserializer<T> extends JsonDeserializer<T> {
 
     return doDeserialize(jp, ctxt);
   }
-
 }

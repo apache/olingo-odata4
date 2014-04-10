@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Container;
@@ -67,7 +68,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
 
         link.setInlineEntry(inline.traverse(codec).<Container<JSONEntryImpl>>readValueAs(
                 new TypeReference<JSONEntryImpl>() {
-                }).getObject());
+        }).getObject());
       }
 
       if (inline instanceof ArrayNode) {
@@ -78,7 +79,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
         while (entries.hasNext()) {
           feed.getEntries().add(entries.next().traverse(codec).<Container<JSONEntryImpl>>readValuesAs(
                   new TypeReference<JSONEntryImpl>() {
-                  }).next().getObject());
+          }).next().getObject());
         }
 
         link.setInlineFeed(feed);
@@ -88,6 +89,15 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
   }
 
   protected void links(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
+          final JsonNode tree, final ObjectCodec codec) throws IOException {
+    if (serverMode) {
+      serverLinks(field, linked, toRemove, tree, codec);
+    } else {
+      clientLinks(field, linked, toRemove, tree, codec);
+    }
+  }
+
+  private void clientLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
           final JsonNode tree, final ObjectCodec codec) throws IOException {
 
     if (field.getKey().endsWith(jsonNavigationLink)) {
@@ -99,11 +109,6 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
       }
-      // NOTE: this should be expected to happen, but it isn't - at least up to OData 4.0
-        /* if (field.getValue().isArray()) {
-       * link.setHref(field.getValue().asText());
-       * link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
-       * } */
 
       linked.getNavigationLinks().add(link);
 
@@ -117,6 +122,39 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
       link.setType(ODataLinkType.ASSOCIATION.toString());
       linked.getAssociationLinks().add(link);
 
+      toRemove.add(field.getKey());
+    }
+  }
+
+  private void serverLinks(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,
+          final JsonNode tree, final ObjectCodec codec) throws IOException {
+
+    if (field.getKey().endsWith(Constants.JSON_BIND_LINK_SUFFIX)
+            || field.getKey().endsWith(jsonNavigationLink)) {
+
+      if (field.getValue().isValueNode()) {
+        final String suffix = field.getKey().replaceAll("^.*@", "@");
+
+        final LinkImpl link = new LinkImpl();
+        link.setTitle(getTitle(field));
+        link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+        link.setHref(field.getValue().textValue());
+        link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+        linked.getNavigationLinks().add(link);
+
+        toRemove.add(setInline(field.getKey(), suffix, tree, codec, link));
+      } else if (field.getValue().isArray()) {
+        for (Iterator<JsonNode> itor = field.getValue().elements(); itor.hasNext();) {
+          final JsonNode node = itor.next();
+          final LinkImpl link = new LinkImpl();
+          link.setTitle(getTitle(field));
+          link.setRel(version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL) + getTitle(field));
+          link.setHref(node.asText());
+          link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
+          linked.getNavigationLinks().add(link);
+          toRemove.add(setInline(field.getKey(), Constants.JSON_BIND_LINK_SUFFIX, tree, codec, link));
+        }
+      }
       toRemove.add(field.getKey());
     }
   }

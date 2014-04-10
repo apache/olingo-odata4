@@ -18,14 +18,18 @@
  */
 package org.apache.olingo.fit.utils;
 
+import java.nio.charset.Charset;
 import java.util.EnumMap;
 import java.util.Map;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class Constants {
 
   private final static Map<ConstantKey, String> v4constants = new EnumMap<ConstantKey, String>(ConstantKey.class);
 
   private final static Map<ConstantKey, String> constants = new EnumMap<ConstantKey, String>(ConstantKey.class);
+
+  public static Charset encoding = Charset.forName("UTF-8");
 
   static {
 
@@ -93,8 +97,8 @@ public class Constants {
     return get(null, key);
   }
 
-  public static String get(final ODataVersion version, final ConstantKey key) {
-    return (version == null || version == ODataVersion.v3 || !v4constants.containsKey(key)
+  public static String get(final ODataServiceVersion version, final ConstantKey key) {
+    return (version == null || version.compareTo(ODataServiceVersion.V30) <= 0 || !v4constants.containsKey(key)
             ? constants : v4constants).get(key);
   }
 }

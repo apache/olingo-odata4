@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.fit;
 
-import org.apache.olingo.fit.utils.ODataVersion;
 import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -30,15 +29,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Path("/V40/NorthWind.svc")
 @InInterceptors(classes = XHTTPMethodInterceptor.class)
-public class V4NorthWind extends AbstractServices {
+public class V4NorthWind extends V4Services {
 
   public V4NorthWind() throws Exception {
-    super(ODataVersion.v4);
+    super();
   }
 
   @Override
   public Response getMetadata() {
     return getMetadata("northwind-" + Constants.get(version, ConstantKey.METADATA));
   }
-
 }

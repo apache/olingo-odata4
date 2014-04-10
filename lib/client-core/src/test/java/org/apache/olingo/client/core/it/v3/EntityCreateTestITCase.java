@@ -51,7 +51,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -251,7 +250,6 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void issue135() {
     final int id = 2;
     final ODataEntity original = (ODataEntity) getSampleCustomerProfile(id, "Sample customer for issue 135", false);

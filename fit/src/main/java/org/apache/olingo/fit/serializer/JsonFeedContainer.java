@@ -16,27 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.op;
+package org.apache.olingo.fit.serializer;
 
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.net.URI;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.core.data.JSONFeedDeserializer;
+import org.apache.olingo.commons.core.data.JSONFeedSerializer;
 
-public class InjectableSerializerProvider extends DefaultSerializerProvider {
+@JsonDeserialize(using = JSONFeedDeserializer.class)
+@JsonSerialize(using = JSONFeedSerializer.class)
+public class JsonFeedContainer<T> extends Container<T> {
 
-  private static final long serialVersionUID = 3432260063063739646L;
-
-  public InjectableSerializerProvider(
-          final SerializerProvider src, final SerializationConfig config, final SerializerFactory factory) {
-
-    super(src, config, factory);
-  }
-
-  @Override
-  public InjectableSerializerProvider createInstance(
-          final SerializationConfig config, final SerializerFactory factory) {
-
-    return this;
+  public JsonFeedContainer(final URI contextURL, final String metadataETag, final T object) {
+    super(contextURL, metadataETag, object);
   }
 }

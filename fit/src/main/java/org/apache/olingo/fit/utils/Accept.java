@@ -21,6 +21,7 @@ package org.apache.olingo.fit.utils;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 
 public enum Accept {
@@ -55,17 +56,17 @@ public enum Accept {
     this.fileExtension = fileExtension;
   }
 
-  public String toString(final ODataVersion version) {
-    return ODataVersion.v3 == version ? contentTypeV3 : contentTypeV4;
+  public String toString(final ODataServiceVersion version) {
+    return version.compareTo(ODataServiceVersion.V40) >= 0 ? contentTypeV4 : contentTypeV3;
   }
 
   public String getExtension() {
     return fileExtension;
   }
 
-  public static Accept parse(final String contentType, final ODataVersion version) {
+  public static Accept parse(final String contentType, final ODataServiceVersion version) {
     final Accept def;
-    if (ODataVersion.v3 == version) {
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
       def = ATOM;
     } else {
       def = JSON_NOMETA;
@@ -74,7 +75,7 @@ public enum Accept {
     return parse(contentType, version, def);
   }
 
-  public static Accept parse(final String contentType, final ODataVersion version, final Accept def) {
+  public static Accept parse(final String contentType, final ODataServiceVersion version, final Accept def) {
     if (StringUtils.isBlank(contentType) || allTypesPattern.matcher(contentType).matches()) {
       return def;
     } else if (JSON_NOMETA.toString(version).equals(contentType)) {

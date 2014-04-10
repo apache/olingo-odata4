@@ -44,7 +44,7 @@ abstract class AbstractODataObject extends AbstractPayloadObject {
   }
 
   public void setBaseURI(final String baseURI) {
-    this.baseURI = URI.create(baseURI);
+    this.baseURI = baseURI == null ? null : URI.create(baseURI);
   }
 
   public String getId() {

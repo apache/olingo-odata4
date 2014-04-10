@@ -35,6 +35,8 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.status;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import static org.apache.olingo.fit.AbstractServices.LOG;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
@@ -42,7 +44,6 @@ import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
-import org.apache.olingo.fit.utils.ODataVersion;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,7 +51,7 @@ import org.springframework.stereotype.Service;
 public class V3ActionOverloading extends AbstractServices {
 
   public V3ActionOverloading() throws Exception {
-    super(ODataVersion.v3);
+    super(ODataServiceVersion.V30);
   }
 
   private Response replaceServiceName(final Response response) {
@@ -84,7 +85,7 @@ public class V3ActionOverloading extends AbstractServices {
   @Produces(MediaType.APPLICATION_XML)
   public Response getLargeMetadata() {
     return super.getMetadata("actionOverloading"
-            + StringUtils.capitalize(Constants.get(ODataVersion.v3, ConstantKey.METADATA)));
+            + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
   }
 
   @POST
@@ -98,14 +99,14 @@ public class V3ActionOverloading extends AbstractServices {
     if (StringUtils.isNotBlank(format)) {
       acceptType = Accept.valueOf(format.toUpperCase());
     } else {
-      acceptType = Accept.parse(accept, ODataVersion.v3);
+      acceptType = Accept.parse(accept, ODataServiceVersion.V30);
     }
     if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
       throw new UnsupportedMediaTypeException("Unsupported media type");
     }
 
     try {
-      final InputStream result = FSManager.instance(ODataVersion.v3).
+      final InputStream result = FSManager.instance(ODataServiceVersion.V30).
               readFile("actionOverloadingRetrieveProduct", acceptType);
       return replaceServiceName(xml.createResponse(result, null, acceptType));
     } catch (Exception e) {
@@ -137,7 +138,7 @@ public class V3ActionOverloading extends AbstractServices {
       }
 
       return replaceServiceName(utils.getValue().createResponse(
-              entity, Commons.getETag(entityInfo.getKey(), ODataVersion.v3), utils.getKey()));
+              entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return replaceServiceName(xml.createFaultResponse(accept, e));
@@ -180,7 +181,7 @@ public class V3ActionOverloading extends AbstractServices {
       }
 
       return replaceServiceName(utils.getValue().createResponse(
-              entity, Commons.getETag(entityInfo.getKey(), ODataVersion.v3), utils.getKey()));
+              entity, Commons.getETag(entityInfo.getKey(), ODataServiceVersion.V30), utils.getKey()));
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return replaceServiceName(xml.createFaultResponse(accept, e));
@@ -197,4 +198,8 @@ public class V3ActionOverloading extends AbstractServices {
     return unboundRetrieveProduct(accept, format, contentType);
   }
 
+  @Override
+  protected void setInlineCount(Feed feed, String count) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

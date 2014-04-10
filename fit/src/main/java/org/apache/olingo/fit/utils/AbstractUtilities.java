@@ -40,7 +40,10 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.metadata.NavigationProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,13 +54,13 @@ public abstract class AbstractUtilities {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractUtilities.class);
 
-  protected final ODataVersion version;
+  protected final ODataServiceVersion version;
 
   protected final FSManager fsManager;
 
   protected final static Pattern entityUriPattern = Pattern.compile(".*\\/.*\\(.*\\)");
 
-  public AbstractUtilities(final ODataVersion version) throws Exception {
+  public AbstractUtilities(final ODataServiceVersion version) throws Exception {
     this.version = version;
     this.fsManager = FSManager.instance(version);
   }
@@ -168,12 +171,15 @@ public abstract class AbstractUtilities {
     IOUtils.copy(is, bos);
     IOUtils.closeQuietly(is);
 
+    final Map<String, NavigationProperty> navigationProperties =
+            Commons.getMetadata(version).getNavigationProperties(entitySetName);
+
     // -----------------------------------------
     // 0. Retrieve navigation links to be mantained
     // -----------------------------------------
     Set<String> linksToBeMantained;
     try {
-      linksToBeMantained = Commons.linkInfo.get(version).getNavigationLinkNames(entitySetName);
+      linksToBeMantained = new HashSet<String>(navigationProperties.keySet());
     } catch (Exception e) {
       linksToBeMantained = Collections.<String>emptySet();
     }
@@ -195,7 +201,7 @@ public abstract class AbstractUtilities {
     // 1. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
     // -----------------------------------------
     final String entityKey = key == null ? getDefaultEntryKey(
-            entitySetName, new ByteArrayInputStream(bos.toByteArray()), getDefaultFormat()) : key;
+            entitySetName, new ByteArrayInputStream(bos.toByteArray())) : key;
 
     final String path = Commons.getEntityBasePath(entitySetName, entityKey);
     // -----------------------------------------
@@ -236,14 +242,13 @@ public abstract class AbstractUtilities {
 
     // -----------------------------------------
     // 4. Create links file and provided inlines
-    // -----------------------------------------
+    // -----------------------------------------  
     for (Map.Entry<String, List<String>> link : links.getLinks()) {
       putLinksInMemory(path, entitySetName, entityKey, link.getKey(), link.getValue());
     }
 
     for (Map.Entry<String, List<InputStream>> inlineEntry : links.getInlines()) {
-      final String inlineEntitySetName =
-              Commons.linkInfo.get(version).getTargetName(entitySetName, inlineEntry.getKey());
+      final String inlineEntitySetName = navigationProperties.get(inlineEntry.getKey()).getTarget();
 
       final List<String> hrefs = new ArrayList<String>();
 
@@ -253,7 +258,7 @@ public abstract class AbstractUtilities {
         IOUtils.closeQuietly(stream);
 
         final String inlineEntryKey = getDefaultEntryKey(
-                inlineEntitySetName, new ByteArrayInputStream(inlineBos.toByteArray()), getDefaultFormat());
+                inlineEntitySetName, new ByteArrayInputStream(inlineBos.toByteArray()));
 
         addOrReplaceEntity(
                 inlineEntryKey,
@@ -270,14 +275,14 @@ public abstract class AbstractUtilities {
     return fo.getContent().getInputStream();
   }
 
-  public InputStream addMediaEntity(
+  public void addMediaEntityValue(
           final String entitySetName,
+          final String entityKey,
           final InputStream is) throws Exception {
 
     // -----------------------------------------
     // 0. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
     // -----------------------------------------
-    final String entityKey = getDefaultEntryKey(entitySetName, null, getDefaultFormat());
     final String path = Commons.getEntityBasePath(entitySetName, entityKey);
     // -----------------------------------------
 
@@ -288,6 +293,17 @@ public abstract class AbstractUtilities {
             + Constants.get(version, ConstantKey.MEDIA_CONTENT_FILENAME), null));
     IOUtils.closeQuietly(is);
     // -----------------------------------------
+  }
+
+  public InputStream addMediaEntity(
+          final String entitySetName,
+          final InputStream is) throws Exception {
+
+    final String entityKey = getDefaultEntryKey(entitySetName, null);
+
+    addMediaEntityValue(entitySetName, entityKey, is);
+
+    final String path = Commons.getEntityBasePath(entitySetName, entityKey);
 
     // -----------------------------------------
     // 2. save entity as atom
@@ -334,7 +350,7 @@ public abstract class AbstractUtilities {
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-                    Accept.JSON_FULLMETA));
+            Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -349,7 +365,10 @@ public abstract class AbstractUtilities {
 
     final HashSet<String> uris = new HashSet<String>();
 
-    if (Commons.linkInfo.get(version).isFeed(entitySetName, linkName)) {
+    final Metadata metadata = Commons.getMetadata(version);
+    final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
+
+    if (navigationProperties.get(linkName).isFeed()) {
       try {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
@@ -383,8 +402,8 @@ public abstract class AbstractUtilities {
   public Response createResponse(
           final InputStream entity, final String etag, final Accept accept, final Response.Status status) {
     final Response.ResponseBuilder builder = Response.ok();
-    if (version == ODataVersion.v3) {
-      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.getVersion() + ";");
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
+      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
     }
 
     if (StringUtils.isNotBlank(etag)) {
@@ -432,7 +451,7 @@ public abstract class AbstractUtilities {
     LOG.debug("Create fault response about .... ", e);
 
     final Response.ResponseBuilder builder = Response.serverError();
-    if (version == ODataVersion.v3) {
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
       builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";");
     }
 
@@ -441,7 +460,7 @@ public abstract class AbstractUtilities {
     if (accept.startsWith("application/json")) {
       ext = ".json";
       contentType = Accept.JSON;
-    } else if (accept.startsWith("application/xml") || version == ODataVersion.v3) {
+    } else if (accept.startsWith("application/xml") || version.compareTo(ODataServiceVersion.V30) <= 0) {
       ext = ".xml";
       contentType = Accept.XML;
     } else {
@@ -470,8 +489,8 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  protected String getDefaultEntryKey(
-          final String entitySetName, final InputStream entity, final Accept accept) throws IOException {
+  public String getDefaultEntryKey(
+          final String entitySetName, final InputStream entity) throws IOException {
     try {
       String res;
 
@@ -649,7 +668,10 @@ public abstract class AbstractUtilities {
 
     final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
     linkInfo.setEtag(Commons.getETag(basePath, version));
-    linkInfo.setFeed(Commons.linkInfo.get(version).isFeed(entitySetName, linkName));
+    final Metadata metadata = Commons.getMetadata(version);
+    final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
+
+    linkInfo.setFeed(navigationProperties.get(linkName.replaceAll("\\(.*\\)", "")).isFeed());
 
     return linkInfo;
   }
@@ -695,31 +717,38 @@ public abstract class AbstractUtilities {
   public InputStream expandEntity(
           final String entitySetName,
           final String entityId,
-          final InputStream entity,
           final String linkName)
           throws Exception {
 
     // --------------------------------
     // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing) 
     // --------------------------------
-    final LinkInfo linkInfo = readLinks(entitySetName, entityId, linkName, Accept.XML);
     final Map.Entry<String, List<String>> links = extractLinkURIs(entitySetName, entityId, linkName);
     // --------------------------------
 
     // --------------------------------
     // 1. Retrieve expanded object (entry or feed)
     // --------------------------------
-    final InputStream expanded = readEntities(
+    final Metadata metadata = Commons.getMetadata(version);
+    final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
+
+    return readEntities(
             links.getValue(),
             linkName,
             links.getKey(),
-            linkInfo.isFeed());
-    // --------------------------------
+            navigationProperties.get(linkName).isFeed());
+  }
 
+  public InputStream expandEntity(
+          final String entitySetName,
+          final String entityId,
+          final InputStream entity,
+          final String linkName)
+          throws Exception {
     // --------------------------------
     // 2. Retrieve expanded object (entry or feed)
     // --------------------------------
-    return replaceLink(entity, linkName, expanded);
+    return replaceLink(entity, linkName, expandEntity(entitySetName, entityId, linkName));
     // --------------------------------
   }
 

@@ -38,10 +38,13 @@ import java.util.Set;
 import javax.ws.rs.NotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.metadata.NavigationProperty;
 
 public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
-  public AbstractJSONUtilities(final ODataVersion version) throws Exception {
+  public AbstractJSONUtilities(final ODataServiceVersion version) throws Exception {
     super(version);
   }
 
@@ -109,6 +112,9 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     final Iterator<Map.Entry<String, JsonNode>> fieldIter = srcNode.fields();
 
+    final Metadata metadata = Commons.getMetadata(version);
+    final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
+
     while (fieldIter.hasNext()) {
       final Map.Entry<String, JsonNode> field = fieldIter.next();
       if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_BIND_SUFFIX))) {
@@ -125,7 +131,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
         }
 
         links.addLinks(title, hrefs);
-      } else if (Commons.linkInfo.get(version).exists(entitySetName, field.getKey())) {
+      } else if (navigationProperties.containsKey(field.getKey())) {
         links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTf-8"));
       }
     }
@@ -170,7 +176,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     srcNode.set(
             Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
-                    Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
+            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
     return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
   }

@@ -150,10 +150,11 @@ public class V3KeyAsSegment {
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postNewEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
 
-    return replaceServiceName(services.postNewEntity(accept, prefer, entitySetName, entity));
+    return replaceServiceName(services.postNewEntity(accept, contentType, prefer, entitySetName, entity));
   }
 }

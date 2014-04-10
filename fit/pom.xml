@@ -40,6 +40,18 @@
   </properties>
 	
   <dependencies>
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-commons-core</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml</groupId>
+          <artifactId>aalto-xml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
     <!-- Stax -->
     <dependency>
       <groupId>stax</groupId>

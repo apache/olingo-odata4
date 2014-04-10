@@ -19,7 +19,12 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" 
+      xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" 
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
+      xmlns:georss="http://www.georss.org/georss" 
+      xmlns:gml="http://www.opengis.net/gml">
+  
   <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product</id>
   <title type="text">Product</title>
   <updated>2014-02-06T16:44:25Z</updated>

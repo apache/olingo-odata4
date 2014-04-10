@@ -66,6 +66,6 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   @Test
   public void readEntityAsJSON() {
-    readPrimitiveKeys(ODataPubFormat.JSON);
+    readPrimitiveKeys(ODataPubFormat.JSON_FULL_METADATA);
   }
 }

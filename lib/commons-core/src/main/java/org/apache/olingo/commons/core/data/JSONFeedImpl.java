@@ -89,7 +89,7 @@ public class JSONFeedImpl extends AbstractPayloadObject implements Feed {
 
   @Override
   public void setNext(final URI next) {
-    this.next = next.toASCIIString();
+    this.next = next == null ? null : next.toASCIIString();
   }
 
   @Override

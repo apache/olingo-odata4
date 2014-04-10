@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Property;
 
 /**
@@ -35,6 +36,15 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
   @Override
   protected void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen,
           final SerializerProvider provider) throws IOException, JsonProcessingException {
+    doContainerSerialize(new Container<JSONPropertyImpl>(null, null, property), jgen, provider);
+  }
+
+  @Override
+  protected void doContainerSerialize(
+          final Container<JSONPropertyImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          throws IOException, JsonProcessingException {
+
+    final Property property = container.getObject();
 
     jgen.writeStartObject();
 

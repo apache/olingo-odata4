@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -74,9 +73,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     if (ODataPubFormat.ATOM == format) {
       assertTrue(entity.getAssociationLinks().isEmpty());
-    } else {
       // In JSON, association links for each $ref link will exist.
-      assertFalse(entity.getAssociationLinks().isEmpty());
     }
 
     boolean found = false;

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.fit.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -39,6 +41,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.AtomDeserializer;
+import org.apache.olingo.commons.core.data.AtomSerializer;
+import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +57,23 @@ public abstract class Commons {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
 
+  private static Map<ODataServiceVersion, AtomDeserializer> atomDeserializer =
+          new EnumMap<ODataServiceVersion, AtomDeserializer>(ODataServiceVersion.class);
+
+  private static Map<ODataServiceVersion, AtomSerializer> atomSerializer =
+          new EnumMap<ODataServiceVersion, AtomSerializer>(ODataServiceVersion.class);
+
+  private static Map<ODataServiceVersion, ObjectMapper> jsonmapper =
+          new EnumMap<ODataServiceVersion, ObjectMapper>(ODataServiceVersion.class);
+
+  private static EnumMap<ODataServiceVersion, Metadata> metadata =
+          new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
+
   protected static Pattern multiKeyPattern = Pattern.compile("(.*=.*,?)+");
 
   protected final static Map<String, Integer> sequence = new HashMap<String, Integer>();
 
   protected final static Map<String, String> mediaContent = new HashMap<String, String>();
-
-  protected final static Map<ODataVersion, MetadataLinkInfo> linkInfo =
-          new EnumMap<ODataVersion, MetadataLinkInfo>(ODataVersion.class);
 
   static {
     sequence.put("Customer", 1000);
@@ -75,8 +91,56 @@ public abstract class Commons {
     mediaContent.put("Car/Photo", null);
   }
 
-  public static Map<ODataVersion, MetadataLinkInfo> getLinkInfo() {
-    return linkInfo;
+  public static AtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
+    if (!atomDeserializer.containsKey(version)) {
+      atomDeserializer.put(version, new AtomDeserializer(version));
+    }
+    return atomDeserializer.get(version);
+  }
+
+  public static AtomSerializer getAtomSerializer(final ODataServiceVersion version) {
+    if (!atomSerializer.containsKey(version)) {
+      atomSerializer.put(version, new AtomSerializer(version, true));
+    }
+
+    return atomSerializer.get(version);
+  }
+
+  public static ObjectMapper getJsonMapper(final ODataServiceVersion version) {
+    if (!jsonmapper.containsKey(version)) {
+      final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+      mapper.setInjectableValues(new InjectableValues.Std()
+              .addValue(Boolean.class, Boolean.TRUE)
+              .addValue(ODataServiceVersion.class, version));
+
+      mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
+              mapper.getSerializationConfig()
+              .withAttribute(ODataServiceVersion.class, version)
+              .withAttribute(Boolean.class, Boolean.TRUE),
+              mapper.getSerializerFactory()));
+
+      jsonmapper.put(version, mapper);
+    }
+
+    return jsonmapper.get(version);
+  }
+
+  public static Metadata getMetadata(final ODataServiceVersion version) {
+    if (!metadata.containsKey(version)) {
+      final InputStream is = Commons.class.getResourceAsStream(
+              File.separatorChar
+              + version.name()
+              + File.separatorChar + "metadata.xml");
+
+      metadata.put(version, new Metadata(is));
+    }
+
+    return metadata.get(version);
+  }
+
+  public static Map<String, String> getMediaContent() {
+    return mediaContent;
   }
 
   public static String getEntityURI(final String entitySetName, final String entityKey) {
@@ -91,7 +155,7 @@ public abstract class Commons {
   }
 
   public static String getLinksURI(
-          final ODataVersion version,
+          final ODataServiceVersion version,
           final String entitySetName,
           final String entityId,
           final String linkName) throws IOException {
@@ -99,22 +163,22 @@ public abstract class Commons {
   }
 
   public static String getLinksPath(
-          final ODataVersion version,
+          final ODataServiceVersion version,
           final String entitySetName,
           final String entityId,
           final String linkName,
           final Accept accept) throws IOException {
-    return getLinksPath(ODataVersion.v3, getEntityBasePath(entitySetName, entityId), linkName, accept);
+    return getLinksPath(ODataServiceVersion.V30, getEntityBasePath(entitySetName, entityId), linkName, accept);
 
   }
 
   public static String getLinksPath(
-          final ODataVersion version, final String basePath, final String linkName, final Accept accept)
+          final ODataServiceVersion version, final String basePath, final String linkName, final Accept accept)
           throws IOException {
     try {
       return FSManager.instance(version)
               .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-                      + File.separatorChar + linkName, accept);
+              + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }
@@ -255,7 +319,7 @@ public abstract class Commons {
     return node;
   }
 
-  public static String getETag(final String basePath, final ODataVersion version) throws Exception {
+  public static String getETag(final String basePath, final ODataServiceVersion version) throws Exception {
     try {
       final InputStream is = FSManager.instance(version).readFile(basePath + "etag", Accept.TEXT);
       if (is.available() <= 0) {

@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
@@ -50,6 +51,14 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   private final JSONGeoValueSerializer geoSerializer = new JSONGeoValueSerializer();
 
   protected void links(final Linked linked, final JsonGenerator jgen) throws IOException {
+    if (serverMode) {
+      serverLinks(linked, jgen);
+    } else {
+      clientLinks(linked, jgen);
+    }
+  }
+
+  protected void clientLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
     for (Link link : linked.getNavigationLinks()) {
       ODataLinkType type = null;
@@ -93,6 +102,34 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     }
   }
 
+  protected void serverLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
+    for (Link link : linked.getAssociationLinks()) {
+      if (StringUtils.isNotBlank(link.getHref())) {
+        jgen.writeStringField(
+                link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK),
+                link.getHref());
+      }
+    }
+
+    for (Link link : linked.getNavigationLinks()) {
+      if (StringUtils.isNotBlank(link.getHref())) {
+        jgen.writeStringField(
+                link.getTitle() + version.getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
+                link.getHref());
+      }
+
+      if (link.getInlineEntry() != null) {
+        jgen.writeObjectField(link.getTitle(), link.getInlineEntry());
+      } else if (link.getInlineFeed() != null) {
+        jgen.writeArrayFieldStart(link.getTitle());
+        for (Entry subEntry : link.getInlineFeed().getEntries()) {
+          jgen.writeObject(subEntry);
+        }
+        jgen.writeEndArray();
+      }
+    }
+  }
+
   private void collection(final JsonGenerator jgen, final String itemType, final CollectionValue value)
           throws IOException {
 
@@ -108,7 +145,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
             ? null
             : new EdmTypeInfo.Builder().setTypeExpression(type).build();
 
-    if (value.isNull()) {
+    if (value == null || value.isNull()) {
       jgen.writeNull();
     } else if (value.isPrimitive()) {
       final boolean isNumber = typeInfo == null
@@ -147,6 +184,15 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   }
 
   protected void property(final JsonGenerator jgen, final Property property, final String name) throws IOException {
+    if (serverMode) {
+      jgen.writeFieldName(
+              name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
+
+      jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(StringUtils.isBlank(property.getType())
+              ? EdmPrimitiveTypeKind.String.getFullQualifiedName().toString()
+              : property.getType()).build().external(version));
+    }
+
     jgen.writeFieldName(name);
     value(jgen, property.getType(), property.getValue());
   }

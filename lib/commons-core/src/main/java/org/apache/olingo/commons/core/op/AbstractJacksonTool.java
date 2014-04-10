@@ -49,10 +49,13 @@ abstract class AbstractJacksonTool {
   protected ObjectMapper getObjectMapper() {
     final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    mapper.setInjectableValues(new InjectableValues.Std().addValue(ODataServiceVersion.class, version));
+    mapper.setInjectableValues(new InjectableValues.Std().
+            addValue(ODataServiceVersion.class, version).
+            addValue(Boolean.class, Boolean.FALSE));
 
     mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-            mapper.getSerializationConfig().withAttribute(ODataServiceVersion.class, version),
+            mapper.getSerializationConfig().withAttribute(ODataServiceVersion.class, version).
+            withAttribute(Boolean.class, Boolean.FALSE),
             mapper.getSerializerFactory()));
 
     return mapper;
@@ -62,10 +65,11 @@ abstract class AbstractJacksonTool {
     final XmlMapper xmlMapper = new XmlMapper(
             new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
-    xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(ODataServiceVersion.class, version));
+    xmlMapper.setInjectableValues(new InjectableValues.Std().
+            addValue(ODataServiceVersion.class, version).
+            addValue(Boolean.class, Boolean.FALSE));
 
     xmlMapper.addHandler(new DeserializationProblemHandler() {
-
       @Override
       public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser jp,
               final JsonDeserializer<?> deserializer, final Object beanOrClass, final String propertyName)
@@ -79,5 +83,4 @@ abstract class AbstractJacksonTool {
     });
     return xmlMapper;
   }
-
 }

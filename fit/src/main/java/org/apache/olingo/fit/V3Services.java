@@ -22,7 +22,6 @@ import java.io.InputStream;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import org.apache.olingo.fit.utils.ODataVersion;
 import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,6 +30,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
@@ -43,7 +44,7 @@ import org.springframework.stereotype.Service;
 public class V3Services extends AbstractServices {
 
   public V3Services() throws Exception {
-    super(ODataVersion.v3);
+    super(ODataServiceVersion.V30);
   }
 
   @GET
@@ -63,7 +64,7 @@ public class V3Services extends AbstractServices {
       final InputStream error = FSManager.instance(version).readFile("InStreamErrorGetCustomer", acceptType);
 
       return Response.ok(error).
-              header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.getVersion() + ";").
+              header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version + ";").
               header("Content-Type", acceptType.toString(version)).
               build();
     } catch (Exception e) {
@@ -99,4 +100,10 @@ public class V3Services extends AbstractServices {
     return getMetadata("openType" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }
 
+  @Override
+  protected void setInlineCount(final Feed feed, final String count) {
+    if ("allpages".equals(count)) {
+      feed.setCount(feed.getEntries().size());
+    }
+  }
 }

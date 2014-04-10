@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit.utils.v3;
 
-import org.apache.olingo.fit.utils.ODataVersion;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class JSONUtilities extends org.apache.olingo.fit.utils.AbstractJSONUtilities {
 
   public JSONUtilities() throws Exception {
-    super(ODataVersion.v3);
+    super(ODataServiceVersion.V30);
   }
 }

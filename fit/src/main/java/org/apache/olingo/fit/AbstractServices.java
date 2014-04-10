@@ -18,15 +18,35 @@
  */
 package org.apache.olingo.fit;
 
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.core.data.AtomDeserializer;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.serializer.JsonFeedContainer;
+import org.apache.olingo.fit.serializer.JsonEntryContainer;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.apache.olingo.fit.utils.DataBinder;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,18 +71,28 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.core.data.AtomSerializer;
+import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.NullValueImpl;
+import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
+import org.apache.olingo.fit.metadata.EntitySet;
+import org.apache.olingo.fit.metadata.EntityType;
+import org.apache.olingo.fit.metadata.NavigationProperty;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.FSManager;
+
+import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.AbstractXMLUtilities;
-import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.Commons;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.LinkInfo;
-import org.apache.olingo.fit.utils.ODataVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,9 +103,7 @@ public abstract class AbstractServices {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
 
-  private static final Set<ODataVersion> INITIALIZED = EnumSet.noneOf(ODataVersion.class);
-
-  protected final ODataVersion version;
+  protected final ODataServiceVersion version;
 
   protected final AbstractXMLUtilities xml;
 
@@ -84,9 +112,11 @@ public abstract class AbstractServices {
   @Context
   protected UriInfo uriInfo;
 
-  public AbstractServices(final ODataVersion version) throws Exception {
+  protected Metadata metadata;
+
+  public AbstractServices(final ODataServiceVersion version) throws Exception {
     this.version = version;
-    if (ODataVersion.v3 == version) {
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
       this.xml = new org.apache.olingo.fit.utils.v3.XMLUtilities();
       this.json = new org.apache.olingo.fit.utils.v3.JSONUtilities();
     } else {
@@ -94,10 +124,7 @@ public abstract class AbstractServices {
       this.json = new org.apache.olingo.fit.utils.v4.JSONUtilities();
     }
 
-    if (!INITIALIZED.contains(version)) {
-      xml.retrieveLinkInfoFromMetadata();
-      INITIALIZED.add(version);
-    }
+    metadata = Commons.getMetadata(version);
   }
 
   /**
@@ -169,7 +196,7 @@ public abstract class AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -216,9 +243,32 @@ public abstract class AbstractServices {
       InputStream res =
               util.patchEntity(entitySetName, entityId, IOUtils.toInputStream(changes), acceptType, ifMatch);
 
+
+      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+
+      final ObjectMapper mapper = Commons.getJsonMapper(version);
+
+      final Container<AtomEntryImpl> cres;
+      if (acceptType == Accept.ATOM) {
+        cres = atomDeserializer.read(res, AtomEntryImpl.class);
+      } else {
+        final Container<JSONEntryImpl> jcont = mapper.readValue(res, new TypeReference<JSONEntryImpl>() {
+        });
+        cres = new Container<AtomEntryImpl>(jcont.getContextURL(), jcont.getMetadataETag(),
+                (new DataBinder(version)).getAtomEntry(jcont.getObject()));
+      }
+
+      normalizeAtomEntry(cres.getObject(), entitySetName, entityId);
+
+      final String path = Commons.getEntityBasePath(entitySetName, entityId);
+      FSManager.instance(version).putInMemory(
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(res, null, acceptType, Response.Status.OK);
+        response = xml.createResponse(
+                util.readEntity(entitySetName, entityId, acceptType).getValue(),
+                null, acceptType, Response.Status.OK);
       } else {
         res.close();
         response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
@@ -258,9 +308,28 @@ public abstract class AbstractServices {
         res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
       }
 
+      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final ObjectMapper mapper = Commons.getJsonMapper(version);
+
+      final Container<AtomEntryImpl> cres;
+      if (acceptType == Accept.ATOM) {
+        cres = atomDeserializer.read(res, AtomEntryImpl.class);
+      } else {
+        final Container<JSONEntryImpl> jcont = mapper.readValue(res, new TypeReference<JSONEntryImpl>() {
+        });
+        cres = new Container<AtomEntryImpl>(jcont.getContextURL(), jcont.getMetadataETag(),
+                (new DataBinder(version)).getAtomEntry(jcont.getObject()));
+      }
+
+      final String path = Commons.getEntityBasePath(entitySetName, entityId);
+      FSManager.instance(version).putInMemory(
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(res, null, acceptType, Response.Status.OK);
+        response = xml.createResponse(
+                getUtilities(acceptType).readEntity(entitySetName, entityId, acceptType).getValue(),
+                null, acceptType, Response.Status.OK);
       } else {
         res.close();
         response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
@@ -282,6 +351,7 @@ public abstract class AbstractServices {
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postNewEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
@@ -297,20 +367,89 @@ public abstract class AbstractServices {
 
       utils = getUtilities(acceptType);
 
-      final InputStream res;
+      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
+      final ObjectMapper mapper = Commons.getJsonMapper(version);
+
+      final Container<AtomEntryImpl> container;
+
+      final EntitySet entitySet = metadata.getEntitySet(entitySetName);
+      final AtomEntryImpl entry;
+
+      final String entityKey;
 
       if (utils.isMediaContent(entitySetName)) {
-        res = utils.addMediaEntity(entitySetName, IOUtils.toInputStream(entity));
+        entityKey = xml.getDefaultEntryKey(entitySetName, null);
+
+        utils.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity));
+
+        entry = new AtomEntryImpl();
+        entry.setMediaContentType(ContentType.WILDCARD);
+        entry.setType(entitySet.getType());
+
+        final String id = Commons.getMediaContent().get(entitySetName);
+        if (StringUtils.isNotBlank(id)) {
+          final AtomPropertyImpl prop = new AtomPropertyImpl();
+          prop.setName(id);
+          prop.setType(EdmPrimitiveTypeKind.Int32.toString());
+          prop.setValue(new PrimitiveValueImpl(entityKey));
+          entry.getProperties().add(prop);
+        }
+
+        final Link editLink = new LinkImpl();
+        editLink.setHref(Commons.getEntityURI(entitySetName, entityKey));
+        editLink.setRel("edit");
+        editLink.setTitle(entitySetName);
+        entry.setEditLink(editLink);
+
+        entry.setMediaContentSource(editLink.getHref() + "/$value");
+
+        container = new Container<AtomEntryImpl>(null, null, entry);
       } else {
-        res = utils.addOrReplaceEntity(entitySetName, IOUtils.toInputStream(entity));
+        final Accept contentTypeValue = Accept.parse(contentType, version);
+        entityKey = getUtilities(contentTypeValue).getDefaultEntryKey(entitySetName, IOUtils.toInputStream(entity));
+
+        if (Accept.ATOM == contentTypeValue) {
+          container = atomDeserializer.read(IOUtils.toInputStream(entity), AtomEntryImpl.class);
+          entry = container.getObject();
+        } else {
+          final Container<JSONEntryImpl> jcontainer =
+                  mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
+          });
+
+          entry = (new DataBinder(version)).
+                  getAtomEntry(jcontainer.getObject());
+
+          container = new Container<AtomEntryImpl>(
+                  jcontainer.getContextURL(),
+                  jcontainer.getMetadataETag(),
+                  entry);
+        }
       }
+
+      normalizeAtomEntry(entry, entitySetName, entityKey);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+      atomSerializer.write(writer, container);
+      writer.flush();
+      writer.close();
+
+      final InputStream serialization =
+              xml.addOrReplaceEntity(entitySetName, new ByteArrayInputStream(content.toByteArray()));
+
+      final Container<AtomEntryImpl> cres = atomDeserializer.read(serialization, AtomEntryImpl.class);
+
+      final String path = Commons.getEntityBasePath(entitySetName, entityKey);
+      FSManager.instance(version).putInMemory(
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
 
       final Response response;
       if ("return-no-content".equalsIgnoreCase(prefer)) {
-        IOUtils.closeQuietly(res);
         response = utils.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
       } else {
-        response = utils.createResponse(res, null, acceptType, Response.Status.CREATED);
+        response = utils.createResponse(utils.readEntity(entitySetName, entityKey, acceptType).getValue(),
+                null, acceptType, Response.Status.CREATED);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -349,13 +488,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -387,7 +526,8 @@ public abstract class AbstractServices {
       final StringBuilder path = new StringBuilder(name).
               append(File.separatorChar).append(type).
               append(File.separatorChar);
-      path.append(Commons.getLinkInfo().get(version).isSingleton(name)
+
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -406,9 +546,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -445,7 +585,8 @@ public abstract class AbstractServices {
       final StringBuilder path = new StringBuilder(name).
               append(File.separatorChar).append(type).
               append(File.separatorChar);
-      path.append(Commons.getLinkInfo().get(version).isSingleton(name)
+
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -462,7 +603,7 @@ public abstract class AbstractServices {
    * @param accept Accept header.
    * @param name entity set or function name.
    * @param format format query option.
-   * @param inlinecount inlinecount query option.
+   * @param count inlinecount query option.
    * @param filter filter query option.
    * @param orderby orderby query option.
    * @param skiptoken skiptoken query option.
@@ -474,7 +615,7 @@ public abstract class AbstractServices {
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("name") String name,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String inlinecount,
+          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String count,
           @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
           @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
           @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
@@ -514,35 +655,55 @@ public abstract class AbstractServices {
           builder.append(Constants.get(version, ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
                   append(skiptoken);
         } else {
-          builder.append(Commons.getLinkInfo().get(version).isSingleton(name)
+          builder.append(metadata.getEntitySet(name).isSingleton()
                   ? Constants.get(version, ConstantKey.ENTITY)
                   : Constants.get(version, ConstantKey.FEED));
         }
 
-        InputStream feed = FSManager.instance(version).readFile(builder.toString(), acceptType);
-        if ("allpages".equals(inlinecount)) {
-          int count = xml.countAllElements(name);
-          feed.close();
-          if (acceptType == Accept.ATOM) {
-            feed = xml.addAtomInlinecount(
-                    FSManager.instance(version).readFile(builder.toString(), acceptType),
-                    count,
-                    acceptType);
-          } else {
-            feed = json.addJsonInlinecount(
-                    FSManager.instance(version).readFile(builder.toString(), acceptType),
-                    count,
-                    acceptType);
-          }
+        final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
+
+        final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+        final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
+        final Container<Feed> container = atomDeserializer.read(feed, AtomFeedImpl.class);
+
+        setInlineCount(container.getObject(), count);
+
+        final ByteArrayOutputStream content = new ByteArrayOutputStream();
+        final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+
+        if (acceptType == Accept.ATOM) {
+          atomSerializer.write(writer, container);
+          writer.flush();
+          writer.close();
+        } else {
+          final ObjectMapper mapper = Commons.getJsonMapper(version);
+
+          mapper.writeValue(
+                  writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
+                  (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
         }
 
-        return xml.createResponse(feed, Commons.getETag(basePath, version), acceptType);
+        return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
+                Commons.getETag(basePath, version), acceptType);
       }
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
   }
 
+  protected abstract void setInlineCount(final Feed feed, final String count);
+
+  /**
+   * Retrieve entity with key as segment.
+   *
+   * @param accept Accept header.
+   * @param entitySetName Entity set name.
+   * @param entityId entity id.
+   * @param format format query option.
+   * @param expand expand query option.
+   * @param select select query option.
+   * @return entity.
+   */
   @GET
   @Path("/Person({entityId})")
   public Response getEntity(
@@ -615,31 +776,101 @@ public abstract class AbstractServices {
       }
 
       final Map.Entry<String, InputStream> entityInfo =
-              utils.getValue().readEntity(entitySetName, entityId, utils.getKey());
+              utils.getValue().readEntity(entitySetName, entityId, Accept.ATOM);
 
       InputStream entity = entityInfo.getValue();
 
+      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
+
+      final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(entity, AtomEntryImpl.class);
+      final Entry entry = container.getObject();
+
       if (keyAsSegment) {
-        entity = utils.getValue().addEditLink(
-                entity, entitySetName,
-                Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
+        final Link editLink = new LinkImpl();
+        editLink.setRel("edit");
+        editLink.setTitle(entitySetName);
+        editLink.setHref(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "/" + entityId);
+
+        entry.setEditLink(editLink);
       }
 
       if (StringUtils.isNotBlank(select)) {
-        entity = utils.getValue().selectEntity(entity, select.split(","));
+        final List<String> properties = Arrays.asList(select.split(","));
+        final Set<Property> toBeRemoved = new HashSet<Property>();
+
+        for (Property property : entry.getProperties()) {
+          if (!properties.contains(property.getName())) {
+            toBeRemoved.add(property);
+          }
+        }
+
+        entry.getProperties().removeAll(toBeRemoved);
+
+        final Set<Link> linkToBeRemoved = new HashSet<Link>();
+
+        for (Link link : entry.getNavigationLinks()) {
+          if (!properties.contains(link.getTitle().replaceAll("@.*$", "")) && !properties.contains(link.getTitle())) {
+            linkToBeRemoved.add(link);
+          }
+        }
+
+        entry.getNavigationLinks().removeAll(linkToBeRemoved);
       }
 
       if (StringUtils.isNotBlank(expand)) {
-        for (String exp : expand.split(",")) {
-          entity = utils.getValue().expandEntity(
-                  entitySetName,
-                  entityId,
-                  entity,
-                  exp);
+        final List<String> links = Arrays.asList(expand.split(","));
+
+        final Map<Link, Link> replace = new HashMap<Link, Link>();
+
+        for (Link link : entry.getNavigationLinks()) {
+          if (links.contains(link.getTitle())) {
+            // expand link
+            final Link rep = new LinkImpl();
+            rep.setHref(link.getHref());
+            rep.setRel(link.getRel());
+            rep.setTitle(link.getTitle());
+            rep.setType(link.getType());
+            if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_ENTRY))) {
+              // inline entry
+              final Entry inline = atomDeserializer.<Entry, AtomEntryImpl>read(
+                      xml.expandEntity(entitySetName, entityId, link.getTitle()),
+                      AtomEntryImpl.class).getObject();
+              rep.setInlineEntry(inline);
+            } else if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_FEED))) {
+              // inline feed
+              final Feed inline = atomDeserializer.<Feed, AtomFeedImpl>read(
+                      xml.expandEntity(entitySetName, entityId, link.getTitle()),
+                      AtomFeedImpl.class).getObject();
+              rep.setInlineFeed(inline);
+            }
+            replace.put(link, rep);
+          }
+        }
+
+        for (Map.Entry<Link, Link> link : replace.entrySet()) {
+          entry.getNavigationLinks().remove(link.getKey());
+          entry.getNavigationLinks().add(link.getValue());
         }
       }
 
-      return utils.getValue().createResponse(entity, Commons.getETag(entityInfo.getKey(), version), utils.getKey());
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+
+      if (utils.getKey() == Accept.ATOM) {
+        atomSerializer.write(writer, container);
+        writer.flush();
+        writer.close();
+      } else {
+        final ObjectMapper mapper = Commons.getJsonMapper(version);
+        mapper.writeValue(
+                writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
+                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+      }
+
+      return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
+              Commons.getETag(entityInfo.getKey(), version), utils.getKey());
+
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return xml.createFaultResponse(accept, e);
@@ -1383,5 +1614,38 @@ public abstract class AbstractServices {
     }
 
     return utils;
+  }
+
+  private void normalizeAtomEntry(final AtomEntryImpl entry, final String entitySetName, final String entityKey) {
+    final EntitySet entitySet = metadata.getEntitySet(entitySetName);
+    final EntityType entityType = metadata.getEntityType(entitySet.getType());
+    for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property
+            : entityType.getPropertyMap().entrySet()) {
+      if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {
+        final AtomPropertyImpl prop = new AtomPropertyImpl();
+        prop.setName(property.getKey());
+        prop.setValue(new NullValueImpl());
+        entry.getProperties().add(prop);
+      }
+    }
+
+    for (Map.Entry<String, NavigationProperty> property : entityType.getNavigationPropertyMap().entrySet()) {
+      boolean found = false;
+      for (Link link : entry.getNavigationLinks()) {
+        if (link.getTitle().equals(property.getKey())) {
+          found = true;
+        }
+      }
+
+      if (!found) {
+        final LinkImpl link = new LinkImpl();
+        link.setTitle(property.getKey());
+        link.setType(property.getValue().isFeed()
+                ? Constants.get(ConstantKey.ATOM_LINK_FEED) : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
+        link.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getKey());
+        link.setHref(entitySetName + "(" + entityKey + ")/" + property.getKey());
+        entry.getNavigationLinks().add(link);
+      }
+    }
   }
 }

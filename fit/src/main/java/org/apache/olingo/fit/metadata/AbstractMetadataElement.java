@@ -16,27 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.op;
+package org.apache.olingo.fit.metadata;
 
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class InjectableSerializerProvider extends DefaultSerializerProvider {
-
-  private static final long serialVersionUID = 3432260063063739646L;
-
-  public InjectableSerializerProvider(
-          final SerializerProvider src, final SerializationConfig config, final SerializerFactory factory) {
-
-    super(src, config, factory);
-  }
+public class AbstractMetadataElement {
 
   @Override
-  public InjectableSerializerProvider createInstance(
-          final SerializationConfig config, final SerializerFactory factory) {
-
-    return this;
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this);
   }
 }

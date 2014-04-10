@@ -22,7 +22,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
@@ -37,6 +40,15 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
   @Override
   protected void doSerialize(final JSONEntryImpl entry, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
+    doContainerSerialize(new Container<JSONEntryImpl>(null, null, entry), jgen, provider);
+  }
+
+  @Override
+  protected void doContainerSerialize(
+          final Container<JSONEntryImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          throws IOException, JsonProcessingException {
+
+    final Entry entry = container.getObject();
 
     jgen.writeStartObject();
 
@@ -45,12 +57,34 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
               new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
     }
 
+    if (serverMode) {
+      if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
+        jgen.writeStringField(
+                Constants.JSON_METADATA_ETAG,
+                container.getMetadataETag());
+      }
+
+      if (StringUtils.isNotBlank(entry.getETag())) {
+        jgen.writeStringField(
+                version.getJSONMap().get(ODataServiceVersion.JSON_ETAG),
+                entry.getETag());
+      }
+    }
+
     if (entry.getId() != null) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entry.getId());
     }
 
     for (Property property : entry.getProperties()) {
       property(jgen, property, property.getName());
+    }
+
+    if (serverMode && entry.getEditLink() != null && StringUtils.isNotBlank(entry.getEditLink().getHref())) {
+      final URI link = URI.create(entry.getEditLink().getHref());
+      final String editLink = link.isAbsolute() ? link.toASCIIString()
+              : URI.create(entry.getBaseURI() + "/" + link.toASCIIString()).normalize().toASCIIString();
+
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK), editLink);
     }
 
     links(entry, jgen);

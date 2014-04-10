@@ -107,7 +107,10 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
 
     if (tree.hasNonNull(jsonEditLink)) {
       final LinkImpl link = new LinkImpl();
-      link.setRel(Constants.EDIT_LINK_REL);
+      // Server mode
+      if (serverMode) {
+        link.setRel(Constants.EDIT_LINK_REL);
+      }
       link.setHref(tree.get(jsonEditLink).textValue());
       entry.setEditLink(link);
 

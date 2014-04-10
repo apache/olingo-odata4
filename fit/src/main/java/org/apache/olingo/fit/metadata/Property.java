@@ -16,20 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.utils;
+package org.apache.olingo.fit.metadata;
 
-public enum ODataVersion {
+public class Property extends AbstractMetadataElement {
 
-  v3("3.0"),
-  v4("4.0");
+  private final String name;
 
-  private final String version;
+  private String type;
 
-  private ODataVersion(String version) {
-    this.version = version;
+  private boolean nullable;
+
+  public Property(String name) {
+    this.name = name;
   }
 
-  public String getVersion() {
-    return version;
+  public String getName() {
+    return name;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public boolean isNullable() {
+    return nullable;
+  }
+
+  public void setNullable(boolean nullable) {
+    this.nullable = nullable;
   }
 }

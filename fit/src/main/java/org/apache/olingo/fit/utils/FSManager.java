@@ -18,10 +18,14 @@
  */
 package org.apache.olingo.fit.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.ws.rs.NotFoundException;
@@ -32,6 +36,12 @@ import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomSerializer;
+import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.fit.serializer.JsonEntryContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,18 +58,19 @@ public class FSManager {
 
   private final FileSystemManager fsManager;
 
-  private static Map<ODataVersion, FSManager> instance = new EnumMap<ODataVersion, FSManager>(ODataVersion.class);
+  private static Map<ODataServiceVersion, FSManager> instance =
+          new EnumMap<ODataServiceVersion, FSManager>(ODataServiceVersion.class);
 
-  private final ODataVersion version;
+  private final ODataServiceVersion version;
 
-  public static FSManager instance(final ODataVersion version) throws Exception {
+  public static FSManager instance(final ODataServiceVersion version) throws Exception {
     if (!instance.containsKey(version)) {
       instance.put(version, new FSManager(version));
     }
     return instance.get(version);
   }
 
-  private FSManager(final ODataVersion version) throws Exception {
+  private FSManager(final ODataServiceVersion version) throws Exception {
     this.version = version;
     fsManager = VFS.getManager();
   }
@@ -86,6 +97,37 @@ public class FSManager {
     IOUtils.closeQuietly(os);
 
     return memObject;
+  }
+
+  public void putInMemory(final Container<AtomEntryImpl> container, final String relativePath)
+          throws IOException {
+    try {
+      final ODataServiceVersion serviceVersion =
+              version == ODataServiceVersion.V30 ? ODataServiceVersion.V30 : ODataServiceVersion.V40;
+
+      final AtomSerializer atomSerializer = Commons.getAtomSerializer(serviceVersion);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+
+      atomSerializer.write(writer, container);
+      writer.flush();
+
+      putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
+      content.reset();
+
+      final ObjectMapper mapper = Commons.getJsonMapper(serviceVersion);
+      mapper.writeValue(
+              writer, new JsonEntryContainer<JSONEntryImpl>(
+              container.getContextURL(),
+              container.getMetadataETag(),
+              (new DataBinder(version == ODataServiceVersion.V30 ? ODataServiceVersion.V30 : ODataServiceVersion.V40)).
+              getJsonEntry(container.getObject())));
+
+      putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
   }
 
   public InputStream readFile(final String relativePath) {
