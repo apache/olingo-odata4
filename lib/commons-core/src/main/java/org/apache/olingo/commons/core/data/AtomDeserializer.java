@@ -43,9 +43,13 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class AtomDeserializer extends AbstractAtomDealer {
 
-  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
+  protected static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
 
   private final AtomGeoValueDeserializer geoDeserializer;
+
+  protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
+    return FACTORY.createXMLEventReader(input);
+  }
 
   public AtomDeserializer(final ODataServiceVersion version) {
     super(version);
@@ -284,7 +288,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private Container<AtomPropertyImpl> property(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, property(reader, start));
   }
@@ -359,7 +363,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private Container<XMLLinkCollectionImpl> linkCollection(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, linkCollection(reader, start));
   }
@@ -545,7 +549,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private Container<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, entry(reader, start));
   }
@@ -615,7 +619,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private Container<AtomFeedImpl> feed(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, feed(reader, start));
   }
@@ -671,7 +675,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
   }
 
   private Container<XMLODataErrorImpl> error(final InputStream input) throws XMLStreamException {
-    final XMLEventReader reader = FACTORY.createXMLEventReader(input);
+    final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, error(reader, start));
   }

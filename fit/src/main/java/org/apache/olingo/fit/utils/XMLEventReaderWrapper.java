@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 
 public class XMLEventReaderWrapper implements XMLEventReader {
 
-  private static Charset encoding = Charset.forName("UTF-8");
+  private static final Charset ENCODING = Charset.forName("UTF-8");
 
   public final static String CONTENT = "CONTENT_TAG";
 
@@ -49,14 +49,14 @@ public class XMLEventReaderWrapper implements XMLEventReader {
     factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
     factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 
-    final CharsetDecoder decoder = encoding.newDecoder();
+    final CharsetDecoder decoder = ENCODING.newDecoder();
     decoder.onMalformedInput(CodingErrorAction.IGNORE);
     decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
 
-    InputStreamReader reader = new InputStreamReader(
+    final InputStreamReader reader = new InputStreamReader(
             new ByteArrayInputStream((XMLEventReaderWrapper.CONTENT_STAG
-            + IOUtils.toString(stream, encoding).replaceAll("^<\\?xml.*\\?>", "")
-            + XMLEventReaderWrapper.CONTENT_ETAG).getBytes(encoding)),
+            + IOUtils.toString(stream, ENCODING).replaceAll("^<\\?xml.*\\?>", "")
+            + XMLEventReaderWrapper.CONTENT_ETAG).getBytes(ENCODING)),
             decoder);
 
     this.wrapped = factory.createXMLEventReader(reader);

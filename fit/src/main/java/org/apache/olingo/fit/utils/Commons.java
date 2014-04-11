@@ -42,10 +42,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomDeserializer;
 import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
 import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +57,8 @@ public abstract class Commons {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
 
-  private static Map<ODataServiceVersion, AtomDeserializer> atomDeserializer =
-          new EnumMap<ODataServiceVersion, AtomDeserializer>(ODataServiceVersion.class);
+  private static Map<ODataServiceVersion, FITAtomDeserializer> atomDeserializer =
+          new EnumMap<ODataServiceVersion, FITAtomDeserializer>(ODataServiceVersion.class);
 
   private static Map<ODataServiceVersion, AtomSerializer> atomSerializer =
           new EnumMap<ODataServiceVersion, AtomSerializer>(ODataServiceVersion.class);
@@ -91,9 +91,9 @@ public abstract class Commons {
     mediaContent.put("Car/Photo", null);
   }
 
-  public static AtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
+  public static FITAtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
     if (!atomDeserializer.containsKey(version)) {
-      atomDeserializer.put(version, new AtomDeserializer(version));
+      atomDeserializer.put(version, new FITAtomDeserializer(version));
     }
     return atomDeserializer.get(version);
   }
@@ -128,10 +128,7 @@ public abstract class Commons {
 
   public static Metadata getMetadata(final ODataServiceVersion version) {
     if (!metadata.containsKey(version)) {
-      final InputStream is = Commons.class.getResourceAsStream(
-              File.separatorChar
-              + version.name()
-              + File.separatorChar + "metadata.xml");
+      final InputStream is = Commons.class.getResourceAsStream("/" + version.name() + "/metadata.xml");
 
       metadata.put(version, new Metadata(is));
     }
@@ -178,7 +175,7 @@ public abstract class Commons {
     try {
       return FSManager.instance(version)
               .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-              + File.separatorChar + linkName, accept);
+                      + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }

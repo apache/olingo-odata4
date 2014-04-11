@@ -54,7 +54,7 @@ public class Metadata extends AbstractMetadataElement {
 
       try {
         while (reader.hasNext()) {
-          XMLEvent event = reader.nextEvent();
+          final XMLEvent event = reader.nextEvent();
 
           if (event.isStartElement() && event.asStartElement().getName().equals(new QName("Schema"))) {
             final Schema schema = getSchema(event.asStartElement(), reader);

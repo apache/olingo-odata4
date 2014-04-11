@@ -24,7 +24,6 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.data.AtomDeserializer;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -89,6 +88,7 @@ import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.AbstractXMLUtilities;
@@ -196,7 +196,7 @@ public abstract class AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -243,8 +243,7 @@ public abstract class AbstractServices {
       InputStream res =
               util.patchEntity(entitySetName, entityId, IOUtils.toInputStream(changes), acceptType, ifMatch);
 
-
-      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
 
       final ObjectMapper mapper = Commons.getJsonMapper(version);
 
@@ -308,7 +307,7 @@ public abstract class AbstractServices {
         res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
       }
 
-      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
       final ObjectMapper mapper = Commons.getJsonMapper(version);
 
       final Container<AtomEntryImpl> cres;
@@ -367,7 +366,7 @@ public abstract class AbstractServices {
 
       utils = getUtilities(acceptType);
 
-      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
       final ObjectMapper mapper = Commons.getJsonMapper(version);
 
@@ -415,7 +414,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-          });
+                  });
 
           entry = (new DataBinder(version)).
                   getAtomEntry(jcontainer.getObject());
@@ -488,13 +487,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -546,9 +545,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -662,7 +661,7 @@ public abstract class AbstractServices {
 
         final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
 
-        final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+        final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
         final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
         final Container<Feed> container = atomDeserializer.read(feed, AtomFeedImpl.class);
 
@@ -680,7 +679,7 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                  (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
+                          (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
         }
 
         return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
@@ -780,7 +779,7 @@ public abstract class AbstractServices {
 
       InputStream entity = entityInfo.getValue();
 
-      final AtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+      final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
 
       final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(entity, AtomEntryImpl.class);
@@ -865,7 +864,7 @@ public abstract class AbstractServices {
         final ObjectMapper mapper = Commons.getJsonMapper(version);
         mapper.writeValue(
                 writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                        (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
       }
 
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
