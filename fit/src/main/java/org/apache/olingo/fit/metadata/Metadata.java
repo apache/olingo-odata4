@@ -127,10 +127,10 @@ public class Metadata extends AbstractMetadataElement {
   }
 
   public EntityType getEntityType(final String fqn) {
-    int lastDotIndex = fqn.lastIndexOf('.');
+    final int lastDotIndex = fqn.lastIndexOf('.');
     final String ns = fqn.substring(0, lastDotIndex).replaceAll("^#", "");
     final String name = fqn.substring(lastDotIndex + 1);
-    return getSchema(ns).getEntityType(name);
+    return getSchema(ns) == null ? null : getSchema(ns).getEntityType(name);
   }
 
   public Map<String, NavigationProperty> getNavigationProperties(final String entitySetName) {

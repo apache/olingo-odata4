@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/" 
+      xmlns="http://www.w3.org/2005/Atom" 
+      xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" 
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
+      xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row</id>
+  <title type="text">Row</title>
+  <updated>2014-04-11T13:23:54Z</updated>
+  <link rel="self" title="Row" href="Row"/>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'432f0da9-806e-4a2f-b708-dbd1c57a1c21')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'432f0da9-806e-4a2f-b708-dbd1c57a1c21')/Microsoft.Test.OData.Services.OpenTypesService.IndexedRow"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">432f0da9-806e-4a2f-b708-dbd1c57a1c21</d:Id>
+        <d:Name>Chris</d:Name>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'02d5d465-edb3-4169-9176-89dd7c86535e')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'02d5d465-edb3-4169-9176-89dd7c86535e')/Microsoft.Test.OData.Services.OpenTypesService.IndexedRow"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">02d5d465-edb3-4169-9176-89dd7c86535e</d:Id>
+        <d:Description>Excellent</d:Description>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'8f59bcb4-1bed-4b91-ab74-44628f57f160')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'8f59bcb4-1bed-4b91-ab74-44628f57f160')/Microsoft.Test.OData.Services.OpenTypesService.IndexedRow"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">8f59bcb4-1bed-4b91-ab74-44628f57f160</d:Id>
+        <d:Count m:type="Edm.Int32">1</d:Count>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'5dcbef86-a002-4121-8087-f6160fe9a1ed')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'5dcbef86-a002-4121-8087-f6160fe9a1ed')/Microsoft.Test.OData.Services.OpenTypesService.IndexedRow"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">5dcbef86-a002-4121-8087-f6160fe9a1ed</d:Id>
+        <d:Occurred m:type="Edm.DateTimeOffset">2001-04-05T05:05:05.001+00:01</d:Occurred>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'71f7d0dc-ede4-45eb-b421-555a2aa1e58f')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.Row" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'71f7d0dc-ede4-45eb-b421-555a2aa1e58f')"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">71f7d0dc-ede4-45eb-b421-555a2aa1e58f</d:Id>
+        <d:Double m:type="Edm.Double">1.2626</d:Double>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'672b8250-1e6e-4785-80cf-b94b572e42b3')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.Row" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'672b8250-1e6e-4785-80cf-b94b572e42b3')"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">672b8250-1e6e-4785-80cf-b94b572e42b3</d:Id>
+        <d:Decimal m:type="Edm.Decimal">1.26</d:Decimal>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'814d505b-6b6a-45a0-9de0-153b16149d56')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.Row" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'814d505b-6b6a-45a0-9de0-153b16149d56')"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">814d505b-6b6a-45a0-9de0-153b16149d56</d:Id>
+        <d:Date m:type="Edm.DateTime">1999-02-04T00:00:00</d:Date>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'2e4904b4-00b0-4e37-9f44-b99a6b208dba')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.Row" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'2e4904b4-00b0-4e37-9f44-b99a6b208dba')"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">2e4904b4-00b0-4e37-9f44-b99a6b208dba</d:Id>
+        <d:GeomPolygon m:type="Edm.GeometryPolygon">
+          <gml:Polygon gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0"/>
+        </d:GeomPolygon>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'5a76c54e-4553-4bf6-8592-04cbcbfb1e65')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.Row" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'5a76c54e-4553-4bf6-8592-04cbcbfb1e65')"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">5a76c54e-4553-4bf6-8592-04cbcbfb1e65</d:Id>
+      </m:properties>
+    </content>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/OpenType.svc/Row(guid'9f9c963b-5c2f-4e39-8bec-b45d19c5dc85')</id>
+    <category term="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" title="Row" href="Row(guid'9f9c963b-5c2f-4e39-8bec-b45d19c5dc85')/Microsoft.Test.OData.Services.OpenTypesService.IndexedRow"/>
+    <title/>
+    <updated>2014-04-11T13:23:54Z</updated>
+    <author>
+      <name/>
+    </author>
+    <content type="application/xml">
+      <m:properties>
+        <d:Id m:type="Edm.Guid">9f9c963b-5c2f-4e39-8bec-b45d19c5dc85</d:Id>
+      </m:properties>
+    </content>
+  </entry>
+</feed>

@@ -162,6 +162,11 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
       return setType(EdmPrimitiveTypeKind.Guid).setValue(value).build();
     }
 
+    @Override
+    public ODataPrimitiveValue buildBinary(final byte[] value) {
+      return setType(EdmPrimitiveTypeKind.Binary).setValue(value).build();
+    }
+
   }
 
   /**

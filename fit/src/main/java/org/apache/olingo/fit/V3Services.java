@@ -88,18 +88,6 @@ public class V3Services extends AbstractServices {
     return getMetadata("large" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
   }
 
-  /**
-   * Provide sample large metadata.
-   *
-   * @return metadata.
-   */
-  @GET
-  @Path("/openType/$metadata")
-  @Produces(MediaType.APPLICATION_XML)
-  public Response getOpenTypeMetadata() {
-    return getMetadata("openType" + StringUtils.capitalize(Constants.get(version, ConstantKey.METADATA)));
-  }
-
   @Override
   protected void setInlineCount(final Feed feed, final String count) {
     if ("allpages".equals(count)) {

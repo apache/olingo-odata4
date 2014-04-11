@@ -123,8 +123,13 @@ public abstract class AbstractServices {
       this.xml = new org.apache.olingo.fit.utils.v4.XMLUtilities();
       this.json = new org.apache.olingo.fit.utils.v4.JSONUtilities();
     }
+  }
 
-    metadata = Commons.getMetadata(version);
+  protected Metadata getMetadataObj() {
+    if (metadata == null) {
+      metadata = Commons.getMetadata(version);
+    }
+    return metadata;
   }
 
   /**
@@ -151,9 +156,9 @@ public abstract class AbstractServices {
   }
 
   /**
-   * Provide sample metadata.
+   * Provide sample getMetadata().
    *
-   * @return metadata.
+   * @return getMetadata().
    */
   @GET
   @Path("/$metadata")
@@ -372,7 +377,7 @@ public abstract class AbstractServices {
 
       final Container<AtomEntryImpl> container;
 
-      final EntitySet entitySet = metadata.getEntitySet(entitySetName);
+      final EntitySet entitySet = getMetadataObj().getEntitySet(entitySetName);
       final AtomEntryImpl entry;
 
       final String entityKey;
@@ -429,7 +434,7 @@ public abstract class AbstractServices {
       normalizeAtomEntry(entry, entitySetName, entityKey);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
       atomSerializer.write(writer, container);
       writer.flush();
       writer.close();
@@ -526,7 +531,7 @@ public abstract class AbstractServices {
               append(File.separatorChar).append(type).
               append(File.separatorChar);
 
-      path.append(metadata.getEntitySet(name).isSingleton()
+      path.append(getMetadataObj().getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -585,7 +590,7 @@ public abstract class AbstractServices {
               append(File.separatorChar).append(type).
               append(File.separatorChar);
 
-      path.append(metadata.getEntitySet(name).isSingleton()
+      path.append(getMetadataObj().getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -654,7 +659,7 @@ public abstract class AbstractServices {
           builder.append(Constants.get(version, ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
                   append(skiptoken);
         } else {
-          builder.append(metadata.getEntitySet(name).isSingleton()
+          builder.append(getMetadataObj().getEntitySet(name).isSingleton()
                   ? Constants.get(version, ConstantKey.ENTITY)
                   : Constants.get(version, ConstantKey.FEED));
         }
@@ -1616,8 +1621,8 @@ public abstract class AbstractServices {
   }
 
   private void normalizeAtomEntry(final AtomEntryImpl entry, final String entitySetName, final String entityKey) {
-    final EntitySet entitySet = metadata.getEntitySet(entitySetName);
-    final EntityType entityType = metadata.getEntityType(entitySet.getType());
+    final EntitySet entitySet = getMetadataObj().getEntitySet(entitySetName);
+    final EntityType entityType = getMetadataObj().getEntityType(entitySet.getType());
     for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property
             : entityType.getPropertyMap().entrySet()) {
       if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {

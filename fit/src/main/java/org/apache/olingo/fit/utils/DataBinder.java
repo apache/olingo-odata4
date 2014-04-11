@@ -20,6 +20,7 @@ package org.apache.olingo.fit.utils;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,7 @@ import org.apache.olingo.commons.core.data.JSONEntryImpl;
 import org.apache.olingo.commons.core.data.JSONFeedImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
+import org.apache.olingo.fit.metadata.EntityType;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 import org.springframework.beans.BeanUtils;
@@ -151,8 +153,10 @@ public class DataBinder {
       atomentry.getNavigationLinks().add(alink);
     }
 
-    final Map<String, NavigationProperty> navProperties =
-            metadata.getEntityType(jsonentry.getType()).getNavigationPropertyMap();
+    final EntityType entityType = StringUtils.isBlank(jsonentry.getType())
+            ? null : metadata.getEntityType(jsonentry.getType());
+    final Map<String, NavigationProperty> navProperties = entityType == null
+            ? Collections.<String, NavigationProperty>emptyMap() : entityType.getNavigationPropertyMap();
 
     final List<Property> properties = atomentry.getProperties();
 
@@ -239,18 +243,20 @@ public class DataBinder {
     if (StringUtils.isNotBlank(jsonproperty.getType())) {
       atomproperty.setType(jsonproperty.getType());
     } else {
-      atomproperty.setType(
-              Commons.getMetadata(version).getEntityType(entryType).getProperty(jsonproperty.getName()).getType());
+      final EntityType entityType = Commons.getMetadata(version).getEntityType(entryType);
+      if (entityType != null) {
+        atomproperty.setType(entityType.getProperty(jsonproperty.getName()).getType());
+      }
     }
 
-    if (jsonproperty.getValue() instanceof ComplexValueImpl) {
+    if (jsonproperty.getValue().isComplex()) {
       final ComplexValueImpl complex = new ComplexValueImpl();
       atomproperty.setValue(complex);
 
       for (Property field : jsonproperty.getValue().asComplex().get()) {
         complex.get().add(getAtomProperty((JSONPropertyImpl) field, atomproperty.getType()));
       }
-    } else if (jsonproperty.getValue() instanceof CollectionValueImpl) {
+    } else if (jsonproperty.getValue().isCollection()) {
       final CollectionValueImpl collection = new CollectionValueImpl();
       atomproperty.setValue(collection);
 

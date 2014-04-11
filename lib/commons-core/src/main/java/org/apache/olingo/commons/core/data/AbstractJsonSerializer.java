@@ -185,12 +185,17 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
 
   protected void property(final JsonGenerator jgen, final Property property, final String name) throws IOException {
     if (serverMode) {
-      jgen.writeFieldName(
-              name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
+      String type = property.getType();
+      if (StringUtils.isBlank(type)
+              && property.getValue().isPrimitive() || property.getValue().isNull()) {
 
-      jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(StringUtils.isBlank(property.getType())
-              ? EdmPrimitiveTypeKind.String.getFullQualifiedName().toString()
-              : property.getType()).build().external(version));
+        type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
+      }
+      if (StringUtils.isNotBlank(type)) {
+        jgen.writeFieldName(
+                name + StringUtils.prependIfMissing(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), "@"));
+        jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external(version));
+      }
     }
 
     jgen.writeFieldName(name);

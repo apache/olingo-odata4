@@ -624,6 +624,19 @@ public abstract class AbstractUtilities {
           }
         }
         sequence.put(entitySetName, Integer.valueOf(res));
+      } else if ("RowIndex".equals(entitySetName)) {
+        try {
+          final Map<String, InputStream> value =
+                  getPropertyValues(entity, Collections.<String>singletonList("Id"));
+          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
+        } catch (Exception e) {
+          if (sequence.containsKey(entitySetName)) {
+            res = String.valueOf(sequence.get(entitySetName) + 1);
+          } else {
+            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+          }
+        }
+        sequence.put(entitySetName, Integer.valueOf(res));
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }

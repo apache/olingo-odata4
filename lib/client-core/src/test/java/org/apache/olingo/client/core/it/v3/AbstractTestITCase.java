@@ -104,7 +104,7 @@ public abstract class AbstractTestITCase {
     testStaticServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/StaticService/V30/KeyAsSegment.svc";
     testActionOverloadingServiceRootURL = "http://localhost:9080/StaticService/V30/ActionOverloading.svc";
-    testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/openType";
+    testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V30/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V30/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
   }

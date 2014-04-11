@@ -68,7 +68,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
 
         link.setInlineEntry(inline.traverse(codec).<Container<JSONEntryImpl>>readValueAs(
                 new TypeReference<JSONEntryImpl>() {
-        }).getObject());
+                }).getObject());
       }
 
       if (inline instanceof ArrayNode) {
@@ -79,7 +79,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
         while (entries.hasNext()) {
           feed.getEntries().add(entries.next().traverse(codec).<Container<JSONEntryImpl>>readValuesAs(
                   new TypeReference<JSONEntryImpl>() {
-          }).next().getObject());
+                  }).next().getObject());
         }
 
         link.setInlineFeed(feed);
@@ -162,11 +162,19 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<Cont
   protected EdmPrimitiveTypeKind getPrimitiveType(final JsonNode node) {
     EdmPrimitiveTypeKind result = EdmPrimitiveTypeKind.String;
 
-    if (node.isIntegralNumber()) {
+    if (node.isShort()) {
+      result = EdmPrimitiveTypeKind.Int16;
+    } else if (node.isIntegralNumber()) {
       result = EdmPrimitiveTypeKind.Int32;
+    } else if (node.isLong()) {
+      result = EdmPrimitiveTypeKind.Int64;
+    } else if (node.isBigDecimal()) {
+      result = EdmPrimitiveTypeKind.Decimal;
     } else if (node.isBoolean()) {
       result = EdmPrimitiveTypeKind.Boolean;
-    } else if (node.isFloatingPointNumber()) {
+    } else if (node.isFloat()) {
+      result = EdmPrimitiveTypeKind.Single;
+    } else if (node.isDouble()) {
       result = EdmPrimitiveTypeKind.Double;
     }
 

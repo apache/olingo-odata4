@@ -49,6 +49,8 @@ public interface ODataPrimitiveValue extends ODataValue {
     ODataPrimitiveValue buildString(String value);
 
     ODataPrimitiveValue buildGuid(UUID value);
+
+    ODataPrimitiveValue buildBinary(byte[] value);
   }
 
   EdmPrimitiveTypeKind getTypeKind();
