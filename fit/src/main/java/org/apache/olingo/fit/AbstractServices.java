@@ -663,7 +663,7 @@ public abstract class AbstractServices {
 
         final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
         final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
-        final Container<Feed> container = atomDeserializer.read(feed, AtomFeedImpl.class);
+        final Container<AtomFeedImpl> container = atomDeserializer.read(feed, AtomFeedImpl.class);
 
         setInlineCount(container.getObject(), count);
 
@@ -679,7 +679,7 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                          (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
+                          new DataBinder(version).getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
