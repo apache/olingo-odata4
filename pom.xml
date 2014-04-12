@@ -46,14 +46,14 @@
     </license>
   </licenses>
 
-  <url>http://olingo.incubator.apache.org</url>
+  <url>http://olingo.apache.org</url>
 
   <mailingLists>
     <mailingList>
       <name>Apache Olingo Developers Mailinglist</name>
-      <archive>http://mail-archives.apache.org/mod_mbox/incubator-olingo-dev/</archive>
-      <post>mailto:dev@olingo.incubator.apache.org</post>
-      <subscribe>mailto:dev-subscribe@olingo.incubator.apache.org</subscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/olingo-dev/</archive>
+      <post>mailto:dev@olingo.apache.org</post>
+      <subscribe>mailto:dev-subscribe@olingo.apache.org</subscribe>
     </mailingList>
   </mailingLists>
 
