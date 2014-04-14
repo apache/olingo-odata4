@@ -59,7 +59,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     }
 
     final String timeZoneOffset = matcher.group(9) != null && matcher.group(10) != null
-                                  && !matcher.group(10).matches("[-+]0+:0+") ? matcher.group(10) : null;
+            && !matcher.group(10).matches("[-+]0+:0+") ? matcher.group(10) : null;
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
     if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
       throw new EdmPrimitiveTypeException(
@@ -90,8 +90,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
                 "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
       }
       final String milliSeconds = decimals.length() > 3
-                                  ? decimals.substring(0, 3)
-                                  : decimals + "000".substring(decimals.length());
+              ? decimals.substring(0, 3)
+              : decimals + "000".substring(decimals.length());
       dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
 
       if (!decimals.isEmpty()) {
@@ -143,6 +143,13 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       return returnType.cast(dateTimeValue.getTimeInMillis()); // may throw IllegalArgumentException
     } else if (returnType.isAssignableFrom(Date.class)) {
       return returnType.cast(dateTimeValue.getTime()); // may throw IllegalArgumentException
+    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+      final Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis()); // may throw IllegalArgumentException
+      if (dateTimeValue.get(Calendar.MILLISECOND) > 0) {
+        timestamp.setNanos(dateTimeValue.get(Calendar.MILLISECOND));  // may throw IllegalArgumentException
+      }
+
+      return returnType.cast(timestamp);
     } else {
       throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
     }
@@ -192,7 +199,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     }
 
     final int offsetInMinutes = (dateTimeValue.get(Calendar.ZONE_OFFSET)
-                                 + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
+            + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
     final int offsetHours = offsetInMinutes / 60;
     final int offsetMinutes = Math.abs(offsetInMinutes % 60);
     final String offsetString = offsetInMinutes == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);

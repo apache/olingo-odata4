@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="Microsoft.Test.OData.Services.ODataWCFService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EnumType Name="Color">
+        <Member Name="Red" Value="1"/>
+        <Member Name="Green" Value="2"/>
+        <Member Name="Blue" Value="4"/>
+      </EnumType>
+      <ComplexType Name="ContactDetails">
+        <Property Name="FirstContacted" Type="Edm.Binary"/>
+        <Property Name="LastContacted" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Contacted" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="GUID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="PreferedContactTime" Type="Edm.Time" Nullable="false"/>
+        <Property Name="Byte" Type="Edm.Byte" Nullable="false"/>
+        <Property Name="SignedByte" Type="Edm.SByte" Nullable="false"/>
+        <Property Name="Double" Type="Edm.Double" Nullable="false"/>
+        <Property Name="Single" Type="Edm.Single" Nullable="false"/>
+        <Property Name="Short" Type="Edm.Int16" Nullable="false"/>
+        <Property Name="Int" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Long" Type="Edm.Int64" Nullable="false"/>
+      </ComplexType>
+      <EntityType Name="Row" OpenType="true">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Row" OpenType="true"/>
+      <EntityType Name="RowIndex" OpenType="true">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Rows" Type="Microsoft.Test.OData.Services.ODataWCFService.Row" Nullable="false"/>
+      </EntityType>
+      <EntityContainer Name="DefaultContainer">
+        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Row">
+          <NavigationPropertyBinding Path="Rows" Target="Row"/>
+        </EntitySet>
+        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.ODataWCFService.RowIndex"/>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

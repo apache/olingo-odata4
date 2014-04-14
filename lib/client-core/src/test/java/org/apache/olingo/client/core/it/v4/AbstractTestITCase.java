@@ -18,9 +18,17 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
+import java.net.URI;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +41,8 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testOpenTypeServiceRootURL;
+
   protected static String testLargeModelServiceRootURL;
 
   protected static String testAuthServiceRootURL;
@@ -40,6 +50,7 @@ public abstract class AbstractTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc";
+    testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
   }
@@ -51,5 +62,21 @@ public abstract class AbstractTestITCase {
 
   protected ODataClient getClient() {
     return client;
+  }
+
+  protected ODataEntity read(final ODataPubFormat format, final URI editLink) {
+    final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
+    req.setFormat(format);
+
+    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataEntity entity = res.getBody();
+
+    assertNotNull(entity);
+
+    if (ODataPubFormat.JSON_FULL_METADATA == format || ODataPubFormat.ATOM == format) {
+      assertEquals(req.getURI(), entity.getEditLink());
+    }
+
+    return entity;
   }
 }

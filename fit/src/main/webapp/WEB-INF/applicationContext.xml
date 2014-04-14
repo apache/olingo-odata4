@@ -46,6 +46,7 @@
       <bean class="org.apache.olingo.fit.V4Services"/>
       <bean class="org.apache.olingo.fit.V4NorthWind"/>
       <bean class="org.apache.olingo.fit.V4NorthWindExt"/>
+      <bean class="org.apache.olingo.fit.V4OpenType"/>
     </jaxrs:serviceBeans>
     <jaxrs:providers>
       <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
