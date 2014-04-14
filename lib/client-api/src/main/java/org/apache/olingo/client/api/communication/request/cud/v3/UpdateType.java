@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.client.api.communication.request.cud.v3;
 
+import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.http.HttpMethod;
 
 /**
  * Update type.
  */
-public enum UpdateType implements org.apache.olingo.client.api.communication.request.cud.UpdateType {
+public enum UpdateType implements CommonUpdateType {
 
   /**
    * Replace all and remove missing attributes.

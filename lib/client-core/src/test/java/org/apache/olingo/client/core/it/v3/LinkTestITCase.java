@@ -22,12 +22,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateRequest;
-import org.apache.olingo.client.api.communication.request.cud.ODataLinkUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.ODataLinkCollectionRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;

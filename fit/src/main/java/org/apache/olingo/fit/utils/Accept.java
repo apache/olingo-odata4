@@ -30,11 +30,11 @@ public enum Accept {
   XML(ContentType.APPLICATION_XML.getMimeType(), ".xml"),
   ATOM(ContentType.APPLICATION_ATOM_XML.getMimeType(), ".xml"),
   JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata=minimalmetadata",
-  ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal", ".full.json"),
+          ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal", ".full.json"),
   JSON_NOMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=nometadata",
-  ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none", ".full.json"),
+          ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none", ".full.json"),
   JSON_FULLMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata=fullmetadata",
-  ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full", ".full.json");
+          ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full", ".full.json");
 
   private final String contentTypeV3;
 
@@ -78,17 +78,19 @@ public enum Accept {
   public static Accept parse(final String contentType, final ODataServiceVersion version, final Accept def) {
     if (StringUtils.isBlank(contentType) || allTypesPattern.matcher(contentType).matches()) {
       return def;
-    } else if (JSON_NOMETA.toString(version).equals(contentType)) {
+    } else if (contentType.startsWith(JSON_NOMETA.toString(version))) {
       return JSON_NOMETA;
-    } else if (JSON.toString(version).equals(contentType) || "application/json".equals(contentType)) {
-      return JSON;
-    } else if (JSON_FULLMETA.toString(version).equals(contentType)) {
+    } else if (contentType.startsWith(JSON_FULLMETA.toString(version))) {
       return JSON_FULLMETA;
-    } else if (XML.toString(version).equals(contentType)) {
+    } else if (contentType.startsWith(JSON.toString(version))
+            || contentType.startsWith(ContentType.APPLICATION_JSON.getMimeType())) {
+
+      return JSON;
+    } else if (contentType.startsWith(XML.toString(version))) {
       return XML;
-    } else if (ATOM.toString(version).equals(contentType)) {
+    } else if (contentType.startsWith(ATOM.toString(version))) {
       return ATOM;
-    } else if (TEXT.toString(version).equals(contentType)) {
+    } else if (contentType.startsWith(TEXT.toString(version))) {
       return TEXT;
     } else {
       throw new UnsupportedMediaTypeException("Unsupported media type");

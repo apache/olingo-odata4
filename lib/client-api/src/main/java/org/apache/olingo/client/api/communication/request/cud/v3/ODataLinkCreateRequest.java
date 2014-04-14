@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.cud;
+package org.apache.olingo.client.api.communication.request.cud.v3;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;

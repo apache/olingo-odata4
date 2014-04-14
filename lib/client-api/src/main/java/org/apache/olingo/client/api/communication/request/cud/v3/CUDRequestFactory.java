@@ -18,7 +18,34 @@
  */
 package org.apache.olingo.client.api.communication.request.cud.v3;
 
+import java.net.URI;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
+import org.apache.olingo.commons.api.domain.ODataLink;
 
-public interface CUDRequestFactory extends CommonCUDRequestFactory {
+public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
+
+  /**
+   * Gets an add link request object instance.
+   * <br/>
+   * Use this kind of request to create a navigation link between existing entities.
+   *
+   * @param targetURI navigation property's link collection.
+   * @param link navigation link to be added.
+   * @return new ODataLinkCreateRequest instance.
+   */
+  ODataLinkCreateRequest getLinkCreateRequest(URI targetURI, ODataLink link);
+
+  /**
+   * Gets a link update request object instance.
+   * <br/>
+   * Use this kind of request to update a navigation link between existing entities.
+   * <br/>
+   * In case of the old navigation link doesn't exist the new one will be added as well.
+   *
+   * @param targetURI navigation property's link collection.
+   * @param type type of update to be performed.
+   * @param link URL that identifies the entity to be linked.
+   * @return new ODataLinkUpdateRequest instance.
+   */
+  ODataLinkUpdateRequest getLinkUpdateRequest(URI targetURI, UpdateType type, ODataLink link);
 }

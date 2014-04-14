@@ -144,12 +144,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     } else if (returnType.isAssignableFrom(Date.class)) {
       return returnType.cast(dateTimeValue.getTime()); // may throw IllegalArgumentException
     } else if (returnType.isAssignableFrom(Timestamp.class)) {
-      final Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis()); // may throw IllegalArgumentException
-      if (dateTimeValue.get(Calendar.MILLISECOND) > 0) {
-        timestamp.setNanos(dateTimeValue.get(Calendar.MILLISECOND));  // may throw IllegalArgumentException
-      }
-
-      return returnType.cast(timestamp);
+      return returnType.cast(new Timestamp(dateTimeValue.getTimeInMillis()));
     } else {
       throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
     }

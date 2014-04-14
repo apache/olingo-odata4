@@ -56,7 +56,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param uri URI of the entity to be updated.
    * @param changes changes to be applied.
    */
-  ODataEntityUpdateRequestImpl(final CommonODataClient odataClient,
+  public ODataEntityUpdateRequestImpl(final CommonODataClient odataClient,
           final HttpMethod method, final URI uri, final CommonODataEntity changes) {
 
     super(odataClient, ODataPubFormat.class, method, uri);

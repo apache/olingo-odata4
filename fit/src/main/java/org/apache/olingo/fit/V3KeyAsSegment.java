@@ -105,13 +105,15 @@ public class V3KeyAsSegment {
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response mergeEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
           final String changes) {
 
-    return replaceServiceName(services.patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes));
+    return replaceServiceName(
+            services.patchEntity(accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PATCH
@@ -120,13 +122,15 @@ public class V3KeyAsSegment {
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response patchEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
           final String changes) {
 
-    return replaceServiceName(services.patchEntity(accept, prefer, ifMatch, entitySetName, entityId, changes));
+    return replaceServiceName(
+            services.patchEntity(accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PUT
@@ -135,12 +139,14 @@ public class V3KeyAsSegment {
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response putNewEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
           final String entity) {
 
-    return replaceServiceName(services.replaceEntity(accept, prefer, entitySetName, entityId, entity));
+    return replaceServiceName(
+            services.replaceEntity(accept, contentType, prefer, entitySetName, entityId, entity));
   }
 
   @POST

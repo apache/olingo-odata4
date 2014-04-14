@@ -21,6 +21,7 @@ package org.apache.olingo.client.api.v4;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
@@ -31,7 +32,7 @@ import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 
-public interface ODataClient extends CommonODataClient {
+public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
   Configuration getConfiguration();

@@ -18,8 +18,11 @@
  */
 package org.apache.olingo.fit;
 
+import javax.ws.rs.NotFoundException;
 import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -41,4 +44,39 @@ public class V4Services extends AbstractServices {
       feed.setCount(feed.getEntries().size());
     }
   }
+
+  @Override
+  public Response patchEntity(
+          final String accept,
+          final String contentType,
+          final String prefer,
+          final String ifMatch,
+          final String entitySetName,
+          final String entityId, 
+          final String changes) {
+
+    final Response response =
+            getEntityInternal(accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+    return response.getStatus() >= 400
+            ? postNewEntity(accept, contentType, prefer, entitySetName, changes)
+            : super.patchEntity(accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
+  }
+
+  @Override
+  public Response replaceEntity(
+          final String accept,
+          final String contentType,
+          final String prefer,
+          final String entitySetName,
+          final String entityId,
+          final String entity) {
+
+    try {
+      getEntityInternal(accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+      return super.replaceEntity(accept, contentType, prefer, entitySetName, entityId, entity);
+    } catch (NotFoundException e) {
+      return postNewEntity(accept, contentType, prefer, entitySetName, entityId);
+    }
+  }
+
 }

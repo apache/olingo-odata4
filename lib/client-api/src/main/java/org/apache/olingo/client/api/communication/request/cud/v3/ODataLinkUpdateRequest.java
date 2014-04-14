@@ -16,16 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.cud;
+package org.apache.olingo.client.api.communication.request.cud.v3;
 
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
+import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
+import org.apache.olingo.commons.api.format.ODataFormat;
 
-public interface UpdateType {
-
-  /**
-   * Gets HTTP request method.
-   *
-   * @return HTTP request method.
-   */
-  HttpMethod getMethod();
+/**
+ * This class implements an update link OData request.
+ */
+public interface ODataLinkUpdateRequest extends ODataBasicRequest<ODataLinkOperationResponse, ODataFormat> {
 }

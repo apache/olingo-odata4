@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.communication.request.cud;
+package org.apache.olingo.client.core.communication.request.cud.v3;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -26,7 +26,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.cud.ODataLinkCreateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.format.ODataFormat;

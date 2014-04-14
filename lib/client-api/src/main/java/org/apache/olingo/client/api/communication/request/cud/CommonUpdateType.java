@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.client.api.communication.request.cud;
 
-import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
-import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.client.api.http.HttpMethod;
 
-/**
- * This class implements an update link OData request.
- */
-public interface ODataLinkUpdateRequest extends ODataBasicRequest<ODataLinkOperationResponse, ODataFormat> {
+public interface CommonUpdateType {
+
+  /**
+   * Gets HTTP request method.
+   *
+   * @return HTTP request method.
+   */
+  HttpMethod getMethod();
 }

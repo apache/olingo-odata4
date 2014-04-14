@@ -19,10 +19,11 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.op.ODataWriter;
 import org.apache.olingo.client.core.op.ODataWriterImpl;
 
-public abstract class AbstractODataClient implements CommonODataClient {
+public abstract class AbstractODataClient<UT extends CommonUpdateType> implements CommonODataClient<UT> {
 
   private static final long serialVersionUID = 7269096702397630265L;
 

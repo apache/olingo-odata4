@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.batch.v3.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFactory;
+import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory;
@@ -50,7 +51,7 @@ import org.apache.olingo.commons.api.domain.v3.ODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.domain.v3.ODataObjectFactoryImpl;
 
-public class ODataClientImpl extends AbstractODataClient implements ODataClient {
+public class ODataClientImpl extends AbstractODataClient<UpdateType> implements ODataClient {
 
   private static final long serialVersionUID = -1655712193243609209L;
 
@@ -137,6 +138,7 @@ public class ODataClientImpl extends AbstractODataClient implements ODataClient 
     return retrieveReqFact;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public CUDRequestFactory getCUDRequestFactory() {
     return cudReqFact;
