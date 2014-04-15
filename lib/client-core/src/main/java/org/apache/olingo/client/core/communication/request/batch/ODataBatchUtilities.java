@@ -148,8 +148,7 @@ public class ODataBatchUtilities {
         }
 
       } else {
-        for (int i = 0;
-                controller.isValidBatch() && controller.getBatchLineIterator().hasNext() && i < count; i++) {
+        for (int i = 0; controller.isValidBatch() && controller.getBatchLineIterator().hasNext() && i < count; i++) {
           currentLine = controller.getBatchLineIterator().nextLine();
         }
       }

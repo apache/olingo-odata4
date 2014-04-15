@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.fit;
 
-import org.apache.olingo.commons.api.data.Container;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -33,24 +33,28 @@ import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.DataBinder;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.Header;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -65,12 +69,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
@@ -81,13 +93,13 @@ import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.fit.metadata.EntitySet;
 import org.apache.olingo.fit.metadata.EntityType;
 import org.apache.olingo.fit.metadata.NavigationProperty;
+import org.apache.olingo.fit.methods.MERGE;
+import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.FSManager;
 
 import org.apache.olingo.fit.utils.Commons;
-import org.apache.olingo.fit.methods.MERGE;
-import org.apache.olingo.fit.methods.PATCH;
-import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.AbstractXMLUtilities;
@@ -101,6 +113,10 @@ public abstract class AbstractServices {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
+
+  private Pattern requestPatter = Pattern.compile("(.*) (http://.*) HTTP/.*");
+
+  private static final String boundary = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
 
@@ -172,6 +188,197 @@ public abstract class AbstractServices {
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
+  }
+
+  @POST
+  @Path("/$batch")
+  @Consumes("multipart/mixed")
+  @Produces("application/octet-stream; boundary=" + boundary)
+  public Response batch(final @Multipart MultipartBody attachment) {
+    try {
+      return xml.createBatchResponse(exploreMultipart(attachment.getAllAttachments(), boundary), boundary);
+    } catch (IOException e) {
+      return xml.createFaultResponse(Accept.XML.toString(version), e);
+    }
+  }
+
+  private Response bodyPartRequest(final MimeBodyPart body) throws Exception {
+
+    @SuppressWarnings("unchecked")
+    final Enumeration<Header> en = (Enumeration<Header>) body.getAllHeaders();
+
+    Header header = en.nextElement();
+    final String request = header.getName() + ":" + header.getValue();
+    final Matcher matcher = requestPatter.matcher(request);
+
+    if (matcher.find()) {
+      final MultivaluedMap<String, String> headers = new MultivaluedHashMap<String, String>();
+
+      while (en.hasMoreElements()) {
+        header = en.nextElement();
+        headers.putSingle(header.getName(), header.getValue());
+      }
+
+      String method = matcher.group(1);
+      if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        headers.putSingle("X-HTTP-METHOD", method);
+        method = "POST";
+      }
+
+      final String url = matcher.group(2);
+
+      final WebClient client = WebClient.create(url);
+
+      client.headers(headers);
+
+      return client.invoke(method, body.getDataHandler().getInputStream());
+    } else {
+      return null;
+    }
+  }
+
+  public InputStream exploreMultipart(final List<Attachment> attachments, final String boundary) throws IOException {
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+    Response res = null;
+    try {
+      for (Attachment obj : attachments) {
+        bos.write(("--" + boundary).getBytes());
+        bos.write(Constants.CRLF);
+
+        final Object content = obj.getDataHandler().getContent();
+        if (content instanceof MimeMultipart) {
+          final String cboundary = "changeset_" + UUID.randomUUID().toString();
+          bos.write(("Content-Type: multipart/mixed;boundary=" + cboundary).getBytes());
+          bos.write(Constants.CRLF);
+          bos.write(Constants.CRLF);
+
+          final ByteArrayOutputStream chbos = new ByteArrayOutputStream();
+          String lastContebtID = null;
+          try {
+            for (int i = 0; i < ((MimeMultipart) content).getCount(); i++) {
+              final MimeBodyPart part = (MimeBodyPart) ((MimeMultipart) content).getBodyPart(i);
+              lastContebtID = part.getContentID();
+              addChangesetItemIntro(chbos, lastContebtID, cboundary);
+
+              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()));
+              if (res.getStatus() > 400) {
+                throw new Exception("Failure processing changeset");
+              }
+
+              addSingleBatchResponse(res, lastContebtID, chbos);
+            }
+            bos.write(chbos.toByteArray());
+            IOUtils.closeQuietly(chbos);
+
+            bos.write(("--" + cboundary + "--").getBytes());
+            bos.write(Constants.CRLF);
+          } catch (Exception e) {
+            LOG.warn("While processing changeset", e);
+            IOUtils.closeQuietly(chbos);
+
+            addChangesetItemIntro(bos, lastContebtID, cboundary);
+            if (res == null || res.getStatus() < 400) {
+              addErrorBatchResponse(e, "1", bos);
+            } else {
+              addSingleBatchResponse(res, lastContebtID, bos);
+            }
+
+            bos.write(("--" + cboundary + "--").getBytes());
+            bos.write(Constants.CRLF);
+          }
+        } else {
+          addItemIntro(bos);
+
+          res = bodyPartRequest(new MimeBodyPart(obj.getDataHandler().getInputStream()));
+
+          if (res.getStatus() > 400) {
+            throw new Exception("Failure processing changeset");
+          }
+
+          addSingleBatchResponse(res, bos);
+        }
+      }
+    } catch (Exception e) {
+      if (res == null || res.getStatus() < 400) {
+        addErrorBatchResponse(e, bos);
+      } else {
+        addSingleBatchResponse(res, bos);
+      }
+    }
+
+    bos.write(("--" + boundary + "--").getBytes());
+
+    return new ByteArrayInputStream(bos.toByteArray());
+  }
+
+  private void addItemIntro(final ByteArrayOutputStream bos) throws IOException {
+    bos.write("Content-Type: application/http".getBytes());
+    bos.write(Constants.CRLF);
+    bos.write("Content-Transfer-Encoding: binary".getBytes());
+    bos.write(Constants.CRLF);
+    bos.write(Constants.CRLF);
+  }
+
+  private void addChangesetItemIntro(
+          final ByteArrayOutputStream bos, final String contentId, final String cboundary) throws IOException {
+    bos.write(("--" + cboundary).getBytes());
+    bos.write(Constants.CRLF);
+    bos.write(("Content-ID: " + contentId).getBytes());
+    bos.write(Constants.CRLF);
+    addItemIntro(bos);
+  }
+
+  private void addSingleBatchResponse(
+          final Response response, final ByteArrayOutputStream bos) throws IOException {
+    addSingleBatchResponse(response, null, bos);
+  }
+
+  private void addSingleBatchResponse(
+          final Response response, final String contentId, final ByteArrayOutputStream bos) throws IOException {
+    bos.write("HTTP/1.1 ".getBytes());
+    bos.write(String.valueOf(response.getStatusInfo().getStatusCode()).getBytes());
+    bos.write(" ".getBytes());
+    bos.write(response.getStatusInfo().getReasonPhrase().getBytes());
+    bos.write(Constants.CRLF);
+
+    for (Map.Entry<String, List<Object>> header : response.getHeaders().entrySet()) {
+      StringBuilder builder = new StringBuilder();
+      for (Object value : header.getValue()) {
+        if (builder.length() > 0) {
+          builder.append(", ");
+        }
+        builder.append(value.toString());
+      }
+      builder.insert(0, ": ").insert(0, header.getKey());
+      bos.write(builder.toString().getBytes());
+      bos.write(Constants.CRLF);
+    }
+
+    if (StringUtils.isNotBlank(contentId)) {
+      bos.write(("Content-ID: " + contentId).getBytes());
+      bos.write(Constants.CRLF);
+    }
+
+    bos.write(Constants.CRLF);
+
+    final Object entity = response.getEntity();
+    if (entity != null) {
+      bos.write(IOUtils.toByteArray((InputStream) entity));
+      bos.write(Constants.CRLF);
+    }
+
+    bos.write(Constants.CRLF);
+  }
+
+  private void addErrorBatchResponse(final Exception e, final ByteArrayOutputStream bos)
+          throws IOException {
+    addErrorBatchResponse(e, null, bos);
+  }
+
+  private void addErrorBatchResponse(final Exception e, final String contentId, final ByteArrayOutputStream bos)
+          throws IOException {
+    addSingleBatchResponse(xml.createFaultResponse(Accept.XML.toString(version), e), contentId, bos);
   }
 
   @MERGE
@@ -386,7 +593,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                  });
+          });
 
           entry = (new DataBinder(version)).
                   getAtomEntry(jcontainer.getObject());
@@ -459,13 +666,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -517,9 +724,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -651,7 +858,7 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                          new DataBinder(version).getJsonFeed(container.getObject())));
+                  new DataBinder(version).getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
@@ -833,7 +1040,7 @@ public abstract class AbstractServices {
         final ObjectMapper mapper = Commons.getJsonMapper(version);
         mapper.writeValue(
                 writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                        (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
       }
 
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),

@@ -151,7 +151,8 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
   /**
    * Batch request payload management.
    */
-  public class BatchStreamManagerImpl extends AbstractODataStreamManager<ODataBatchResponse> {
+  public class BatchStreamManagerImpl extends AbstractODataStreamManager<ODataBatchResponse>
+          implements BatchStreamManager {
 
     /**
      * Batch request current item.
@@ -178,6 +179,7 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
      *
      * @return ODataChangeset instance.
      */
+    @Override
     public ODataChangeset addChangeset() {
       closeCurrentItem();
 
@@ -197,6 +199,7 @@ public class ODataBatchRequestImpl extends AbstractODataStreamedRequest<ODataBat
      *
      * @return ODataRetrieve instance.
      */
+    @Override
     public ODataRetrieve addRetrieve() {
       closeCurrentItem();
 

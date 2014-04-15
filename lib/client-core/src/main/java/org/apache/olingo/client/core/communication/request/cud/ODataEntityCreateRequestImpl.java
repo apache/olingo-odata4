@@ -25,7 +25,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -44,7 +43,7 @@ import org.apache.olingo.commons.api.data.Entry;
  */
 public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
         extends AbstractODataBasicRequest<ODataEntityCreateResponse<E>, ODataPubFormat>
-        implements ODataEntityCreateRequest<E>, ODataBatchableRequest {
+        implements ODataEntityCreateRequest<E> {
 
   /**
    * Entity to be created.

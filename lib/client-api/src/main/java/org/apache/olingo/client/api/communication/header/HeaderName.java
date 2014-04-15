@@ -59,7 +59,7 @@ public enum HeaderName {
    * <li>multipart/mixed</li>
    * </ul>
    */
-  contentType("Content-Type", Arrays.asList(ODataServiceVersion.V30)),
+  contentType("Content-Type", Arrays.asList(ODataServiceVersion.V30, ODataServiceVersion.V40)),
   /**
    * This header is a custom HTTP header defined for protocol versioning purposes. This header MAY be present on any
    * request or response message.

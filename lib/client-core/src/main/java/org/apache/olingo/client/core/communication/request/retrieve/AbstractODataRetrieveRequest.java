@@ -23,7 +23,6 @@ import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRetrieveRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.format.Format;
@@ -36,7 +35,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  */
 public abstract class AbstractODataRetrieveRequest<V, T extends Format>
         extends AbstractODataBasicRequest<ODataRetrieveResponse<V>, T>
-        implements ODataRetrieveRequest<V, T>, ODataBatchableRequest {
+        implements ODataRetrieveRequest<V, T> {
 
   /**
    * Private constructor.

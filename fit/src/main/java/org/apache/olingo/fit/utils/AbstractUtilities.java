@@ -60,6 +60,21 @@ public abstract class AbstractUtilities {
 
   protected final static Pattern entityUriPattern = Pattern.compile(".*\\/.*\\(.*\\)");
 
+  /**
+   * Batch/Changeset content type.
+   */
+  public static final String MULTIPART_CONTENT_TYPE = "multipart/mixed";
+
+  /**
+   * Batch item content type.
+   */
+  public static final String ITEM_CONTENT_TYPE = "application/http";
+
+  /**
+   * Boundary key.
+   */
+  public static final String BOUNDARY = "boundary";
+
   public AbstractUtilities(final ODataServiceVersion version) throws Exception {
     this.version = version;
     this.fsManager = FSManager.instance(version);
@@ -397,6 +412,13 @@ public abstract class AbstractUtilities {
   public Response createResponse(
           final InputStream entity, final String etag, final Accept accept) {
     return createResponse(entity, etag, accept, null);
+  }
+
+  public Response createBatchResponse(final InputStream stream, final String boundary) {
+
+    final Response.ResponseBuilder builder = Response.accepted(stream);
+    builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
+    return builder.build();
   }
 
   public Response createResponse(

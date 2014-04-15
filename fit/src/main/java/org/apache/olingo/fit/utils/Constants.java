@@ -29,6 +29,11 @@ public class Constants {
 
   private final static Map<ConstantKey, String> constants = new EnumMap<ConstantKey, String>(ConstantKey.class);
 
+  /**
+   * CR/LF.
+   */
+  public static final byte[] CRLF = {13, 10};
+
   public static Charset encoding = Charset.forName("UTF-8");
 
   static {
