@@ -662,6 +662,11 @@ public abstract class AbstractUtilities {
     return res;
   }
 
+  public String getLinksBasePath(final String entitySetName, final String entityId) {
+            return entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
+            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;    
+  }
+  
   /**
    * Retrieves entity links about the given link name.
    *
@@ -675,9 +680,7 @@ public abstract class AbstractUtilities {
           final String entitySetName, final String entityId, final String linkName, final Accept accept)
           throws Exception {
 
-    final String basePath =
-            entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
-            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
+    final String basePath = getLinksBasePath(entitySetName, entityId);
 
     final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
     linkInfo.setEtag(Commons.getETag(basePath, version));

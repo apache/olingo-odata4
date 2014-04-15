@@ -18,13 +18,10 @@
  */
 package org.apache.olingo.client.core.communication.request.cud.v4;
 
-import java.net.URI;
-import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.core.communication.request.cud.AbstractCUDRequestFactory;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 
 public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType>
         implements CUDRequestFactory {
@@ -33,14 +30,6 @@ public class CUDRequestFactoryImpl extends AbstractCUDRequestFactory<UpdateType>
 
   public CUDRequestFactoryImpl(final ODataClient client) {
     super(client);
-  }
-
-  @Override
-  public ODataEntityUpdateRequest getEntityUpsertRequest(
-          final UpdateType type, final URI uri, final ODataEntity entity) {
-    
-    entity.setEditLink(uri);
-    return super.getEntityUpdateRequest(type, entity);
   }
 
 }

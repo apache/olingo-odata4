@@ -52,7 +52,7 @@ public abstract class AbstractODataBasicRequest<V extends ODataResponse, T exten
    * @param method request method.
    * @param uri OData request URI.
    */
-  public AbstractODataBasicRequest(final CommonODataClient odataClient,
+  public AbstractODataBasicRequest(final CommonODataClient<?> odataClient,
           final Class<T> formatRef, final HttpMethod method, final URI uri) {
 
     super(odataClient, formatRef, method, uri);

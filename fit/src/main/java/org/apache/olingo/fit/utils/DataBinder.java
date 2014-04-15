@@ -91,7 +91,6 @@ public class DataBinder {
     jsonentry.setBaseURI(atomentry.getBaseURI() == null ? null : atomentry.getBaseURI().toASCIIString());
 
     for (Link link : atomentry.getNavigationLinks()) {
-
       final Link jlink = new LinkImpl();
       jlink.setHref(link.getHref());
       jlink.setTitle(link.getTitle());
@@ -99,13 +98,12 @@ public class DataBinder {
       jlink.setRel(link.getRel());
 
       if (link.getInlineEntry() instanceof AtomEntryImpl) {
-        Entry inlineEntry = link.getInlineEntry();
+        final Entry inlineEntry = link.getInlineEntry();
         if (inlineEntry instanceof AtomEntryImpl) {
           jlink.setInlineEntry(getJsonEntry((AtomEntryImpl) link.getInlineEntry()));
         }
       } else if (link.getInlineFeed() instanceof AtomFeedImpl) {
-
-        Feed inlineFeed = link.getInlineFeed();
+        final Feed inlineFeed = link.getInlineFeed();
         if (inlineFeed instanceof AtomFeedImpl) {
           jlink.setInlineFeed(getJsonFeed((AtomFeedImpl) link.getInlineFeed()));
         }

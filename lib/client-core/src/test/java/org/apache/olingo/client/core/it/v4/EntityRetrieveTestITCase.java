@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -55,7 +55,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void withInlineEntry(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().
@@ -63,7 +63,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
-    final CommonODataEntity entity = res.getBody();
+    final ODataEntity entity = res.getBody();
 
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
@@ -116,7 +116,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void withInlineFeed(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().
@@ -124,7 +124,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
-    final CommonODataEntity entity = res.getBody();
+    final ODataEntity entity = res.getBody();
     assertNotNull(entity);
 
     boolean found = false;
@@ -153,7 +153,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("People").appendKeySegment(5);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -185,14 +185,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     multiKey.put("ProductID", "6");
     multiKey.put("ProductDetailID", 1);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("ProductDetails").appendKeySegment(multiKey);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
-    final CommonODataEntity entity = res.getBody();
+    final ODataEntity entity = res.getBody();
     assertNotNull(entity);
     assertEquals(Integer.valueOf(1),
             entity.getProperty("ProductDetailID").getPrimitiveValue().toCastValue(Integer.class));
@@ -219,7 +219,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void checkForETag(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder =
+    final URIBuilder uriBuilder =
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Orders").appendKeySegment(8);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -231,13 +231,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final String etag = res.getEtag();
     assertTrue(StringUtils.isNotBlank(etag));
 
-    final CommonODataEntity order = res.getBody();
+    final ODataEntity order = res.getBody();
     assertEquals(etag, order.getETag());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void issue99() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Orders");
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.JSON);
@@ -258,7 +258,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   private void retrieveEntityViaReference(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
             appendRefSegment();
 
@@ -281,5 +281,29 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     res = req.execute();
     assertNotNull(res);
     assertNotNull(res.getBody());
+  }
+
+  private void contained(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+    final URI uri = getClient().getURIBuilder(getServiceRoot()).
+            appendEntitySetSegment("Accounts").appendKeySegment(101).
+            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101901).build();
+
+    final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
+    req.setFormat(format);
+
+    final ODataEntity contained = req.execute().getBody();
+    assertNotNull(contained);
+    assertEquals(101901,
+            contained.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
+  }
+
+  @Test
+  public void atomContained() throws EdmPrimitiveTypeException {
+    contained(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonContained() throws EdmPrimitiveTypeException {
+    contained(ODataPubFormat.JSON);
   }
 }

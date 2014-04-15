@@ -1,0 +1,34 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Accounts/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Account",
+  "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)",
+  "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)",
+  "AccountID": 101,
+  "Country": "US",
+  "AccountInfo": {
+    "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccountInfo",
+    "FirstName": "Alex",
+    "LastName": "Green",
+    "MiddleName": "Hood"
+  },
+  "MyGiftCard@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyGiftCard/$ref",
+  "MyGiftCard@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyGiftCard",
+  "MyPaymentInstruments@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments/$ref",
+  "MyPaymentInstruments@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments",
+  "ActiveSubscriptions@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/ActiveSubscriptions/$ref",
+  "ActiveSubscriptions@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/ActiveSubscriptions",
+  "AvailableSubscriptionTemplatess@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/AvailableSubscriptionTemplatess/$ref",
+  "AvailableSubscriptionTemplatess@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/AvailableSubscriptionTemplatess",
+  "#Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI",
+    "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI"
+  },
+  "#Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI",
+    "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI"
+  },
+  "#Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo": {
+    "title": "Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo",
+    "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo"
+  }
+}

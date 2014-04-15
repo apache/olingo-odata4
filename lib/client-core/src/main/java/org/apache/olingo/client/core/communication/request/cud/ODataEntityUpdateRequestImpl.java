@@ -39,14 +39,16 @@ import org.apache.olingo.commons.api.data.Entry;
 
 /**
  * This class implements an OData update request.
+ * @param <E> concrete ODataEntity implementation
  */
-public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODataEntityUpdateResponse, ODataPubFormat>
-        implements ODataEntityUpdateRequest, ODataBatchableRequest {
+public class ODataEntityUpdateRequestImpl<E extends CommonODataEntity>
+        extends AbstractODataBasicRequest<ODataEntityUpdateResponse<E>, ODataPubFormat>
+        implements ODataEntityUpdateRequest<E>, ODataBatchableRequest {
 
   /**
    * Changes to be applied.
    */
-  private final CommonODataEntity changes;
+  private final E changes;
 
   /**
    * Constructor.
@@ -56,8 +58,8 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
    * @param uri URI of the entity to be updated.
    * @param changes changes to be applied.
    */
-  public ODataEntityUpdateRequestImpl(final CommonODataClient odataClient,
-          final HttpMethod method, final URI uri, final CommonODataEntity changes) {
+  public ODataEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
+          final HttpMethod method, final URI uri, final E changes) {
 
     super(odataClient, ODataPubFormat.class, method, uri);
     this.changes = changes;
@@ -67,7 +69,7 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
    * {@inheritDoc }
    */
   @Override
-  public ODataEntityUpdateResponse execute() {
+  public ODataEntityUpdateResponse<E> execute() {
     final InputStream input = getPayload();
     ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
@@ -89,12 +91,12 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
   /**
    * Response class about an ODataEntityUpdateRequest.
    */
-  private class ODataEntityUpdateResponseImpl extends AbstractODataResponse implements ODataEntityUpdateResponse {
+  private class ODataEntityUpdateResponseImpl extends AbstractODataResponse implements ODataEntityUpdateResponse<E> {
 
     /**
      * Changes.
      */
-    private CommonODataEntity entity = null;
+    private E entity = null;
 
     /**
      * Constructor.
@@ -118,13 +120,14 @@ public class ODataEntityUpdateRequestImpl extends AbstractODataBasicRequest<ODat
      * {@inheritDoc ]
      */
     @Override
-    public CommonODataEntity getBody() {
+    @SuppressWarnings("unchecked")
+    public E getBody() {
       if (entity == null) {
         try {
-          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), 
+          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(),
                   ODataPubFormat.fromString(getAccept()));
-          
-          entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
+
+          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

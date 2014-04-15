@@ -46,21 +46,23 @@ public interface CommonCUDRequestFactory<UT extends CommonUpdateType> extends Se
   /**
    * Gets an update request object instance.
    *
+   * @param <E> concrete ODataEntity implementation
    * @param targetURI edit link of the object to be updated.
    * @param type type of update to be performed.
    * @param changes changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  ODataEntityUpdateRequest getEntityUpdateRequest(URI targetURI, UT type, CommonODataEntity changes);
+  <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(URI targetURI, UT type, E changes);
 
   /**
    * Gets an update request object instance; uses entity's edit link as endpoint.
    *
+   * @param <E> concrete ODataEntity implementation
    * @param type type of update to be performed.
    * @param entity changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  ODataEntityUpdateRequest getEntityUpdateRequest(UT type, CommonODataEntity entity);
+  <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(UT type, E entity);
 
   /**
    * Gets a create request object instance.

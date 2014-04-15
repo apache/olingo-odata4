@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Calendar;
+import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -49,11 +50,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     final URI upsertURI = getClient().getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(9).build();
-    final ODataEntityUpdateRequest req = getClient().getCUDRequestFactory().
-            getEntityUpsertRequest(updateType, upsertURI, order);
+    final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
+            getEntityUpdateRequest(upsertURI, updateType, order);
     req.setFormat(format);
 
-    final ODataEntityUpdateResponse res = req.execute();
+    req.execute();
     try {
       final ODataEntity read = read(format, upsertURI);
       assertNotNull(read);
@@ -77,6 +78,38 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   public void jsonUpsert() {
     upsert(UpdateType.PATCH, ODataPubFormat.JSON);
     upsert(UpdateType.REPLACE, ODataPubFormat.JSON);
+  }
+
+  private void onContained(final ODataPubFormat format) {
+    final String newName = UUID.randomUUID().toString();
+    final ODataEntity changes = getClient().getObjectFactory().newEntity(
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument"));
+    changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("FriendlyName",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(newName)));
+
+    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Accounts").appendKeySegment(101).
+            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101901).build();
+    final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
+            getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
+    req.setFormat(format);
+
+    final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
+    assertEquals(204, res.getStatusCode());
+
+    final ODataEntity actual = getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute().getBody();
+    assertNotNull(actual);
+    assertEquals(newName, actual.getProperty("FriendlyName").getPrimitiveValue().toString());
+  }
+
+  @Test
+  public void atomOnContained() {
+    onContained(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonOnContained() {
+    onContained(ODataPubFormat.JSON);
   }
 
 }

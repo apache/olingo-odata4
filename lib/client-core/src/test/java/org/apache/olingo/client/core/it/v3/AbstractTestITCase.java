@@ -561,7 +561,9 @@ public abstract class AbstractTestITCase {
 
   protected void update(
           final UpdateType type, final ODataEntity changes, final ODataPubFormat format, final String etag) {
-    final ODataEntityUpdateRequest req = getClient().getCUDRequestFactory().getEntityUpdateRequest(type, changes);
+
+    final ODataEntityUpdateRequest<ODataEntity> req =
+            getClient().getCUDRequestFactory().getEntityUpdateRequest(type, changes);
 
     if (getClient().getConfiguration().isUseXHTTPMethod()) {
       assertEquals(HttpMethod.POST, req.getMethod());
@@ -574,7 +576,7 @@ public abstract class AbstractTestITCase {
       req.setIfMatch(etag); // Product include ETag header into the response .....
     }
 
-    final ODataEntityUpdateResponse res = req.execute();
+    final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
   }
 }

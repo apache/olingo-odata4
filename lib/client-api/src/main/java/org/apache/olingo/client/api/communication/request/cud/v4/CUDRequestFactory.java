@@ -18,20 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.cud.v4;
 
-import java.net.URI;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 
 public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
-
-  /**
-   * Gets an update request object instance; uses given URL as endpoint (for upsert).
-   *
-   * @param type type of update to be performed
-   * @param uri endpoint for upsert
-   * @param entity entity to be upserted.
-   * @return new ODataEntityUpdateRequest instance.
-   */
-  ODataEntityUpdateRequest getEntityUpsertRequest(final UpdateType type, URI uri, ODataEntity entity);
 }

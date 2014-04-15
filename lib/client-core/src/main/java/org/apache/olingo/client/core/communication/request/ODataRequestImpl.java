@@ -76,7 +76,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(ODataRequest.class);
 
-  protected final CommonODataClient odataClient;
+  protected final CommonODataClient<?> odataClient;
 
   private final Class<T> formatRef;
 
@@ -113,7 +113,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
    * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
    * @param uri OData request URI.
    */
-  protected ODataRequestImpl(final CommonODataClient odataClient,
+  protected ODataRequestImpl(final CommonODataClient<?> odataClient,
           final Class<T> formatRef, final HttpMethod method, final URI uri) {
 
     this.odataClient = odataClient;
@@ -392,7 +392,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
 
       addCustomHeader(
               HeaderName.dataServiceUrlConventions.toString(),
-              new ODataPreferences(odataClient.getServiceVersion()).keyAsSegment());
+              odataClient.newPreferences().keyAsSegment());
     }
 
     // Add all available headers

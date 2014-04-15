@@ -67,7 +67,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.data.Entry;
@@ -172,41 +171,6 @@ public abstract class AbstractServices {
       return xml.createResponse(FSManager.instance(version).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
-    }
-  }
-
-  /**
-   * Retrieve entity reference sample.
-   *
-   * @param accept Accept header.
-   * @param path path.
-   * @param format format query option.
-   * @return entity reference or feed of entity reference.
-   */
-  @GET
-  @Path("/{path:.*}/$ref")
-  public Response getEntityReference(
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("path") String path,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
-
-    try {
-      final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
-
-      if (utils.getKey() == Accept.TEXT) {
-        throw new UnsupportedMediaTypeException("Unsupported media type");
-      }
-
-      final String filename = Base64.encodeBase64String(path.getBytes("UTF-8"));
-
-      return utils.getValue().createResponse(
-              FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
-              null,
-              utils.getKey());
-    } catch (Exception e) {
-      LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(accept, e);
     }
   }
 
@@ -704,11 +668,8 @@ public abstract class AbstractServices {
    * Retrieve entity with key as segment.
    *
    * @param accept Accept header.
-   * @param entitySetName Entity set name.
    * @param entityId entity id.
    * @param format format query option.
-   * @param expand expand query option.
-   * @param select select query option.
    * @return entity.
    */
   @GET
@@ -1410,7 +1371,7 @@ public abstract class AbstractServices {
     return utils;
   }
 
-  private void normalizeAtomEntry(final AtomEntryImpl entry, final String entitySetName, final String entityKey) {
+  protected void normalizeAtomEntry(final AtomEntryImpl entry, final String entitySetName, final String entityKey) {
     final EntitySet entitySet = getMetadataObj().getEntitySet(entitySetName);
     final EntityType entityType = getMetadataObj().getEntityType(entitySet.getType());
     for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property

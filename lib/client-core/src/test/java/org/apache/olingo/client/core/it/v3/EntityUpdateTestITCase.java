@@ -173,7 +173,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // ---------------------------------------
   }
 
-  private ODataEntityUpdateRequest buildMultiKeyUpdateReq(final ODataPubFormat format)
+  private ODataEntityUpdateRequest<ODataEntity> buildMultiKeyUpdateReq(final ODataPubFormat format)
           throws EdmPrimitiveTypeException {
 
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
@@ -194,7 +194,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   }
 
   private void mergeMultiKey(final ODataPubFormat format) throws EdmPrimitiveTypeException {
-    final ODataEntityUpdateResponse res = buildMultiKeyUpdateReq(format).execute();
+    final ODataEntityUpdateResponse<ODataEntity> res = buildMultiKeyUpdateReq(format).execute();
     assertEquals(204, res.getStatusCode());
   }
 
@@ -210,12 +210,13 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateReturnContent() throws EdmPrimitiveTypeException {
-    final ODataEntityUpdateRequest req = buildMultiKeyUpdateReq(client.getConfiguration().getDefaultPubFormat());
-    req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
+    final ODataEntityUpdateRequest<ODataEntity> req =
+            buildMultiKeyUpdateReq(client.getConfiguration().getDefaultPubFormat());
+    req.setPrefer(client.newPreferences().returnContent());
 
-    final ODataEntityUpdateResponse res = req.execute();
+    final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    assertEquals(new ODataPreferences(client.getServiceVersion()).returnContent(),
+    assertEquals(client.newPreferences().returnContent(),
             res.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertNotNull(res.getBody());
   }

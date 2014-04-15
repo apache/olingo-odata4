@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api;
 
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
@@ -42,6 +43,8 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
   ODataHeaders getVersionHeaders();
 
   CommonConfiguration getConfiguration();
+
+  ODataPreferences newPreferences();
 
   CommonURIBuilder<?> getURIBuilder(String serviceRoot);
 

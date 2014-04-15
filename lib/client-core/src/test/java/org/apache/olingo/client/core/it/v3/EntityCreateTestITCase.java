@@ -229,11 +229,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").build(), original);
-    createReq.setPrefer(new ODataPreferences(client.getServiceVersion()).returnNoContent());
+    createReq.setPrefer(client.newPreferences().returnNoContent());
 
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(204, createRes.getStatusCode());
-    assertEquals(new ODataPreferences(client.getServiceVersion()).returnNoContent(),
+    assertEquals(client.newPreferences().returnNoContent(),
             createRes.getHeader(HeaderName.preferenceApplied).iterator().next());
 
     try {
@@ -259,7 +259,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
     createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
     createReq.setContentType(ContentType.APPLICATION_ATOM_XML.getMimeType());
-    createReq.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
+    createReq.setPrefer(client.newPreferences().returnContent());
 
     try {
       final ODataEntityCreateResponse createRes = createReq.execute();

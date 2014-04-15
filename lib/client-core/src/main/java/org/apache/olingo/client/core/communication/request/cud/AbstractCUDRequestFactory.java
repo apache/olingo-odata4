@@ -50,34 +50,36 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
   }
 
   @Override
-  public ODataEntityUpdateRequest getEntityUpdateRequest(
-          final URI targetURI, final UT type, final CommonODataEntity changes) {
+  public <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+          final URI targetURI, final UT type, final E changes) {
 
-    final ODataEntityUpdateRequest req;
+    final ODataEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataEntityUpdateRequestImpl(client, HttpMethod.POST, targetURI, changes);
+      req = new ODataEntityUpdateRequestImpl<E>(client, HttpMethod.POST, targetURI, changes);
       req.setXHTTPMethod(type.getMethod().name());
     } else {
-      req = new ODataEntityUpdateRequestImpl(client, type.getMethod(), targetURI, changes);
+      req = new ODataEntityUpdateRequestImpl<E>(client, type.getMethod(), targetURI, changes);
     }
 
     return req;
   }
 
   @Override
-  public ODataEntityUpdateRequest getEntityUpdateRequest(final UT type, final CommonODataEntity entity) {
+  public <E extends CommonODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+          final UT type, final E entity) {
+
     if (entity.getEditLink() == null) {
       throw new IllegalArgumentException("No edit link found");
     }
 
-    final ODataEntityUpdateRequest req;
+    final ODataEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataEntityUpdateRequestImpl(client, HttpMethod.POST, entity.getEditLink(), entity);
+      req = new ODataEntityUpdateRequestImpl<E>(client, HttpMethod.POST, entity.getEditLink(), entity);
       req.setXHTTPMethod(type.getMethod().name());
     } else {
-      req = new ODataEntityUpdateRequestImpl(client, type.getMethod(), entity.getEditLink(), entity);
+      req = new ODataEntityUpdateRequestImpl<E>(client, type.getMethod(), entity.getEditLink(), entity);
     }
 
     return req;

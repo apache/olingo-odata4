@@ -68,7 +68,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     final ODataRetrieveResponse<ODataEntity> entityRes = client.getRetrieveRequestFactory().
             getEntityRequest(uri).execute();
-    final CommonODataEntity entity = entityRes.getBody();
+    final ODataEntity entity = entityRes.getBody();
     entity.getAssociationLinks().clear();
     entity.getNavigationLinks().clear();
     entity.getEditMediaLinks().clear();
@@ -78,10 +78,10 @@ public class AsyncTestITCase extends AbstractTestITCase {
             client.getObjectFactory().newPrimitiveProperty("Description",
                     client.getObjectFactory().newPrimitiveValueBuilder().setText("AsyncTest#updateEntity").build()));
 
-    final ODataEntityUpdateRequest updateReq =
+    final ODataEntityUpdateRequest<ODataEntity> updateReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.MERGE, entity);
     updateReq.setIfMatch(entityRes.getEtag());
-    final Future<ODataEntityUpdateResponse> futureRes = updateReq.asyncExecute();
+    final Future<ODataEntityUpdateResponse<ODataEntity>> futureRes = updateReq.asyncExecute();
 
     while (!futureRes.isDone()) {
       Thread.sleep(1000L);
