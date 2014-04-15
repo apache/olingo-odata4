@@ -365,7 +365,7 @@ public abstract class AbstractUtilities {
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-            Accept.JSON_FULLMETA));
+                    Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -415,7 +415,6 @@ public abstract class AbstractUtilities {
   }
 
   public Response createBatchResponse(final InputStream stream, final String boundary) {
-
     final Response.ResponseBuilder builder = Response.accepted(stream);
     builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
     return builder.build();
@@ -423,6 +422,7 @@ public abstract class AbstractUtilities {
 
   public Response createResponse(
           final InputStream entity, final String etag, final Accept accept, final Response.Status status) {
+
     final Response.ResponseBuilder builder = Response.ok();
     if (version.compareTo(ODataServiceVersion.V30) <= 0) {
       builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
@@ -444,8 +444,8 @@ public abstract class AbstractUtilities {
       try {
         final InputStream toBeStreamedBack;
 
-        if (accept != null && (Accept.JSON == accept || Accept.JSON_NOMETA == accept)) {
-          toBeStreamedBack = Commons.changeFormat(entity, accept);
+        if (Accept.JSON == accept || Accept.JSON_NOMETA == accept) {
+          toBeStreamedBack = Commons.changeFormat(entity, version, accept);
         } else {
           toBeStreamedBack = entity;
         }
@@ -685,10 +685,10 @@ public abstract class AbstractUtilities {
   }
 
   public String getLinksBasePath(final String entitySetName, final String entityId) {
-            return entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
-            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;    
+    return entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar
+            + Constants.get(version, ConstantKey.LINKS_FILE_PATH) + File.separatorChar;
   }
-  
+
   /**
    * Retrieves entity links about the given link name.
    *

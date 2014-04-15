@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.PrimitiveValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -140,6 +141,26 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     jgen.writeEndArray();
   }
 
+  protected void primitiveValue(final JsonGenerator jgen, final EdmTypeInfo typeInfo, final PrimitiveValue value)
+          throws IOException {
+
+    final boolean isNumber = typeInfo == null
+            ? NumberUtils.isNumber(value.get())
+            : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveTypeKind());
+    final boolean isBoolean = typeInfo == null
+            ? (value.get().equalsIgnoreCase(Boolean.TRUE.toString())
+            || value.get().equalsIgnoreCase(Boolean.FALSE.toString()))
+            : typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Boolean;
+
+    if (isNumber) {
+      jgen.writeNumber(value.get());
+    } else if (isBoolean) {
+      jgen.writeBoolean(BooleanUtils.toBoolean(value.get()));
+    } else {
+      jgen.writeString(value.get());
+    }
+  }
+
   private void value(final JsonGenerator jgen, final String type, final Value value) throws IOException {
     final EdmTypeInfo typeInfo = type == null
             ? null
@@ -148,21 +169,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     if (value == null || value.isNull()) {
       jgen.writeNull();
     } else if (value.isPrimitive()) {
-      final boolean isNumber = typeInfo == null
-              ? NumberUtils.isNumber(value.asPrimitive().get())
-              : ArrayUtils.contains(NUMBER_TYPES, typeInfo.getPrimitiveTypeKind());
-      final boolean isBoolean = typeInfo == null
-              ? (value.asPrimitive().get().equalsIgnoreCase(Boolean.TRUE.toString())
-              || value.asPrimitive().get().equalsIgnoreCase(Boolean.FALSE.toString()))
-              : typeInfo.getPrimitiveTypeKind() == EdmPrimitiveTypeKind.Boolean;
-
-      if (isNumber) {
-        jgen.writeNumber(value.asPrimitive().get());
-      } else if (isBoolean) {
-        jgen.writeBoolean(BooleanUtils.toBoolean(value.asPrimitive().get()));
-      } else {
-        jgen.writeString(value.asPrimitive().get());
-      }
+      primitiveValue(jgen, typeInfo, value.asPrimitive());
     } else if (value.isEnum()) {
       jgen.writeString(value.asEnum().get());
     } else if (value.isGeospatial()) {

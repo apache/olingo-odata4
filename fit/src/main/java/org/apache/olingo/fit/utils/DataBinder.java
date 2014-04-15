@@ -203,20 +203,20 @@ public class DataBinder {
   public JSONPropertyImpl getJsonProperty(final AtomPropertyImpl atomproperty) {
     final JSONPropertyImpl jsonproperty = new JSONPropertyImpl();
     BeanUtils.copyProperties(atomproperty, jsonproperty, "value");
-
-    if (atomproperty.getValue() instanceof ComplexValueImpl) {
+    
+    if (atomproperty.getValue().isComplex()) {
       final ComplexValueImpl complex = new ComplexValueImpl();
       jsonproperty.setValue(complex);
 
       for (Property field : atomproperty.getValue().asComplex().get()) {
         complex.get().add(getJsonProperty((AtomPropertyImpl) field));
       }
-    } else if (atomproperty.getValue() instanceof CollectionValueImpl) {
+    } else if (atomproperty.getValue().isCollection()) {
       final CollectionValueImpl collection = new CollectionValueImpl();
       jsonproperty.setValue(collection);
 
       for (Value element : atomproperty.getValue().asCollection().get()) {
-        if (element instanceof ComplexValueImpl) {
+        if (element.isComplex()) {
           final ComplexValueImpl complex = new ComplexValueImpl();
           collection.get().add(complex);
 

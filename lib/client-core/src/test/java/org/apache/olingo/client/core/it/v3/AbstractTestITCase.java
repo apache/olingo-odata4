@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -52,9 +49,8 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.it.AbstractBaseTestITCase;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -68,19 +64,9 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTestITCase {
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
+public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static final FullQualifiedName TEST_PRODUCT_TYPE =
           new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Product");
@@ -114,6 +100,7 @@ public abstract class AbstractTestITCase {
     client = ODataClientFactory.getV3();
   }
 
+  @Override
   protected ODataClient getClient() {
     return client;
   }
@@ -305,58 +292,6 @@ public abstract class AbstractTestITCase {
     }
 
     return entity;
-  }
-
-  protected void debugEntry(final Entry entry, final String message) {
-    if (LOG.isDebugEnabled()) {
-      final StringWriter writer = new StringWriter();
-      getClient().getSerializer().entry(entry, writer);
-      writer.flush();
-      LOG.debug(message + "\n{}", writer.toString());
-    }
-  }
-
-  protected void debugFeed(final Feed feed, final String message) {
-    if (LOG.isDebugEnabled()) {
-      final StringWriter writer = new StringWriter();
-      getClient().getSerializer().feed(feed, writer);
-      writer.flush();
-      LOG.debug(message + "\n{}", writer.toString());
-    }
-  }
-
-  protected void debugODataProperty(final ODataProperty property, final String message) {
-    LOG.debug(message + "\n{}", property.toString());
-  }
-
-  protected void debugODataValue(final ODataValue value, final String message) {
-    LOG.debug(message + "\n{}", value.toString());
-  }
-
-  protected void debugODataEntity(final ODataEntity entity, final String message) {
-    if (LOG.isDebugEnabled()) {
-      StringWriter writer = new StringWriter();
-      getClient().getSerializer().entry(getClient().getBinder().getEntry(entity, AtomEntryImpl.class), writer);
-      writer.flush();
-      LOG.debug(message + " (Atom)\n{}", writer.toString());
-
-      writer = new StringWriter();
-      getClient().getSerializer().entry(getClient().getBinder().getEntry(entity, JSONEntryImpl.class), writer);
-      writer.flush();
-      LOG.debug(message + " (JSON)\n{}", writer.toString());
-    }
-  }
-
-  protected void debugInputStream(final InputStream input, final String message) {
-    if (LOG.isDebugEnabled()) {
-      try {
-        LOG.debug(message + "\n{}", IOUtils.toString(input));
-      } catch (IOException e) {
-        LOG.error("Error writing stream", e);
-      } finally {
-        IOUtils.closeQuietly(input);
-      }
-    }
   }
 
   protected String getETag(final URI uri) {

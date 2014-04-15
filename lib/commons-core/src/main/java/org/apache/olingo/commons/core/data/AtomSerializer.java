@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -102,9 +103,11 @@ public class AtomSerializer extends AbstractAtomDealer {
     }
 
     if (StringUtils.isNotBlank(property.getType())) {
-      writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
-              Constants.ATTR_TYPE,
-              new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
+      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+      if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
+        writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+                Constants.ATTR_TYPE, typeInfo.external(version));
+      }
     }
 
     if (property.getValue().isNull()) {

@@ -20,19 +20,6 @@ package org.apache.olingo.fit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.olingo.commons.api.data.Feed;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
-import org.apache.olingo.commons.core.data.LinkImpl;
-import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.serializer.JsonFeedContainer;
-import org.apache.olingo.fit.serializer.JsonEntryContainer;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.DataBinder;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -83,6 +70,12 @@ import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
@@ -98,12 +91,17 @@ import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.FSManager;
-
 import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.AbstractJSONUtilities;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.AbstractXMLUtilities;
 import org.apache.olingo.fit.utils.LinkInfo;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.serializer.JsonFeedContainer;
+import org.apache.olingo.fit.serializer.JsonEntryContainer;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.apache.olingo.fit.utils.DataBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,9 +112,9 @@ public abstract class AbstractServices {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractServices.class);
 
-  private Pattern requestPatter = Pattern.compile("(.*) (http://.*) HTTP/.*");
+  private static final Pattern REQUEST_PATTERN = Pattern.compile("(.*) (http://.*) HTTP/.*");
 
-  private static final String boundary = "batch_243234_25424_ef_892u748";
+  private static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
 
@@ -193,10 +191,10 @@ public abstract class AbstractServices {
   @POST
   @Path("/$batch")
   @Consumes("multipart/mixed")
-  @Produces("application/octet-stream; boundary=" + boundary)
+  @Produces("application/octet-stream; boundary=" + BOUNDARY)
   public Response batch(final @Multipart MultipartBody attachment) {
     try {
-      return xml.createBatchResponse(exploreMultipart(attachment.getAllAttachments(), boundary), boundary);
+      return xml.createBatchResponse(exploreMultipart(attachment.getAllAttachments(), BOUNDARY), BOUNDARY);
     } catch (IOException e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
@@ -209,7 +207,7 @@ public abstract class AbstractServices {
 
     Header header = en.nextElement();
     final String request = header.getName() + ":" + header.getValue();
-    final Matcher matcher = requestPatter.matcher(request);
+    final Matcher matcher = REQUEST_PATTERN.matcher(request);
 
     if (matcher.find()) {
       final MultivaluedMap<String, String> headers = new MultivaluedHashMap<String, String>();
@@ -343,7 +341,7 @@ public abstract class AbstractServices {
     bos.write(Constants.CRLF);
 
     for (Map.Entry<String, List<Object>> header : response.getHeaders().entrySet()) {
-      StringBuilder builder = new StringBuilder();
+      final StringBuilder builder = new StringBuilder();
       for (Object value : header.getValue()) {
         if (builder.length() > 0) {
           builder.append(", ");
@@ -593,7 +591,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-          });
+                  });
 
           entry = (new DataBinder(version)).
                   getAtomEntry(jcontainer.getObject());
@@ -666,13 +664,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -724,9 +722,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -858,7 +856,7 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                  new DataBinder(version).getJsonFeed(container.getObject())));
+                          new DataBinder(version).getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
@@ -1040,7 +1038,7 @@ public abstract class AbstractServices {
         final ObjectMapper mapper = Commons.getJsonMapper(version);
         mapper.writeValue(
                 writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                        (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
       }
 
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
@@ -1469,27 +1467,50 @@ public abstract class AbstractServices {
 
   private Response navigateEntity(
           final Accept acceptType,
-          String entitySetName,
-          String entityId,
-          String path) throws Exception {
-    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+          final String entitySetName,
+          final String entityId,
+          final String path) throws Exception {
 
-    final LinkInfo linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.XML);
-    final Map.Entry<String, List<String>> links = xml.extractLinkURIs(linkInfo.getLinks());
-
+    final LinkInfo linkInfo;
     InputStream stream;
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
+      linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.XML);
+      final Map.Entry<String, List<String>> links = xml.extractLinkURIs(linkInfo.getLinks());
 
-    switch (acceptType) {
-      case JSON:
-      case JSON_FULLMETA:
-      case JSON_NOMETA:
-        stream = json.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
-        stream = json.wrapJsonEntities(stream);
-        break;
-      default:
-        stream = xml.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
+      switch (acceptType) {
+        case JSON:
+        case JSON_FULLMETA:
+        case JSON_NOMETA:
+          stream = json.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
+          stream = json.wrapJsonEntities(stream);
+          break;
+        default:
+          stream = xml.readEntities(links.getValue(), path, links.getKey(), linkInfo.isFeed());
+      }
+
+    } else {
+      linkInfo = xml.readLinks(entitySetName, entityId, path, Accept.ATOM);
+      if (acceptType == Accept.ATOM) {
+        stream = linkInfo.getLinks();
+      } else {
+        final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
+        final DataBinder dataBinder = new DataBinder(version);
+        final ObjectMapper mapper = Commons.getJsonMapper(version);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final Object object;
+        if (linkInfo.isFeed()) {
+          final Container<AtomFeedImpl> container = atomDeserializer.read(linkInfo.getLinks(), AtomFeedImpl.class);
+          object = dataBinder.getJsonFeed(container.getObject());
+        } else {
+          final Container<AtomEntryImpl> container = atomDeserializer.read(linkInfo.getLinks(), AtomEntryImpl.class);
+          object = dataBinder.getJsonEntry(container.getObject());
+        }
+        mapper.writeValue(baos, object);
+        stream = new ByteArrayInputStream(baos.toByteArray());
+      }
     }
-
+    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
     return xml.createResponse(stream, Commons.getETag(basePath, version), acceptType);
   }
 
