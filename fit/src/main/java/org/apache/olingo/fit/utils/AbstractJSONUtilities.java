@@ -359,7 +359,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       node.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), new TextNode(next));
     }
 
-    return IOUtils.toInputStream(node.toString(), "UTf-8");
+    return IOUtils.toInputStream(node.toString(), "UTF-8");
   }
 
   @Override

@@ -25,9 +25,9 @@
   <updated>2014-04-14T12:45:33Z</updated>
   <entry>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101901)/TheStoredPI"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101901)/BillingStatements"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101901)/BackupStoredPI"/>
     <id/>
     <title/>
     <updated>2014-04-14T12:45:33Z</updated>
@@ -44,10 +44,10 @@
   </entry>
   <entry>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="potato"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101902)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/TheStoredPI"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101902)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/BillingStatements"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101902)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/BackupStoredPI"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101902)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/CreditRecords"/>
     <id/>
     <title/>
     <updated>2014-04-14T12:45:33Z</updated>
@@ -69,10 +69,10 @@
   </entry>
   <entry>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="potato"/>
-    <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="potato"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/TheStoredPI" type="application/atom+xml;type=entry" title="TheStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101903)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/TheStoredPI"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BillingStatements" type="application/atom+xml;type=feed" title="BillingStatements" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101903)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/BillingStatements"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/BackupStoredPI" type="application/atom+xml;type=entry" title="BackupStoredPI" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101903)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/BackupStoredPI"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/CreditRecords" type="application/atom+xml;type=feed" title="CreditRecords" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Accounts(101)/MyPaymentInstruments(101903)/Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI/CreditRecords"/>
     <id/>
     <title/>
     <updated>2014-04-14T12:45:33Z</updated>

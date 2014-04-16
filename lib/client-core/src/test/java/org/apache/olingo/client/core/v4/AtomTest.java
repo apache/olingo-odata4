@@ -60,6 +60,7 @@ public class AtomTest extends JSONTest {
     return result.toString();
   }
 
+  @Override
   protected void assertSimilar(final String filename, final String actual) throws Exception {
     final Diff diff = new Diff(cleanup(IOUtils.toString(getClass().getResourceAsStream(filename))), actual);
     diff.overrideElementQualifier(new AtomLinksQualifier());

@@ -58,6 +58,10 @@
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>      
     
     <dependency>
       <groupId>org.apache.olingo</groupId>
@@ -72,8 +76,25 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <systemPropertyVariables>
+            <propertyName>org.slf4j.simpleLogger.defaultLogLevel</propertyName>
+            <org.slf4j.simpleLogger.defaultLogLevel>ERROR</org.slf4j.simpleLogger.defaultLogLevel>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <inherited>true</inherited>
+        <configuration>
+          <systemPropertyVariables>
+            <propertyName>org.slf4j.simpleLogger.defaultLogLevel</propertyName>
+            <org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
       
       <plugin>

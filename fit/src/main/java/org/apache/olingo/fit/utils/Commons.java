@@ -251,7 +251,7 @@ public abstract class Commons {
     return IOUtils.toInputStream(links.toString(), "UTf-8");
   }
 
-  public static InputStream changeFormat(final InputStream is, final Accept target) {
+  public static InputStream changeFormat(final InputStream is, final ODataServiceVersion version, final Accept target) {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     try {
@@ -260,7 +260,7 @@ public abstract class Commons {
 
       final ObjectMapper mapper = new ObjectMapper();
       final JsonNode node =
-              changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), target);
+              changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
 
       return IOUtils.toInputStream(node.toString(), "UTF-8");
     } catch (Exception e) {
@@ -272,30 +272,35 @@ public abstract class Commons {
   }
 
   @SuppressWarnings("fallthrough")
-  public static JsonNode changeFormat(final ObjectNode node, final Accept target) {
+  public static JsonNode changeFormat(final ObjectNode node, final ODataServiceVersion version, final Accept target) {
     final List<String> toBeRemoved = new ArrayList<String>();
-    final Map<String, JsonNode> toBeReplaced = new HashMap<String, JsonNode>();
-
     switch (target) {
       case JSON_NOMETA:
         // nometa + minimal
-        toBeRemoved.add(Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME));
+        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME));
 
       case JSON:
         // minimal
-        toBeRemoved.add(Constants.get(ConstantKey.JSON_EDITLINK_NAME));
-        toBeRemoved.add(Constants.get(ConstantKey.JSON_ID_NAME));
-        toBeRemoved.add(Constants.get(ConstantKey.JSON_TYPE_NAME));
+        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME));
+        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_ID_NAME));
+        toBeRemoved.add(Constants.get(version, ConstantKey.JSON_TYPE_NAME));
 
         final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
         while (fields.hasNext()) {
           final Map.Entry<String, JsonNode> field = fields.next();
-          if (field.getKey().endsWith(Constants.get(ConstantKey.JSON_MEDIA_SUFFIX))
-                  || field.getKey().endsWith(Constants.get(ConstantKey.JSON_NAVIGATION_SUFFIX))
-                  || field.getKey().endsWith(Constants.get(ConstantKey.JSON_TYPE_SUFFIX))) {
+          if (field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_MEDIA_SUFFIX))
+                  || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_NAVIGATION_SUFFIX))
+                  || field.getKey().endsWith(Constants.get(version, ConstantKey.JSON_TYPE_SUFFIX))) {
             toBeRemoved.add(field.getKey());
           } else if (field.getValue().isObject()) {
-            toBeReplaced.put(field.getKey(), changeFormat((ObjectNode) field.getValue(), target));
+            changeFormat((ObjectNode) field.getValue(), version, target);
+          } else if (field.getValue().isArray()) {
+            for (final Iterator<JsonNode> subItor = field.getValue().elements(); subItor.hasNext();) {
+              final JsonNode subNode = subItor.next();
+              if (subNode.isObject()) {
+                changeFormat((ObjectNode) subNode, version, target);
+              }
+            }
           }
         }
       case JSON_FULLMETA:
@@ -305,14 +310,7 @@ public abstract class Commons {
       default:
         throw new UnsupportedOperationException(target.name());
     }
-
-    for (String field : toBeRemoved) {
-      node.remove(field);
-    }
-
-    for (Map.Entry<String, JsonNode> field : toBeReplaced.entrySet()) {
-      node.replace(field.getKey(), field.getValue());
-    }
+    node.remove(toBeRemoved);
 
     return node;
   }

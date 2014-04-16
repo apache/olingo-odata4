@@ -271,6 +271,10 @@ public class AtomDeserializer extends AbstractAtomDealer {
           break;
 
         case PRIMITIVE:
+          // No type specified? Defaults to Edm.String          
+          if (typeInfo == null) {
+            property.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
+          }
           value = fromPrimitive(reader, start, typeInfo);
           break;
 

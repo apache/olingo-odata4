@@ -59,15 +59,11 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     if (serverMode) {
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
-        jgen.writeStringField(
-                Constants.JSON_METADATA_ETAG,
-                container.getMetadataETag());
+        jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
 
       if (StringUtils.isNotBlank(entry.getETag())) {
-        jgen.writeStringField(
-                version.getJSONMap().get(ODataServiceVersion.JSON_ETAG),
-                entry.getETag());
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ETAG), entry.getETag());
       }
     }
 

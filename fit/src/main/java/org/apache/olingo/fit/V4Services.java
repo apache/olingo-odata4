@@ -223,7 +223,7 @@ public class V4Services extends AbstractServices {
         final ObjectMapper mapper = Commons.getJsonMapper(version);
         final DataBinder dataBinder = new DataBinder(version);
 
-        Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
+        final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
                 new TypeReference<JSONEntryImpl>() {
                 });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
@@ -243,7 +243,6 @@ public class V4Services extends AbstractServices {
 
       return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {
-      e.printStackTrace();
       return xml.createFaultResponse(accept, e);
     }
   }

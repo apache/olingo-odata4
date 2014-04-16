@@ -27,15 +27,12 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.it.AbstractBaseTestITCase;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTestITCase {
-
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
+public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static ODataClient client;
 
@@ -60,6 +57,7 @@ public abstract class AbstractTestITCase {
     client = ODataClientFactory.getV4();
   }
 
+  @Override
   protected ODataClient getClient() {
     return client;
   }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
  * Writes out JSON string from <tt>JSONPropertyImpl</tt>.
@@ -51,7 +52,12 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
     if (property.getValue().isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
     } else if (property.getValue().isPrimitive()) {
-      jgen.writeStringField(Constants.VALUE, property.getValue().asPrimitive().get());
+      final EdmTypeInfo typeInfo = property.getType() == null
+              ? null
+              : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+
+      jgen.writeFieldName(Constants.VALUE);
+      primitiveValue(jgen, typeInfo, property.getValue().asPrimitive());
     } else if (property.getValue().isEnum()) {
       jgen.writeStringField(Constants.VALUE, property.getValue().asEnum().get());
     } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
