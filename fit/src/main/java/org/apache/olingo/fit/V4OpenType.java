@@ -31,8 +31,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -54,9 +56,8 @@ public class V4OpenType {
   public V4OpenType() throws Exception {
     this.openMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).
             readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
-                    Accept.XML));
+            Accept.XML));
     this.services = new V4Services() {
-
       @Override
       protected Metadata getMetadataObj() {
         return openMetadata;
@@ -106,6 +107,7 @@ public class V4OpenType {
   @GET
   @Path("/{entitySetName}({entityId})")
   public Response getEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -114,7 +116,8 @@ public class V4OpenType {
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
     return replaceServiceName(
-            services.getEntityInternal(accept, entitySetName, entityId, format, expand, select, false));
+            services.getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, entitySetName, entityId, format, expand, select, false));
   }
 
   @POST
@@ -122,13 +125,14 @@ public class V4OpenType {
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postNewEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") final String entitySetName,
           final String entity) {
 
-    return replaceServiceName(services.postNewEntity(accept, contentType, prefer, entitySetName, entity));
+    return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
 
   @DELETE
