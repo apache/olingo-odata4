@@ -315,10 +315,9 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(200, res.getStatusCode());
     assertEquals("OK", res.getStatusMessage());
 
-    ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl entres =
-            (ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl) res;
-
-    ODataEntity entity = entres.getBody();
+    ODataEntityResponseImpl entres = (ODataEntityResponseImpl) res;
+    ODataEntity entity = (ODataEntity)entres.getBody();
+    
     assertEquals(new Integer(-10), entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class));
 
     // retrieve the second item (ODataChangeset)
@@ -350,8 +349,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(200, res.getStatusCode());
     assertEquals("OK", res.getStatusMessage());
 
-    entres = (ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl) res;
-    entity = entres.getBody();
+    entres = (ODataEntityResponseImpl) res;
+    entity = (ODataEntity)entres.getBody();
     assertEquals("new description from batch",
             entity.getProperty("Description").getPrimitiveValue().toCastValue(String.class));
 
