@@ -24,5 +24,5 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 /**
  * This class implements an OData retrieve query request returning a single entity.
  */
-public interface ODataEntityRequest<T extends CommonODataEntity> extends ODataRetrieveRequest<T, ODataPubFormat> {
+public interface ODataEntityRequest<E extends CommonODataEntity> extends ODataRetrieveRequest<E, ODataPubFormat> {
 }

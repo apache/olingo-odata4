@@ -30,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;

@@ -49,7 +49,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
     final ODataRetrieveResponse<List<? extends Schema>> xmlMetadataResponse =
             odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot).execute();
 
-    return new ODataRetrieveResponseImpl() {
+    return new AbstractODataRetrieveResponse() {
       private Edm metadata = null;
 
       @Override

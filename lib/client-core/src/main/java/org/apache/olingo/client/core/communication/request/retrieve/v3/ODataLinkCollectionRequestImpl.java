@@ -56,7 +56,7 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
     return new ODataLinkCollectionResponseImpl(httpClient, doExecute());
   }
 
-  protected class ODataLinkCollectionResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataLinkCollectionResponseImpl extends AbstractODataRetrieveResponse {
 
     private ODataLinkCollection links = null;
 

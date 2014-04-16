@@ -57,7 +57,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
   /**
    * Response class about an ODataServiceDocumentRequest.
    */
-  protected class ODataServiceResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataServiceResponseImpl extends AbstractODataRetrieveResponse {
 
     private ODataServiceDocument serviceDocument = null;
 

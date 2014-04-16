@@ -44,7 +44,9 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
    * @param formatRef reference class for the format being used
    * @param query query to be executed.
    */
-  public AbstractODataRetrieveRequest(final CommonODataClient odataClient, final Class<T> formatRef, final URI query) {
+  public AbstractODataRetrieveRequest(final CommonODataClient<?> odataClient, final Class<T> formatRef,
+          final URI query) {
+
     super(odataClient, formatRef, HttpMethod.GET, query);
   }
 
@@ -67,14 +69,15 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
   /**
    * Response abstract class about an ODataRetrieveRequest.
    */
-  protected abstract class ODataRetrieveResponseImpl extends AbstractODataResponse implements ODataRetrieveResponse<V> {
+  protected abstract class AbstractODataRetrieveResponse
+          extends AbstractODataResponse implements ODataRetrieveResponse<V> {
 
     /**
      * Constructor.
      * <p>
      * Just to create response templates to be initialized from batch.
      */
-    protected ODataRetrieveResponseImpl() {
+    protected AbstractODataRetrieveResponse() {
       super();
     }
 
@@ -84,7 +87,7 @@ public abstract class AbstractODataRetrieveRequest<V, T extends Format>
      * @param client HTTP client.
      * @param res HTTP response.
      */
-    protected ODataRetrieveResponseImpl(final HttpClient client, final HttpResponse res) {
+    protected AbstractODataRetrieveResponse(final HttpClient client, final HttpResponse res) {
       super(client, res);
     }
 

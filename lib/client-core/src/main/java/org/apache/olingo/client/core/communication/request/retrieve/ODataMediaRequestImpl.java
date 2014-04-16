@@ -65,7 +65,7 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
   /**
    * Response class about an ODataMediaRequest.
    */
-  protected class ODataMediaResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataMediaResponseImpl extends AbstractODataRetrieveResponse {
 
     private InputStream input = null;
 

@@ -61,7 +61,7 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
   /**
    * Response class about an ODataEntitySetRequest.
    */
-  protected class ODataEntitySetResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataEntitySetResponseImpl extends AbstractODataRetrieveResponse {
 
     /**
      * Constructor.

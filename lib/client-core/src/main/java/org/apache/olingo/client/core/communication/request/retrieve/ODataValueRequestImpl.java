@@ -58,7 +58,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
   /**
    * Response class about an ODataDeleteReODataValueRequestquest.
    */
-  protected class ODataValueResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataValueResponseImpl extends AbstractODataRetrieveResponse {
 
     private ODataPrimitiveValue value = null;
 

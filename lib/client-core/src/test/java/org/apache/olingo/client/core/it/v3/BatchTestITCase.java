@@ -60,11 +60,11 @@ import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
 
-  private static String PREFIX = "!!PREFIX!!";
+  private static final String PREFIX = "!!PREFIX!!";
 
-  private static String SUFFIX = "!!SUFFIX!!";
+  private static final String SUFFIX = "!!SUFFIX!!";
 
-  private static int MAX = 10000;
+  private static final int MAX = 10000;
 
   @Test
   public void stringStreaming() {
@@ -78,7 +78,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       streaming.addObject((i + ") send info\n").getBytes());
     }
 
-    streaming.addObject((SUFFIX).getBytes());
+    streaming.addObject(SUFFIX.getBytes());
     streaming.finalizeBody();
   }
 
@@ -304,7 +304,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(202, response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
-    
+
     // retrive the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
     assertTrue(item instanceof ODataRetrieveResponseItem);
@@ -315,10 +315,11 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(200, res.getStatusCode());
     assertEquals("OK", res.getStatusMessage());
 
-    ODataEntityResponseImpl entres = (ODataEntityResponseImpl) res;
-    ODataEntity entity = (ODataEntity)entres.getBody();
-    
-    assertEquals(new Integer(-10), entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class));
+    ODataEntityRequestImpl<ODataEntity>.ODataEntityResponseImpl entres =
+            (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
+
+    ODataEntity entity = entres.getBody();
+    assertEquals(-10, entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // retrieve the second item (ODataChangeset)
     item = iter.next();
@@ -349,8 +350,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(200, res.getStatusCode());
     assertEquals("OK", res.getStatusMessage());
 
-    entres = (ODataEntityResponseImpl) res;
-    entity = (ODataEntity)entres.getBody();
+    entres = (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
+    entity = entres.getBody();
     assertEquals("new description from batch",
             entity.getProperty("Description").getPrimitiveValue().toCastValue(String.class));
 

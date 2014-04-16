@@ -77,7 +77,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
 
     @Override
     public ODataRetrieveResponse<XMLMetadata> execute() {
-      return new ODataRetrieveResponseImpl(httpClient, doExecute()) {
+      return new AbstractODataRetrieveResponse(httpClient, doExecute()) {
 
         @Override
         public XMLMetadata getBody() {
@@ -91,7 +91,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
     }
   }
 
-  public class XMLMetadataResponseImpl extends ODataRetrieveResponseImpl {
+  public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
     private final List<Schema> schemas = new ArrayList<Schema>();
 

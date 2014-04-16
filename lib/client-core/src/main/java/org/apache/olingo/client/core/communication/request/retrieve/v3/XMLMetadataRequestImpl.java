@@ -41,7 +41,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
     return new XMLMetadataResponseImpl(httpClient, doExecute());
   }
 
-  public class XMLMetadataResponseImpl extends ODataRetrieveResponseImpl {
+  public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
     private XMLMetadata metadata = null;
 

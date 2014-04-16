@@ -56,7 +56,7 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
     return new ODataPropertyResponseImpl(httpClient, res);
   }
 
-  protected class ODataPropertyResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataPropertyResponseImpl extends AbstractODataRetrieveResponse {
 
     private T property = null;
 

@@ -32,8 +32,8 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
 /**
  * This class implements an OData retrieve query request returning a single entity.
  */
-public class ODataEntityRequestImpl<T extends CommonODataEntity>
-        extends AbstractODataRetrieveRequest<T, ODataPubFormat> implements ODataEntityRequest<T> {
+public class ODataEntityRequestImpl<E extends CommonODataEntity>
+        extends AbstractODataRetrieveRequest<E, ODataPubFormat> implements ODataEntityRequest<E> {
 
   /**
    * Private constructor.
@@ -41,31 +41,29 @@ public class ODataEntityRequestImpl<T extends CommonODataEntity>
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public ODataEntityRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntityRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  public ODataRetrieveResponse<T> execute() {
+  public ODataRetrieveResponse<E> execute() {
     return new ODataEntityResponseImpl(httpClient, doExecute());
   }
 
   /**
    * Response class about an ODataEntityRequest.
    */
-  public class ODataEntityResponseImpl extends ODataRetrieveResponseImpl {
+  public class ODataEntityResponseImpl extends AbstractODataRetrieveResponse {
 
-    private T entity = null;
+    private E entity = null;
 
     /**
      * Constructor.
-     * <p>
+     * <br/>
      * Just to create response templates to be initialized from batch.
      */
     private ODataEntityResponseImpl() {
+      super();
     }
 
     /**
@@ -78,18 +76,15 @@ public class ODataEntityRequestImpl<T extends CommonODataEntity>
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     @SuppressWarnings("unchecked")
-    public T getBody() {
+    public E getBody() {
       if (entity == null) {
         try {
           final Container<Entry> container =
                   odataClient.getDeserializer().toEntry(getRawResponse(), ODataPubFormat.fromString(getContentType()));
 
-          entity = (T) odataClient.getBinder().getODataEntity(extractFromContainer(container));
+          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

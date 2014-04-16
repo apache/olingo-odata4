@@ -60,7 +60,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
   /**
    * Response class about an ODataEntitySetIteratorRequest.
    */
-  protected class ODataEntitySetIteratorResponseImpl extends ODataRetrieveResponseImpl {
+  protected class ODataEntitySetIteratorResponseImpl extends AbstractODataRetrieveResponse {
 
     /**
      * Constructor.
