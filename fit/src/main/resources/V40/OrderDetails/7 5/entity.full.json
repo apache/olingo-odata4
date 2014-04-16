@@ -1,0 +1,17 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#OrderDetails/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.OrderDetail",
+  "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)",
+  "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)",
+  "OrderID": 7,
+  "ProductID": 5,
+  "OrderPlaced@odata.type": "#DateTimeOffset",
+  "OrderPlaced": "2014-04-16T12:34:53.1351147Z",
+  "Quantity": 50,
+  "UnitPrice@odata.type": "#Single",
+  "UnitPrice": 3.24,
+  "ProductOrdered@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/ProductOrdered/$ref",
+  "ProductOrdered@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/ProductOrdered",
+  "AssociatedOrder@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/AssociatedOrder/$ref",
+  "AssociatedOrder@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/AssociatedOrder"
+}

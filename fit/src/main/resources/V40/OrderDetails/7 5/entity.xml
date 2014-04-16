@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#OrderDetails/$entity">
+  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)</id>
+  <category term="#Microsoft.Test.OData.Services.ODataWCFService.OrderDetail" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/ProductOrdered" type="application/atom+xml;type=feed" title="ProductOrdered" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/ProductOrdered" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/AssociatedOrder" type="application/atom+xml;type=entry" title="AssociatedOrder" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/AssociatedOrder" />
+  <title />
+  <updated>2014-04-16T12:38:34Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:OrderID m:type="Int32">7</d:OrderID>
+      <d:ProductID m:type="Int32">5</d:ProductID>
+      <d:OrderPlaced m:type="DateTimeOffset">2014-04-16T12:34:53.1351147Z</d:OrderPlaced>
+      <d:Quantity m:type="Int32">50</d:Quantity>
+      <d:UnitPrice m:type="Single">3.24</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>

@@ -132,7 +132,11 @@ public class DataBinder {
       final Link alink = new LinkImpl();
       alink.setHref(link.getHref());
       alink.setTitle(link.getTitle());
-      alink.setType(metadata.getEntityType(jsonentry.getType()).getNavigationProperty(link.getTitle()).isFeed()
+
+      final NavigationProperty navPropDetails =
+              metadata.getEntityType(jsonentry.getType()).getNavigationProperty(link.getTitle());
+
+      alink.setType(navPropDetails != null && navPropDetails.isFeed()
               ? Constants.get(ConstantKey.ATOM_LINK_FEED) : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
       alink.setRel(link.getRel());
 
@@ -203,7 +207,7 @@ public class DataBinder {
   public JSONPropertyImpl getJsonProperty(final AtomPropertyImpl atomproperty) {
     final JSONPropertyImpl jsonproperty = new JSONPropertyImpl();
     BeanUtils.copyProperties(atomproperty, jsonproperty, "value");
-    
+
     if (atomproperty.getValue().isComplex()) {
       final ComplexValueImpl complex = new ComplexValueImpl();
       jsonproperty.setValue(complex);

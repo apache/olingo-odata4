@@ -84,6 +84,7 @@ public abstract class Commons {
     sequence.put("ComputerDetail", 1000);
     sequence.put("AllGeoTypesSet", 1000);
     sequence.put("Orders", 1000);
+    sequence.put("Customers", 1000);
     sequence.put("Person", 1000);
     sequence.put("RowIndex", 1000);
 

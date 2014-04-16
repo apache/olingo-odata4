@@ -67,7 +67,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
-    assertEquals(getServiceRoot() + "/Customers(PersonID=1)", entity.getEditLink().toASCIIString());
+    assertEquals(getServiceRoot() + "/Customers(1)", entity.getEditLink().toASCIIString());
 
     assertEquals(3, entity.getNavigationLinks().size());
 
