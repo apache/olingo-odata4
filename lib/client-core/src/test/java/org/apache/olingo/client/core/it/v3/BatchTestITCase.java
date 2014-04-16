@@ -151,7 +151,6 @@ public class BatchTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   @SuppressWarnings("unchecked")
   public void changesetWithReference() throws EdmPrimitiveTypeException {
     // create your request
@@ -161,7 +160,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity customer = getSampleCustomerProfile(20, "sample customer", false);
 
-    URIBuilder uriBuilder = client.getURIBuilder(testAuthServiceRootURL).appendEntitySetSegment("Customer");
+    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
@@ -176,10 +175,10 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity customerChanges = client.getObjectFactory().newEntity(customer.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Info",
-            client.getURIBuilder(testAuthServiceRootURL).appendEntitySetSegment("CustomerInfo").
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo").
             appendKeySegment(17).build()));
 
-    final ODataEntityUpdateRequest updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
+    final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
             URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
 
     changeset.addRequest(updateReq);

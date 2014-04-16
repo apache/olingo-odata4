@@ -114,6 +114,8 @@ public abstract class AbstractServices {
 
   private static final Pattern REQUEST_PATTERN = Pattern.compile("(.*) (http://.*) HTTP/.*");
 
+  private static final Pattern BATCH_REQUEST_REF_PATTERN = Pattern.compile("(.*) ([$].*) HTTP/.*");
+
   private static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
@@ -161,6 +163,7 @@ public abstract class AbstractServices {
       }
 
       return xml.createResponse(
+              null,
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.SERVICES), acceptType),
               null, acceptType);
     } catch (Exception e) {
@@ -182,7 +185,7 @@ public abstract class AbstractServices {
 
   protected Response getMetadata(final String filename) {
     try {
-      return xml.createResponse(FSManager.instance(version).readFile(filename, Accept.XML), null, Accept.XML);
+      return xml.createResponse(null, FSManager.instance(version).readFile(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
@@ -201,22 +204,29 @@ public abstract class AbstractServices {
   }
 
   private Response bodyPartRequest(final MimeBodyPart body) throws Exception {
+    return bodyPartRequest(body, Collections.<String, String>emptyMap());
+  }
+
+  private Response bodyPartRequest(final MimeBodyPart body, final Map<String, String> references) throws Exception {
 
     @SuppressWarnings("unchecked")
     final Enumeration<Header> en = (Enumeration<Header>) body.getAllHeaders();
 
     Header header = en.nextElement();
-    final String request = header.getName() + ":" + header.getValue();
+    final String request = 
+            header.getName() + (StringUtils.isNotBlank(header.getValue()) ? ":" + header.getValue() : "");
+    
     final Matcher matcher = REQUEST_PATTERN.matcher(request);
+    final Matcher matcherRef = BATCH_REQUEST_REF_PATTERN.matcher(request);
+
+    final MultivaluedMap<String, String> headers = new MultivaluedHashMap<String, String>();
+
+    while (en.hasMoreElements()) {
+      header = en.nextElement();
+      headers.putSingle(header.getName(), header.getValue());
+    }
 
     if (matcher.find()) {
-      final MultivaluedMap<String, String> headers = new MultivaluedHashMap<String, String>();
-
-      while (en.hasMoreElements()) {
-        header = en.nextElement();
-        headers.putSingle(header.getName(), header.getValue());
-      }
-
       String method = matcher.group(1);
       if ("PATCH".equals(method) || "MERGE".equals(method)) {
         headers.putSingle("X-HTTP-METHOD", method);
@@ -226,7 +236,19 @@ public abstract class AbstractServices {
       final String url = matcher.group(2);
 
       final WebClient client = WebClient.create(url);
+      client.headers(headers);
 
+      return client.invoke(method, body.getDataHandler().getInputStream());
+    } else if (matcherRef.find()) {
+      String method = matcherRef.group(1);
+      if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        headers.putSingle("X-HTTP-METHOD", method);
+        method = "POST";
+      }
+
+      final String url = matcherRef.group(2);
+
+      final WebClient client = WebClient.create(references.get(url));
       client.headers(headers);
 
       return client.invoke(method, body.getDataHandler().getInputStream());
@@ -246,6 +268,8 @@ public abstract class AbstractServices {
 
         final Object content = obj.getDataHandler().getContent();
         if (content instanceof MimeMultipart) {
+          final Map<String, String> references = new HashMap<String, String>();
+
           final String cboundary = "changeset_" + UUID.randomUUID().toString();
           bos.write(("Content-Type: multipart/mixed;boundary=" + cboundary).getBytes());
           bos.write(Constants.CRLF);
@@ -259,12 +283,13 @@ public abstract class AbstractServices {
               lastContebtID = part.getContentID();
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
-              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()));
-              if (res.getStatus() > 400) {
+              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
+              if (res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
               addSingleBatchResponse(res, lastContebtID, chbos);
+              references.put("$" + lastContebtID, res.getHeaderString("Location"));
             }
             bos.write(chbos.toByteArray());
             IOUtils.closeQuietly(chbos);
@@ -290,7 +315,7 @@ public abstract class AbstractServices {
 
           res = bodyPartRequest(new MimeBodyPart(obj.getDataHandler().getInputStream()));
 
-          if (res.getStatus() > 400) {
+          if (res.getStatus() >= 400) {
             throw new Exception("Failure processing changeset");
           }
 
@@ -384,6 +409,7 @@ public abstract class AbstractServices {
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response mergeEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -392,7 +418,7 @@ public abstract class AbstractServices {
           @PathParam("entityId") String entityId,
           final String changes) {
 
-    return patchEntity(accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
+    return patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
   @PATCH
@@ -400,6 +426,7 @@ public abstract class AbstractServices {
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response patchEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -442,11 +469,16 @@ public abstract class AbstractServices {
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
         response = xml.createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
                 util.readEntity(entitySetName, entityId, acceptType).getValue(),
                 null, acceptType, Response.Status.OK);
       } else {
         res.close();
-        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        response = xml.createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
+                null,
+                null,
+                acceptType, Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -464,6 +496,7 @@ public abstract class AbstractServices {
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   public Response replaceEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -504,11 +537,19 @@ public abstract class AbstractServices {
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
         response = xml.createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
                 getUtilities(acceptType).readEntity(entitySetName, entityId, acceptType).getValue(),
-                null, acceptType, Response.Status.OK);
+                null,
+                acceptType,
+                Response.Status.OK);
       } else {
         res.close();
-        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        response = xml.createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
+                null,
+                null,
+                acceptType,
+                Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -526,6 +567,7 @@ public abstract class AbstractServices {
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
   public Response postNewEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -591,7 +633,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                  });
+          });
 
           entry = (new DataBinder(version)).
                   getAtomEntry(jcontainer.getObject());
@@ -620,12 +662,23 @@ public abstract class AbstractServices {
       FSManager.instance(version).putInMemory(
               cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
 
+      final String location = uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")";
+
       final Response response;
       if ("return-no-content".equalsIgnoreCase(prefer)) {
-        response = utils.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        response = utils.createResponse(
+                location,
+                null,
+                null,
+                acceptType,
+                Response.Status.NO_CONTENT);
       } else {
-        response = utils.createResponse(utils.readEntity(entitySetName, entityKey, acceptType).getValue(),
-                null, acceptType, Response.Status.CREATED);
+        response = utils.createResponse(
+                location,
+                utils.readEntity(entitySetName, entityKey, acceptType).getValue(),
+                null,
+                acceptType,
+                Response.Status.CREATED);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -664,15 +717,15 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
-      return utils.getValue().createResponse(null, null, utils.getKey(), Response.Status.NO_CONTENT);
+      return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -722,15 +775,15 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               FSManager.instance(version).getAbsolutePath(path.toString(), acceptType));
 
-      return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+      return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -767,7 +820,7 @@ public abstract class AbstractServices {
               : Constants.get(version, ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
-      return xml.createResponse(feed, Commons.getETag(basePath, version), acceptType);
+      return xml.createResponse(null, feed, Commons.getETag(basePath, version), acceptType);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -788,6 +841,7 @@ public abstract class AbstractServices {
   @GET
   @Path("/{name}")
   public Response getEntitySet(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("name") String name,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
@@ -804,10 +858,11 @@ public abstract class AbstractServices {
         acceptType = Accept.parse(accept, version);
       }
 
+      final String location = uriInfo.getRequestUri().toASCIIString();
       try {
         // search for function ...
         final InputStream func = FSManager.instance(version).readFile(name, acceptType);
-        return xml.createResponse(func, null, acceptType);
+        return xml.createResponse(location, func, null, acceptType);
       } catch (NotFoundException e) {
         if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
           throw new UnsupportedMediaTypeException("Unsupported media type");
@@ -856,11 +911,14 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                          new DataBinder(version).getJsonFeed(container.getObject())));
+                  new DataBinder(version).getJsonFeed(container.getObject())));
         }
 
-        return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
-                Commons.getETag(basePath, version), acceptType);
+        return xml.createResponse(
+                location,
+                new ByteArrayInputStream(content.toByteArray()),
+                Commons.getETag(basePath, version),
+                acceptType);
       }
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
@@ -880,6 +938,7 @@ public abstract class AbstractServices {
   @GET
   @Path("/Person({entityId})")
   public Response getEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @PathParam("entityId") final String entityId,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
@@ -901,7 +960,10 @@ public abstract class AbstractServices {
       }
 
       return utils.getValue().createResponse(
-              entity, Commons.getETag(entityInfo.getKey(), version), utils.getKey());
+              uriInfo.getRequestUri().toASCIIString(),
+              entity,
+              Commons.getETag(entityInfo.getKey(), version),
+              utils.getKey());
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
       return xml.createFaultResponse(accept, e);
@@ -922,6 +984,7 @@ public abstract class AbstractServices {
   @GET
   @Path("/{entitySetName}({entityId})")
   public Response getEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -929,10 +992,12 @@ public abstract class AbstractServices {
           @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
-    return getEntityInternal(accept, entitySetName, entityId, format, expand, select, false);
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, entitySetName, entityId, format, expand, select, false);
   }
 
   protected Response getEntityInternal(
+          final String location,
           final String accept,
           final String entitySetName,
           final String entityId,
@@ -1038,11 +1103,14 @@ public abstract class AbstractServices {
         final ObjectMapper mapper = Commons.getJsonMapper(version);
         mapper.writeValue(
                 writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                        (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
       }
 
-      return xml.createResponse(new ByteArrayInputStream(content.toByteArray()),
-              Commons.getETag(entityInfo.getKey(), version), utils.getKey());
+      return xml.createResponse(
+              location,
+              new ByteArrayInputStream(content.toByteArray()),
+              Commons.getETag(entityInfo.getKey(), version),
+              utils.getKey());
 
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
@@ -1053,6 +1121,7 @@ public abstract class AbstractServices {
   @GET
   @Path("/{entitySetName}({entityId})/$value")
   public Response getMediaEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId) {
@@ -1064,7 +1133,11 @@ public abstract class AbstractServices {
 
       final AbstractUtilities utils = getUtilities(null);
       final Map.Entry<String, InputStream> entityInfo = utils.readMediaEntity(entitySetName, entityId);
-      return utils.createResponse(entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), version), null);
+      return utils.createResponse(
+              uriInfo.getRequestUri().toASCIIString(),
+              entityInfo.getValue(),
+              Commons.getETag(entityInfo.getKey(), version),
+              null);
 
     } catch (Exception e) {
       LOG.error("Error retrieving entity", e);
@@ -1084,7 +1157,7 @@ public abstract class AbstractServices {
 
       FSManager.instance(version).deleteFile(basePath + Constants.get(version, ConstantKey.ENTITY));
 
-      return xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+      return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
@@ -1122,10 +1195,10 @@ public abstract class AbstractServices {
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(changed, null, acceptType, Response.Status.OK);
+        response = xml.createResponse(null, changed, null, acceptType, Response.Status.OK);
       } else {
         changed.close();
-        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        response = xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -1167,10 +1240,10 @@ public abstract class AbstractServices {
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(changed, null, acceptType, Response.Status.OK);
+        response = xml.createResponse(null, changed, null, acceptType, Response.Status.OK);
       } else {
         changed.close();
-        response = xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
+        response = xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -1261,6 +1334,7 @@ public abstract class AbstractServices {
   @Consumes({MediaType.WILDCARD, MediaType.APPLICATION_OCTET_STREAM})
   @Path("/{entitySetName}({entityId})/$value")
   public Response replaceMediaEntity(
+          @Context UriInfo uriInfo,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -1272,12 +1346,14 @@ public abstract class AbstractServices {
 
       InputStream res = utils.putMediaInMemory(entitySetName, entityId, IOUtils.toInputStream(value));
 
+      final String location = uriInfo.getRequestUri().toASCIIString().replace("/$value", "");
+
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(res, null, null, Response.Status.OK);
+        response = xml.createResponse(location, res, null, null, Response.Status.OK);
       } else {
         res.close();
-        response = xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+        response = xml.createResponse(location, null, null, null, Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -1333,10 +1409,10 @@ public abstract class AbstractServices {
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
-        response = xml.createResponse(res, null, null, Response.Status.OK);
+        response = xml.createResponse(null, res, null, null, Response.Status.OK);
       } else {
         res.close();
-        response = xml.createResponse(null, null, null, Response.Status.NO_CONTENT);
+        response = xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
       }
 
       if (StringUtils.isNotBlank(prefer)) {
@@ -1462,7 +1538,7 @@ public abstract class AbstractServices {
 
     final AbstractUtilities utils = getUtilities(null);
     final Map.Entry<String, InputStream> entityInfo = utils.readMediaEntity(entitySetName, entityId, path);
-    return utils.createResponse(entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), version), null);
+    return utils.createResponse(null, entityInfo.getValue(), Commons.getETag(entityInfo.getKey(), version), null);
   }
 
   private Response navigateEntity(
@@ -1511,7 +1587,7 @@ public abstract class AbstractServices {
       }
     }
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
-    return xml.createResponse(stream, Commons.getETag(basePath, version), acceptType);
+    return xml.createResponse(null, stream, Commons.getETag(basePath, version), acceptType);
   }
 
   private Response navigateProperty(
@@ -1544,7 +1620,7 @@ public abstract class AbstractServices {
       stream = utils.getProperty(entitySetName, entityId, pathElements, edmType);
     }
 
-    return xml.createResponse(stream, Commons.getETag(basePath, version), acceptType);
+    return xml.createResponse(null, stream, Commons.getETag(basePath, version), acceptType);
   }
 
   /**

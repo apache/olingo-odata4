@@ -365,7 +365,7 @@ public abstract class AbstractUtilities {
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-                    Accept.JSON_FULLMETA));
+            Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -410,8 +410,12 @@ public abstract class AbstractUtilities {
   }
 
   public Response createResponse(
-          final InputStream entity, final String etag, final Accept accept) {
-    return createResponse(entity, etag, accept, null);
+          final String location, final InputStream entity, final String etag, final Accept accept) {
+    return createResponse(location, entity, etag, accept, null);
+  }
+  
+  public Response createResponse(final InputStream entity, final String etag, final Accept accept) {
+    return createResponse(null, entity, etag, accept, null);
   }
 
   public Response createBatchResponse(final InputStream stream, final String boundary) {
@@ -421,7 +425,18 @@ public abstract class AbstractUtilities {
   }
 
   public Response createResponse(
-          final InputStream entity, final String etag, final Accept accept, final Response.Status status) {
+          final InputStream entity,
+          final String etag,
+          final Accept accept,
+          final Response.Status status) {
+    return createResponse(null, entity, etag, accept, status);
+  }
+  public Response createResponse(
+          final String location,
+          final InputStream entity,
+          final String etag,
+          final Accept accept,
+          final Response.Status status) {
 
     final Response.ResponseBuilder builder = Response.ok();
     if (version.compareTo(ODataServiceVersion.V30) <= 0) {
@@ -465,6 +480,10 @@ public abstract class AbstractUtilities {
 
     builder.header("Content-Length", contentLength);
     builder.header("Content-Type", (accept == null ? "*/*" : accept.toString(version)) + contentTypeEncoding);
+
+    if (StringUtils.isNotBlank(location)) {
+      builder.header("Location", location);
+    }
 
     return builder.build();
   }

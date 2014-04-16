@@ -319,5 +319,4 @@ public class V3Services extends AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-
 }

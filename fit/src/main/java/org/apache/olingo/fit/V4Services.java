@@ -31,6 +31,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,7 +98,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -108,6 +109,7 @@ public class V4Services extends AbstractServices {
 
   @Override
   public Response patchEntity(
+          final UriInfo uriInfo,
           final String accept,
           final String contentType,
           final String prefer,
@@ -117,14 +119,16 @@ public class V4Services extends AbstractServices {
           final String changes) {
 
     final Response response =
-            getEntityInternal(accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
-            ? postNewEntity(accept, contentType, prefer, entitySetName, changes)
-            : super.patchEntity(accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
+            ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
+            : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
   @Override
   public Response replaceEntity(
+          final UriInfo uriInfo,
           final String accept,
           final String contentType,
           final String prefer,
@@ -133,10 +137,11 @@ public class V4Services extends AbstractServices {
           final String entity) {
 
     try {
-      getEntityInternal(accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
-      return super.replaceEntity(accept, contentType, prefer, entitySetName, entityId, entity);
+      getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+              accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+      return super.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity);
     } catch (NotFoundException e) {
-      return postNewEntity(accept, contentType, prefer, entitySetName, entityId);
+      return postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId);
     }
   }
 
@@ -225,7 +230,7 @@ public class V4Services extends AbstractServices {
 
         final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
                 new TypeReference<JSONEntryImpl>() {
-                });
+        });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.getAtomEntry(jsonContainer.getObject());
       }
@@ -246,5 +251,4 @@ public class V4Services extends AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-
 }
