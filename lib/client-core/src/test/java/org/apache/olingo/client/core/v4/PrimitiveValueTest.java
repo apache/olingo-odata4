@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.core.AbstractTest;
@@ -36,7 +36,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageTimeOfDay() throws EdmPrimitiveTypeException {
+  public void timeOfDay() throws EdmPrimitiveTypeException {
     final Calendar expected = Calendar.getInstance();
     expected.clear();
     expected.set(2013, 0, 10, 21, 45, 17);
@@ -49,12 +49,12 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(expected.get(Calendar.HOUR), actual.get(Calendar.HOUR));
     assertEquals(expected.get(Calendar.MINUTE), actual.get(Calendar.MINUTE));
     assertEquals(expected.get(Calendar.SECOND), actual.get(Calendar.SECOND));
-    
+
     assertEquals("21:45:17", value.asPrimitive().toString());
   }
 
   @Test
-  public void manageDate() throws EdmPrimitiveTypeException {
+  public void Date() throws EdmPrimitiveTypeException {
     final Calendar expected = Calendar.getInstance();
     expected.clear();
     expected.set(2013, 0, 10);

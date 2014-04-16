@@ -31,6 +31,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
@@ -44,7 +45,6 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
-
 import org.junit.Test;
 
 public class PrimitiveValueTest extends AbstractTest {
@@ -55,7 +55,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageInt32() throws EdmPrimitiveTypeException {
+  public void int32() throws EdmPrimitiveTypeException {
     final int primitive = -10;
     ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Int32).
             setValue(primitive).build();
@@ -68,20 +68,19 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageString() throws EdmPrimitiveTypeException {
-    final String primitive = UUID.randomUUID().toString();
-    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
-            setText(primitive).build();
+  public void string() throws EdmPrimitiveTypeException {
+    final String primitive = RandomStringUtils.random(17);
+    ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().buildString(primitive);
     assertEquals(EdmPrimitiveTypeKind.String, value.asPrimitive().getTypeKind());
     assertEquals(primitive, value.toString());
 
     value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.String).
             setText("1126a28b-a4af-4bbd-bf0a-2b2c22635565").build();
-    assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(String.class).toString());
+    assertEquals("1126a28b-a4af-4bbd-bf0a-2b2c22635565", value.asPrimitive().toCastValue(String.class));
   }
 
   @Test
-  public void manageDecimal() throws EdmPrimitiveTypeException {
+  public void decimal() throws EdmPrimitiveTypeException {
     final BigDecimal primitive = new BigDecimal("-79228162514264337593543950335");
     ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Decimal).
             setValue(primitive).build();
@@ -94,7 +93,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageDateTime() throws EdmPrimitiveTypeException {
+  public void dateTime() throws EdmPrimitiveTypeException {
     final Calendar expected = Calendar.getInstance();
     expected.clear();
     expected.set(2013, 0, 10, 2, 0, 0);
@@ -121,7 +120,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageTime() throws EdmPrimitiveTypeException {
+  public void time() throws EdmPrimitiveTypeException {
     final String primitive = "-P9DT51M10.5063807S";
     final ODataValue value =
             getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Time).
@@ -132,29 +131,34 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageDateTimeOffset() throws EdmPrimitiveTypeException {
+  public void dateTimeOffset() throws EdmPrimitiveTypeException {
     final Calendar expected = Calendar.getInstance();
     expected.clear();
     expected.setTimeZone(TimeZone.getTimeZone("GMT"));
     expected.set(2013, 0, 10, 2, 0, 0);
+    expected.set(Calendar.MILLISECOND, 22);
 
     final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.DateTimeOffset, value.asPrimitive().getTypeKind());
 
-    final Calendar actual = value.asPrimitive().toCastValue(Calendar.class);
-    assertEquals(expected.get(Calendar.YEAR), actual.get(Calendar.YEAR));
-    assertEquals(expected.get(Calendar.MONTH), actual.get(Calendar.MONTH));
-    assertEquals(expected.get(Calendar.DATE), actual.get(Calendar.DATE));
-    assertEquals(expected.get(Calendar.HOUR), actual.get(Calendar.HOUR));
-    assertEquals(expected.get(Calendar.MINUTE), actual.get(Calendar.MINUTE));
-    assertEquals(expected.get(Calendar.SECOND), actual.get(Calendar.SECOND));
+    final Calendar asCalendar = value.asPrimitive().toCastValue(Calendar.class);
+    assertEquals(expected.get(Calendar.YEAR), asCalendar.get(Calendar.YEAR));
+    assertEquals(expected.get(Calendar.MONTH), asCalendar.get(Calendar.MONTH));
+    assertEquals(expected.get(Calendar.DATE), asCalendar.get(Calendar.DATE));
+    assertEquals(expected.get(Calendar.HOUR), asCalendar.get(Calendar.HOUR));
+    assertEquals(expected.get(Calendar.MINUTE), asCalendar.get(Calendar.MINUTE));
+    assertEquals(expected.get(Calendar.SECOND), asCalendar.get(Calendar.SECOND));
+    assertEquals(expected.get(Calendar.MILLISECOND), asCalendar.get(Calendar.MILLISECOND));
 
-    assertEquals("2013-01-10T02:00:00Z", value.asPrimitive().toString());
+    final Timestamp asTimestamp = value.asPrimitive().toCastValue(Timestamp.class);
+    assertEquals(expected.get(Calendar.MILLISECOND), asTimestamp.getNanos());
+    
+    assertEquals("2013-01-10T02:00:00.022Z", value.asPrimitive().toString());
   }
 
   @Test
-  public void manageGuid() throws EdmPrimitiveTypeException {
+  public void guid() throws EdmPrimitiveTypeException {
     final UUID primitive = UUID.fromString("1126a28b-a4af-4bbd-bf0a-2b2c22635565");
     ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Guid).
             setValue(primitive).build();
@@ -167,7 +171,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageBinary() throws EdmPrimitiveTypeException {
+  public void binary() throws EdmPrimitiveTypeException {
     final byte[] primitive = UUID.randomUUID().toString().getBytes();
     ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Binary).
             setValue(primitive).build();
@@ -183,7 +187,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void managePoint() throws EdmPrimitiveTypeException {
+  public void point() throws EdmPrimitiveTypeException {
     final Point primitive = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     primitive.setX(52.8606);
     primitive.setY(173.334);
@@ -200,7 +204,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageLineString() throws EdmPrimitiveTypeException {
+  public void lineString() throws EdmPrimitiveTypeException {
     final List<Point> points = new ArrayList<Point>();
     Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(40.5);
@@ -241,7 +245,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiPoint() throws EdmPrimitiveTypeException {
+  public void multiPoint() throws EdmPrimitiveTypeException {
     final List<Point> points = new ArrayList<Point>();
     Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
     point.setX(0);
@@ -263,7 +267,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiLine() throws EdmPrimitiveTypeException {
+  public void multiLine() throws EdmPrimitiveTypeException {
     final List<LineString> lines = new ArrayList<LineString>();
 
     // line one ...
@@ -332,7 +336,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void managePolygon() throws EdmPrimitiveTypeException {
+  public void polygon() throws EdmPrimitiveTypeException {
 
     final List<Point> interior = new ArrayList<Point>();
     final List<Point> exterior = new ArrayList<Point>();
@@ -382,7 +386,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageMultiPolygon() throws EdmPrimitiveTypeException {
+  public void multiPolygon() throws EdmPrimitiveTypeException {
     final List<Polygon> polygons = new ArrayList<Polygon>();
 
     List<Point> interior = new ArrayList<Point>();
@@ -499,7 +503,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageGeomCollection() throws EdmPrimitiveTypeException {
+  public void geomCollection() throws EdmPrimitiveTypeException {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
     Point point = new Point(Geospatial.Dimension.GEOMETRY, null);
@@ -531,7 +535,7 @@ public class PrimitiveValueTest extends AbstractTest {
   }
 
   @Test
-  public void manageGeogCollection() throws EdmPrimitiveTypeException {
+  public void geogCollection() throws EdmPrimitiveTypeException {
     final List<Geospatial> collection = new ArrayList<Geospatial>();
 
     Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
