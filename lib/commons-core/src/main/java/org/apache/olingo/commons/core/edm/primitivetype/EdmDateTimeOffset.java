@@ -103,7 +103,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
 
       if (!decimals.isEmpty()) {
-        final int fractionalSecs = Integer.parseInt(decimals);
+        final int fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
         // if fractional are just milliseconds, convert to nanoseconds
         timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
       }
@@ -296,10 +296,19 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         throw new IllegalArgumentException();
       }
 
+      // Keep output similar to Calendar's, if possible            
       String fractionals = NANO_FORMAT.get().format(fractionalSeconds);
-      // Keep output similar to Calendar's, if possible
-      if ("000000".equals(fractionals.substring(3))) {
-        fractionals = fractionals.substring(0, 3);
+      boolean canStart = false;
+      int firstZeroAfterNonZeroIdx = -1;
+      for (int i = 0; i < fractionals.length() && firstZeroAfterNonZeroIdx == -1; i++) {
+        if ('0' != fractionals.charAt(i)) {
+          canStart = true;
+        } else if (canStart && '0' == fractionals.charAt(i)) {
+          firstZeroAfterNonZeroIdx = i;
+        }
+      }
+      if (firstZeroAfterNonZeroIdx != -1 && 0 == Integer.valueOf(fractionals.substring(firstZeroAfterNonZeroIdx))) {
+        fractionals = fractionals.substring(0, firstZeroAfterNonZeroIdx);
       }
       result.append('.').append(fractionals);
     }

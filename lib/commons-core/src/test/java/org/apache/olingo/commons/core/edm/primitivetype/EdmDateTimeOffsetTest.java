@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import java.sql.Timestamp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -104,6 +105,8 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     dateTime.add(Calendar.MILLISECOND, 7);
     assertEquals(dateTime, instance.valueOfString("2012-02-29T01:02:03.007+11:00", null, null, 3, null, null,
         Calendar.class));
+    assertEquals(530000000, instance.valueOfString("2012-02-29T01:02:03.53+11:00", null, null, 9, null, null,
+        Timestamp.class).getNanos());
 
     assertEquals(Long.valueOf(120000L), instance.valueOfString("1970-01-01T00:02", null, null, null, null, null,
         Long.class));
