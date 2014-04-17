@@ -81,7 +81,7 @@
         <configuration>
           <systemPropertyVariables>
             <propertyName>org.slf4j.simpleLogger.defaultLogLevel</propertyName>
-            <org.slf4j.simpleLogger.defaultLogLevel>ERROR</org.slf4j.simpleLogger.defaultLogLevel>
+            <org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
           </systemPropertyVariables>
         </configuration>
       </plugin>

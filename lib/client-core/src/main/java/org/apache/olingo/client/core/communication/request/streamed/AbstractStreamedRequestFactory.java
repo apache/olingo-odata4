@@ -26,22 +26,23 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEnt
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.CommonStreamedRequestFactory;
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 public abstract class AbstractStreamedRequestFactory implements CommonStreamedRequestFactory {
 
   private static final long serialVersionUID = -2438839640443961168L;
 
-  protected final CommonODataClient client;
+  protected final CommonODataClient<?> client;
 
-  protected AbstractStreamedRequestFactory(final CommonODataClient client) {
+  protected AbstractStreamedRequestFactory(final CommonODataClient<?> client) {
     this.client = client;
   }
 
   @Override
-  public ODataMediaEntityCreateRequest getMediaEntityCreateRequest(
+  public <E extends CommonODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
           final URI targetURI, final InputStream media) {
 
-    return new ODataMediaEntityCreateRequestImpl(client, targetURI, media);
+    return new ODataMediaEntityCreateRequestImpl<E>(client, targetURI, media);
   }
 
   @Override
@@ -59,16 +60,16 @@ public abstract class AbstractStreamedRequestFactory implements CommonStreamedRe
   }
 
   @Override
-  public ODataMediaEntityUpdateRequest getMediaEntityUpdateRequest(
+  public <E extends CommonODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
           final URI editURI, final InputStream media) {
 
-    final ODataMediaEntityUpdateRequest req;
+    final ODataMediaEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataMediaEntityUpdateRequestImpl(client, HttpMethod.POST, editURI, media);
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.POST, editURI, media);
       req.setXHTTPMethod(HttpMethod.PUT.name());
     } else {
-      req = new ODataMediaEntityUpdateRequestImpl(client, HttpMethod.PUT, editURI, media);
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.PUT, editURI, media);
     }
 
     return req;

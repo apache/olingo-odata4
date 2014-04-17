@@ -45,8 +45,9 @@ public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse
    * @param method HTTP request method.
    * @param uri request URI.
    */
-  public AbstractODataStreamedEntityRequest(final CommonODataClient odataClient, final HttpMethod method,
-          URI uri) {
+  public AbstractODataStreamedEntityRequest(final CommonODataClient<?> odataClient, final HttpMethod method,
+          final URI uri) {
+
     super(odataClient, method, uri);
     setAccept(getFormat().toString(odataClient.getServiceVersion()));
   }

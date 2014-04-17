@@ -32,10 +32,13 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -166,5 +169,84 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void jsonOnContained() {
     onContained(ODataPubFormat.JSON);
+  }
+
+  private void deepInsert(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+    final int productId = RandomUtils.nextInt(10, 20);
+    final ODataEntity product = getClient().getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Product"));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductID",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(productId)));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Name",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Latte")));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("QuantityPerUnit",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("100g Bag")));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("UnitPrice",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildSingle(3.24f)));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("QuantityInStock",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(100)));
+    product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Discontinued",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildBoolean(false)));
+    product.getProperties().add(getClient().getObjectFactory().newEnumProperty("UserAccess",
+            getClient().getObjectFactory().
+            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "Execute")));
+    product.getProperties().add(getClient().getObjectFactory().newEnumProperty("SkinColor",
+            getClient().getObjectFactory().
+            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
+    product.getProperties().add(getClient().getObjectFactory().newCollectionProperty("CoverColors",
+            getClient().getObjectFactory().
+            newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")));
+    product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().
+            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Green"));
+    product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().
+            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Red"));
+
+    final int productDetailId = RandomUtils.nextInt(10, 20);
+    final ODataEntity detail = getClient().getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.ProductDetail"));
+    detail.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductID",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(productId)));
+    detail.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductDetailID",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(productDetailId)));
+    detail.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductName",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("LatteHQ")));
+    detail.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Description",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("High-Quality Milk")));
+
+    final ODataEntitySet details = getClient().getObjectFactory().newEntitySet();
+    details.getEntities().add(detail);
+
+    final ODataInlineEntitySet inlineDetails = getClient().getObjectFactory().
+            newDeepInsertEntitySet("Details", details);
+    product.addLink(inlineDetails);
+
+    final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
+            getClient().getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Products").build(), product);
+    req.setFormat(format);
+    final ODataEntityCreateResponse<ODataEntity> res = req.execute();
+    assertEquals(201, res.getStatusCode());
+
+    final ODataEntity createdProduct = res.getBody();
+    assertEquals(productId,
+            createdProduct.getProperty("ProductID").getPrimitiveValue().toCastValue(Integer.class), 0);
+
+    final ODataLink createdLink = createdProduct.getNavigationLink("Details");
+    assertNotNull(createdLink);
+
+    final ODataEntitySet createdProductDetails =
+            getClient().getRetrieveRequestFactory().getEntitySetRequest(createdLink.getLink()).execute().getBody();
+    assertNotNull(createdProductDetails);
+    assertEquals(productDetailId, createdProductDetails.getEntities().iterator().next().
+            getProperty("ProductDetailID").getPrimitiveValue().toCastValue(Integer.class), 0);
+  }
+
+  @Test
+  public void atomDeepInsert() throws EdmPrimitiveTypeException {
+    deepInsert(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonDeepInsert() throws EdmPrimitiveTypeException {
+    deepInsert(ODataPubFormat.JSON_FULL_METADATA);
   }
 }

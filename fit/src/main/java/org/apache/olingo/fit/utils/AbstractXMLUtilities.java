@@ -76,7 +76,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       ifactory = XMLInputFactory.newInstance();
     }
     ifactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-    return ifactory.createXMLEventReader(is, "utf-8");
+    return ifactory.createXMLEventReader(is, "UTF-8");
   }
 
   protected static XMLEventWriter getEventWriter(final OutputStream os) throws XMLStreamException {
@@ -84,7 +84,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
       ofactory = XMLOutputFactory.newInstance();
     }
 
-    return ofactory.createXMLEventWriter(os, "utf-8");
+    return ofactory.createXMLEventWriter(os, "UTF-8");
   }
 
   private void writeEvent(final XMLEvent event, final XMLEventWriter writer) {
@@ -265,7 +265,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
           inlineReader.close();
         } catch (Exception ignore) {
           // inline element not found (inlines are not mondatory).
-          if (StringUtils.isNotBlank(href) && entityUriPattern.matcher(href).matches()) {
+          if (StringUtils.isNotBlank(href) && ENTITY_URI_PATTERN.matcher(href).matches()) {
             links.addLinks(title, href.substring(href.lastIndexOf('/') + 1));
           }
         }
@@ -1054,6 +1054,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
   public Map.Entry<String, List<String>> extractLinkURIs(
           final String entitySetName, final String entityId, final String linkName)
           throws Exception {
+    
     final LinkInfo links = readLinks(entitySetName, entityId, linkName, Accept.XML);
     return extractLinkURIs(links.getLinks());
   }
@@ -1117,7 +1118,7 @@ public abstract class AbstractXMLUtilities extends AbstractUtilities {
     final XMLEventWriter writer = getEventWriter(bos);
 
     final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    writer.add(eventFactory.createStartDocument("utf-8", "1.0"));
+    writer.add(eventFactory.createStartDocument("UTF-8", "1.0"));
     writer.add(property.getStart());
 
     if (property.getStart().getAttributeByName(new QName(

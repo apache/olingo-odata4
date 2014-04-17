@@ -445,6 +445,14 @@ public class AtomSerializer extends AbstractAtomDealer {
           final XMLStreamWriter writer, final Container<T> container) throws XMLStreamException {
 
     if (container.getContextURL() != null) {
+      final String base = StringUtils.substringBefore(container.getContextURL().toASCIIString(), Constants.METADATA);
+      if (container.getObject() instanceof AtomFeedImpl) {
+        ((AtomFeedImpl) container.getObject()).setBaseURI(base);
+      }
+      if (container.getObject() instanceof AtomEntryImpl) {
+        ((AtomEntryImpl) container.getObject()).setBaseURI(base);
+      }
+
       writer.writeAttribute(
               version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
               Constants.CONTEXT,

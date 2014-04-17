@@ -118,8 +118,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final int id = 5;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
-    original.addLink(client.getObjectFactory().newInlineEntity(
-            "Info", null, getSampleCustomerInfo(id, "Sample Customer_Info")));
+    original.addLink(client.getObjectFactory().newDeepInsertEntity(
+            "Info", getSampleCustomerInfo(id, "Sample Customer_Info")));
 
     createEntity(getServiceRoot(), format, original, "Customer");
     final ODataEntity actual =
@@ -145,8 +145,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final int id = 6;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
-    original.addLink(client.getObjectFactory().newInlineEntity(
-            "Info", null, getSampleCustomerInfo(id, "Sample Customer_Info")));
+    original.addLink(client.getObjectFactory().newDeepInsertEntity(
+            "Info", getSampleCustomerInfo(id, "Sample Customer_Info")));
 
     createEntity(getServiceRoot(), format, original, "Customer");
     final ODataEntity actual =
@@ -224,7 +224,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void createReturnNoContent() {
     final int id = 1;
-    final ODataEntity original = (ODataEntity) getSampleCustomerProfile(id, "Sample customer", false);
+    final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
             client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").build(), original);
@@ -251,7 +251,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   @Test
   public void issue135() {
     final int id = 2;
-    final ODataEntity original = (ODataEntity) getSampleCustomerProfile(id, "Sample customer for issue 135", false);
+    final ODataEntity original = getSampleCustomerProfile(id, "Sample customer for issue 135", false);
 
     final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
     final ODataEntityCreateRequest<ODataEntity> createReq =
@@ -278,7 +278,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
           throws EdmPrimitiveTypeException {
 
     final String sampleName = "Sample customer";
-    final ODataEntity original = (ODataEntity) getSampleCustomerProfile(id, sampleName, false);
+    final ODataEntity original = getSampleCustomerProfile(id, sampleName, false);
 
     final Set<Integer> keys = new HashSet<Integer>();
     keys.add(-100);
@@ -288,12 +288,10 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       final ODataEntity order = client.getObjectFactory().
               newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.Order"));
 
-      getClient().getBinder().add(order,
-              client.getObjectFactory().newPrimitiveProperty("OrderId",
-                      client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(key)));
-      getClient().getBinder().add(order,
-              client.getObjectFactory().newPrimitiveProperty("CustomerId",
-                      client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
+      order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("OrderId",
+              client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(key)));
+      order.getProperties().add(client.getObjectFactory().newPrimitiveProperty("CustomerId",
+              client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
       final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
               client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Order").build(), order);
@@ -304,9 +302,9 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
               createReq.execute().getBody().getEditLink()));
     }
 
-    final ODataEntity created = (ODataEntity) createEntity(getServiceRoot(), format, original, "Customer");
+    final ODataEntity created = createEntity(getServiceRoot(), format, original, "Customer");
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
-    final ODataEntity actual = (ODataEntity) compareEntities(getServiceRoot(), format, created, id, null);
+    final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
     final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
@@ -381,8 +379,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     final String sampleName = "Sample customer";
 
-    ODataEntity customer = (ODataEntity) getSampleCustomerProfile(id, sampleName, false);
-    customer = (ODataEntity) createEntity(getServiceRoot(), format, customer, "Customer");
+    ODataEntity customer = getSampleCustomerProfile(id, sampleName, false);
+    customer = createEntity(getServiceRoot(), format, customer, "Customer");
 
     ODataEntity order = client.getObjectFactory().newEntity(new FullQualifiedName(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Order"));
@@ -396,9 +394,9 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Customer", URIUtils.getURI(getServiceRoot(), customer.getEditLink().toASCIIString())));
 
-    order = (ODataEntity) createEntity(getServiceRoot(), format, order, "Order");
+    order = createEntity(getServiceRoot(), format, order, "Order");
 
-    ODataEntity changes = client.getObjectFactory().newEntity(new FullQualifiedName(
+    final ODataEntity changes = client.getObjectFactory().newEntity(new FullQualifiedName(
             "Microsoft.Test.OData.Services.AstoriaDefaultService.Customer"));
     changes.setEditLink(customer.getEditLink());
     changes.addLink(client.getObjectFactory().newEntitySetNavigationLink(

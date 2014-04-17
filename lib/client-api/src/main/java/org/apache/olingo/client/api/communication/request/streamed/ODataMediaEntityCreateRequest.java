@@ -19,10 +19,13 @@
 package org.apache.olingo.client.api.communication.request.streamed;
 
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
+ *
+ * @param <E> concrete ODataEntity implementation
  */
-public interface ODataMediaEntityCreateRequest
-        extends ODataStreamedEntityRequest<ODataMediaEntityCreateResponse, MediaEntityCreateStreamManager> {
+public interface ODataMediaEntityCreateRequest<E extends CommonODataEntity>
+        extends ODataStreamedEntityRequest<ODataMediaEntityCreateResponse<E>, MediaEntityCreateStreamManager<E>> {
 }

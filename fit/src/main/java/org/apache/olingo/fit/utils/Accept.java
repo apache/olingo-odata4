@@ -93,7 +93,7 @@ public enum Accept {
     } else if (contentType.startsWith(TEXT.toString(version))) {
       return TEXT;
     } else {
-      throw new UnsupportedMediaTypeException("Unsupported media type");
+      throw new UnsupportedMediaTypeException(contentType);
     }
   }
 }

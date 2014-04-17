@@ -18,19 +18,21 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.net.URI;
 import java.util.Calendar;
 import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 
 public class EntityUpdateTestITCase extends AbstractTestITCase {
@@ -112,4 +114,41 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     onContained(ODataPubFormat.JSON);
   }
 
+  private void bindOperation(final ODataPubFormat format) throws EdmPrimitiveTypeException {
+    final ODataEntity changes = getClient().getObjectFactory().newEntity(
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+    final ODataLink parent = getClient().getObjectFactory().newEntityNavigationLink("Parent",
+            getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("People").appendKeySegment(1).build());
+    changes.getNavigationLinks().add(parent);
+
+    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("People").appendKeySegment(5).build();
+    final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
+            getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
+    req.setFormat(format);
+
+    final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
+    assertEquals(204, res.getStatusCode());
+
+    final ODataEntity updated = getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute().getBody();
+    assertNotNull(updated);
+    final ODataLink updatedLink = updated.getNavigationLink("Parent");
+    assertNotNull(updatedLink);
+
+    final ODataEntity updatedEntity = getClient().getRetrieveRequestFactory().getEntityRequest(updatedLink.getLink()).
+            execute().getBody();
+    assertNotNull(updatedEntity);
+    assertEquals(1, updatedEntity.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
+  }
+
+  @Test
+  public void atomBindOperation() throws EdmPrimitiveTypeException {
+    bindOperation(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void jsonBindOperation() throws EdmPrimitiveTypeException {
+    bindOperation(ODataPubFormat.JSON);
+  }
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.client.api.communication.request.streamed;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 /**
  * OData request factory class.
@@ -32,11 +33,13 @@ public interface CommonStreamedRequestFactory extends Serializable {
    * <br/>
    * Use this kind of request to create a new media entity.
    *
+   * @param <E> concrete ODataEntity implementation
    * @param targetURI entity set URI.
    * @param media entity blob to be created.
    * @return new ODataMediaEntityCreateRequest instance.
    */
-  ODataMediaEntityCreateRequest getMediaEntityCreateRequest(URI targetURI, InputStream media);
+  <E extends CommonODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+          URI targetURI, InputStream media);
 
   /**
    * Gets a stream update request object instance.
@@ -54,9 +57,11 @@ public interface CommonStreamedRequestFactory extends Serializable {
    * <br/>
    * Use this kind of request to update a media entity.
    *
+   * @param <E> concrete ODataEntity implementation
    * @param editURI media entity edit link URI.
    * @param media entity blob to be updated.
    * @return new ODataMediaEntityUpdateRequest instance.
    */
-  ODataMediaEntityUpdateRequest getMediaEntityUpdateRequest(URI editURI, InputStream media);
+  <E extends CommonODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+          URI editURI, InputStream media);
 }

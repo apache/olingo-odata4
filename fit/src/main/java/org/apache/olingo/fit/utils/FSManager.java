@@ -108,7 +108,7 @@ public class FSManager {
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(serviceVersion);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
       atomSerializer.write(writer, container);
       writer.flush();

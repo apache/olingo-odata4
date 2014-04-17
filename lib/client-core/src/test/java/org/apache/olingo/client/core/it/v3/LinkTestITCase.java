@@ -36,7 +36,6 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.junit.Test;
 
@@ -50,7 +49,7 @@ public class LinkTestITCase extends AbstractTestITCase {
   }
 
   private ODataLinkCollection doRetrieveLinkURIs(final ODataFormat format, final String linkname) throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataLinkCollectionRequest req =
@@ -94,9 +93,9 @@ public class LinkTestITCase extends AbstractTestITCase {
 
     // 2. create new link
     final ODataLink newLink = client.getObjectFactory().
-            newAssociationLink(null, URI.create(getServiceRoot() + "/Login('3')"));
+            newAssociationLink(URI.create(getServiceRoot() + "/Login('3')"));
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins");
 
     final ODataLinkCreateRequest req =
@@ -133,8 +132,8 @@ public class LinkTestITCase extends AbstractTestITCase {
     final URI before = doRetrieveLinkURIs(format, "Info").getLinks().get(0);
 
     // 2. update the link
-    ODataLink newLink =
-            client.getObjectFactory().newAssociationLink(null, URI.create(getServiceRoot() + "/CustomerInfo(12)"));
+    ODataLink newLink = client.getObjectFactory().
+            newAssociationLink(URI.create(getServiceRoot() + "/CustomerInfo(12)"));
 
     final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Info");
@@ -151,7 +150,7 @@ public class LinkTestITCase extends AbstractTestITCase {
     assertEquals(newLink.getLink(), after);
 
     // 3. reset back the link value
-    newLink = client.getObjectFactory().newAssociationLink(null, before);
+    newLink = client.getObjectFactory().newAssociationLink(before);
     req = client.getCUDRequestFactory().getLinkUpdateRequest(uriBuilder.build(), updateType, newLink);
     req.setFormat(format);
 

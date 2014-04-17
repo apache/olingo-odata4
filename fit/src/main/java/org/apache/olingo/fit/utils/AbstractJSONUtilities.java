@@ -66,7 +66,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
               new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
     }
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 
   @Override
@@ -97,13 +97,10 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     return links;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  protected NavigationLinks retrieveNavigationInfo(
-          final String entitySetName, final InputStream is)
+  protected NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
           throws Exception {
+
     final ObjectMapper mapper = new ObjectMapper();
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
@@ -132,7 +129,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
         links.addLinks(title, hrefs);
       } else if (navigationProperties.containsKey(field.getKey())) {
-        links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTf-8"));
+        links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTF-8"));
       }
     }
 
@@ -176,9 +173,9 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     srcNode.set(
             Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
-            Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
+                    Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 
   @Override
@@ -186,7 +183,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
           throws Exception {
     final ObjectMapper mapper = new ObjectMapper();
     final JsonNode srcNode = mapper.readTree(src);
-    JsonNode node = getProperty(srcNode, path);
+    final JsonNode node = getProperty(srcNode, path);
     return IOUtils.toInputStream(node.asText());
   }
 
@@ -310,7 +307,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     srcNode.retain(retain);
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 
   @Override
@@ -382,7 +379,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       toBeChangedNode.set(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_SUFFIX), next);
     }
 
-    return IOUtils.toInputStream(toBeChangedNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(toBeChangedNode.toString(), "UTF-8");
   }
 
   @Override
@@ -395,7 +392,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     final Iterator<Map.Entry<String, JsonNode>> fields = srcObject.fields();
     while (fields.hasNext()) {
       final Map.Entry<String, JsonNode> field = fields.next();
-      res.put(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTf-8"));
+      res.put(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTF-8"));
     }
 
     return res;
@@ -489,7 +486,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     ((ObjectNode) node).set(path.get(path.size() - 1), replacementNode);
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 
   @Override
@@ -508,6 +505,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     ((ObjectNode) node).set(path.get(path.size() - 1), null);
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTf-8");
+    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
   }
 }

@@ -50,7 +50,7 @@ public class Metadata extends AbstractMetadataElement {
     try {
       final XMLInputFactory ifactory = XMLInputFactory.newInstance();
       ifactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-      final XMLEventReader reader = ifactory.createXMLEventReader(is, "utf-8");
+      final XMLEventReader reader = ifactory.createXMLEventReader(is, "UTF-8");
 
       try {
         while (reader.hasNext()) {

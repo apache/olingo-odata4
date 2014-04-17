@@ -59,65 +59,22 @@ public interface CommonODataObjectFactory {
   CommonODataEntity newEntity(FullQualifiedName typeName, URI link);
 
   /**
-   * Instantiates a new in-line entity set.
+   * Instantiates a new entity set (for deep insert).
    *
    * @param name name.
-   * @param link edit link.
    * @param entitySet entity set.
    * @return in-line entity set.
    */
-  ODataInlineEntitySet newInlineEntitySet(String name, URI link, CommonODataEntitySet entitySet);
+  ODataInlineEntitySet newDeepInsertEntitySet(String name, CommonODataEntitySet entitySet);
 
   /**
-   * Instantiates a new in-line entity set.
+   * Instantiates a new entity (for deep insert).
    *
    * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @param entitySet entity set.
-   * @return in-line entity set.
-   */
-  ODataInlineEntitySet newInlineEntitySet(String name, URI baseURI, String href, CommonODataEntitySet entitySet);
-
-  /**
-   * Instantiates a new in-line entity.
-   *
-   * @param name name.
-   * @param link edit link.
    * @param entity entity.
    * @return in-line entity.
    */
-  ODataInlineEntity newInlineEntity(String name, URI link, CommonODataEntity entity);
-
-  /**
-   * Instantiates a new in-line entity.
-   *
-   * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @param entity entity.
-   * @return in-line entity.
-   */
-  ODataInlineEntity newInlineEntity(String name, URI baseURI, String href, CommonODataEntity entity);
-
-  /**
-   * Instantiates a new entity navigation link.
-   *
-   * @param name name.
-   * @param link link.
-   * @return entity navigation link.
-   */
-  ODataLink newEntityNavigationLink(String name, URI link);
-
-  /**
-   * Instantiates a new entity navigation link.
-   *
-   * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @return entity navigation link.
-   */
-  ODataLink newEntityNavigationLink(String name, URI baseURI, String href);
+  ODataInlineEntity newDeepInsertEntity(String name, CommonODataEntity entity);
 
   /**
    * Instantiates a new entity set navigation link.
@@ -129,52 +86,13 @@ public interface CommonODataObjectFactory {
   ODataLink newEntitySetNavigationLink(String name, URI link);
 
   /**
-   * Instantiates a new entity set navigation link.
-   *
-   * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @return entity set navigation link.
-   */
-  ODataLink newEntitySetNavigationLink(String name, URI baseURI, String href);
-
-  /**
-   * Instantiates a new association link.
+   * Instantiates a new entity navigation link.
    *
    * @param name name.
    * @param link link.
-   * @return association link.
+   * @return entity navigation link.
    */
-  ODataLink newAssociationLink(String name, URI link);
-
-  /**
-   * Instantiates a new association link.
-   *
-   * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @return association link.
-   */
-  ODataLink newAssociationLink(String name, URI baseURI, String href);
-
-  /**
-   * Instantiates a new media-edit link.
-   *
-   * @param name name.
-   * @param link link.
-   * @return media-edit link.
-   */
-  ODataLink newMediaEditLink(String name, URI link);
-
-  /**
-   * Instantiates a new media-edit link.
-   *
-   * @param name name.
-   * @param baseURI base URI.
-   * @param href href.
-   * @return media-edit link.
-   */
-  ODataLink newMediaEditLink(String name, URI baseURI, String href);
+  ODataLink newEntityNavigationLink(String name, URI link);
 
   ODataPrimitiveValue.Builder newPrimitiveValueBuilder();
 

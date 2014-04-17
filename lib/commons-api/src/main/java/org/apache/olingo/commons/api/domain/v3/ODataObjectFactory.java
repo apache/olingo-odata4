@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -40,6 +41,14 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
 
   @Override
   ODataEntity newEntity(FullQualifiedName typeName, URI link);
+
+  /**
+   * Instantiates a new association link.
+   *
+   * @param link link.
+   * @return association link.
+   */
+  ODataLink newAssociationLink(URI link);
 
   @Override
   ODataComplexValue<ODataProperty> newComplexValue(String typeName);

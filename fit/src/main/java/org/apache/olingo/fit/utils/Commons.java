@@ -57,59 +57,61 @@ public abstract class Commons {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
 
-  private static Map<ODataServiceVersion, FITAtomDeserializer> atomDeserializer =
+  private static final Map<ODataServiceVersion, FITAtomDeserializer> ATOM_DESERIALIZER =
           new EnumMap<ODataServiceVersion, FITAtomDeserializer>(ODataServiceVersion.class);
 
-  private static Map<ODataServiceVersion, AtomSerializer> atomSerializer =
+  private static final Map<ODataServiceVersion, AtomSerializer> ATOM_SERIALIZER =
           new EnumMap<ODataServiceVersion, AtomSerializer>(ODataServiceVersion.class);
 
-  private static Map<ODataServiceVersion, ObjectMapper> jsonmapper =
+  private static final Map<ODataServiceVersion, ObjectMapper> JSON_MAPPER =
           new EnumMap<ODataServiceVersion, ObjectMapper>(ODataServiceVersion.class);
 
-  private static EnumMap<ODataServiceVersion, Metadata> metadata =
+  private static final EnumMap<ODataServiceVersion, Metadata> METADATA =
           new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
 
-  protected static Pattern multiKeyPattern = Pattern.compile("(.*=.*,?)+");
+  protected static final Pattern MULTIKEY_PATTERN = Pattern.compile("(.*=.*,?)+");
 
-  protected final static Map<String, Integer> sequence = new HashMap<String, Integer>();
+  protected static final Map<String, Integer> SEQUENCE = new HashMap<String, Integer>();
 
-  protected final static Map<String, String> mediaContent = new HashMap<String, String>();
+  protected static final Map<String, String> MEDIA_CONTENT = new HashMap<String, String>();
 
   static {
-    sequence.put("Customer", 1000);
-    sequence.put("CustomerInfo", 1000);
-    sequence.put("Car", 1000);
-    sequence.put("Message", 1000);
-    sequence.put("Order", 1000);
-    sequence.put("ComputerDetail", 1000);
-    sequence.put("AllGeoTypesSet", 1000);
-    sequence.put("Orders", 1000);
-    sequence.put("Customers", 1000);
-    sequence.put("Person", 1000);
-    sequence.put("RowIndex", 1000);
+    SEQUENCE.put("Customer", 1000);
+    SEQUENCE.put("CustomerInfo", 1000);
+    SEQUENCE.put("Car", 1000);
+    SEQUENCE.put("Message", 1000);
+    SEQUENCE.put("Order", 1000);
+    SEQUENCE.put("ComputerDetail", 1000);
+    SEQUENCE.put("AllGeoTypesSet", 1000);
+    SEQUENCE.put("Orders", 1000);
+    SEQUENCE.put("Customers", 1000);
+    SEQUENCE.put("Person", 1000);
+    SEQUENCE.put("RowIndex", 1000);
+    SEQUENCE.put("Products", 1000);
+    SEQUENCE.put("ProductDetails", 1000);
 
-    mediaContent.put("CustomerInfo", "CustomerinfoId");
-    mediaContent.put("Car", "VIN");
-    mediaContent.put("Car/Photo", null);
+    MEDIA_CONTENT.put("CustomerInfo", "CustomerinfoId");
+    MEDIA_CONTENT.put("Car", "VIN");
+    MEDIA_CONTENT.put("Car/Photo", null);
   }
 
   public static FITAtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
-    if (!atomDeserializer.containsKey(version)) {
-      atomDeserializer.put(version, new FITAtomDeserializer(version));
+    if (!ATOM_DESERIALIZER.containsKey(version)) {
+      ATOM_DESERIALIZER.put(version, new FITAtomDeserializer(version));
     }
-    return atomDeserializer.get(version);
+    return ATOM_DESERIALIZER.get(version);
   }
 
   public static AtomSerializer getAtomSerializer(final ODataServiceVersion version) {
-    if (!atomSerializer.containsKey(version)) {
-      atomSerializer.put(version, new AtomSerializer(version, true));
+    if (!ATOM_SERIALIZER.containsKey(version)) {
+      ATOM_SERIALIZER.put(version, new AtomSerializer(version, true));
     }
 
-    return atomSerializer.get(version);
+    return ATOM_SERIALIZER.get(version);
   }
 
   public static ObjectMapper getJsonMapper(final ODataServiceVersion version) {
-    if (!jsonmapper.containsKey(version)) {
+    if (!JSON_MAPPER.containsKey(version)) {
       final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
       mapper.setInjectableValues(new InjectableValues.Std()
@@ -122,24 +124,24 @@ public abstract class Commons {
               .withAttribute(Boolean.class, Boolean.TRUE),
               mapper.getSerializerFactory()));
 
-      jsonmapper.put(version, mapper);
+      JSON_MAPPER.put(version, mapper);
     }
 
-    return jsonmapper.get(version);
+    return JSON_MAPPER.get(version);
   }
 
   public static Metadata getMetadata(final ODataServiceVersion version) {
-    if (!metadata.containsKey(version)) {
+    if (!METADATA.containsKey(version)) {
       final InputStream is = Commons.class.getResourceAsStream("/" + version.name() + "/metadata.xml");
 
-      metadata.put(version, new Metadata(is));
+      METADATA.put(version, new Metadata(is));
     }
 
-    return metadata.get(version);
+    return METADATA.get(version);
   }
 
   public static Map<String, String> getMediaContent() {
-    return mediaContent;
+    return MEDIA_CONTENT;
   }
 
   public static String getEntityURI(final String entitySetName, final String entityKey) {
@@ -184,7 +186,7 @@ public abstract class Commons {
   }
 
   public static String getEntityKey(final String entityId) {
-    if (multiKeyPattern.matcher(entityId).matches()) {
+    if (MULTIKEY_PATTERN.matcher(entityId).matches()) {
       // assume correct multi-key
       final String[] keys = entityId.split(",");
       final StringBuilder keyBuilder = new StringBuilder();
@@ -200,19 +202,19 @@ public abstract class Commons {
     }
   }
 
-  public static InputStream getLinksAsATOM(final Map.Entry<String, Collection<String>> link)
-          throws IOException {
+  public static InputStream getLinksAsATOM(final ODataServiceVersion version,
+          final Map.Entry<String, Collection<String>> link) throws IOException {
 
     final StringBuilder builder = new StringBuilder();
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    builder.append("<links xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">");
+    builder.append("<links xmlns=\"" + Constants.get(version, ConstantKey.DATASERVICES_NS) + "\">");
 
     for (String uri : link.getValue()) {
       builder.append("<uri>");
       if (URI.create(uri).isAbsolute()) {
         builder.append(uri);
       } else {
-        builder.append(Constants.get(ConstantKey.DEFAULT_SERVICE_URL)).append(uri);
+        builder.append(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)).append(uri);
       }
       builder.append("</uri>");
     }
@@ -222,14 +224,14 @@ public abstract class Commons {
     return IOUtils.toInputStream(builder.toString());
   }
 
-  public static InputStream getLinksAsJSON(
+  public static InputStream getLinksAsJSON(final ODataServiceVersion version,
           final String entitySetName, final Map.Entry<String, Collection<String>> link)
           throws IOException {
 
     final ObjectNode links = new ObjectNode(JsonNodeFactory.instance);
     links.put(
-            Constants.get(ConstantKey.JSON_ODATAMETADATA_NAME),
-            Constants.get(ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
+            Constants.get(version, ConstantKey.JSON_ODATAMETADATA_NAME),
+            Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + entitySetName + "/$links/" + link.getKey());
 
     final ArrayNode uris = new ArrayNode(JsonNodeFactory.instance);
 
@@ -238,7 +240,7 @@ public abstract class Commons {
       if (URI.create(uri).isAbsolute()) {
         absoluteURI = uri;
       } else {
-        absoluteURI = Constants.get(ConstantKey.DEFAULT_SERVICE_URL) + uri;
+        absoluteURI = Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + uri;
       }
       uris.add(new ObjectNode(JsonNodeFactory.instance).put("url", absoluteURI));
     }
@@ -249,7 +251,7 @@ public abstract class Commons {
       links.set("value", uris);
     }
 
-    return IOUtils.toInputStream(links.toString(), "UTf-8");
+    return IOUtils.toInputStream(links.toString(), "UTF-8");
   }
 
   public static InputStream changeFormat(final InputStream is, final ODataServiceVersion version, final Accept target) {

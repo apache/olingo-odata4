@@ -22,6 +22,8 @@ import java.net.URI;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
@@ -58,6 +60,11 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
     final ODataEntityImpl result = new ODataEntityImpl(typeName);
     result.setLink(link);
     return result;
+  }
+
+  @Override
+  public ODataLink newAssociationLink(final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).setType(ODataLinkType.ASSOCIATION).build();
   }
 
   @Override

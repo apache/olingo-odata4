@@ -102,11 +102,11 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final String TO_BE_UPDATED = "async buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
-    final ODataMediaEntityCreateRequest createReq =
+    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
             client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
 
-    final MediaEntityCreateStreamManager streamManager = createReq.execute();
-    final Future<ODataMediaEntityCreateResponse> futureCreateRes = streamManager.getAsyncResponse();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final Future<ODataMediaEntityCreateResponse<ODataEntity>> futureCreateRes = streamManager.getAsyncResponse();
 
     while (!futureCreateRes.isDone()) {
       Thread.sleep(1000L);

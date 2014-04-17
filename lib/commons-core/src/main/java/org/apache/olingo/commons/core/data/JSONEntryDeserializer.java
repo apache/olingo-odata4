@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Link;
@@ -55,17 +56,9 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
-    final String metadataETag;
-    final URI contextURL;
     final JSONEntryImpl entry = new JSONEntryImpl();
 
-    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
-      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
-      tree.remove(Constants.JSON_METADATA_ETAG);
-    } else {
-      metadataETag = null;
-    }
-
+    final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
       contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
       tree.remove(Constants.JSON_CONTEXT);
@@ -75,10 +68,16 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     } else {
       contextURL = null;
     }
-
     if (contextURL != null) {
-      String url = contextURL.toASCIIString();
-      entry.setBaseURI(url.substring(0, url.indexOf(Constants.METADATA)));
+      entry.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
+    }
+
+    final String metadataETag;
+    if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
+      metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
+      tree.remove(Constants.JSON_METADATA_ETAG);
+    } else {
+      metadataETag = null;
     }
 
     if (tree.hasNonNull(jsonETag)) {

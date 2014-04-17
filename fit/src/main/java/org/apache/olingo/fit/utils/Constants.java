@@ -34,7 +34,7 @@ public class Constants {
    */
   public static final byte[] CRLF = {13, 10};
 
-  public static Charset encoding = Charset.forName("UTF-8");
+  public static final Charset ENCODING = Charset.forName("UTF-8");
 
   static {
 
@@ -46,6 +46,7 @@ public class Constants {
     v4constants.put(ConstantKey.JSON_NAVIGATION_SUFFIX, "@odata.navigationLink");
     v4constants.put(ConstantKey.DATASERVICES_NS, "http://docs.oasis-open.org/odata/ns/dataservices");
     v4constants.put(ConstantKey.METADATA_NS, "http://docs.oasis-open.org/odata/ns/metadata");
+    v4constants.put(ConstantKey.ATOM_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
     v4constants.put(ConstantKey.ODATA_SERVICE_VERSION, "OData-Version");
     v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V40/Static.svc/");
     v4constants.put(ConstantKey.ODATA_METADATA_PREFIX, "http://localhost:9080/StaticService/V40/Static.svc/$metadata#");

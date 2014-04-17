@@ -37,10 +37,12 @@ import org.apache.olingo.commons.api.data.Entry;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
+ *
+ * @param <E> concrete ODataEntity implementation
  */
-public class ODataMediaEntityUpdateRequestImpl
-        extends AbstractODataStreamedEntityRequest<ODataMediaEntityUpdateResponse, MediaEntityUpdateStreamManager>
-        implements ODataMediaEntityUpdateRequest, ODataBatchableRequest {
+public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
+        extends AbstractODataStreamedEntityRequest<ODataMediaEntityUpdateResponse<E>, MediaEntityUpdateStreamManager<E>>
+        implements ODataMediaEntityUpdateRequest<E>, ODataBatchableRequest {
 
   private final InputStream media;
 
@@ -52,29 +54,26 @@ public class ODataMediaEntityUpdateRequestImpl
    * @param editURI edit URI of the entity to be updated.
    * @param media media entity blob to be created.
    */
-  ODataMediaEntityUpdateRequestImpl(final CommonODataClient odataClient,
+  ODataMediaEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI editURI, final InputStream media) {
 
     super(odataClient, method, editURI);
     this.media = media;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
-  protected MediaEntityUpdateStreamManager getStreamManager() {
+  protected MediaEntityUpdateStreamManager<E> getStreamManager() {
     if (streamManager == null) {
       streamManager = new MediaEntityUpdateStreamManagerImpl(media);
     }
-    return (MediaEntityUpdateStreamManager) streamManager;
+    return (MediaEntityUpdateStreamManager<E>) streamManager;
   }
 
   /**
    * Media entity payload object.
    */
-  public class MediaEntityUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataMediaEntityUpdateResponse>
-          implements MediaEntityUpdateStreamManager {
+  public class MediaEntityUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataMediaEntityUpdateResponse<E>>
+          implements MediaEntityUpdateStreamManager<E> {
 
     /**
      * Private constructor.
@@ -85,11 +84,8 @@ public class ODataMediaEntityUpdateRequestImpl
       super(ODataMediaEntityUpdateRequestImpl.this.futureWrapper, input);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    protected ODataMediaEntityUpdateResponse getResponse(final long timeout, final TimeUnit unit) {
+    protected ODataMediaEntityUpdateResponse<E> getResponse(final long timeout, final TimeUnit unit) {
       finalizeBody();
       return new ODataMediaEntityUpdateResponseImpl(httpClient, getHttpResponse(timeout, unit));
     }
@@ -99,16 +95,17 @@ public class ODataMediaEntityUpdateRequestImpl
    * Response class about an ODataMediaEntityUpdateRequest.
    */
   private class ODataMediaEntityUpdateResponseImpl extends AbstractODataResponse
-          implements ODataMediaEntityUpdateResponse {
+          implements ODataMediaEntityUpdateResponse<E> {
 
-    private CommonODataEntity entity = null;
+    private E entity = null;
 
     /**
      * Constructor.
-     * <p>
+     * <br/>
      * Just to create response templates to be initialized from batch.
      */
     private ODataMediaEntityUpdateResponseImpl() {
+      super();
     }
 
     /**
@@ -121,15 +118,13 @@ public class ODataMediaEntityUpdateRequestImpl
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public CommonODataEntity getBody() {
+    @SuppressWarnings("unchecked")
+    public E getBody() {
       if (entity == null) {
         try {
           final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());
-          entity = odataClient.getBinder().getODataEntity(extractFromContainer(container));
+          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
         } finally {
           this.close();
         }

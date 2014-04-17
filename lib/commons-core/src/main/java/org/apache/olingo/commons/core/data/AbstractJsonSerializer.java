@@ -77,7 +77,9 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
           uris = new ArrayList<String>();
           entitySetLinks.put(link.getTitle(), uris);
         }
-        uris.add(link.getHref());
+        if (StringUtils.isNotBlank(link.getHref())) {
+          uris.add(link.getHref());
+        }
       } else {
         if (StringUtils.isNotBlank(link.getHref())) {
           jgen.writeStringField(link.getTitle() + Constants.JSON_BIND_LINK_SUFFIX, link.getHref());
@@ -95,11 +97,13 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       }
     }
     for (Map.Entry<String, List<String>> entitySetLink : entitySetLinks.entrySet()) {
-      jgen.writeArrayFieldStart(entitySetLink.getKey() + Constants.JSON_BIND_LINK_SUFFIX);
-      for (String uri : entitySetLink.getValue()) {
-        jgen.writeString(uri);
+      if (!entitySetLink.getValue().isEmpty()) {
+        jgen.writeArrayFieldStart(entitySetLink.getKey() + Constants.JSON_BIND_LINK_SUFFIX);
+        for (String uri : entitySetLink.getValue()) {
+          jgen.writeString(uri);
+        }
+        jgen.writeEndArray();
       }
-      jgen.writeEndArray();
     }
   }
 

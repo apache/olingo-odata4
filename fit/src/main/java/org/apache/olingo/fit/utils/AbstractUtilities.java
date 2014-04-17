@@ -18,32 +18,41 @@
  */
 package org.apache.olingo.fit.utils;
 
-import static org.apache.olingo.fit.utils.Commons.sequence;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.JSONEntryImpl;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
+import org.apache.olingo.fit.serializer.JsonEntryContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +67,7 @@ public abstract class AbstractUtilities {
 
   protected final FSManager fsManager;
 
-  protected final static Pattern entityUriPattern = Pattern.compile(".*\\/.*\\(.*\\)");
+  protected static final Pattern ENTITY_URI_PATTERN = Pattern.compile(".*\\/.*\\(.*\\)");
 
   /**
    * Batch/Changeset content type.
@@ -81,7 +90,7 @@ public abstract class AbstractUtilities {
   }
 
   public boolean isMediaContent(final String entityName) {
-    return Commons.mediaContent.containsKey(entityName);
+    return Commons.MEDIA_CONTENT.containsKey(entityName);
   }
 
   /**
@@ -171,16 +180,18 @@ public abstract class AbstractUtilities {
     return fo.getContent().getInputStream();
   }
 
-  public InputStream addOrReplaceEntity(
-          final String entitySetName, final InputStream is) throws Exception {
+  private InputStream toInputStream(final AtomEntryImpl entry) throws XMLStreamException {
+    final StringWriter writer = new StringWriter();
+    Commons.getAtomSerializer(version).write(writer, entry);
 
-    return addOrReplaceEntity(null, entitySetName, is);
+    return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
   public InputStream addOrReplaceEntity(
           final String key,
           final String entitySetName,
-          final InputStream is) throws Exception {
+          final InputStream is,
+          final AtomEntryImpl entry) throws Exception {
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(is, bos);
@@ -190,33 +201,32 @@ public abstract class AbstractUtilities {
             Commons.getMetadata(version).getNavigationProperties(entitySetName);
 
     // -----------------------------------------
-    // 0. Retrieve navigation links to be mantained
+    // 0. Retrieve navigation links to be kept
     // -----------------------------------------
-    Set<String> linksToBeMantained;
+    Set<String> linksToBeKept;
     try {
-      linksToBeMantained = new HashSet<String>(navigationProperties.keySet());
+      linksToBeKept = new HashSet<String>(navigationProperties.keySet());
     } catch (Exception e) {
-      linksToBeMantained = Collections.<String>emptySet();
+      linksToBeKept = Collections.<String>emptySet();
     }
 
-    for (String availableLink : new HashSet<String>(linksToBeMantained)) {
+    for (String availableLink : new HashSet<String>(linksToBeKept)) {
       try {
         fsManager.resolve(Commons.getLinksPath(version, entitySetName, key, availableLink, Accept.JSON_FULLMETA));
       } catch (Exception e) {
-        linksToBeMantained.remove(availableLink);
+        linksToBeKept.remove(availableLink);
       }
     }
 
     for (String linkName : retrieveAllLinkNames(new ByteArrayInputStream(bos.toByteArray()))) {
-      linksToBeMantained.remove(linkName);
+      linksToBeKept.remove(linkName);
     }
     // -----------------------------------------
 
     // -----------------------------------------
     // 1. Get default entry key and path (N.B. operation will consume/close the stream; use a copy instead)
     // -----------------------------------------
-    final String entityKey = key == null ? getDefaultEntryKey(
-            entitySetName, new ByteArrayInputStream(bos.toByteArray())) : key;
+    final String entityKey = key == null ? getDefaultEntryKey(entitySetName, entry) : key;
 
     final String path = Commons.getEntityBasePath(entitySetName, entityKey);
     // -----------------------------------------
@@ -224,8 +234,7 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     // 2. Retrieve navigation info
     // -----------------------------------------
-    final NavigationLinks links =
-            retrieveNavigationInfo(entitySetName, new ByteArrayInputStream(bos.toByteArray()));
+    final NavigationLinks links = retrieveNavigationInfo(entitySetName, new ByteArrayInputStream(bos.toByteArray()));
     // -----------------------------------------
 
     // -----------------------------------------
@@ -239,10 +248,10 @@ public abstract class AbstractUtilities {
     IOUtils.copy(createdEntity, bos);
 
     // -----------------------------------------
-    // 4. Add navigation links to be mantained
+    // 4. Add navigation links to be kept
     // -----------------------------------------
     final InputStream normalizedEntity =
-            addLinks(entitySetName, entityKey, new ByteArrayInputStream(bos.toByteArray()), linksToBeMantained);
+            addLinks(entitySetName, entityKey, new ByteArrayInputStream(bos.toByteArray()), linksToBeKept);
     // -----------------------------------------
 
     IOUtils.closeQuietly(bos);
@@ -262,28 +271,42 @@ public abstract class AbstractUtilities {
       putLinksInMemory(path, entitySetName, entityKey, link.getKey(), link.getValue());
     }
 
-    for (Map.Entry<String, List<InputStream>> inlineEntry : links.getInlines()) {
-      final String inlineEntitySetName = navigationProperties.get(inlineEntry.getKey()).getTarget();
+    final List<String> hrefs = new ArrayList<String>();
 
-      final List<String> hrefs = new ArrayList<String>();
+    for (final Link link : entry.getNavigationLinks()) {
+      final NavigationProperty navProp = navigationProperties == null? null: navigationProperties.get(link.getTitle());
+      if (navProp != null) {
+        final String inlineEntitySetName = navProp.getTarget();
+        if (link.getInlineEntry() != null) {
+          final String inlineEntryKey = getDefaultEntryKey(
+                  inlineEntitySetName, (AtomEntryImpl) link.getInlineEntry());
 
-      for (InputStream stream : inlineEntry.getValue()) {
-        final ByteArrayOutputStream inlineBos = new ByteArrayOutputStream();
-        IOUtils.copy(stream, inlineBos);
-        IOUtils.closeQuietly(stream);
+          addOrReplaceEntity(
+                  inlineEntryKey,
+                  inlineEntitySetName,
+                  toInputStream((AtomEntryImpl) link.getInlineEntry()),
+                  (AtomEntryImpl) link.getInlineEntry());
 
-        final String inlineEntryKey = getDefaultEntryKey(
-                inlineEntitySetName, new ByteArrayInputStream(inlineBos.toByteArray()));
+          hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
+        } else if (link.getInlineFeed() != null) {
+          for (Entry subentry : link.getInlineFeed().getEntries()) {
+            final String inlineEntryKey = getDefaultEntryKey(
+                    inlineEntitySetName, (AtomEntryImpl) subentry);
 
-        addOrReplaceEntity(
-                inlineEntryKey,
-                inlineEntitySetName,
-                new ByteArrayInputStream(inlineBos.toByteArray()));
+            addOrReplaceEntity(
+                    inlineEntryKey,
+                    inlineEntitySetName,
+                    toInputStream((AtomEntryImpl) subentry),
+                    (AtomEntryImpl) subentry);
 
-        hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
+            hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
+          }
+        }
+
+        if (!hrefs.isEmpty()) {
+          putLinksInMemory(path, entitySetName, entityKey, link.getTitle(), hrefs);
+        }
       }
-
-      putLinksInMemory(path, entitySetName, entityKey, inlineEntry.getKey(), hrefs);
     }
     // -----------------------------------------
 
@@ -338,7 +361,7 @@ public abstract class AbstractUtilities {
             + "<link rel=\"edit-media\" title=\"Car\" href=\"" + entityURI + "/$value\" />"
             + "<content type=\"*/*\" src=\"" + entityURI + "/$value\" />"
             + "<m:properties>"
-            + "<d:" + Commons.mediaContent.get(entitySetName) + " m:type=\"Edm.Int32\">" + entityKey + "</d:VIN>"
+            + "<d:" + Commons.MEDIA_CONTENT.get(entitySetName) + " m:type=\"Edm.Int32\">" + entityKey + "</d:VIN>"
             + "<d:Description m:null=\"true\" />"
             + "</m:properties>"
             + "</entry>";
@@ -360,12 +383,12 @@ public abstract class AbstractUtilities {
             + "\"odata.mediaEditLink\": \"" + entityURI + "/$value\","
             + "\"odata.mediaReadLink\": \"" + entityURI + "/$value\","
             + "\"odata.mediaContentType\": \"*/*\","
-            + "\"" + Commons.mediaContent.get(entitySetName) + "\": " + entityKey + ","
+            + "\"" + Commons.MEDIA_CONTENT.get(entitySetName) + "\": " + entityKey + ","
             + "\"Description\": null" + "}";
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-            Accept.JSON_FULLMETA));
+                    Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -401,11 +424,11 @@ public abstract class AbstractUtilities {
           throws IOException {
 
     fsManager.putInMemory(
-            Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
+            Commons.getLinksAsJSON(version, entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
             Commons.getLinksPath(version, basePath, linkName, Accept.JSON_FULLMETA));
 
     fsManager.putInMemory(
-            Commons.getLinksAsATOM(new SimpleEntry<String, Collection<String>>(linkName, uris)),
+            Commons.getLinksAsATOM(version, new SimpleEntry<String, Collection<String>>(linkName, uris)),
             Commons.getLinksPath(version, basePath, linkName, Accept.XML));
   }
 
@@ -533,154 +556,122 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  public String getDefaultEntryKey(
-          final String entitySetName, final InputStream entity) throws IOException {
+  public AtomEntryImpl readEntry(final Accept contentTypeValue, final InputStream entity)
+          throws XMLStreamException, IOException {
+
+    final AtomEntryImpl entry;
+
+    if (Accept.ATOM == contentTypeValue) {
+      final Container<AtomEntryImpl> container = Commons.getAtomDeserializer(version).
+              read(entity, AtomEntryImpl.class);
+      entry = container.getObject();
+    } else {
+      final Container<JSONEntryImpl> jcontainer =
+              Commons.getJsonMapper(version).readValue(entity, new TypeReference<JSONEntryImpl>() {
+              });
+      entry = new DataBinder(version).getAtomEntry(jcontainer.getObject());
+    }
+
+    return entry;
+  }
+
+  public InputStream writeEntry(final Accept accept, final Container<AtomEntryImpl> container)
+          throws XMLStreamException, IOException {
+
+    final ByteArrayOutputStream content = new ByteArrayOutputStream();
+    final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+
+    if (accept == Accept.ATOM) {
+      Commons.getAtomSerializer(version).write(writer, container);
+      writer.flush();
+      writer.close();
+    } else {
+      final ObjectMapper mapper = Commons.getJsonMapper(version);
+      mapper.writeValue(
+              writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
+                      (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+    }
+
+    return new ByteArrayInputStream(content.toByteArray());
+  }
+
+  private String getDefaultEntryKey(final String entitySetName, final AtomEntryImpl entry, final String propertyName)
+          throws Exception {
+
+    String res;
+    if (entry.getProperty(propertyName) == null) {
+      if (Commons.SEQUENCE.containsKey(entitySetName)) {
+        res = String.valueOf(Commons.SEQUENCE.get(entitySetName) + 1);
+      } else {
+        throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+      }
+    } else {
+      res = entry.getProperty(propertyName).getValue().asPrimitive().get();
+    }
+    Commons.SEQUENCE.put(entitySetName, Integer.valueOf(res));
+
+    return res;
+  }
+
+  public String getDefaultEntryKey(final String entitySetName, final AtomEntryImpl entry) throws IOException {
     try {
       String res;
 
       if ("Message".equals(entitySetName)) {
-        try {
-          final List<String> propertyNames = new ArrayList<String>();
-          propertyNames.add("MessageId");
-          propertyNames.add("FromUsername");
-
-          final StringBuilder keyBuilder = new StringBuilder();
-          for (Map.Entry<String, InputStream> value : getPropertyValues(entity, propertyNames).entrySet()) {
-
-            if (keyBuilder.length() > 0) {
-              keyBuilder.append(",");
-            }
-
-            keyBuilder.append(value.getKey()).append("=").append(IOUtils.toString(value.getValue()));
-          }
-          res = keyBuilder.toString();
-        } catch (Exception e) {
-          final int messageId;
-          if (sequence.containsKey(entitySetName)) {
-            messageId = sequence.get(entitySetName) + 1;
+        int messageId;
+        if (entry.getProperty("MessageId") == null || entry.getProperty("FromUsername") == null) {
+          if (Commons.SEQUENCE.containsKey(entitySetName)) {
+            messageId = Commons.SEQUENCE.get(entitySetName) + 1;
             res = "MessageId=" + String.valueOf(messageId) + ",FromUsername=1";
           } else {
             throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
-          sequence.put(entitySetName, Integer.valueOf(messageId));
+        } else {
+          messageId = Integer.valueOf(entry.getProperty("MessageId").getValue().asPrimitive().get());
+          res = "MessageId=" + entry.getProperty("MessageId").getValue().asPrimitive().get()
+                  + ",FromUsername=" + entry.getProperty("FromUsername").getValue().asPrimitive().get();
         }
+        Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("Order".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("OrderId"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "OrderId");
       } else if ("Orders".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("OrderID"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "OrderID");
       } else if ("Customer".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("CustomerId"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "CustomerId");
       } else if ("Person".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("PersonId"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "PersonId");
       } else if ("ComputerDetail".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("ComputerDetailId"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "ComputerDetailId");
       } else if ("AllGeoTypesSet".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("Id"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "Id");
       } else if ("CustomerInfo".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("CustomerInfoId"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "CustomerInfoId");
       } else if ("Car".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("VIN"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
-          } else {
-            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
-          }
-        }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        res = getDefaultEntryKey(entitySetName, entry, "VIN");
       } else if ("RowIndex".equals(entitySetName)) {
-        try {
-          final Map<String, InputStream> value =
-                  getPropertyValues(entity, Collections.<String>singletonList("Id"));
-          res = value.isEmpty() ? null : IOUtils.toString(value.values().iterator().next());
-        } catch (Exception e) {
-          if (sequence.containsKey(entitySetName)) {
-            res = String.valueOf(sequence.get(entitySetName) + 1);
+        res = getDefaultEntryKey(entitySetName, entry, "Id");
+      } else if ("Products".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entry, "ProductID");
+      } else if ("ProductDetails".equals(entitySetName)) {
+        int productId;
+        int productDetailId;
+        if (entry.getProperty("ProductID") == null || entry.getProperty("ProductDetailID") == null) {
+          if (Commons.SEQUENCE.containsKey(entitySetName) && Commons.SEQUENCE.containsKey("Products")) {
+            productId = Commons.SEQUENCE.get("Products") + 1;
+            productDetailId = Commons.SEQUENCE.get(entitySetName) + 1;
+            res = "ProductID=" + String.valueOf(productId) + ",ProductDetailID=" + String.valueOf(productDetailId);
           } else {
             throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
+          Commons.SEQUENCE.put(entitySetName, productDetailId);
+        } else {
+          productId = Integer.valueOf(entry.getProperty("ProductID").getValue().asPrimitive().get());
+          productDetailId = Integer.valueOf(entry.getProperty("ProductDetailID").getValue().asPrimitive().get());
+          res = "ProductID=" + entry.getProperty("ProductID").getValue().asPrimitive().get()
+                  + ",ProductDetailID=" + entry.getProperty("ProductDetailID").getValue().asPrimitive().get();
         }
-        sequence.put(entitySetName, Integer.valueOf(res));
+        Commons.SEQUENCE.put(entitySetName, productDetailId);
+        Commons.SEQUENCE.put("Products", productId);
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }
@@ -688,22 +679,7 @@ public abstract class AbstractUtilities {
       return res;
     } catch (Exception e) {
       throw new NotFoundException(e);
-    } finally {
-      IOUtils.closeQuietly(entity);
     }
-  }
-
-  private Map<String, InputStream> getPropertyValues(final InputStream is, final List<String> propertyNames)
-          throws Exception {
-    final Map<String, InputStream> res = new LinkedHashMap<String, InputStream>();
-
-    for (String propertyName : propertyNames) {
-      res.put(propertyName, getPropertyValue(is, Collections.<String>singletonList(propertyName)));
-    }
-
-    IOUtils.closeQuietly(is);
-
-    return res;
   }
 
   public String getLinksBasePath(final String entitySetName, final String entityId) {
@@ -819,6 +795,7 @@ public abstract class AbstractUtilities {
           final List<String> path,
           final Accept accept,
           final boolean justValue) throws Exception {
+
     final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
 
     final Accept acceptType = accept == null || Accept.TEXT == accept

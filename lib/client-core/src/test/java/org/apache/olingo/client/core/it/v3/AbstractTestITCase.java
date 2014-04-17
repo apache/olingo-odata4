@@ -283,9 +283,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     contactAliasValue.add(getClient().getObjectFactory().newCollectionProperty("AlternativeNames", aliasAltNamesValue));
 
     if (withInlineInfo) {
-      final ODataInlineEntity inlineInfo = getClient().getObjectFactory().newInlineEntity(
+      final ODataInlineEntity inlineInfo = getClient().getObjectFactory().newDeepInsertEntity(
               "Info",
-              URI.create("Customer(" + id + ")/Info"),
               getSampleCustomerInfo(id, sampleName + "_Info"));
       inlineInfo.getEntity().setMediaEntity(true);
       entity.addLink(inlineInfo);

@@ -48,8 +48,6 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Co
             : new org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl();
 
     final String metadataETag;
-    final URI contextURL;
-
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
       metadataETag = tree.get(Constants.JSON_METADATA_ETAG).textValue();
       tree.remove(Constants.JSON_METADATA_ETAG);
@@ -57,6 +55,7 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Co
       metadataETag = null;
     }
 
+    final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
       contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
       tree.remove(Constants.JSON_CONTEXT);

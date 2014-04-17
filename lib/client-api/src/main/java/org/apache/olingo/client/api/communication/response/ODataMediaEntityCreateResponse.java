@@ -21,16 +21,16 @@ package org.apache.olingo.client.api.communication.response;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 /**
- * This class implements the response to an Odata media entity create request.
+ * This class implements the response to an OData media entity create request.
  *
- * @see org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequest
+ * @param <E> concrete ODataEntity implementation
  */
-public interface ODataMediaEntityCreateResponse extends ODataResponse {
+public interface ODataMediaEntityCreateResponse<E extends CommonODataEntity> extends ODataResponse {
 
   /**
    * Gets created object.
    *
    * @return created object.
    */
-  CommonODataEntity getBody();
+  E getBody();
 }

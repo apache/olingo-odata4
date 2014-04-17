@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
@@ -36,18 +33,23 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() throws Exception {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -62,7 +64,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithXmlError() throws Exception {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -73,7 +75,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithJsonError() throws Exception {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -109,7 +111,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateNamedStream() throws Exception {
-    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(16).appendNavigationSegment("Photo");
 
     final String TO_BE_UPDATED = "buffered stream sample";
@@ -131,18 +133,18 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
-    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
 
     final String TO_BE_UPDATED = "new buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
-    final ODataMediaEntityUpdateRequest updateReq =
+    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq =
             client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
     updateReq.setFormat(format);
 
-    final MediaEntityUpdateStreamManager streamManager = updateReq.execute();
-    final ODataMediaEntityUpdateResponse updateRes = streamManager.getResponse();
+    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
+    final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
@@ -153,23 +155,23 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
-    final CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car");
 
-    final ODataMediaEntityCreateRequest createReq =
+    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
             client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
     createReq.setFormat(format);
 
-    final MediaEntityCreateStreamManager streamManager = createReq.execute();
-    final ODataMediaEntityCreateResponse createRes = streamManager.getResponse();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
-    final CommonODataEntity created = createRes.getBody();
+    final ODataEntity created = createRes.getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperties().size());
 
     Integer id = null;
-    for (CommonODataProperty prop : created.getProperties()) {
+    for (ODataProperty prop : created.getProperties()) {
       if ("VIN".equals(prop.getName())) {
         id = prop.getPrimitiveValue().toCastValue(Integer.class);
       }

@@ -141,12 +141,12 @@ public class DataBinder {
       alink.setRel(link.getRel());
 
       if (link.getInlineEntry() instanceof JSONEntryImpl) {
-        Entry inlineEntry = link.getInlineEntry();
+        final Entry inlineEntry = link.getInlineEntry();
         if (inlineEntry instanceof JSONEntryImpl) {
           alink.setInlineEntry(getAtomEntry((JSONEntryImpl) link.getInlineEntry()));
         }
       } else if (link.getInlineFeed() instanceof JSONFeedImpl) {
-        Feed inlineFeed = link.getInlineFeed();
+        final Feed inlineFeed = link.getInlineFeed();
         if (inlineFeed instanceof JSONFeedImpl) {
           alink.setInlineFeed(getAtomFeed((JSONFeedImpl) link.getInlineFeed()));
         }
@@ -168,10 +168,10 @@ public class DataBinder {
         alink.setTitle(property.getName());
 
         alink.setType(navProperties.get(property.getName()).isFeed()
-                ? Constants.get(ConstantKey.ATOM_LINK_FEED)
-                : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
+                ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
+                : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
 
-        alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
+        alink.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getName());
 
         if (property.getValue().isComplex()) {
           final Entry inline = new AtomEntryImpl();
@@ -187,7 +187,7 @@ public class DataBinder {
             final Entry inlineEntry = new AtomEntryImpl();
             inlineEntry.setType(navProperties.get(property.getName()).getType());
             for (Property prop : entry.asComplex().get()) {
-              inlineEntry.getProperties().add(prop);
+              inlineEntry.getProperties().add(getAtomProperty((JSONPropertyImpl) prop, inlineEntry.getType()));
             }
             inline.getEntries().add(inlineEntry);
           }

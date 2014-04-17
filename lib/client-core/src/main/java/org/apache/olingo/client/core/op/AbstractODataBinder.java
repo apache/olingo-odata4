@@ -291,18 +291,20 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
                 ? ODataLinkType.ENTITY_NAVIGATION
                 : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
         odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
-                ? client.getObjectFactory().newEntityNavigationLink(link.getTitle(), base, link.getHref())
-                : client.getObjectFactory().newEntitySetNavigationLink(link.getTitle(), base, link.getHref()));
+                ? client.getObjectFactory().
+                newEntityNavigationLink(link.getTitle(), URIUtils.getURI(base, link.getHref()))
+                : client.getObjectFactory().
+                newEntitySetNavigationLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
       } else if (inlineEntry != null) {
-        odataLinked.addLink(client.getObjectFactory().newInlineEntity(
-                link.getTitle(), base, link.getHref(),
+        odataLinked.addLink(new ODataInlineEntity(client.getServiceVersion(),
+                URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_NAVIGATION, link.getTitle(),
                 getODataEntity(inlineEntry,
-                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
       } else {
-        odataLinked.addLink(client.getObjectFactory().newInlineEntitySet(
-                link.getTitle(), base, link.getHref(),
+        odataLinked.addLink(new ODataInlineEntitySet(client.getServiceVersion(),
+                URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_SET_NAVIGATION, link.getTitle(),
                 getODataEntitySet(inlineFeed,
-                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
       }
     }
   }
@@ -337,13 +339,17 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Link link : resource.getAssociationLinks()) {
-      entity.addLink(client.getObjectFactory().newAssociationLink(link.getTitle(), base, link.getHref()));
+      entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
+              setURI(URIUtils.getURI(base, link.getHref())).
+              setType(ODataLinkType.ASSOCIATION).setTitle(link.getTitle()).build());
     }
 
     odataLinks(resource, entity, base);
 
     for (Link link : resource.getMediaEditLinks()) {
-      entity.addLink(client.getObjectFactory().newMediaEditLink(link.getTitle(), base, link.getHref()));
+      entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
+              setURI(URIUtils.getURI(base, link.getHref())).
+              setType(ODataLinkType.MEDIA_EDIT).setTitle(link.getTitle()).build());
     }
 
     for (ODataOperation operation : resource.getOperations()) {
@@ -373,18 +379,18 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(resource.getValue().asPrimitive().get()).
               setType(typeInfo == null
-              ? null
-              : EdmPrimitiveTypeKind.valueOfFQN(
-              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+                      ? null
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setValue(resource.getValue().asGeospatial().get()).
               setType(typeInfo == null
-              || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-              || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-              ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-              : EdmPrimitiveTypeKind.valueOfFQN(
-              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
+                      ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+                      : EdmPrimitiveTypeKind.valueOfFQN(
+                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
     } else if (resource.getValue().isComplex()) {
       value = client.getObjectFactory().newComplexValue(typeInfo == null
               ? null : typeInfo.getFullQualifiedName().toString());

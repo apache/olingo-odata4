@@ -159,7 +159,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity order = newOrder(20);
 
-    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
@@ -176,13 +176,13 @@ public class BatchTestITCase extends AbstractTestITCase {
             "OrderDetails",
             client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
             appendKeySegment(new HashMap<String, Object>() {
-      private static final long serialVersionUID = 3109256773218160485L;
+              private static final long serialVersionUID = 3109256773218160485L;
 
-      {
-        put("OrderID", 7);
-        put("ProductID", 5);
-      }
-    }).build()));
+              {
+                put("OrderID", 7);
+                put("ProductID", 5);
+              }
+            }).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
             URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
@@ -206,7 +206,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertTrue(res instanceof ODataEntityCreateResponse);
 
     order = ((ODataEntityCreateResponse<ODataEntity>) res).getBody();
-    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
             URIUtils.getURI(testStaticServiceRootURL, order.getEditLink().toASCIIString() + "/OrderDetails"));
 
     assertEquals(Integer.valueOf(7),
@@ -274,7 +274,7 @@ public class BatchTestITCase extends AbstractTestITCase {
             "LastName",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("new last name")));
 
-    final ODataEntityUpdateRequest changeReq =
+    final ODataEntityUpdateRequest<ODataEntity> changeReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
     changeReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
 
@@ -295,8 +295,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     retrieve = streamManager.addRetrieve();
 
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1);
+    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -309,7 +308,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals("OK", response.getStatusMessage());
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
 
-    // retrive the first item (ODataRetrieve)
+    // retrieve the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
     assertTrue(item instanceof ODataRetrieveResponseItem);
 
@@ -368,13 +367,13 @@ public class BatchTestITCase extends AbstractTestITCase {
       super(new Wrapper<Future<HttpResponse>>());
     }
 
-    public ODataStreamManager<ODataBatchResponse> addObject(byte[] src) {
+    public ODataStreamManager<ODataBatchResponse> addObject(final byte[] src) {
       stream(src);
       return this;
     }
 
     @Override
-    protected ODataBatchResponse getResponse(long timeout, TimeUnit unit) {
+    protected ODataBatchResponse getResponse(final long timeout, final TimeUnit unit) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
   };
@@ -387,6 +386,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     private final TestStreamManager streaming;
 
     public StreamingThread(final TestStreamManager streaming) {
+      super();
       this.streaming = streaming;
     }
 
@@ -422,6 +422,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     private final BatchStreamManager streaming;
 
     public BatchStreamingThread(final BatchStreamManager streaming) {
+      super();
       this.streaming = streaming;
     }
 
@@ -430,7 +431,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       try {
         final StringBuilder builder = new StringBuilder();
 
-        byte[] buff = new byte[1024];
+        final byte[] buff = new byte[1024];
 
         int len;
 

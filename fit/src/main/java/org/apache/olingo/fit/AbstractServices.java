@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
@@ -468,29 +469,29 @@ public abstract class AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcont =
                 mapper.readValue(IOUtils.toInputStream(changes), new TypeReference<JSONEntryImpl>() {
-        });
+                });
 
         entryChanges = (new DataBinder(version)).getAtomEntry(jcont.getObject());
       }
 
-      final Container<AtomEntryImpl> entry = atomDeserializer.read(entityInfo.getValue(), AtomEntryImpl.class);
+      final Container<AtomEntryImpl> container = atomDeserializer.read(entityInfo.getValue(), AtomEntryImpl.class);
 
       for (Property property : entryChanges.getProperties()) {
-        entry.getObject().getProperty(property.getName()).setValue(property.getValue());
+        container.getObject().getProperty(property.getName()).setValue(property.getValue());
       }
 
       for (Link link : entryChanges.getNavigationLinks()) {
-        entry.getObject().getNavigationLinks().add(link);
+        container.getObject().getNavigationLinks().add(link);
       }
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
-      atomSerializer.write(writer, entry);
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+      atomSerializer.write(writer, container);
       writer.flush();
       writer.close();
 
-      final InputStream res =
-              xml.addOrReplaceEntity(entityId, entitySetName, new ByteArrayInputStream(content.toByteArray()));
+      final InputStream res = xml.addOrReplaceEntity(
+              entityId, entitySetName, new ByteArrayInputStream(content.toByteArray()), container.getObject());
 
       final Container<AtomEntryImpl> cres = atomDeserializer.read(res, AtomEntryImpl.class);
 
@@ -546,9 +547,11 @@ public abstract class AbstractServices {
 
       InputStream res;
       if (acceptType == Accept.ATOM) {
-        res = xml.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+        res = xml.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity),
+                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity)));
       } else {
-        res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity));
+        res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity),
+                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity)));
       }
 
       final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
@@ -631,13 +634,13 @@ public abstract class AbstractServices {
       final String entityKey;
 
       if (utils.isMediaContent(entitySetName)) {
-        entityKey = xml.getDefaultEntryKey(entitySetName, null);
-
-        utils.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity));
-
         entry = new AtomEntryImpl();
         entry.setMediaContentType(ContentType.WILDCARD);
         entry.setType(entitySet.getType());
+
+        entityKey = xml.getDefaultEntryKey(entitySetName, entry);
+
+        utils.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity));
 
         final String id = Commons.getMediaContent().get(entitySetName);
         if (StringUtils.isNotBlank(id)) {
@@ -659,42 +662,44 @@ public abstract class AbstractServices {
         container = new Container<AtomEntryImpl>(null, null, entry);
       } else {
         final Accept contentTypeValue = Accept.parse(contentType, version);
-        entityKey = getUtilities(contentTypeValue).getDefaultEntryKey(entitySetName, IOUtils.toInputStream(entity));
-
         if (Accept.ATOM == contentTypeValue) {
           container = atomDeserializer.read(IOUtils.toInputStream(entity), AtomEntryImpl.class);
           entry = container.getObject();
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-          });
+                  });
 
-          entry = (new DataBinder(version)).
-                  getAtomEntry(jcontainer.getObject());
+          entry = new DataBinder(version).getAtomEntry(jcontainer.getObject());
 
           container = new Container<AtomEntryImpl>(
                   jcontainer.getContextURL(),
                   jcontainer.getMetadataETag(),
                   entry);
         }
+
+        entityKey = getUtilities(contentTypeValue).getDefaultEntryKey(entitySetName, entry);
       }
 
       normalizeAtomEntry(entry, entitySetName, entityKey);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
       atomSerializer.write(writer, container);
       writer.flush();
       writer.close();
 
       final InputStream serialization =
-              xml.addOrReplaceEntity(entitySetName, new ByteArrayInputStream(content.toByteArray()));
+              xml.addOrReplaceEntity(null, entitySetName, new ByteArrayInputStream(content.toByteArray()), entry);
 
-      final Container<AtomEntryImpl> cres = atomDeserializer.read(serialization, AtomEntryImpl.class);
+      Container<AtomEntryImpl> result = atomDeserializer.read(serialization, AtomEntryImpl.class);
+      result = new Container<AtomEntryImpl>(
+              URI.create(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
+                      + "$metadata#" + entitySetName + "/$entity"), null, result.getObject());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
       FSManager.instance(version).putInMemory(
-              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+              result, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
 
       final String location = uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")";
 
@@ -709,7 +714,7 @@ public abstract class AbstractServices {
       } else {
         response = utils.createResponse(
                 location,
-                utils.readEntity(entitySetName, entityKey, acceptType).getValue(),
+                utils.writeEntry(acceptType, result),
                 null,
                 acceptType,
                 Response.Status.CREATED);
@@ -721,6 +726,7 @@ public abstract class AbstractServices {
 
       return response;
     } catch (Exception e) {
+      LOG.error("While creating new entity", e);
       return utils.createFaultResponse(accept, e);
     }
   }
@@ -751,13 +757,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -809,9 +815,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -934,7 +940,7 @@ public abstract class AbstractServices {
         setInlineCount(container.getObject(), count);
 
         final ByteArrayOutputStream content = new ByteArrayOutputStream();
-        final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+        final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
         if (acceptType == Accept.ATOM) {
           atomSerializer.write(writer, container);
@@ -945,7 +951,7 @@ public abstract class AbstractServices {
 
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                  new DataBinder(version).getJsonFeed(container.getObject())));
+                          new DataBinder(version).getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(
@@ -1055,7 +1061,12 @@ public abstract class AbstractServices {
       final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
 
-      final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(entity, AtomEntryImpl.class);
+      Container<AtomEntryImpl> container = atomDeserializer.read(entity, AtomEntryImpl.class);
+      if (container.getContextURL() == null) {
+        container = new Container<AtomEntryImpl>(URI.create(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
+                + "$metadata#" + entitySetName + "/$entity"),
+                container.getMetadataETag(), container.getObject());
+      }
       final Entry entry = container.getObject();
 
       if (keyAsSegment) {
@@ -1103,13 +1114,13 @@ public abstract class AbstractServices {
             rep.setRel(link.getRel());
             rep.setTitle(link.getTitle());
             rep.setType(link.getType());
-            if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_ENTRY))) {
+            if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_ENTRY))) {
               // inline entry
               final Entry inline = atomDeserializer.<Entry, AtomEntryImpl>read(
                       xml.expandEntity(entitySetName, entityId, link.getTitle()),
                       AtomEntryImpl.class).getObject();
               rep.setInlineEntry(inline);
-            } else if (link.getType().equals(Constants.get(ConstantKey.ATOM_LINK_FEED))) {
+            } else if (link.getType().equals(Constants.get(version, ConstantKey.ATOM_LINK_FEED))) {
               // inline feed
               final Feed inline = atomDeserializer.<Feed, AtomFeedImpl>read(
                       xml.expandEntity(entitySetName, entityId, link.getTitle()),
@@ -1126,23 +1137,9 @@ public abstract class AbstractServices {
         }
       }
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
-
-      if (utils.getKey() == Accept.ATOM) {
-        atomSerializer.write(writer, container);
-        writer.flush();
-        writer.close();
-      } else {
-        final ObjectMapper mapper = Commons.getJsonMapper(version);
-        mapper.writeValue(
-                writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
-      }
-
       return xml.createResponse(
               location,
-              new ByteArrayInputStream(content.toByteArray()),
+              xml.writeEntry(utils.getKey(), container),
               Commons.getETag(entityInfo.getKey(), version),
               utils.getKey());
 
@@ -1560,7 +1557,7 @@ public abstract class AbstractServices {
           final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
 
           final ByteArrayOutputStream content = new ByteArrayOutputStream();
-          final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.encoding);
+          final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
           if (linkInfo.isFeed()) {
             final Container<Feed> container = atomDeserializer.<Feed, AtomFeedImpl>read(stream, AtomFeedImpl.class);
@@ -1575,8 +1572,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(),
-                      container.getMetadataETag(),
-                      (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
+                              container.getMetadataETag(),
+                              (new DataBinder(version)).getJsonFeed((AtomFeedImpl) container.getObject())));
             }
           } else {
             final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(stream, AtomEntryImpl.class);
@@ -1590,8 +1587,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(),
-                      container.getMetadataETag(),
-                      (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                              container.getMetadataETag(),
+                              (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
             }
           }
 
@@ -1649,7 +1646,7 @@ public abstract class AbstractServices {
 
       stream = utils.getPropertyValue(stream, pathElements);
     } else {
-      String edmType = xml.getEdmTypeFromAtom(entitySetName, entityId, pathElements);
+      final String edmType = xml.getEdmTypeFromAtom(entitySetName, entityId, pathElements);
       stream = utils.getProperty(entitySetName, entityId, pathElements, edmType);
     }
 
@@ -1737,8 +1734,9 @@ public abstract class AbstractServices {
         final LinkImpl link = new LinkImpl();
         link.setTitle(property.getKey());
         link.setType(property.getValue().isFeed()
-                ? Constants.get(ConstantKey.ATOM_LINK_FEED) : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
-        link.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getKey());
+                ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
+                : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
+        link.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getKey());
         link.setHref(entitySetName + "(" + entityKey + ")/" + property.getKey());
         entry.getNavigationLinks().add(link);
       }

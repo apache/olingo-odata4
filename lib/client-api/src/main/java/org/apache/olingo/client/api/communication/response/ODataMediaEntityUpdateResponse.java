@@ -23,14 +23,14 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 /**
  * This class implements the response to an Odata media entity update request.
  *
- * @see org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequest
+ * @param <E> concrete ODataEntity implementation
  */
-public interface ODataMediaEntityUpdateResponse extends ODataResponse {
+public interface ODataMediaEntityUpdateResponse<E extends CommonODataEntity> extends ODataResponse {
 
   /**
    * Gets updated object.
    *
    * @return updated object.
    */
-  CommonODataEntity getBody();
+  E getBody();
 }

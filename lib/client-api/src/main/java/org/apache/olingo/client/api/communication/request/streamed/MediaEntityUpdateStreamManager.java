@@ -20,9 +20,13 @@ package org.apache.olingo.client.api.communication.request.streamed;
 
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
+import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
 /**
  * Media entity payload object.
+ *
+ * @param <E> concrete ODataEntity implementation
  */
-public interface MediaEntityUpdateStreamManager extends ODataStreamManager<ODataMediaEntityUpdateResponse> {
+public interface MediaEntityUpdateStreamManager<E extends CommonODataEntity>
+        extends ODataStreamManager<ODataMediaEntityUpdateResponse<E>> {
 }
