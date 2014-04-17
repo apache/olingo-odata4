@@ -402,21 +402,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   }
 
   @Override
-  protected InputStream setChanges(
-          final InputStream toBeChanged, final Map<String, InputStream> properties) throws Exception {
-
-    final ObjectMapper mapper = new ObjectMapper();
-    final ObjectNode toBeChangedObject = (ObjectNode) mapper.readTree(toBeChanged);
-
-    for (Map.Entry<String, InputStream> property : properties.entrySet()) {
-      final JsonNode propertyNode = mapper.readTree(property.getValue());
-      toBeChangedObject.set(property.getKey(), propertyNode);
-    }
-
-    return IOUtils.toInputStream(toBeChangedObject.toString(), "UTf-8");
-  }
-
-  @Override
   public Map.Entry<String, List<String>> extractLinkURIs(
           final String entitySetName, final String entityId, final String linkName)
           throws Exception {

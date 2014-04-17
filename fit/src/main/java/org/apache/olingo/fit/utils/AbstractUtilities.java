@@ -413,13 +413,15 @@ public abstract class AbstractUtilities {
           final String location, final InputStream entity, final String etag, final Accept accept) {
     return createResponse(location, entity, etag, accept, null);
   }
-  
+
   public Response createResponse(final InputStream entity, final String etag, final Accept accept) {
     return createResponse(null, entity, etag, accept, null);
   }
 
   public Response createBatchResponse(final InputStream stream, final String boundary) {
-    final Response.ResponseBuilder builder = Response.accepted(stream);
+    final Response.ResponseBuilder builder = version.compareTo(ODataServiceVersion.V30) <= 0
+            ? Response.accepted(stream)
+            : Response.ok(stream);
     builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
     return builder.build();
   }
@@ -431,6 +433,7 @@ public abstract class AbstractUtilities {
           final Response.Status status) {
     return createResponse(null, entity, etag, accept, status);
   }
+
   public Response createResponse(
           final String location,
           final InputStream entity,
@@ -809,25 +812,6 @@ public abstract class AbstractUtilities {
     // --------------------------------
   }
 
-  public InputStream patchEntity(
-          final String entitySetName,
-          final String entityId,
-          final InputStream changes,
-          final Accept accept,
-          final String ifMatch)
-          throws Exception {
-
-    final Map.Entry<String, InputStream> entityInfo = readEntity(entitySetName, entityId, accept);
-
-    final String etag = Commons.getETag(entityInfo.getKey(), version);
-    if (StringUtils.isNotBlank(ifMatch) && !ifMatch.equals(etag)) {
-      throw new ConcurrentModificationException("Concurrent modification");
-    }
-
-    final Map<String, InputStream> replacement = getChanges(changes);
-    return addOrReplaceEntity(entityId, entitySetName, setChanges(entityInfo.getValue(), replacement));
-  }
-
   public InputStream replaceProperty(
           final String entitySetName,
           final String entityId,
@@ -888,9 +872,6 @@ public abstract class AbstractUtilities {
   protected abstract Accept getDefaultFormat();
 
   protected abstract Map<String, InputStream> getChanges(final InputStream src) throws Exception;
-
-  protected abstract InputStream setChanges(
-          final InputStream toBeChanged, final Map<String, InputStream> properties) throws Exception;
 
   public abstract InputStream addEditLink(
           final InputStream content, final String title, final String href) throws Exception;
