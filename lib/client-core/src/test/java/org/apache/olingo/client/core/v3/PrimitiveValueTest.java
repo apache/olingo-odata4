@@ -152,9 +152,13 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(expected.get(Calendar.MILLISECOND), asCalendar.get(Calendar.MILLISECOND));
 
     final Timestamp asTimestamp = value.asPrimitive().toCastValue(Timestamp.class);
-    assertEquals(expected.get(Calendar.MILLISECOND), asTimestamp.getNanos());
-    
+    assertEquals(expected.get(Calendar.MILLISECOND), asTimestamp.getNanos() / 1000000);
+
     assertEquals("2013-01-10T02:00:00.022Z", value.asPrimitive().toString());
+
+    final ODataValue parsed = getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText(value.asPrimitive().toString()).build();
+    assertEquals("2013-01-10T03:00:00.022+01:00", parsed.asPrimitive().toString());
   }
 
   @Test

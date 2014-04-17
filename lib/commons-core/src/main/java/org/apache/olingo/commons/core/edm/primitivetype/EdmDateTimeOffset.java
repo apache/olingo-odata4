@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -31,6 +32,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
  * Implementation of the EDM primitive type DateTimeOffset.
  */
 public final class EdmDateTimeOffset extends SingletonPrimitiveType {
+
+  public static final ThreadLocal<DecimalFormat> NANO_FORMAT = new ThreadLocal<DecimalFormat>() {
+    @Override
+    protected DecimalFormat initialValue() {
+      return new DecimalFormat("000000000");
+    }
+  };
 
   private static final Pattern PATTERN = Pattern.compile(
           "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
@@ -95,7 +103,9 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
 
       if (!decimals.isEmpty()) {
-        timestamp.setNanos(Integer.parseInt(decimals));
+        final int fractionalSecs = Integer.parseInt(decimals);
+        // if fractional are just milliseconds, convert to nanoseconds
+        timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
       }
     }
 
@@ -253,18 +263,19 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    */
   protected static void appendMilliseconds(final StringBuilder result, final int milliseconds,
           final Integer precision) throws IllegalArgumentException {
+
     final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
     if (digits > 0) {
+      if (precision == null || precision < digits) {
+        throw new IllegalArgumentException();
+      }
+
       result.append('.');
       for (int d = 100; d > 0; d /= 10) {
         final byte digit = (byte) (milliseconds % (d * 10) / d);
         if (digit > 0 || milliseconds % d > 0) {
           result.append((char) ('0' + digit));
         }
-      }
-
-      if (precision == null || precision < digits) {
-        throw new IllegalArgumentException();
       }
     }
   }
@@ -285,7 +296,12 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         throw new IllegalArgumentException();
       }
 
-      result.append('.').append(fractionalSeconds);
+      String fractionals = NANO_FORMAT.get().format(fractionalSeconds);
+      // Keep output similar to Calendar's, if possible
+      if ("000000".equals(fractionals.substring(3))) {
+        fractionals = fractionals.substring(0, 3);
+      }
+      result.append('.').append(fractionals);
     }
   }
 }
