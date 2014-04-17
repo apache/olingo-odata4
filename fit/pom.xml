@@ -51,7 +51,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- Stax -->
     <dependency>
       <groupId>stax</groupId>
@@ -95,7 +95,12 @@
       <artifactId>commons-logging</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>compile</scope>
+    </dependency>
+                  
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-vfs2</artifactId>
