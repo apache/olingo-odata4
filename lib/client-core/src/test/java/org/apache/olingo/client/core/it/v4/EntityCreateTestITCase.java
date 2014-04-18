@@ -21,12 +21,8 @@ package org.apache.olingo.client.core.it.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URI;
 import java.util.Calendar;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
@@ -43,30 +39,9 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EntityCreateTestITCase extends AbstractTestITCase {
-
-  private static final String serviceRoot = "http://odatae2etest.azurewebsites.net/javatest/DefaultService";
-
-  // TODO: remove once fit provides contained entity CRUD
-  @BeforeClass
-  public static void checkServerIsOnline() throws IOException {
-    final Socket socket = new Socket();
-    boolean reachable = false;
-    try {
-      socket.connect(new InetSocketAddress("odatae2etest.azurewebsites.net", 80), 2000);
-      reachable = true;
-    } catch (Exception e) {
-      LOG.warn("External test service not reachable, ignoring this whole class: {}",
-              OperationImportInvokeTestITCase.class.getName());
-    } finally {
-      IOUtils.closeQuietly(socket);
-    }
-    Assume.assumeTrue(reachable);
-  }
 
   private void order(final ODataPubFormat format, final int id) {
     final ODataEntity order = new ODataEntityImpl(
@@ -116,8 +91,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   private void onContained(final ODataPubFormat format) {
-    final URI uri = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Accounts").appendKeySegment(101).
-            appendNavigationSegment("MyPaymentInstruments").build();
+    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
+            appendKeySegment(101).appendNavigationSegment("MyPaymentInstruments").build();
 
     // 1. read contained collection before any operation
     ODataEntitySet instruments = getClient().getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody();
@@ -171,8 +146,9 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     onContained(ODataPubFormat.JSON);
   }
 
-  private void deepInsert(final ODataPubFormat format) throws EdmPrimitiveTypeException {
-    final int productId = RandomUtils.nextInt(10, 20);
+  private void deepInsert(final ODataPubFormat format, final int productId, final int productDetailId)
+          throws EdmPrimitiveTypeException {
+
     final ODataEntity product = getClient().getObjectFactory().
             newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Product"));
     product.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductID",
@@ -201,7 +177,6 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Red"));
 
-    final int productDetailId = RandomUtils.nextInt(10, 20);
     final ODataEntity detail = getClient().getObjectFactory().
             newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.ProductDetail"));
     detail.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ProductID",
@@ -242,11 +217,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataPubFormat.ATOM);
+    deepInsert(ODataPubFormat.ATOM, 10, 10);
   }
 
   @Test
   public void jsonDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataPubFormat.JSON_FULL_METADATA);
+    deepInsert(ODataPubFormat.JSON_FULL_METADATA, 11, 11);
   }
 }

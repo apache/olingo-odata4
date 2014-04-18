@@ -62,6 +62,15 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:00"));
     assertEquals("2012-02-29T01:02:03+11:00", instance.valueToString(dateTime, null, null, null, null, null));
 
+    dateTime.set(Calendar.MILLISECOND, 503);
+    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
+    
+    dateTime.set(Calendar.MILLISECOND, 530);
+    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
+
+    dateTime.set(Calendar.MILLISECOND, 53);
+    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));    
+
     final Long millis = 1330558323007L;
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, 3, null, null));
     assertEquals("1969-12-31T23:59:59.9Z", instance.valueToString(-100L, null, null, 1, null, null));

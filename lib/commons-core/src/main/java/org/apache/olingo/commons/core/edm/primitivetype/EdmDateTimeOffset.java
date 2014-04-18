@@ -292,25 +292,22 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
           final Integer precision) throws IllegalArgumentException {
 
     if (fractionalSeconds > 0) {
-      if (precision == null || precision < String.valueOf(fractionalSeconds).length()) {
+      String formatted = NANO_FORMAT.get().format(fractionalSeconds);
+      int actualLength = formatted.length();
+      boolean nonZeroFound = false;
+      for (int i = formatted.length() - 1; i >= 0 && !nonZeroFound; i--) {
+        if ('0' == formatted.charAt(i)) {
+          actualLength--;
+        } else {
+          nonZeroFound = true;
+        }
+      }
+
+      if (precision == null || precision < actualLength) {
         throw new IllegalArgumentException();
       }
 
-      // Keep output similar to Calendar's, if possible            
-      String fractionals = NANO_FORMAT.get().format(fractionalSeconds);
-      boolean canStart = false;
-      int firstZeroAfterNonZeroIdx = -1;
-      for (int i = 0; i < fractionals.length() && firstZeroAfterNonZeroIdx == -1; i++) {
-        if ('0' != fractionals.charAt(i)) {
-          canStart = true;
-        } else if (canStart && '0' == fractionals.charAt(i)) {
-          firstZeroAfterNonZeroIdx = i;
-        }
-      }
-      if (firstZeroAfterNonZeroIdx != -1 && 0 == Integer.valueOf(fractionals.substring(firstZeroAfterNonZeroIdx))) {
-        fractionals = fractionals.substring(0, firstZeroAfterNonZeroIdx);
-      }
-      result.append('.').append(fractionals);
+      result.append('.').append(formatted.substring(0, actualLength));
     }
   }
 }

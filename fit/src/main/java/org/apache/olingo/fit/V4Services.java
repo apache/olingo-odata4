@@ -20,16 +20,22 @@ package org.apache.olingo.fit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.Map;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
-import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
@@ -41,10 +47,14 @@ import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONFeedImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.serializer.FITAtomDeserializer;
+import org.apache.olingo.fit.serializer.JsonFeedContainer;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.Commons;
@@ -54,6 +64,7 @@ import org.apache.olingo.fit.utils.DataBinder;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.LinkInfo;
 import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
+import org.apache.olingo.fit.utils.XHTTPMethodInterceptor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -98,7 +109,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -120,7 +131,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -144,12 +155,18 @@ public class V4Services extends AbstractServices {
       return postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId);
     }
   }
+  
+  private StringBuilder containedPath(final String entityId, final String containedEntitySetName) {
+    return new StringBuilder("Accounts").append(File.separatorChar).
+            append(entityId).append(File.separatorChar).
+            append("links").append(File.separatorChar).
+            append(containedEntitySetName);
+  }
 
   @GET
-  @Path("/{entitySetName}({entityId})/{containedEntitySetName}({containedEntityId})")
+  @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
   public Response getContainedEntity(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
           @PathParam("containedEntitySetName") String containedEntitySetName,
           @PathParam("containedEntityId") String containedEntityId,
@@ -162,19 +179,102 @@ public class V4Services extends AbstractServices {
       } else {
         acceptType = Accept.parse(accept, version);
       }
-
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
-      final LinkInfo links = xml.readLinks(
-              entitySetName, entityId, containedEntitySetName + "(" + containedEntityId + ")", acceptType);
+      final InputStream entry = FSManager.instance(version).
+              readFile(containedPath(entityId, containedEntitySetName).
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+
+      final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       return xml.createResponse(
-              links.getLinks(),
-              links.getEtag(),
+              null,
+              xml.writeEntry(acceptType, container),
+              null,
               acceptType);
     } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
+  public Response postContainedEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @PathParam("entityId") String entityId,
+          @PathParam("containedEntitySetName") String containedEntitySetName,
+          final String entity) {
+
+    // default
+    try {
+      final Accept acceptType = Accept.parse(accept, version);
+      if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final AbstractUtilities utils = getUtilities(acceptType);
+
+      // 1. parse the entry (from Atom or JSON) into AtomEntryImpl
+      final Container<AtomEntryImpl> entryContainer;
+      final AtomEntryImpl entry;
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      if (Accept.ATOM == contentTypeValue) {
+        entryContainer = atomDeserializer.read(IOUtils.toInputStream(entity), AtomEntryImpl.class);
+        entry = entryContainer.getObject();
+      } else {
+        final Container<JSONEntryImpl> jcontainer =
+                mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
+                });
+
+        entry = dataBinder.getAtomEntry(jcontainer.getObject());
+
+        entryContainer = new Container<AtomEntryImpl>(
+                jcontainer.getContextURL(),
+                jcontainer.getMetadataETag(),
+                entry);
+      }
+
+      final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(getMetadataObj().
+              getNavigationProperties("Accounts").get(containedEntitySetName).getType()).build();
+      final String entityKey = getUtilities(contentTypeValue).
+              getDefaultEntryKey(contained.getFullQualifiedName().getName(), entry);
+
+      // 2. Store the new entity
+      final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
+              append('(').append(entityKey).append(')').toString();
+      FSManager.instance(version).putInMemory(
+              utils.writeEntry(Accept.ATOM, entryContainer),
+              FSManager.instance(version).getAbsolutePath(atomEntryRelativePath, Accept.ATOM));
+
+      // 3. Update the contained entity set
+      final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
+      final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
+      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
+      feedContainer.getObject().getEntries().add(entry);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+      atomSerializer.write(writer, feedContainer);
+      writer.flush();
+      writer.close();
+
+      FSManager.instance(version).putInMemory(
+              new ByteArrayInputStream(content.toByteArray()),
+              FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
+
+      // Finally, return
+      return utils.createResponse(
+              uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")",
+              utils.writeEntry(acceptType, entryContainer),
+              null,
+              acceptType,
+              Response.Status.CREATED);
+    } catch (Exception e) {
+      LOG.error("While creating new contained entity", e);
       return xml.createFaultResponse(accept, e);
     }
   }
@@ -211,7 +311,6 @@ public class V4Services extends AbstractServices {
       final LinkInfo links = xml.readLinks(
               entitySetName, entityId, containedEntitySetName + "(" + containedEntityId + ")", Accept.ATOM);
 
-      final FITAtomDeserializer atomDeserializer = Commons.getAtomDeserializer(version);
       Container<AtomEntryImpl> container = atomDeserializer.read(links.getLinks(), AtomEntryImpl.class);
       final AtomEntryImpl original = container.getObject();
 
@@ -225,12 +324,9 @@ public class V4Services extends AbstractServices {
                 getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
-        final ObjectMapper mapper = Commons.getJsonMapper(version);
-        final DataBinder dataBinder = new DataBinder(version);
-
         final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
                 new TypeReference<JSONEntryImpl>() {
-        });
+                });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.getAtomEntry(jsonContainer.getObject());
       }
@@ -251,4 +347,93 @@ public class V4Services extends AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
+
+  @DELETE
+  @Path("/Accounts({entityId})/{containedEntitySetName}({containedEntityId})")
+  public Response removeContainedEntity(
+          @PathParam("entityId") String entityId,
+          @PathParam("containedEntitySetName") String containedEntitySetName,
+          @PathParam("containedEntityId") String containedEntityId) {
+
+    try {
+      // 1. Fetch the contained entity to be removed
+      final InputStream entry = FSManager.instance(version).
+              readFile(containedPath(entityId, containedEntitySetName).
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+      final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
+      
+      // 2. Remove the contained entity
+      final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
+              append('(').append(containedEntityId).append(')').toString();
+      FSManager.instance(version).deleteFile(atomEntryRelativePath);
+
+      // 3. Update the contained entity set
+      final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
+      final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
+      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);     
+      feedContainer.getObject().getEntries().remove(container.getObject());
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+      atomSerializer.write(writer, feedContainer);
+      writer.flush();
+      writer.close();
+
+      FSManager.instance(version).putInMemory(
+              new ByteArrayInputStream(content.toByteArray()),
+              FSManager.instance(version).getAbsolutePath(atomFeedRelativePath, Accept.ATOM));
+
+      return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
+    } catch (Exception e) {
+      return xml.createFaultResponse(Accept.XML.toString(version), e);
+    }
+  }
+
+  @GET
+  @Path("/Accounts({entityId})/{containedEntitySetName:.*}")
+  public Response getContainedEntitySet(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @PathParam("containedEntitySetName") String containedEntitySetName,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+      if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final InputStream feed = FSManager.instance(version).
+              readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
+
+      final Container<AtomFeedImpl> container = atomDeserializer.read(feed, AtomFeedImpl.class);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+
+      if (acceptType == Accept.ATOM) {
+        atomSerializer.write(writer, container);
+        writer.flush();
+        writer.close();
+      } else {
+        mapper.writeValue(
+                writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
+                        dataBinder.getJsonFeed(container.getObject())));
+      }
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(content.toByteArray()),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
 }

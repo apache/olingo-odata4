@@ -248,16 +248,16 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void retrieveEntityViaReferenceAsAtom() {
-    retrieveEntityViaReference(ODataPubFormat.ATOM);
+  public void atomReference() {
+    reference(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void retrieveEntityViaReferenceAsJSON() {
-    retrieveEntityViaReference(ODataPubFormat.JSON_FULL_METADATA);
+  public void jsonReference() {
+    reference(ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void retrieveEntityViaReference(final ODataPubFormat format) {
+  private void reference(final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
             appendRefSegment();

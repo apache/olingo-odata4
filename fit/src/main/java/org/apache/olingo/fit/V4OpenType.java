@@ -56,7 +56,7 @@ public class V4OpenType {
   public V4OpenType() throws Exception {
     this.openMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).
             readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
-            Accept.XML));
+                    Accept.XML));
     this.services = new V4Services() {
       @Override
       protected Metadata getMetadataObj() {
@@ -115,8 +115,7 @@ public class V4OpenType {
           @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
-    return replaceServiceName(
-            services.getEntityInternal(
+    return replaceServiceName(services.getEntityInternal(
             uriInfo.getRequestUri().toASCIIString(), accept, entitySetName, entityId, format, expand, select, false));
   }
 

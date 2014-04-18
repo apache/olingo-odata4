@@ -30,9 +30,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.status;
+import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.data.Feed;
@@ -117,6 +119,7 @@ public class V3ActionOverloading extends AbstractServices {
   @GET
   @Path("/Product({entityId})")
   public Response getProduct(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @PathParam("entityId") final String entityId,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
@@ -158,6 +161,7 @@ public class V3ActionOverloading extends AbstractServices {
   @GET
   @Path("/OrderLine(OrderId={orderId},ProductId={productId})")
   public Response getOrderLine(
+          @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @PathParam("orderId") final String orderId,
           @PathParam("productId") final String productId,

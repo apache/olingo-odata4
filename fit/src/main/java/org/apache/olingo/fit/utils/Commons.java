@@ -89,6 +89,7 @@ public abstract class Commons {
     SEQUENCE.put("RowIndex", 1000);
     SEQUENCE.put("Products", 1000);
     SEQUENCE.put("ProductDetails", 1000);
+    SEQUENCE.put("PaymentInstrument", 10192);
 
     MEDIA_CONTENT.put("CustomerInfo", "CustomerinfoId");
     MEDIA_CONTENT.put("Car", "VIN");

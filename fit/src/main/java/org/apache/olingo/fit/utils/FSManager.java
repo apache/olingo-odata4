@@ -102,10 +102,7 @@ public class FSManager {
   public void putInMemory(final Container<AtomEntryImpl> container, final String relativePath)
           throws IOException {
     try {
-      final ODataServiceVersion serviceVersion =
-              version == ODataServiceVersion.V30 ? ODataServiceVersion.V30 : ODataServiceVersion.V40;
-
-      final AtomSerializer atomSerializer = Commons.getAtomSerializer(serviceVersion);
+      final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
       final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
@@ -116,13 +113,12 @@ public class FSManager {
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
       content.reset();
 
-      final ObjectMapper mapper = Commons.getJsonMapper(serviceVersion);
+      final ObjectMapper mapper = Commons.getJsonMapper(version);
       mapper.writeValue(
               writer, new JsonEntryContainer<JSONEntryImpl>(
-              container.getContextURL(),
-              container.getMetadataETag(),
-              (new DataBinder(version == ODataServiceVersion.V30 ? ODataServiceVersion.V30 : ODataServiceVersion.V40)).
-              getJsonEntry(container.getObject())));
+                      container.getContextURL(),
+                      container.getMetadataETag(),
+                      new DataBinder(version).getJsonEntry(container.getObject())));
 
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
     } catch (Exception e) {
@@ -164,7 +160,6 @@ public class FSManager {
   }
 
   public void deleteFile(final String relativePath) {
-
     for (Accept accept : Accept.values()) {
       final String path = getAbsolutePath(relativePath, accept);
       LOG.info("Delete {}", path);

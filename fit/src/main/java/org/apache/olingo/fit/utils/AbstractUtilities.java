@@ -120,7 +120,6 @@ public abstract class AbstractUtilities {
    * Retrieve entity links and inlines.
    *
    * @param entitySetName
-   * @param entityKey
    * @param is
    * @return
    * @throws IOException
@@ -589,7 +588,7 @@ public abstract class AbstractUtilities {
       final ObjectMapper mapper = Commons.getJsonMapper(version);
       mapper.writeValue(
               writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                      (new DataBinder(version)).getJsonEntry((AtomEntryImpl) container.getObject())));
+                      new DataBinder(version).getJsonEntry((AtomEntryImpl) container.getObject())));
     }
 
     return new ByteArrayInputStream(content.toByteArray());
@@ -672,6 +671,8 @@ public abstract class AbstractUtilities {
         }
         Commons.SEQUENCE.put(entitySetName, productDetailId);
         Commons.SEQUENCE.put("Products", productId);
+      } else if ("PaymentInstrument".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entry, "PaymentInstrumentID");
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }
