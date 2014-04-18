@@ -161,7 +161,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String continueOnError() {
-    return PreferenceNames.callback.isSupportedBy(serviceVersion).toString();
+    return PreferenceNames.continueOnError.isSupportedBy(serviceVersion).toString();
   }
 
   /**

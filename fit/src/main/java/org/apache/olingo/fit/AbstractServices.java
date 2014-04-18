@@ -207,19 +207,25 @@ public abstract class AbstractServices {
   @Path("/$batch")
   @Consumes("multipart/mixed")
   @Produces("application/octet-stream; boundary=" + BOUNDARY)
-  public Response batch(final @Multipart MultipartBody attachment) {
+  public Response batch(
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          final @Multipart MultipartBody attachment) {
     try {
-      return xml.createBatchResponse(exploreMultipart(attachment.getAllAttachments(), BOUNDARY), BOUNDARY);
+      final boolean continueOnError = prefer.contains("odata.continue-on-error");
+      
+      return xml.createBatchResponse(
+              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError), 
+              BOUNDARY);
     } catch (IOException e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
   }
 
-  private Response bodyPartRequest(final MimeBodyPart body) throws Exception {
+  protected Response bodyPartRequest(final MimeBodyPart body) throws Exception {
     return bodyPartRequest(body, Collections.<String, String>emptyMap());
   }
 
-  private Response bodyPartRequest(final MimeBodyPart body, final Map<String, String> references) throws Exception {
+  protected Response bodyPartRequest(final MimeBodyPart body, final Map<String, String> references) throws Exception {
 
     @SuppressWarnings("unchecked")
     final Enumeration<Header> en = (Enumeration<Header>) body.getAllHeaders();
@@ -269,93 +275,29 @@ public abstract class AbstractServices {
     }
   }
 
-  public InputStream exploreMultipart(final List<Attachment> attachments, final String boundary) throws IOException {
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+  protected abstract InputStream exploreMultipart(
+          final List<Attachment> attachments, final String boundary, final boolean continueOnError) 
+          throws IOException;
 
-    Response res = null;
-    try {
-      for (Attachment obj : attachments) {
-        bos.write(("--" + boundary).getBytes());
-        bos.write(Constants.CRLF);
-
-        final Object content = obj.getDataHandler().getContent();
-        if (content instanceof MimeMultipart) {
-          final Map<String, String> references = new HashMap<String, String>();
-
-          final String cboundary = "changeset_" + UUID.randomUUID().toString();
-          bos.write(("Content-Type: multipart/mixed;boundary=" + cboundary).getBytes());
-          bos.write(Constants.CRLF);
-          bos.write(Constants.CRLF);
-
-          final ByteArrayOutputStream chbos = new ByteArrayOutputStream();
-          String lastContebtID = null;
-          try {
-            for (int i = 0; i < ((MimeMultipart) content).getCount(); i++) {
-              final MimeBodyPart part = (MimeBodyPart) ((MimeMultipart) content).getBodyPart(i);
-              lastContebtID = part.getContentID();
-              addChangesetItemIntro(chbos, lastContebtID, cboundary);
-
-              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res.getStatus() >= 400) {
-                throw new Exception("Failure processing changeset");
-              }
-
-              addSingleBatchResponse(res, lastContebtID, chbos);
-              references.put("$" + lastContebtID, res.getHeaderString("Location"));
-            }
-            bos.write(chbos.toByteArray());
-            IOUtils.closeQuietly(chbos);
-
-            bos.write(("--" + cboundary + "--").getBytes());
-            bos.write(Constants.CRLF);
-          } catch (Exception e) {
-            LOG.warn("While processing changeset", e);
-            IOUtils.closeQuietly(chbos);
-
-            addChangesetItemIntro(bos, lastContebtID, cboundary);
-            if (res == null || res.getStatus() < 400) {
-              addErrorBatchResponse(e, "1", bos);
-            } else {
-              addSingleBatchResponse(res, lastContebtID, bos);
-            }
-
-            bos.write(("--" + cboundary + "--").getBytes());
-            bos.write(Constants.CRLF);
-          }
-        } else {
-          addItemIntro(bos);
-
-          res = bodyPartRequest(new MimeBodyPart(obj.getDataHandler().getInputStream()));
-
-          if (res.getStatus() >= 400) {
-            throw new Exception("Failure processing changeset");
-          }
-
-          addSingleBatchResponse(res, bos);
-        }
-      }
-    } catch (Exception e) {
-      if (res == null || res.getStatus() < 400) {
-        addErrorBatchResponse(e, bos);
-      } else {
-        addSingleBatchResponse(res, bos);
-      }
-    }
-
-    bos.write(("--" + boundary + "--").getBytes());
-
-    return new ByteArrayInputStream(bos.toByteArray());
+  protected void addItemIntro(final ByteArrayOutputStream bos) throws IOException {
+    addItemIntro(bos, null);
   }
 
-  private void addItemIntro(final ByteArrayOutputStream bos) throws IOException {
+  protected void addItemIntro(final ByteArrayOutputStream bos, final String contentId) throws IOException {
     bos.write("Content-Type: application/http".getBytes());
     bos.write(Constants.CRLF);
     bos.write("Content-Transfer-Encoding: binary".getBytes());
     bos.write(Constants.CRLF);
+
+    if (StringUtils.isNotBlank(contentId)) {
+      bos.write(("Content-ID: " + contentId).getBytes());
+      bos.write(Constants.CRLF);
+    }
+
     bos.write(Constants.CRLF);
   }
 
-  private void addChangesetItemIntro(
+  protected void addChangesetItemIntro(
           final ByteArrayOutputStream bos, final String contentId, final String cboundary) throws IOException {
     bos.write(("--" + cboundary).getBytes());
     bos.write(Constants.CRLF);
@@ -364,12 +306,12 @@ public abstract class AbstractServices {
     addItemIntro(bos);
   }
 
-  private void addSingleBatchResponse(
+  protected void addSingleBatchResponse(
           final Response response, final ByteArrayOutputStream bos) throws IOException {
     addSingleBatchResponse(response, null, bos);
   }
 
-  private void addSingleBatchResponse(
+  protected void addSingleBatchResponse(
           final Response response, final String contentId, final ByteArrayOutputStream bos) throws IOException {
     bos.write("HTTP/1.1 ".getBytes());
     bos.write(String.valueOf(response.getStatusInfo().getStatusCode()).getBytes());
@@ -406,12 +348,12 @@ public abstract class AbstractServices {
     bos.write(Constants.CRLF);
   }
 
-  private void addErrorBatchResponse(final Exception e, final ByteArrayOutputStream bos)
+  protected void addErrorBatchResponse(final Exception e, final ByteArrayOutputStream bos)
           throws IOException {
     addErrorBatchResponse(e, null, bos);
   }
 
-  private void addErrorBatchResponse(final Exception e, final String contentId, final ByteArrayOutputStream bos)
+  protected void addErrorBatchResponse(final Exception e, final String contentId, final ByteArrayOutputStream bos)
           throws IOException {
     addSingleBatchResponse(xml.createFaultResponse(Accept.XML.toString(version), e), contentId, bos);
   }

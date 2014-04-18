@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
+import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
 
 /**
  * Retrieve response wrapper for the corresponding batch item.
@@ -41,29 +43,9 @@ public class ODataRetrieveResponseItem extends AbstractODataBatchResponseItem {
    * {@inheritDoc }
    */
   @Override
-  public boolean hasNext() {
-    if (closed) {
-      throw new IllegalStateException("Invalid request - the item has been closed");
-    }
-
-    if (expectedItemsIterator == null) {
-      expectedItemsIterator = responses.values().iterator();
-    }
-
-    return expectedItemsIterator.hasNext();
-  }
-
-  /**
-   * {@inheritDoc }
-   */
-  @Override
   public ODataResponse next() {
     if (closed) {
       throw new IllegalStateException("Invalid request - the item has been closed");
-    }
-
-    if (!hasNext()) {
-      throw new NoSuchElementException("No item found");
     }
 
     final Map.Entry<Integer, String> responseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
@@ -72,7 +54,19 @@ public class ODataRetrieveResponseItem extends AbstractODataBatchResponseItem {
     final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
     LOG.debug("Retrieved item headers {}", headers);
 
-    return expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
+    final ODataResponse res;
+
+    if (responseLine.getKey() >= 400) {
+      // generate error response
+      res = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+    } else {
+      if (!hasNext()) {
+        throw new NoSuchElementException("No item found");
+      }
+      res = expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
+    }
+
+    return res;
   }
 
   /**

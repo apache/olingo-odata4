@@ -18,9 +18,16 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -37,6 +44,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.methods.MERGE;
@@ -105,6 +113,92 @@ public class V3Services extends AbstractServices {
     if ("allpages".equals(count)) {
       feed.setCount(feed.getEntries().size());
     }
+  }
+
+  @Override
+  public InputStream exploreMultipart(
+          final List<Attachment> attachments, final String boundary, final boolean contineOnError)
+          throws IOException {
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+    Response res = null;
+    boolean goon = true;
+    for (int i = 0; i < attachments.size() && goon; i++) {
+      try {
+        final Attachment obj = attachments.get(i);
+        bos.write(("--" + boundary).getBytes());
+        bos.write(Constants.CRLF);
+
+        final Object content = obj.getDataHandler().getContent();
+        if (content instanceof MimeMultipart) {
+          final Map<String, String> references = new HashMap<String, String>();
+
+          final String cboundary = "changeset_" + UUID.randomUUID().toString();
+          bos.write(("Content-Type: multipart/mixed;boundary=" + cboundary).getBytes());
+          bos.write(Constants.CRLF);
+          bos.write(Constants.CRLF);
+
+          final ByteArrayOutputStream chbos = new ByteArrayOutputStream();
+          String lastContebtID = null;
+          try {
+            for (int j = 0; j < ((MimeMultipart) content).getCount(); j++) {
+              final MimeBodyPart part = (MimeBodyPart) ((MimeMultipart) content).getBodyPart(j);
+              lastContebtID = part.getContentID();
+              addChangesetItemIntro(chbos, lastContebtID, cboundary);
+
+              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
+              if (res.getStatus() >= 400) {
+                throw new Exception("Failure processing changeset");
+              }
+
+              addSingleBatchResponse(res, lastContebtID, chbos);
+              references.put("$" + lastContebtID, res.getHeaderString("Location"));
+            }
+
+            bos.write(chbos.toByteArray());
+            IOUtils.closeQuietly(chbos);
+
+            bos.write(("--" + cboundary + "--").getBytes());
+            bos.write(Constants.CRLF);
+          } catch (Exception e) {
+            LOG.warn("While processing changeset", e);
+            IOUtils.closeQuietly(chbos);
+
+            addChangesetItemIntro(bos, lastContebtID, cboundary);
+
+            if (res == null || res.getStatus() < 400) {
+              addErrorBatchResponse(e, "1", bos);
+            } else {
+              addSingleBatchResponse(res, lastContebtID, bos);
+            }
+
+            goon = contineOnError;
+          }
+        } else {
+          addItemIntro(bos);
+
+          res = bodyPartRequest(new MimeBodyPart(obj.getDataHandler().getInputStream()));
+
+          if (res.getStatus() >= 400) {
+            goon = contineOnError;
+            throw new Exception("Failure processing changeset");
+          }
+
+          addSingleBatchResponse(res, bos);
+        }
+
+      } catch (Exception e) {
+        if (res == null || res.getStatus() < 400) {
+          addErrorBatchResponse(e, bos);
+        } else {
+          addSingleBatchResponse(res, bos);
+        }
+      }
+    }
+
+    bos.write(("--" + boundary + "--").getBytes());
+
+    return new ByteArrayInputStream(bos.toByteArray());
   }
 
   /**

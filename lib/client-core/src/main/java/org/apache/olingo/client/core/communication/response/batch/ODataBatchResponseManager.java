@@ -32,6 +32,7 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchRespon
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
+import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,18 +122,19 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
 
         current.initFromBatch(
                 batchLineIterator,
-                ODataBatchUtilities.getBoundaryFromHeader(
-                nextItemHeaders.get(HeaderName.contentType.toString())));
+                ODataBatchUtilities.getBoundaryFromHeader(nextItemHeaders.get(HeaderName.contentType.toString())));
         break;
 
       case RETRIEVE:
         if (current.isChangeset()) {
-          throw new IllegalStateException("Unexpected batch item");
+          // Maybe V4 error item
+          ((ODataChangesetResponseItem) current).setUnexpected();
         }
 
         current.initFromBatch(
                 batchLineIterator,
                 batchBoundary);
+
         break;
       default:
         throw new IllegalStateException("Expected item not found");

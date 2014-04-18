@@ -20,7 +20,9 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -37,6 +39,7 @@ import static javax.ws.rs.core.Response.status;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import static org.apache.olingo.fit.AbstractServices.LOG;
@@ -204,6 +207,13 @@ public class V3ActionOverloading extends AbstractServices {
 
   @Override
   protected void setInlineCount(Feed feed, String count) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  protected InputStream exploreMultipart(
+          final List<Attachment> attachments, final String boundary, final boolean continueOnError) 
+          throws IOException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

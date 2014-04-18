@@ -125,6 +125,19 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
     return responses.values().iterator();
   }
 
+  @Override
+  public boolean hasNext() {
+    if (closed) {
+      throw new IllegalStateException("Invalid request - the item has been closed");
+    }
+
+    if (expectedItemsIterator == null) {
+      expectedItemsIterator = responses.values().iterator();
+    }
+
+    return expectedItemsIterator.hasNext();
+  }
+
   /**
    * {@inheritDoc }
    */

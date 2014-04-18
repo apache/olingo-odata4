@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
+import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
 
 /**
  * Changeset wrapper for the corresponding batch item.
@@ -34,6 +36,8 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
    */
   private ODataResponse current = null;
 
+  private boolean unexpected = false;
+
   /**
    * Constructor.
    */
@@ -41,20 +45,8 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
     super(true);
   }
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public boolean hasNext() {
-    if (closed) {
-      throw new IllegalStateException("Invalid request - the item has been closed");
-    }
-
-    if (expectedItemsIterator == null) {
-      expectedItemsIterator = responses.values().iterator();
-    }
-
-    return expectedItemsIterator.hasNext();
+  public void setUnexpected() {
+    this.unexpected = true;
   }
 
   /**
@@ -62,7 +54,6 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
    */
   @Override
   public ODataResponse next() {
-
     if (current != null) {
       current.close();
     }
@@ -71,6 +62,14 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
       throw new IllegalStateException("Invalid request - the item has been closed");
     }
 
+    if (unexpected) {
+      return nextUnexpected();
+    } else {
+      return nextExpected();
+    }
+  }
+
+  private ODataResponse nextExpected() {
     if (hasNext()) {
       // consume item for condition above (like a counter ...)
       expectedItemsIterator.next();
@@ -117,6 +116,21 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
     }
 
     return current;
+  }
+
+  private ODataResponse nextUnexpected() {
+    final Map.Entry<Integer, String> responseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
+    LOG.debug("Retrieved item response {}", responseLine);
+
+    if (responseLine.getKey() >= 400) {
+      // generate error response
+      final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
+      LOG.debug("Retrieved item headers {}", headers);
+
+      return new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+    }
+
+    throw new IllegalStateException("Expected item not found");
   }
 
   /**

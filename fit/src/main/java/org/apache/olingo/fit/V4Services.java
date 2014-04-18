@@ -19,13 +19,18 @@
 package org.apache.olingo.fit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -42,25 +47,22 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
-import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
 import org.apache.olingo.commons.core.data.JSONFeedImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.methods.PATCH;
-import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.serializer.JsonFeedContainer;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.DataBinder;
 import org.apache.olingo.fit.utils.FSManager;
 import org.apache.olingo.fit.utils.LinkInfo;
 import org.apache.olingo.fit.utils.ResolvingReferencesInterceptor;
@@ -81,6 +83,91 @@ public class V4Services extends AbstractServices {
     if ("true".equals(count)) {
       feed.setCount(feed.getEntries().size());
     }
+  }
+
+  @Override
+  public InputStream exploreMultipart(
+          final List<Attachment> attachments, final String boundary, final boolean continueOnError)
+          throws IOException {
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+    Response res = null;
+    boolean goon = true;
+    for (int i = 0; i < attachments.size() && goon; i++) {
+      try {
+        final Attachment obj = attachments.get(i);
+        bos.write(("--" + boundary).getBytes());
+        bos.write(Constants.CRLF);
+
+        final Object content = obj.getDataHandler().getContent();
+        if (content instanceof MimeMultipart) {
+          final ByteArrayOutputStream chbos = new ByteArrayOutputStream();
+          String lastContebtID = null;
+          try {
+            final Map<String, String> references = new HashMap<String, String>();
+
+            final String cboundary = "changeset_" + UUID.randomUUID().toString();
+            chbos.write(("Content-Type: multipart/mixed;boundary=" + cboundary).getBytes());
+            chbos.write(Constants.CRLF);
+            chbos.write(Constants.CRLF);
+
+            for (int j = 0; j < ((MimeMultipart) content).getCount(); j++) {
+              final MimeBodyPart part = (MimeBodyPart) ((MimeMultipart) content).getBodyPart(j);
+              lastContebtID = part.getContentID();
+              addChangesetItemIntro(chbos, lastContebtID, cboundary);
+
+              res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
+              if (res.getStatus() >= 400) {
+                throw new Exception("Failure processing changeset");
+              }
+
+              addSingleBatchResponse(res, lastContebtID, chbos);
+              references.put("$" + lastContebtID, res.getHeaderString("Location"));
+            }
+
+            chbos.write(("--" + cboundary + "--").getBytes());
+            chbos.write(Constants.CRLF);
+
+            bos.write(chbos.toByteArray());
+            IOUtils.closeQuietly(chbos);
+          } catch (Exception e) {
+            LOG.warn("While processing changeset", e);
+            IOUtils.closeQuietly(chbos);
+
+            addItemIntro(bos, lastContebtID);
+
+            if (res == null || res.getStatus() < 400) {
+              addErrorBatchResponse(e, "1", bos);
+            } else {
+              addSingleBatchResponse(res, lastContebtID, bos);
+            }
+
+            goon = continueOnError;
+          }
+        } else {
+          addItemIntro(bos);
+
+          res = bodyPartRequest(new MimeBodyPart(obj.getDataHandler().getInputStream()));
+
+          if (res.getStatus() >= 400) {
+            goon = continueOnError;
+            throw new Exception("Failure processing batch item");
+          }
+
+          addSingleBatchResponse(res, bos);
+        }
+      } catch (Exception e) {
+        if (res == null || res.getStatus() < 400) {
+          addErrorBatchResponse(e, bos);
+        } else {
+          addSingleBatchResponse(res, bos);
+        }
+      }
+    }
+
+    bos.write(("--" + boundary + "--").getBytes());
+
+    return new ByteArrayInputStream(bos.toByteArray());
   }
 
   /**
