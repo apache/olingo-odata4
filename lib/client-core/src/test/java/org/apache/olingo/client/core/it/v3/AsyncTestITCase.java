@@ -35,8 +35,7 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEnt
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
@@ -97,7 +96,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
    */
   @Test
   public void createMediaEntity() throws Exception {
-    CommonURIBuilder<?> builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
+    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final String TO_BE_UPDATED = "async buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
@@ -112,11 +111,10 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final ODataMediaEntityCreateResponse createRes = futureCreateRes.get();
-
+    final ODataMediaEntityCreateResponse<ODataEntity> createRes = futureCreateRes.get();
     assertEquals(201, createRes.getStatusCode());
 
-    final CommonODataEntity created = createRes.getBody();
+    final ODataEntity created = createRes.getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperties().size());
 

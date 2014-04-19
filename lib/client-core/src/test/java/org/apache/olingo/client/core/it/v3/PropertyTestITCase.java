@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
@@ -37,8 +32,7 @@ import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -46,6 +40,15 @@ import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -124,7 +127,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void readCountValue() throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").count();
 
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -162,7 +165,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void updatePropertyValue(final ODataValueFormat format, final UpdateType type)
           throws IOException, EdmPrimitiveTypeException {
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").
@@ -205,7 +208,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
@@ -252,7 +255,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).
             appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
@@ -300,7 +303,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updatePrimitiveProperty(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
@@ -312,7 +315,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
-    CommonODataProperty phoneNumber = retrieveRes.getBody();
+    ODataProperty phoneNumber = retrieveRes.getBody();
 
     final String oldMsg = phoneNumber.getPrimitiveValue().toCastValue(String.class);
     final String newMsg = "new item " + System.currentTimeMillis();
@@ -345,7 +348,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void rawRequest(final ODataFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -354,7 +357,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final CommonODataProperty property = res.getBodyAs(CommonODataProperty.class);
+    final ODataProperty property = res.getBodyAs(ODataProperty.class);
     assertNotNull(property);
   }
 }

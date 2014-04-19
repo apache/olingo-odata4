@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.junit.Test;
 
 public class FilterTestITCase extends AbstractTestITCase {
 
   private void filterQueryTest(final String entity, final String filter, final int expected) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entity).filter(filter);
-    final CommonODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
+    final ODataEntitySet entitySet = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).
             execute().getBody();
     assertNotNull(entitySet);
     assertEquals(expected, entitySet.getEntities().size());

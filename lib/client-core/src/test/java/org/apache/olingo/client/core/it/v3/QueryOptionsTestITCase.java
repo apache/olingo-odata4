@@ -24,10 +24,9 @@ import java.util.List;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
 import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
@@ -35,7 +34,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -61,7 +63,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void filterOrderby() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").filter("(VIN lt 16)");
 
     // 1. check that filtered entity set looks as expected
@@ -73,7 +75,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     // 2. extract VIN values - sorted ASC by default
     final List<Integer> vinsASC = new ArrayList<Integer>(5);
-    for (CommonODataEntity entity : feed.getEntities()) {
+    for (ODataEntity entity : feed.getEntities()) {
       final Integer vin = entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(vin < 16);
       vinsASC.add(vin);
@@ -87,7 +89,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     // 4. extract again VIN value - now they were required to be sorted DESC
     final List<Integer> vinsDESC = new ArrayList<Integer>(5);
-    for (CommonODataEntity entity : feed.getEntities()) {
+    for (ODataEntity entity : feed.getEntities()) {
       vinsDESC.add(entity.getProperty("VIN").getPrimitiveValue().toCastValue(Integer.class));
     }
 
@@ -101,7 +103,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void format() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).format("json");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -136,7 +138,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void skiptoken() throws EdmPrimitiveTypeException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").skipToken("-10");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -155,7 +157,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void inlinecount() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
             inlineCount(InlineCount.allpages);
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -171,7 +173,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void select() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).select("CustomerId,Orders").expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -183,7 +185,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void issue131() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-7).select("Name");
 
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());

@@ -18,13 +18,6 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -46,7 +39,7 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.it.AbstractBaseTestITCase;
@@ -64,6 +57,32 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
+
 import org.junit.BeforeClass;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
@@ -181,13 +200,13 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
             original.getClass().getSimpleName(), actual.getClass().getSimpleName());
 
     if (original.isComplex()) {
-      final List<CommonODataProperty> originalFileds = new ArrayList<CommonODataProperty>();
-      for (CommonODataProperty prop : original.asComplex()) {
+      final List<ODataProperty> originalFileds = new ArrayList<ODataProperty>();
+      for (ODataProperty prop : original.<ODataProperty>asComplex()) {
         originalFileds.add(prop);
       }
 
-      final List<CommonODataProperty> actualFileds = new ArrayList<CommonODataProperty>();
-      for (CommonODataProperty prop : actual.asComplex()) {
+      final List<ODataProperty> actualFileds = new ArrayList<ODataProperty>();
+      for (ODataProperty prop : actual.<ODataProperty>asComplex()) {
         actualFileds.add(prop);
       }
 
@@ -326,7 +345,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
           final ODataEntity original,
           final String entitySetName) {
 
-    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(serviceRootURL).
             appendEntitySetSegment(entitySetName);
 
     debugODataEntity(original, "About to create");
@@ -353,7 +372,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
           final int actualObjectId,
           final Collection<String> expands) {
 
-    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(serviceRootURL).
+    final URIBuilder uriBuilder = getClient().getURIBuilder(serviceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(actualObjectId);
 
     // search expanded

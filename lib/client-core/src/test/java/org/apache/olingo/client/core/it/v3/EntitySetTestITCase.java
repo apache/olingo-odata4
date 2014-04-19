@@ -30,10 +30,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRawReque
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -100,7 +98,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readEntitySetWithNextLink(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -125,7 +123,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   private void readODataEntitySetIterator(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
@@ -157,12 +155,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
+    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertEquals(10, entitySet.getCount());
   }
 
   private void rawRequest(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Car");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
@@ -171,7 +169,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
+    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNotNull(entitySet);
   }
 }

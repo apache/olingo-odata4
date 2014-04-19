@@ -262,7 +262,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertTrue(bossEmails.hasCollectionValue());
     assertEquals(2, bossEmails.getCollectionValue().size());
 
-    EdmFunctionImport funcImp = container.getFunctionImport("GetBossEmails");
+    final EdmFunctionImport funcImp = container.getFunctionImport("GetBossEmails");
 
     final Map<String, ODataValue> params = new LinkedHashMap<String, ODataValue>(2);
     params.put("start", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(0));

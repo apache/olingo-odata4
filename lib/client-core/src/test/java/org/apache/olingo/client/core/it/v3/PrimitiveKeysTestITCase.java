@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
@@ -41,7 +40,7 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
     req.setFormat(format);
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
-    final CommonODataEntity entity = res.getBody();
+    final ODataEntity entity = res.getBody();
     assertNotNull(entity);
     assertNotNull(entity.getProperty("Id"));
   }

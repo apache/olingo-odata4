@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
@@ -47,7 +46,7 @@ public class EntitySetTest extends AbstractTest {
     assertEquals(2, entitySet.getEntities().size());
     assertNotNull(entitySet.getNext());
 
-    final CommonODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().
+    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().
             getBinder().getFeed(entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM)));
     assertEquals(entitySet, written);
   }

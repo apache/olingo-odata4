@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.api.uri.URIFilter;
-import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
-import org.apache.olingo.client.api.uri.v3.FilterFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.client.api.uri.v3.FilterArgFactory;
+import org.apache.olingo.client.api.uri.v3.FilterFactory;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.junit.Test;
 
 public class FilterFactoryTestITCase extends AbstractTestITCase {
@@ -39,7 +39,7 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
   }
 
   private void match(final String entitySet, final URIFilter filter, final int expected) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySet).filter(filter);
 
     final CommonODataEntitySet feed = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).

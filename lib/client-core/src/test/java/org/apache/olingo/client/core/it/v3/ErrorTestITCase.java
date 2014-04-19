@@ -21,26 +21,24 @@ package org.apache.olingo.client.core.it.v3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -56,7 +54,7 @@ import org.junit.Test;
 public class ErrorTestITCase extends AbstractTestITCase {
 
   private class ErrorGeneratingRequest
-          extends AbstractODataBasicRequest<ODataEntityCreateResponse, ODataPubFormat> {
+          extends AbstractODataBasicRequest<ODataEntityCreateResponse<ODataEntity>, ODataPubFormat> {
 
     public ErrorGeneratingRequest(final HttpMethod method, final URI uri) {
       super(client, ODataPubFormat.class, method, uri);
@@ -68,31 +66,29 @@ public class ErrorTestITCase extends AbstractTestITCase {
     }
 
     @Override
-    public ODataEntityCreateResponse execute() {
+    public ODataEntityCreateResponse<ODataEntity> execute() {
       final HttpResponse res = doExecute();
       return new ErrorResponseImpl(client, httpClient, res);
     }
 
-    private class ErrorResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse {
+    private class ErrorResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<ODataEntity> {
 
-      private final CommonODataClient odataClient;
+      private final ODataClient odataClient;
 
-      public ErrorResponseImpl(
-              final CommonODataClient odataClient, final HttpClient client, final HttpResponse res) {
-
+      public ErrorResponseImpl(final ODataClient odataClient, final HttpClient client, final HttpResponse res) {
         super(client, res);
         this.odataClient = odataClient;
       }
 
       @Override
-      public CommonODataEntity getBody() {
+      public ODataEntity getBody() {
         return odataClient.getObjectFactory().newEntity(new FullQualifiedName("Invalid.Invalid"));
       }
     }
   }
 
   private void stacktraceError(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ErrorGeneratingRequest errorReq = new ErrorGeneratingRequest(HttpMethod.POST, uriBuilder.build());
@@ -119,7 +115,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
   }
 
   private void notfoundError(final ODataPubFormat format) {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer(154)");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
