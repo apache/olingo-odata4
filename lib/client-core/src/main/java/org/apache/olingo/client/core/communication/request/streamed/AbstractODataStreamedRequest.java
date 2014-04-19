@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -112,7 +112,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    *
    * @param req destination batch request.
    */
-  public void batch(final ODataBatchRequest req) {
+  public void batch(final CommonODataBatchRequest req) {
     batch(req, null);
   }
 
@@ -124,7 +124,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param req destination batch request.
    * @param contentId ContentId header value to be added to the serialization. Use this in case of changeset items.
    */
-  public void batch(final ODataBatchRequest req, final String contentId) {
+  public void batch(final CommonODataBatchRequest req, final String contentId) {
     final InputStream input = getStreamManager().getBody();
 
     try {

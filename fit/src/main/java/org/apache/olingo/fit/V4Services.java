@@ -196,7 +196,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -218,7 +218,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -242,7 +242,7 @@ public class V4Services extends AbstractServices {
       return postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId);
     }
   }
-  
+
   private StringBuilder containedPath(final String entityId, final String containedEntitySetName) {
     return new StringBuilder("Accounts").append(File.separatorChar).
             append(entityId).append(File.separatorChar).
@@ -272,7 +272,7 @@ public class V4Services extends AbstractServices {
 
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
 
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
@@ -315,7 +315,7 @@ public class V4Services extends AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                });
+        });
 
         entry = dataBinder.getAtomEntry(jcontainer.getObject());
 
@@ -413,7 +413,7 @@ public class V4Services extends AbstractServices {
 
         final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
                 new TypeReference<JSONEntryImpl>() {
-                });
+        });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.getAtomEntry(jsonContainer.getObject());
       }
@@ -446,9 +446,9 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
-      
+
       // 2. Remove the contained entity
       final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
               append('(').append(containedEntityId).append(')').toString();
@@ -457,7 +457,7 @@ public class V4Services extends AbstractServices {
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
       final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
-      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);     
+      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
       feedContainer.getObject().getEntries().remove(container.getObject());
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
@@ -510,7 +510,7 @@ public class V4Services extends AbstractServices {
       } else {
         mapper.writeValue(
                 writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                        dataBinder.getJsonFeed(container.getObject())));
+                dataBinder.getJsonFeed(container.getObject())));
       }
 
       return xml.createResponse(
@@ -522,5 +522,4 @@ public class V4Services extends AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-
 }

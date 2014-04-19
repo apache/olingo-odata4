@@ -18,15 +18,17 @@
  */
 package org.apache.olingo.client.api.communication.request.batch.v4;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
+/**
+ * Batch request payload management.
+ */
+public interface BatchStreamManager
+        extends org.apache.olingo.client.api.communication.request.batch.BatchStreamManager {
 
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
-  
   /**
-   * Gets a batch request object instance.
+   * Gets an outside update batch item instance. An outside update item can be submitted embedded into a batch request
+   * only.
    *
-   * @param serviceRoot service root.
-   * @return new ODataBatchRequest instance.
+   * @return ODataOutsideUpdate instance.
    */
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+  ODataOutsideUpdate addOutsideUpdate();
 }

@@ -21,4 +21,12 @@ package org.apache.olingo.client.api.communication.request.batch.v3;
 import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
 
 public interface BatchRequestFactory extends CommonBatchRequestFactory {
+  
+  /**
+   * Gets a batch request object instance.
+   *
+   * @param serviceRoot service root.
+   * @return new ODataBatchRequest instance.
+   */
+  ODataBatchRequest getBatchRequest(String serviceRoot);
 }

@@ -37,6 +37,7 @@ import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,7 +302,7 @@ public class ODataBatchUtilities {
     final String contentType = headers.containsKey(HeaderName.contentType.toString())
             ? headers.get(HeaderName.contentType.toString()).toString() : StringUtils.EMPTY;
 
-    if (contentType.contains(ODataBatchConstants.MULTIPART_CONTENT_TYPE)) {
+    if (contentType.contains(ContentType.MULTIPART_MIXED)) {
       nextItemType = BatchItemType.CHANGESET;
     } else if (contentType.contains(ODataBatchConstants.ITEM_CONTENT_TYPE)) {
       nextItemType = BatchItemType.RETRIEVE;

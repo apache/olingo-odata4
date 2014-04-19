@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
@@ -42,7 +41,7 @@ import org.apache.olingo.commons.api.data.Entry;
  */
 public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
         extends AbstractODataStreamedEntityRequest<ODataMediaEntityCreateResponse<E>, MediaEntityCreateStreamManager<E>>
-        implements ODataMediaEntityCreateRequest<E>, ODataBatchableRequest {
+        implements ODataMediaEntityCreateRequest<E> {
 
   private final InputStream media;
 

@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -94,7 +94,7 @@ public abstract class AbstractODataBasicRequest<V extends ODataResponse, T exten
    *
    * @param req destination batch request.
    */
-  public void batch(final ODataBatchRequest req) {
+  public void batch(final CommonODataBatchRequest req) {
     batch(req, null);
   }
 
@@ -106,7 +106,7 @@ public abstract class AbstractODataBasicRequest<V extends ODataResponse, T exten
    * @param req destination batch request.
    * @param contentId contentId of the changeset item.
    */
-  public void batch(final ODataBatchRequest req, final String contentId) {
+  public void batch(final CommonODataBatchRequest req, final String contentId) {
     try {
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {

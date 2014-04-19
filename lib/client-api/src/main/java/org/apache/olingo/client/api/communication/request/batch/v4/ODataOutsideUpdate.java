@@ -18,15 +18,21 @@
  */
 package org.apache.olingo.client.api.communication.request.batch.v4;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
 
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
-  
+/**
+ * Retrieve request wrapper for the corresponding batch item.
+ */
+public interface ODataOutsideUpdate extends ODataBatchRequestItem {
+
   /**
-   * Gets a batch request object instance.
+   * Serialize and send the given request.
+   * <p>
+   * An IllegalArgumentException is thrown in case of no GET request.
    *
-   * @param serviceRoot service root.
-   * @return new ODataBatchRequest instance.
+   * @param request request to be serialized.
+   * @return current item instance.
    */
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+  ODataOutsideUpdate setRequest(final ODataBatchableRequest request);
 }

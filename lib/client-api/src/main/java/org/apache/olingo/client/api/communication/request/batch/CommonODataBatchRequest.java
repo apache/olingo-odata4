@@ -20,13 +20,11 @@ package org.apache.olingo.client.api.communication.request.batch;
 
 import java.io.IOException;
 import java.io.PipedOutputStream;
-import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
-import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 
 /**
  * This class implements a batch request.
  */
-public interface ODataBatchRequest extends ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
+public interface CommonODataBatchRequest {
 
   /**
    * Gets piped stream to be used to stream batch items.
@@ -42,7 +40,7 @@ public interface ODataBatchRequest extends ODataStreamedRequest<ODataBatchRespon
    * @return the current batch request.
    * @throws IOException in case of write errors.
    */
-  ODataBatchRequest rawAppend(final byte[] toBeStreamed) throws IOException;
+  CommonODataBatchRequest rawAppend(final byte[] toBeStreamed) throws IOException;
 
   /**
    * Appends the given byte array to the payload.
@@ -53,5 +51,5 @@ public interface ODataBatchRequest extends ODataStreamedRequest<ODataBatchRespon
    * @return the current batch request.
    * @throws IOException in case of write errors.
    */
-  ODataBatchRequest rawAppend(final byte[] toBeStreamed, int off, int len) throws IOException;
+  CommonODataBatchRequest rawAppend(final byte[] toBeStreamed, int off, int len) throws IOException;
 }

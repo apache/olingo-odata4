@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.streamed;
 
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
@@ -27,5 +28,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
  * @param <E> concrete ODataEntity implementation
  */
 public interface ODataMediaEntityCreateRequest<E extends CommonODataEntity>
-        extends ODataStreamedEntityRequest<ODataMediaEntityCreateResponse<E>, MediaEntityCreateStreamManager<E>> {
+        extends ODataStreamedEntityRequest<ODataMediaEntityCreateResponse<E>, MediaEntityCreateStreamManager<E>>,
+        ODataBatchableRequest{
 }

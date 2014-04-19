@@ -24,11 +24,6 @@ package org.apache.olingo.client.api;
 public class ODataBatchConstants {
 
   /**
-   * Batch/Changeset content type.
-   */
-  public static final String MULTIPART_CONTENT_TYPE = "multipart/mixed";
-
-  /**
    * Batch item content type.
    */
   public static final String ITEM_CONTENT_TYPE = "application/http";

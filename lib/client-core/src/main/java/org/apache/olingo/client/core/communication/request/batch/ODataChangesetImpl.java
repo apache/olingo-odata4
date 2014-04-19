@@ -19,13 +19,13 @@
 package org.apache.olingo.client.core.communication.request.batch;
 
 import java.util.UUID;
-import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * Changeset wrapper for the corresponding batch item.
@@ -54,7 +54,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
    * @param req batch request.
    * @param expectedResItem expected OData response items.
    */
-  ODataChangesetImpl(final ODataBatchRequest req, final ODataChangesetResponseItem expectedResItem) {
+  ODataChangesetImpl(final CommonODataBatchRequest req, final ODataChangesetResponseItem expectedResItem) {
     super(req);
     this.expectedResItem = expectedResItem;
 
@@ -99,7 +99,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
 
     if (!hasStreamedSomething) {
       stream((HeaderName.contentType.toString() + ": "
-              + ODataBatchConstants.MULTIPART_CONTENT_TYPE + ";boundary=" + boundary).getBytes());
+              + ContentType.MULTIPART_MIXED + ";boundary=" + boundary).getBytes());
 
       newLine();
       newLine();
@@ -117,7 +117,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     newLine();
 
     // stream the request
-    streamRequestHeader(request, contentId);
+    streamRequestHeader(request, String.valueOf(contentId));
 
     request.batch(req, String.valueOf(contentId));
 

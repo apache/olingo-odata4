@@ -16,17 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.client.api.communication.request.batch.v3;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
-
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
-  
-  /**
-   * Gets a batch request object instance.
-   *
-   * @param serviceRoot service root.
-   * @return new ODataBatchRequest instance.
-   */
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+/**
+ * Batch request payload management.
+ */
+public interface BatchStreamManager
+        extends org.apache.olingo.client.api.communication.request.batch.BatchStreamManager {
 }

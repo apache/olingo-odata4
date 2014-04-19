@@ -24,12 +24,4 @@ import java.io.Serializable;
  * OData batch request factory class.
  */
 public interface CommonBatchRequestFactory extends Serializable {
-
-  /**
-   * Gets a batch request object instance.
-   *
-   * @param serviceRoot service root.
-   * @return new ODataBatchRequest instance.
-   */
-  ODataBatchRequest getBatchRequest(String serviceRoot);
 }

@@ -33,6 +33,8 @@ public abstract class ContentType {
 
   public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
+  public static final String MULTIPART_MIXED = "multipart/mixed";
+
   public static final String APPLICATION_SVG_XML = "application/svg+xml";
 
   public static final String APPLICATION_XHTML_XML = "application/xhtml+xml";

@@ -16,21 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.communication.request.batch;
+package org.apache.olingo.client.core.communication.request.batch.v4;
 
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
+import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequestItem;
 
 /**
  * Retrieve request wrapper for the corresponding batch item.
  */
-public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
-        implements ODataRetrieve {
+public class ODataOutsideUpdateImpl extends AbstractODataBatchRequestItem
+        implements ODataOutsideUpdate {
 
-  private final ODataRetrieveResponseItem expectedResItem;
+  private final ODataOutsideUpdateResponseItem expectedResItem;
 
   /**
    * Constructor.
@@ -38,7 +39,7 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
    * @param req batch request.
    * @param expectedResItem expected batch response item.
    */
-  ODataRetrieveImpl(final CommonODataBatchRequest req, final ODataRetrieveResponseItem expectedResItem) {
+  ODataOutsideUpdateImpl(final CommonODataBatchRequest req, final ODataOutsideUpdateResponseItem expectedResItem) {
     super(req);
     this.expectedResItem = expectedResItem;
   }
@@ -55,26 +56,28 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
    * {@inheritDoc }
    */
   @Override
-  public ODataRetrieve setRequest(final ODataBatchableRequest request) {
+  public ODataOutsideUpdate setRequest(final ODataBatchableRequest request) {
     if (!isOpen()) {
       throw new IllegalStateException("Current batch item is closed");
     }
 
-    if (((ODataRequestImpl) request).getMethod() != HttpMethod.GET) {
-      throw new IllegalArgumentException("Invalid request. Only GET method is allowed");
+    if (((ODataRequestImpl) request).getMethod() == HttpMethod.GET) {
+      throw new IllegalArgumentException("Invalid request. Use ODataRetrieve for GET method");
     }
 
     hasStreamedSomething = true;
 
     // stream the request
-    streamRequestHeader(request);
+    streamRequestHeader(request, ODataOutsideUpdateResponseItem.OUTSIDE_CONTENT_ID);
+
+    request.batch(req, ODataOutsideUpdateResponseItem.OUTSIDE_CONTENT_ID);
 
     // close before in order to avoid any further setRequest calls.
     close();
 
     // add request to the list
     expectedResItem.addResponse(
-            ODataRetrieveResponseItem.RETRIEVE_CONTENT_ID, ((ODataRequestImpl) request).getResponseTemplate());
+            ODataOutsideUpdateResponseItem.OUTSIDE_CONTENT_ID, ((ODataRequestImpl) request).getResponseTemplate());
 
     return this;
   }

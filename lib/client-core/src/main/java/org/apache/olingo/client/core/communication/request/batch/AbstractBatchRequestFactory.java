@@ -14,7 +14,6 @@ package org.apache.olingo.client.core.communication.request.batch;
 
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
-import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 
 /**
  * OData batch request factory class.
@@ -27,10 +26,5 @@ public abstract class AbstractBatchRequestFactory implements CommonBatchRequestF
 
   protected AbstractBatchRequestFactory(final CommonODataClient client) {
     this.client = client;
-  }
-
-  @Override
-  public ODataBatchRequest getBatchRequest(final String serviceRoot) {
-    return new ODataBatchRequestImpl(client, client.getURIBuilder(serviceRoot).appendBatchSegment().build());
   }
 }

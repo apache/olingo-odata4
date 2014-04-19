@@ -38,12 +38,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Header;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -118,7 +116,7 @@ public abstract class AbstractServices {
 
   private static final Pattern BATCH_REQUEST_REF_PATTERN = Pattern.compile("(.*) ([$].*) HTTP/.*");
 
-  private static final String BOUNDARY = "batch_243234_25424_ef_892u748";
+  protected static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
 
@@ -205,16 +203,16 @@ public abstract class AbstractServices {
 
   @POST
   @Path("/$batch")
-  @Consumes("multipart/mixed")
-  @Produces("application/octet-stream; boundary=" + BOUNDARY)
+  @Consumes(ContentType.MULTIPART_MIXED)
+  @Produces(ContentType.APPLICATION_OCTET_STREAM + ";boundary=" + BOUNDARY)
   public Response batch(
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           final @Multipart MultipartBody attachment) {
     try {
       final boolean continueOnError = prefer.contains("odata.continue-on-error");
-      
+
       return xml.createBatchResponse(
-              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError), 
+              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError),
               BOUNDARY);
     } catch (IOException e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
@@ -244,6 +242,8 @@ public abstract class AbstractServices {
       headers.putSingle(header.getName(), header.getValue());
     }
 
+    final Response res;
+
     if (matcher.find()) {
       String method = matcher.group(1);
       if ("PATCH".equals(method) || "MERGE".equals(method)) {
@@ -255,8 +255,8 @@ public abstract class AbstractServices {
 
       final WebClient client = WebClient.create(url);
       client.headers(headers);
-
-      return client.invoke(method, body.getDataHandler().getInputStream());
+      res = client.invoke(method, body.getDataHandler().getInputStream());
+      client.close();
     } else if (matcherRef.find()) {
       String method = matcherRef.group(1);
       if ("PATCH".equals(method) || "MERGE".equals(method)) {
@@ -269,14 +269,17 @@ public abstract class AbstractServices {
       final WebClient client = WebClient.create(references.get(url));
       client.headers(headers);
 
-      return client.invoke(method, body.getDataHandler().getInputStream());
+      res = client.invoke(method, body.getDataHandler().getInputStream());
+      client.close();
     } else {
-      return null;
+      res = null;
     }
+
+    return res;
   }
 
   protected abstract InputStream exploreMultipart(
-          final List<Attachment> attachments, final String boundary, final boolean continueOnError) 
+          final List<Attachment> attachments, final String boundary, final boolean continueOnError)
           throws IOException;
 
   protected void addItemIntro(final ByteArrayOutputStream bos) throws IOException {
@@ -417,7 +420,7 @@ public abstract class AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcont =
                 mapper.readValue(IOUtils.toInputStream(changes), new TypeReference<JSONEntryImpl>() {
-                });
+        });
 
         entryChanges = dataBinder.getAtomEntry(jcont.getObject());
       }
@@ -555,7 +558,6 @@ public abstract class AbstractServices {
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
-
     // default
     AbstractUtilities utils = xml;
     try {
@@ -608,7 +610,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                  });
+          });
 
           entry = dataBinder.getAtomEntry(jcontainer.getObject());
 
@@ -635,7 +637,7 @@ public abstract class AbstractServices {
       Container<AtomEntryImpl> result = atomDeserializer.read(serialization, AtomEntryImpl.class);
       result = new Container<AtomEntryImpl>(
               URI.create(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
-                      + "$metadata#" + entitySetName + "/$entity"), null, result.getObject());
+              + "$metadata#" + entitySetName + "/$entity"), null, result.getObject());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
       FSManager.instance(version).putInMemory(
@@ -697,13 +699,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -755,9 +757,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -887,7 +889,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                          dataBinder.getJsonFeed(container.getObject())));
+                  dataBinder.getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(
@@ -1502,8 +1504,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.getJsonFeed((AtomFeedImpl) container.getObject())));
+                      container.getMetadataETag(),
+                      dataBinder.getJsonFeed((AtomFeedImpl) container.getObject())));
             }
           } else {
             final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(stream, AtomEntryImpl.class);
@@ -1515,8 +1517,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.getJsonEntry((AtomEntryImpl) container.getObject())));
+                      container.getMetadataETag(),
+                      dataBinder.getJsonEntry((AtomEntryImpl) container.getObject())));
             }
           }
 
