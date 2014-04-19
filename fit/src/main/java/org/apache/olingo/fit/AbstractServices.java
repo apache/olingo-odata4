@@ -212,8 +212,7 @@ public abstract class AbstractServices {
       final boolean continueOnError = prefer.contains("odata.continue-on-error");
 
       return xml.createBatchResponse(
-              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError),
-              BOUNDARY);
+              exploreMultipart(attachment.getAllAttachments(), BOUNDARY, continueOnError), BOUNDARY);
     } catch (IOException e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }

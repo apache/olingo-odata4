@@ -67,7 +67,7 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
     streamDashBoundary();
 
     final ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem();
-    ((AbstractODataBatchRequest) req).expectedResItems.add(expectedResItem);
+    ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
     currentItem = new ODataChangesetImpl(req, expectedResItem);
 
@@ -88,7 +88,7 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
     final ODataRetrieveResponseItem expectedResItem = new ODataRetrieveResponseItem();
     currentItem = new ODataRetrieveImpl(req, expectedResItem);
 
-    ((AbstractODataBatchRequest) req).expectedResItems.add(expectedResItem);
+    ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
     return (ODataRetrieve) currentItem;
   }

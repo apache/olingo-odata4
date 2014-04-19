@@ -80,7 +80,8 @@ public class BatchTestITCase extends AbstractTestITCase {
   // ------------------------
   // Uncomment to performe check externally ...
   // ------------------------
-  // private final static String testStaticServiceRootURL= "http://odatae2etest.azurewebsites.net/javatest/DefaultService/";
+  // private final static String testStaticServiceRootURL= 
+  //                  "http://odatae2etest.azurewebsites.net/javatest/DefaultService/";
   // private final static String ACCEPT = ContentType.MULTIPART_MIXED;
   // ------------------------
   private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM;
