@@ -1,0 +1,139 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Products",
+  "value": [{
+      "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+      "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)",
+      "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)",
+      "ProductID": 5,
+      "Name": "Cheetos",
+      "QuantityPerUnit": "100g Bag",
+      "UnitPrice@odata.type": "#Single",
+      "UnitPrice": 3.24,
+      "QuantityInStock": 100,
+      "Discontinued": true,
+      "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+      "UserAccess": "None",
+      "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+      "SkinColor": "Red",
+      "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+      "CoverColors": ["Green", "Blue", "Blue"],
+      "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)/Details/$ref",
+      "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)/Details",
+      "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+      },
+      "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+      }
+    }, {
+      "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+      "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)",
+      "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)",
+      "ProductID": 6,
+      "Name": "Mushrooms",
+      "QuantityPerUnit": "Pound",
+      "UnitPrice@odata.type": "#Single",
+      "UnitPrice": 3.24,
+      "QuantityInStock": 100,
+      "Discontinued": false,
+      "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+      "UserAccess": "ReadWrite",
+      "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+      "SkinColor": "Blue",
+      "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+      "CoverColors": ["Red", "Blue"],
+      "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)/Details/$ref",
+      "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)/Details",
+      "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+      },
+      "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+      }
+    }, {
+      "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+      "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)",
+      "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)",
+      "ProductID": 7,
+      "Name": "Apple",
+      "QuantityPerUnit": "Pound",
+      "UnitPrice@odata.type": "#Single",
+      "UnitPrice": 0.35,
+      "QuantityInStock": 20,
+      "Discontinued": false,
+      "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+      "UserAccess": "Read",
+      "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+      "SkinColor": "Red",
+      "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+      "CoverColors": ["Blue"],
+      "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)/Details/$ref",
+      "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)/Details",
+      "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+      },
+      "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+      }
+    }, {
+      "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+      "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)",
+      "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)",
+      "ProductID": 8,
+      "Name": "Car",
+      "QuantityPerUnit": "Pound",
+      "UnitPrice@odata.type": "#Single",
+      "UnitPrice": 28000,
+      "QuantityInStock": 300,
+      "Discontinued": false,
+      "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+      "UserAccess": "Execute",
+      "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+      "SkinColor": "Red",
+      "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+      "CoverColors": ["Red", "Red", "Blue"],
+      "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)/Details/$ref",
+      "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)/Details",
+      "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+      },
+      "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+      }
+    }, {
+      "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+      "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)",
+      "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)",
+      "ProductID": 9,
+      "Name": "Computer",
+      "QuantityPerUnit": "Pound",
+      "UnitPrice@odata.type": "#Single",
+      "UnitPrice": 1250,
+      "QuantityInStock": 1000,
+      "Discontinued": false,
+      "UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+      "UserAccess": "Read",
+      "SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+      "SkinColor": "Green",
+      "CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+      "CoverColors": ["Green"],
+      "Details@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)/Details/$ref",
+      "Details@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)/Details",
+      "#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+      },
+      "#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+        "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+      }
+    }]
+}

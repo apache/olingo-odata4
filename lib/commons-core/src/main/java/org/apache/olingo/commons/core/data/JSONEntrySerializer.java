@@ -52,26 +52,24 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
 
     jgen.writeStartObject();
 
-    if (StringUtils.isNotBlank(entry.getType())) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
-              new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
-    }
-
     if (serverMode) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
                 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
                 container.getContextURL().toASCIIString());
       }
-      if (version.compareTo(ODataServiceVersion.V40) >= 0) {
-        if (StringUtils.isNotBlank(container.getMetadataETag())) {
-          jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
-        }
+      if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
+        jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
 
       if (StringUtils.isNotBlank(entry.getETag())) {
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ETAG), entry.getETag());
       }
+    }
+
+    if (StringUtils.isNotBlank(entry.getType())) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
+              new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
     }
 
     if (entry.getId() != null) {

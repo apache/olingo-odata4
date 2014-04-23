@@ -419,7 +419,7 @@ public abstract class AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcont =
                 mapper.readValue(IOUtils.toInputStream(changes), new TypeReference<JSONEntryImpl>() {
-        });
+                });
 
         entryChanges = dataBinder.getAtomEntry(jcont.getObject());
       }
@@ -609,7 +609,7 @@ public abstract class AbstractServices {
         } else {
           final Container<JSONEntryImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-          });
+                  });
 
           entry = dataBinder.getAtomEntry(jcontainer.getObject());
 
@@ -636,7 +636,7 @@ public abstract class AbstractServices {
       Container<AtomEntryImpl> result = atomDeserializer.read(serialization, AtomEntryImpl.class);
       result = new Container<AtomEntryImpl>(
               URI.create(Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
-              + "$metadata#" + entitySetName + "/$entity"), null, result.getObject());
+                      + "$metadata#" + entitySetName + "/$entity"), null, result.getObject());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
       FSManager.instance(version).putInMemory(
@@ -698,13 +698,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -756,9 +756,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
@@ -888,7 +888,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                  dataBinder.getJsonFeed(container.getObject())));
+                          dataBinder.getJsonFeed(container.getObject())));
         }
 
         return xml.createResponse(
@@ -1503,8 +1503,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.getJsonFeed((AtomFeedImpl) container.getObject())));
+                              container.getMetadataETag(),
+                              dataBinder.getJsonFeed((AtomFeedImpl) container.getObject())));
             }
           } else {
             final Container<Entry> container = atomDeserializer.<Entry, AtomEntryImpl>read(stream, AtomEntryImpl.class);
@@ -1516,8 +1516,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.getJsonEntry((AtomEntryImpl) container.getObject())));
+                              container.getMetadataETag(),
+                              dataBinder.getJsonEntry((AtomEntryImpl) container.getObject())));
             }
           }
 

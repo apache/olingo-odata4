@@ -35,8 +35,8 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   private ODataPubFormat format;
 
-  public ODataInvokeRequestImpl(final CommonODataClient odataClient, final Class<T> reference, final HttpMethod method,
-          final URI uri) {
+  public ODataInvokeRequestImpl(final CommonODataClient<?> odataClient, final Class<T> reference,
+          final HttpMethod method, final URI uri) {
 
     super(odataClient, reference, method, uri);
   }

@@ -77,7 +77,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   private static final int MAX = 10000;
 
   // ------------------------
-  // Uncomment to performe check externally ...
+  // Uncomment to check externally ...
   // ------------------------
   // private final static String testStaticServiceRootURL= 
   //                  "http://odatae2etest.azurewebsites.net/javatest/DefaultService/";

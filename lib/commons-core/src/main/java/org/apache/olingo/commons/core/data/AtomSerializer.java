@@ -229,8 +229,10 @@ public class AtomSerializer extends AbstractAtomDealer {
 
     writer.writeStartElement(Constants.ATOM_ELEM_CATEGORY);
     writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, version.getNamespaceMap().get(ODataServiceVersion.NS_SCHEME));
-    writer.writeAttribute(Constants.ATOM_ATTR_TERM,
-            new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
+    if (StringUtils.isNotBlank(entry.getType())) {
+      writer.writeAttribute(Constants.ATOM_ATTR_TERM,
+              new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
+    }
     writer.writeEndElement();
 
     if (entry instanceof AbstractODataObject) {

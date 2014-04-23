@@ -195,7 +195,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   }
 
   protected void property(final JsonGenerator jgen, final Property property, final String name) throws IOException {
-    if (serverMode) {
+    if (serverMode && !Constants.VALUE.equals(name)) {
       String type = property.getType();
       if (StringUtils.isBlank(type)
               && property.getValue().isPrimitive() || property.getValue().isNull()) {

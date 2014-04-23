@@ -70,7 +70,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
    * @param uri URI that identifies the operation.
    */
   public AbstractODataInvokeRequest(
-          final CommonODataClient odataClient,
+          final CommonODataClient<?> odataClient,
           final Class<T> reference,
           final HttpMethod method,
           final URI uri) {

@@ -22,9 +22,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
@@ -48,6 +50,17 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
     final Property property = container.getObject();
 
     jgen.writeStartObject();
+
+    if (serverMode && container.getContextURL() != null) {
+      jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
+              ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
+              container.getContextURL().toASCIIString());
+    }
+
+    if (StringUtils.isNotBlank(property.getType())) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
+              new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
+    }
 
     if (property.getValue().isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);

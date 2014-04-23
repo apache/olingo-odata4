@@ -22,13 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
@@ -46,35 +42,14 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 
 import org.junit.Test;
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
-  private static final String serviceRoot = "http://odatae2etest.azurewebsites.net/javatest/DefaultService";
-
-  // TODO: remove once fit provides function / action imports
-  @BeforeClass
-  public static void checkServerIsOnline() throws IOException {
-    final Socket socket = new Socket();
-    boolean reachable = false;
-    try {
-      socket.connect(new InetSocketAddress("odatae2etest.azurewebsites.net", 80), 2000);
-      reachable = true;
-    } catch (Exception e) {
-      LOG.warn("External test service not reachable, ignoring this whole class: {}",
-              OperationImportInvokeTestITCase.class.getName());
-    } finally {
-      IOUtils.closeQuietly(socket);
-    }
-    Assume.assumeTrue(reachable);
-  }
-
   private Edm getEdm() {
     final Edm edm = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(serviceRoot).execute().getBody();
+            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
     assertNotNull(edm);
 
     return edm;
@@ -89,7 +64,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     EdmFunctionImport funcImp = container.getFunctionImport("GetDefaultColor");
 
     final ODataInvokeRequest<ODataProperty> defaultColorReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0));
     defaultColorReq.setFormat(format);
@@ -106,7 +81,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("London");
 
     final ODataInvokeRequest<ODataEntity> person2Req = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0),
                     Collections.<String, ODataValue>singletonMap("city", city));
@@ -129,24 +104,20 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("98052")));
 
     final ODataInvokeRequest<ODataEntity> personReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0),
                     Collections.<String, ODataValue>singletonMap("address", address));
     personReq.setFormat(format);
-    //TODO test service doesn't support yet complex and collection values as inline parameters
-    try {
-      final ODataEntity person = personReq.execute().getBody();
-      assertNotNull(person);
-    } catch (Exception e) {
-      // ignore
-    }
+    final ODataEntity person = personReq.execute().getBody();
+    assertNotNull(person);
+    assertEquals(person2, person);
 
     // GetAllProducts
     funcImp = container.getFunctionImport("GetAllProducts");
 
     final ODataInvokeRequest<ODataEntitySet> productsReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0));
     productsReq.setFormat(format);
@@ -161,7 +132,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "None");
 
     final ODataInvokeRequest<ODataProperty> prodByALReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0),
                     Collections.<String, ODataValue>singletonMap("accessLevel", accessLevel));
@@ -193,7 +164,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
     final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
     final ODataInvokeRequest<ODataNoContent> discountReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(actImp.getName()).build(),
                     actImp.getUnboundAction(),
                     Collections.<String, ODataValue>singletonMap("percentage", percentage));
@@ -214,7 +185,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("66010")));
 
     final ODataInvokeRequest<ODataProperty> resetBossAddressReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(actImp.getName()).build(),
                     actImp.getUnboundAction(),
                     Collections.<String, ODataValue>singletonMap("address", address));
@@ -225,12 +196,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomActionImports() {
-    //TODO test service doesn't support yet Atom POST params
-    try {
-      actionImports(ODataPubFormat.ATOM);
-    } catch (Exception e) {
-      // ignore
-    }
+    actionImports(ODataPubFormat.ATOM);
   }
 
   @Test
@@ -247,12 +213,11 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     final EdmActionImport actImp = container.getActionImport("ResetBossEmail");
 
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> emails =
-            getClient().getObjectFactory().newCollectionValue(
-                    EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
+            getClient().getObjectFactory().newCollectionValue("Collection(Edm.String)");
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("first@olingo.apache.org"));
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("second@olingo.apache.org"));
     ODataInvokeRequest<ODataProperty> bossEmailsReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(actImp.getName()).build(),
                     actImp.getUnboundAction(),
                     Collections.<String, ODataValue>singletonMap("emails", emails));
@@ -268,7 +233,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     params.put("start", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(0));
     params.put("count", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(100));
     bossEmailsReq = getClient().getInvokeRequestFactory().
-            getInvokeRequest(getClient().getURIBuilder(serviceRoot).
+            getInvokeRequest(getClient().getURIBuilder(testStaticServiceRootURL).
                     appendOperationCallSegment(funcImp.getName()).build(),
                     funcImp.getUnboundFunctions().get(0),
                     params);
@@ -277,17 +242,13 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(bossEmailsViaGET);
     assertTrue(bossEmailsViaGET.hasCollectionValue());
     assertEquals(2, bossEmailsViaGET.getCollectionValue().size());
-    assertEquals(bossEmails, bossEmailsViaGET);
+    assertEquals(bossEmails.getCollectionValue().asJavaCollection(), 
+            bossEmailsViaGET.getCollectionValue().asJavaCollection());
   }
 
   @Test
   public void atomBossEmails() throws EdmPrimitiveTypeException {
-    //TODO test service doesn't support yet Atom POST params
-    try {
-      bossEmails(ODataPubFormat.ATOM);
-    } catch (Exception e) {
-      // ignore
-    }
+    bossEmails(ODataPubFormat.ATOM);
   }
 
   @Test

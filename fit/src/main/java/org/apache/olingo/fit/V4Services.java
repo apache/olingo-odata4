@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,17 +50,25 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.core.data.CollectionValueImpl;
+import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
 import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONPropertyImpl;
+import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.serializer.JsonFeedContainer;
+import org.apache.olingo.fit.serializer.JsonPropertyContainer;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
@@ -196,7 +206,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -218,7 +228,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -272,7 +282,7 @@ public class V4Services extends AbstractServices {
 
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
 
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
@@ -315,7 +325,7 @@ public class V4Services extends AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-        });
+                });
 
         entry = dataBinder.getAtomEntry(jcontainer.getObject());
 
@@ -413,7 +423,7 @@ public class V4Services extends AbstractServices {
 
         final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
                 new TypeReference<JSONEntryImpl>() {
-        });
+                });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.getAtomEntry(jsonContainer.getObject());
       }
@@ -446,7 +456,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       // 2. Remove the contained entity
@@ -510,12 +520,323 @@ public class V4Services extends AbstractServices {
       } else {
         mapper.writeValue(
                 writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                dataBinder.getJsonFeed(container.getObject())));
+                        dataBinder.getJsonFeed(container.getObject())));
       }
 
       return xml.createResponse(
               null,
               new ByteArrayInputStream(content.toByteArray()),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/GetDefaultColor()")
+  public Response functionGetDefaultColor(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomPropertyImpl property = new AtomPropertyImpl();
+      property.setType("Microsoft.Test.OData.Services.ODataWCFService.Color");
+      property.setValue(new EnumValueImpl("Red"));
+      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+
+      if (acceptType == Accept.XML) {
+        atomSerializer.write(writer, container);
+        writer.flush();
+        writer.close();
+      } else {
+        mapper.writeValue(
+                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
+                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
+      }
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(content.toByteArray()),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/GetPerson2({param:.*})")
+  public Response functionGetPerson2(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
+  }
+
+  @GET
+  @Path("/GetPerson({param:.*})")
+  public Response functionGetPerson(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Customers", "1", format, null, null, false);
+  }
+
+  @GET
+  @Path("/GetAllProducts()")
+  public Response functionGetAllProducts(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntitySet(uriInfo, accept, "Products", format, null, null, null, null);
+  }
+
+  @GET
+  @Path("/GetProductsByAccessLevel({param:.*})")
+  public Response functionGetProductsByAccessLevel(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomPropertyImpl property = new AtomPropertyImpl();
+      property.setType("Collection(String)");
+      final CollectionValue value = new CollectionValueImpl();
+      value.get().add(new PrimitiveValueImpl("Cheetos"));
+      value.get().add(new PrimitiveValueImpl("Mushrooms"));
+      value.get().add(new PrimitiveValueImpl("Apple"));
+      value.get().add(new PrimitiveValueImpl("Car"));
+      value.get().add(new PrimitiveValueImpl("Computer"));
+      property.setValue(value);
+      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+
+      if (acceptType == Accept.XML) {
+        atomSerializer.write(writer, container);
+        writer.flush();
+        writer.close();
+      } else {
+        mapper.writeValue(
+                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
+                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
+      }
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(content.toByteArray()),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/GetBossEmails({param:.*})")
+  public Response functionGetBossEmails(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomPropertyImpl property = new AtomPropertyImpl();
+      property.setType("Collection(Edm.String)");
+      final CollectionValue value = new CollectionValueImpl();
+      value.get().add(new PrimitiveValueImpl("first@olingo.apache.org"));
+      value.get().add(new PrimitiveValueImpl("second@olingo.apache.org"));
+      property.setValue(value);
+      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
+
+      final ByteArrayOutputStream content = new ByteArrayOutputStream();
+      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+
+      if (acceptType == Accept.XML) {
+        atomSerializer.write(writer, container);
+        writer.flush();
+        writer.close();
+      } else {
+        mapper.writeValue(
+                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
+                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
+      }
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(content.toByteArray()),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Discount()")
+  public Response actionDiscount(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      Property property;
+      if (contentTypeValue == Accept.ATOM) {
+        final Container<AtomPropertyImpl> paramContainer = atomDeserializer.read(
+                IOUtils.toInputStream(param, Constants.ENCODING), AtomPropertyImpl.class);
+        property = paramContainer.getObject();
+      } else {
+        final Container<JSONPropertyImpl> paramContainer =
+                mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
+                        new TypeReference<JSONPropertyImpl>() {
+                        });
+        property = paramContainer.getObject();
+      }
+
+      assert property.getValue().isComplex();
+      assert 1 == property.getValue().asComplex().get().size();
+      assert "Edm.Int32".equals(property.getValue().asComplex().get().get(0).getType());
+      assert property.getValue().asComplex().get().get(0).getValue().isPrimitive();
+      assert "percentage".equals(property.getValue().asComplex().get().get(0).getName());
+
+      return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/ResetBossAddress()")
+  public Response actionResetBossAddress(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      Property property;
+      if (contentTypeValue == Accept.XML) {
+        final Container<AtomPropertyImpl> paramContainer = atomDeserializer.read(
+                IOUtils.toInputStream(param, Constants.ENCODING), AtomPropertyImpl.class);
+        property = paramContainer.getObject();
+      } else {
+        final Container<JSONPropertyImpl> paramContainer =
+                mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
+                        new TypeReference<JSONPropertyImpl>() {
+                        });
+        property = paramContainer.getObject();
+      }
+
+      assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(property.getType());
+      assert property.getValue().isComplex();
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(param.getBytes(Constants.ENCODING)),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/ResetBossEmail()")
+  public Response actionResetBossEmail(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      Entry entry;
+      if (contentTypeValue == Accept.XML) {
+        final Container<AtomEntryImpl> paramContainer = atomDeserializer.read(
+                IOUtils.toInputStream(param, Constants.ENCODING), AtomEntryImpl.class);
+        entry = paramContainer.getObject();
+      } else {
+        final Container<JSONEntryImpl> paramContainer =
+                mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
+                        new TypeReference<JSONEntryImpl>() {
+                        });
+        entry = paramContainer.getObject();
+      }
+
+      assert 1 == entry.getProperties().size();
+      assert "Collection(Edm.String)".equals(entry.getProperty("emails").getType());
+      assert entry.getProperty("emails").getValue().isCollection();
+
+      final StringWriter writer = new StringWriter();
+      if (acceptType == Accept.XML) {
+        atomSerializer.write(writer, entry.getProperty("emails"));
+      } else {
+        mapper.writeValue(writer, entry.getProperty("emails"));
+      }
+
+      return xml.createResponse(
+              null,
+              new ByteArrayInputStream(writer.toString().getBytes(Constants.ENCODING)),
               null,
               acceptType);
     } catch (Exception e) {
