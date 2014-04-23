@@ -32,6 +32,12 @@
   <author>
     <name />
   </author>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue"/>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount"/>
   <content type="application/xml">
     <m:properties>
       <d:CompanyID m:type="Int32">0</d:CompanyID>

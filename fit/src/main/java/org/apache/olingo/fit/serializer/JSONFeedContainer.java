@@ -23,13 +23,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.net.URI;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.core.data.JSONFeedDeserializer;
+import org.apache.olingo.commons.core.data.JSONFeedImpl;
 import org.apache.olingo.commons.core.data.JSONFeedSerializer;
 
 @JsonDeserialize(using = JSONFeedDeserializer.class)
 @JsonSerialize(using = JSONFeedSerializer.class)
-public class JsonFeedContainer<T> extends Container<T> {
+public class JSONFeedContainer extends Container<JSONFeedImpl> {
 
-  public JsonFeedContainer(final URI contextURL, final String metadataETag, final T object) {
+  public JSONFeedContainer(final URI contextURL, final String metadataETag, final JSONFeedImpl object) {
     super(contextURL, metadataETag, object);
   }
 }

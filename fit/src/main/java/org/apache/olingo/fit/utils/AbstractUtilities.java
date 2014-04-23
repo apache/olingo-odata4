@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -46,13 +45,21 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomPropertyImpl;
+import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
-import org.apache.olingo.fit.serializer.JsonEntryContainer;
+import org.apache.olingo.fit.serializer.FITAtomDeserializer;
+import org.apache.olingo.fit.serializer.JSONEntryContainer;
+import org.apache.olingo.fit.serializer.JSONFeedContainer;
+import org.apache.olingo.fit.serializer.JSONPropertyContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,10 +69,6 @@ public abstract class AbstractUtilities {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractUtilities.class);
-
-  protected final ODataServiceVersion version;
-
-  protected final FSManager fsManager;
 
   protected static final Pattern ENTITY_URI_PATTERN = Pattern.compile(".*\\/.*\\(.*\\)");
 
@@ -84,9 +87,25 @@ public abstract class AbstractUtilities {
    */
   public static final String BOUNDARY = "boundary";
 
+  protected final ODataServiceVersion version;
+
+  protected final FSManager fsManager;
+
+  protected final DataBinder dataBinder;
+
+  protected final FITAtomDeserializer atomDeserializer;
+
+  protected final AtomSerializer atomSerializer;
+
+  protected final ObjectMapper mapper;
+
   public AbstractUtilities(final ODataServiceVersion version) throws Exception {
     this.version = version;
     this.fsManager = FSManager.instance(version);
+    this.dataBinder = new DataBinder(version);
+    this.atomDeserializer = Commons.getAtomDeserializer(version);
+    this.atomSerializer = Commons.getAtomSerializer(version);
+    this.mapper = Commons.getJSONMapper(version);
   }
 
   public boolean isMediaContent(final String entityName) {
@@ -181,7 +200,7 @@ public abstract class AbstractUtilities {
 
   private InputStream toInputStream(final AtomEntryImpl entry) throws XMLStreamException {
     final StringWriter writer = new StringWriter();
-    Commons.getAtomSerializer(version).write(writer, entry);
+    atomSerializer.write(writer, entry);
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
@@ -273,7 +292,8 @@ public abstract class AbstractUtilities {
     final List<String> hrefs = new ArrayList<String>();
 
     for (final Link link : entry.getNavigationLinks()) {
-      final NavigationProperty navProp = navigationProperties == null? null: navigationProperties.get(link.getTitle());
+      final NavigationProperty navProp = navigationProperties == null
+              ? null : navigationProperties.get(link.getTitle());
       if (navProp != null) {
         final String inlineEntitySetName = navProp.getTarget();
         if (link.getInlineEntry() != null) {
@@ -555,20 +575,36 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
+  public InputStream writeFeed(final Accept accept, final Container<AtomFeedImpl> container)
+          throws XMLStreamException, IOException {
+
+    final StringWriter writer = new StringWriter();
+    if (accept == Accept.ATOM) {
+      atomSerializer.write(writer, container);
+      writer.flush();
+      writer.close();
+    } else {
+      mapper.writeValue(
+              writer, new JSONFeedContainer(container.getContextURL(),
+                      container.getMetadataETag(), dataBinder.toJSONFeed(container.getObject())));
+    }
+
+    return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
+  }
+
   public AtomEntryImpl readEntry(final Accept contentTypeValue, final InputStream entity)
           throws XMLStreamException, IOException {
 
     final AtomEntryImpl entry;
 
-    if (Accept.ATOM == contentTypeValue) {
-      final Container<AtomEntryImpl> container = Commons.getAtomDeserializer(version).
-              read(entity, AtomEntryImpl.class);
+    if (Accept.ATOM == contentTypeValue || Accept.XML == contentTypeValue) {
+      final Container<AtomEntryImpl> container = atomDeserializer.read(entity, AtomEntryImpl.class);
       entry = container.getObject();
     } else {
-      final Container<JSONEntryImpl> jcontainer =
-              Commons.getJsonMapper(version).readValue(entity, new TypeReference<JSONEntryImpl>() {
+      final Container<JSONEntryImpl> container =
+              mapper.readValue(entity, new TypeReference<JSONEntryImpl>() {
               });
-      entry = new DataBinder(version).getAtomEntry(jcontainer.getObject());
+      entry = dataBinder.toAtomEntry(container.getObject());
     }
 
     return entry;
@@ -577,21 +613,46 @@ public abstract class AbstractUtilities {
   public InputStream writeEntry(final Accept accept, final Container<AtomEntryImpl> container)
           throws XMLStreamException, IOException {
 
-    final ByteArrayOutputStream content = new ByteArrayOutputStream();
-    final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
-
+    final StringWriter writer = new StringWriter();
     if (accept == Accept.ATOM) {
-      Commons.getAtomSerializer(version).write(writer, container);
-      writer.flush();
-      writer.close();
+      atomSerializer.write(writer, container);
     } else {
-      final ObjectMapper mapper = Commons.getJsonMapper(version);
       mapper.writeValue(
-              writer, new JsonEntryContainer<JSONEntryImpl>(container.getContextURL(), container.getMetadataETag(),
-                      new DataBinder(version).getJsonEntry((AtomEntryImpl) container.getObject())));
+              writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
+                      dataBinder.toJSONEntry(container.getObject())));
     }
 
-    return new ByteArrayInputStream(content.toByteArray());
+    return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
+  }
+
+  public InputStream writeProperty(final Accept accept, final Property property)
+          throws XMLStreamException, IOException {
+
+    final StringWriter writer = new StringWriter();
+    if (accept == Accept.XML || accept == Accept.ATOM) {
+      atomSerializer.write(writer, property instanceof AtomPropertyImpl
+              ? property : dataBinder.toAtomProperty((JSONPropertyImpl) property, property.getType()));
+    } else {
+      mapper.writeValue(writer, property instanceof JSONPropertyImpl
+              ? property : dataBinder.toJSONProperty((AtomPropertyImpl) property));
+    }
+
+    return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
+  }
+
+  public InputStream writeProperty(final Accept accept, final Container<AtomPropertyImpl> container)
+          throws XMLStreamException, IOException {
+
+    final StringWriter writer = new StringWriter();
+    if (accept == Accept.XML) {
+      atomSerializer.write(writer, container);
+    } else {
+      mapper.writeValue(
+              writer, new JSONPropertyContainer(container.getContextURL(), container.getMetadataETag(),
+                      dataBinder.toJSONProperty(container.getObject())));
+    }
+
+    return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
   private String getDefaultEntryKey(final String entitySetName, final AtomEntryImpl entry, final String propertyName)

@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -62,13 +61,10 @@ import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.CollectionValueImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.methods.PATCH;
-import org.apache.olingo.fit.serializer.JsonFeedContainer;
-import org.apache.olingo.fit.serializer.JsonPropertyContainer;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
@@ -180,6 +176,266 @@ public class V4Services extends AbstractServices {
     return new ByteArrayInputStream(bos.toByteArray());
   }
 
+  @GET
+  @Path("/Company")
+  public Response getSingletonCompany(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null, false);
+  }
+
+  @GET
+  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount")
+  public Response functionGetEmployeesCount(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomPropertyImpl property = new AtomPropertyImpl();
+      property.setType("Edm.Int32");
+      property.setValue(new PrimitiveValueImpl("2"));
+      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
+              property);
+
+      return xml.createResponse(
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue")
+  public Response actionIncreaseRevenue(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      
+      return xml.createResponse(
+              null,
+              xml.writeProperty(acceptType, entry.getProperty("IncreaseValue")),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails({param:.*})")
+  public Response functionGetProductDetails(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomEntryImpl entry = new AtomEntryImpl();
+      entry.setType("Microsoft.Test.OData.Services.ODataWCFService.ProductDetail");
+      final Property productId = new AtomPropertyImpl();
+      productId.setName("ProductID");
+      productId.setType("Edm.Int32");
+      productId.setValue(new PrimitiveValueImpl(entityId));
+      entry.getProperties().add(productId);
+      final Property productDetailId = new AtomPropertyImpl();
+      productDetailId.setName("ProductDetailID");
+      productDetailId.setType("Edm.Int32");
+      productDetailId.setValue(new PrimitiveValueImpl("2"));
+      entry.getProperties().add(productDetailId);
+
+      final AtomFeedImpl feed = new AtomFeedImpl();
+      feed.getEntries().add(entry);
+
+      final Container<AtomFeedImpl> container = new Container<AtomFeedImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "ProductDetail"), null,
+              feed);
+
+      return xml.createResponse(
+              null,
+              xml.writeFeed(acceptType, container),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight")
+  public Response actionAddAccessRight(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+
+      assert 1 == entry.getProperties().size();
+      assert entry.getProperty("accessRight") != null;
+
+      entry.getProperty("accessRight").setType("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel");
+
+      return xml.createResponse(
+              null,
+              xml.writeProperty(acceptType, entry.getProperty("accessRight")),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Customers(PersonID={personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress")
+  public Response actionResetAddress(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("personId") String personId,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+
+      assert 2 == entry.getProperties().size();
+      assert entry.getProperty("addresses") != null;
+      assert entry.getProperty("index") != null;
+
+      return getEntityInternal(
+              uriInfo.getRequestUri().toASCIIString(), accept, "Customers", personId, format, null, null, false);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/ProductDetails(ProductID={productId},ProductDetailID={productDetailId})"
+          + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct")
+  public Response functionGetRelatedProduct(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("productId") String productId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Products", productId, format, null, null, false);
+  }
+
+  @POST
+  @Path("/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI")
+  public Response actionRefreshDefaultPI(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String param) {
+
+    try {
+      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      
+      assert 1 == entry.getProperties().size();
+      assert entry.getProperty("newDate") != null;
+
+      return functionGetDefaultPI(accept, format);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @GET
+  @Path("/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI")
+  public Response functionGetDefaultPI(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getContainedEntity(accept, "101", "MyPaymentInstruments", "101901", format);
+  }
+
+  @GET
+  @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo")
+  public Response functionGetAccountInfo(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getPath(accept, "Accounts", entityId, "AccountInfo", format);
+  }
+
+  @GET
+  @Path("/Accounts({entityId})/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount({param:.*})")
+  public Response functionGetActualAmount(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final AtomPropertyImpl property = new AtomPropertyImpl();
+      property.setType("Edm.Double");
+      property.setValue(new PrimitiveValueImpl("41.79"));
+
+      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(null, null, property);
+
+      return xml.createResponse(
+              null,
+              xml.writeProperty(acceptType, container),
+              null,
+              acceptType);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
   /**
    * Retrieve entity reference sample.
    *
@@ -280,9 +536,11 @@ public class V4Services extends AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
-      final InputStream entry = FSManager.instance(version).
-              readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+      final StringBuilder containedPath = containedPath(entityId, containedEntitySetName);
+      if (StringUtils.isNotBlank(containedEntityId)) {
+        containedPath.append('(').append(containedEntityId).append(')');
+      }
+      final InputStream entry = FSManager.instance(version).readFile(containedPath.toString(), Accept.ATOM);
 
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
@@ -306,7 +564,6 @@ public class V4Services extends AbstractServices {
           @PathParam("containedEntitySetName") String containedEntitySetName,
           final String entity) {
 
-    // default
     try {
       final Accept acceptType = Accept.parse(accept, version);
       if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
@@ -327,7 +584,7 @@ public class V4Services extends AbstractServices {
                 mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
                 });
 
-        entry = dataBinder.getAtomEntry(jcontainer.getObject());
+        entry = dataBinder.toAtomEntry(jcontainer.getObject());
 
         entryContainer = new Container<AtomEntryImpl>(
                 jcontainer.getContextURL(),
@@ -425,7 +682,7 @@ public class V4Services extends AbstractServices {
                 new TypeReference<JSONEntryImpl>() {
                 });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
-        entryChanges = dataBinder.getAtomEntry(jsonContainer.getObject());
+        entryChanges = dataBinder.toAtomEntry(jsonContainer.getObject());
       }
 
       for (Property property : entryChanges.getProperties()) {
@@ -494,6 +751,10 @@ public class V4Services extends AbstractServices {
           @PathParam("containedEntitySetName") String containedEntitySetName,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
 
+    if ("MyGiftCard".equals(containedEntitySetName)) {
+      return getContainedEntity(accept, entityId, containedEntitySetName, null, format);
+    }
+
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -510,22 +771,9 @@ public class V4Services extends AbstractServices {
 
       final Container<AtomFeedImpl> container = atomDeserializer.read(feed, AtomFeedImpl.class);
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
-
-      if (acceptType == Accept.ATOM) {
-        atomSerializer.write(writer, container);
-        writer.flush();
-        writer.close();
-      } else {
-        mapper.writeValue(
-                writer, new JsonFeedContainer<JSONFeedImpl>(container.getContextURL(), container.getMetadataETag(),
-                        dataBinder.getJsonFeed(container.getObject())));
-      }
-
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(content.toByteArray()),
+              xml.writeFeed(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -554,22 +802,9 @@ public class V4Services extends AbstractServices {
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
-
-      if (acceptType == Accept.XML) {
-        atomSerializer.write(writer, container);
-        writer.flush();
-        writer.close();
-      } else {
-        mapper.writeValue(
-                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
-                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
-      }
-
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(content.toByteArray()),
+              xml.writeProperty(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -637,22 +872,9 @@ public class V4Services extends AbstractServices {
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
-
-      if (acceptType == Accept.XML) {
-        atomSerializer.write(writer, container);
-        writer.flush();
-        writer.close();
-      } else {
-        mapper.writeValue(
-                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
-                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
-      }
-
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(content.toByteArray()),
+              xml.writeProperty(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -685,22 +907,9 @@ public class V4Services extends AbstractServices {
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
-      final ByteArrayOutputStream content = new ByteArrayOutputStream();
-      final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
-
-      if (acceptType == Accept.XML) {
-        atomSerializer.write(writer, container);
-        writer.flush();
-        writer.close();
-      } else {
-        mapper.writeValue(
-                writer, new JsonPropertyContainer<JSONPropertyImpl>(container.getContextURL(),
-                        container.getMetadataETag(), dataBinder.getJsonProperty(container.getObject())));
-      }
-
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(content.toByteArray()),
+              xml.writeProperty(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -785,7 +994,7 @@ public class V4Services extends AbstractServices {
 
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(param.getBytes(Constants.ENCODING)),
+              IOUtils.toInputStream(param, Constants.ENCODING),
               null,
               acceptType);
     } catch (Exception e) {
@@ -810,33 +1019,15 @@ public class V4Services extends AbstractServices {
       }
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      Entry entry;
-      if (contentTypeValue == Accept.XML) {
-        final Container<AtomEntryImpl> paramContainer = atomDeserializer.read(
-                IOUtils.toInputStream(param, Constants.ENCODING), AtomEntryImpl.class);
-        entry = paramContainer.getObject();
-      } else {
-        final Container<JSONEntryImpl> paramContainer =
-                mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONEntryImpl>() {
-                        });
-        entry = paramContainer.getObject();
-      }
+      final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert 1 == entry.getProperties().size();
       assert "Collection(Edm.String)".equals(entry.getProperty("emails").getType());
       assert entry.getProperty("emails").getValue().isCollection();
 
-      final StringWriter writer = new StringWriter();
-      if (acceptType == Accept.XML) {
-        atomSerializer.write(writer, entry.getProperty("emails"));
-      } else {
-        mapper.writeValue(writer, entry.getProperty("emails"));
-      }
-
       return xml.createResponse(
               null,
-              new ByteArrayInputStream(writer.toString().getBytes(Constants.ENCODING)),
+              xml.writeProperty(acceptType, entry.getProperty("emails")),
               null,
               acceptType);
     } catch (Exception e) {

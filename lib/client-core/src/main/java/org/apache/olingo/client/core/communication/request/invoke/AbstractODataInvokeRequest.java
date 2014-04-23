@@ -185,6 +185,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
      * Just to create response templates to be initialized from batch.
      */
     private ODataInvokeResponseImpl() {
+      super();
     }
 
     /**
@@ -203,20 +204,16 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     @Override
     public T getBody() {
       if (invokeResult == null) {
-        if (ODataNoContent.class.isAssignableFrom(reference)) {
-          invokeResult = reference.cast(new ODataNoContent());
-        }
-
         try {
-          if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
+          if (ODataNoContent.class.isAssignableFrom(reference)) {
+            invokeResult = reference.cast(new ODataNoContent());
+          } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(odataClient.getReader().readEntitySet(res.getEntity().getContent(),
                     ODataPubFormat.fromString(getContentType())));
-          }
-          if (CommonODataEntity.class.isAssignableFrom(reference)) {
+          } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(odataClient.getReader().readEntity(res.getEntity().getContent(),
                     ODataPubFormat.fromString(getContentType())));
-          }
-          if (CommonODataProperty.class.isAssignableFrom(reference)) {
+          } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(odataClient.getReader().readProperty(res.getEntity().getContent(),
                     ODataFormat.fromString(getContentType())));
           }

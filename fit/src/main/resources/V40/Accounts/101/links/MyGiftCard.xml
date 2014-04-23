@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Accounts(101)/MyGiftCard/$entity">
+  <category term="#Microsoft.Test.OData.Services.ODataWCFService.GiftCard" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <id />
+  <title />
+  <updated>2014-04-23T13:48:48Z</updated>
+  <author>
+    <name />
+  </author>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount"/>
+  <content type="application/xml">
+    <m:properties>
+      <d:GiftCardID m:type="Int32">301</d:GiftCardID>
+      <d:GiftCardNO>AAA123A</d:GiftCardNO>
+      <d:Amount m:type="Double">19.9</d:Amount>
+      <d:ExperationDate m:type="DateTimeOffset">2013-12-30T00:00:00Z</d:ExperationDate>
+    </m:properties>
+  </content>
+</entry>

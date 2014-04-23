@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -104,6 +105,15 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
           jgen.writeObject(subEntry);
         }
         jgen.writeEndArray();
+      }
+    }
+
+    if (serverMode) {
+      for (ODataOperation operation : entry.getOperations()) {
+        jgen.writeObjectFieldStart("#" + StringUtils.substringAfterLast(operation.getMetadataAnchor(), "#"));
+        jgen.writeStringField(Constants.ATTR_TITLE, operation.getTitle());
+        jgen.writeStringField(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());
+        jgen.writeEndObject();
       }
     }
 

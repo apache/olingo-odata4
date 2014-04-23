@@ -22,14 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
@@ -50,34 +45,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
-  private static final String serviceRoot = "http://odatae2etest.azurewebsites.net/javatest/DefaultService";
-
-  // TODO: remove once fit provides function / action imports
-  @BeforeClass
-  public static void checkServerIsOnline() throws IOException {
-    final Socket socket = new Socket();
-    boolean reachable = false;
-    try {
-      socket.connect(new InetSocketAddress("odatae2etest.azurewebsites.net", 80), 2000);
-      reachable = true;
-    } catch (Exception e) {
-      LOG.warn("External test service not reachable, ignoring this whole class: {}",
-              OperationImportInvokeTestITCase.class.getName());
-    } finally {
-      IOUtils.closeQuietly(socket);
-    }
-    Assume.assumeTrue(reachable);
-  }
-
   private Edm getEdm() {
     final Edm edm = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(serviceRoot).execute().getBody();
+            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
     assertNotNull(edm);
 
     return edm;
@@ -89,11 +63,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(container);
 
     // GetEmployeesCount
-    URIBuilder builder = getClient().getURIBuilder(serviceRoot).appendSingletonSegment("Company");
+    URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ODataEntity> entityReq =
             getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -112,10 +85,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(getEmployeesCountRes.hasPrimitiveValue());
 
     // GetProductDetails
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Products").appendKeySegment(5);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Products").appendKeySegment(5);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -135,14 +108,13 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(1, getProductDetailsRes.getCount());
 
     // GetRelatedProduct
-    final Map<String, Object> keyMap = new HashMap<String, Object>();
+    final Map<String, Object> keyMap = new LinkedHashMap<String, Object>();
     keyMap.put("ProductID", 6);
     keyMap.put("ProductDetailID", 1);
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("ProductDetails").
-            appendKeySegment(keyMap);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("ProductDetails").appendKeySegment(keyMap);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -155,22 +127,17 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final ODataInvokeRequest<ODataEntity> getRelatedProductReq =
             getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
     getRelatedProductReq.setFormat(format);
-    //TODO test service returns error instead of Products(6)
-    try {
-      final ODataEntity getRelatedProductRes = getRelatedProductReq.execute().getBody();
-      assertNotNull(getRelatedProductRes);
-      assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Product",
-              getRelatedProductRes.getTypeName().toString());
-      assertEquals(6, getRelatedProductRes.getProperty("ProductID").getPrimitiveValue().toCastValue(Integer.class), 0);
-    } catch (Exception e) {
-      // ignore
-    }
+    final ODataEntity getRelatedProductRes = getRelatedProductReq.execute().getBody();
+    assertNotNull(getRelatedProductRes);
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Product",
+            getRelatedProductRes.getTypeName().toString());
+    assertEquals(6, getRelatedProductRes.getProperty("ProductID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetDefaultPI
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Accounts").appendKeySegment(101);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Accounts").appendKeySegment(101);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -209,8 +176,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     // GetActualAmount
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(
             entity.getNavigationLink("MyGiftCard").getLink());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
     assertEquals(301, entity.getProperty("GiftCardID").getPrimitiveValue().toCastValue(Integer.class), 0);
@@ -247,11 +213,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(container);
 
     // IncreaseRevenue
-    URIBuilder builder = getClient().getURIBuilder(serviceRoot).appendSingletonSegment("Company");
+    URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ODataEntity> entityReq =
             getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -272,10 +237,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(increaseRevenueRes.hasPrimitiveValue());
 
     // AddAccessRight
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Products").appendKeySegment(5);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Products").appendKeySegment(5);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -296,10 +261,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(getProductDetailsRes.hasEnumValue());
 
     // ResetAddress
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Customers").appendKeySegment(2);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customers").appendKeySegment(2);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -334,10 +299,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(2, resetAddressRes.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // RefreshDefaultPI
-    builder = getClient().getURIBuilder(serviceRoot).appendEntitySetSegment("Accounts").appendKeySegment(101);
+    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Accounts").appendKeySegment(101);
     entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    // TODO: remove when fit is used since external test server does not advertise actions in Atom
-    entityReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+    entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
@@ -363,12 +328,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomActions() throws EdmPrimitiveTypeException {
-    //TODO test service doesn't support yet Atom POST params
-    try {
-      actions(ODataPubFormat.ATOM);
-    } catch (Exception e) {
-      // ignore
-    }
+    actions(ODataPubFormat.ATOM);
   }
 
   @Test

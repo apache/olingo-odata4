@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -214,7 +215,6 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeAttribute(XMLConstants.XML_NS_URI, Constants.ATTR_XML_BASE, entry.getBaseURI().toASCIIString());
     }
 
-    // server mode only
     if (serverMode && StringUtils.isNotBlank(entry.getETag())) {
       writer.writeAttribute(
               version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
@@ -239,7 +239,6 @@ public class AtomSerializer extends AbstractAtomDealer {
       common(writer, (AbstractODataObject) entry);
     }
 
-    // server mode only
     if (serverMode) {
       if (entry.getEditLink() != null) {
         links(writer, Collections.singletonList(entry.getEditLink()));
@@ -253,6 +252,17 @@ public class AtomSerializer extends AbstractAtomDealer {
     links(writer, entry.getAssociationLinks());
     links(writer, entry.getNavigationLinks());
     links(writer, entry.getMediaEditLinks());
+
+    if (serverMode) {
+      for (ODataOperation operation : entry.getOperations()) {
+        writer.writeStartElement(
+                version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ACTION);        
+        writer.writeAttribute(Constants.ATTR_METADATA, operation.getMetadataAnchor());
+        writer.writeAttribute(Constants.ATTR_TITLE, operation.getTitle());
+        writer.writeAttribute(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());
+        writer.writeEndElement();
+      }
+    }
 
     writer.writeStartElement(Constants.ATOM_ELEM_CONTENT);
     if (entry.isMediaEntry()) {

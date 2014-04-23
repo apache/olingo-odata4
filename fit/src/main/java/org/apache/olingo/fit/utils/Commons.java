@@ -111,7 +111,7 @@ public abstract class Commons {
     return ATOM_SERIALIZER.get(version);
   }
 
-  public static ObjectMapper getJsonMapper(final ODataServiceVersion version) {
+  public static ObjectMapper getJSONMapper(final ODataServiceVersion version) {
     if (!JSON_MAPPER.containsKey(version)) {
       final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 

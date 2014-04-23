@@ -30,6 +30,9 @@
   <author>
     <name />
   </author>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct"/>
   <content type="application/xml">
     <m:properties>
       <d:ProductID m:type="Int32">6</d:ProductID>

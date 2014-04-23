@@ -201,7 +201,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     final ObjectNode propertyNode = new ObjectNode(JsonNodeFactory.instance);
 
-    if (StringUtils.isNotBlank(edmType)) {
+    if (StringUtils.isNotBlank(edmType) && version.compareTo(ODataServiceVersion.V40) < 0) {
       propertyNode.put(Constants.get(
               version, ConstantKey.JSON_ODATAMETADATA_NAME),
               Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + edmType);

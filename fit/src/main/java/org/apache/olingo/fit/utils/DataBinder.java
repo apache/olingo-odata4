@@ -52,7 +52,7 @@ public class DataBinder {
     this.version = version;
   }
 
-  public JSONFeedImpl getJsonFeed(final AtomFeedImpl atomfeed) {
+  public JSONFeedImpl toJSONFeed(final AtomFeedImpl atomfeed) {
     final JSONFeedImpl jsonfeed = new JSONFeedImpl();
 
     BeanUtils.copyProperties(atomfeed, jsonfeed, "baseURI", "metadataContextURL");
@@ -62,13 +62,13 @@ public class DataBinder {
 
     final Collection<Entry> entries = jsonfeed.getEntries();
     for (Entry entry : atomfeed.getEntries()) {
-      entries.add(getJsonEntry((AtomEntryImpl) entry));
+      entries.add(toJSONEntry((AtomEntryImpl) entry));
     }
 
     return jsonfeed;
   }
 
-  public AtomFeedImpl getAtomFeed(final JSONFeedImpl jsonfeed) {
+  public AtomFeedImpl toAtomFeed(final JSONFeedImpl jsonfeed) {
     final AtomFeedImpl atomfeed = new AtomFeedImpl();
 
     BeanUtils.copyProperties(jsonfeed, atomfeed, "baseURI", "metadataContextURL");
@@ -78,17 +78,18 @@ public class DataBinder {
 
     final Collection<Entry> entries = atomfeed.getEntries();
     for (Entry entry : jsonfeed.getEntries()) {
-      entries.add(getAtomEntry((JSONEntryImpl) entry));
+      entries.add(toAtomEntry((JSONEntryImpl) entry));
     }
 
     return atomfeed;
   }
 
-  public JSONEntryImpl getJsonEntry(final AtomEntryImpl atomentry) {
+  public JSONEntryImpl toJSONEntry(final AtomEntryImpl atomentry) {
     final JSONEntryImpl jsonentry = new JSONEntryImpl();
 
     BeanUtils.copyProperties(atomentry, jsonentry, "baseURI", "properties", "links");
     jsonentry.setBaseURI(atomentry.getBaseURI() == null ? null : atomentry.getBaseURI().toASCIIString());
+    jsonentry.getOperations().addAll(atomentry.getOperations());
 
     for (Link link : atomentry.getNavigationLinks()) {
       final Link jlink = new LinkImpl();
@@ -100,12 +101,12 @@ public class DataBinder {
       if (link.getInlineEntry() instanceof AtomEntryImpl) {
         final Entry inlineEntry = link.getInlineEntry();
         if (inlineEntry instanceof AtomEntryImpl) {
-          jlink.setInlineEntry(getJsonEntry((AtomEntryImpl) link.getInlineEntry()));
+          jlink.setInlineEntry(toJSONEntry((AtomEntryImpl) link.getInlineEntry()));
         }
       } else if (link.getInlineFeed() instanceof AtomFeedImpl) {
         final Feed inlineFeed = link.getInlineFeed();
         if (inlineFeed instanceof AtomFeedImpl) {
-          jlink.setInlineFeed(getJsonFeed((AtomFeedImpl) link.getInlineFeed()));
+          jlink.setInlineFeed(toJSONFeed((AtomFeedImpl) link.getInlineFeed()));
         }
       }
 
@@ -114,13 +115,13 @@ public class DataBinder {
 
     final Collection<Property> properties = jsonentry.getProperties();
     for (Property property : atomentry.getProperties()) {
-      properties.add(getJsonProperty((AtomPropertyImpl) property));
+      properties.add(toJSONProperty((AtomPropertyImpl) property));
     }
 
     return jsonentry;
   }
 
-  public AtomEntryImpl getAtomEntry(final JSONEntryImpl jsonentry) {
+  public AtomEntryImpl toAtomEntry(final JSONEntryImpl jsonentry) {
     final AtomEntryImpl atomentry = new AtomEntryImpl();
 
     final Metadata metadata = Commons.getMetadata(version);
@@ -143,12 +144,12 @@ public class DataBinder {
       if (link.getInlineEntry() instanceof JSONEntryImpl) {
         final Entry inlineEntry = link.getInlineEntry();
         if (inlineEntry instanceof JSONEntryImpl) {
-          alink.setInlineEntry(getAtomEntry((JSONEntryImpl) link.getInlineEntry()));
+          alink.setInlineEntry(toAtomEntry((JSONEntryImpl) link.getInlineEntry()));
         }
       } else if (link.getInlineFeed() instanceof JSONFeedImpl) {
         final Feed inlineFeed = link.getInlineFeed();
         if (inlineFeed instanceof JSONFeedImpl) {
-          alink.setInlineFeed(getAtomFeed((JSONFeedImpl) link.getInlineFeed()));
+          alink.setInlineFeed(toAtomFeed((JSONFeedImpl) link.getInlineFeed()));
         }
       }
 
@@ -187,7 +188,7 @@ public class DataBinder {
             final Entry inlineEntry = new AtomEntryImpl();
             inlineEntry.setType(navProperties.get(property.getName()).getType());
             for (Property prop : entry.asComplex().get()) {
-              inlineEntry.getProperties().add(getAtomProperty((JSONPropertyImpl) prop, inlineEntry.getType()));
+              inlineEntry.getProperties().add(toAtomProperty((JSONPropertyImpl) prop, inlineEntry.getType()));
             }
             inline.getEntries().add(inlineEntry);
           }
@@ -197,14 +198,14 @@ public class DataBinder {
         }
         atomentry.getNavigationLinks().add(alink);
       } else {
-        properties.add(getAtomProperty((JSONPropertyImpl) property, atomentry.getType()));
+        properties.add(toAtomProperty((JSONPropertyImpl) property, atomentry.getType()));
       }
     }
 
     return atomentry;
   }
 
-  public JSONPropertyImpl getJsonProperty(final AtomPropertyImpl atomproperty) {
+  public JSONPropertyImpl toJSONProperty(final AtomPropertyImpl atomproperty) {
     final JSONPropertyImpl jsonproperty = new JSONPropertyImpl();
     BeanUtils.copyProperties(atomproperty, jsonproperty, "value");
 
@@ -213,7 +214,7 @@ public class DataBinder {
       jsonproperty.setValue(complex);
 
       for (Property field : atomproperty.getValue().asComplex().get()) {
-        complex.get().add(getJsonProperty((AtomPropertyImpl) field));
+        complex.get().add(toJSONProperty((AtomPropertyImpl) field));
       }
     } else if (atomproperty.getValue().isCollection()) {
       final CollectionValueImpl collection = new CollectionValueImpl();
@@ -225,7 +226,7 @@ public class DataBinder {
           collection.get().add(complex);
 
           for (Property field : element.asComplex().get()) {
-            complex.get().add(getJsonProperty((AtomPropertyImpl) field));
+            complex.get().add(toJSONProperty((AtomPropertyImpl) field));
           }
         } else {
           collection.get().add(element);
@@ -238,14 +239,14 @@ public class DataBinder {
     return jsonproperty;
   }
 
-  public AtomPropertyImpl getAtomProperty(final JSONPropertyImpl jsonproperty, final String entryType) {
+  public AtomPropertyImpl toAtomProperty(final JSONPropertyImpl jsonproperty, final String entryType) {
     final AtomPropertyImpl atomproperty = new AtomPropertyImpl();
     atomproperty.setName(jsonproperty.getName());
 
     if (StringUtils.isNotBlank(jsonproperty.getType())) {
       atomproperty.setType(jsonproperty.getType());
     } else {
-      final EntityType entityType = Commons.getMetadata(version).getEntityType(entryType);
+      final EntityType entityType = entryType == null ? null : Commons.getMetadata(version).getEntityType(entryType);
       if (entityType != null) {
         atomproperty.setType(entityType.getProperty(jsonproperty.getName()).getType());
       }
@@ -256,7 +257,7 @@ public class DataBinder {
       atomproperty.setValue(complex);
 
       for (Property field : jsonproperty.getValue().asComplex().get()) {
-        complex.get().add(getAtomProperty((JSONPropertyImpl) field, atomproperty.getType()));
+        complex.get().add(toAtomProperty((JSONPropertyImpl) field, atomproperty.getType()));
       }
     } else if (jsonproperty.getValue().isCollection()) {
       final CollectionValueImpl collection = new CollectionValueImpl();
@@ -268,8 +269,10 @@ public class DataBinder {
           collection.get().add(complex);
 
           for (Property field : element.asComplex().get()) {
-            complex.get().add(getAtomProperty((JSONPropertyImpl) field,
-                    atomproperty.getType().replaceAll("^Collection\\(", "").replaceAll("\\)$", "")));
+            complex.get().add(toAtomProperty((JSONPropertyImpl) field,
+                    atomproperty.getType() == null
+                    ? null
+                    : atomproperty.getType().replaceAll("^Collection\\(", "").replaceAll("\\)$", "")));
           }
         } else {
           collection.get().add(element);

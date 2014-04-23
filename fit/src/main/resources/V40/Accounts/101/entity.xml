@@ -32,6 +32,15 @@
   <author>
     <name/>
   </author>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI"/>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI"/>
+  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo" 
+            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo"/>
   <content type="application/xml">
     <m:properties>
       <d:AccountID m:type="Int32">101</d:AccountID>

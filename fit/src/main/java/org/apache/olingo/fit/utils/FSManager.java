@@ -40,8 +40,7 @@ import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.fit.serializer.JsonEntryContainer;
+import org.apache.olingo.fit.serializer.JSONEntryContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,12 +112,12 @@ public class FSManager {
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
       content.reset();
 
-      final ObjectMapper mapper = Commons.getJsonMapper(version);
+      final ObjectMapper mapper = Commons.getJSONMapper(version);
       mapper.writeValue(
-              writer, new JsonEntryContainer<JSONEntryImpl>(
+              writer, new JSONEntryContainer(
                       container.getContextURL(),
                       container.getMetadataETag(),
-                      new DataBinder(version).getJsonEntry(container.getObject())));
+                      new DataBinder(version).toJSONEntry(container.getObject())));
 
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
     } catch (Exception e) {
