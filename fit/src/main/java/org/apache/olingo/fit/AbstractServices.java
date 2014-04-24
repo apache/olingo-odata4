@@ -413,10 +413,10 @@ public abstract class AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       } else if (contentTypeValue == Accept.ATOM) {
         entryChanges = atomDeserializer.<AtomEntryImpl, AtomEntryImpl>read(
-                IOUtils.toInputStream(changes), AtomEntryImpl.class).getObject();
+                IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntryImpl.class).getObject();
       } else {
-        final Container<JSONEntryImpl> jcont =
-                mapper.readValue(IOUtils.toInputStream(changes), new TypeReference<JSONEntryImpl>() {
+        final Container<JSONEntryImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
+                new TypeReference<JSONEntryImpl>() {
                 });
 
         entryChanges = dataBinder.toAtomEntry(jcont.getObject());
@@ -495,11 +495,11 @@ public abstract class AbstractServices {
 
       InputStream res;
       if (acceptType == Accept.ATOM) {
-        res = xml.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity),
-                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity)));
+        res = xml.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity, Constants.ENCODING),
+                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity, Constants.ENCODING)));
       } else {
-        res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity),
-                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity)));
+        res = json.addOrReplaceEntity(entityId, entitySetName, IOUtils.toInputStream(entity, Constants.ENCODING),
+                getUtilities(acceptType).readEntry(acceptType, IOUtils.toInputStream(entity, Constants.ENCODING)));
       }
 
       final Container<AtomEntryImpl> cres;
@@ -579,7 +579,7 @@ public abstract class AbstractServices {
 
         entityKey = xml.getDefaultEntryKey(entitySetName, entry);
 
-        utils.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity));
+        utils.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity, Constants.ENCODING));
 
         final String id = Commons.getMediaContent().get(entitySetName);
         if (StringUtils.isNotBlank(id)) {
@@ -602,12 +602,13 @@ public abstract class AbstractServices {
       } else {
         final Accept contentTypeValue = Accept.parse(contentType, version);
         if (Accept.ATOM == contentTypeValue) {
-          container = atomDeserializer.read(IOUtils.toInputStream(entity), AtomEntryImpl.class);
+          container = atomDeserializer.read(IOUtils.toInputStream(entity, Constants.ENCODING), AtomEntryImpl.class);
           entry = container.getObject();
         } else {
           final Container<JSONEntryImpl> jcontainer =
-                  mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                  });
+                  mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
+                          new TypeReference<JSONEntryImpl>() {
+                          });
 
           entry = dataBinder.toAtomEntry(jcontainer.getObject());
 
@@ -700,7 +701,7 @@ public abstract class AbstractServices {
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
-      fsManager.putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
+      fsManager.putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
                               ConstantKey.ENTITY), utils.getKey()));
 
@@ -759,7 +760,7 @@ public abstract class AbstractServices {
                         "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
-      FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, "UTF-8"),
+      FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               FSManager.instance(version).getAbsolutePath(path.toString(), acceptType));
 
       return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
@@ -1150,7 +1151,7 @@ public abstract class AbstractServices {
       final InputStream changed = utils.replaceProperty(
               entitySetName,
               entityId,
-              IOUtils.toInputStream(changes),
+              IOUtils.toInputStream(changes, Constants.ENCODING),
               Arrays.asList(path.split("/")),
               acceptType,
               justValue);
@@ -1306,7 +1307,8 @@ public abstract class AbstractServices {
 
       final AbstractUtilities utils = getUtilities(null);
 
-      final InputStream res = utils.putMediaInMemory(entitySetName, entityId, IOUtils.toInputStream(value));
+      final InputStream res = utils.putMediaInMemory(
+              entitySetName, entityId, IOUtils.toInputStream(value, Constants.ENCODING));
 
       final String location = uriInfo.getRequestUri().toASCIIString().replace("/$value", "");
 
@@ -1367,7 +1369,8 @@ public abstract class AbstractServices {
     try {
       final AbstractUtilities utils = getUtilities(null);
 
-      InputStream res = utils.putMediaInMemory(entitySetName, entityId, path, IOUtils.toInputStream(value));
+      InputStream res = utils.putMediaInMemory(
+              entitySetName, entityId, path, IOUtils.toInputStream(value, Constants.ENCODING));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {

@@ -67,7 +67,7 @@ public class V4OpenType {
 
   private Response replaceServiceName(final Response response) {
     try {
-      final String content = IOUtils.toString((InputStream) response.getEntity(), "UTF-8").
+      final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
               replaceAll("Static\\.svc", "OpenType.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
@@ -77,7 +77,7 @@ public class V4OpenType {
         }
       }
 
-      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, "UTF-8");
+      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, Constants.ENCODING);
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       IOUtils.copy(toBeStreamedBack, baos);
       IOUtils.closeQuietly(toBeStreamedBack);

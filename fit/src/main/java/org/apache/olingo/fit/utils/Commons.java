@@ -222,7 +222,7 @@ public abstract class Commons {
 
     builder.append("</links>");
 
-    return IOUtils.toInputStream(builder.toString());
+    return IOUtils.toInputStream(builder.toString(), Constants.ENCODING);
   }
 
   public static InputStream getLinksAsJSON(final ODataServiceVersion version,
@@ -252,7 +252,7 @@ public abstract class Commons {
       links.set("value", uris);
     }
 
-    return IOUtils.toInputStream(links.toString(), "UTF-8");
+    return IOUtils.toInputStream(links.toString(), Constants.ENCODING);
   }
 
   public static InputStream changeFormat(final InputStream is, final ODataServiceVersion version, final Accept target) {
@@ -266,7 +266,7 @@ public abstract class Commons {
       final JsonNode node =
               changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
 
-      return IOUtils.toInputStream(node.toString(), "UTF-8");
+      return IOUtils.toInputStream(node.toString(), Constants.ENCODING);
     } catch (Exception e) {
       LOG.error("Error changing format", e);
       return new ByteArrayInputStream(bos.toByteArray());

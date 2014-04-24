@@ -61,7 +61,7 @@ public class V3ActionOverloading extends AbstractServices {
 
   private Response replaceServiceName(final Response response) {
     try {
-      final String content = IOUtils.toString((InputStream) response.getEntity(), "UTF-8").
+      final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
               replaceAll("Static\\.svc", "ActionOverloading.svc");
 
       final Response.ResponseBuilder builder = status(response.getStatus());
@@ -71,7 +71,7 @@ public class V3ActionOverloading extends AbstractServices {
         }
       }
 
-      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, "UTF-8");
+      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, Constants.ENCODING);
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       IOUtils.copy(toBeStreamedBack, baos);
       IOUtils.closeQuietly(toBeStreamedBack);

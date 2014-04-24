@@ -106,7 +106,7 @@ public class V4Services extends AbstractServices {
       if (!providedAsync.containsKey(name)) {
         throw new NotFoundException();
       }
-      final InputStream res = IOUtils.toInputStream(providedAsync.get(name));
+      final InputStream res = IOUtils.toInputStream(providedAsync.get(name), Constants.ENCODING);
       providedAsync.remove(name);
       return xml.createMonitorResponse(res);
     } catch (Exception e) {
@@ -304,7 +304,7 @@ public class V4Services extends AbstractServices {
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
       final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
-      
+
       return xml.createResponse(
               null,
               xml.writeProperty(acceptType, entry.getProperty("IncreaseValue")),
@@ -444,7 +444,7 @@ public class V4Services extends AbstractServices {
     try {
       final Accept contentTypeValue = Accept.parse(contentType, version);
       final Entry entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
-      
+
       assert 1 == entry.getProperties().size();
       assert entry.getProperty("newDate") != null;
 
@@ -645,12 +645,13 @@ public class V4Services extends AbstractServices {
       final AtomEntryImpl entry;
       final Accept contentTypeValue = Accept.parse(contentType, version);
       if (Accept.ATOM == contentTypeValue) {
-        entryContainer = atomDeserializer.read(IOUtils.toInputStream(entity), AtomEntryImpl.class);
+        entryContainer = atomDeserializer.read(IOUtils.toInputStream(entity, Constants.ENCODING), AtomEntryImpl.class);
         entry = entryContainer.getObject();
       } else {
         final Container<JSONEntryImpl> jcontainer =
-                mapper.readValue(IOUtils.toInputStream(entity), new TypeReference<JSONEntryImpl>() {
-                });
+                mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
+                        new TypeReference<JSONEntryImpl>() {
+                        });
 
         entry = dataBinder.toAtomEntry(jcontainer.getObject());
 
@@ -738,7 +739,7 @@ public class V4Services extends AbstractServices {
 
       final AtomEntryImpl entryChanges;
       if (Accept.ATOM == contentTypeValue) {
-        container = atomDeserializer.read(IOUtils.toInputStream(changes), AtomEntryImpl.class);
+        container = atomDeserializer.read(IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntryImpl.class);
         entryChanges = container.getObject();
       } else {
         final String entityType = getMetadataObj().getEntitySet(entitySetName).getType();
@@ -746,8 +747,8 @@ public class V4Services extends AbstractServices {
                 getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
-        final Container<JSONEntryImpl> jsonContainer = mapper.readValue(IOUtils.toInputStream(changes),
-                new TypeReference<JSONEntryImpl>() {
+        final Container<JSONEntryImpl> jsonContainer = mapper.readValue(
+                IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntryImpl>() {
                 });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.toAtomEntry(jsonContainer.getObject());

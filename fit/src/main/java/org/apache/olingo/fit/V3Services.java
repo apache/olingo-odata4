@@ -275,9 +275,9 @@ public class V3Services extends AbstractServices {
 
       final List<String> links;
       if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
-        links = xml.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = xml.extractLinkURIs(IOUtils.toInputStream(link, Constants.ENCODING)).getValue();
       } else {
-        links = json.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = json.extractLinkURIs(IOUtils.toInputStream(link, Constants.ENCODING)).getValue();
       }
 
       utils.putLinksInMemory(
@@ -352,9 +352,9 @@ public class V3Services extends AbstractServices {
 
       final List<String> links;
       if (content == Accept.XML || content == Accept.TEXT || content == Accept.ATOM) {
-        links = xml.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = xml.extractLinkURIs(IOUtils.toInputStream(link, Constants.ENCODING)).getValue();
       } else {
-        links = json.extractLinkURIs(IOUtils.toInputStream(link)).getValue();
+        links = json.extractLinkURIs(IOUtils.toInputStream(link, Constants.ENCODING)).getValue();
       }
 
       utils.putLinksInMemory(

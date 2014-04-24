@@ -386,7 +386,7 @@ public abstract class AbstractUtilities {
             + "</entry>";
 
     fsManager.putInMemory(
-            IOUtils.toInputStream(entity),
+            IOUtils.toInputStream(entity, Constants.ENCODING),
             fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
     // -----------------------------------------
 
@@ -406,7 +406,8 @@ public abstract class AbstractUtilities {
             + "\"Description\": null" + "}";
 
     fsManager.putInMemory(
-            IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
+            IOUtils.toInputStream(entity, Constants.ENCODING), 
+            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
             Accept.JSON_FULLMETA));
     // -----------------------------------------
 

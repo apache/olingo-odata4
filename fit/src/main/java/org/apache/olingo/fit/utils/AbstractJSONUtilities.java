@@ -57,7 +57,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected InputStream addLinks(
           final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -71,7 +71,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
   @Override
   protected Set<String> retrieveAllLinkNames(InputStream is) throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -101,7 +101,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
           throws Exception {
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -144,7 +144,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
           final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
           throws Exception {
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
     if (links != null) {
@@ -175,16 +175,16 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
             Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(
                     Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entitySetName + "(" + entityKey + ")"));
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   public InputStream getPropertyValue(final InputStream src, final List<String> path)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final JsonNode srcNode = mapper.readTree(src);
     final JsonNode node = getProperty(srcNode, path);
-    return IOUtils.toInputStream(node.asText());
+    return IOUtils.toInputStream(node.asText(), Constants.ENCODING);
   }
 
   @Override
@@ -196,7 +196,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
             Commons.getEntityBasePath(entitySetName, entityId) + Constants.get(version, ConstantKey.ENTITY),
             Accept.JSON_FULLMETA);
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final JsonNode srcNode = mapper.readTree(src);
 
     final ObjectNode propertyNode = new ObjectNode(JsonNodeFactory.instance);
@@ -243,7 +243,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   public InputStream addJsonInlinecount(
           final InputStream src, final int count, final Accept accept)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final JsonNode srcNode = mapper.readTree(src);
 
     ((ObjectNode) srcNode).put(Constants.get(version, ConstantKey.ODATA_COUNT_NAME), count);
@@ -258,7 +258,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   }
 
   public InputStream wrapJsonEntities(final InputStream entities) throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final JsonNode node = mapper.readTree(entities);
 
     final ObjectNode res;
@@ -287,7 +287,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream selectEntity(final InputStream src, final String[] propertyNames) throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
 
     final Set<String> retain = new HashSet<String>();
@@ -319,7 +319,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       throw new NotFoundException();
     }
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode node = mapper.createObjectNode();
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -363,7 +363,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected InputStream replaceLink(
           final InputStream toBeChanged, final String linkName, final InputStream replacement)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
 
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
@@ -386,7 +386,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected Map<String, InputStream> getChanges(final InputStream src) throws Exception {
     final Map<String, InputStream> res = new HashMap<String, InputStream>();
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final JsonNode srcObject = mapper.readTree(src);
 
     final Iterator<Map.Entry<String, JsonNode>> fields = srcObject.fields();
@@ -409,7 +409,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   @Override
   public Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -436,7 +436,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   @Override
   public InputStream addEditLink(
           final InputStream content, final String title, final String href) throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
@@ -448,7 +448,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
           final String href) throws Exception {
 
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
@@ -464,7 +464,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   public InputStream replaceProperty(
           final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
           throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
 
@@ -491,7 +491,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception {
-    final ObjectMapper mapper = new ObjectMapper();
+    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
 

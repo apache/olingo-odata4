@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.utils.Constants;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,7 +54,7 @@ public class V4KeyAsSegment {
 
   private Response replaceServiceName(final Response response) {
     try {
-      final String content = IOUtils.toString((InputStream) response.getEntity(), "UTF-8").
+      final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
               replaceAll("Static\\.svc", "KeyAsSegment.svc");
 
       final Response.ResponseBuilder builder = Response.status(response.getStatus());
@@ -63,7 +64,7 @@ public class V4KeyAsSegment {
         }
       }
 
-      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, "UTF-8");
+      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, Constants.ENCODING);
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       IOUtils.copy(toBeStreamedBack, baos);
       IOUtils.closeQuietly(toBeStreamedBack);
