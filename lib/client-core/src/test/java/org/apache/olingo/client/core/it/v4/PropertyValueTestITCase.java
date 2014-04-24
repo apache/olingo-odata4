@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -31,7 +34,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class PropertyValueTestITCase extends AbstractTestITCase {
@@ -134,8 +136,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveNullPropertyValueTest() {
-    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("MiddleName").
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("HomeAddress").
             appendValueSegment();
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);

@@ -99,7 +99,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   @Override
   public URIBuilder getURIBuilder(final String serviceRoot) {
-    return new URIBuilderImpl(getServiceVersion(), serviceRoot);
+    return new URIBuilderImpl(getServiceVersion(), getConfiguration(), serviceRoot);
   }
 
   @Override

@@ -47,6 +47,8 @@ public abstract class AbstractConfiguration implements CommonConfiguration {
 
   private static final String USE_XHTTP_METHOD = "useHTTPMethod";
 
+  private static final String KEY_AS_SEGMENT = "keyAsSegment";
+
   private static final String GZIP_COMPRESSION = "gzipCompression";
 
   private static final String CHUNKING = "chunking";
@@ -185,6 +187,16 @@ public abstract class AbstractConfiguration implements CommonConfiguration {
   @Override
   public void setUseChuncked(final boolean value) {
     setProperty(CHUNKING, value);
+  }
+
+  @Override
+  public boolean isKeyAsSegment() {
+    return (Boolean) getProperty(KEY_AS_SEGMENT, false);
+  }
+
+  @Override
+  public void setKeyAsSegment(final boolean value) {
+    setProperty(KEY_AS_SEGMENT, value);
   }
 
   @Override

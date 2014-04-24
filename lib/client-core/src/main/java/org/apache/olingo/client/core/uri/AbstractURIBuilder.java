@@ -27,24 +27,17 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.CommonConfiguration;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> implements CommonURIBuilder<UB> {
-
-  private static final long serialVersionUID = -3267515371720408124L;
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(CommonURIBuilder.class);
 
   protected static class Segment {
 
@@ -65,7 +58,16 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
       return value;
     }
   }
+  private static final long serialVersionUID = -3267515371720408124L;
+
+  /**
+   * Logger.
+   */
+  protected static final Logger LOG = LoggerFactory.getLogger(CommonURIBuilder.class);
+
   private final ODataServiceVersion version;
+
+  private final CommonConfiguration configuration;
 
   protected final List<Segment> segments = new ArrayList<Segment>();
 
@@ -85,8 +87,11 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
    * @param serviceRoot absolute URL (schema, host and port included) representing the location of the root of the data
    * service.
    */
-  protected AbstractURIBuilder(final ODataServiceVersion version, final String serviceRoot) {
+  protected AbstractURIBuilder(
+          final ODataServiceVersion version, final CommonConfiguration configuration, final String serviceRoot) {
+
     this.version = version;
+    this.configuration = configuration;
     segments.add(new Segment(SegmentType.SERVICEROOT, serviceRoot));
   }
 
@@ -119,7 +124,10 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
   public UB appendKeySegment(final Object val) {
     final String segValue = URIUtils.escape(version, val);
 
-    segments.add(new Segment(SegmentType.KEY, "(" + segValue + ")"));
+    segments.add(configuration.isKeyAsSegment()
+            ? new Segment(SegmentType.KEY_AS_SEGMENT, segValue)
+            : new Segment(SegmentType.KEY, "(" + segValue + ")"));
+
     return getThis();
   }
 
@@ -127,11 +135,13 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB appendKeySegment(final Map<String, Object> segmentValues) {
-    final String key = buildMultiKeySegment(segmentValues, true);
-    if (StringUtils.isEmpty(key)) {
-      segments.add(new Segment(SegmentType.KEY, noKeysWrapper()));
-    } else {
-      segments.add(new Segment(SegmentType.KEY, key));
+    if (!configuration.isKeyAsSegment()) {
+      final String key = buildMultiKeySegment(segmentValues, true);
+      if (StringUtils.isEmpty(key)) {
+        segments.add(new Segment(SegmentType.KEY, noKeysWrapper()));
+      } else {
+        segments.add(new Segment(SegmentType.KEY, key));
+      }
     }
 
     return getThis();

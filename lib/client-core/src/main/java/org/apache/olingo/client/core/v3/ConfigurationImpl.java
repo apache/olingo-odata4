@@ -25,34 +25,8 @@ public class ConfigurationImpl extends AbstractConfiguration implements Configur
 
   private static final long serialVersionUID = -8719958537946884777L;
 
-  private static final String KEY_AS_SEGMENT = "keyAsSegment";
-
   protected ConfigurationImpl() {
     super();
-  }
-
-  /**
-   * Checks whether URIs contain entity key between parentheses (standard) or instead as additional segment. Example:
-   * http://services.odata.org/V4/OData/OData.svc/Products(0) or http://services.odata.org/V4/OData/OData.svc/Products/0
-   *
-   * @return whether URIs shall be built with entity key between parentheses (standard) or instead as additional
-   * segment.
-   */
-  @Override
-  public boolean isKeyAsSegment() {
-    return (Boolean) getProperty(KEY_AS_SEGMENT, false);
-  }
-
-  /**
-   * Sets whether URIs shall be built with entity key between parentheses (standard) or instead as additional segment.
-   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
-   * http://services.odata.org/V4/OData/OData.svc/Products/0
-   *
-   * @param value 'TRUE' to use this feature.
-   */
-  @Override
-  public void setKeyAsSegment(final boolean value) {
-    setProperty(KEY_AS_SEGMENT, value);
   }
 
 }

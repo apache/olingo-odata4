@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.uri.v3;
 
-import org.apache.olingo.client.core.uri.URIUtils;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.uri.QueryOption;
@@ -35,14 +32,11 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
 
   private final ODataServiceVersion version;
 
-  private final Configuration configuration;
+  public URIBuilderImpl(
+          final ODataServiceVersion version, final Configuration configuration, final String serviceRoot) {
 
-  public URIBuilderImpl(final ODataServiceVersion version, final Configuration configuration,
-          final String serviceRoot) {
-
-    super(version, serviceRoot);
+    super(version, configuration, serviceRoot);
     this.version = version;
-    this.configuration = configuration;
   }
 
   @Override
@@ -76,27 +70,6 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   @Override
   protected String noKeysWrapper() {
     return StringUtils.EMPTY;
-  }
-
-  @Override
-  public URIBuilder appendKeySegment(final Object val) {
-    if (configuration.isKeyAsSegment()) {
-      final String segValue = URIUtils.escape(version, val);
-      segments.add(new Segment(SegmentType.KEY_AS_SEGMENT, segValue));
-    } else {
-      super.appendKeySegment(val);
-    }
-
-    return getThis();
-  }
-
-  @Override
-  public URIBuilder appendKeySegment(final Map<String, Object> segmentValues) {
-    if (!configuration.isKeyAsSegment()) {
-      super.appendKeySegment(segmentValues);
-    }
-
-    return getThis();
   }
 
   @Override

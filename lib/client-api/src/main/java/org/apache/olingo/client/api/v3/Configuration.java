@@ -22,25 +22,4 @@ import org.apache.olingo.client.api.CommonConfiguration;
 
 public interface Configuration extends CommonConfiguration {
 
-  /**
-   * Checks whether URIs contain entity key between parentheses (standard) or instead as additional segment.
-   * <br/>
-   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
-   * http://services.odata.org/V4/OData/OData.svc/Products/0
-   *
-   * @return whether URIs shall be built with entity key between parentheses (standard) or instead as additional
-   * segment.
-   */
-  boolean isKeyAsSegment();
-
-  /**
-   * Sets whether URIs shall be built with entity key between parentheses (standard) or instead as additional segment.
-   * <br/>
-   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
-   * http://services.odata.org/V4/OData/OData.svc/Products/0
-   *
-   * @param value 'TRUE' to use this feature.
-   */
-  void setKeyAsSegment(boolean value);
-
 }

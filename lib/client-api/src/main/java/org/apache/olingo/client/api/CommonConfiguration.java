@@ -168,6 +168,29 @@ public interface CommonConfiguration extends Serializable {
   void setUseChuncked(boolean value);
 
   /**
+   * Checks whether URIs contain entity key between parentheses (standard) or instead as additional segment
+   * (non-standard).
+   * <br/>
+   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
+   * http://services.odata.org/V4/OData/OData.svc/Products/0
+   *
+   * @return whether URIs shall be built with entity key between parentheses (standard) or instead as additional
+   * segment.
+   */
+  boolean isKeyAsSegment();
+
+  /**
+   * Sets whether URIs shall be built with entity key between parentheses (standard) or instead as additional segment
+   * (non-standard).
+   * <br/>
+   * Example: http://services.odata.org/V4/OData/OData.svc/Products(0) or
+   * http://services.odata.org/V4/OData/OData.svc/Products/0
+   *
+   * @param value 'TRUE' to use this feature.
+   */
+  void setKeyAsSegment(boolean value);
+
+  /**
    * Retrieves request executor service.
    *
    * @return request executor service.

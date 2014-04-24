@@ -33,7 +33,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.v3.Configuration;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
@@ -386,9 +385,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     }
 
     // Add header for KeyAsSegment management
-    if (odataClient.getConfiguration() instanceof Configuration
-            && ((Configuration) odataClient.getConfiguration()).isKeyAsSegment()) {
-
+    if (odataClient.getConfiguration().isKeyAsSegment()) {
       addCustomHeader(
               HeaderName.dataServiceUrlConventions.toString(),
               odataClient.newPreferences().keyAsSegment());
