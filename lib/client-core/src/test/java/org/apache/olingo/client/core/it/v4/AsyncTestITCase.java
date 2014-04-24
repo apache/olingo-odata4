@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import java.net.URI;
 import java.util.List;
 
 import java.util.concurrent.ExecutionException;
@@ -129,6 +130,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntitySet>> async =
             client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>>getAsyncRequestWrapper(req);
+    async.callback(URI.create("http://client.service.it/callback/endpoint"));
 
     final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntitySet>> responseWrapper = async.execute();
 

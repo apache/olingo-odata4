@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
 
@@ -30,6 +31,20 @@ public interface AsyncRequestWrapper<R extends ODataResponse> {
    * @return the current AsyncRequestWrapper instance.
    */
   AsyncRequestWrapper<R> wait(int waitInSeconds);
+
+  /**
+   * The odata.callback preference MUST include the parameter url whose value is the URL of a callback endpoint to be
+   * invoked by the OData service when data is available. The syntax of the odata.callback preference is specified in
+   * [OData-ABNF].
+   * <br />
+   * For HTTP based callbacks, the OData service executes an HTTP GET request against the specified URL.
+   * <br/>
+   * Services that support odata.callback SHOULD support notifying the client through HTTP.
+   *
+   * @param url callback URL
+   * @return the current AsyncRequestWrapper instance.
+   */
+  AsyncRequestWrapper<R> callback(final URI url);
 
   /**
    * execute the request for the first time.

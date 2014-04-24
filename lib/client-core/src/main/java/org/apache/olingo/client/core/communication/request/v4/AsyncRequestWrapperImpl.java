@@ -109,6 +109,13 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     return this;
   }
 
+  @Override
+  public AsyncRequestWrapper<R> callback(URI url) {
+    extendHeader(HeaderName.prefer.toString(),
+            new ODataPreferences(ODataServiceVersion.V40).callback(url.toASCIIString()));
+    return this;
+  }
+
   private void extendHeader(final String headerName, final String headerValue) {
     final StringBuilder extended = new StringBuilder();
     if (this.odataRequest.getHeaderNames().contains(headerName)) {
