@@ -49,6 +49,8 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
     super(typeName);
   }
 
+  protected abstract ODataComplexValue<OP> getThis();
+
   /**
    * Adds field to the complex type.
    *
@@ -56,8 +58,9 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
    */
   @Override
   @SuppressWarnings("unchecked")
-  public void add(final CommonODataProperty field) {
+  public ODataComplexValue<OP> add(final CommonODataProperty field) {
     fields.put(field.getName(), (OP) field);
+    return getThis();
   }
 
   /**
@@ -109,5 +112,4 @@ public abstract class AbstractODataComplexValue<OP extends CommonODataProperty>
 
     return result;
   }
-
 }

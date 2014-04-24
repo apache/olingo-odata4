@@ -33,8 +33,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -44,14 +42,9 @@ import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
-import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
-import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
@@ -67,12 +60,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.olingo.client.api.communication.request.streamed.v3.StreamedRequestFactory
  * @see org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory
  */
-public class ODataRequestImpl<T extends Format> implements ODataRequest {
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(ODataRequest.class);
+public abstract class AbstractODataRequest<T extends Format> extends AbstractRequest implements ODataRequest {
 
   protected final CommonODataClient<?> odataClient;
 
@@ -111,7 +99,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
    * @param method HTTP request method. If configured X-HTTP-METHOD header will be used.
    * @param uri OData request URI.
    */
-  protected ODataRequestImpl(final CommonODataClient<?> odataClient,
+  protected AbstractODataRequest(final CommonODataClient<?> odataClient,
           final Class<T> formatRef, final HttpMethod method, final URI uri) {
 
     this.odataClient = odataClient;
@@ -412,33 +400,7 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
       throw new HttpClientException(e);
     }
 
-    if (response.getStatusLine().getStatusCode() >= 500) {
-      throw new ODataServerErrorException(response.getStatusLine());
-    } else if (response.getStatusLine().getStatusCode() >= 400) {
-      try {
-        final HttpEntity httpEntity = response.getEntity();
-        if (httpEntity == null) {
-          throw new ODataClientErrorException(response.getStatusLine());
-        } else {
-          final boolean isXML = getAccept().contains("json");
-          ODataError error;
-          try {
-            error = odataClient.getReader().readError(httpEntity.getContent(), isXML);
-          } catch (IllegalArgumentException e) {
-            LOG.warn("Error deserializing error response", e);
-            error = getGenericError(
-                    response.getStatusLine().getStatusCode(),
-                    response.getStatusLine().getReasonPhrase(),
-                    isXML);
-          }
-
-          throw new ODataClientErrorException(response.getStatusLine(), error);
-        }
-      } catch (IOException e) {
-        throw new HttpClientException(
-                "Received '" + response.getStatusLine() + "' but could not extract error body", e);
-      }
-    }
+    checkForResponse(odataClient, response, getAccept());
 
     return response;
   }
@@ -467,20 +429,5 @@ public class ODataRequestImpl<T extends Format> implements ODataRequest {
     }
 
     throw new IllegalStateException("No response class template has been found");
-  }
-
-  private ODataError getGenericError(final int code, final String errorMsg, final boolean isXML) {
-    final ODataError error;
-    if (isXML) {
-      error = new XMLODataErrorImpl();
-      ((XMLODataErrorImpl) error).setCode(String.valueOf(code));
-      ((XMLODataErrorImpl) error).setMessage(errorMsg);
-    } else {
-      error = new JSONODataErrorImpl();
-      ((JSONODataErrorImpl) error).setCode(String.valueOf(code));
-      ((JSONODataErrorImpl) error).setMessage(errorMsg);
-    }
-
-    return error;
   }
 }

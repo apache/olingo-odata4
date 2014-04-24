@@ -146,7 +146,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     for (int i = 3; i <= 4; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(100 + i));
-      createReq.setFormat(ODataPubFormat.ATOM);
+      createReq.setFormat(ODataPubFormat.JSON);
       changeset.addRequest(createReq);
     }
 
@@ -197,7 +197,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.ATOM);
+    queryReq.setFormat(ODataPubFormat.JSON);
 
     retrieve.setRequest(queryReq);
     // -------------------------------------------
@@ -346,7 +346,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.ATOM);
+    queryReq.setFormat(ODataPubFormat.JSON);
 
     retrieve.setRequest(queryReq);
     // -------------------------------------------
@@ -361,7 +361,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity original = newOrder(2000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
-    createReq.setFormat(ODataPubFormat.ATOM);
+    createReq.setFormat(ODataPubFormat.JSON);
     outside.setRequest(createReq);
     // -------------------------------------------
 
@@ -413,12 +413,12 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
-    targetURI.appendEntitySetSegment("Customers").appendKeySegment(1).
-            expand("Orders").select("PersonID,Orders/OrderID");
+    targetURI.appendEntitySetSegment("Customers").appendKeySegment(1);//.
+//            expand("Orders").select("PersonID,Orders/OrderID");
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataPubFormat.ATOM);
+    queryReq.setFormat(ODataPubFormat.JSON);
 
     retrieve.setRequest(queryReq);
     // -------------------------------------------
@@ -451,7 +451,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity original = newOrder(1000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
-    createReq.setFormat(ODataPubFormat.ATOM);
+    createReq.setFormat(ODataPubFormat.JSON);
     changeset.addRequest(createReq);
     // -------------------------------------------
 
@@ -627,6 +627,10 @@ public class BatchTestITCase extends AbstractTestITCase {
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
             getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+    order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
+            getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
+            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
+            setText("PT0.0000002S").build())));
 
     return order;
   }

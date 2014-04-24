@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
+import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
 import org.apache.olingo.client.api.op.v4.ODataReader;
@@ -54,6 +55,8 @@ public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
   ODataObjectFactory getObjectFactory();
+
+  AsyncRequestFactory getAsyncRequestFactory();
 
   @Override
   RetrieveRequestFactory getRetrieveRequestFactory();

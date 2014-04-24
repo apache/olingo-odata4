@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequestItem;
 
 /**
@@ -61,7 +61,7 @@ public class ODataOutsideUpdateImpl extends AbstractODataBatchRequestItem
       throw new IllegalStateException("Current batch item is closed");
     }
 
-    if (((ODataRequestImpl) request).getMethod() == HttpMethod.GET) {
+    if (((AbstractODataRequest) request).getMethod() == HttpMethod.GET) {
       throw new IllegalArgumentException("Invalid request. Use ODataRetrieve for GET method");
     }
 
@@ -77,7 +77,7 @@ public class ODataOutsideUpdateImpl extends AbstractODataBatchRequestItem
 
     // add request to the list
     expectedResItem.addResponse(
-            ODataOutsideUpdateResponseItem.OUTSIDE_CONTENT_ID, ((ODataRequestImpl) request).getResponseTemplate());
+            ODataOutsideUpdateResponseItem.OUTSIDE_CONTENT_ID, ((AbstractODataRequest) request).getResponseTemplate());
 
     return this;
   }

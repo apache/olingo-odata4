@@ -16,21 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v3;
+package org.apache.olingo.client.api.communication.request.v4;
 
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.core.domain.AbstractODataCollectionValue;
+import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
 
-public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> {
+@SuppressWarnings("unchecked")
+public interface AsyncRequestFactory {
 
-  private static final long serialVersionUID = 5887168245885401351L;
-
-  public ODataCollectionValueImpl(final String typeName) {
-    super(typeName);
-  }
-
-  @Override
-  protected ODataCollectionValueImpl getThis() {
-    return this;
-  }
+  <R extends ODataResponse> AsyncRequestWrapper<R> getAsyncRequestWrapper(final ODataRequest odataRequest);
 }

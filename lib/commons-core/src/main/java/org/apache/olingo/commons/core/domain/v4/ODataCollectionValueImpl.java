@@ -35,6 +35,11 @@ public class ODataCollectionValueImpl extends AbstractODataCollectionValue<OData
   }
 
   @Override
+  protected ODataCollectionValueImpl getThis() {
+    return this;
+  }
+
+  @Override
   public boolean isEnum() {
     return false;
   }

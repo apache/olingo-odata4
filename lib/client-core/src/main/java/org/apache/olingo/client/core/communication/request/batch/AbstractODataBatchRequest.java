@@ -59,7 +59,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
    * @param odataClient client instance getting this request
    * @param uri batch request URI (http://serviceRoot/$batch)
    */
-  protected AbstractODataBatchRequest(final CommonODataClient odataClient, final URI uri) {
+  protected AbstractODataBatchRequest(final CommonODataClient<?> odataClient, final URI uri) {
     super(odataClient, HttpMethod.POST, uri);
 
     // create a random UUID value for boundary

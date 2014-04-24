@@ -28,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
+import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
@@ -41,6 +42,7 @@ import org.apache.olingo.client.core.communication.request.cud.v4.CUDRequestFact
 import org.apache.olingo.client.core.communication.request.invoke.v4.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.v4.RetrieveRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.streamed.v4.StreamedRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.v4.AsyncRequestFactoryImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataBinderImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataDeserializerImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataReaderImpl;
@@ -68,6 +70,8 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   private final ODataBinder binder = new ODataBinderImpl(this);
 
   private final ODataObjectFactory objectFactory = new ODataObjectFactoryImpl(getServiceVersion());
+
+  private final AsyncRequestFactory asyncReqFact = new AsyncRequestFactoryImpl(this);
 
   private final RetrieveRequestFactory retrieveReqFact = new RetrieveRequestFactoryImpl(this);
 
@@ -130,6 +134,11 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   @Override
   public ODataObjectFactory getObjectFactory() {
     return objectFactory;
+  }
+
+  @Override
+  public AsyncRequestFactory getAsyncRequestFactory() {
+    return asyncReqFact;
   }
 
   @Override

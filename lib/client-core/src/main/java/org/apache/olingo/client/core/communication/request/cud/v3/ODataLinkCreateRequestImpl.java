@@ -25,7 +25,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -39,7 +38,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  * This class implements an insert link OData request.
  */
 public class ODataLinkCreateRequestImpl extends AbstractODataBasicRequest<ODataLinkOperationResponse, ODataFormat>
-        implements ODataLinkCreateRequest, ODataBatchableRequest {
+        implements ODataLinkCreateRequest {
 
   /**
    * OData entity to be linked.

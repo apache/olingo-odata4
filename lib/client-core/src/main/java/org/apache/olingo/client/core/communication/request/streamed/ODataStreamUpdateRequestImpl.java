@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.StreamUpdateStreamManager;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
@@ -37,7 +36,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  */
 public class ODataStreamUpdateRequestImpl
         extends AbstractODataStreamedRequest<ODataStreamUpdateResponse, StreamUpdateStreamManager>
-        implements ODataStreamUpdateRequest, ODataBatchableRequest {
+        implements ODataStreamUpdateRequest {
 
   private final InputStream stream;
 

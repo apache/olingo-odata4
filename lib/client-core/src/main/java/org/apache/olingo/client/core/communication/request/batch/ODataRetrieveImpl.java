@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 
 /**
  * Retrieve request wrapper for the corresponding batch item.
@@ -60,7 +60,7 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
       throw new IllegalStateException("Current batch item is closed");
     }
 
-    if (((ODataRequestImpl) request).getMethod() != HttpMethod.GET) {
+    if (((AbstractODataRequest) request).getMethod() != HttpMethod.GET) {
       throw new IllegalArgumentException("Invalid request. Only GET method is allowed");
     }
 
@@ -74,7 +74,7 @@ public class ODataRetrieveImpl extends AbstractODataBatchRequestItem
 
     // add request to the list
     expectedResItem.addResponse(
-            ODataRetrieveResponseItem.RETRIEVE_CONTENT_ID, ((ODataRequestImpl) request).getResponseTemplate());
+            ODataRetrieveResponseItem.RETRIEVE_CONTENT_ID, ((AbstractODataRequest) request).getResponseTemplate());
 
     return this;
   }

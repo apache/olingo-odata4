@@ -43,6 +43,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -80,8 +81,75 @@ import org.springframework.stereotype.Service;
 @InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
 public class V4Services extends AbstractServices {
 
+  /**
+   * CR/LF.
+   */
+  public static final byte[] CRLF = {13, 10};
+
+  private Map<String, String> providedAsync = new HashMap<String, String>();
+
   public V4Services() throws Exception {
     super(ODataServiceVersion.V40);
+  }
+
+  @DELETE
+  @Path("/monitor/{name}")
+  public Response removeMonitor(@Context final UriInfo uriInfo, @PathParam("name") final String name) {
+    providedAsync.remove(name);
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
+  }
+
+  @GET
+  @Path("/monitor/{name}")
+  public Response async(@Context final UriInfo uriInfo, @PathParam("name") final String name) {
+    try {
+      if (!providedAsync.containsKey(name)) {
+        throw new NotFoundException();
+      }
+      final InputStream res = IOUtils.toInputStream(providedAsync.get(name));
+      providedAsync.remove(name);
+      return xml.createMonitorResponse(res);
+    } catch (Exception e) {
+      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), e);
+    }
+  }
+
+  @GET
+  @Path("/async/{name}")
+  public Response async(
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("name") final String name) {
+
+    try {
+      final Accept acceptType = Accept.parse(accept, version);
+      if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
+        throw new UnsupportedMediaTypeException("Unsupported media type");
+      }
+
+      final String basePath = name + File.separatorChar;
+      final StringBuilder path = new StringBuilder(basePath);
+
+      path.append(getMetadataObj().getEntitySet(name).isSingleton()
+              ? Constants.get(version, ConstantKey.ENTITY)
+              : Constants.get(version, ConstantKey.FEED));
+
+      final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
+
+      final StringBuilder builder = new StringBuilder();
+      builder.append("HTTP/1.1 200 Ok").append(new String(CRLF));
+      builder.append("Content-Type: ").append(accept).append(new String(CRLF)).append(new String(CRLF));
+      builder.append(IOUtils.toString(feed));
+      IOUtils.closeQuietly(feed);
+
+      final UUID uuid = UUID.randomUUID();
+      providedAsync.put(uuid.toString(), builder.toString());
+
+      return xml.createAsyncResponse(
+              uriInfo.getRequestUri().toASCIIString().replaceAll("async/" + name, "") + "monitor/" + uuid.toString());
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
   }
 
   @Override

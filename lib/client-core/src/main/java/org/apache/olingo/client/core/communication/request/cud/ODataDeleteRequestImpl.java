@@ -23,7 +23,6 @@ import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -35,7 +34,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  * This class implements an OData delete request.
  */
 public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDeleteResponse, ODataPubFormat>
-        implements ODataDeleteRequest, ODataBatchableRequest {
+        implements ODataDeleteRequest {
 
   /**
    * Constructor.

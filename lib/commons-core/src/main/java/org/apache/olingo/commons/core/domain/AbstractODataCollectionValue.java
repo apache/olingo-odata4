@@ -49,6 +49,8 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
   public AbstractODataCollectionValue(final String typeName) {
     super(typeName);
   }
+  
+  protected abstract ODataCollectionValue<OV> getThis();
 
   /**
    * Adds a value to the collection.
@@ -57,8 +59,9 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
    */
   @Override
   @SuppressWarnings("unchecked")
-  public void add(final ODataValue value) {
+  public ODataCollectionValue<OV> add(final ODataValue value) {
     values.add((OV) value);
+    return getThis();
   }
 
   /**

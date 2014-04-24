@@ -29,14 +29,14 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRawReque
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.Container;
 
 /**
  * This class implements a generic OData request.
  */
-public class ODataRawRequestImpl extends ODataRequestImpl<ODataPubFormat>
+public class ODataRawRequestImpl extends AbstractODataRequest<ODataPubFormat>
         implements ODataRawRequest {
 
   /**

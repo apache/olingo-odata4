@@ -57,7 +57,7 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
    * @param targetURI entity set URI.
    * @param entity entity to be created.
    */
-  ODataEntityCreateRequestImpl(final CommonODataClient odataClient, final URI targetURI, final E entity) {
+  ODataEntityCreateRequestImpl(final CommonODataClient<?> odataClient, final URI targetURI, final E entity) {
     super(odataClient, ODataPubFormat.class, HttpMethod.POST, targetURI);
     this.entity = entity;
   }

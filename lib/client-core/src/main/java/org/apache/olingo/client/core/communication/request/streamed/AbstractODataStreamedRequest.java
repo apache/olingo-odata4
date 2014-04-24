@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.Wrapper;
-import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -48,7 +48,7 @@ import org.apache.commons.io.IOUtils;
  * @param <T> OData request payload type corresponding to the request implementation.
  */
 public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T extends ODataStreamManager<V>>
-        extends ODataRequestImpl<ODataMediaFormat> implements ODataStreamedRequest<V, T> {
+        extends AbstractODataRequest<ODataMediaFormat> implements ODataStreamedRequest<V, T> {
 
   /**
    * OData payload stream manager.

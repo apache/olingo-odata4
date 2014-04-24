@@ -41,7 +41,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
  * @param <T> OData format being used.
  */
 public abstract class AbstractODataBasicRequest<V extends ODataResponse, T extends Format>
-        extends ODataRequestImpl<T>
+        extends AbstractODataRequest<T>
         implements ODataBasicRequest<V, T> {
 
   /**

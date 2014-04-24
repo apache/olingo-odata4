@@ -19,11 +19,13 @@
 package org.apache.olingo.client.api.communication.request.cud;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData update entity property request.
  */
-public interface ODataPropertyUpdateRequest extends ODataBasicRequest<ODataPropertyUpdateResponse, ODataFormat> {
+public interface ODataPropertyUpdateRequest
+        extends ODataBasicRequest<ODataPropertyUpdateResponse, ODataFormat>, ODataBatchableRequest {
 }

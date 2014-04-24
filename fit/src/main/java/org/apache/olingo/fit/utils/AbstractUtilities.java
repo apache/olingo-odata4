@@ -292,8 +292,8 @@ public abstract class AbstractUtilities {
     final List<String> hrefs = new ArrayList<String>();
 
     for (final Link link : entry.getNavigationLinks()) {
-      final NavigationProperty navProp = navigationProperties == null
-              ? null : navigationProperties.get(link.getTitle());
+      final NavigationProperty navProp =
+              navigationProperties == null ? null : navigationProperties.get(link.getTitle());
       if (navProp != null) {
         final String inlineEntitySetName = navProp.getTarget();
         if (link.getInlineEntry() != null) {
@@ -407,7 +407,7 @@ public abstract class AbstractUtilities {
 
     fsManager.putInMemory(
             IOUtils.toInputStream(entity), fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-                    Accept.JSON_FULLMETA));
+            Accept.JSON_FULLMETA));
     // -----------------------------------------
 
     return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
@@ -454,6 +454,31 @@ public abstract class AbstractUtilities {
   public Response createResponse(
           final String location, final InputStream entity, final String etag, final Accept accept) {
     return createResponse(location, entity, etag, accept, null);
+  }
+
+  public Response createAsyncResponse(final String location) {
+    final Response.ResponseBuilder builder = Response.accepted();
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
+      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
+    }
+
+    builder.header("Location", location);
+    builder.header("Preference-Applied", "Respond-Async");
+    builder.header("Retry-After", "10");
+
+    return builder.build();
+  }
+
+  public Response createMonitorResponse(final InputStream res) {
+    final Response.ResponseBuilder builder = Response.ok();
+    if (version.compareTo(ODataServiceVersion.V30) <= 0) {
+      builder.header(Constants.get(version, ConstantKey.ODATA_SERVICE_VERSION), version.toString() + ";");
+    }
+
+    builder.header("Content-Type", "application/http");
+    builder.header("Content-Transfer-Encoding", "binary");
+
+    return builder.entity(res).build();
   }
 
   public Response createResponse(final InputStream entity, final String etag, final Accept accept) {
@@ -586,7 +611,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(), dataBinder.toJSONFeed(container.getObject())));
+              container.getMetadataETag(), dataBinder.toJSONFeed(container.getObject())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -603,7 +628,7 @@ public abstract class AbstractUtilities {
     } else {
       final Container<JSONEntryImpl> container =
               mapper.readValue(entity, new TypeReference<JSONEntryImpl>() {
-              });
+      });
       entry = dataBinder.toAtomEntry(container.getObject());
     }
 
@@ -619,7 +644,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONEntry(container.getObject())));
+              dataBinder.toJSONEntry(container.getObject())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -649,7 +674,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONPropertyContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONProperty(container.getObject())));
+              dataBinder.toJSONProperty(container.getObject())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);

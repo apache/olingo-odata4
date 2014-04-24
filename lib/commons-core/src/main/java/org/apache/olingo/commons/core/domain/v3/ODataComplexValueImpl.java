@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.domain.v3;
 
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.core.domain.AbstractODataComplexValue;
 
@@ -29,4 +30,8 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
     super(typeName);
   }
 
+  @Override
+  protected ODataComplexValue<ODataProperty> getThis() {
+    return this;
+  }
 }

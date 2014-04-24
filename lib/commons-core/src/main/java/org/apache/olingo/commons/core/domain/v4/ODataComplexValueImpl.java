@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
@@ -44,6 +45,11 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
 
   public ODataComplexValueImpl(final String typeName) {
     super(typeName);
+  }
+
+  @Override
+  protected ODataComplexValue<ODataProperty> getThis() {
+    return this;
   }
 
   @Override
@@ -145,5 +151,4 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
 
     return result;
   }
-
 }

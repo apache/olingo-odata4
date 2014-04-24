@@ -32,9 +32,9 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
 
   private static final long serialVersionUID = -111683263158803362L;
 
-  protected final CommonODataClient client;
+  protected final CommonODataClient<?> client;
 
-  protected AbstractRetrieveRequestFactory(final CommonODataClient client) {
+  protected AbstractRetrieveRequestFactory(final CommonODataClient<?> client) {
     this.client = client;
   }
 

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 
@@ -59,7 +60,7 @@ public interface ODataResponse {
    * @return ETag header value, if provided
    */
   String getEtag();
-  
+
   /**
    * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
    * fragment identifying the relevant portion of the metadata document.
@@ -113,18 +114,35 @@ public interface ODataResponse {
   InputStream getRawResponse();
 
   /**
+   * Initializes OData response from HTTP response.
+   *
+   * @param res HTTP response.
+   * @return OData response;
+   */
+  ODataResponse initFromHttpResponse(HttpResponse res);
+
+  /**
    * Initializes response from batch response item.
    *
    * @param responseLine response line.
    * @param headers response headers.
    * @param batchLineIterator batch line iterator.
    * @param boundary batch boundary.
+   * @return OData response.
    */
   ODataResponse initFromBatch(
           final Map.Entry<Integer, String> responseLine,
           final Map<String, Collection<String>> headers,
           final ODataBatchLineIterator batchLineIterator,
           final String boundary);
+
+  /**
+   * Initializes response from an enclosed HTTP response.
+   *
+   * @param part enclosed HTTP response.
+   * @return OData response.
+   */
+  ODataResponse initFromEnclosedPart(InputStream part);
 
   /**
    * Close the underlying message entity input stream (if available and open) as well as releases any other resources

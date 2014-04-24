@@ -44,7 +44,7 @@ public class ODataBatchRequestImpl
         extends AbstractODataBatchRequest<ODataBatchResponse, BatchStreamManager>
         implements ODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
 
-  public ODataBatchRequestImpl(final CommonODataClient odataClient, final URI uri) {
+  public ODataBatchRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
     super(odataClient, uri);
   }
 

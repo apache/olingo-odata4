@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.request.ODataRequestImpl;
+import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
 
 /**
@@ -122,7 +122,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     request.batch(req, String.valueOf(contentId));
 
     // add request to the list
-    expectedResItem.addResponse(String.valueOf(contentId), ((ODataRequestImpl) request).getResponseTemplate());
+    expectedResItem.addResponse(String.valueOf(contentId), ((AbstractODataRequest) request).getResponseTemplate());
     return this;
   }
 }

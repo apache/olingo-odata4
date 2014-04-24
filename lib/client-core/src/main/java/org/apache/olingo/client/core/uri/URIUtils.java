@@ -383,7 +383,7 @@ public final class URIUtils {
     return value;
   }
 
-  public static InputStreamEntity buildInputStreamEntity(final CommonODataClient client, final InputStream input) {
+  public static InputStreamEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
     InputStreamEntity entity;
     if (client.getConfiguration().isUseChuncked()) {
       entity = new InputStreamEntity(input, -1);

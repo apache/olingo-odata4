@@ -32,7 +32,7 @@ public interface ODataComplexValue<OP extends CommonODataProperty> extends OData
    *
    * @param field field to be added.
    */
-  void add(OP field);
+  ODataComplexValue<OP> add(OP field);
 
   /**
    * Gets field.

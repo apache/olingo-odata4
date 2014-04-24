@@ -16,21 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v3;
+package org.apache.olingo.client.core.communication.response.v4;
 
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.core.domain.AbstractODataCollectionValue;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.communication.response.v4.AsyncResponse;
+import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
-public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> {
+/**
+ * Abstract representation of an OData response.
+ */
+public class AsyncResponseImpl extends AbstractODataResponse implements AsyncResponse {
 
-  private static final long serialVersionUID = 5887168245885401351L;
-
-  public ODataCollectionValueImpl(final String typeName) {
-    super(typeName);
+  /**
+   * Constructor.
+   * <p>
+   * Just to create response templates to be initialized from batch.
+   */
+  public AsyncResponseImpl() {
+    super();
   }
 
-  @Override
-  protected ODataCollectionValueImpl getThis() {
-    return this;
+  /**
+   * Constructor.
+   *
+   * @param client HTTP client.
+   * @param res HTTP response.
+   */
+  public AsyncResponseImpl(final HttpClient client, final HttpResponse res) {
+    super(client, res);
   }
 }

@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.client.api.communication.request.streamed;
 
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
 
 /**
- * This class implements an OData stream create/update request.
- * Get instance by using ODataStreamedRequestFactory.
+ * This class implements an OData stream create/update request. Get instance by using ODataStreamedRequestFactory.
  */
 public interface ODataStreamUpdateRequest
-        extends ODataStreamedRequest<ODataStreamUpdateResponse, StreamUpdateStreamManager> {
+        extends ODataStreamedRequest<ODataStreamUpdateResponse, StreamUpdateStreamManager>, ODataBatchableRequest {
 }

@@ -16,21 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v3;
+package org.apache.olingo.client.api.communication.request.v4;
 
-import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.core.domain.AbstractODataCollectionValue;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
 
-public class ODataCollectionValueImpl extends AbstractODataCollectionValue<ODataValue> {
+public interface AsyncRequestWrapper<R extends ODataResponse> {
 
-  private static final long serialVersionUID = 5887168245885401351L;
+  /**
+   * Add wait http header.
+   *
+   * @param waitInSeconds wait time in seconds.
+   * @return the current AsyncRequestWrapper instance.
+   */
+  AsyncRequestWrapper<R> wait(int waitInSeconds);
 
-  public ODataCollectionValueImpl(final String typeName) {
-    super(typeName);
-  }
-
-  @Override
-  protected ODataCollectionValueImpl getThis() {
-    return this;
-  }
+  /**
+   * execute the request for the first time.
+   *
+   * @return
+   */
+  AsyncResponseWrapper<R> execute();
 }

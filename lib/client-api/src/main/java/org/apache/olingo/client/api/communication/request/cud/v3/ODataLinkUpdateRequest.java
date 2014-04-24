@@ -19,11 +19,13 @@
 package org.apache.olingo.client.api.communication.request.cud.v3;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an update link OData request.
  */
-public interface ODataLinkUpdateRequest extends ODataBasicRequest<ODataLinkOperationResponse, ODataFormat> {
+public interface ODataLinkUpdateRequest
+        extends ODataBasicRequest<ODataLinkOperationResponse, ODataFormat>, ODataBatchableRequest {
 }

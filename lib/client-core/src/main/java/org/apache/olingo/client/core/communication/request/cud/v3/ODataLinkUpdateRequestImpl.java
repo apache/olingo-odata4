@@ -25,7 +25,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.ODataLinkUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataLinkOperationResponse;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -39,7 +38,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
  * This class implements an update link OData request.
  */
 public class ODataLinkUpdateRequestImpl extends AbstractODataBasicRequest<ODataLinkOperationResponse, ODataFormat>
-        implements ODataLinkUpdateRequest, ODataBatchableRequest {
+        implements ODataLinkUpdateRequest {
 
   /**
    * Entity to be linked.

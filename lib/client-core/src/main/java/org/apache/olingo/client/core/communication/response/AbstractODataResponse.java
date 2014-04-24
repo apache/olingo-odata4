@@ -18,11 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.response;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,7 +40,9 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIt
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
+import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Container;
 import org.slf4j.LoggerFactory;
 
@@ -80,27 +85,27 @@ public abstract class AbstractODataResponse implements ODataResponse {
   /**
    * Response code.
    */
-  private int statusCode = -1;
+  protected int statusCode = -1;
 
   /**
    * Response message.
    */
-  private String statusMessage = null;
+  protected String statusMessage = null;
 
   /**
    * Response body/payload.
    */
-  private InputStream payload = null;
+  protected InputStream payload = null;
 
   /**
    * Initialization check.
    */
-  private boolean hasBeenInitialized = false;
+  protected boolean hasBeenInitialized = false;
 
   /**
    * Batch info (if to be batched).
    */
-  private ODataBatchController batchInfo = null;
+  protected ODataBatchController batchInfo = null;
 
   /**
    * Constructor.
@@ -119,30 +124,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   public AbstractODataResponse(final HttpClient client, final HttpResponse res) {
     this.client = client;
     this.res = res;
-
-    try {
-      this.payload = this.res.getEntity() == null ? null : this.res.getEntity().getContent();
-    } catch (Exception e) {
-      LOG.error("Error retrieving payload", e);
-      throw new IllegalStateException(e);
-    }
-
-    this.hasBeenInitialized = true;
-
-    for (Header header : res.getAllHeaders()) {
-      final Collection<String> headerValues;
-      if (headers.containsKey(header.getName())) {
-        headerValues = headers.get(header.getName());
-      } else {
-        headerValues = new HashSet<String>();
-        headers.put(header.getName(), headerValues);
-      }
-
-      headerValues.add(header.getValue());
-    }
-
-    statusCode = res.getStatusLine().getStatusCode();
-    statusMessage = res.getStatusLine().getReasonPhrase();
+    initFromHttpResponse(res);
   }
 
   @Override
@@ -229,6 +211,37 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * {@inheritDoc}
    */
   @Override
+  public final ODataResponse initFromHttpResponse(final HttpResponse res) {
+    try {
+      this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
+    } catch (Exception e) {
+      LOG.error("Error retrieving payload", e);
+      throw new IllegalStateException(e);
+    }
+
+    for (Header header : res.getAllHeaders()) {
+      final Collection<String> headerValues;
+      if (headers.containsKey(header.getName())) {
+        headerValues = headers.get(header.getName());
+      } else {
+        headerValues = new HashSet<String>();
+        headers.put(header.getName(), headerValues);
+      }
+
+      headerValues.add(header.getValue());
+    }
+
+    statusCode = res.getStatusLine().getStatusCode();
+    statusMessage = res.getStatusLine().getReasonPhrase();
+
+    this.hasBeenInitialized = true;
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public ODataResponse initFromBatch(
           final Map.Entry<Integer, String> responseLine,
           final Map<String, Collection<String>> headers,
@@ -239,15 +252,60 @@ public abstract class AbstractODataResponse implements ODataResponse {
       throw new IllegalStateException("Request already initialized");
     }
 
-    this.hasBeenInitialized = true;
-
     this.batchInfo = new ODataBatchController(batchLineIterator, boundary);
 
     this.statusCode = responseLine.getKey();
     this.statusMessage = responseLine.getValue();
     this.headers.putAll(headers);
 
+    this.hasBeenInitialized = true;
     return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ODataResponse initFromEnclosedPart(final InputStream part) {
+    try {
+      if (hasBeenInitialized) {
+        throw new IllegalStateException("Request already initialized");
+      }
+
+      final ODataBatchLineIteratorImpl batchLineIterator =
+              new ODataBatchLineIteratorImpl(IOUtils.lineIterator(part, Constants.UTF8));
+
+      final Map.Entry<Integer, String> partResponseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
+      LOG.debug("Retrieved async item response {}", partResponseLine);
+
+      this.statusCode = partResponseLine.getKey();
+      this.statusMessage = partResponseLine.getValue();
+
+      final Map<String, Collection<String>> partHeaders = ODataBatchUtilities.readHeaders(batchLineIterator);
+      LOG.debug("Retrieved async item headers {}", partHeaders);
+
+      this.headers.putAll(partHeaders);
+
+      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      LOG.debug("Retrieved payload {}", bos.toString(Charset.forName("UTF-8").toString()));
+
+      while (batchLineIterator.hasNext()) {
+        bos.write(batchLineIterator.nextLine().getBytes());
+      }
+
+      try {
+        this.payload = new ByteArrayInputStream(bos.toByteArray());
+      } catch (Exception e) {
+        LOG.error("Error retrieving payload", e);
+        throw new IllegalStateException(e);
+      }
+
+      this.hasBeenInitialized = true;
+      return this;
+    } catch (IOException e) {
+      LOG.error("Error streaming payload response", e);
+      throw new IllegalStateException(e);
+    }
   }
 
   /**
@@ -308,7 +366,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
     if (container == null) {
       return null;
     }
-    
+
     setContextURL(container.getContextURL());
     setMetadataETag(container.getMetadataETag());
     return container.getObject();
