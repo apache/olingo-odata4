@@ -1,0 +1,18 @@
+{
+  "@odata.context": "http://host/service/$metadata#Collection(Edm.ComplexType)",
+  "value":
+          [
+            {
+              "Products@odata.navigationLink": "Products(0)",
+              "Sales@odata.navigationLink": "Sales(42)"
+            },
+            {
+              "Products@odata.navigationLink": "Products(0)",
+              "Sales@odata.navigationLink": "Sales(57)"
+            },
+            {
+              "Products@odata.navigationLink": "Products(99)",
+              "Sales@odata.navigationLink": "Sales(21)"
+            }
+          ]
+}

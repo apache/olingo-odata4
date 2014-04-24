@@ -119,4 +119,16 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    * @see org.apache.olingo.client.api.uri.QueryOption#EXPAND
    */
   URIBuilder expandWithOptions(String expandItem, Map<String, Object> options);
+  
+  /**
+   * Properties of related entities can be specified by including the $select query option within the $expand.
+   * <br />
+   * <tt>http://host/service/Products?$expand=Category($select=Name)</tt>
+   * @param expandItem related entity name.
+   * @param selectItems properties to be selected.
+   * @return current URIBuilder instance.
+   * @see org.apache.olingo.client.api.uri.QueryOption#EXPAND
+   * @see org.apache.olingo.client.api.uri.QueryOption#SELECT
+   */
+  URIBuilder expandWithSelect(String expandItem, String... selectItems);
 }

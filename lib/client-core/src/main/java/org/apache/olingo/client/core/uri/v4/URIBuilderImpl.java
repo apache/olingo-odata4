@@ -134,4 +134,9 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   public URIBuilder expandWithOptions(final String expandItem, final Map<String, Object> options) {
     return expand(expandItem + buildMultiKeySegment(options, false));
   }
+
+  @Override
+  public URIBuilder expandWithSelect(final String expandItem, final String... selectItems) {
+    return expand(expandItem + "($select=" + StringUtils.join(selectItems, ",") + ")");
+  }
 }

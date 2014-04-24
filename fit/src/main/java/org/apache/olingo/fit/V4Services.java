@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.DELETE;
@@ -84,12 +85,49 @@ public class V4Services extends AbstractServices {
   /**
    * CR/LF.
    */
-  public static final byte[] CRLF = {13, 10};
+  protected static final byte[] CRLF = {13, 10};
+
+  protected static final Pattern RELENTITY_SELECT_PATTERN = Pattern.compile("^.*\\(\\$select=.*\\)$");
+
+  protected static final Pattern CROSSJOIN_PATTERN = Pattern.compile(
+          "^\\$crossjoin\\(.*\\)\\?\\$filter=\\([a-zA-Z/]+ eq [a-zA-Z/]+\\)$");
 
   private Map<String, String> providedAsync = new HashMap<String, String>();
 
   public V4Services() throws Exception {
     super(ODataServiceVersion.V40);
+  }
+
+  @GET
+  @Path("/$crossjoin({elements:.*})")
+  public Response crossjoin(
+          @PathParam("elements") String elements,
+          @QueryParam("$filter") String filter) {
+
+    try {
+      if (CROSSJOIN_PATTERN.matcher("$crossjoin(" + elements + ")?$filter=" + filter).matches()) {
+        final InputStream feed = FSManager.instance(version).readFile("crossjoin", Accept.JSON);
+
+        return xml.createResponse(feed, null, Accept.JSON_FULLMETA);
+      } else {
+        throw new Exception("Unexpected crossjoin pattern");
+      }
+    } catch (Exception e) {
+      return xml.createFaultResponse(Accept.JSON.toString(version), e);
+    }
+  }
+
+  @GET
+  @Path("/relatedEntitySelect/{path:.*}")
+  public Response relatedEntitySelect(
+          @PathParam("path") String path,
+          @QueryParam("$expand") String expand) {
+
+    if (RELENTITY_SELECT_PATTERN.matcher(expand).matches()) {
+      return xml.createResponse(null, null, Accept.JSON_FULLMETA);
+    } else {
+      return xml.createFaultResponse(Accept.JSON.toString(version), new Exception("Unexpected expand pattern"));
+    }
   }
 
   @DELETE
@@ -530,7 +568,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -552,7 +590,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -650,8 +688,8 @@ public class V4Services extends AbstractServices {
       } else {
         final Container<JSONEntryImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                        new TypeReference<JSONEntryImpl>() {
-                        });
+                new TypeReference<JSONEntryImpl>() {
+        });
 
         entry = dataBinder.toAtomEntry(jcontainer.getObject());
 
@@ -749,7 +787,7 @@ public class V4Services extends AbstractServices {
 
         final Container<JSONEntryImpl> jsonContainer = mapper.readValue(
                 IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntryImpl>() {
-                });
+        });
         jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.toAtomEntry(jsonContainer.getObject());
       }
@@ -782,7 +820,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       // 2. Remove the contained entity
@@ -910,7 +948,7 @@ public class V4Services extends AbstractServices {
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
 
-    return getEntitySet(uriInfo, accept, "Products", format, null, null, null, null);
+    return getEntitySet(uriInfo, accept, "Products", null, null, format, null, null, null, null);
   }
 
   @GET
@@ -1011,8 +1049,8 @@ public class V4Services extends AbstractServices {
       } else {
         final Container<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
+                new TypeReference<JSONPropertyImpl>() {
+        });
         property = paramContainer.getObject();
       }
 
@@ -1053,8 +1091,8 @@ public class V4Services extends AbstractServices {
       } else {
         final Container<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
+                new TypeReference<JSONPropertyImpl>() {
+        });
         property = paramContainer.getObject();
       }
 

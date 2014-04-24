@@ -23,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +103,12 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB addQueryOption(final String option, final String value) {
-    queryOptions.put(option, value);
+    final StringBuilder builder = new StringBuilder();
+    if (queryOptions.containsKey(option)) {
+      builder.append(queryOptions.get(option)).append(',');
+    }
+    builder.append(value);
+    queryOptions.put(option, builder.toString());
     return getThis();
   }
 
@@ -199,14 +203,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB expand(final String... expandItems) {
-    final List<String> values = new ArrayList<String>();
-    if (queryOptions.containsKey(QueryOption.EXPAND.toString())) {
-      values.add(queryOptions.get(QueryOption.EXPAND.toString()));
-    }
-
-    values.addAll(Arrays.asList(expandItems));
-
-    return addQueryOption(QueryOption.EXPAND, StringUtils.join(values, ","));
+    return addQueryOption(QueryOption.EXPAND, StringUtils.join(expandItems, ","));
   }
 
   @Override
@@ -231,14 +228,7 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB select(final String... selectItems) {
-    final List<String> values = new ArrayList<String>();
-    if (queryOptions.containsKey(QueryOption.SELECT.toString())) {
-      values.add(queryOptions.get(QueryOption.SELECT.toString()));
-    }
-
-    values.addAll(Arrays.asList(selectItems));
-
-    return addQueryOption(QueryOption.SELECT, StringUtils.join(values, ","));
+    return addQueryOption(QueryOption.SELECT, StringUtils.join(selectItems, ","));
   }
 
   @Override

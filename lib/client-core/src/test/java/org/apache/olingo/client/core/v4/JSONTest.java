@@ -85,15 +85,15 @@ public class JSONTest extends AbstractTest {
 
       if (field.getKey().charAt(0) == '#'
               || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))
+              getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_TYPE))
               || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))
+              getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK))
               || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))
+              getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))
               || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK))
+              getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_ASSOCIATION_LINK))
               || field.getKey().endsWith(
-                      getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG))) {
+              getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_ETAG))) {
 
         toRemove.add(field.getKey());
       } else if (field.getValue().isObject()) {
@@ -113,7 +113,7 @@ public class JSONTest extends AbstractTest {
   protected void assertSimilar(final String filename, final String actual) throws Exception {
     final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
             replace(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NAVIGATION_LINK),
-                    Constants.JSON_BIND_LINK_SUFFIX));
+            Constants.JSON_BIND_LINK_SUFFIX));
     cleanup((ObjectNode) expected);
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     cleanup(actualNode);
@@ -174,5 +174,11 @@ public class JSONTest extends AbstractTest {
     property("Products_5_CoverColors", getODataFormat());
     property("Employees_3_HomeAddress", getODataFormat());
     property("Employees_3_HomeAddress", getODataFormat());
+  }
+
+  @Test
+  public void crossjoin() throws Exception {
+    getClient().getDeserializer().toFeed(
+            getClass().getResourceAsStream("crossjoin.json"), ODataPubFormat.JSON_FULL_METADATA);
   }
 }

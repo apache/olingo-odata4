@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import static org.apache.olingo.client.core.it.v4.AbstractTestITCase.testStaticServiceRootURL;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
