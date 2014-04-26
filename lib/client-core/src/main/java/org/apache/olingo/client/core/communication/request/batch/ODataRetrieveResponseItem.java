@@ -48,25 +48,28 @@ public class ODataRetrieveResponseItem extends AbstractODataBatchResponseItem {
       throw new IllegalStateException("Invalid request - the item has been closed");
     }
 
+    if (!hasNext()) {
+      throw new NoSuchElementException("No item found");
+    }
+
     final Map.Entry<Integer, String> responseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
     LOG.debug("Retrieved item response {}", responseLine);
 
     final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
     LOG.debug("Retrieved item headers {}", headers);
 
-    final ODataResponse res;
-
     if (responseLine.getKey() >= 400) {
       // generate error response
-      res = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      breakingitem = true;
     } else {
       if (!hasNext()) {
         throw new NoSuchElementException("No item found");
       }
-      res = expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
+      current = expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
     }
 
-    return res;
+    return current;
   }
 
   /**

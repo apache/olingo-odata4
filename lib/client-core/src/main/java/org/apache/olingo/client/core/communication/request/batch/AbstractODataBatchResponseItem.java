@@ -68,12 +68,20 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
   protected boolean closed = false;
 
   /**
+   * Last cached OData response.
+   */
+  protected ODataResponse current;
+
+  protected boolean breakingitem = false;
+
+  /**
    * Constructor.
    *
    * @param isChangeset 'TRUE' if the current batch response item is a changeset.
    */
   public AbstractODataBatchResponseItem(boolean isChangeset) {
     this.changeset = isChangeset;
+    this.current = null;
   }
 
   /**
@@ -135,7 +143,15 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
       expectedItemsIterator = responses.values().iterator();
     }
 
-    return expectedItemsIterator.hasNext();
+    return !breakingitem && expectedItemsIterator.hasNext();
+  }
+
+  /**
+   * {@inheritDoc }
+   */
+  @Override
+  public boolean isBreakingitem() {
+    return breakingitem;
   }
 
   /**

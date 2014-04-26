@@ -22,9 +22,9 @@ public abstract class AbstractBatchRequestFactory implements CommonBatchRequestF
 
   private static final long serialVersionUID = -3875283254713404483L;
 
-  protected final CommonODataClient client;
+  protected final CommonODataClient<?> client;
 
-  protected AbstractBatchRequestFactory(final CommonODataClient client) {
+  protected AbstractBatchRequestFactory(final CommonODataClient<?> client) {
     this.client = client;
   }
 }

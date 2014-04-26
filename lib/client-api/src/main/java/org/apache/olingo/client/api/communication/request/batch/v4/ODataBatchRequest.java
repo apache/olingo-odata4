@@ -27,4 +27,6 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
  */
 public interface ODataBatchRequest
         extends CommonODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
+
+  ODataBatchRequest continueOnError();
 }

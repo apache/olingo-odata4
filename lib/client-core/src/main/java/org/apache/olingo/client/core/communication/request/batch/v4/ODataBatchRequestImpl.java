@@ -24,12 +24,14 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchStreamManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
@@ -43,7 +45,9 @@ public class ODataBatchRequestImpl
         extends AbstractODataBatchRequest<ODataBatchResponse, BatchStreamManager>
         implements ODataBatchRequest {
 
-  public ODataBatchRequestImpl(final CommonODataClient odataClient, final URI uri) {
+  private boolean continueOnError = false;
+
+  public ODataBatchRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, uri);
     setAccept(ContentType.MULTIPART_MIXED);
   }
@@ -71,6 +75,13 @@ public class ODataBatchRequestImpl
   @Override
   public ODataBatchRequest rawAppend(final byte[] toBeStreamed, int off, int len) throws IOException {
     getStreamManager().getBodyStreamWriter().write(toBeStreamed, off, len);
+    return this;
+  }
+
+  @Override
+  public ODataBatchRequest continueOnError() {
+    addCustomHeader(HeaderName.prefer, new ODataPreferences(odataClient.getServiceVersion()).continueOnError());
+    continueOnError = true;
     return this;
   }
 
@@ -126,7 +137,7 @@ public class ODataBatchRequestImpl
      */
     @Override
     public Iterator<ODataBatchResponseItem> getBody() {
-      return new ODataBatchResponseManager(this, expectedResItems);
+      return new ODataBatchResponseManager(this, expectedResItems, continueOnError);
     }
   }
 }

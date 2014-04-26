@@ -68,7 +68,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param method OData request HTTP method.
    * @param uri OData request URI.
    */
-  public AbstractODataStreamedRequest(final CommonODataClient odataClient,
+  public AbstractODataStreamedRequest(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI uri) {
 
     super(odataClient, ODataMediaFormat.class, method, uri);

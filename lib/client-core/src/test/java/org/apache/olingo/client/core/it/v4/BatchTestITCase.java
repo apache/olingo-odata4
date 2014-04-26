@@ -32,8 +32,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -154,8 +152,9 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(200, response.getStatusCode());
     assertEquals("OK", response.getStatusMessage());
 
+    final Iterator<ODataBatchResponseItem> iter = response.getBody();
     // retrieve the first item (ODataRetrieve)
-    ODataBatchResponseItem item = response.getBody().next();
+    ODataBatchResponseItem item = iter.next();
 
     ODataChangesetResponseItem retitem = (ODataChangesetResponseItem) item;
     ODataResponse res = retitem.next();
@@ -163,6 +162,9 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals("Not Found", res.getStatusMessage());
     assertEquals(Integer.valueOf(3), Integer.valueOf(
             res.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next()));
+
+    assertFalse(retitem.hasNext());
+    assertFalse(iter.hasNext());
   }
 
   @Test
@@ -179,10 +181,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
-
-    if (continueOnError) {
-      request.addCustomHeader(HeaderName.prefer, new ODataPreferences(client.getServiceVersion()).continueOnError());
-    }
+    request.continueOnError();
 
     final BatchStreamManager streamManager = request.execute();
 

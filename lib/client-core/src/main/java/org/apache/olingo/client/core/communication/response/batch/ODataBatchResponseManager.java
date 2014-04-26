@@ -66,13 +66,26 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
    */
   private ODataBatchResponseItem current = null;
 
+  private final boolean continueOnError;
+
   /**
    * Constructor.
    *
    * @param res OData batch response.
    * @param expectedItems expected batch response items.
    */
-  public ODataBatchResponseManager(final ODataBatchResponse res, final List<ODataBatchResponseItem> expectedItems) {
+  public ODataBatchResponseManager(
+          final ODataBatchResponse res,
+          final List<ODataBatchResponseItem> expectedItems) {
+    this(res, expectedItems, false);
+  }
+
+  public ODataBatchResponseManager(
+          final ODataBatchResponse res,
+          final List<ODataBatchResponseItem> expectedItems,
+          final boolean continueOnError) {
+    this.continueOnError = continueOnError;
+
     try {
       this.expectedItemsIterator = expectedItems.iterator();
       this.batchLineIterator = new ODataBatchLineIteratorImpl(
@@ -93,7 +106,7 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
    */
   @Override
   public boolean hasNext() {
-    return expectedItemsIterator.hasNext();
+    return (current == null || continueOnError || !current.isBreakingitem()) && expectedItemsIterator.hasNext();
   }
 
   /**

@@ -24,12 +24,12 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.v3.BatchStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.v3.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchStreamManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
 import org.apache.olingo.client.core.communication.request.batch.v3.ODataBatchRequestImpl.BatchStreamManagerImpl;
@@ -44,7 +44,7 @@ public class ODataBatchRequestImpl
         extends AbstractODataBatchRequest<ODataBatchResponse, BatchStreamManager>
         implements ODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
 
-  public ODataBatchRequestImpl(final CommonODataClient<?> odataClient, final URI uri) {
+  public ODataBatchRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, uri);
   }
 

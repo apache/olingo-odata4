@@ -31,11 +31,6 @@ import org.apache.olingo.client.core.communication.response.batch.ODataBatchErro
  */
 public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
 
-  /**
-   * Last cached OData response.
-   */
-  private ODataResponse current = null;
-
   private boolean unexpected = false;
 
   /**
@@ -62,7 +57,12 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
       throw new IllegalStateException("Invalid request - the item has been closed");
     }
 
+    if (!hasNext()) {
+      throw new NoSuchElementException("No item found");
+    }
+
     if (unexpected) {
+      breakingitem = true;
       return nextUnexpected();
     } else {
       return nextExpected();
@@ -70,12 +70,8 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
   }
 
   private ODataResponse nextExpected() {
-    if (hasNext()) {
-      // consume item for condition above (like a counter ...)
-      expectedItemsIterator.next();
-    } else {
-      throw new NoSuchElementException("No item found");
-    }
+    // consume item for condition above (used like a counter ...)
+    expectedItemsIterator.next();
 
     final Map<String, Collection<String>> nextItemHeaders =
             ODataBatchUtilities.nextItemHeaders(batchLineIterator, boundary);
@@ -109,10 +105,8 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
     current.initFromBatch(responseLine, headers, batchLineIterator, boundary);
 
     if (current.getStatusCode() >= 400) {
-      // found error .... consume expeted items
-      while (expectedItemsIterator.hasNext()) {
-        expectedItemsIterator.next();
-      }
+      // found error .... 
+      breakingitem = true;
     }
 
     return current;
@@ -127,7 +121,8 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
       final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
       LOG.debug("Retrieved item headers {}", headers);
 
-      return new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      return current;
     }
 
     throw new IllegalStateException("Expected item not found");
