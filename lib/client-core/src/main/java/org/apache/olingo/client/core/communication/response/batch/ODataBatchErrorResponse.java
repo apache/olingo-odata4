@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.response.batch;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -55,17 +54,7 @@ public class ODataBatchErrorResponse extends AbstractODataResponse {
   }
 
   @Override
-  public String getEtag() {
-    return null;
-  }
-
-  @Override
-  public URI getContextURL() {
-    return null;
-  }
-
-  @Override
-  public String getMetadataETag() {
+  public String getETag() {
     return null;
   }
 }

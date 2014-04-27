@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 
 /**
@@ -119,10 +119,10 @@ public class ODataEntityCreateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(),
-                  ODataPubFormat.fromString(getAccept()));
-
-          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
+          final ResWrap<Entry> resource = odataClient.getDeserializer().
+                  toEntry(getRawResponse(), ODataPubFormat.fromString(getAccept()));
+          
+          entity = (E) odataClient.getBinder().getODataEntity(resource);
         } finally {
           this.close();
         }

@@ -16,13 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.utils.v3;
+package org.apache.olingo.client.api.v4;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 
-public class XMLUtilities extends org.apache.olingo.fit.utils.AbstractXMLUtilities {
+public interface EdmEnabledODataClient extends CommonEdmEnabledODataClient<UpdateType>, ODataClient {
 
-  public XMLUtilities() throws Exception {
-    super(ODataServiceVersion.V30);
-  }
 }

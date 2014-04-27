@@ -79,7 +79,6 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return complex value.
    */
-//  @SuppressWarnings("unchecked")
   @Override
   public <OP extends CommonODataProperty> ODataComplexValue<OP> asComplex() {
     return isComplex() ? (ODataComplexValue<OP>) this : null;
@@ -100,7 +99,6 @@ public abstract class AbstractODataValue implements ODataValue {
    *
    * @return collection value.
    */
-//  @SuppressWarnings("unchecked")
   @Override
   public <OV extends ODataValue> ODataCollectionValue<OV> asCollection() {
     return isCollection() ? (ODataCollectionValue<OV>) this : null;

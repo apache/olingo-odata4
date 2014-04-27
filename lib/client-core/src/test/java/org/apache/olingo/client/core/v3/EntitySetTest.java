@@ -23,9 +23,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 import org.junit.Test;
@@ -40,14 +43,15 @@ public class EntitySetTest extends AbstractTest {
   private void read(final ODataPubFormat format) throws IOException {
     final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
     final ODataEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-            getClient().getDeserializer().toFeed(input, format).getObject());
+            getClient().getDeserializer().toFeed(input, format));
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());
     assertNotNull(entitySet.getNext());
 
-    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(getClient().
-            getBinder().getFeed(entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM)));
+    final ODataEntitySet written = getClient().getBinder().getODataEntitySet(new ResWrap<Feed>((URI) null, null,
+            getClient().getBinder().getFeed(
+                    entitySet, ResourceFactory.feedClassForFormat(format == ODataPubFormat.ATOM))));
     assertEquals(entitySet, written);
   }
 

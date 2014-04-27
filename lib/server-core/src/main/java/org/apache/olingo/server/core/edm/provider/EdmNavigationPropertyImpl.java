@@ -32,6 +32,7 @@ import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   private final NavigationProperty navigationProperty;
+
   private List<EdmReferentialConstraint> referentialConstraints;
 
   public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
@@ -52,6 +53,11 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   @Override
   public Boolean isNullable() {
     return navigationProperty.getNullable();
+  }
+
+  @Override
+  public Boolean containsTarget() {
+    return navigationProperty.isContainsTarget();
   }
 
   @Override
@@ -80,7 +86,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
           referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
-              .getReferencedProperty()));
+                  .getReferencedProperty()));
         }
       }
     }

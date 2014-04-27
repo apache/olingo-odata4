@@ -21,34 +21,45 @@ package org.apache.olingo.client.core.op;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -73,9 +84,9 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
    */
   protected final Logger LOG = LoggerFactory.getLogger(AbstractODataBinder.class);
 
-  protected final CommonODataClient client;
+  protected final CommonODataClient<?> client;
 
-  protected AbstractODataBinder(final CommonODataClient client) {
+  protected AbstractODataBinder(final CommonODataClient<?> client) {
     this.client = client;
   }
 
@@ -241,55 +252,61 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return valueResource;
   }
 
-  @Override
-  public CommonODataEntitySet getODataEntitySet(final Feed resource) {
-    return getODataEntitySet(resource, null);
-  }
-
   protected abstract boolean add(CommonODataEntitySet entitySet, CommonODataEntity entity);
 
   @Override
-  public CommonODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
+  public CommonODataEntitySet getODataEntitySet(final ResWrap<Feed> resource) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      client.getSerializer().feed(resource, writer);
+      client.getSerializer().feed(resource.getPayload(), writer);
       writer.flush();
       LOG.debug("Feed -> ODataEntitySet:\n{}", writer.toString());
     }
 
-    final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
+    final URI base = resource.getContextURL() == null
+            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
 
-    final URI next = resource.getNext();
+    final URI next = resource.getPayload().getNext();
 
     final CommonODataEntitySet entitySet = next == null
             ? client.getObjectFactory().newEntitySet()
             : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
-    if (resource.getCount() != null) {
-      entitySet.setCount(resource.getCount());
+    if (resource.getPayload().getCount() != null) {
+      entitySet.setCount(resource.getPayload().getCount());
     }
 
-    for (Entry entryResource : resource.getEntries()) {
-      add(entitySet, getODataEntity(entryResource));
+    for (Entry entryResource : resource.getPayload().getEntries()) {
+      add(entitySet, getODataEntity(
+              new ResWrap<Entry>(resource.getContextURL(), resource.getMetadataETag(), entryResource)));
     }
 
     return entitySet;
   }
 
-  @Override
-  public CommonODataEntity getODataEntity(final Entry resource) {
-    return getODataEntity(resource, null);
-  }
+  protected void odataNavigationLinks(final EdmStructuredType edmType,
+          final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
 
-  protected void odataLinks(final Linked linked, final ODataLinked odataLinked, final URI base) {
     for (Link link : linked.getNavigationLinks()) {
       final Entry inlineEntry = link.getInlineEntry();
       final Feed inlineFeed = link.getInlineFeed();
 
       if (inlineEntry == null && inlineFeed == null) {
-        final ODataLinkType linkType = link.getType() == null
-                ? ODataLinkType.ENTITY_NAVIGATION
-                : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+        ODataLinkType linkType = null;
+        if (edmType != null) {
+          final EdmNavigationProperty navProp = edmType.getNavigationProperty(link.getTitle());
+          if (navProp != null) {
+            linkType = navProp.isCollection()
+                    ? ODataLinkType.ENTITY_SET_NAVIGATION
+                    : ODataLinkType.ENTITY_NAVIGATION;
+          }
+        }
+        if (linkType == null) {
+          linkType = link.getType() == null
+                  ? ODataLinkType.ENTITY_NAVIGATION
+                  : ODataLinkType.fromString(client.getServiceVersion(), link.getRel(), link.getType());
+        }
+
         odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION
                 ? client.getObjectFactory().
                 newEntityNavigationLink(link.getTitle(), URIUtils.getURI(base, link.getHref()))
@@ -298,114 +315,193 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
       } else if (inlineEntry != null) {
         odataLinked.addLink(new ODataInlineEntity(client.getServiceVersion(),
                 URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_NAVIGATION, link.getTitle(),
-                getODataEntity(inlineEntry,
-                        inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI())));
+                getODataEntity(new ResWrap<Entry>(
+                                inlineEntry.getBaseURI() == null ? base : inlineEntry.getBaseURI(),
+                                metadataETag,
+                                inlineEntry))));
       } else {
         odataLinked.addLink(new ODataInlineEntitySet(client.getServiceVersion(),
                 URIUtils.getURI(base, link.getHref()), ODataLinkType.ENTITY_SET_NAVIGATION, link.getTitle(),
-                getODataEntitySet(inlineFeed,
-                        inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI())));
+                getODataEntitySet(new ResWrap<Feed>(
+                                inlineFeed.getBaseURI() == null ? base : inlineFeed.getBaseURI(),
+                                metadataETag,
+                                inlineFeed))));
       }
     }
   }
 
-  protected abstract void copyProperties(List<Property> src, CommonODataEntity dst, final URI base);
+  /**
+   * Infer type name from various sources of information including Edm and context URL, if available.
+   *
+   * @param contextURL context URL
+   * @param metadataETag metadata ETag
+   * @return Edm type information
+   */
+  private EdmEntityType findEntityType(final ContextURL contextURL, final String metadataETag) {
+    EdmEntityType entityType = null;
+
+    if (client instanceof EdmEnabledODataClient && contextURL != null) {
+      final Edm edm = ((EdmEnabledODataClient) client).getEdm(metadataETag);
+
+      if (contextURL.getDerivedEntity() == null) {
+        for (EdmSchema schema : edm.getSchemas()) {
+          final EdmEntityContainer container = schema.getEntityContainer();
+
+          EdmBindingTarget bindingTarget =
+                  container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
+          if (bindingTarget == null) {
+            bindingTarget = container.getSingleton(contextURL.getEntitySetOrSingletonOrType());
+          }
+          if (bindingTarget != null) {
+            if (contextURL.getNavOrPropertyPath() == null) {
+              entityType = bindingTarget.getEntityType();
+            } else {
+              final EdmNavigationProperty navProp = bindingTarget.getEntityType().
+                      getNavigationProperty(contextURL.getNavOrPropertyPath());
+
+              entityType = navProp == null
+                      ? bindingTarget.getEntityType()
+                      : navProp.getType();
+            }
+          }
+        }
+      } else {
+        entityType = edm.getEntityType(new FullQualifiedName(contextURL.getDerivedEntity()));
+      }
+    }
+
+    return entityType;
+  }
 
   @Override
-  public CommonODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
+  public CommonODataEntity getODataEntity(final ResWrap<Entry> resource) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      client.getSerializer().entry(resource, writer);
+      client.getSerializer().entry(resource.getPayload(), writer);
       writer.flush();
       LOG.debug("EntryResource -> ODataEntity:\n{}", writer.toString());
     }
 
-    final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
+    final URI base = resource.getContextURL() == null
+            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
 
-    final FullQualifiedName entityTypeName = resource.getType() == null
-            ? null
-            : new FullQualifiedName(resource.getType());
-    final CommonODataEntity entity = resource.getSelfLink() == null
-            ? client.getObjectFactory().newEntity(entityTypeName)
-            : client.getObjectFactory().newEntity(entityTypeName,
-                    URIUtils.getURI(base, resource.getSelfLink().getHref()));
-
-    if (StringUtils.isNotBlank(resource.getETag())) {
-      entity.setETag(resource.getETag());
+    final EdmEntityType edmType = findEntityType(resource.getContextURL(), resource.getMetadataETag());
+    FullQualifiedName typeName = null;
+    if (resource.getPayload().getType() == null) {
+      if (edmType != null) {
+        typeName = edmType.getFullQualifiedName();
+      }
+    } else {
+      typeName = new FullQualifiedName(resource.getPayload().getType());
     }
 
-    if (resource.getEditLink() != null) {
-      entity.setEditLink(URIUtils.getURI(base, resource.getEditLink().getHref()));
+    final CommonODataEntity entity = resource.getPayload().getSelfLink() == null
+            ? client.getObjectFactory().newEntity(typeName)
+            : client.getObjectFactory().newEntity(typeName,
+                    URIUtils.getURI(base, resource.getPayload().getSelfLink().getHref()));
+
+    if (StringUtils.isNotBlank(resource.getPayload().getETag())) {
+      entity.setETag(resource.getPayload().getETag());
     }
 
-    for (Link link : resource.getAssociationLinks()) {
+    if (resource.getPayload().getEditLink() != null) {
+      entity.setEditLink(URIUtils.getURI(base, resource.getPayload().getEditLink().getHref()));
+    }
+
+    for (Link link : resource.getPayload().getAssociationLinks()) {
       entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
               setURI(URIUtils.getURI(base, link.getHref())).
               setType(ODataLinkType.ASSOCIATION).setTitle(link.getTitle()).build());
     }
 
-    odataLinks(resource, entity, base);
+    odataNavigationLinks(
+            edmType, resource.getPayload(), entity, resource.getMetadataETag(), base);
 
-    for (Link link : resource.getMediaEditLinks()) {
+    for (Link link : resource.getPayload().getMediaEditLinks()) {
       entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
               setURI(URIUtils.getURI(base, link.getHref())).
               setType(ODataLinkType.MEDIA_EDIT).setTitle(link.getTitle()).build());
     }
 
-    for (ODataOperation operation : resource.getOperations()) {
+    for (ODataOperation operation : resource.getPayload().getOperations()) {
       operation.setTarget(URIUtils.getURI(base, operation.getTarget()));
       entity.getOperations().add(operation);
     }
 
-    if (resource.isMediaEntry()) {
+    if (resource.getPayload().isMediaEntry()) {
       entity.setMediaEntity(true);
-      entity.setMediaContentSource(resource.getMediaContentSource());
-      entity.setMediaContentType(resource.getMediaContentType());
-      entity.setMediaETag(resource.getMediaETag());
+      entity.setMediaContentSource(resource.getPayload().getMediaContentSource());
+      entity.setMediaContentType(resource.getPayload().getMediaContentType());
+      entity.setMediaETag(resource.getPayload().getMediaETag());
     }
 
-    copyProperties(resource.getProperties(), entity, base);
+    for (Property property : resource.getPayload().getProperties()) {
+      add(entity, getODataProperty(
+              new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
+    }
 
     return entity;
   }
 
-  protected ODataValue getODataValue(final Property resource, final URI base) {
-    ODataValue value = null;
+  protected EdmTypeInfo buildTypeInfo(final ResWrap<Property> resource) {
+    FullQualifiedName typeName = null;
+    final EdmType entityType = findEntityType(resource.getContextURL(), resource.getMetadataETag());
+    if (entityType instanceof EdmStructuredType) {
+      final EdmProperty edmProperty = ((EdmStructuredType) entityType).
+              getStructuralProperty(resource.getPayload().getName());
+      if (edmProperty != null) {
+        typeName = edmProperty.getType().getFullQualifiedName();
+      }
+    }
 
-    final EdmTypeInfo typeInfo = resource.getType() == null
-            ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(resource.getType()).build();
-    if (resource.getValue().isPrimitive()) {
+    EdmTypeInfo typeInfo = null;
+    if (typeName == null) {
+      if (resource.getPayload().getType() != null) {
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(resource.getPayload().getType()).build();
+      }
+    } else {
+      typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
+    }
+    return typeInfo;
+  }
+
+  protected ODataValue getODataValue(final ResWrap<Property> resource) {
+    final EdmTypeInfo typeInfo = buildTypeInfo(resource);
+
+    ODataValue value = null;
+    if (resource.getPayload().getValue().isPrimitive()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
-              setText(resource.getValue().asPrimitive().get()).
+              setText(resource.getPayload().getValue().asPrimitive().get()).
               setType(typeInfo == null
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(
                               client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
-    } else if (resource.getValue().isGeospatial()) {
+    } else if (resource.getPayload().getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
-              setValue(resource.getValue().asGeospatial().get()).
+              setValue(resource.getPayload().getValue().asGeospatial().get()).
               setType(typeInfo == null
                       || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
                       || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-                      ? resource.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+                      ? resource.getPayload().getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
                       : EdmPrimitiveTypeKind.valueOfFQN(
                               client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
-    } else if (resource.getValue().isComplex()) {
+    } else if (resource.getPayload().getValue().isComplex()) {
       value = client.getObjectFactory().newComplexValue(typeInfo == null
               ? null : typeInfo.getFullQualifiedName().toString());
 
-      for (Property property : resource.getValue().asComplex().get()) {
-        value.asComplex().add(getODataProperty(property));
+      for (Property property : resource.getPayload().getValue().asComplex().get()) {
+        value.asComplex().add(getODataProperty(
+                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
       }
-    } else if (resource.getValue().isCollection()) {
+    } else if (resource.getPayload().getValue().isCollection()) {
       value = client.getObjectFactory().newCollectionValue(typeInfo == null
               ? null : "Collection(" + typeInfo.getFullQualifiedName().toString() + ")");
 
-      for (Value _value : resource.getValue().asCollection().get()) {
+      for (Value _value : resource.getPayload().getValue().asCollection().get()) {
         final JSONPropertyImpl fake = new JSONPropertyImpl();
         fake.setValue(_value);
-        value.asCollection().add(getODataValue(fake, base));
+        value.asCollection().add(getODataValue(
+                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), fake)));
       }
     }
 

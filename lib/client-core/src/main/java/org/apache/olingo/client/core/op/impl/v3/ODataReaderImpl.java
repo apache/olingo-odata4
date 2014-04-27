@@ -25,8 +25,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.op.v3.ODataReader;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataReader;
-import org.apache.olingo.commons.api.data.Container;
-import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
@@ -43,39 +42,36 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
 
   @Override
   public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().
-            getODataEntitySet(client.getDeserializer().toFeed(input, format).getObject());
+    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format));
   }
 
   @Override
   public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().
-            getODataEntity(client.getDeserializer().toEntry(input, format).getObject());
+    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer().toEntry(input, format));
   }
 
   @Override
   public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    final Property property = client.getDeserializer().toProperty(input, format).getObject();
-    return ((ODataClient) client).getBinder().getODataProperty(property);
+    return ((ODataClient) client).getBinder().getODataProperty(client.getDeserializer().toProperty(input, format));
   }
 
   @Override
   public ODataLinkCollection readLinks(final InputStream input, final ODataFormat format) {
     return ((ODataClient) client).getBinder().getLinkCollection(
-            ((ODataClient) client).getDeserializer().toLinkCollection(input, format).getObject());
+            ((ODataClient) client).getDeserializer().toLinkCollection(input, format).getPayload());
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public <T> Container<T> read(final InputStream src, final String format, final Class<T> reference) {
+  public <T> ResWrap<T> read(final InputStream src, final String format, final Class<T> reference) {
     if (ODataLinkCollection.class.isAssignableFrom(reference)) {
-      final Container<LinkCollection> container =
+      final ResWrap<LinkCollection> container =
               ((ODataClient) client).getDeserializer().toLinkCollection(src, ODataFormat.fromString(format));
 
-      return new Container<T>(
+      return new ResWrap<T>(
               container.getContextURL(),
               container.getMetadataETag(),
-              (T) ((ODataClient) client).getBinder().getLinkCollection(container.getObject()));
+              (T) ((ODataClient) client).getBinder().getLinkCollection(container.getPayload()));
     } else {
       return super.read(src, format, reference);
     }

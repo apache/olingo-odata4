@@ -35,6 +35,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   private final NavigationProperty navigationProperty;
 
   private final EdmTypeInfo edmTypeInfo;
+
   private List<EdmReferentialConstraint> referentialConstraints;
 
   public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
@@ -64,6 +65,11 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   }
 
   @Override
+  public Boolean containsTarget() {
+    return navigationProperty.isContainsTarget();
+  }
+
+  @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
     final List<? extends ReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
     if (referentialConstraints != null) {
@@ -84,7 +90,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
           referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
-              .getReferencedProperty()));
+                  .getReferencedProperty()));
         }
       }
     }

@@ -52,7 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
@@ -310,7 +310,7 @@ public class V4Services extends AbstractServices {
       final AtomPropertyImpl property = new AtomPropertyImpl();
       property.setType("Edm.Int32");
       property.setValue(new PrimitiveValueImpl("2"));
-      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+      final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
@@ -384,7 +384,7 @@ public class V4Services extends AbstractServices {
       final AtomFeedImpl feed = new AtomFeedImpl();
       feed.getEntries().add(entry);
 
-      final Container<AtomFeedImpl> container = new Container<AtomFeedImpl>(
+      final ResWrap<AtomFeedImpl> container = new ResWrap<AtomFeedImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "ProductDetail"), null,
               feed);
 
@@ -530,7 +530,7 @@ public class V4Services extends AbstractServices {
       property.setType("Edm.Double");
       property.setValue(new PrimitiveValueImpl("41.79"));
 
-      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(null, null, property);
+      final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>((URI) null, null, property);
 
       return xml.createResponse(
               null,
@@ -568,7 +568,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-              + File.separatorChar + filename, utils.getKey()),
+                      + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -590,7 +590,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -648,7 +648,7 @@ public class V4Services extends AbstractServices {
       }
       final InputStream entry = FSManager.instance(version).readFile(containedPath.toString(), Accept.ATOM);
 
-      final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
+      final ResWrap<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       return xml.createResponse(
               null,
@@ -679,21 +679,21 @@ public class V4Services extends AbstractServices {
       final AbstractUtilities utils = getUtilities(acceptType);
 
       // 1. parse the entry (from Atom or JSON) into AtomEntryImpl
-      final Container<AtomEntryImpl> entryContainer;
+      final ResWrap<AtomEntryImpl> entryContainer;
       final AtomEntryImpl entry;
       final Accept contentTypeValue = Accept.parse(contentType, version);
       if (Accept.ATOM == contentTypeValue) {
         entryContainer = atomDeserializer.read(IOUtils.toInputStream(entity, Constants.ENCODING), AtomEntryImpl.class);
-        entry = entryContainer.getObject();
+        entry = entryContainer.getPayload();
       } else {
-        final Container<JSONEntryImpl> jcontainer =
+        final ResWrap<JSONEntryImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                new TypeReference<JSONEntryImpl>() {
-        });
+                        new TypeReference<JSONEntryImpl>() {
+                        });
 
-        entry = dataBinder.toAtomEntry(jcontainer.getObject());
+        entry = dataBinder.toAtomEntry(jcontainer.getPayload());
 
-        entryContainer = new Container<AtomEntryImpl>(
+        entryContainer = new ResWrap<AtomEntryImpl>(
                 jcontainer.getContextURL(),
                 jcontainer.getMetadataETag(),
                 entry);
@@ -714,8 +714,8 @@ public class V4Services extends AbstractServices {
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
       final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
-      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
-      feedContainer.getObject().getEntries().add(entry);
+      final ResWrap<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
+      feedContainer.getPayload().getEntries().add(entry);
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
       final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
@@ -772,24 +772,24 @@ public class V4Services extends AbstractServices {
       final LinkInfo links = xml.readLinks(
               entitySetName, entityId, containedEntitySetName + "(" + containedEntityId + ")", Accept.ATOM);
 
-      Container<AtomEntryImpl> container = atomDeserializer.read(links.getLinks(), AtomEntryImpl.class);
-      final AtomEntryImpl original = container.getObject();
+      ResWrap<AtomEntryImpl> container = atomDeserializer.read(links.getLinks(), AtomEntryImpl.class);
+      final AtomEntryImpl original = container.getPayload();
 
       final AtomEntryImpl entryChanges;
       if (Accept.ATOM == contentTypeValue) {
         container = atomDeserializer.read(IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntryImpl.class);
-        entryChanges = container.getObject();
+        entryChanges = container.getPayload();
       } else {
         final String entityType = getMetadataObj().getEntitySet(entitySetName).getType();
         final String containedType = getMetadataObj().getEntityType(entityType).
                 getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
-        final Container<JSONEntryImpl> jsonContainer = mapper.readValue(
+        final ResWrap<JSONEntryImpl> jsonContainer = mapper.readValue(
                 IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntryImpl>() {
-        });
-        jsonContainer.getObject().setType(typeInfo.getFullQualifiedName().toString());
-        entryChanges = dataBinder.toAtomEntry(jsonContainer.getObject());
+                });
+        jsonContainer.getPayload().setType(typeInfo.getFullQualifiedName().toString());
+        entryChanges = dataBinder.toAtomEntry(jsonContainer.getPayload());
       }
 
       for (Property property : entryChanges.getProperties()) {
@@ -800,7 +800,7 @@ public class V4Services extends AbstractServices {
         original.getProperties().add(property);
       }
 
-      FSManager.instance(version).putInMemory(new Container<AtomEntryImpl>(null, null, original),
+      FSManager.instance(version).putInMemory(new ResWrap<AtomEntryImpl>((URI) null, null, original),
               xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")");
 
       return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
@@ -820,8 +820,8 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
-      final Container<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
+                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+      final ResWrap<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       // 2. Remove the contained entity
       final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
@@ -831,8 +831,8 @@ public class V4Services extends AbstractServices {
       // 3. Update the contained entity set
       final String atomFeedRelativePath = containedPath(entityId, containedEntitySetName).toString();
       final InputStream feedIS = FSManager.instance(version).readFile(atomFeedRelativePath, Accept.ATOM);
-      final Container<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
-      feedContainer.getObject().getEntries().remove(container.getObject());
+      final ResWrap<AtomFeedImpl> feedContainer = atomDeserializer.read(feedIS, AtomFeedImpl.class);
+      feedContainer.getPayload().getEntries().remove(container.getPayload());
 
       final ByteArrayOutputStream content = new ByteArrayOutputStream();
       final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
@@ -876,7 +876,7 @@ public class V4Services extends AbstractServices {
       final InputStream feed = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
 
-      final Container<AtomFeedImpl> container = atomDeserializer.read(feed, AtomFeedImpl.class);
+      final ResWrap<AtomFeedImpl> container = atomDeserializer.read(feed, AtomFeedImpl.class);
 
       return xml.createResponse(
               null,
@@ -905,7 +905,7 @@ public class V4Services extends AbstractServices {
       final AtomPropertyImpl property = new AtomPropertyImpl();
       property.setType("Microsoft.Test.OData.Services.ODataWCFService.Color");
       property.setValue(new EnumValueImpl("Red"));
-      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+      final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
@@ -975,7 +975,7 @@ public class V4Services extends AbstractServices {
       value.get().add(new PrimitiveValueImpl("Car"));
       value.get().add(new PrimitiveValueImpl("Computer"));
       property.setValue(value);
-      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+      final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
@@ -1010,7 +1010,7 @@ public class V4Services extends AbstractServices {
       value.get().add(new PrimitiveValueImpl("first@olingo.apache.org"));
       value.get().add(new PrimitiveValueImpl("second@olingo.apache.org"));
       property.setValue(value);
-      final Container<AtomPropertyImpl> container = new Container<AtomPropertyImpl>(
+      final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()), null,
               property);
 
@@ -1043,15 +1043,15 @@ public class V4Services extends AbstractServices {
       final Accept contentTypeValue = Accept.parse(contentType, version);
       Property property;
       if (contentTypeValue == Accept.ATOM) {
-        final Container<AtomPropertyImpl> paramContainer = atomDeserializer.read(
+        final ResWrap<AtomPropertyImpl> paramContainer = atomDeserializer.read(
                 IOUtils.toInputStream(param, Constants.ENCODING), AtomPropertyImpl.class);
-        property = paramContainer.getObject();
+        property = paramContainer.getPayload();
       } else {
-        final Container<JSONPropertyImpl> paramContainer =
+        final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                new TypeReference<JSONPropertyImpl>() {
-        });
-        property = paramContainer.getObject();
+                        new TypeReference<JSONPropertyImpl>() {
+                        });
+        property = paramContainer.getPayload();
       }
 
       assert property.getValue().isComplex();
@@ -1085,15 +1085,15 @@ public class V4Services extends AbstractServices {
       final Accept contentTypeValue = Accept.parse(contentType, version);
       Property property;
       if (contentTypeValue == Accept.XML) {
-        final Container<AtomPropertyImpl> paramContainer = atomDeserializer.read(
+        final ResWrap<AtomPropertyImpl> paramContainer = atomDeserializer.read(
                 IOUtils.toInputStream(param, Constants.ENCODING), AtomPropertyImpl.class);
-        property = paramContainer.getObject();
+        property = paramContainer.getPayload();
       } else {
-        final Container<JSONPropertyImpl> paramContainer =
+        final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                new TypeReference<JSONPropertyImpl>() {
-        });
-        property = paramContainer.getObject();
+                        new TypeReference<JSONPropertyImpl>() {
+                        });
+        property = paramContainer.getPayload();
       }
 
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(property.getType());

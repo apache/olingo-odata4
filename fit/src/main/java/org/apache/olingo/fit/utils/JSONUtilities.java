@@ -19,9 +19,7 @@
 package org.apache.olingo.fit.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.ByteArrayInputStream;
@@ -42,9 +40,9 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 
-public abstract class AbstractJSONUtilities extends AbstractUtilities {
+public class JSONUtilities extends AbstractUtilities {
 
-  public AbstractJSONUtilities(final ODataServiceVersion version) throws Exception {
+  public JSONUtilities(final ODataServiceVersion version) throws Exception {
     super(version);
   }
 
@@ -57,7 +55,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected InputStream addLinks(
           final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
           throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -66,12 +64,11 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
               new TextNode(Commons.getLinksURI(version, entitySetName, entitykey, link)));
     }
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   protected Set<String> retrieveAllLinkNames(InputStream is) throws Exception {
-    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -101,7 +98,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   protected NavigationLinks retrieveNavigationInfo(final String entitySetName, final InputStream is)
           throws Exception {
 
-    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -129,7 +125,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
         links.addLinks(title, hrefs);
       } else if (navigationProperties.containsKey(field.getKey())) {
-        links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTF-8"));
+        links.addInlines(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), Constants.ENCODING));
       }
     }
 
@@ -144,7 +140,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
           final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
           throws Exception {
 
-    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
     if (links != null) {
@@ -178,72 +173,10 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
-  @Override
-  public InputStream getPropertyValue(final InputStream src, final List<String> path)
-          throws Exception {
-    
-    final JsonNode srcNode = mapper.readTree(src);
-    final JsonNode node = getProperty(srcNode, path);
-    return IOUtils.toInputStream(node.asText(), Constants.ENCODING);
-  }
-
-  @Override
-  public InputStream getProperty(
-          final String entitySetName, final String entityId, final List<String> path, final String edmType)
-          throws Exception {
-
-    final InputStream src = fsManager.readFile(
-            Commons.getEntityBasePath(entitySetName, entityId) + Constants.get(version, ConstantKey.ENTITY),
-            Accept.JSON_FULLMETA);
-
-    
-    final JsonNode srcNode = mapper.readTree(src);
-
-    final ObjectNode propertyNode = new ObjectNode(JsonNodeFactory.instance);
-
-    if (StringUtils.isNotBlank(edmType) && version.compareTo(ODataServiceVersion.V40) < 0) {
-      propertyNode.put(Constants.get(
-              version, ConstantKey.JSON_ODATAMETADATA_NAME),
-              Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + edmType);
-    }
-
-    JsonNode jsonNode = getProperty(srcNode, path);
-
-    if (jsonNode.isArray()) {
-      propertyNode.put("value", (ArrayNode) jsonNode);
-    } else if (jsonNode.isObject()) {
-      propertyNode.putAll((ObjectNode) jsonNode);
-    } else {
-      propertyNode.put("value", jsonNode.asText());
-    }
-
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    mapper.writeValue(bos, propertyNode);
-
-    final InputStream res = new ByteArrayInputStream(bos.toByteArray());
-    IOUtils.closeQuietly(bos);
-
-    return res;
-  }
-
-  private JsonNode getProperty(final JsonNode node, final List<String> path)
-          throws NotFoundException {
-
-    JsonNode propertyNode = node;
-    for (int i = 0; i < path.size(); i++) {
-      propertyNode = propertyNode.get(path.get(i));
-      if (propertyNode == null) {
-        throw new NotFoundException();
-      }
-    }
-
-    return propertyNode;
-  }
-
   public InputStream addJsonInlinecount(
           final InputStream src, final int count, final Accept accept)
           throws Exception {
-    
+
     final JsonNode srcNode = mapper.readTree(src);
 
     ((ObjectNode) srcNode).put(Constants.get(version, ConstantKey.ODATA_COUNT_NAME), count);
@@ -258,7 +191,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   }
 
   public InputStream wrapJsonEntities(final InputStream entities) throws Exception {
-    
+
     final JsonNode node = mapper.readTree(entities);
 
     final ObjectNode res;
@@ -287,7 +220,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
   @Override
   public InputStream selectEntity(final InputStream src, final String[] propertyNames) throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
 
     final Set<String> retain = new HashSet<String>();
@@ -307,7 +240,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     srcNode.retain(retain);
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
@@ -319,7 +252,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       throw new NotFoundException();
     }
 
-    
     final ObjectNode node = mapper.createObjectNode();
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -356,14 +288,13 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       node.set(Constants.get(version, ConstantKey.JSON_NEXTLINK_NAME), new TextNode(next));
     }
 
-    return IOUtils.toInputStream(node.toString(), "UTF-8");
+    return IOUtils.toInputStream(node.toString(), Constants.ENCODING);
   }
 
   @Override
   protected InputStream replaceLink(
           final InputStream toBeChanged, final String linkName, final InputStream replacement)
           throws Exception {
-    
 
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
@@ -379,20 +310,19 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       toBeChangedNode.set(linkName + Constants.get(version, ConstantKey.JSON_NEXTLINK_SUFFIX), next);
     }
 
-    return IOUtils.toInputStream(toBeChangedNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(toBeChangedNode.toString(), Constants.ENCODING);
   }
 
   @Override
   protected Map<String, InputStream> getChanges(final InputStream src) throws Exception {
     final Map<String, InputStream> res = new HashMap<String, InputStream>();
 
-    
     final JsonNode srcObject = mapper.readTree(src);
 
     final Iterator<Map.Entry<String, JsonNode>> fields = srcObject.fields();
     while (fields.hasNext()) {
       final Map.Entry<String, JsonNode> field = fields.next();
-      res.put(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), "UTF-8"));
+      res.put(field.getKey(), IOUtils.toInputStream(field.getValue().toString(), Constants.ENCODING));
     }
 
     return res;
@@ -409,7 +339,7 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   @Override
   public Map.Entry<String, List<String>> extractLinkURIs(final InputStream is)
           throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
 
@@ -436,19 +366,18 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
   @Override
   public InputStream addEditLink(
           final InputStream content, final String title, final String href) throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
     srcNode.set(Constants.get(version, ConstantKey.JSON_EDITLINK_NAME), new TextNode(href));
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   public InputStream addOperation(final InputStream content, final String name, final String metaAnchor,
           final String href) throws Exception {
 
-    
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(content);
     IOUtils.closeQuietly(content);
 
@@ -457,22 +386,25 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
     action.set("target", new TextNode(href));
 
     srcNode.set(metaAnchor, action);
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   public InputStream replaceProperty(
           final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
           throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
 
-    final JsonNode replacementNode;
+    JsonNode replacementNode;
     if (justValue) {
       replacementNode = new TextNode(IOUtils.toString(replacement));
     } else {
-      replacementNode = (ObjectNode) mapper.readTree(replacement);
+      replacementNode = mapper.readTree(replacement);
+      if (replacementNode.has("value")) {
+        replacementNode = replacementNode.get("value");
+      }
     }
     IOUtils.closeQuietly(replacement);
 
@@ -484,14 +416,14 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
       }
     }
 
-    ((ObjectNode) node).set(path.get(path.size() - 1), replacementNode);
-
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    ((ObjectNode) node).set(path.get(path.size() - 1), replacementNode);   
+    
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 
   @Override
   public InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception {
-    
+
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);
 
@@ -505,6 +437,6 @@ public abstract class AbstractJSONUtilities extends AbstractUtilities {
 
     ((ObjectNode) node).set(path.get(path.size() - 1), null);
 
-    return IOUtils.toInputStream(srcNode.toString(), "UTF-8");
+    return IOUtils.toInputStream(srcNode.toString(), Constants.ENCODING);
   }
 }

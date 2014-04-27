@@ -39,7 +39,7 @@ public abstract class AbstractEdmNavigationProperty extends EdmElementImpl imple
   protected abstract FullQualifiedName getTypeFQN();
 
   @Override
-  public EdmType getType() {
+  public EdmEntityType getType() {
     if (typeImpl == null) {
       typeImpl = edm.getEntityType(getTypeFQN());
       if (typeImpl == null) {

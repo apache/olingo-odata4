@@ -18,11 +18,10 @@
  */
 package org.apache.olingo.client.core.op.impl.v4;
 
-import java.net.URI;
-import java.util.List;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -30,6 +29,7 @@ import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
@@ -143,68 +144,52 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource) {
+  public ODataEntitySet getODataEntitySet(final ResWrap<Feed> resource) {
     return (ODataEntitySet) super.getODataEntitySet(resource);
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
-    return (ODataEntitySet) super.getODataEntitySet(resource, defaultBaseURI);
-  }
-
-  @Override
-  protected void copyProperties(final List<Property> src, final CommonODataEntity dst, final URI base) {
-    for (Property property : src) {
-      add(dst, getODataProperty(property, base));
-    }
-  }
-
-  @Override
-  public ODataEntity getODataEntity(final Entry resource) {
-    return (ODataEntity) super.getODataEntity(resource);
-  }
-
-  @Override
-  public ODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
-    final ODataEntity entity = (ODataEntity) super.getODataEntity(resource, defaultBaseURI);
-    entity.setReference(resource.getId());
+  public ODataEntity getODataEntity(final ResWrap<Entry> resource) {
+    final ODataEntity entity = (ODataEntity) super.getODataEntity(resource);
+    entity.setReference(resource.getPayload().getId());
     return entity;
   }
 
   @Override
-  public ODataProperty getODataProperty(final Property property) {
-    return getODataProperty(property, null);
+  public ODataProperty getODataProperty(final ResWrap<Property> property) {
+    return new ODataPropertyImpl(property.getPayload().getName(), getODataValue(property));
   }
 
   @Override
-  public ODataProperty getODataProperty(final Property property, final URI base) {
-    return new ODataPropertyImpl(property.getName(), getODataValue(property, base));
-  }
-
-  @Override
-  protected ODataValue getODataValue(final Property resource, final URI base) {
-    final EdmTypeInfo typeInfo = resource.getType() == null
-            ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(resource.getType()).build();
+  protected ODataValue getODataValue(final ResWrap<Property> resource) {
+    final EdmTypeInfo typeInfo = buildTypeInfo(resource);
 
     ODataValue value;
-    if (resource.getValue().isEnum()) {
+    if (resource.getPayload().getValue().isEnum()) {
       value = ((ODataClient) client).getObjectFactory().newEnumValue(
               typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(),
-              resource.getValue().asEnum().get());
-    } else if (resource.getValue().isLinkedComplex()) {
+              resource.getPayload().getValue().asEnum().get());
+    } else if (resource.getPayload().getValue().isLinkedComplex()) {
       final ODataLinkedComplexValue lcValue = ((ODataClient) client).getObjectFactory().
               newLinkedComplexValue(typeInfo == null ? null : typeInfo.getFullQualifiedName().toString());
 
-      for (Property property : resource.getValue().asComplex().get()) {
-        lcValue.add(getODataProperty(property));
+      for (Property property : resource.getPayload().getValue().asComplex().get()) {
+        lcValue.add(getODataProperty(
+                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
       }
 
-      odataLinks(resource.getValue().asLinkedComplex(), lcValue, base);
+      EdmComplexType edmType = null;
+      if (client instanceof EdmEnabledODataClient && typeInfo != null) {
+        edmType = ((EdmEnabledODataClient) client).getEdm(resource.getMetadataETag()).
+                getComplexType(typeInfo.getFullQualifiedName());
+      }
+
+      odataNavigationLinks(edmType, resource.getPayload().getValue().asLinkedComplex(), lcValue,
+              resource.getMetadataETag(), resource.getContextURL() == null ? null : resource.getContextURL().getURI());
 
       value = lcValue;
     } else {
-      value = super.getODataValue(resource, base);
+      value = super.getODataValue(resource);
     }
 
     return value;

@@ -27,6 +27,8 @@ import org.apache.olingo.client.core.it.AbstractMetadataTestITCase;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Test;
 
@@ -42,6 +44,14 @@ public class MetadataTestITCase extends AbstractMetadataTestITCase {
     final Edm metadata = getClient().getRetrieveRequestFactory().
             getMetadataRequest(getTestServiceRoot()).execute().getBody();
     assertNotNull(metadata);
+
+    final EdmEntityType order = metadata.getEntityType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService", "Order"));
+    assertNotNull(order);
+
+    final EdmProperty orderDate = order.getStructuralProperty("OrderDate");
+    assertNotNull(orderDate);
+    assertEquals("Edm.DateTimeOffset", orderDate.getType().getFullQualifiedName().toString());
   }
 
   @Test

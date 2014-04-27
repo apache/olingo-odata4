@@ -50,6 +50,7 @@ public class Constants {
     v4constants.put(ConstantKey.ODATA_SERVICE_VERSION, "OData-Version");
     v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V40/Static.svc/");
     v4constants.put(ConstantKey.ODATA_METADATA_PREFIX, "http://localhost:9080/StaticService/V40/Static.svc/$metadata#");
+    v4constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/$entity");
     // -----------------------------
 
     // -----------------------------
@@ -59,6 +60,7 @@ public class Constants {
     constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V30/Static.svc/");
     constants.put(ConstantKey.ODATA_COUNT_NAME, "odata.count");
     constants.put(ConstantKey.ODATA_METADATA_PREFIX, "http://localhost:9080/StaticService/V30/Static.svc/$metadata#");
+    constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/@Element");
     constants.put(ConstantKey.ATOM_DEF_TYPE, "Edm.String");
     constants.put(ConstantKey.ATOM_PROPERTY_PREFIX, "d:");
     constants.put(ConstantKey.ATOM_METADATA_PREFIX, "m:");

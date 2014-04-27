@@ -22,7 +22,6 @@ import java.io.InputStream;
 import org.apache.olingo.client.api.op.v4.ODataReader;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataReader;
-import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -39,19 +38,16 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
 
   @Override
   public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().
-            getODataEntitySet(client.getDeserializer().toFeed(input, format).getObject());
+    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format));
   }
 
   @Override
   public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().
-            getODataEntity(client.getDeserializer().toEntry(input, format).getObject());
+    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer().toEntry(input, format));
   }
 
   @Override
   public ODataProperty readProperty(final InputStream input, final ODataFormat format) {
-    final Property property = client.getDeserializer().toProperty(input, format).getObject();
-    return ((ODataClient) client).getBinder().getODataProperty(property);
+    return ((ODataClient) client).getBinder().getODataProperty(client.getDeserializer().toProperty(input, format));
   }
 }

@@ -49,9 +49,9 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
         implements AsyncRequestWrapper<R> {
 
-  private final ODataClient odataClient;
+  private static final int MAX_RETRY = 5;
 
-  private final static int MAX_RETRY = 5;
+  private final ODataClient odataClient;
 
   /**
    * Request to be wrapped.
@@ -131,7 +131,6 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
   }
 
   private HttpResponse doExecute() {
-
     // Add all available headers
     for (String key : odataRequest.getHeaderNames()) {
       final String value = odataRequest.getHeader(key);
@@ -159,7 +158,6 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
      */
     @SuppressWarnings("unchecked")
     public AsyncResponseWrapperImpl(final HttpResponse res) {
-
       if (res.getStatusLine().getStatusCode() == 202) {
         retrieveMonitorDetails(res, true);
       } else {
@@ -236,9 +234,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     @SuppressWarnings("unchecked")
     private R instantiateResponse(final HttpResponse res) {
       R odataResponse;
-
       try {
-
         odataResponse = (R) ((AbstractODataRequest<?>) odataRequest).getResponseTemplate().
                 initFromEnclosedPart(res.getEntity().getContent());
 
@@ -292,7 +288,9 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
   }
 
   private HttpResponse executeHttpRequest(final HttpClient client, final HttpUriRequest req) {
-    final HttpResponse response;
+    checkRequest(odataClient, request);
+
+    HttpResponse response;
     try {
       response = client.execute(req);
     } catch (IOException e) {
@@ -302,7 +300,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       throw new HttpClientException(e);
     }
 
-    checkForResponse(odataClient, response, odataRequest.getAccept());
+    checkResponse(odataClient, response, odataRequest.getAccept());
 
     return response;
   }

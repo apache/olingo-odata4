@@ -39,7 +39,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
    * @param odataClient client instance getting this request
    * @param uri metadata URI.
    */
-  EdmMetadataRequestImpl(final CommonODataClient odataClient, final String serviceRoot, final URI uri) {
+  EdmMetadataRequestImpl(final CommonODataClient<?> odataClient, final String serviceRoot, final URI uri) {
     super(odataClient, uri);
     this.serviceRoot = serviceRoot;
   }

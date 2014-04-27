@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 
 /**
@@ -123,8 +123,9 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
     public E getBody() {
       if (entity == null) {
         try {
-          final Container<Entry> container = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());
-          entity = (E) odataClient.getBinder().getODataEntity(extractFromContainer(container));
+          final ResWrap<Entry> resource = odataClient.getDeserializer().toEntry(getRawResponse(), getFormat());
+
+          entity = (E) odataClient.getBinder().getODataEntity(resource);
         } finally {
           this.close();
         }

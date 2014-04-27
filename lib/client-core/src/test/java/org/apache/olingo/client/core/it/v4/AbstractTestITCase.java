@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.it.AbstractBaseTestITCase;
@@ -42,7 +43,9 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
-  protected static ODataClient client;
+  protected static final ODataClient client = ODataClientFactory.getV4();
+
+  protected static EdmEnabledODataClient edmClient;
 
   protected static String testStaticServiceRootURL;
 
@@ -61,11 +64,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
-  }
 
-  @BeforeClass
-  public static void setClientInstance() {
-    client = ODataClientFactory.getV4();
+    edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);  
   }
 
   @Override

@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.op;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
@@ -35,7 +36,7 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.op.CommonODataReader;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -74,7 +75,7 @@ public abstract class AbstractODataReader implements CommonODataReader {
   @Override
   public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format) {
     return client.getBinder().getODataServiceDocument(
-            client.getDeserializer().toServiceDocument(input, format).getObject());
+            client.getDeserializer().toServiceDocument(input, format).getPayload());
   }
 
   @Override
@@ -84,48 +85,60 @@ public abstract class AbstractODataReader implements CommonODataReader {
 
   @Override
   @SuppressWarnings("unchecked")
-  public <T> Container<T> read(final InputStream src, final String format, final Class<T> reference) {
-    Container<T> res;
+  public <T> ResWrap<T> read(final InputStream src, final String format, final Class<T> reference) {
+    ResWrap<T> res;
 
     try {
       if (ODataEntitySetIterator.class.isAssignableFrom(reference)) {
-        res = new Container<T>(
-                null, null, (T) new ODataEntitySetIterator(client, src, ODataPubFormat.fromString(format)));
+        res = new ResWrap<T>(
+                (URI) null,
+                null,
+                reference.cast(new ODataEntitySetIterator<CommonODataEntitySet, CommonODataEntity>(
+                                client, src, ODataPubFormat.fromString(format))));
       } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
-        final Container<Feed> container = client.getDeserializer().toFeed(src, ODataPubFormat.fromString(format));
-        res = new Container<T>(
-                container.getContextURL(),
-                container.getMetadataETag(),
-                (T) client.getBinder().getODataEntitySet(container.getObject()));
+        final ResWrap<Feed> resource = client.getDeserializer().toFeed(src, ODataPubFormat.fromString(format));
+        res = new ResWrap<T>(
+                resource.getContextURL(),
+                resource.getMetadataETag(),
+                reference.cast(client.getBinder().getODataEntitySet(resource)));
       } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
-        final Container<Entry> container = client.getDeserializer().toEntry(src, ODataPubFormat.fromString(format));
-        res = new Container<T>(
+        final ResWrap<Entry> container = client.getDeserializer().toEntry(src, ODataPubFormat.fromString(format));
+        res = new ResWrap<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
-                (T) client.getBinder().getODataEntity(container.getObject()));
+                reference.cast(client.getBinder().getODataEntity(container)));
       } else if (CommonODataProperty.class.isAssignableFrom(reference)) {
-        final Container<Property> container = client.getDeserializer().toProperty(src, ODataFormat.fromString(format));
-        res = new Container<T>(
+        final ResWrap<Property> container = client.getDeserializer().toProperty(src, ODataFormat.fromString(format));
+        res = new ResWrap<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),
-                (T) client.getBinder().getODataProperty(container.getObject()));
+                reference.cast(client.getBinder().getODataProperty(container)));
       } else if (ODataValue.class.isAssignableFrom(reference)) {
-        res = new Container<T>(null, null, (T) client.getObjectFactory().newPrimitiveValueBuilder().
-                setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
-                        ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
-                setText(IOUtils.toString(src)).
-                build());
+        res = new ResWrap<T>(
+                (URI) null,
+                null,
+                reference.cast(client.getObjectFactory().newPrimitiveValueBuilder().
+                        setType(ODataValueFormat.fromString(format) == ODataValueFormat.TEXT
+                                ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
+                        setText(IOUtils.toString(src)).
+                        build()));
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {
-        res = new Container<T>(null, null, (T) readMetadata(src));
+        res = new ResWrap<T>(
+                (URI) null,
+                null,
+                reference.cast(readMetadata(src)));
       } else if (ODataServiceDocument.class.isAssignableFrom(reference)) {
-        final Container<ServiceDocument> container =
+        final ResWrap<ServiceDocument> resource =
                 client.getDeserializer().toServiceDocument(src, ODataFormat.fromString(format));
-        res = new Container<T>(
-                container.getContextURL(),
-                container.getMetadataETag(),
-                (T) client.getBinder().getODataServiceDocument(container.getObject()));
+        res = new ResWrap<T>(
+                resource.getContextURL(),
+                resource.getMetadataETag(),
+                reference.cast(client.getBinder().getODataServiceDocument(resource.getPayload())));
       } else if (ODataError.class.isAssignableFrom(reference)) {
-        res = new Container<T>(null, null, (T) readError(src, !format.toString().contains("json")));
+        res = new ResWrap<T>(
+                (URI) null,
+                null,
+                reference.cast(readError(src, !format.toString().contains("json"))));
       } else {
         throw new IllegalArgumentException("Invalid reference type " + reference);
       }

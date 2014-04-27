@@ -32,6 +32,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -155,8 +156,8 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
-    assertEquals(10, entitySet.getCount());
+    final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
+    assertEquals(10, entitySet.getPayload().getCount());
   }
 
   private void rawRequest(final ODataPubFormat format) {
@@ -169,7 +170,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataEntitySet entitySet = res.getBodyAs(ODataEntitySet.class);
-    assertNotNull(entitySet);
+    final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
+    assertNotNull(entitySet.getPayload());
   }
 }

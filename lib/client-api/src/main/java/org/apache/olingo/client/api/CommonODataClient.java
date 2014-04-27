@@ -36,6 +36,11 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.CommonFilterFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
+/**
+ * Generic client interface (common to all supported OData protocol versions).
+ *
+ * @param <UT> concrete update type, depending on the protocol version
+ */
 public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataServiceVersion getServiceVersion();

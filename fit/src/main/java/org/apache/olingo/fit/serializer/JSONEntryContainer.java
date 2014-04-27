@@ -20,17 +20,17 @@ package org.apache.olingo.fit.serializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.net.URI;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.data.JSONEntryDeserializer;
 import org.apache.olingo.commons.core.data.JSONEntryImpl;
 import org.apache.olingo.commons.core.data.JSONEntrySerializer;
 
 @JsonDeserialize(using = JSONEntryDeserializer.class)
 @JsonSerialize(using = JSONEntrySerializer.class)
-public class JSONEntryContainer extends Container<JSONEntryImpl> {
+public class JSONEntryContainer extends ResWrap<JSONEntryImpl> {
 
-  public JSONEntryContainer(final URI contextURL, final String metadataETag, final JSONEntryImpl object) {
+  public JSONEntryContainer(final ContextURL contextURL, final String metadataETag, final JSONEntryImpl object) {
     super(contextURL, metadataETag, object);
   }
 }

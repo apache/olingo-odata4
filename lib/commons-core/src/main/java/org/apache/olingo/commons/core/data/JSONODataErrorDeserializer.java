@@ -24,13 +24,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.net.URI;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 
 public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODataErrorImpl> {
 
   @Override
-  protected Container<JSONODataErrorImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONODataErrorImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final JSONODataErrorImpl error = new JSONODataErrorImpl();
@@ -55,6 +56,6 @@ public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODa
       }
     }
 
-    return new Container<JSONODataErrorImpl>(null, null, error);
+    return new ResWrap<JSONODataErrorImpl>((URI) null, null, error);
   }
 }

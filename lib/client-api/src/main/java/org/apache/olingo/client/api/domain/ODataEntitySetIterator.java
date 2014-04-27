@@ -31,16 +31,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * OData entity set iterator class.
  * <br/>
- * <b>Please don't forget to call the <tt>close()>/<tt> method when not needed any more.</b>
+ * <b>Please don't forget to call the <tt>close()>/</tt> method when not needed any more.</b>
  *
  * @param <E> concrete ODataEntity implementation
  * @param <ES> concrete ODataEntitySet implementation
@@ -61,7 +62,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
 
   private final ODataPubFormat format;
 
-  private Entry cached;
+  private ResWrap<Entry> cached;
 
   private ES entitySet;
 
@@ -78,7 +79,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    * @param stream source stream.
    * @param format OData format.
    */
-  public ODataEntitySetIterator(final CommonODataClient odataClient, final InputStream stream,
+  public ODataEntitySetIterator(final CommonODataClient<?> odataClient, final InputStream stream,
           final ODataPubFormat format) {
 
     this.odataClient = odataClient;
@@ -171,10 +172,10 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
     return entitySet.getNext();
   }
 
-  private Entry nextJsonEntryFromFeed(final InputStream input, final OutputStream osFeed) {
+  private ResWrap<Entry> nextJsonEntryFromFeed(final InputStream input, final OutputStream osFeed) {
     final ByteArrayOutputStream entry = new ByteArrayOutputStream();
 
-    Entry jsonEntry = null;
+    ResWrap<Entry> jsonEntry = null;
     try {
       int c;
 
@@ -209,7 +210,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
 
         if (c >= 0) {
           jsonEntry = odataClient.getDeserializer().toEntry(
-                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON).getObject();
+                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON);
         }
       } else {
         while ((c = input.read()) >= 0) {
@@ -230,10 +231,12 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    * @param format de-serialize as AtomFeed or JSONFeed
    * @return de-serialized entity set.
    */
-  private Entry nextAtomEntryFromFeed(final InputStream input, final OutputStream osFeed, final String namespaces) {
+  private ResWrap<Entry> nextAtomEntryFromFeed(
+          final InputStream input, final OutputStream osFeed, final String namespaces) {
+
     final ByteArrayOutputStream entry = new ByteArrayOutputStream();
 
-    Entry atomEntry = null;
+    ResWrap<Entry> atomEntry = null;
 
     try {
       if (consume(input, "<entry>", osFeed, false) >= 0) {
@@ -243,7 +246,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
 
         if (consume(input, "</entry>", entry, true) >= 0) {
           atomEntry = odataClient.getDeserializer().
-                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM).getObject();
+                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM);
         }
       }
     } catch (Exception e) {

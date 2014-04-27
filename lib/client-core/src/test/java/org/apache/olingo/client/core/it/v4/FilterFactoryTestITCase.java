@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import static org.junit.Assert.assertEquals;
+import static org.apache.olingo.client.core.it.v4.AbstractTestITCase.client;
 
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.v4.FilterArgFactory;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import static org.apache.olingo.client.core.it.v4.AbstractTestITCase.client;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -43,7 +43,6 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
 
   @Test
   public void crossjoin() {
-
     final URIFilter filter = getFilterFactory().eq(
             getFilterArgFactory().property("Orders/OrderID"), getFilterArgFactory().property("Customers/Order"));
 

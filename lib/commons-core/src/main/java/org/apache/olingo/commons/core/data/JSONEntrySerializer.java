@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
@@ -41,15 +41,16 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
   @Override
   protected void doSerialize(final JSONEntryImpl entry, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
-    doContainerSerialize(new Container<JSONEntryImpl>(null, null, entry), jgen, provider);
+
+    doContainerSerialize(new ResWrap<JSONEntryImpl>((URI) null, null, entry), jgen, provider);
   }
 
   @Override
   protected void doContainerSerialize(
-          final Container<JSONEntryImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          final ResWrap<JSONEntryImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    final Entry entry = container.getObject();
+    final Entry entry = container.getPayload();
 
     jgen.writeStartObject();
 
@@ -57,7 +58,7 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
                 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-                container.getContextURL().toASCIIString());
+                container.getContextURL().getURI().toASCIIString());
       }
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());

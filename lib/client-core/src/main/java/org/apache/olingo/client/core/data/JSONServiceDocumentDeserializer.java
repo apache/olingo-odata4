@@ -30,14 +30,14 @@ import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.ODataJacksonDeserializer;
 
-public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Container<AbstractServiceDocument>> {
+public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<ResWrap<AbstractServiceDocument>> {
 
   @Override
-  protected Container<AbstractServiceDocument> doDeserialize(
+  protected ResWrap<AbstractServiceDocument> doDeserialize(
           final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
@@ -90,6 +90,6 @@ public class JSONServiceDocumentDeserializer extends ODataJacksonDeserializer<Co
       }
     }
 
-    return new Container<AbstractServiceDocument>(contextURL, metadataETag, serviceDocument);
+    return new ResWrap<AbstractServiceDocument>(contextURL, metadataETag, serviceDocument);
   }
 }

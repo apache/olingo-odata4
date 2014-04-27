@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -37,7 +37,7 @@ public abstract class ODataJacksonSerializer<T> extends JsonSerializer<T> {
   protected abstract void doSerialize(T value, JsonGenerator jgen, SerializerProvider provider)
           throws IOException, JsonProcessingException;
 
-  protected abstract void doContainerSerialize(Container<T> value, JsonGenerator jgen, SerializerProvider provider)
+  protected abstract void doContainerSerialize(ResWrap<T> value, JsonGenerator jgen, SerializerProvider provider)
           throws IOException, JsonProcessingException;
 
   @Override
@@ -48,8 +48,8 @@ public abstract class ODataJacksonSerializer<T> extends JsonSerializer<T> {
     version = (ODataServiceVersion) provider.getAttribute(ODataServiceVersion.class);
     serverMode = (Boolean) provider.getAttribute(Boolean.class);
 
-    if (value instanceof Container) {
-      doContainerSerialize((Container) value, jgen, provider);
+    if (value instanceof ResWrap) {
+      doContainerSerialize((ResWrap) value, jgen, provider);
     } else {
       doSerialize(value, jgen, provider);
     }

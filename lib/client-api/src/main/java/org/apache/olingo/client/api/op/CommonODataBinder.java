@@ -19,12 +19,12 @@
 package org.apache.olingo.client.api.op;
 
 import java.io.Serializable;
-import java.net.URI;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -90,41 +90,23 @@ public interface CommonODataBinder extends Serializable {
    * Gets <tt>ODataEntitySet</tt> from the given feed resource.
    *
    * @param resource feed resource.
-   * @return <tt>ODataEntitySet</tt> object.
+   * @return {@link CommonODataEntitySet} object.
    */
-  CommonODataEntitySet getODataEntitySet(Feed resource);
-
-  /**
-   * Gets <tt>ODataEntitySet</tt> from the given feed resource.
-   *
-   * @param resource feed resource.
-   * @param defaultBaseURI default base URI.
-   * @return <tt>ODataEntitySet</tt> object.
-   */
-  CommonODataEntitySet getODataEntitySet(Feed resource, URI defaultBaseURI);
+  CommonODataEntitySet getODataEntitySet(ResWrap<Feed> resource);
 
   /**
    * Gets <tt>ODataEntity</tt> from the given entry resource.
    *
    * @param resource entry resource.
-   * @return <tt>ODataEntity</tt> object.
+   * @return {@link CommonODataEntity} object.
    */
-  CommonODataEntity getODataEntity(Entry resource);
-
-  /**
-   * Gets <tt>ODataEntity</tt> from the given entry resource.
-   *
-   * @param resource entry resource.
-   * @param defaultBaseURI default base URI.
-   * @return <tt>ODataEntity</tt> object.
-   */
-  CommonODataEntity getODataEntity(Entry resource, URI defaultBaseURI);
+  CommonODataEntity getODataEntity(ResWrap<Entry> resource);
 
   /**
    * Gets an <tt>ODataProperty</tt> from the given property resource.
    *
-   * @param property property resource.
-   * @return <tt>ODataProperty</tt> object.
+   * @param resource property resource.
+   * @return {@link CommonODataProperty} object.
    */
-  CommonODataProperty getODataProperty(Property property);
+  CommonODataProperty getODataProperty(ResWrap<Property> resource);
 }

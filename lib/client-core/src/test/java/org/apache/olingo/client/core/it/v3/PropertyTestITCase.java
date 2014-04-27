@@ -38,6 +38,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
@@ -284,7 +285,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     }
     updateReq.setFormat(format);
 
-    ODataPropertyUpdateResponse updateRes = updateReq.execute();
+    final ODataPropertyUpdateResponse updateRes = updateReq.execute();
     assertEquals(204, updateRes.getStatusCode());
 
     retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
@@ -353,7 +354,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ODataProperty property = res.getBodyAs(ODataProperty.class);
-    assertNotNull(property);
+    final ResWrap<ODataProperty> property = res.getBodyAs(ODataProperty.class);
+    assertNotNull(property.getPayload());
   }
 }

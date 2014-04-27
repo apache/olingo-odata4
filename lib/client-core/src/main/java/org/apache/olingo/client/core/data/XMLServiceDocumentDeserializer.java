@@ -30,10 +30,10 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Container<ServiceDocument>> {
+public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<ResWrap<ServiceDocument>> {
 
   private String getTitle(final JsonParser jp) throws IOException {
     String title = jp.nextTextValue();
@@ -69,7 +69,7 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Con
   }
 
   @Override
-  protected Container<ServiceDocument> doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected ResWrap<ServiceDocument> doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final AbstractServiceDocument sdoc = ODataServiceVersion.V30 == version
@@ -117,7 +117,7 @@ public class XMLServiceDocumentDeserializer extends ODataJacksonDeserializer<Con
             ? URIUtils.getURI(base, "$metadata")
             : URIUtils.getURI(base, contextURL.toASCIIString())).toASCIIString());
 
-    return new Container<ServiceDocument>(
+    return new ResWrap<ServiceDocument>(
             contextURL == null ? null : URIUtils.getURI(sdoc.getBaseURI(), contextURL),
             metadataETag, sdoc);
   }

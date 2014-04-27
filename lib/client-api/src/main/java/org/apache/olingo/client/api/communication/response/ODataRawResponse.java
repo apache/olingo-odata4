@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
+import org.apache.olingo.commons.api.data.ResWrap;
+
 /**
  * This interface represents a generic OData response.
  */
@@ -29,5 +31,5 @@ public interface ODataRawResponse extends ODataResponse {
    * @param reference an OData domain object class reference
    * @return response body parsed as the given reference, if available, <tt>null</tt> otherwise
    */
-  <T> T getBodyAs(final Class<T> reference);
+  <T> ResWrap<T> getBodyAs(final Class<T> reference);
 }

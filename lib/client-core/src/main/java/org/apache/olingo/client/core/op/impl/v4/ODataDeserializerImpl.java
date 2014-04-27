@@ -28,7 +28,7 @@ import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -50,7 +50,7 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
   }
 
   @Override
-  public Container<ServiceDocument> toServiceDocument(final InputStream input, final ODataFormat format) {
+  public ResWrap<ServiceDocument> toServiceDocument(final InputStream input, final ODataFormat format) {
     return format == ODataFormat.XML
             ? this.<ServiceDocument, XMLServiceDocumentImpl>xml(input, XMLServiceDocumentImpl.class)
             : this.<ServiceDocument, JSONServiceDocumentImpl>json(input, JSONServiceDocumentImpl.class);

@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
 
 /**
@@ -86,11 +86,10 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
     public T getBody() {
       if (property == null) {
         try {
-          final Container<Property> container =
-                  odataClient.getDeserializer().toProperty(
+          final ResWrap<Property> resource = odataClient.getDeserializer().toProperty(
                   res.getEntity().getContent(), ODataFormat.fromString(getContentType()));
 
-          property = (T) odataClient.getBinder().getODataProperty(extractFromContainer(container));
+          property = (T) odataClient.getBinder().getODataProperty(resource);
         } catch (IOException e) {
           throw new HttpClientException(e);
         } finally {

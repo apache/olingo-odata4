@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
@@ -37,7 +37,7 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPropertyImpl> {
 
   @Override
-  protected Container<JSONPropertyImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONPropertyImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -78,6 +78,6 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
       value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree, parser.getCodec());
     }
 
-    return new Container<JSONPropertyImpl>(contextURL, metadataETag, property);
+    return new ResWrap<JSONPropertyImpl>(contextURL, metadataETag, property);
   }
 }

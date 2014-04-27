@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,7 +42,6 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchContr
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -55,16 +53,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Logger.
    */
   protected static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
-
-  /**
-   * Context URL.
-   */
-  private URI contextURL;
-
-  /**
-   * Metadata ETag.
-   */
-  private String metadataETag;
 
   /**
    * HTTP client.
@@ -127,24 +115,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
     initFromHttpResponse(res);
   }
 
-  @Override
-  public URI getContextURL() {
-    return contextURL;
-  }
-
-  protected void setContextURL(final URI contextURL) {
-    this.contextURL = contextURL;
-  }
-
-  @Override
-  public String getMetadataETag() {
-    return metadataETag;
-  }
-
-  protected void setMetadataETag(final String metadataETag) {
-    this.metadataETag = metadataETag;
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -173,7 +143,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * {@inheritDoc}
    */
   @Override
-  public String getEtag() {
+  public String getETag() {
     final Collection<String> etag = getHeader(HeaderName.etag);
     return etag == null || etag.isEmpty()
             ? null
@@ -360,15 +330,5 @@ public abstract class AbstractODataResponse implements ODataResponse {
     }
 
     return payload;
-  }
-
-  protected <T> T extractFromContainer(final Container<T> container) {
-    if (container == null) {
-      return null;
-    }
-
-    setContextURL(container.getContextURL());
-    setMetadataETag(container.getMetadataETag());
-    return container.getObject();
   }
 }

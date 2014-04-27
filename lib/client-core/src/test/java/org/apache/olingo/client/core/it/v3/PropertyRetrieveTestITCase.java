@@ -64,8 +64,7 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
         assertTrue(value.isCollection());
       }
     } catch (ODataClientErrorException e) {
-      if (e.getStatusLine().getStatusCode() != 404
-              && e.getStatusLine().getStatusCode() != 400) {
+      if (e.getStatusLine().getStatusCode() != 404 && e.getStatusLine().getStatusCode() != 400) {
         fail(e.getMessage());
       }
     }

@@ -24,12 +24,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import org.apache.olingo.client.api.data.ServiceDocument;
-
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {
@@ -44,13 +43,13 @@ public class ServiceDocumentTest extends AbstractTest {
   }
 
   private ODataServiceDocument parse(final ODataFormat format) {
-    Container<ServiceDocument> service = getClient().getDeserializer().toServiceDocument(
+    ResWrap<ServiceDocument> service = getClient().getDeserializer().toServiceDocument(
             getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)), format);
 
-    assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL());
+    assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL().getURI());
     assertEquals("W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"", service.getMetadataETag());
 
-    final ODataServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getObject());
+    final ODataServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());
     assertNotNull(serviceDocument);
 
     assertTrue(serviceDocument.getEntitySetTitles().contains("Order Details"));
@@ -69,6 +68,6 @@ public class ServiceDocumentTest extends AbstractTest {
 
   @Test
   public void xml() {
-    final ODataServiceDocument serviceDocument = parse(ODataFormat.XML);
+    parse(ODataFormat.XML);
   }
 }

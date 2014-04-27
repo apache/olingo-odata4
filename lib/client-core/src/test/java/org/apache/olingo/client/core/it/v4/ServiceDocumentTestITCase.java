@@ -19,7 +19,6 @@
 package org.apache.olingo.client.core.it.v4;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
@@ -43,7 +42,6 @@ public class ServiceDocumentTestITCase extends AbstractTestITCase {
     assertEquals(6, serviceDocument.getSingletons().size());
     assertEquals(6, serviceDocument.getFunctionImports().size());
 
-    assertTrue(res.getContextURL().toASCIIString().endsWith("/StaticService/V40/Static.svc/$metadata"));
     assertEquals(URI.create(testStaticServiceRootURL + "/ProductDetails"),
             serviceDocument.getEntitySetURI("ProductDetails"));
     assertEquals(URI.create(testStaticServiceRootURL + "/Boss"),

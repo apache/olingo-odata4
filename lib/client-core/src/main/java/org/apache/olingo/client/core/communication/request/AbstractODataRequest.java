@@ -364,6 +364,8 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
    * @return HttpReponse object.
    */
   protected HttpResponse doExecute() {
+    checkRequest(odataClient, request);
+
     // Set Content-Type and Accept headers with default values, if not yet set
     if (StringUtils.isBlank(odataHeaders.getHeader(HeaderName.contentType))) {
       setContentType(getContentType());
@@ -390,7 +392,7 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
       }
     }
 
-    final HttpResponse response;
+    HttpResponse response;
     try {
       response = this.httpClient.execute(this.request);
     } catch (IOException e) {
@@ -400,7 +402,7 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
       throw new HttpClientException(e);
     }
 
-    checkForResponse(odataClient, response, getAccept());
+    checkResponse(odataClient, response, getAccept());
 
     return response;
   }

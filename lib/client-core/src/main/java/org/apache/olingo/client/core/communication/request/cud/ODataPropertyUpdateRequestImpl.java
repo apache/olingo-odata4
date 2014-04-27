@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
 
 /**
@@ -118,10 +118,10 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     public CommonODataProperty getBody() {
       if (property == null) {
         try {
-          final Container<Property> container = odataClient.getDeserializer().toProperty(getRawResponse(),
-                  ODataFormat.fromString(getAccept()));
+          final ResWrap<Property> resource = odataClient.getDeserializer().
+                  toProperty(getRawResponse(), ODataFormat.fromString(getAccept()));
 
-          property = odataClient.getBinder().getODataProperty(extractFromContainer(container));
+          property = odataClient.getBinder().getODataProperty(resource);
         } finally {
           this.close();
         }

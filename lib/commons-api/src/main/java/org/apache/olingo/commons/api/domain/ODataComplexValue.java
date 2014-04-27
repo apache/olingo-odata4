@@ -31,6 +31,7 @@ public interface ODataComplexValue<OP extends CommonODataProperty> extends OData
    * Adds field to the complex type.
    *
    * @param field field to be added.
+   * @return this (for fluent-style calls)
    */
   ODataComplexValue<OP> add(OP field);
 

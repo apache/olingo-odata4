@@ -19,7 +19,6 @@
 package org.apache.olingo.client.api.communication.response;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.http.HttpResponse;
@@ -59,31 +58,7 @@ public interface ODataResponse {
    *
    * @return ETag header value, if provided
    */
-  String getEtag();
-
-  /**
-   * The context URL describes the content of the payload. It consists of the canonical metadata document URL and a
-   * fragment identifying the relevant portion of the metadata document.
-   * <br />
-   * Request payloads generally do not require context URLs as the type of the payload can generally be determined from
-   * the request URL.
-   * <br />
-   * For details on how the context URL is used to describe a payload, see the relevant sections in the particular
-   * format.
-   *
-   * @return context URL.
-   */
-  URI getContextURL();
-
-  /**
-   * An ETag header MAY also be returned on a metadata document request or service document request to allow the client
-   * subsequently to make a conditional request for the metadata or service document. Clients can also compare the value
-   * of the ETag header returned from a metadata document request to the metadata ETag returned in a response in order
-   * to verify the version of the metadata used to generate that response.
-   *
-   * @return metadata ETag.
-   */
-  String getMetadataETag();
+  String getETag();
 
   /**
    * Gets the content type.

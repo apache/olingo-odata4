@@ -21,20 +21,26 @@ package org.apache.olingo.commons.api.data;
 import java.net.URI;
 
 /**
- * Outermost response object container.
+ * Outermost response payload wrapper.
+ *
+ * @param <T> the actual response payload
  */
-public class Container<T> {
+public class ResWrap<T> {
 
-  private final URI contextURL;
+  private final ContextURL contextURL;
 
   private final String metadataETag;
 
-  private final T object;
+  private final T payload;
 
-  public Container(final URI contextURL, final String metadataETag, final T object) {
+  public ResWrap(final URI contextURL, final String metadataETag, final T payload) {
+    this(contextURL == null ? null : ContextURL.getInstance(contextURL), metadataETag, payload);
+  }
+
+  public ResWrap(final ContextURL contextURL, final String metadataETag, final T payload) {
     this.contextURL = contextURL;
     this.metadataETag = metadataETag;
-    this.object = object;
+    this.payload = payload;
   }
 
   /**
@@ -49,7 +55,7 @@ public class Container<T> {
    *
    * @return context URL.
    */
-  public URI getContextURL() {
+  public ContextURL getContextURL() {
     return contextURL;
   }
 
@@ -70,7 +76,7 @@ public class Container<T> {
    *
    * @return contained object.
    */
-  public T getObject() {
-    return object;
+  public T getPayload() {
+    return payload;
   }
 }

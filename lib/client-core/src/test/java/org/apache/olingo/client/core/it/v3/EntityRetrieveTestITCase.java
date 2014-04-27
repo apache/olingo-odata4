@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.client.core.it.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +31,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRawReque
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -33,14 +39,10 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
+import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.op.ResourceFactory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 /**
@@ -154,11 +156,11 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final CommonODataEntitySet entitySet = res.getBodyAs(CommonODataEntitySet.class);
+    final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
     assertNull(entitySet);
 
-    final CommonODataEntity entity = res.getBodyAs(CommonODataEntity.class);
-    assertNotNull(entity);
+    final ResWrap<ODataEntity> entity = res.getBodyAs(ODataEntity.class);
+    assertNotNull(entity.getPayload());
   }
 
   @Test
@@ -219,7 +221,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
 
-    final String etag = res.getEtag();
+    final String etag = res.getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
     final CommonODataEntity product = res.getBody();

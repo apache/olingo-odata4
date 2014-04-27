@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Link;
@@ -291,11 +291,11 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.writeAttribute(Constants.ATOM_ATTR_ID, entry.getId());
   }
 
-  private void entryRef(final XMLStreamWriter writer, final Container<Entry> container) throws XMLStreamException {
+  private void entryRef(final XMLStreamWriter writer, final ResWrap<Entry> container) throws XMLStreamException {
     writer.writeStartElement(Constants.ATOM_ELEM_ENTRY_REF);
     writer.writeNamespace(StringUtils.EMPTY, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
     addContextInfo(writer, container);
-    writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getObject().getId());
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, container.getPayload().getId());
   }
 
   private void entry(final Writer outWriter, final Entry entry) throws XMLStreamException {
@@ -317,8 +317,8 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.flush();
   }
 
-  private void entry(final Writer outWriter, final Container<Entry> container) throws XMLStreamException {
-    final Entry entry = container.getObject();
+  private void entry(final Writer outWriter, final ResWrap<Entry> container) throws XMLStreamException {
+    final Entry entry = container.getPayload();
 
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
@@ -394,14 +394,14 @@ public class AtomSerializer extends AbstractAtomDealer {
     writer.flush();
   }
 
-  private void feed(final Writer outWriter, final Container<Feed> feed) throws XMLStreamException {
+  private void feed(final Writer outWriter, final ResWrap<Feed> feed) throws XMLStreamException {
     final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(outWriter);
 
     startDocument(writer, Constants.ATOM_ELEM_FEED);
 
     addContextInfo(writer, feed);
 
-    feed(writer, feed.getObject());
+    feed(writer, feed.getPayload());
 
     writer.writeEndElement();
     writer.writeEndDocument();
@@ -439,13 +439,13 @@ public class AtomSerializer extends AbstractAtomDealer {
   }
 
   @SuppressWarnings("unchecked")
-  public <T> void write(final Writer writer, final Container<T> container) throws XMLStreamException {
-    final T obj = container == null ? null : container.getObject();
+  public <T> void write(final Writer writer, final ResWrap<T> container) throws XMLStreamException {
+    final T obj = container == null ? null : container.getPayload();
 
     if (obj instanceof Feed) {
-      this.feed(writer, (Container<Feed>) container);
+      this.feed(writer, (ResWrap<Feed>) container);
     } else if (obj instanceof Entry) {
-      entry(writer, (Container<Entry>) container);
+      entry(writer, (ResWrap<Entry>) container);
     } else if (obj instanceof Property) {
       property(writer, (Property) obj);
     } else if (obj instanceof Link) {
@@ -454,21 +454,21 @@ public class AtomSerializer extends AbstractAtomDealer {
   }
 
   private <T> void addContextInfo(
-          final XMLStreamWriter writer, final Container<T> container) throws XMLStreamException {
+          final XMLStreamWriter writer, final ResWrap<T> container) throws XMLStreamException {
 
     if (container.getContextURL() != null) {
-      final String base = StringUtils.substringBefore(container.getContextURL().toASCIIString(), Constants.METADATA);
-      if (container.getObject() instanceof AtomFeedImpl) {
-        ((AtomFeedImpl) container.getObject()).setBaseURI(base);
+      String base = container.getContextURL().getServiceRoot().toASCIIString();
+      if (container.getPayload() instanceof AtomFeedImpl) {
+        ((AtomFeedImpl) container.getPayload()).setBaseURI(base);
       }
-      if (container.getObject() instanceof AtomEntryImpl) {
-        ((AtomEntryImpl) container.getObject()).setBaseURI(base);
+      if (container.getPayload() instanceof AtomEntryImpl) {
+        ((AtomEntryImpl) container.getPayload()).setBaseURI(base);
       }
 
       writer.writeAttribute(
               version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
               Constants.CONTEXT,
-              container.getContextURL().toASCIIString());
+              container.getContextURL().getURI().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(container.getMetadataETag())) {

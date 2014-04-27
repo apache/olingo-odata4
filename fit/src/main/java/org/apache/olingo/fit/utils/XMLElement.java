@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
@@ -33,14 +32,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XmlElement {
+public class XMLElement {
 
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(XmlElement.class);
-
-  private static Charset encoding = Charset.forName("UTF-8");
+  private static final Logger LOG = LoggerFactory.getLogger(XMLElement.class);
 
   private StartElement start;
 
@@ -75,8 +72,8 @@ public class XmlElement {
   public void setContent(final InputStream content) throws IOException {
     this.content.reset();
 
-    final InputStreamReader reader = new InputStreamReader(content, encoding);
-    final OutputStreamWriter writer = new OutputStreamWriter(this.content, encoding);
+    final InputStreamReader reader = new InputStreamReader(content, Constants.ENCODING);
+    final OutputStreamWriter writer = new OutputStreamWriter(this.content, Constants.ENCODING);
     IOUtils.copyLarge(reader, writer);
 
     writer.flush();
@@ -89,11 +86,11 @@ public class XmlElement {
     InputStream res;
     try {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      final OutputStreamWriter osw = new OutputStreamWriter(bos, encoding);
+      final OutputStreamWriter osw = new OutputStreamWriter(bos, Constants.ENCODING);
 
       getStart().writeAsEncodedUnicode(osw);
 
-      IOUtils.copy(getContent(), osw, encoding);
+      IOUtils.copy(getContent(), osw, Constants.ENCODING);
 
       getEnd().writeAsEncodedUnicode(osw);
       osw.flush();
@@ -101,7 +98,7 @@ public class XmlElement {
 
       res = new ByteArrayInputStream(bos.toByteArray());
     } catch (Exception e) {
-      LOG.error("Error serializing elemnt", e);
+      LOG.error("Error serializing element", e);
       res = null;
     }
     return res;

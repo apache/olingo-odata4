@@ -27,10 +27,18 @@ import java.util.List;
  */
 public interface EdmNavigationProperty extends EdmElement {
 
+  @Override
+  EdmEntityType getType();
+
   /**
    * @return true if nullable or null if not specified
    */
   Boolean isNullable();
+
+  /**
+   * @return true if containsTarget or null if not specified
+   */
+  Boolean containsTarget();
 
   /**
    * @return the partner navigation property

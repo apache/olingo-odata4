@@ -36,7 +36,7 @@ import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
@@ -98,7 +98,7 @@ public class FSManager {
     return memObject;
   }
 
-  public void putInMemory(final Container<AtomEntryImpl> container, final String relativePath)
+  public void putInMemory(final ResWrap<AtomEntryImpl> container, final String relativePath)
           throws IOException {
     try {
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
@@ -117,7 +117,7 @@ public class FSManager {
               writer, new JSONEntryContainer(
                       container.getContextURL(),
                       container.getMetadataETag(),
-                      new DataBinder(version).toJSONEntry(container.getObject())));
+                      new DataBinder(version).toJSONEntry(container.getPayload())));
 
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
     } catch (Exception e) {

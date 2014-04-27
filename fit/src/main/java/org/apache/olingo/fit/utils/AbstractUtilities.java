@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,10 +43,10 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.olingo.commons.api.data.Container;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
@@ -352,68 +353,6 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
   }
 
-  public InputStream addMediaEntity(
-          final String entitySetName,
-          final InputStream is) throws Exception {
-
-    final String entityKey = getDefaultEntryKey(entitySetName, null);
-
-    addMediaEntityValue(entitySetName, entityKey, is);
-
-    final String path = Commons.getEntityBasePath(entitySetName, entityKey);
-
-    // -----------------------------------------
-    // 2. save entity as atom
-    // -----------------------------------------
-    final String entityURI = Commons.getEntityURI(entitySetName, entityKey);
-    String entity = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<entry xml:base=\"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + "\" "
-            + "xmlns=\"http://www.w3.org/2005/Atom\" "
-            + "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" "
-            + "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
-            + "xmlns:georss=\"http://www.georss.org/georss\" "
-            + "xmlns:gml=\"http://www.opengis.net/gml\">"
-            + "<id>" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entityURI + "</id>"
-            + "<category term=\"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\" "
-            + "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />"
-            + "<link rel=\"edit\" title=\"Car\" href=\"" + entityURI + "\" />"
-            + "<link rel=\"edit-media\" title=\"Car\" href=\"" + entityURI + "/$value\" />"
-            + "<content type=\"*/*\" src=\"" + entityURI + "/$value\" />"
-            + "<m:properties>"
-            + "<d:" + Commons.MEDIA_CONTENT.get(entitySetName) + " m:type=\"Edm.Int32\">" + entityKey + "</d:VIN>"
-            + "<d:Description m:null=\"true\" />"
-            + "</m:properties>"
-            + "</entry>";
-
-    fsManager.putInMemory(
-            IOUtils.toInputStream(entity, Constants.ENCODING),
-            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
-    // -----------------------------------------
-
-    // -----------------------------------------
-    // 3. save entity as json
-    // -----------------------------------------
-    entity = "{"
-            + "\"odata.metadata\": \"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL)
-            + "/$metadata#" + entitySetName + "/@Element\","
-            + "\"odata.type\": \"Microsoft.Test.OData.Services.AstoriaDefaultService." + entitySetName + "\","
-            + "\"odata.id\": \"" + Constants.get(version, ConstantKey.DEFAULT_SERVICE_URL) + entityURI + "\","
-            + "\"odata.editLink\": \"" + entityURI + "\","
-            + "\"odata.mediaEditLink\": \"" + entityURI + "/$value\","
-            + "\"odata.mediaReadLink\": \"" + entityURI + "/$value\","
-            + "\"odata.mediaContentType\": \"*/*\","
-            + "\"" + Commons.MEDIA_CONTENT.get(entitySetName) + "\": " + entityKey + ","
-            + "\"Description\": null" + "}";
-
-    fsManager.putInMemory(
-            IOUtils.toInputStream(entity, Constants.ENCODING), 
-            fsManager.getAbsolutePath(path + Constants.get(version, ConstantKey.ENTITY),
-            Accept.JSON_FULLMETA));
-    // -----------------------------------------
-
-    return readEntity(entitySetName, entityKey, getDefaultFormat()).getValue();
-  }
-
   public void putLinksInMemory(
           final String basePath,
           final String entitySetName,
@@ -601,51 +540,51 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  public InputStream writeFeed(final Accept accept, final Container<AtomFeedImpl> container)
+  public InputStream writeFeed(final Accept accept, final ResWrap<AtomFeedImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
-    if (accept == Accept.ATOM) {
+    if (accept == Accept.ATOM || accept == Accept.XML) {
       atomSerializer.write(writer, container);
       writer.flush();
       writer.close();
     } else {
       mapper.writeValue(
               writer, new JSONFeedContainer(container.getContextURL(),
-              container.getMetadataETag(), dataBinder.toJSONFeed(container.getObject())));
+                      container.getMetadataETag(), dataBinder.toJSONFeed(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public AtomEntryImpl readEntry(final Accept contentTypeValue, final InputStream entity)
+  public AtomEntryImpl readEntry(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
 
     final AtomEntryImpl entry;
 
-    if (Accept.ATOM == contentTypeValue || Accept.XML == contentTypeValue) {
-      final Container<AtomEntryImpl> container = atomDeserializer.read(entity, AtomEntryImpl.class);
-      entry = container.getObject();
+    if (accept == Accept.ATOM || accept == Accept.XML) {
+      final ResWrap<AtomEntryImpl> container = atomDeserializer.read(entity, AtomEntryImpl.class);
+      entry = container.getPayload();
     } else {
-      final Container<JSONEntryImpl> container =
+      final ResWrap<JSONEntryImpl> container =
               mapper.readValue(entity, new TypeReference<JSONEntryImpl>() {
-      });
-      entry = dataBinder.toAtomEntry(container.getObject());
+              });
+      entry = dataBinder.toAtomEntry(container.getPayload());
     }
 
     return entry;
   }
 
-  public InputStream writeEntry(final Accept accept, final Container<AtomEntryImpl> container)
+  public InputStream writeEntry(final Accept accept, final ResWrap<AtomEntryImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
-    if (accept == Accept.ATOM) {
+    if (accept == Accept.ATOM || accept == Accept.XML) {
       atomSerializer.write(writer, container);
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-              dataBinder.toJSONEntry(container.getObject())));
+                      dataBinder.toJSONEntry(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -666,16 +605,16 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public InputStream writeProperty(final Accept accept, final Container<AtomPropertyImpl> container)
+  public InputStream writeProperty(final Accept accept, final ResWrap<AtomPropertyImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
-    if (accept == Accept.XML) {
+    if (accept == Accept.XML || accept == Accept.ATOM) {
       atomSerializer.write(writer, container);
     } else {
       mapper.writeValue(
               writer, new JSONPropertyContainer(container.getContextURL(), container.getMetadataETag(),
-              dataBinder.toJSONProperty(container.getObject())));
+                      dataBinder.toJSONProperty(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -829,6 +768,7 @@ public abstract class AbstractUtilities {
 
   public Map.Entry<String, InputStream> readEntity(
           final String entitySetName, final String entityId, final Accept accept) {
+
     if (accept == Accept.XML || accept == Accept.TEXT) {
       throw new UnsupportedMediaTypeException("Unsupported media type");
     }
@@ -876,7 +816,7 @@ public abstract class AbstractUtilities {
     // --------------------------------
   }
 
-  public InputStream replaceProperty(
+  public void replaceProperty(
           final String entitySetName,
           final String entityId,
           final InputStream changes,
@@ -889,17 +829,14 @@ public abstract class AbstractUtilities {
     final Accept acceptType = accept == null || Accept.TEXT == accept
             ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
 
-    // read atom
     InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
-
-    // change atom
     stream = replaceProperty(stream, changes, path, justValue);
 
-    // save atom
-    fsManager.putInMemory(stream,
-            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType));
+    final AtomEntryImpl entry = readEntry(acceptType, stream);
+    final ResWrap<AtomEntryImpl> container = new ResWrap<AtomEntryImpl>((URI) null, null, entry);
 
-    return fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
+    fsManager.putInMemory(writeEntry(Accept.ATOM, container),
+            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
   }
 
   public InputStream deleteProperty(
@@ -949,13 +886,6 @@ public abstract class AbstractUtilities {
           throws Exception;
 
   protected abstract InputStream deleteProperty(final InputStream src, final List<String> path) throws Exception;
-
-  public abstract InputStream getProperty(
-          final String entitySetName, final String entityId, final List<String> path, final String edmType)
-          throws Exception;
-
-  public abstract InputStream getPropertyValue(final InputStream is, final List<String> path)
-          throws Exception;
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(final InputStream is) throws Exception;
 

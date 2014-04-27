@@ -297,7 +297,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ODataEntity> res = getClient().getRetrieveRequestFactory().
             getEntityRequest(uri).execute();
     try {
-      return res.getEtag();
+      return res.getETag();
     } finally {
       res.close();
     }

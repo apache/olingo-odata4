@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 
 /**
  * Reads JSON string into a feed.
@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.data.Container;
 public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl> {
 
   @Override
-  protected Container<JSONFeedImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONFeedImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -79,12 +79,12 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
     if (tree.hasNonNull(Constants.VALUE)) {
       for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {
         feed.getEntries().add(
-                itor.next().traverse(parser.getCodec()).<Container<JSONEntryImpl>>readValueAs(
+                itor.next().traverse(parser.getCodec()).<ResWrap<JSONEntryImpl>>readValueAs(
                         new TypeReference<JSONEntryImpl>() {
-                        }).getObject());
+                        }).getPayload());
       }
     }
 
-    return new Container<JSONFeedImpl>(contextURL, metadataETag, feed);
+    return new ResWrap<JSONFeedImpl>(contextURL, metadataETag, feed);
   }
 }

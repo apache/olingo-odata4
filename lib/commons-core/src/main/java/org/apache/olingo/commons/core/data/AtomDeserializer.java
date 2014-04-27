@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -291,7 +291,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return property;
   }
 
-  private Container<AtomPropertyImpl> property(final InputStream input) throws XMLStreamException {
+  private ResWrap<AtomPropertyImpl> property(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, property(reader, start));
@@ -366,7 +366,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
-  private Container<XMLLinkCollectionImpl> linkCollection(final InputStream input) throws XMLStreamException {
+  private ResWrap<XMLLinkCollectionImpl> linkCollection(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, linkCollection(reader, start));
@@ -552,7 +552,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return entry;
   }
 
-  private Container<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
+  private ResWrap<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, entry(reader, start));
@@ -622,7 +622,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return feed;
   }
 
-  private Container<AtomFeedImpl> feed(final InputStream input) throws XMLStreamException {
+  private ResWrap<AtomFeedImpl> feed(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, feed(reader, start));
@@ -678,36 +678,36 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return error;
   }
 
-  private Container<XMLODataErrorImpl> error(final InputStream input) throws XMLStreamException {
+  private ResWrap<XMLODataErrorImpl> error(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
     return getContainer(start, error(reader, start));
   }
 
-  private <T> Container<T> getContainer(final StartElement start, final T object) {
+  private <T> ResWrap<T> getContainer(final StartElement start, final T object) {
     final Attribute context = start.getAttributeByName(contextQName);
     final Attribute metadataETag = start.getAttributeByName(metadataEtagQName);
 
-    return new Container<T>(
+    return new ResWrap<T>(
             context == null ? null : URI.create(context.getValue()),
             metadataETag == null ? null : metadataETag.getValue(),
             object);
   }
 
   @SuppressWarnings("unchecked")
-  public <T, V extends T> Container<T> read(final InputStream input, final Class<V> reference)
+  public <T, V extends T> ResWrap<T> read(final InputStream input, final Class<V> reference)
           throws XMLStreamException {
 
     if (XMLODataErrorImpl.class.equals(reference)) {
-      return (Container<T>) error(input);
+      return (ResWrap<T>) error(input);
     } else if (AtomFeedImpl.class.equals(reference)) {
-      return (Container<T>) feed(input);
+      return (ResWrap<T>) feed(input);
     } else if (AtomEntryImpl.class.equals(reference)) {
-      return (Container<T>) entry(input);
+      return (ResWrap<T>) entry(input);
     } else if (AtomPropertyImpl.class.equals(reference)) {
-      return (Container<T>) property(input);
+      return (ResWrap<T>) property(input);
     } else if (XMLLinkCollectionImpl.class.equals(reference)) {
-      return (Container<T>) linkCollection(input);
+      return (ResWrap<T>) linkCollection(input);
     }
     return null;
   }

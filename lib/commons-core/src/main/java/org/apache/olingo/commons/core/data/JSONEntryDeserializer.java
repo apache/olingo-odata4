@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataOperation;
@@ -47,7 +47,7 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImpl> {
 
   @Override
-  protected Container<JSONEntryImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONEntryImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
@@ -195,6 +195,6 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       }
     }
 
-    return new Container<JSONEntryImpl>(contextURL, metadataETag, entry);
+    return new ResWrap<JSONEntryImpl>(contextURL, metadataETag, entry);
   }
 }

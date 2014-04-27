@@ -18,14 +18,30 @@
  */
 package org.apache.olingo.client.core;
 
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+
 public final class ODataClientFactory {
 
   public static org.apache.olingo.client.api.v3.ODataClient getV3() {
     return new org.apache.olingo.client.core.v3.ODataClientImpl();
   }
 
+  public static org.apache.olingo.client.api.v3.EdmEnabledODataClient getEdmEnabledV3(final String serviceRoot) {
+    final org.apache.olingo.client.api.v3.EdmEnabledODataClient instance =
+            new org.apache.olingo.client.core.v3.EdmEnabledODataClientImpl(serviceRoot);
+    instance.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON);
+    return instance;
+  }
+
   public static org.apache.olingo.client.api.v4.ODataClient getV4() {
     return new org.apache.olingo.client.core.v4.ODataClientImpl();
+  }
+
+  public static org.apache.olingo.client.api.v4.EdmEnabledODataClient getEdmEnabledV4(final String serviceRoot) {
+    final org.apache.olingo.client.api.v4.EdmEnabledODataClient instance =
+            new org.apache.olingo.client.core.v4.EdmEnabledODataClientImpl(serviceRoot);
+    instance.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON);
+    return instance;
   }
 
   private ODataClientFactory() {

@@ -22,9 +22,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -34,15 +35,16 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
   protected void doSerialize(
           final JSONFeedImpl feed, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
-    doContainerSerialize(new Container<JSONFeedImpl>(null, null, feed), jgen, provider);
+    
+    doContainerSerialize(new ResWrap<JSONFeedImpl>((URI) null, null, feed), jgen, provider);
   }
 
   @Override
   protected void doContainerSerialize(
-          final Container<JSONFeedImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          final ResWrap<JSONFeedImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    final JSONFeedImpl feed = container.getObject();
+    final JSONFeedImpl feed = container.getPayload();
 
     jgen.writeStartObject();
 
@@ -50,7 +52,7 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
       if (container.getContextURL() != null) {
         jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
                 ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-                container.getContextURL().toASCIIString());
+                container.getContextURL().getURI().toASCIIString());
       }
 
       if (version.compareTo(ODataServiceVersion.V40) >= 0 && StringUtils.isNotBlank(container.getMetadataETag())) {

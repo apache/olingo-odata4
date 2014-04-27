@@ -79,7 +79,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq =
             client.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.MERGE, entity);
-    updateReq.setIfMatch(entityRes.getEtag());
+    updateReq.setIfMatch(entityRes.getETag());
     final Future<ODataEntityUpdateResponse<ODataEntity>> futureRes = updateReq.asyncExecute();
 
     while (!futureRes.isDone()) {

@@ -70,7 +70,7 @@ public class AtomTest extends AbstractTest {
   protected void feed(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().feed(getClient().getDeserializer().toFeed(
-            getClass().getResourceAsStream("Customer." + getSuffix(format)), format).getObject(), writer);
+            getClass().getResourceAsStream("Customer." + getSuffix(format)), format).getPayload(), writer);
 
     assertSimilar("Customer." + getSuffix(format), writer.toString());
   }
@@ -83,7 +83,7 @@ public class AtomTest extends AbstractTest {
   protected void entry(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().entry(getClient().getDeserializer().toEntry(
-            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
+            getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getPayload(), writer);
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
@@ -103,7 +103,8 @@ public class AtomTest extends AbstractTest {
   protected void property(final String filename, final ODataFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
     getClient().getSerializer().property(getClient().getDeserializer().
-            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getObject(), writer);
+            toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getPayload(),
+            writer);
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }

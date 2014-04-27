@@ -22,9 +22,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Container;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -39,22 +40,23 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
   @Override
   protected void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen,
           final SerializerProvider provider) throws IOException, JsonProcessingException {
-    doContainerSerialize(new Container<JSONPropertyImpl>(null, null, property), jgen, provider);
+    
+    doContainerSerialize(new ResWrap<JSONPropertyImpl>((URI) null, null, property), jgen, provider);
   }
 
   @Override
   protected void doContainerSerialize(
-          final Container<JSONPropertyImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          final ResWrap<JSONPropertyImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    final Property property = container.getObject();
+    final Property property = container.getPayload();
 
     jgen.writeStartObject();
 
     if (serverMode && container.getContextURL() != null) {
       jgen.writeStringField(version.compareTo(ODataServiceVersion.V40) >= 0
               ? Constants.JSON_CONTEXT : Constants.JSON_METADATA,
-              container.getContextURL().toASCIIString());
+              container.getContextURL().getURI().toASCIIString());
     }
 
     if (StringUtils.isNotBlank(property.getType())) {

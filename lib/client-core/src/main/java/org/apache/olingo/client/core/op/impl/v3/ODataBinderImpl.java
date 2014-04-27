@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.client.core.op.impl.v3;
 
-import java.net.URI;
-import java.util.List;
-import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
@@ -28,6 +25,8 @@ import org.apache.olingo.client.core.v3.ODataClientImpl;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -73,35 +72,18 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource) {
+  public ODataEntitySet getODataEntitySet(final ResWrap<Feed> resource) {
     return (ODataEntitySet) super.getODataEntitySet(resource);
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final Feed resource, final URI defaultBaseURI) {
-    return (ODataEntitySet) super.getODataEntitySet(resource, defaultBaseURI);
-  }
-
-  @Override
-  protected void copyProperties(final List<Property> src, final CommonODataEntity dst, final URI base) {
-    for (Property property : src) {
-      add(dst, getODataProperty(property));
-    }
-  }
-
-  @Override
-  public ODataEntity getODataEntity(final Entry resource) {
+  public ODataEntity getODataEntity(final ResWrap<Entry> resource) {
     return (ODataEntity) super.getODataEntity(resource);
   }
 
   @Override
-  public ODataEntity getODataEntity(final Entry resource, final URI defaultBaseURI) {
-    return (ODataEntity) super.getODataEntity(resource, defaultBaseURI);
-  }
-
-  @Override
-  public ODataProperty getODataProperty(final Property property) {
-    return new ODataPropertyImpl(property.getName(), getODataValue(property, null));
+  public ODataProperty getODataProperty(final ResWrap<Property> property) {
+    return new ODataPropertyImpl(property.getPayload().getName(), getODataValue(property));
   }
 
   @Override
