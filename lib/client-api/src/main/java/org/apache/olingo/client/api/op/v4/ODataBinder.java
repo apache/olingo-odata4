@@ -19,10 +19,12 @@
 package org.apache.olingo.client.api.op.v4;
 
 import org.apache.olingo.client.api.op.CommonODataBinder;
+import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -37,4 +39,6 @@ public interface ODataBinder extends CommonODataBinder {
 
   @Override
   ODataProperty getODataProperty(ResWrap<Property> resource);
+
+  ODataDelta getODataDelta(ResWrap<Delta> resource);
 }

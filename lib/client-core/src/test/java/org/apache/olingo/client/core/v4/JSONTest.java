@@ -200,7 +200,7 @@ public class JSONTest extends AbstractTest {
     assertEquals(5, delta.getCount(), 0);
 
     assertEquals(1, delta.getDeletedEntities().size());
-    assertTrue(delta.getDeletedEntities().get(0).getId().endsWith("Customers('ANTON')"));
+    assertTrue(delta.getDeletedEntities().get(0).getId().toASCIIString().endsWith("Customers('ANTON')"));
 
     assertEquals(1, delta.getAddedLinks().size());
     assertTrue(delta.getAddedLinks().get(0).getSource().toASCIIString().endsWith("Customers('BOTTM')"));

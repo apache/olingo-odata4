@@ -43,13 +43,10 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public ODataPropertyRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataPropertyRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataFormat.class, query);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataRetrieveResponse<T> execute() {
     final HttpResponse res = doExecute();
@@ -78,9 +75,6 @@ public class ODataPropertyRequestImpl<T extends CommonODataProperty>
       super(client, res);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     @SuppressWarnings("unchecked")
     public T getBody() {

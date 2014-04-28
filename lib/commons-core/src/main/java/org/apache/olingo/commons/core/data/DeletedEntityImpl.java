@@ -18,31 +18,32 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.net.URI;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 
 public class DeletedEntityImpl extends AbstractPayloadObject implements DeletedEntity {
 
   private static final long serialVersionUID = -3841730551749114664L;
 
-  private String id;
+  private URI id;
 
-  private String reason;
+  private Reason reason;
 
   @Override
-  public String getId() {
+  public URI getId() {
     return id;
   }
 
-  public void setId(final String id) {
+  public void setId(final URI id) {
     this.id = id;
   }
 
   @Override
-  public String getReason() {
+  public Reason getReason() {
     return reason;
   }
 
-  public void setReason(final String reason) {
+  public void setReason(final Reason reason) {
     this.reason = reason;
   }
 

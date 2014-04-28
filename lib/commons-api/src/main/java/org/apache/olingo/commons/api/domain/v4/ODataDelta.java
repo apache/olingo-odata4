@@ -16,13 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.retrieve;
+package org.apache.olingo.commons.api.domain.v4;
 
-import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import java.net.URI;
+import java.util.List;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.DeltaLink;
 
-/**
- * Describes an OData retrieve query request returning a single entity.
- */
-public interface ODataEntityRequest<E extends CommonODataEntity> extends ODataRetrieveRequest<E, ODataPubFormat> {
+public interface ODataDelta extends ODataEntitySet {
+
+  List<DeletedEntity> getDeletedEntities();
+
+  List<DeltaLink> getAddedLinks();
+
+  List<DeltaLink> getDeletedLinks();
+
+  /**
+   * Gets delta link if exists.
+   *
+   * @return delta link if exists; null otherwise.
+   */
+  URI getDeltaLink();
+
+  /**
+   * Sets delta link.
+   *
+   * @param deltaLink delta link.
+   */
+  void setDeltaLink(URI deltaLink);
+
 }

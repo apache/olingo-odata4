@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.op.impl.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
@@ -25,6 +26,9 @@ import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -36,11 +40,14 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.core.data.DeletedEntityImpl;
+import org.apache.olingo.commons.core.data.DeltaLinkImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
@@ -194,4 +201,56 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     return value;
   }
+
+  @Override
+  public ODataDelta getODataDelta(final ResWrap<Delta> resource) {
+    final URI base = resource.getContextURL() == null
+            ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
+
+    final URI next = resource.getPayload().getNext();
+
+    final ODataDelta delta = next == null
+            ? ((ODataClient) client).getObjectFactory().newDelta()
+            : ((ODataClient) client).getObjectFactory().newDelta(URIUtils.getURI(base, next.toASCIIString()));
+
+    if (resource.getPayload().getCount() != null) {
+      delta.setCount(resource.getPayload().getCount());
+    }
+
+    if (resource.getPayload().getDeltaLink() != null) {
+      delta.setDeltaLink(URIUtils.getURI(base, resource.getPayload().getDeltaLink()));
+    }
+
+    for (Entity entityResource : resource.getPayload().getEntities()) {
+      add(delta, getODataEntity(
+              new ResWrap<Entity>(resource.getContextURL(), resource.getMetadataETag(), entityResource)));
+    }
+    for (DeletedEntity deletedEntity : resource.getPayload().getDeletedEntities()) {
+      final DeletedEntityImpl impl = new DeletedEntityImpl();
+      impl.setId(URIUtils.getURI(base, deletedEntity.getId()));
+      impl.setReason(deletedEntity.getReason());
+
+      delta.getDeletedEntities().add(impl);
+    }
+
+    for (DeltaLink link : resource.getPayload().getAddedLinks()) {
+      final DeltaLinkImpl impl = new DeltaLinkImpl();
+      impl.setRelationship(link.getRelationship());
+      impl.setSource(URIUtils.getURI(base, link.getSource()));
+      impl.setTarget(URIUtils.getURI(base, link.getTarget()));
+
+      delta.getAddedLinks().add(impl);
+    }
+    for (DeltaLink link : resource.getPayload().getDeletedLinks()) {
+      final DeltaLinkImpl impl = new DeltaLinkImpl();
+      impl.setRelationship(link.getRelationship());
+      impl.setSource(URIUtils.getURI(base, link.getSource()));
+      impl.setTarget(URIUtils.getURI(base, link.getTarget()));
+
+      delta.getDeletedLinks().add(impl);
+    }
+
+    return delta;
+  }
+
 }

@@ -42,4 +42,6 @@ public interface RetrieveRequestFactory extends CommonRetrieveRequestFactory {
 
   @Override
   ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
+  
+  ODataDeltaRequest getDeltaRequest(URI uri);
 }

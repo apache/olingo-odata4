@@ -18,10 +18,19 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.net.URI;
+
 public interface DeletedEntity {
 
-  String getId();
+  enum Reason {
 
-  String getReason();
+    deleted,
+    changed;
+
+  }
+
+  URI getId();
+
+  Reason getReason();
 
 }

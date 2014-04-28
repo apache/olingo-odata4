@@ -345,6 +345,36 @@ public class V4Services extends AbstractServices {
   }
 
   @GET
+  @Path("/Customers")
+  public Response getEntitySet(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) String deltatoken) {
+
+    if (StringUtils.isBlank(deltatoken)) {
+      return getEntitySet(uriInfo, accept, "Customers", null, null, format, null, null, null, null);
+    } else {
+      try {
+        final Accept acceptType;
+        if (StringUtils.isNotBlank(format)) {
+          acceptType = Accept.valueOf(format.toUpperCase());
+        } else {
+          acceptType = Accept.parse(accept, version);
+        }
+
+        return xml.createResponse(
+                null,
+                FSManager.instance(version).readFile("delta", acceptType),
+                null,
+                acceptType);
+      } catch (Exception e) {
+        return xml.createFaultResponse(accept, e);
+      }
+    }
+  }
+
+  @GET
   @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount")
   public Response functionGetEmployeesCount(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,

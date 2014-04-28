@@ -62,4 +62,8 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   ODataProperty newCollectionProperty(String name,
           ODataCollectionValue<? extends org.apache.olingo.commons.api.domain.ODataValue> value);
 
+  ODataDelta newDelta();
+
+  ODataDelta newDelta(URI next);
+
 }

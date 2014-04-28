@@ -31,6 +31,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
+import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
@@ -420,11 +421,11 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
           final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
           if (ref != null) {
-            deletedEntity.setId(ref.getValue());
+            deletedEntity.setId(URI.create(ref.getValue()));
           }
           final Attribute reason = event.asStartElement().getAttributeByName(reasonQName);
           if (reason != null) {
-            deletedEntity.setReason(reason.getValue());
+            deletedEntity.setReason(Reason.valueOf(reason.getValue()));
           }
 
           delta.getDeletedEntities().add(deletedEntity);
