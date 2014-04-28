@@ -122,6 +122,9 @@ public class ODataBatchRequestImpl
    */
   protected class ODataBatchResponseImpl extends AbstractODataResponse implements ODataBatchResponse {
 
+    private ODataBatchResponseImpl() {
+    }
+
     /**
      * Constructor.
      *

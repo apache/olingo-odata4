@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,6 +34,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
@@ -257,10 +257,10 @@ public abstract class AbstractODataResponse implements ODataResponse {
       this.headers.putAll(partHeaders);
 
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      LOG.debug("Retrieved payload {}", bos.toString(Charset.forName("UTF-8").toString()));
 
       while (batchLineIterator.hasNext()) {
-        bos.write(batchLineIterator.nextLine().getBytes());
+        bos.write(batchLineIterator.nextLine().getBytes(Constants.UTF8));
+        bos.write(ODataStreamer.CRLF);
       }
 
       try {

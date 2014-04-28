@@ -19,6 +19,8 @@
 package org.apache.olingo.client.core.communication.request.v4;
 
 import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.v4.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -38,5 +40,10 @@ public class AsyncRequestFactoryImpl implements AsyncRequestFactory {
   @Override
   public <R extends ODataResponse> AsyncRequestWrapper<R> getAsyncRequestWrapper(final ODataRequest odataRequest) {
     return new AsyncRequestWrapperImpl<R>(client, odataRequest);
+  }
+
+  @Override
+  public AsyncBatchRequestWrapper getAsyncBatchRequestWrapper(final ODataBatchRequest odataRequest) {
+    return new AsyncBatchRequestWrapperImpl(client, odataRequest);
   }
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response.v4;
 
+import java.net.URI;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 
@@ -48,6 +49,16 @@ public interface AsyncResponseWrapper<R extends ODataResponse> {
    * @return real OData response.
    */
   R getODataResponse();
+
+  /**
+   * Specifies the location for the next monitor check.
+   * <br />
+   * Overrides the location value retrieved among headers and nullifies the previous valid response (if exists).
+   *
+   * @param uri monitor location.
+   * @return the current async response wrapper.
+   */
+  AsyncResponseWrapper<R> forceNextMonitorCheck(URI uri);
 
   /**
    * DeleteA DELETE request sent to the status monitor resource requests that the asynchronous processing be canceled. A

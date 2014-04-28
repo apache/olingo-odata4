@@ -26,12 +26,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -44,10 +46,13 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.v4.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.communication.response.v4.AsyncResponse;
+import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
@@ -397,7 +402,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked"})
   public void batchRequest() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
@@ -412,8 +417,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
-    targetURI.appendEntitySetSegment("Customers").appendKeySegment(1);//.
-//            expand("Orders").select("PersonID,Orders/OrderID");
+    targetURI.appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -520,9 +524,79 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     entres = (ODataEntityRequestImpl.ODataEntityResponseImpl) res;
     entity = entres.getBody();
-    assertEquals("new last name",
-            entity.getProperty("LastName").getPrimitiveValue().toCastValue(String.class));
+    assertEquals("new last name", entity.getProperty("LastName").getPrimitiveValue().toCastValue(String.class));
 
+    assertFalse(iter.hasNext());
+  }
+
+  @Test
+  public void async() {
+    // create your request
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(
+            URI.create(testStaticServiceRootURL + "/async/").normalize().toASCIIString());
+    request.setAccept(ACCEPT);
+
+    final AsyncBatchRequestWrapper async = client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(request);
+
+    // -------------------------------------------
+    // Add retrieve item
+    // -------------------------------------------
+    ODataRetrieve retrieve = async.addRetrieve();
+
+    // prepare URI
+    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    targetURI.appendEntitySetSegment("People").appendKeySegment(5);
+
+    // create new request
+    ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
+    queryReq.setFormat(ODataPubFormat.JSON);
+
+    retrieve.setRequest(queryReq);
+    // -------------------------------------------
+
+    // -------------------------------------------
+    // Add retrieve item
+    // -------------------------------------------
+    retrieve = async.addRetrieve();
+
+    // prepare URI
+    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
+
+    // create new request
+    queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
+
+    retrieve.setRequest(queryReq);
+    // -------------------------------------------
+
+    final AsyncResponseWrapper<ODataBatchResponse> responseWrapper = async.execute();
+
+    assertTrue(responseWrapper.isPreferenceApplied());
+    assertTrue(responseWrapper.isDone());
+
+    final ODataBatchResponse response = responseWrapper.getODataResponse();
+
+    assertEquals(200, response.getStatusCode());
+    assertEquals("Ok", response.getStatusMessage());
+    final Iterator<ODataBatchResponseItem> iter = response.getBody();
+
+    // retrieve the first item (ODataRetrieve)
+    ODataBatchResponseItem item = iter.next();
+    assertTrue(item instanceof ODataRetrieveResponseItem);
+
+    // The service return interim results to an asynchronously executing batch.
+    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataResponse res = retitem.next();
+    assertTrue(res instanceof AsyncResponse);
+    assertEquals(202, res.getStatusCode());
+    assertEquals("Accepted", res.getStatusMessage());
+
+    Collection<String> newMonitorLocation = res.getHeader(HeaderName.location);
+    if (newMonitorLocation != null && !newMonitorLocation.isEmpty()) {
+      responseWrapper.forceNextMonitorCheck(URI.create(newMonitorLocation.iterator().next()));
+      // .... now you can start again with isDone() and getODataResponse().
+    }
+
+    assertFalse(retitem.hasNext());
     assertFalse(iter.hasNext());
   }
 

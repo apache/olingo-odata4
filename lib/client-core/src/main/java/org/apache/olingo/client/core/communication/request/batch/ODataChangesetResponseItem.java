@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
+import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
 /**
  * Changeset wrapper for the corresponding batch item.
@@ -116,11 +117,15 @@ public class ODataChangesetResponseItem extends AbstractODataBatchResponseItem {
     final Map.Entry<Integer, String> responseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
     LOG.debug("Retrieved item response {}", responseLine);
 
-    if (responseLine.getKey() >= 400) {
-      // generate error response
-      final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
-      LOG.debug("Retrieved item headers {}", headers);
+    final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
+    LOG.debug("Retrieved item headers {}", headers);
 
+    if (responseLine.getKey() == 202) {
+      // generate async response
+      current = new AsyncResponseImpl(responseLine, headers, batchLineIterator, boundary);
+      return current;
+    } else if (responseLine.getKey() >= 400) {
+      // generate error response
       current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
       return current;
     }

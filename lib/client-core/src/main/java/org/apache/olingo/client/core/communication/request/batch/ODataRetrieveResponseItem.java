@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
+import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
 /**
  * Retrieve response wrapper for the corresponding batch item.
@@ -58,7 +59,11 @@ public class ODataRetrieveResponseItem extends AbstractODataBatchResponseItem {
     final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
     LOG.debug("Retrieved item headers {}", headers);
 
-    if (responseLine.getKey() >= 400) {
+    if (responseLine.getKey() == 202) {
+      // generate async response
+      current = new AsyncResponseImpl(responseLine, headers, batchLineIterator, boundary);
+      breakingitem = true;
+    } else if (responseLine.getKey() >= 400) {
       // generate error response
       current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
       breakingitem = true;

@@ -18,9 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.response.v4;
 
+import java.util.Collection;
+import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponse;
+import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 
 /**
@@ -45,5 +49,28 @@ public class AsyncResponseImpl extends AbstractODataResponse implements AsyncRes
    */
   public AsyncResponseImpl(final HttpClient client, final HttpResponse res) {
     super(client, res);
+  }
+
+  /**
+   * Constructor to be used inside a batch item.
+   */
+  public AsyncResponseImpl(
+          final Map.Entry<Integer, String> responseLine,
+          final Map<String, Collection<String>> headers,
+          final ODataBatchLineIterator batchLineIterator,
+          final String boundary) {
+    super();
+
+    if (hasBeenInitialized) {
+      throw new IllegalStateException("Request already initialized");
+    }
+
+    this.hasBeenInitialized = true;
+
+    this.batchInfo = new ODataBatchController(batchLineIterator, boundary);
+
+    this.statusCode = responseLine.getKey();
+    this.statusMessage = responseLine.getValue();
+    this.headers.putAll(headers);
   }
 }

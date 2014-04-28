@@ -51,12 +51,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entry;
 import org.apache.olingo.commons.api.data.Feed;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.data.AtomEntryImpl;
 import org.apache.olingo.commons.core.data.AtomFeedImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
@@ -149,6 +152,54 @@ public class V4Services extends AbstractServices {
       return xml.createMonitorResponse(res);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(), e);
+    }
+  }
+
+  @POST
+  @Path("/async/$batch")
+  public Response async(
+          @Context final UriInfo uriInfo,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
+          final @Multipart MultipartBody attachment) {
+
+    try {
+      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      bos.write("HTTP/1.1 200 Ok".getBytes());
+      bos.write(CRLF);
+      bos.write("OData-Version: 4.0".getBytes());
+      bos.write(CRLF);
+      bos.write(("Content-Type: " + ContentType.APPLICATION_OCTET_STREAM + ";boundary=" + BOUNDARY).getBytes());
+      bos.write(CRLF);
+      bos.write(CRLF);
+
+      bos.write(("--" + BOUNDARY).getBytes());
+      bos.write(CRLF);
+      bos.write("Content-Type: application/http".getBytes());
+      bos.write(CRLF);
+      bos.write("Content-Transfer-Encoding: binary".getBytes());
+      bos.write(CRLF);
+      bos.write(CRLF);
+
+      bos.write("HTTP/1.1 202 Accepted".getBytes());
+      bos.write(CRLF);
+      bos.write("Location: http://service-root/async-monitor".getBytes());
+      bos.write(CRLF);
+      bos.write("Retry-After: 10".getBytes());
+      bos.write(CRLF);
+      bos.write(CRLF);
+      bos.write(("--" + BOUNDARY + "--").getBytes());
+      bos.write(CRLF);
+
+      final UUID uuid = UUID.randomUUID();
+      providedAsync.put(uuid.toString(), bos.toString(Constants.ENCODING.toString()));
+      
+      bos.flush();
+      bos.close();
+
+      return xml.createAsyncResponse(
+              uriInfo.getRequestUri().toASCIIString().replace("async/$batch", "") + "monitor/" + uuid.toString());
+    } catch (Exception e) {
+      return xml.createFaultResponse(Accept.JSON.toString(), e);
     }
   }
 
@@ -568,7 +619,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -590,7 +641,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -688,8 +739,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONEntryImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                        new TypeReference<JSONEntryImpl>() {
-                        });
+                new TypeReference<JSONEntryImpl>() {
+        });
 
         entry = dataBinder.toAtomEntry(jcontainer.getPayload());
 
@@ -787,7 +838,7 @@ public class V4Services extends AbstractServices {
 
         final ResWrap<JSONEntryImpl> jsonContainer = mapper.readValue(
                 IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntryImpl>() {
-                });
+        });
         jsonContainer.getPayload().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.toAtomEntry(jsonContainer.getPayload());
       }
@@ -820,7 +871,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<AtomEntryImpl> container = atomDeserializer.read(entry, AtomEntryImpl.class);
 
       // 2. Remove the contained entity
@@ -1049,8 +1100,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
+                new TypeReference<JSONPropertyImpl>() {
+        });
         property = paramContainer.getPayload();
       }
 
@@ -1091,8 +1142,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
+                new TypeReference<JSONPropertyImpl>() {
+        });
         property = paramContainer.getPayload();
       }
 

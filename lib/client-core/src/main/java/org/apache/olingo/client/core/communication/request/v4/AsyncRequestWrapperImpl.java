@@ -41,7 +41,6 @@ import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapp
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.AbstractRequest;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -49,34 +48,29 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
         implements AsyncRequestWrapper<R> {
 
-  private static final int MAX_RETRY = 5;
+  protected static final int MAX_RETRY = 5;
 
-  private final ODataClient odataClient;
+  protected final ODataClient odataClient;
 
   /**
    * Request to be wrapped.
    */
-  private final ODataRequest odataRequest;
+  protected final ODataRequest odataRequest;
 
   /**
    * HTTP client.
    */
-  private final HttpClient httpClient;
+  protected final HttpClient httpClient;
 
   /**
    * HTTP request.
    */
-  private final HttpUriRequest request;
-
-  /**
-   * OData request header.
-   */
-  private final ODataHeadersImpl odataHeaders;
+  protected final HttpUriRequest request;
 
   /**
    * Target URI.
    */
-  private final URI uri;
+  protected final URI uri;
 
   protected AsyncRequestWrapperImpl(final ODataClient odataClient, final ODataRequest odataRequest) {
     this.odataRequest = odataRequest;
@@ -87,9 +81,6 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     this.odataClient = odataClient;
     final HttpMethod method = odataRequest.getMethod();
-
-    // initialize default headers
-    this.odataHeaders = (ODataHeadersImpl) odataClient.getVersionHeaders();
 
     // target uri
     this.uri = odataRequest.getURI();
@@ -104,19 +95,19 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
   }
 
   @Override
-  public AsyncRequestWrapper<R> wait(final int waitInSeconds) {
+  public final AsyncRequestWrapper<R> wait(final int waitInSeconds) {
     extendHeader(HeaderName.prefer.toString(), new ODataPreferences(ODataServiceVersion.V40).wait(waitInSeconds));
     return this;
   }
 
   @Override
-  public AsyncRequestWrapper<R> callback(URI url) {
+  public final AsyncRequestWrapper<R> callback(URI url) {
     extendHeader(HeaderName.prefer.toString(),
             new ODataPreferences(ODataServiceVersion.V40).callback(url.toASCIIString()));
     return this;
   }
 
-  private void extendHeader(final String headerName, final String headerValue) {
+  protected final void extendHeader(final String headerName, final String headerValue) {
     final StringBuilder extended = new StringBuilder();
     if (this.odataRequest.getHeaderNames().contains(headerName)) {
       extended.append(this.odataRequest.getHeader(headerName)).append(", ");
@@ -130,7 +121,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     return new AsyncResponseWrapperImpl(doExecute());
   }
 
-  private HttpResponse doExecute() {
+  protected HttpResponse doExecute() {
     // Add all available headers
     for (String key : odataRequest.getHeaderNames()) {
       final String value = odataRequest.getHeader(key);
@@ -143,13 +134,16 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
   public class AsyncResponseWrapperImpl implements AsyncResponseWrapper<R> {
 
-    private URI location = null;
+    protected URI location = null;
 
-    private R response = null;
+    protected R response = null;
 
-    private int retryAfter = 5;
+    protected int retryAfter = 5;
 
-    private boolean preferenceApplied = false;
+    protected boolean preferenceApplied = false;
+
+    public AsyncResponseWrapperImpl() {
+    }
 
     /**
      * Constructor.
@@ -159,7 +153,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     @SuppressWarnings("unchecked")
     public AsyncResponseWrapperImpl(final HttpResponse res) {
       if (res.getStatusLine().getStatusCode() == 202) {
-        retrieveMonitorDetails(res, true);
+        retrieveMonitorDetails(res);
       } else {
         response = (R) ((AbstractODataRequest<?>) odataRequest).getResponseTemplate().initFromHttpResponse(res);
       }
@@ -177,7 +171,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
         final HttpResponse res = checkMonitor(location);
 
         if (res.getStatusLine().getStatusCode() == 202) {
-          retrieveMonitorDetails(res, false);
+          retrieveMonitorDetails(res);
         } else {
           response = instantiateResponse(res);
         }
@@ -219,16 +213,32 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ODataDeleteResponse delete() {
       final ODataDeleteRequest deleteRequest = odataClient.getCUDRequestFactory().getDeleteRequest(location);
       return deleteRequest.execute();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AsyncResponseWrapper<ODataDeleteResponse> asyncDelete() {
       return odataClient.getAsyncRequestFactory().<ODataDeleteResponse>getAsyncRequestWrapper(
               odataClient.getCUDRequestFactory().getDeleteRequest(location)).execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AsyncResponseWrapper<R> forceNextMonitorCheck(final URI uri) {
+      this.location = uri;
+      this.response = null;
+      return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -246,7 +256,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       return odataResponse;
     }
 
-    private void retrieveMonitorDetails(final HttpResponse res, final boolean includePreferenceApplied) {
+    private void retrieveMonitorDetails(final HttpResponse res) {
       Header[] headers = res.getHeaders(HeaderName.location.toString());
       if (ArrayUtils.isNotEmpty(headers)) {
         this.location = URI.create(headers[0].getValue());
@@ -276,7 +286,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
   }
 
-  private HttpResponse checkMonitor(final URI location) {
+  protected final HttpResponse checkMonitor(final URI location) {
     if (location == null) {
       throw new AsyncRequestException("Invalid async request response. Missing monitor URL");
     }
@@ -287,10 +297,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     return executeHttpRequest(httpClient, monitor);
   }
 
-  private HttpResponse executeHttpRequest(final HttpClient client, final HttpUriRequest req) {
-    checkRequest(odataClient, request);
-
-    HttpResponse response;
+  protected final HttpResponse executeHttpRequest(final HttpClient client, final HttpUriRequest req) {
+    final HttpResponse response;
     try {
       response = client.execute(req);
     } catch (IOException e) {
