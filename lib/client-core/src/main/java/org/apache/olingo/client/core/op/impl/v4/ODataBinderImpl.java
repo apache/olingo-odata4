@@ -25,8 +25,8 @@ import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -89,14 +89,14 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Entry getEntry(final CommonODataEntity entity, final Class<? extends Entry> reference) {
-    final Entry entry = super.getEntry(entity, reference);
-    entry.setId(((ODataEntity) entity).getReference());
-    return entry;
+  public Entity getEntity(final CommonODataEntity odataEntity, final Class<? extends Entity> reference) {
+    final Entity entity = super.getEntity(odataEntity, reference);
+    entity.setId(((ODataEntity) odataEntity).getReference());
+    return entity;
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference) {
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entity> reference) {
     final ODataProperty _property = (ODataProperty) property;
 
     final Property propertyResource = ResourceFactory.newProperty(reference);
@@ -117,7 +117,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  protected Value getValue(final ODataValue value, final Class<? extends Entry> reference) {
+  protected Value getValue(final ODataValue value, final Class<? extends Entity> reference) {
     Value valueResource;
     if (value instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
             && ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).isEnum()) {
@@ -144,12 +144,12 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final ResWrap<Feed> resource) {
+  public ODataEntitySet getODataEntitySet(final ResWrap<EntitySet> resource) {
     return (ODataEntitySet) super.getODataEntitySet(resource);
   }
 
   @Override
-  public ODataEntity getODataEntity(final ResWrap<Entry> resource) {
+  public ODataEntity getODataEntity(final ResWrap<Entity> resource) {
     final ODataEntity entity = (ODataEntity) super.getODataEntity(resource);
     entity.setReference(resource.getPayload().getId());
     return entity;

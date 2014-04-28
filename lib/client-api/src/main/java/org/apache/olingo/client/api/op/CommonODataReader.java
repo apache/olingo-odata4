@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.format.ODataPubFormat;
  * <br/>
  * Use this class to de-serialize an OData response body.
  * <br/>
- * This class provides method helpers to de-serialize an entire feed, a set of entities and a single entity as well.
+ * This class provides method helpers to de-serialize an entire entity set, a set of entities or a single entity.
  */
 public interface CommonODataReader extends Serializable {
 
@@ -71,7 +71,7 @@ public interface CommonODataReader extends Serializable {
    * De-Serializes a stream into an OData entity set.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize as AtomFeed or JSONFeed
+   * @param format de-serialize format
    * @return de-serialized entity set.
    */
   CommonODataEntitySet readEntitySet(InputStream input, ODataPubFormat format);
@@ -80,7 +80,7 @@ public interface CommonODataReader extends Serializable {
    * Parses a stream taking care to de-serializes the first OData entity found.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize as AtomEntry or JSONEntry
+   * @param format de-serialize format
    * @return entity de-serialized.
    */
   CommonODataEntity readEntity(InputStream input, ODataPubFormat format);

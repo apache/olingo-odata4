@@ -19,7 +19,9 @@
 package org.apache.olingo.commons.api.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import org.junit.Test;
@@ -35,6 +37,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Orders(4711)/Items"));
 
@@ -42,6 +45,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertEquals("Items", contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -52,6 +56,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Orders(4711)/Items/$entity"));
 
@@ -59,6 +64,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertEquals("Items", contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
 
     // v3    
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Products/@Element"));
@@ -67,6 +73,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
   }
 
   @Test
@@ -77,6 +84,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -88,6 +96,7 @@ public class ContextURLTest {
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -99,6 +108,7 @@ public class ContextURLTest {
     assertEquals("Model.VipCustomer", contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
   }
 
   @Test
@@ -110,6 +120,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertEquals("Address,Orders", contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -121,6 +132,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertEquals("Name,Rating", contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertTrue(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(
             URI.create("http://host/service/$metadata#Customers(Name,Address/Country)"));
@@ -129,6 +141,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertEquals("Name,Address/Country", contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -141,6 +154,7 @@ public class ContextURLTest {
     assertEquals("Sales.Manager", contextURL.getDerivedEntity());
     assertEquals("DirectReports,DirectReports+(FirstName,LastName)", contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -152,6 +166,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertEquals("Addresses", contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -163,6 +178,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
   }
 
   @Test
@@ -173,6 +189,7 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
 
     contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#ODataDemo.Address"));
 
@@ -180,5 +197,21 @@ public class ContextURLTest {
     assertNull(contextURL.getDerivedEntity());
     assertNull(contextURL.getSelectList());
     assertNull(contextURL.getNavOrPropertyPath());
+    assertFalse(contextURL.isEntity());
+  }
+
+  @Test
+  public void delta() {
+    ContextURL contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$delta"));
+    assertTrue(contextURL.isDelta());
+
+    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedLink"));
+    assertTrue(contextURL.isDeltaDeletedLink());
+
+    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$link"));
+    assertTrue(contextURL.isDeltaLink());
+  
+    contextURL = ContextURL.getInstance(URI.create("http://host/service/$metadata#Customers/$deletedEntity"));
+    assertTrue(contextURL.isDeltaDeletedEntity());
   }
 }

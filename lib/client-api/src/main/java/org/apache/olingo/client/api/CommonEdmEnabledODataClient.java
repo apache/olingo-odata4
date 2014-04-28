@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.api;
 
-import java.net.URI;
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.commons.api.edm.Edm;
 

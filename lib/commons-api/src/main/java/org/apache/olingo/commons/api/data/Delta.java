@@ -16,51 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
 
-/**
- * List of entries, represented via Atom.
- *
- * @see AtomEntry
- */
-public class AtomFeedImpl extends AbstractODataObject implements Feed {
+public interface Delta extends EntitySet {
 
-  private static final long serialVersionUID = 5466590540021319153L;
+  List<DeletedEntity> getDeletedEntities();
 
-  private Integer count;
+  List<DeltaLink> getAddedLinks();
 
-  private final List<Entry> entries = new ArrayList<Entry>();
+  List<DeltaLink> getDeletedLinks();
 
-  private URI next;
+  /**
+   * Gets delta link if exists.
+   *
+   * @return delta link if exists; null otherwise.
+   */
+  URI getDeltaLink();
 
-  @Override
-  public void setCount(final Integer count) {
-    this.count = count;
-  }
-
-  @Override
-  public Integer getCount() {
-    return count;
-  }
-
-  @Override
-  public List<Entry> getEntries() {
-    return entries;
-  }
-
-  @Override
-  public void setNext(final URI next) {
-    this.next = next;
-  }
-
-  @Override
-  public URI getNext() {
-    return next;
-  }
+  /**
+   * Sets delta link.
+   *
+   * @param deltaLink delta link.
+   */
+  void setDeltaLink(URI deltaLink);
 }

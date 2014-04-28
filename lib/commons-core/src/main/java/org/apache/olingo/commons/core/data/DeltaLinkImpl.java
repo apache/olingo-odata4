@@ -16,27 +16,49 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.op.v4;
+package org.apache.olingo.commons.core.data;
 
-import java.io.InputStream;
+import java.net.URI;
+import org.apache.olingo.commons.api.data.DeltaLink;
 
-import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
-import org.apache.olingo.client.api.op.ClientODataDeserializer;
-import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+public class DeltaLinkImpl extends AbstractPayloadObject implements DeltaLink {
 
-public interface ODataDeserializer extends ClientODataDeserializer {
+  private static final long serialVersionUID = -6686550836508873044L;
+
+  private URI source;
+
+  private String relationship;
+
+  private URI target;
 
   @Override
-  XMLMetadata toMetadata(InputStream input);
+  public URI getSource() {
+    return source;
+  }
 
-  /**
-   * Gets a delta object from the given InputStream.
-   *
-   * @param input stream to be de-serialized.
-   * @param format Atom or JSON
-   * @return {@link Delta} instance.
-   */
-  ResWrap<Delta> toDelta(InputStream input, ODataPubFormat format);
+  @Override
+  public void setSource(final URI source) {
+    this.source = source;
+  }
+
+  @Override
+  public String getRelationship() {
+    return relationship;
+  }
+
+  @Override
+  public void setRelationship(String relationship) {
+    this.relationship = relationship;
+  }
+
+  @Override
+  public URI getTarget() {
+    return target;
+  }
+
+  @Override
+  public void setTarget(URI target) {
+    this.target = target;
+  }
+
 }

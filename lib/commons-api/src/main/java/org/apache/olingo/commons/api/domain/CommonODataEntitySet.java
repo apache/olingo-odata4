@@ -36,7 +36,7 @@ public interface CommonODataEntitySet extends ODataInvokeResult {
   /**
    * Gets contained entities.
    *
-   * @return feed entries.
+   * @return entity set's entities.
    */
   List<? extends CommonODataEntity> getEntities();
 

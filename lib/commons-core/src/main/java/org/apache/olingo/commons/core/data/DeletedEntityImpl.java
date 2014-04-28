@@ -18,8 +18,32 @@
  */
 package org.apache.olingo.commons.core.data;
 
-public class AtomEntryImpl extends AbstractEntry {
+import org.apache.olingo.commons.api.data.DeletedEntity;
 
-  private static final long serialVersionUID = 6973729343868293279L;
+public class DeletedEntityImpl extends AbstractPayloadObject implements DeletedEntity {
+
+  private static final long serialVersionUID = -3841730551749114664L;
+
+  private String id;
+
+  private String reason;
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  public void setId(final String id) {
+    this.id = id;
+  }
+
+  @Override
+  public String getReason() {
+    return reason;
+  }
+
+  public void setReason(final String reason) {
+    this.reason = reason;
+  }
 
 }

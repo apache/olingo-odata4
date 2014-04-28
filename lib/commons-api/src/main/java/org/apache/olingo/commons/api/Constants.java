@@ -42,6 +42,8 @@ public interface Constants {
 
   public static final String NS_GML = "http://www.opengis.net/gml";
 
+  public static final String NS_ATOM_TOMBSTONE = "http://purl.org/atompub/tombstones/1.0";
+
   public static final String PREFIX_DATASERVICES = "d";
 
   public static final String PREFIX_METADATA = "m";
@@ -60,6 +62,8 @@ public interface Constants {
   public static final String EDITMEDIA_LINK_REL = "edit-media";
 
   public static final String NEXT_LINK_REL = "next";
+
+  public static final String DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
 
   // XML elements and attributes
   public static final String PROPERTIES = "properties";
@@ -83,6 +87,8 @@ public interface Constants {
   public static final String ATTR_METADATA = "metadata";
 
   public static final String ATTR_HREF = "href";
+
+  public static final String ATTR_REF = "ref";
 
   public static final String ATTR_TARGET = "target";
 
@@ -138,6 +144,14 @@ public interface Constants {
 
   public static final String ELEM_URI = "uri";
 
+  public final static String ELEM_REASON = "reason";
+
+  public static final String ELEM_DELETED_LINK = "deleted-link";
+
+  public static final String ATTR_SOURCE = "source";
+
+  public static final String ATTR_RELATIONSHIP = "relationship";
+
   // JSON stuff
   public final static String JSON_METADATA = "odata.metadata";
 
@@ -158,10 +172,6 @@ public interface Constants {
   public final static String JSON_GEOMETRIES = "geometries";
 
   public final static String JSON_CRS = "crs";
-
-  public final static String JSON_COUNT = "odata.count";
-
-  public final static String JSON_NEXT_LINK = "odata.nextLink";
 
   public final static String JSON_NAME = "name";
 
@@ -224,7 +234,9 @@ public interface Constants {
 
   public static final String ATOM_ATTR_METADATAETAG = "metadata-etag";
 
-  // error stuff
+  public static final String ATOM_ELEM_DELETED_ENTRY = "deleted-entry";
+
+// error stuff
   public static final String ERROR_CODE = "code";
 
   public static final String ERROR_MESSAGE = "message";

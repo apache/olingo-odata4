@@ -16,21 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.serializer;
+package org.apache.olingo.commons.api.data;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.JSONEntityDeserializer;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntitySerializer;
+import java.net.URI;
 
-@JsonDeserialize(using = JSONEntityDeserializer.class)
-@JsonSerialize(using = JSONEntitySerializer.class)
-public class JSONEntryContainer extends ResWrap<JSONEntityImpl> {
+public interface DeltaLink {
 
-  public JSONEntryContainer(final ContextURL contextURL, final String metadataETag, final JSONEntityImpl object) {
-    super(contextURL, metadataETag, object);
-  }
+  URI getSource();
+
+  void setSource(URI source);
+
+  String getRelationship();
+
+  void setRelationship(String relationship);
+
+  URI getTarget();
+
+  void setTarget(URI target);
 }

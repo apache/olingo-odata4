@@ -48,8 +48,8 @@ public class ODataWriterImpl implements ODataWriter {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
       for (CommonODataEntity entity : entities) {
-        client.getSerializer().entry(client.getBinder().getEntry(
-                entity, ResourceFactory.entryClassForFormat(format == ODataPubFormat.ATOM)), output);
+        client.getSerializer().entity(client.getBinder().getEntity(
+                entity, ResourceFactory.entityClassForFormat(format == ODataPubFormat.ATOM)), output);
       }
 
       return new ByteArrayInputStream(output.toByteArray());
@@ -68,7 +68,7 @@ public class ODataWriterImpl implements ODataWriter {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     try {
       client.getSerializer().property(client.getBinder().getProperty(
-              property, ResourceFactory.entryClassForFormat(format == ODataFormat.XML)), output);
+              property, ResourceFactory.entityClassForFormat(format == ODataFormat.XML)), output);
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

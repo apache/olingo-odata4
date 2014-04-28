@@ -159,7 +159,7 @@ public class XMLUtilities extends AbstractUtilities {
       attributes.add(eventFactory.createAttribute(new QName("rel"),
               Constants.get(version, ConstantKey.ATOM_LINK_REL) + link));
       attributes.add(eventFactory.createAttribute(new QName("type"),
-              navigationProperties.get(link).isFeed()
+              navigationProperties.get(link).isEntitySet()
               ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
               : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY)));
 

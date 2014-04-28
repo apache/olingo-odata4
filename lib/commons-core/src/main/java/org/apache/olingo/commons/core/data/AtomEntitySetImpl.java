@@ -16,21 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.serializer;
+package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.JSONEntityDeserializer;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntitySerializer;
+/**
+ * List of entries, represented via Atom.
+ */
+public class AtomEntitySetImpl extends AbstractEntitySet {
 
-@JsonDeserialize(using = JSONEntityDeserializer.class)
-@JsonSerialize(using = JSONEntitySerializer.class)
-public class JSONEntryContainer extends ResWrap<JSONEntityImpl> {
+  private static final long serialVersionUID = 5466590540021319153L;
 
-  public JSONEntryContainer(final ContextURL contextURL, final String metadataETag, final JSONEntityImpl object) {
-    super(contextURL, metadataETag, object);
-  }
 }

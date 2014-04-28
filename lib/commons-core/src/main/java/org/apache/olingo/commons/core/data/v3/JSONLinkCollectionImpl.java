@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.core.data.AbstractPayloadObject;
 
 /**
- * Link from an entry, represented via JSON.
+ * Link from an entity, represented via JSON.
  */
 public class JSONLinkCollectionImpl extends AbstractPayloadObject implements LinkCollection {
 

@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
 
-public interface Entry extends Linked {
+public interface Entity extends Linked {
 
   /**
    * Gets ETag.
@@ -39,56 +39,56 @@ public interface Entry extends Linked {
   URI getBaseURI();
 
   /**
-   * Gets entry type.
+   * Gets entity type.
    *
-   * @return entry type.
+   * @return entity type.
    */
   String getType();
 
   /**
-   * Sets entry type.
+   * Sets entity type.
    *
-   * @param type entry type.
+   * @param type entity type.
    */
   void setType(String type);
 
   /**
-   * Gets entry ID.
+   * Gets entity ID.
    *
-   * @return entry ID.
+   * @return entity ID.
    */
   String getId();
 
   /**
-   * Sets entry ID.
+   * Sets entity ID.
    *
-   * @param id entry ID.
+   * @param id entity ID.
    */
   void setId(String id);
 
   /**
-   * Gets entry self link.
+   * Gets entity self link.
    *
    * @return self link.
    */
   Link getSelfLink();
 
   /**
-   * Sets entry self link.
+   * Sets entity self link.
    *
    * @param selfLink self link.
    */
   void setSelfLink(Link selfLink);
 
   /**
-   * Gets entry edit link.
+   * Gets entity edit link.
    *
    * @return edit link.
    */
   Link getEditLink();
 
   /**
-   * Sets entry edit link.
+   * Sets entity edit link.
    *
    * @param editLink edit link.
    */
@@ -166,9 +166,9 @@ public interface Entry extends Linked {
   void setMediaETag(String eTag);
 
   /**
-   * Checks if the current entry is a media entry.
+   * Checks if the current entity is a media entity.
    *
-   * @return 'TRUE' if is a media entry; 'FALSE' otherwise.
+   * @return 'TRUE' if is a media entity; 'FALSE' otherwise.
    */
-  boolean isMediaEntry();
+  boolean isMediaEntity();
 }

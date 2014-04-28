@@ -16,25 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.op.v4;
+package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.client.api.op.CommonODataBinder;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.v4.ODataEntity;
-import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 
-public interface ODataBinder extends CommonODataBinder {
+public abstract class AbstractEntitySet extends AbstractODataObject implements EntitySet {
 
-  @Override
-  ODataEntitySet getODataEntitySet(ResWrap<EntitySet> resource);
+  private static final long serialVersionUID = -9159884750819150969L;
 
-  @Override
-  ODataEntity getODataEntity(ResWrap<Entity> resource);
+  private Integer count;
+
+  private final List<Entity> entities = new ArrayList<Entity>();
+
+  private URI next;
 
   @Override
-  ODataProperty getODataProperty(ResWrap<Property> resource);
+  public void setCount(final Integer count) {
+    this.count = count;
+  }
+
+  @Override
+  public Integer getCount() {
+    return count;
+  }
+
+  @Override
+  public List<Entity> getEntities() {
+    return entities;
+  }
+
+  @Override
+  public void setNext(final URI next) {
+    this.next = next;
+  }
+
+  @Override
+  public URI getNext() {
+    return next;
+  }
 }

@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.ResWrap;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -32,6 +31,8 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
+import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
@@ -228,7 +229,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
     final AtomPropertyImpl property = new AtomPropertyImpl();
 
-    if (ODataServiceVersion.V40 == version && v4PropertyValueQName.equals(start.getName())) {
+    if (ODataServiceVersion.V40 == version && propertyValueQName.equals(start.getName())) {
       // retrieve name from context
       final Attribute context = start.getAttributeByName(contextQName);
       if (context != null) {
@@ -352,10 +353,10 @@ public class AtomDeserializer extends AbstractAtomDealer {
         }
         if (inline != null) {
           if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
-            link.setInlineEntry(entry(reader, inline));
+            link.setInlineEntity(entity(reader, inline));
           }
           if (Constants.QNAME_ATOM_ELEM_FEED.equals(inline.getName())) {
-            link.setInlineFeed(feed(reader, inline));
+            link.setInlineEntitySet(entitySet(reader, inline));
           }
         }
       }
@@ -364,6 +365,102 @@ public class AtomDeserializer extends AbstractAtomDealer {
         foundEndElement = true;
       }
     }
+  }
+
+  private ResWrap<AtomDeltaImpl> delta(final InputStream input) throws XMLStreamException {
+    final XMLEventReader reader = getReader(input);
+    final StartElement start = skipBeforeFirstStartElement(reader);
+    return getContainer(start, delta(reader, start));
+  }
+
+  private AtomDeltaImpl delta(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
+      return null;
+    }
+    final AtomDeltaImpl delta = new AtomDeltaImpl();
+    final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
+    if (xmlBase != null) {
+      delta.setBaseURI(xmlBase.getValue());
+    }
+
+    boolean foundEndFeed = false;
+    while (reader.hasNext() && !foundEndFeed) {
+      final XMLEvent event = reader.nextEvent();
+      if (event.isStartElement()) {
+        if (countQName.equals(event.asStartElement().getName())) {
+          count(reader, event.asStartElement(), delta);
+        } else if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), delta, "id");
+        } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), delta, "title");
+        } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), delta, "summary");
+        } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
+          common(reader, event.asStartElement(), delta, "updated");
+        } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
+          final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
+          if (rel != null) {
+            if (Constants.NEXT_LINK_REL.equals(rel.getValue())) {
+              final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+              if (href != null) {
+                delta.setNext(URI.create(href.getValue()));
+              }
+            }
+            if (Constants.DELTA_LINK_REL.equals(rel.getValue())) {
+              final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+              if (href != null) {
+                delta.setDeltaLink(URI.create(href.getValue()));
+              }
+            }
+          }
+        } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
+          delta.getEntities().add(entity(reader, event.asStartElement()));
+        } else if (deletedEntryQName.equals(event.asStartElement().getName())) {
+          final DeletedEntityImpl deletedEntity = new DeletedEntityImpl();
+
+          final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
+          if (ref != null) {
+            deletedEntity.setId(ref.getValue());
+          }
+          final Attribute reason = event.asStartElement().getAttributeByName(reasonQName);
+          if (reason != null) {
+            deletedEntity.setReason(reason.getValue());
+          }
+
+          delta.getDeletedEntities().add(deletedEntity);
+        } else if (linkQName.equals(event.asStartElement().getName())
+                || deletedLinkQName.equals(event.asStartElement().getName())) {
+
+          final DeltaLinkImpl link = new DeltaLinkImpl();
+
+          final Attribute source = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_SOURCE));
+          if (source != null) {
+            link.setSource(URI.create(source.getValue()));
+          }
+          final Attribute relationship = 
+                  event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_RELATIONSHIP));
+          if (relationship != null) {
+            link.setRelationship(relationship.getValue());
+          }
+          final Attribute target = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TARGET));
+          if (target != null) {
+            link.setTarget(URI.create(target.getValue()));
+          }
+
+          if (linkQName.equals(event.asStartElement().getName())) {
+            delta.getAddedLinks().add(link);
+          } else {
+            delta.getDeletedLinks().add(link);
+          }
+        }
+      }
+
+      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
+        foundEndFeed = true;
+      }
+    }
+
+    return delta;
   }
 
   private ResWrap<XMLLinkCollectionImpl> linkCollection(final InputStream input) throws XMLStreamException {
@@ -400,14 +497,14 @@ public class AtomDeserializer extends AbstractAtomDealer {
     return linkCollection;
   }
 
-  private void properties(final XMLEventReader reader, final StartElement start, final AtomEntryImpl entry)
+  private void properties(final XMLEventReader reader, final StartElement start, final AtomEntityImpl entity)
           throws XMLStreamException {
     boolean foundEndProperties = false;
     while (reader.hasNext() && !foundEndProperties) {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
-        entry.getProperties().add(property(reader, event.asStartElement()));
+        entity.getProperties().add(property(reader, event.asStartElement()));
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -416,31 +513,31 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
-  private AtomEntryImpl entryRef(final StartElement start) throws XMLStreamException {
-    final AtomEntryImpl entry = new AtomEntryImpl();
+  private AtomEntityImpl entityRef(final StartElement start) throws XMLStreamException {
+    final AtomEntityImpl entity = new AtomEntityImpl();
 
-    final Attribute entryRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
-    if (entryRefId != null) {
-      entry.setId(entryRefId.getValue());
+    final Attribute entityRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
+    if (entityRefId != null) {
+      entity.setId(entityRefId.getValue());
     }
 
-    return entry;
+    return entity;
   }
 
-  private AtomEntryImpl entry(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
-    final AtomEntryImpl entry;
+  private AtomEntityImpl entity(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    final AtomEntityImpl entity;
     if (entryRefQName.equals(start.getName())) {
-      entry = entryRef(start);
+      entity = entityRef(start);
     } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
-      entry = new AtomEntryImpl();
+      entity = new AtomEntityImpl();
       final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
       if (xmlBase != null) {
-        entry.setBaseURI(xmlBase.getValue());
+        entity.setBaseURI(xmlBase.getValue());
       }
 
       final Attribute etag = start.getAttributeByName(etagQName);
       if (etag != null) {
-        entry.setETag(etag.getValue());
+        entity.setETag(etag.getValue());
       }
 
       boolean foundEndEntry = false;
@@ -449,17 +546,17 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
         if (event.isStartElement()) {
           if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
-            common(reader, event.asStartElement(), entry, "id");
+            common(reader, event.asStartElement(), entity, "id");
           } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
-            common(reader, event.asStartElement(), entry, "title");
+            common(reader, event.asStartElement(), entity, "title");
           } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
-            common(reader, event.asStartElement(), entry, "summary");
+            common(reader, event.asStartElement(), entity, "summary");
           } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
-            common(reader, event.asStartElement(), entry, "updated");
+            common(reader, event.asStartElement(), entity, "updated");
           } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
             final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
             if (term != null) {
-              entry.setType(new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal());
+              entity.setType(new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal());
             }
           } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
             final LinkImpl link = new LinkImpl();
@@ -481,22 +578,22 @@ public class AtomDeserializer extends AbstractAtomDealer {
             }
 
             if (Constants.SELF_LINK_REL.equals(link.getRel())) {
-              entry.setSelfLink(link);
+              entity.setSelfLink(link);
             } else if (Constants.EDIT_LINK_REL.equals(link.getRel())) {
-              entry.setEditLink(link);
+              entity.setEditLink(link);
             } else if (Constants.EDITMEDIA_LINK_REL.equals(link.getRel())) {
               final Attribute mediaETag = event.asStartElement().getAttributeByName(etagQName);
               if (mediaETag != null) {
-                entry.setMediaETag(mediaETag.getValue());
+                entity.setMediaETag(mediaETag.getValue());
               }
             } else if (link.getRel().startsWith(
                     version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
-              entry.getNavigationLinks().add(link);
+              entity.getNavigationLinks().add(link);
               inline(reader, event.asStartElement(), link);
             } else if (link.getRel().startsWith(
                     version.getNamespaceMap().get(ODataServiceVersion.ASSOCIATION_LINK_REL))) {
 
-              entry.getAssociationLinks().add(link);
+              entity.getAssociationLinks().add(link);
             } else if (link.getRel().startsWith(
                     version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL))) {
 
@@ -504,7 +601,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
               if (metag != null) {
                 link.setMediaETag(metag.getValue());
               }
-              entry.getMediaEditLinks().add(link);
+              entity.getMediaEditLinks().add(link);
             }
           } else if (actionQName.equals(event.asStartElement().getName())) {
             final ODataOperation operation = new ODataOperation();
@@ -522,20 +619,20 @@ public class AtomDeserializer extends AbstractAtomDealer {
               operation.setTarget(URI.create(target.getValue()));
             }
 
-            entry.getOperations().add(operation);
+            entity.getOperations().add(operation);
           } else if (Constants.QNAME_ATOM_ELEM_CONTENT.equals(event.asStartElement().getName())) {
             final Attribute type = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
             if (type == null || ContentType.APPLICATION_XML.equals(type.getValue())) {
-              properties(reader, skipBeforeFirstStartElement(reader), entry);
+              properties(reader, skipBeforeFirstStartElement(reader), entity);
             } else {
-              entry.setMediaContentType(type.getValue());
+              entity.setMediaContentType(type.getValue());
               final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
               if (src != null) {
-                entry.setMediaContentSource(src.getValue());
+                entity.setMediaContentSource(src.getValue());
               }
             }
           } else if (propertiesQName.equals(event.asStartElement().getName())) {
-            properties(reader, event.asStartElement(), entry);
+            properties(reader, event.asStartElement(), entity);
           }
         }
 
@@ -544,21 +641,21 @@ public class AtomDeserializer extends AbstractAtomDealer {
         }
       }
 
-      return entry;
+      return entity;
     } else {
-      entry = null;
+      entity = null;
     }
 
-    return entry;
+    return entity;
   }
 
-  private ResWrap<AtomEntryImpl> entry(final InputStream input) throws XMLStreamException {
+  private ResWrap<AtomEntityImpl> entity(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
-    return getContainer(start, entry(reader, start));
+    return getContainer(start, entity(reader, start));
   }
 
-  private void count(final XMLEventReader reader, final StartElement start, final AtomFeedImpl feed)
+  private void count(final XMLEventReader reader, final StartElement start, final EntitySet entitySet)
           throws XMLStreamException {
 
     boolean foundEndElement = false;
@@ -566,7 +663,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        feed.setCount(Integer.valueOf(event.asCharacters().getData()));
+        entitySet.setCount(Integer.valueOf(event.asCharacters().getData()));
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -575,14 +672,14 @@ public class AtomDeserializer extends AbstractAtomDealer {
     }
   }
 
-  private AtomFeedImpl feed(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+  private AtomEntitySetImpl entitySet(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
     if (!Constants.QNAME_ATOM_ELEM_FEED.equals(start.getName())) {
       return null;
     }
-    final AtomFeedImpl feed = new AtomFeedImpl();
+    final AtomEntitySetImpl entitySet = new AtomEntitySetImpl();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
-      feed.setBaseURI(xmlBase.getValue());
+      entitySet.setBaseURI(xmlBase.getValue());
     }
 
     boolean foundEndFeed = false;
@@ -590,27 +687,27 @@ public class AtomDeserializer extends AbstractAtomDealer {
       final XMLEvent event = reader.nextEvent();
       if (event.isStartElement()) {
         if (countQName.equals(event.asStartElement().getName())) {
-          count(reader, event.asStartElement(), feed);
+          count(reader, event.asStartElement(), entitySet);
         } else if (Constants.QNAME_ATOM_ELEM_ID.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), feed, "id");
+          common(reader, event.asStartElement(), entitySet, "id");
         } else if (Constants.QNAME_ATOM_ELEM_TITLE.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), feed, "title");
+          common(reader, event.asStartElement(), entitySet, "title");
         } else if (Constants.QNAME_ATOM_ELEM_SUMMARY.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), feed, "summary");
+          common(reader, event.asStartElement(), entitySet, "summary");
         } else if (Constants.QNAME_ATOM_ELEM_UPDATED.equals(event.asStartElement().getName())) {
-          common(reader, event.asStartElement(), feed, "updated");
+          common(reader, event.asStartElement(), entitySet, "updated");
         } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
           final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
           if (rel != null && Constants.NEXT_LINK_REL.equals(rel.getValue())) {
             final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
             if (href != null) {
-              feed.setNext(URI.create(href.getValue()));
+              entitySet.setNext(URI.create(href.getValue()));
             }
           }
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
-          feed.getEntries().add(entry(reader, event.asStartElement()));
+          entitySet.getEntities().add(entity(reader, event.asStartElement()));
         } else if (entryRefQName.equals(event.asStartElement().getName())) {
-          feed.getEntries().add(entryRef(event.asStartElement()));
+          entitySet.getEntities().add(entityRef(event.asStartElement()));
         }
       }
 
@@ -619,13 +716,13 @@ public class AtomDeserializer extends AbstractAtomDealer {
       }
     }
 
-    return feed;
+    return entitySet;
   }
 
-  private ResWrap<AtomFeedImpl> feed(final InputStream input) throws XMLStreamException {
+  private ResWrap<AtomEntitySetImpl> entitySet(final InputStream input) throws XMLStreamException {
     final XMLEventReader reader = getReader(input);
     final StartElement start = skipBeforeFirstStartElement(reader);
-    return getContainer(start, feed(reader, start));
+    return getContainer(start, entitySet(reader, start));
   }
 
   private XMLODataErrorImpl error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
@@ -700,14 +797,16 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
     if (XMLODataErrorImpl.class.equals(reference)) {
       return (ResWrap<T>) error(input);
-    } else if (AtomFeedImpl.class.equals(reference)) {
-      return (ResWrap<T>) feed(input);
-    } else if (AtomEntryImpl.class.equals(reference)) {
-      return (ResWrap<T>) entry(input);
+    } else if (AtomEntitySetImpl.class.equals(reference)) {
+      return (ResWrap<T>) entitySet(input);
+    } else if (AtomEntityImpl.class.equals(reference)) {
+      return (ResWrap<T>) entity(input);
     } else if (AtomPropertyImpl.class.equals(reference)) {
       return (ResWrap<T>) property(input);
     } else if (XMLLinkCollectionImpl.class.equals(reference)) {
       return (ResWrap<T>) linkCollection(input);
+    } else if (AtomDeltaImpl.class.equals(reference)) {
+      return (ResWrap<T>) delta(input);
     }
     return null;
   }

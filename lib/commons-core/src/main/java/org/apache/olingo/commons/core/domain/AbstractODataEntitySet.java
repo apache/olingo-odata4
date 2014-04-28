@@ -32,8 +32,9 @@ public abstract class AbstractODataEntitySet extends AbstractODataPayload implem
   private URI next;
 
   /**
-   * Number of ODataEntities contained in this feed. If <tt>$inlinecount</tt> was requested, this value comes from
-   * there.
+   * Number of ODataEntities contained in this entity set.
+   * <br/>
+   * If <tt>$inlinecount</tt> was requested, this value comes from there.
    */
   private Integer count;
 

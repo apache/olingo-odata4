@@ -22,9 +22,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -32,11 +32,11 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.op.CommonODataDeserializer;
 import org.apache.olingo.commons.core.data.AtomDeserializer;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
 import org.apache.olingo.commons.core.data.JSONODataErrorImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.XMLODataErrorImpl;
@@ -54,17 +54,17 @@ public abstract class AbstractODataDeserializer extends AbstractJacksonTool impl
   }
 
   @Override
-  public ResWrap<Feed> toFeed(final InputStream input, final ODataPubFormat format) {
+  public ResWrap<EntitySet> toEntitySet(final InputStream input, final ODataPubFormat format) {
     return format == ODataPubFormat.ATOM
-            ? this.<Feed, AtomFeedImpl>atom(input, AtomFeedImpl.class)
-            : this.<Feed, JSONFeedImpl>json(input, JSONFeedImpl.class);
+            ? this.<EntitySet, AtomEntitySetImpl>atom(input, AtomEntitySetImpl.class)
+            : this.<EntitySet, JSONEntitySetImpl>json(input, JSONEntitySetImpl.class);
   }
 
   @Override
-  public ResWrap<Entry> toEntry(final InputStream input, final ODataPubFormat format) {
+  public ResWrap<Entity> toEntity(final InputStream input, final ODataPubFormat format) {
     return format == ODataPubFormat.ATOM
-            ? this.<Entry, AtomEntryImpl>atom(input, AtomEntryImpl.class)
-            : this.<Entry, JSONEntryImpl>json(input, JSONEntryImpl.class);
+            ? this.<Entity, AtomEntityImpl>atom(input, AtomEntityImpl.class)
+            : this.<Entity, JSONEntityImpl>json(input, JSONEntityImpl.class);
   }
 
   @Override

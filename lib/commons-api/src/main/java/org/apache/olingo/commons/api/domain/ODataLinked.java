@@ -62,7 +62,7 @@ public interface ODataLinked {
   ODataLink getNavigationLink(String name);
 
   /**
-   * Returns all entity navigation links (including inline entities / feeds).
+   * Returns all entity navigation links (including inline entities / entity sets).
    *
    * @return OData entity links.
    */

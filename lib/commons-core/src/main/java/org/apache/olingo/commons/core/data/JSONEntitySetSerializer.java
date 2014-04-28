@@ -26,25 +26,25 @@ import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
+public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySetImpl> {
 
   @Override
   protected void doSerialize(
-          final JSONFeedImpl feed, final JsonGenerator jgen, final SerializerProvider provider)
+          final JSONEntitySetImpl entitySet, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
-    
-    doContainerSerialize(new ResWrap<JSONFeedImpl>((URI) null, null, feed), jgen, provider);
+
+    doContainerSerialize(new ResWrap<JSONEntitySetImpl>((URI) null, null, entitySet), jgen, provider);
   }
 
   @Override
   protected void doContainerSerialize(
-          final ResWrap<JSONFeedImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          final ResWrap<JSONEntitySetImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    final JSONFeedImpl feed = container.getPayload();
+    final JSONEntitySetImpl entitySet = container.getPayload();
 
     jgen.writeStartObject();
 
@@ -62,19 +62,19 @@ public class JSONFeedSerializer extends AbstractJsonSerializer<JSONFeedImpl> {
       }
     }
 
-    if (feed.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), feed.getId());
+    if (entitySet.getId() != null) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entitySet.getId());
     }
-    if (feed.getCount() != null) {
-      jgen.writeNumberField(Constants.JSON_COUNT, feed.getCount());
-    }
-    if (feed.getNext() != null) {
-      jgen.writeStringField(Constants.JSON_NEXT_LINK, feed.getNext().toASCIIString());
+    jgen.writeNumberField(version.getJSONMap().get(ODataServiceVersion.JSON_COUNT),
+            entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
+    if (entitySet.getNext() != null) {
+      jgen.writeStringField(
+              version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK), entitySet.getNext().toASCIIString());
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);
-    for (Entry entry : feed.getEntries()) {
-      jgen.writeObject(entry);
+    for (Entity entity : entitySet.getEntities()) {
+      jgen.writeObject(entity);
     }
 
     jgen.writeEndArray();

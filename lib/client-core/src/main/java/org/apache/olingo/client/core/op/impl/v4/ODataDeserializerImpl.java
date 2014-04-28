@@ -28,9 +28,13 @@ import org.apache.olingo.client.core.data.v4.JSONServiceDocumentImpl;
 import org.apache.olingo.client.core.data.v4.XMLServiceDocumentImpl;
 import org.apache.olingo.client.core.edm.xml.v4.EdmxImpl;
 import org.apache.olingo.client.core.edm.xml.v4.XMLMetadataImpl;
+import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.commons.core.data.AtomDeltaImpl;
+import org.apache.olingo.commons.core.data.JSONDeltaImpl;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 
@@ -56,4 +60,12 @@ public class ODataDeserializerImpl extends AbstractODataDeserializer implements 
             : this.<ServiceDocument, JSONServiceDocumentImpl>json(input, JSONServiceDocumentImpl.class);
 
   }
+
+  @Override
+  public ResWrap<Delta> toDelta(final InputStream input, final ODataPubFormat format) {
+    return format == ODataPubFormat.ATOM
+            ? this.<Delta, AtomDeltaImpl>atom(input, AtomDeltaImpl.class)
+            : this.<Delta, JSONDeltaImpl>json(input, JSONDeltaImpl.class);
+  }
+
 }

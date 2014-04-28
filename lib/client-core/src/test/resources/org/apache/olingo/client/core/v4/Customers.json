@@ -1,6 +1,6 @@
 {
   "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Customers",
-  "odata.count": 2,
+  "@odata.count": 2,
   "value": [{
       "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
       "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",

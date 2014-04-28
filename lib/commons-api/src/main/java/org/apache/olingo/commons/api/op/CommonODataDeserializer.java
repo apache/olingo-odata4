@@ -21,35 +21,35 @@ package org.apache.olingo.commons.api.op;
 import java.io.InputStream;
 import java.io.Serializable;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 /**
- * Interface for serialization.
+ * Interface for de-serialization.
  */
 public interface CommonODataDeserializer extends Serializable {
 
   /**
-   * Gets a feed object from the given InputStream.
+   * Gets an entity set object from the given InputStream.
    *
    * @param input stream to be de-serialized.
    * @param format Atom or JSON
-   * @return Feed instance.
+   * @return {@link EntitySet} instance.
    */
-  ResWrap<Feed> toFeed(InputStream input, ODataPubFormat format);
+  ResWrap<EntitySet> toEntitySet(InputStream input, ODataPubFormat format);
 
   /**
-   * Gets an entry object from the given InputStream.
+   * Gets an entity object from the given InputStream.
    *
    * @param input stream to be de-serialized.
    * @param format Atom or JSON
-   * @return Entry instance.
+   * @return {@link Entity} instance.
    */
-  ResWrap<Entry> toEntry(InputStream input, ODataPubFormat format);
+  ResWrap<Entity> toEntity(InputStream input, ODataPubFormat format);
 
   /**
    * Gets a property object from the given InputStream.

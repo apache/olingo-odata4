@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 
@@ -90,8 +90,8 @@ public class ODataEntitySetRequestImpl<ES extends CommonODataEntitySet>
     public ES getBody() {
       if (entitySet == null) {
         try {
-          final ResWrap<Feed> resource = odataClient.getDeserializer().
-                  toFeed(getRawResponse(), ODataPubFormat.fromString(getContentType()));
+          final ResWrap<EntitySet> resource = odataClient.getDeserializer().
+                  toEntitySet(getRawResponse(), ODataPubFormat.fromString(getContentType()));
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);
         } finally {

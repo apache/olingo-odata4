@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 
 public class LinkImpl extends AbstractPayloadObject implements Link {
@@ -36,9 +36,9 @@ public class LinkImpl extends AbstractPayloadObject implements Link {
 
   private String mediaETag;
 
-  private Entry entry;
+  private Entity entity;
 
-  private Feed feed;
+  private EntitySet entitySet;
 
   @Override
   public String getTitle() {
@@ -91,22 +91,22 @@ public class LinkImpl extends AbstractPayloadObject implements Link {
   }
 
   @Override
-  public Entry getInlineEntry() {
-    return entry;
+  public Entity getInlineEntity() {
+    return entity;
   }
 
   @Override
-  public void setInlineEntry(final Entry entry) {
-    this.entry = entry;
+  public void setInlineEntity(final Entity entity) {
+    this.entity = entity;
   }
 
   @Override
-  public Feed getInlineFeed() {
-    return feed;
+  public EntitySet getInlineEntitySet() {
+    return entitySet;
   }
 
   @Override
-  public void setInlineFeed(final Feed feed) {
-    this.feed = feed;
+  public void setInlineEntitySet(final EntitySet entitySet) {
+    this.entitySet = entitySet;
   }
 }

@@ -42,14 +42,38 @@ public class ContextURL {
 
   private String navOrPropertyPath;
 
+  private boolean entity;
+
+  private boolean delta;
+
+  private boolean deltaDeletedEntity;
+
+  private boolean deltaLink;
+
+  private boolean deltaDeletedLink;
+
   public static ContextURL getInstance(final URI contextURL) {
     final ContextURL instance = new ContextURL();
     instance.uri = contextURL;
 
-    final String contextURLasString = instance.uri.toASCIIString().
-            replace("/$entity", StringUtils.EMPTY).
-            replace("/@Element", StringUtils.EMPTY);
-    
+    String contextURLasString = instance.uri.toASCIIString();
+
+    instance.entity = contextURLasString.endsWith("/$entity") || contextURLasString.endsWith("/@Element");
+    contextURLasString = contextURLasString.
+            replace("/$entity", StringUtils.EMPTY).replace("/@Element", StringUtils.EMPTY);
+
+    instance.delta = contextURLasString.endsWith("/$delta");
+    contextURLasString = contextURLasString.replace("/$delta", StringUtils.EMPTY);
+
+    instance.deltaDeletedEntity = contextURLasString.endsWith("/$deletedEntity");
+    contextURLasString = contextURLasString.replace("/$deletedEntity", StringUtils.EMPTY);
+
+    instance.deltaLink = contextURLasString.endsWith("/$link");
+    contextURLasString = contextURLasString.replace("/$link", StringUtils.EMPTY);
+
+    instance.deltaDeletedLink = contextURLasString.endsWith("$deletedLink");
+    contextURLasString = contextURLasString.replace("$deletedLink", StringUtils.EMPTY);
+
     instance.serviceRoot = URI.create(StringUtils.substringBefore(contextURLasString, Constants.METADATA));
 
     final String rest = StringUtils.substringAfter(contextURLasString, Constants.METADATA + "#");
@@ -122,6 +146,26 @@ public class ContextURL {
 
   public String getNavOrPropertyPath() {
     return navOrPropertyPath;
+  }
+
+  public boolean isEntity() {
+    return entity;
+  }
+
+  public boolean isDelta() {
+    return delta;
+  }
+
+  public boolean isDeltaDeletedEntity() {
+    return deltaDeletedEntity;
+  }
+
+  public boolean isDeltaLink() {
+    return deltaLink;
+  }
+
+  public boolean isDeltaDeletedLink() {
+    return deltaDeletedLink;
   }
 
   @Override

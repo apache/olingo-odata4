@@ -111,7 +111,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
     assertNotNull(feed);
 
-    debugFeed(client.getBinder().getFeed(feed, ResourceFactory.feedClassForFormat(
+    debugEntitySet(client.getBinder().getEntitySet(feed, ResourceFactory.entitySetClassForFormat(
             ODataPubFormat.ATOM == format)), "Just retrieved feed");
 
     assertEquals(2, feed.getEntities().size());

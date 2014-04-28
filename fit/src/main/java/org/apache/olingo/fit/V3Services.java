@@ -45,7 +45,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
@@ -109,9 +109,9 @@ public class V3Services extends AbstractServices {
   }
 
   @Override
-  protected void setInlineCount(final Feed feed, final String count) {
+  protected void setInlineCount(final EntitySet feed, final String count) {
     if ("allpages".equals(count)) {
-      feed.setCount(feed.getEntries().size());
+      feed.setCount(feed.getEntities().size());
     }
   }
 

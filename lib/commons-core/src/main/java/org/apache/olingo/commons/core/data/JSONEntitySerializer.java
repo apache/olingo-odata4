@@ -26,7 +26,7 @@ import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataOperation;
@@ -34,23 +34,23 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
- * Writes out JSON string from an entry.
+ * Writes out JSON string from an entity.
  */
-public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
+public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl> {
 
   @Override
-  protected void doSerialize(final JSONEntryImpl entry, final JsonGenerator jgen, final SerializerProvider provider)
+  protected void doSerialize(final JSONEntityImpl entity, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    doContainerSerialize(new ResWrap<JSONEntryImpl>((URI) null, null, entry), jgen, provider);
+    doContainerSerialize(new ResWrap<JSONEntityImpl>((URI) null, null, entity), jgen, provider);
   }
 
   @Override
   protected void doContainerSerialize(
-          final ResWrap<JSONEntryImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
+          final ResWrap<JSONEntityImpl> container, final JsonGenerator jgen, final SerializerProvider provider)
           throws IOException, JsonProcessingException {
 
-    final Entry entry = container.getPayload();
+    final Entity entity = container.getPayload();
 
     jgen.writeStartObject();
 
@@ -64,45 +64,45 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
 
-      if (StringUtils.isNotBlank(entry.getETag())) {
-        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ETAG), entry.getETag());
+      if (StringUtils.isNotBlank(entity.getETag())) {
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ETAG), entity.getETag());
       }
     }
 
-    if (StringUtils.isNotBlank(entry.getType())) {
+    if (StringUtils.isNotBlank(entity.getType())) {
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE),
-              new EdmTypeInfo.Builder().setTypeExpression(entry.getType()).build().external(version));
+              new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external(version));
     }
 
-    if (entry.getId() != null) {
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entry.getId());
+    if (entity.getId() != null) {
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId());
     }
 
-    for (Property property : entry.getProperties()) {
+    for (Property property : entity.getProperties()) {
       property(jgen, property, property.getName());
     }
 
-    if (serverMode && entry.getEditLink() != null && StringUtils.isNotBlank(entry.getEditLink().getHref())) {
-      final URI link = URI.create(entry.getEditLink().getHref());
+    if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
+      final URI link = URI.create(entity.getEditLink().getHref());
       final String editLink = link.isAbsolute() ? link.toASCIIString()
-              : URI.create(entry.getBaseURI() + "/" + link.toASCIIString()).normalize().toASCIIString();
+              : URI.create(entity.getBaseURI() + "/" + link.toASCIIString()).normalize().toASCIIString();
 
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK), editLink);
     }
 
-    links(entry, jgen);
+    links(entity, jgen);
 
-    for (Link link : entry.getMediaEditLinks()) {
+    for (Link link : entity.getMediaEditLinks()) {
       if (link.getTitle() == null) {
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), link.getHref());
       }
 
-      if (link.getInlineEntry() != null) {
-        jgen.writeObjectField(link.getTitle(), link.getInlineEntry());
+      if (link.getInlineEntity() != null) {
+        jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
       }
-      if (link.getInlineFeed() != null) {
+      if (link.getInlineEntitySet() != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        for (Entry subEntry : link.getInlineFeed().getEntries()) {
+        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
           jgen.writeObject(subEntry);
         }
         jgen.writeEndArray();
@@ -110,7 +110,7 @@ public class JSONEntrySerializer extends AbstractJsonSerializer<JSONEntryImpl> {
     }
 
     if (serverMode) {
-      for (ODataOperation operation : entry.getOperations()) {
+      for (ODataOperation operation : entity.getOperations()) {
         jgen.writeObjectFieldStart("#" + StringUtils.substringAfterLast(operation.getMetadataAnchor(), "#"));
         jgen.writeStringField(Constants.ATTR_TITLE, operation.getTitle());
         jgen.writeStringField(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());

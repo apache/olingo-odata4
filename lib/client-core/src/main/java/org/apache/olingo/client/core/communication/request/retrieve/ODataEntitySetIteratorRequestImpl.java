@@ -36,7 +36,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
         extends AbstractODataRetrieveRequest<ODataEntitySetIterator<ES, E>, ODataPubFormat>
         implements ODataEntitySetIteratorRequest<ES, E> {
 
-  private ODataEntitySetIterator feedIterator = null;
+  private ODataEntitySetIterator entitySetIterator = null;
 
   /**
    * Private constructor.
@@ -44,7 +44,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  public ODataEntitySetIteratorRequestImpl(final CommonODataClient odataClient, final URI query) {
+  public ODataEntitySetIteratorRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataPubFormat.class, query);
   }
 
@@ -78,11 +78,11 @@ public class ODataEntitySetIteratorRequestImpl<ES extends CommonODataEntitySet, 
     @Override
     @SuppressWarnings("unchecked")
     public ODataEntitySetIterator<ES, E> getBody() {
-      if (feedIterator == null) {
-        feedIterator = new ODataEntitySetIterator<ES, E>(
+      if (entitySetIterator == null) {
+        entitySetIterator = new ODataEntitySetIterator<ES, E>(
                 odataClient, getRawResponse(), ODataPubFormat.fromString(getContentType()));
       }
-      return feedIterator;
+      return entitySetIterator;
     }
   }
 }

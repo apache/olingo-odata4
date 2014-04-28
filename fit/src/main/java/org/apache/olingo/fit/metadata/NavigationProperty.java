@@ -34,7 +34,7 @@ public class NavigationProperty extends AbstractMetadataElement {
 
   private String target;
 
-  private boolean feed;
+  private boolean entitySet;
 
   public NavigationProperty(final String name) {
     this.name = name;
@@ -76,11 +76,11 @@ public class NavigationProperty extends AbstractMetadataElement {
     this.target = target;
   }
 
-  public boolean isFeed() {
-    return feed;
+  public boolean isEntitySet() {
+    return entitySet;
   }
 
-  public void setFeed(boolean feed) {
-    this.feed = feed;
+  public void setFeed(boolean entitySet) {
+    this.entitySet = entitySet;
   }
 }

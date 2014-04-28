@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.PrimitiveValue;
@@ -86,11 +86,11 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
         }
       }
 
-      if (link.getInlineEntry() != null) {
-        jgen.writeObjectField(link.getTitle(), link.getInlineEntry());
-      } else if (link.getInlineFeed() != null) {
+      if (link.getInlineEntity() != null) {
+        jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
+      } else if (link.getInlineEntitySet() != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        for (Entry subEntry : link.getInlineFeed().getEntries()) {
+        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
           jgen.writeObject(subEntry);
         }
         jgen.writeEndArray();
@@ -123,11 +123,11 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
                 link.getHref());
       }
 
-      if (link.getInlineEntry() != null) {
-        jgen.writeObjectField(link.getTitle(), link.getInlineEntry());
-      } else if (link.getInlineFeed() != null) {
+      if (link.getInlineEntity() != null) {
+        jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
+      } else if (link.getInlineEntitySet() != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        for (Entry subEntry : link.getInlineFeed().getEntries()) {
+        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
           jgen.writeObject(subEntry);
         }
         jgen.writeEndArray();

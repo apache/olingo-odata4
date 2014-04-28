@@ -21,8 +21,8 @@ package org.apache.olingo.commons.api.op;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -33,36 +33,36 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 public interface ODataSerializer extends Serializable {
 
   /**
-   * Writes Feed object onto the given stream.
+   * Writes entity set object onto the given stream.
    *
    * @param obj object to be streamed.
    * @param out output stream.
    */
-  void feed(Feed obj, OutputStream out);
+  void entitySet(EntitySet obj, OutputStream out);
 
   /**
-   * Writes Feed object by the given writer.
+   * Writes entity set object by the given writer.
    *
    * @param obj object to be streamed.
    * @param writer writer.
    */
-  void feed(Feed obj, Writer writer);
+  void entitySet(EntitySet obj, Writer writer);
 
   /**
-   * Writes theEntry object onto the given stream.
+   * Writes entity object onto the given stream.
    *
    * @param obj object to be streamed.
    * @param out output stream.
    */
-  void entry(Entry obj, OutputStream out);
+  void entity(Entity obj, OutputStream out);
 
   /**
-   * Writes the Entry object by the given writer.
+   * Writes entity object by the given writer.
    *
    * @param obj object to be streamed.
    * @param writer writer.
    */
-  void entry(Entry obj, Writer writer);
+  void entity(Entity obj, Writer writer);
 
   /**
    * Writes the property object onto the given stream.

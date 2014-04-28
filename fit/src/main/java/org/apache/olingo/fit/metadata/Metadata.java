@@ -81,7 +81,7 @@ public class Metadata extends AbstractMetadataElement {
                     property.getReleationship().replaceAll(schemaEntry.getKey() + "\\.", ""));
             final Association.Role role = association.getRole(property.getToRole());
             property.setFeed(role.getMultiplicity().equals("*"));
-            property.setType(property.isFeed() ? "Collection(" + role.getType() + ")" : role.getType());
+            property.setType(property.isEntitySet() ? "Collection(" + role.getType() + ")" : role.getType());
 
             // let me assume that it will be just a single container
             final AssociationSet associationSet = schemaEntry.getValue().getContainers().iterator().next().

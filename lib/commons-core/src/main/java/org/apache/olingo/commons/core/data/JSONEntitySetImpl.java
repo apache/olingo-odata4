@@ -16,21 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.serializer;
+package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.JSONEntityDeserializer;
-import org.apache.olingo.commons.core.data.JSONEntityImpl;
-import org.apache.olingo.commons.core.data.JSONEntitySerializer;
 
-@JsonDeserialize(using = JSONEntityDeserializer.class)
-@JsonSerialize(using = JSONEntitySerializer.class)
-public class JSONEntryContainer extends ResWrap<JSONEntityImpl> {
+/**
+ * List of entries, represented via JSON.
+ *
+ * @see JSONEntry
+ */
+@JsonDeserialize(using = JSONEntitySetDeserializer.class)
+@JsonSerialize(using = JSONEntitySetSerializer.class)
+public class JSONEntitySetImpl extends AbstractEntitySet {
 
-  public JSONEntryContainer(final ContextURL contextURL, final String metadataETag, final JSONEntityImpl object) {
-    super(contextURL, metadataETag, object);
-  }
+  private static final long serialVersionUID = -3576372289800799417L;
+
 }

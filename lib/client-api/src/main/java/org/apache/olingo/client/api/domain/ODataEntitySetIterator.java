@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
@@ -62,11 +62,11 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
 
   private final ODataPubFormat format;
 
-  private ResWrap<Entry> cached;
+  private ResWrap<Entity> cached;
 
   private ES entitySet;
 
-  private final ByteArrayOutputStream osFeed;
+  private final ByteArrayOutputStream osEntitySet;
 
   private final String namespaces;
 
@@ -85,21 +85,21 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
     this.odataClient = odataClient;
     this.stream = stream;
     this.format = format;
-    this.osFeed = new ByteArrayOutputStream();
+    this.osEntitySet = new ByteArrayOutputStream();
 
     if (format == ODataPubFormat.ATOM) {
-      namespaces = getAllElementAttributes(stream, "feed", osFeed);
+      namespaces = getAllElementAttributes(stream, "feed", osEntitySet);
     } else {
       namespaces = null;
       try {
-        if (consume(stream, "\"value\":", osFeed, true) >= 0) {
+        if (consume(stream, "\"value\":", osEntitySet, true) >= 0) {
           int c = 0;
           while (c != '[' && (c = stream.read()) >= 0) {
-            osFeed.write(c);
+            osEntitySet.write(c);
           }
         }
       } catch (IOException e) {
-        LOG.error("Error parsing feed", e);
+        LOG.error("Error parsing entity set", e);
         throw new IllegalStateException(e);
       }
     }
@@ -113,15 +113,15 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
   public boolean hasNext() {
     if (available && cached == null) {
       if (format == ODataPubFormat.ATOM) {
-        cached = nextAtomEntryFromFeed(stream, osFeed, namespaces);
+        cached = nextAtomEntityFromEntitySet(stream, osEntitySet, namespaces);
       } else {
-        cached = nextJsonEntryFromFeed(stream, osFeed);
+        cached = nextJSONEntityFromEntitySet(stream, osEntitySet);
       }
 
       if (cached == null) {
         available = false;
         entitySet = (ES) odataClient.getReader().
-                readEntitySet(new ByteArrayInputStream(osFeed.toByteArray()), format);
+                readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), format);
         close();
       }
     }
@@ -157,7 +157,7 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
    */
   public void close() {
     IOUtils.closeQuietly(stream);
-    IOUtils.closeQuietly(osFeed);
+    IOUtils.closeQuietly(osEntitySet);
   }
 
   /**
@@ -172,10 +172,10 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
     return entitySet.getNext();
   }
 
-  private ResWrap<Entry> nextJsonEntryFromFeed(final InputStream input, final OutputStream osFeed) {
-    final ByteArrayOutputStream entry = new ByteArrayOutputStream();
+  private ResWrap<Entity> nextJSONEntityFromEntitySet(final InputStream input, final OutputStream osEntitySet) {
+    final ByteArrayOutputStream entity = new ByteArrayOutputStream();
 
-    ResWrap<Entry> jsonEntry = null;
+    ResWrap<Entity> jsonEntity = null;
     try {
       int c;
 
@@ -184,12 +184,12 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
       do {
         c = input.read();
         if (c == '{') {
-          entry.write(c);
+          entity.write(c);
           c = -1;
           foundNewOne = true;
         }
         if (c == ']') {
-          osFeed.write(c);
+          osEntitySet.write(c);
           c = -1;
         }
       } while (c >= 0);
@@ -205,55 +205,48 @@ public class ODataEntitySetIterator<ES extends CommonODataEntitySet, E extends C
           } else if (c == '}') {
             count--;
           }
-          entry.write(c);
+          entity.write(c);
         }
 
         if (c >= 0) {
-          jsonEntry = odataClient.getDeserializer().toEntry(
-                  new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.JSON);
+          jsonEntity = odataClient.getDeserializer().toEntity(
+                  new ByteArrayInputStream(entity.toByteArray()), ODataPubFormat.JSON);
         }
       } else {
         while ((c = input.read()) >= 0) {
-          osFeed.write(c);
+          osEntitySet.write(c);
         }
       }
     } catch (Exception e) {
       LOG.error("Error retrieving entities from EntitySet", e);
     }
 
-    return jsonEntry;
+    return jsonEntity;
   }
 
-  /**
-   * De-Serializes a stream into an OData entity set.
-   *
-   * @param input stream to de-serialize.
-   * @param format de-serialize as AtomFeed or JSONFeed
-   * @return de-serialized entity set.
-   */
-  private ResWrap<Entry> nextAtomEntryFromFeed(
-          final InputStream input, final OutputStream osFeed, final String namespaces) {
+  private ResWrap<Entity> nextAtomEntityFromEntitySet(
+          final InputStream input, final OutputStream osEntitySet, final String namespaces) {
 
-    final ByteArrayOutputStream entry = new ByteArrayOutputStream();
+    final ByteArrayOutputStream entity = new ByteArrayOutputStream();
 
-    ResWrap<Entry> atomEntry = null;
+    ResWrap<Entity> atomEntity = null;
 
     try {
-      if (consume(input, "<entry>", osFeed, false) >= 0) {
-        entry.write("<entry ".getBytes(Constants.UTF8));
-        entry.write(namespaces.getBytes(Constants.UTF8));
-        entry.write(">".getBytes(Constants.UTF8));
+      if (consume(input, "<entry>", osEntitySet, false) >= 0) {
+        entity.write("<entry ".getBytes(Constants.UTF8));
+        entity.write(namespaces.getBytes(Constants.UTF8));
+        entity.write(">".getBytes(Constants.UTF8));
 
-        if (consume(input, "</entry>", entry, true) >= 0) {
-          atomEntry = odataClient.getDeserializer().
-                  toEntry(new ByteArrayInputStream(entry.toByteArray()), ODataPubFormat.ATOM);
+        if (consume(input, "</entry>", entity, true) >= 0) {
+          atomEntity = odataClient.getDeserializer().
+                  toEntity(new ByteArrayInputStream(entity.toByteArray()), ODataPubFormat.ATOM);
         }
       }
     } catch (Exception e) {
       LOG.error("Error retrieving entities from EntitySet", e);
     }
 
-    return atomEntry;
+    return atomEntity;
   }
 
   private String getAllElementAttributes(final InputStream input, final String name, final OutputStream os) {
