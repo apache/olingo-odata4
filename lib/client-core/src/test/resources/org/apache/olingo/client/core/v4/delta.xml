@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<feed xml:base="http://host/service/"
+      xmlns:data="http://docs.oasis-open.org/odata/ns/data"
+      xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
+      xmlns="http://www.w3.org/2005/Atom"
+      xmlns:at="http://purl.org/atompub/tombstones/1.0"
+      metadata:context="$metadata#Customers/$delta">
+  <title type="text">Customers</title>
+  <id>http://host/service/Customers</id>
+  <updated>2012-11-27T15:38:25Z</updated>
+  <metadata:count>5</metadata:count>
+  <entry>
+    <id>http://host/service/Customers('BOTTM')</id>
+    <title type="text" />
+    <updated>2012-11-17T15:38:22Z</updated>
+    <author>
+      <name />
+    </author>
+    <link rel="edit" title="Customer" href="Customers('BOTTM')"/>
+    <category term="#Model.Customer"
+          scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <content type="application/xml">
+      <metadata:properties>
+        <data:ContactName>Susan Halvenstern</data:ContactName>
+      </metadata:properties>
+    </content>
+  </entry>
+  <metadata:deleted-link
+    metadata:context="$metadata#Customers/$deleted-link"
+    source="http://host/service/Customers('ALFKI')"
+    relationship="Orders"
+    target="http://host/service/Orders(10643)"/>
+  <metadata:link
+    metadata:context="$metadata#Customers/$link"
+    source="http://host/service/Customers('BOTTM')"
+    relationship="Orders"
+    target="http://host/service/Orders(10645)"/>
+  <entry metadata:context="$metadata#Orders/$entity">
+    <id>http://host/service/Orders(10643)</id>
+    <title type="text" />
+    <updated>2012-11-27T15:38:24Z</updated>
+    <author>
+      <name/>
+    </author>
+    <link rel="edit" title="Order" href="Orders(10643)" />
+    <category term="#Model.Order"
+          scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+    <content type="application/xml">
+      <metadata:properties>
+        <data:ShippingAddress>
+          <data:Street>23 Tsawassen Blvd.</data:Street>
+          <data:City>Tsawassen</data:City>
+          <data:Region>BC</data:Region>
+          <data:PostalCode>T2F 8M4</data:PostalCode>
+        </data:ShippingAddress>
+      </metadata:properties>
+    </content>
+  </entry>
+  <at:deleted-entry
+    metadata:context="$metadata#Customers/$deleted-entry"
+    ref="http://host/service/Customers('ANTON')"
+    when="2012-11-27T15:38:25Z"
+    metadata:reason="deleted"/>
+  <link
+    rel="http://docs.oasis-open.org/odata/ns/delta"
+    href="http://host/service/Customers?$expand=Orders&amp;$deltatoken=8015"/>
+</feed>

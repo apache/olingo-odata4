@@ -42,12 +42,12 @@ public class ODataReaderImpl extends AbstractODataReader implements ODataReader 
 
   @Override
   public ODataEntitySet readEntitySet(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer().toFeed(input, format));
+    return ((ODataClient) client).getBinder().getODataEntitySet(client.getDeserializer().toEntitySet(input, format));
   }
 
   @Override
   public ODataEntity readEntity(final InputStream input, final ODataPubFormat format) {
-    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer().toEntry(input, format));
+    return ((ODataClient) client).getBinder().getODataEntity(client.getDeserializer().toEntity(input, format));
   }
 
   @Override

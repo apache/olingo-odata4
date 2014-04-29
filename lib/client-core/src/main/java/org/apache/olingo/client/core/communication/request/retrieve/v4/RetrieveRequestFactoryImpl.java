@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.v4.ODataDeltaRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractRetrieveRequestFactory;
@@ -69,5 +70,10 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
   @Override
   public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI uri) {
     return new ODataPropertyRequestImpl<ODataProperty>(client, uri);
+  }
+
+  @Override
+  public ODataDeltaRequest getDeltaRequest(final URI uri) {
+    return new ODataDeltaRequestImpl(client, uri);
   }
 }

@@ -1,0 +1,39 @@
+{
+  "@odata.context": "http://host/service/$metadata#Customers/$delta",
+  "@odata.count": 5,
+  "value":
+          [
+            {
+              "@odata.id": "Customers('BOTTM')'",
+              "ContactName": "Susan Halvenstern"
+            },
+            {
+              "@odata.context": "#Customers/$deletedLink",
+              "source": "Customers('ALFKI')",
+              "relationship": "Orders",
+              "target": "Orders(10643)"
+            },
+            {
+              "@odata.context": "#Customers/$link",
+              "source": "Customers('BOTTM')",
+              "relationship": "Orders",
+              "target": "Orders(10645)"
+            },
+            {
+              "@odata.context": "#Orders/$entity",
+              "@odata.id": "Orders(10643)",
+              "ShippingAddress": {
+                "Street": "23 Tsawassen Blvd.",
+                "City": " Tsawassen ",
+                "Region": "BC",
+                "PostalCode": "T2F 8M4"
+              }
+            },
+            {
+              "@odata.context": "#Customers/$deletedEntity",
+              "id": "Customers('ANTON')",
+              "reason": "deleted"
+            }
+          ],
+  "@odata.deltaLink": "Customers?$expand=Orders&$deltatoken=8015"
+}

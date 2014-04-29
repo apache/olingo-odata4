@@ -40,7 +40,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import static org.apache.olingo.fit.AbstractServices.LOG;
 import org.apache.olingo.fit.utils.AbstractUtilities;
@@ -206,7 +206,7 @@ public class V3ActionOverloading extends AbstractServices {
   }
 
   @Override
-  protected void setInlineCount(Feed feed, String count) {
+  protected void setInlineCount(EntitySet feed, String count) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 

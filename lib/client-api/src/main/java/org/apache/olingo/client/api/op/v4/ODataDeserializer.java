@@ -22,10 +22,21 @@ import java.io.InputStream;
 
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 
 public interface ODataDeserializer extends ClientODataDeserializer {
 
   @Override
   XMLMetadata toMetadata(InputStream input);
 
+  /**
+   * Gets a delta object from the given InputStream.
+   *
+   * @param input stream to be de-serialized.
+   * @param format Atom or JSON
+   * @return {@link Delta} instance.
+   */
+  ResWrap<Delta> toDelta(InputStream input, ODataPubFormat format);
 }

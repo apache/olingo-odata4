@@ -18,62 +18,62 @@
  */
 package org.apache.olingo.commons.core.op;
 
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 
 public class ResourceFactory {
 
   /**
-   * Gets a new instance of <tt>Feed</tt>.
+   * Gets a new instance of <tt>EntitySet</tt>.
    *
    * @param resourceClass reference class.
-   * @return <tt>Feed</tt> object.
+   * @return {@link EntitySet} object.
    */
-  public static Feed newFeed(final Class<? extends Feed> resourceClass) {
-    Feed result = null;
+  public static EntitySet newEntitySet(final Class<? extends EntitySet> resourceClass) {
+    EntitySet result = null;
 
-    if (AtomFeedImpl.class.equals(resourceClass)) {
-      result = new AtomFeedImpl();
+    if (AtomEntitySetImpl.class.equals(resourceClass)) {
+      result = new AtomEntitySetImpl();
     }
-    if (JSONFeedImpl.class.equals(resourceClass)) {
-      result = new JSONFeedImpl();
+    if (JSONEntitySetImpl.class.equals(resourceClass)) {
+      result = new JSONEntitySetImpl();
     }
 
     return result;
   }
 
   /**
-   * Gets a new instance of <tt>Entry</tt>.
+   * Gets a new instance of <tt>Entity</tt>.
    *
    * @param resourceClass reference class.
-   * @return <tt>Entry</tt> object.
+   * @return {@link Entity} object.
    */
-  public static Entry newEntry(final Class<? extends Entry> resourceClass) {
-    Entry result = null;
-    if (AtomEntryImpl.class.equals(resourceClass)) {
-      result = new AtomEntryImpl();
+  public static Entity newEntity(final Class<? extends Entity> resourceClass) {
+    Entity result = null;
+    if (AtomEntityImpl.class.equals(resourceClass)) {
+      result = new AtomEntityImpl();
     }
-    if (JSONEntryImpl.class.equals(resourceClass)) {
-      result = new JSONEntryImpl();
+    if (JSONEntityImpl.class.equals(resourceClass)) {
+      result = new JSONEntityImpl();
     }
 
     return result;
   }
 
-  public static Property newProperty(final Class<? extends Entry> resourceClass) {
+  public static Property newProperty(final Class<? extends Entity> resourceClass) {
     Property result = null;
-    if (AtomEntryImpl.class.equals(resourceClass)) {
+    if (AtomEntityImpl.class.equals(resourceClass)) {
       result = new AtomPropertyImpl();
     }
-    if (JSONEntryImpl.class.equals(resourceClass)) {
+    if (JSONEntityImpl.class.equals(resourceClass)) {
       result = new JSONPropertyImpl();
     }
 
@@ -81,45 +81,45 @@ public class ResourceFactory {
   }
 
   /**
-   * Gets feed reference class from the given format.
+   * Gets entity set reference class from the given format.
    *
    * @param isXML whether it is JSON or XML / Atom
    * @return resource reference class.
    */
-  public static Class<? extends Feed> feedClassForFormat(final boolean isXML) {
-    return isXML ? AtomFeedImpl.class : JSONFeedImpl.class;
+  public static Class<? extends EntitySet> entitySetClassForFormat(final boolean isXML) {
+    return isXML ? AtomEntitySetImpl.class : JSONEntitySetImpl.class;
   }
 
   /**
-   * Gets entry reference class from the given format.
+   * Gets entity reference class from the given format.
    *
    * @param isXML whether it is JSON or XML / Atom
    * @return resource reference class.
    */
-  public static Class<? extends Entry> entryClassForFormat(final boolean isXML) {
-    return isXML ? AtomEntryImpl.class : JSONEntryImpl.class;
+  public static Class<? extends Entity> entityClassForFormat(final boolean isXML) {
+    return isXML ? AtomEntityImpl.class : JSONEntityImpl.class;
   }
 
   /**
-   * Gets <tt>Entry</tt> object from feed resource.
+   * Gets <tt>Entity</tt> object from entity set resource.
    *
-   * @param resourceClass feed reference class.
-   * @return <tt>Entry</tt> object.
+   * @param resourceClass entity set reference class.
+   * @return {@link Entity} object.
    */
-  public static Class<? extends Entry> entryClassForFeed(final Class<? extends Feed> resourceClass) {
-    Class<? extends Entry> result = null;
+  public static Class<? extends Entity> entityClassForEntitySet(final Class<? extends EntitySet> resourceClass) {
+    Class<? extends Entity> result = null;
 
-    if (AtomFeedImpl.class.equals(resourceClass)) {
-      result = AtomEntryImpl.class;
+    if (AtomEntitySetImpl.class.equals(resourceClass)) {
+      result = AtomEntityImpl.class;
     }
-    if (JSONFeedImpl.class.equals(resourceClass)) {
-      result = JSONEntryImpl.class;
+    if (JSONEntitySetImpl.class.equals(resourceClass)) {
+      result = JSONEntityImpl.class;
     }
 
     return result;
   }
 
-  public static ODataPubFormat formatForEntryClass(final Class<? extends Entry> reference) {
-    return reference.equals(AtomEntryImpl.class) ? ODataPubFormat.ATOM : ODataPubFormat.JSON;
+  public static ODataPubFormat formatForEntityClass(final Class<? extends Entity> reference) {
+    return reference.equals(AtomEntityImpl.class) ? ODataPubFormat.ATOM : ODataPubFormat.JSON;
   }
 }

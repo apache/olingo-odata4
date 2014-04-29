@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.commons.core.data;
 
-public class AtomEntryImpl extends AbstractEntry {
+public class AtomDeltaImpl extends AbstractDelta {
 
-  private static final long serialVersionUID = 6973729343868293279L;
+  private static final long serialVersionUID = -730729098008847535L;
 
 }

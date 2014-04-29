@@ -37,8 +37,8 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.op.CommonODataReader;
 import org.apache.olingo.client.core.edm.EdmClientImpl;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -96,13 +96,14 @@ public abstract class AbstractODataReader implements CommonODataReader {
                 reference.cast(new ODataEntitySetIterator<CommonODataEntitySet, CommonODataEntity>(
                                 client, src, ODataPubFormat.fromString(format))));
       } else if (CommonODataEntitySet.class.isAssignableFrom(reference)) {
-        final ResWrap<Feed> resource = client.getDeserializer().toFeed(src, ODataPubFormat.fromString(format));
+        final ResWrap<EntitySet> resource = client.getDeserializer().
+                toEntitySet(src, ODataPubFormat.fromString(format));
         res = new ResWrap<T>(
                 resource.getContextURL(),
                 resource.getMetadataETag(),
                 reference.cast(client.getBinder().getODataEntitySet(resource)));
       } else if (CommonODataEntity.class.isAssignableFrom(reference)) {
-        final ResWrap<Entry> container = client.getDeserializer().toEntry(src, ODataPubFormat.fromString(format));
+        final ResWrap<Entity> container = client.getDeserializer().toEntity(src, ODataPubFormat.fromString(format));
         res = new ResWrap<T>(
                 container.getContextURL(),
                 container.getMetadataETag(),

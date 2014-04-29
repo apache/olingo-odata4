@@ -22,7 +22,6 @@ import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 
-@SuppressWarnings("unchecked")
 public interface AsyncRequestFactory {
 
   <R extends ODataResponse> AsyncRequestWrapper<R> getAsyncRequestWrapper(final ODataRequest odataRequest);

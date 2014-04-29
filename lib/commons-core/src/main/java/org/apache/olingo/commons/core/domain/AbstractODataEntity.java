@@ -69,7 +69,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   private URI editLink;
 
   /**
-   * Navigation links (might contain in-line entities or feeds).
+   * Navigation links (might contain in-line entities or entity sets).
    */
   private final List<ODataLink> navigationLinks = new ArrayList<ODataLink>();
 

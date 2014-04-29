@@ -42,16 +42,16 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -198,7 +198,7 @@ public abstract class AbstractUtilities {
     return fo.getContent().getInputStream();
   }
 
-  private InputStream toInputStream(final AtomEntryImpl entry) throws XMLStreamException {
+  private InputStream toInputStream(final AtomEntityImpl entry) throws XMLStreamException {
     final StringWriter writer = new StringWriter();
     atomSerializer.write(writer, entry);
 
@@ -209,7 +209,7 @@ public abstract class AbstractUtilities {
           final String key,
           final String entitySetName,
           final InputStream is,
-          final AtomEntryImpl entry) throws Exception {
+          final AtomEntityImpl entry) throws Exception {
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     IOUtils.copy(is, bos);
@@ -296,27 +296,27 @@ public abstract class AbstractUtilities {
               navigationProperties == null ? null : navigationProperties.get(link.getTitle());
       if (navProp != null) {
         final String inlineEntitySetName = navProp.getTarget();
-        if (link.getInlineEntry() != null) {
+        if (link.getInlineEntity() != null) {
           final String inlineEntryKey = getDefaultEntryKey(
-                  inlineEntitySetName, (AtomEntryImpl) link.getInlineEntry());
+                  inlineEntitySetName, (AtomEntityImpl) link.getInlineEntity());
 
           addOrReplaceEntity(
                   inlineEntryKey,
                   inlineEntitySetName,
-                  toInputStream((AtomEntryImpl) link.getInlineEntry()),
-                  (AtomEntryImpl) link.getInlineEntry());
+                  toInputStream((AtomEntityImpl) link.getInlineEntity()),
+                  (AtomEntityImpl) link.getInlineEntity());
 
           hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
-        } else if (link.getInlineFeed() != null) {
-          for (Entry subentry : link.getInlineFeed().getEntries()) {
+        } else if (link.getInlineEntitySet() != null) {
+          for (Entity subentry : link.getInlineEntitySet().getEntities()) {
             final String inlineEntryKey = getDefaultEntryKey(
-                    inlineEntitySetName, (AtomEntryImpl) subentry);
+                    inlineEntitySetName, (AtomEntityImpl) subentry);
 
             addOrReplaceEntity(
                     inlineEntryKey,
                     inlineEntitySetName,
-                    toInputStream((AtomEntryImpl) subentry),
-                    (AtomEntryImpl) subentry);
+                    toInputStream((AtomEntityImpl) subentry),
+                    (AtomEntityImpl) subentry);
 
             hrefs.add(inlineEntitySetName + "(" + inlineEntryKey + ")");
           }
@@ -364,7 +364,7 @@ public abstract class AbstractUtilities {
     final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
-    if (navigationProperties.get(linkName).isFeed()) {
+    if (navigationProperties.get(linkName).isEntitySet()) {
       try {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
@@ -539,7 +539,7 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  public InputStream writeFeed(final Accept accept, final ResWrap<AtomFeedImpl> container)
+  public InputStream writeFeed(final Accept accept, final ResWrap<AtomEntitySetImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
@@ -550,38 +550,38 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONFeedContainer(container.getContextURL(),
-              container.getMetadataETag(), dataBinder.toJSONFeed(container.getPayload())));
+              container.getMetadataETag(), dataBinder.toJSONEntitySet(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public ResWrap<AtomEntryImpl> readContainerEntry(final Accept accept, final InputStream entity)
+  public ResWrap<AtomEntityImpl> readContainerEntry(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
-    final ResWrap<AtomEntryImpl> container;
+    final ResWrap<AtomEntityImpl> container;
 
     if (accept == Accept.ATOM || accept == Accept.XML) {
-      container = atomDeserializer.read(entity, AtomEntryImpl.class);
+      container = atomDeserializer.read(entity, AtomEntityImpl.class);
     } else {
-      final ResWrap<JSONEntryImpl> jcontainer =
-              mapper.readValue(entity, new TypeReference<JSONEntryImpl>() {
+      final ResWrap<JSONEntityImpl> jcontainer =
+              mapper.readValue(entity, new TypeReference<JSONEntityImpl>() {
       });
-      container = new ResWrap<AtomEntryImpl>(
+      container = new ResWrap<AtomEntityImpl>(
               jcontainer.getContextURL(),
               jcontainer.getMetadataETag(),
-              dataBinder.toAtomEntry(jcontainer.getPayload()));
+              dataBinder.toAtomEntity(jcontainer.getPayload()));
     }
 
     return container;
   }
 
-  public AtomEntryImpl readEntry(final Accept accept, final InputStream entity)
+  public AtomEntityImpl readEntry(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
     return readContainerEntry(accept, entity).getPayload();
 
   }
 
-  public InputStream writeEntry(final Accept accept, final ResWrap<AtomEntryImpl> container)
+  public InputStream writeEntry(final Accept accept, final ResWrap<AtomEntityImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
@@ -590,7 +590,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-              dataBinder.toJSONEntry(container.getPayload())));
+              dataBinder.toJSONEntityType(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -643,7 +643,7 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  private String getDefaultEntryKey(final String entitySetName, final AtomEntryImpl entry, final String propertyName)
+  private String getDefaultEntryKey(final String entitySetName, final AtomEntityImpl entry, final String propertyName)
           throws Exception {
 
     String res;
@@ -661,7 +661,7 @@ public abstract class AbstractUtilities {
     return res;
   }
 
-  public String getDefaultEntryKey(final String entitySetName, final AtomEntryImpl entry) throws IOException {
+  public String getDefaultEntryKey(final String entitySetName, final AtomEntityImpl entry) throws IOException {
     try {
       String res;
 
@@ -757,7 +757,7 @@ public abstract class AbstractUtilities {
     final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
-    linkInfo.setFeed(navigationProperties.get(linkName.replaceAll("\\(.*\\)", "")).isFeed());
+    linkInfo.setFeed(navigationProperties.get(linkName.replaceAll("\\(.*\\)", "")).isEntitySet());
 
     return linkInfo;
   }
@@ -823,7 +823,7 @@ public abstract class AbstractUtilities {
             links.getValue(),
             linkName,
             links.getKey(),
-            navigationProperties.get(linkName).isFeed());
+            navigationProperties.get(linkName).isEntitySet());
   }
 
   public InputStream expandEntity(

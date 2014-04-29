@@ -23,13 +23,13 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,19 +43,19 @@ public abstract class AbstractBaseTestITCase {
   @SuppressWarnings("rawtypes")
   protected abstract CommonODataClient getClient();
 
-  protected void debugEntry(final Entry entry, final String message) {
+  protected void debugEntity(final Entity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      getClient().getSerializer().entry(entry, writer);
+      getClient().getSerializer().entity(entity, writer);
       writer.flush();
       LOG.debug(message + "\n{}", writer.toString());
     }
   }
 
-  protected void debugFeed(final Feed feed, final String message) {
+  protected void debugEntitySet(final EntitySet entitySet, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
-      getClient().getSerializer().feed(feed, writer);
+      getClient().getSerializer().entitySet(entitySet, writer);
       writer.flush();
       LOG.debug(message + "\n{}", writer.toString());
     }
@@ -72,12 +72,12 @@ public abstract class AbstractBaseTestITCase {
   protected void debugODataEntity(final CommonODataEntity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
-      getClient().getSerializer().entry(getClient().getBinder().getEntry(entity, AtomEntryImpl.class), writer);
+      getClient().getSerializer().entity(getClient().getBinder().getEntity(entity, AtomEntityImpl.class), writer);
       writer.flush();
       LOG.debug(message + " (Atom)\n{}", writer.toString());
 
       writer = new StringWriter();
-      getClient().getSerializer().entry(getClient().getBinder().getEntry(entity, JSONEntryImpl.class), writer);
+      getClient().getSerializer().entity(getClient().getBinder().getEntity(entity, JSONEntityImpl.class), writer);
       writer.flush();
       LOG.debug(message + " (JSON)\n{}", writer.toString());
     }

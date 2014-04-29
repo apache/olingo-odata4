@@ -27,18 +27,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
 
 /**
- * Reads JSON string into a feed.
+ * Reads JSON string into an entity set.
  * <br/>
- * If metadata information is available, the corresponding entry fields and content will be populated.
+ * If metadata information is available, the corresponding entity fields and content will be populated.
  */
-public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl> {
+public class JSONEntitySetDeserializer extends AbstractJsonDeserializer<JSONEntitySetImpl> {
 
   @Override
-  protected ResWrap<JSONFeedImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONEntitySetImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = (ObjectNode) parser.getCodec().readTree(parser);
@@ -47,7 +48,7 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
       return null;
     }
 
-    final JSONFeedImpl feed = new JSONFeedImpl();
+    final JSONEntitySetImpl entitySet = new JSONEntitySetImpl();
 
     final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -59,7 +60,9 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
     } else {
       contextURL = null;
     }
-    feed.setMetadataContextURL(contextURL);
+    if (contextURL != null) {
+      entitySet.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
+    }
 
     final String metadataETag;
     if (tree.hasNonNull(Constants.JSON_METADATA_ETAG)) {
@@ -69,22 +72,22 @@ public class JSONFeedDeserializer extends AbstractJsonDeserializer<JSONFeedImpl>
       metadataETag = null;
     }
 
-    if (tree.hasNonNull(Constants.JSON_COUNT)) {
-      feed.setCount(tree.get(Constants.JSON_COUNT).asInt());
+    if (tree.hasNonNull(jsonCount)) {
+      entitySet.setCount(tree.get(jsonCount).asInt());
     }
-    if (tree.hasNonNull(Constants.JSON_NEXT_LINK)) {
-      feed.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
+    if (tree.hasNonNull(jsonNextLink)) {
+      entitySet.setNext(URI.create(tree.get(jsonNextLink).textValue()));
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {
       for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {
-        feed.getEntries().add(
-                itor.next().traverse(parser.getCodec()).<ResWrap<JSONEntryImpl>>readValueAs(
-                        new TypeReference<JSONEntryImpl>() {
+        entitySet.getEntities().add(
+                itor.next().traverse(parser.getCodec()).<ResWrap<JSONEntityImpl>>readValueAs(
+                        new TypeReference<JSONEntityImpl>() {
                         }).getPayload());
       }
     }
 
-    return new ResWrap<JSONFeedImpl>(contextURL, metadataETag, feed);
+    return new ResWrap<JSONEntitySetImpl>(contextURL, metadataETag, entitySet);
   }
 }

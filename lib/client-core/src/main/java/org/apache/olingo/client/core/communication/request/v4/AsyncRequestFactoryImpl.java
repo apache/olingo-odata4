@@ -26,12 +26,11 @@ import org.apache.olingo.client.api.communication.request.v4.AsyncRequestWrapper
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 
-@SuppressWarnings("unchecked")
 public class AsyncRequestFactoryImpl implements AsyncRequestFactory {
 
   private static final long serialVersionUID = 546577958047902917L;
 
-  protected final ODataClient client;
+  private final ODataClient client;
 
   public AsyncRequestFactoryImpl(final ODataClient client) {
     this.client = client;

@@ -18,25 +18,24 @@
  */
 package org.apache.olingo.fit.utils;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.CollectionValueImpl;
 import org.apache.olingo.commons.core.data.ComplexValueImpl;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.LinkImpl;
 import org.apache.olingo.fit.metadata.EntityType;
@@ -52,157 +51,157 @@ public class DataBinder {
     this.version = version;
   }
 
-  public JSONFeedImpl toJSONFeed(final AtomFeedImpl atomfeed) {
-    final JSONFeedImpl jsonfeed = new JSONFeedImpl();
+  public JSONEntitySetImpl toJSONEntitySet(final AtomEntitySetImpl atomEntitySet) {
+    final JSONEntitySetImpl jsonEntitySet = new JSONEntitySetImpl();
 
-    BeanUtils.copyProperties(atomfeed, jsonfeed, "baseURI", "metadataContextURL");
-    jsonfeed.setMetadataContextURL(atomfeed.getBaseURI() == null
+    BeanUtils.copyProperties(atomEntitySet, jsonEntitySet, "baseURI", "metadataContextURL");
+    jsonEntitySet.setBaseURI(atomEntitySet.getBaseURI() == null
             ? null
-            : URI.create(atomfeed.getBaseURI().toASCIIString() + "/$metadata").normalize());
+            : atomEntitySet.getBaseURI().toASCIIString() + "/$metadata");
 
-    final Collection<Entry> entries = jsonfeed.getEntries();
-    for (Entry entry : atomfeed.getEntries()) {
-      entries.add(toJSONEntry((AtomEntryImpl) entry));
+    final Collection<Entity> entries = jsonEntitySet.getEntities();
+    for (Entity entity : atomEntitySet.getEntities()) {
+      entries.add(toJSONEntityType((AtomEntityImpl) entity));
     }
 
-    return jsonfeed;
+    return jsonEntitySet;
   }
 
-  public AtomFeedImpl toAtomFeed(final JSONFeedImpl jsonfeed) {
-    final AtomFeedImpl atomfeed = new AtomFeedImpl();
+  public AtomEntitySetImpl toAtomEntitySet(final JSONEntitySetImpl jsonEntitySet) {
+    final AtomEntitySetImpl atomEntitySet = new AtomEntitySetImpl();
 
-    BeanUtils.copyProperties(jsonfeed, atomfeed, "baseURI", "metadataContextURL");
-    atomfeed.setBaseURI(jsonfeed.getBaseURI() == null
+    BeanUtils.copyProperties(jsonEntitySet, atomEntitySet, "baseURI", "metadataContextURL");
+    atomEntitySet.setBaseURI(jsonEntitySet.getBaseURI() == null
             ? null
-            : jsonfeed.getBaseURI().toASCIIString() + "/$metadata");
+            : jsonEntitySet.getBaseURI().toASCIIString() + "/$metadata");
 
-    final Collection<Entry> entries = atomfeed.getEntries();
-    for (Entry entry : jsonfeed.getEntries()) {
-      entries.add(toAtomEntry((JSONEntryImpl) entry));
+    final Collection<Entity> entries = atomEntitySet.getEntities();
+    for (Entity entity : jsonEntitySet.getEntities()) {
+      entries.add(toAtomEntity((JSONEntityImpl) entity));
     }
 
-    return atomfeed;
+    return atomEntitySet;
   }
 
-  public JSONEntryImpl toJSONEntry(final AtomEntryImpl atomentry) {
-    final JSONEntryImpl jsonentry = new JSONEntryImpl();
+  public JSONEntityImpl toJSONEntityType(final AtomEntityImpl atomEntity) {
+    final JSONEntityImpl jsonEntity = new JSONEntityImpl();
 
-    BeanUtils.copyProperties(atomentry, jsonentry, "baseURI", "properties", "links");
-    jsonentry.setBaseURI(atomentry.getBaseURI() == null ? null : atomentry.getBaseURI().toASCIIString());
-    jsonentry.getOperations().addAll(atomentry.getOperations());
+    BeanUtils.copyProperties(atomEntity, jsonEntity, "baseURI", "properties", "links");
+    jsonEntity.setBaseURI(atomEntity.getBaseURI() == null ? null : atomEntity.getBaseURI().toASCIIString());
+    jsonEntity.getOperations().addAll(atomEntity.getOperations());
 
-    for (Link link : atomentry.getNavigationLinks()) {
+    for (Link link : atomEntity.getNavigationLinks()) {
       final Link jlink = new LinkImpl();
       jlink.setHref(link.getHref());
       jlink.setTitle(link.getTitle());
       jlink.setType(link.getType());
       jlink.setRel(link.getRel());
 
-      if (link.getInlineEntry() instanceof AtomEntryImpl) {
-        final Entry inlineEntry = link.getInlineEntry();
-        if (inlineEntry instanceof AtomEntryImpl) {
-          jlink.setInlineEntry(toJSONEntry((AtomEntryImpl) link.getInlineEntry()));
+      if (link.getInlineEntity() instanceof AtomEntityImpl) {
+        final Entity inlineEntity = link.getInlineEntity();
+        if (inlineEntity instanceof AtomEntityImpl) {
+          jlink.setInlineEntity(toJSONEntityType((AtomEntityImpl) link.getInlineEntity()));
         }
-      } else if (link.getInlineFeed() instanceof AtomFeedImpl) {
-        final Feed inlineFeed = link.getInlineFeed();
-        if (inlineFeed instanceof AtomFeedImpl) {
-          jlink.setInlineFeed(toJSONFeed((AtomFeedImpl) link.getInlineFeed()));
+      } else if (link.getInlineEntitySet() instanceof AtomEntitySetImpl) {
+        final EntitySet inlineEntitySet = link.getInlineEntitySet();
+        if (inlineEntitySet instanceof AtomEntitySetImpl) {
+          jlink.setInlineEntitySet(toJSONEntitySet((AtomEntitySetImpl) link.getInlineEntitySet()));
         }
       }
 
-      jsonentry.getNavigationLinks().add(jlink);
+      jsonEntity.getNavigationLinks().add(jlink);
     }
 
-    final Collection<Property> properties = jsonentry.getProperties();
-    for (Property property : atomentry.getProperties()) {
+    final Collection<Property> properties = jsonEntity.getProperties();
+    for (Property property : atomEntity.getProperties()) {
       properties.add(toJSONProperty((AtomPropertyImpl) property));
     }
 
-    return jsonentry;
+    return jsonEntity;
   }
 
-  public AtomEntryImpl toAtomEntry(final JSONEntryImpl jsonentry) {
-    final AtomEntryImpl atomentry = new AtomEntryImpl();
+  public AtomEntityImpl toAtomEntity(final JSONEntityImpl jsonEntity) {
+    final AtomEntityImpl atomEntity = new AtomEntityImpl();
 
     final Metadata metadata = Commons.getMetadata(version);
 
-    BeanUtils.copyProperties(jsonentry, atomentry, "baseURI", "properties", "links");
-    atomentry.setBaseURI(jsonentry.getBaseURI() == null ? null : jsonentry.getBaseURI().toASCIIString());
+    BeanUtils.copyProperties(jsonEntity, atomEntity, "baseURI", "properties", "links");
+    atomEntity.setBaseURI(jsonEntity.getBaseURI() == null ? null : jsonEntity.getBaseURI().toASCIIString());
 
-    for (Link link : jsonentry.getNavigationLinks()) {
+    for (Link link : jsonEntity.getNavigationLinks()) {
       final Link alink = new LinkImpl();
       alink.setHref(link.getHref());
       alink.setTitle(link.getTitle());
 
       final NavigationProperty navPropDetails =
-              metadata.getEntityType(jsonentry.getType()).getNavigationProperty(link.getTitle());
+              metadata.getEntityType(jsonEntity.getType()).getNavigationProperty(link.getTitle());
 
-      alink.setType(navPropDetails != null && navPropDetails.isFeed()
+      alink.setType(navPropDetails != null && navPropDetails.isEntitySet()
               ? Constants.get(ConstantKey.ATOM_LINK_FEED) : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
       alink.setRel(link.getRel());
 
-      if (link.getInlineEntry() instanceof JSONEntryImpl) {
-        final Entry inlineEntry = link.getInlineEntry();
-        if (inlineEntry instanceof JSONEntryImpl) {
-          alink.setInlineEntry(toAtomEntry((JSONEntryImpl) link.getInlineEntry()));
+      if (link.getInlineEntity() instanceof JSONEntityImpl) {
+        final Entity inlineEntity = link.getInlineEntity();
+        if (inlineEntity instanceof JSONEntityImpl) {
+          alink.setInlineEntity(toAtomEntity((JSONEntityImpl) link.getInlineEntity()));
         }
-      } else if (link.getInlineFeed() instanceof JSONFeedImpl) {
-        final Feed inlineFeed = link.getInlineFeed();
-        if (inlineFeed instanceof JSONFeedImpl) {
-          alink.setInlineFeed(toAtomFeed((JSONFeedImpl) link.getInlineFeed()));
+      } else if (link.getInlineEntitySet() instanceof JSONEntitySetImpl) {
+        final EntitySet inlineEntitySet = link.getInlineEntitySet();
+        if (inlineEntitySet instanceof JSONEntitySetImpl) {
+          alink.setInlineEntitySet(toAtomEntitySet((JSONEntitySetImpl) link.getInlineEntitySet()));
         }
       }
 
-      atomentry.getNavigationLinks().add(alink);
+      atomEntity.getNavigationLinks().add(alink);
     }
 
-    final EntityType entityType = StringUtils.isBlank(jsonentry.getType())
-            ? null : metadata.getEntityType(jsonentry.getType());
+    final EntityType entityType = StringUtils.isBlank(jsonEntity.getType())
+            ? null : metadata.getEntityType(jsonEntity.getType());
     final Map<String, NavigationProperty> navProperties = entityType == null
             ? Collections.<String, NavigationProperty>emptyMap() : entityType.getNavigationPropertyMap();
 
-    final List<Property> properties = atomentry.getProperties();
+    final List<Property> properties = atomEntity.getProperties();
 
-    for (Property property : jsonentry.getProperties()) {
+    for (Property property : jsonEntity.getProperties()) {
       if (navProperties.containsKey(property.getName())) {
         final Link alink = new LinkImpl();
         alink.setTitle(property.getName());
 
-        alink.setType(navProperties.get(property.getName()).isFeed()
+        alink.setType(navProperties.get(property.getName()).isEntitySet()
                 ? Constants.get(version, ConstantKey.ATOM_LINK_FEED)
                 : Constants.get(version, ConstantKey.ATOM_LINK_ENTRY));
 
         alink.setRel(Constants.get(version, ConstantKey.ATOM_LINK_REL) + property.getName());
 
         if (property.getValue().isComplex()) {
-          final Entry inline = new AtomEntryImpl();
+          final Entity inline = new AtomEntityImpl();
           inline.setType(navProperties.get(property.getName()).getType());
           for (Property prop : property.getValue().asComplex().get()) {
             inline.getProperties().add(prop);
           }
-          alink.setInlineEntry(inline);
+          alink.setInlineEntity(inline);
 
         } else if (property.getValue().isCollection()) {
-          final Feed inline = new AtomFeedImpl();
-          for (Value entry : property.getValue().asCollection().get()) {
-            final Entry inlineEntry = new AtomEntryImpl();
-            inlineEntry.setType(navProperties.get(property.getName()).getType());
-            for (Property prop : entry.asComplex().get()) {
-              inlineEntry.getProperties().add(toAtomProperty((JSONPropertyImpl) prop, inlineEntry.getType()));
+          final EntitySet inline = new AtomEntitySetImpl();
+          for (Value value : property.getValue().asCollection().get()) {
+            final Entity inlineEntity = new AtomEntityImpl();
+            inlineEntity.setType(navProperties.get(property.getName()).getType());
+            for (Property prop : value.asComplex().get()) {
+              inlineEntity.getProperties().add(toAtomProperty((JSONPropertyImpl) prop, inlineEntity.getType()));
             }
-            inline.getEntries().add(inlineEntry);
+            inline.getEntities().add(inlineEntity);
           }
-          alink.setInlineFeed(inline);
+          alink.setInlineEntitySet(inline);
         } else {
           throw new IllegalStateException("Invalid navigation property " + property);
         }
-        atomentry.getNavigationLinks().add(alink);
+        atomEntity.getNavigationLinks().add(alink);
       } else {
-        properties.add(toAtomProperty((JSONPropertyImpl) property, atomentry.getType()));
+        properties.add(toAtomProperty((JSONPropertyImpl) property, atomEntity.getType()));
       }
     }
 
-    return atomentry;
+    return atomEntity;
   }
 
   public JSONPropertyImpl toJSONProperty(final AtomPropertyImpl atomproperty) {

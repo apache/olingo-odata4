@@ -40,14 +40,14 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 /**
- * Reads JSON string into an entry.
+ * Reads JSON string into an entity.
  * <br/>
- * If metadata information is available, the corresponding entry fields and content will be populated.
+ * If metadata information is available, the corresponding entity fields and content will be populated.
  */
-public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImpl> {
+public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityImpl> {
 
   @Override
-  protected ResWrap<JSONEntryImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
+  protected ResWrap<JSONEntityImpl> doDeserialize(final JsonParser parser, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
@@ -56,7 +56,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       throw new JsonParseException("Expected OData Entity, found EntitySet", parser.getCurrentLocation());
     }
 
-    final JSONEntryImpl entry = new JSONEntryImpl();
+    final JSONEntityImpl entity = new JSONEntityImpl();
 
     final URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
@@ -69,7 +69,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       contextURL = null;
     }
     if (contextURL != null) {
-      entry.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
+      entity.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
     }
 
     final String metadataETag;
@@ -81,17 +81,17 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     }
 
     if (tree.hasNonNull(jsonETag)) {
-      entry.setETag(tree.get(jsonETag).textValue());
+      entity.setETag(tree.get(jsonETag).textValue());
       tree.remove(jsonETag);
     }
 
     if (tree.hasNonNull(jsonType)) {
-      entry.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
+      entity.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
       tree.remove(jsonType);
     }
 
     if (tree.hasNonNull(jsonId)) {
-      entry.setId(tree.get(jsonId).textValue());
+      entity.setId(tree.get(jsonId).textValue());
       tree.remove(jsonId);
     }
 
@@ -99,7 +99,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
       final LinkImpl link = new LinkImpl();
       link.setRel(Constants.SELF_LINK_REL);
       link.setHref(tree.get(jsonReadLink).textValue());
-      entry.setSelfLink(link);
+      entity.setSelfLink(link);
 
       tree.remove(jsonReadLink);
     }
@@ -111,25 +111,25 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         link.setRel(Constants.EDIT_LINK_REL);
       }
       link.setHref(tree.get(jsonEditLink).textValue());
-      entry.setEditLink(link);
+      entity.setEditLink(link);
 
       tree.remove(jsonEditLink);
     }
 
     if (tree.hasNonNull(jsonMediaReadLink)) {
-      entry.setMediaContentSource(tree.get(jsonMediaReadLink).textValue());
+      entity.setMediaContentSource(tree.get(jsonMediaReadLink).textValue());
       tree.remove(jsonMediaReadLink);
     }
     if (tree.hasNonNull(jsonMediaEditLink)) {
-      entry.setMediaContentSource(tree.get(jsonMediaEditLink).textValue());
+      entity.setMediaContentSource(tree.get(jsonMediaEditLink).textValue());
       tree.remove(jsonMediaEditLink);
     }
     if (tree.hasNonNull(jsonMediaContentType)) {
-      entry.setMediaContentType(tree.get(jsonMediaContentType).textValue());
+      entity.setMediaContentType(tree.get(jsonMediaContentType).textValue());
       tree.remove(jsonMediaContentType);
     }
     if (tree.hasNonNull(jsonMediaETag)) {
-      entry.setMediaETag(tree.get(jsonMediaETag).textValue());
+      entity.setMediaETag(tree.get(jsonMediaETag).textValue());
       tree.remove(jsonMediaETag);
     }
 
@@ -137,14 +137,14 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
-      links(field, entry, toRemove, tree, parser.getCodec());
+      links(field, entity, toRemove, tree, parser.getCodec());
       if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
         final LinkImpl link = new LinkImpl();
         link.setTitle(getTitle(field));
         link.setRel(version.getNamespaceMap().get(ODataServiceVersion.MEDIA_EDIT_LINK_REL) + getTitle(field));
         link.setHref(field.getValue().textValue());
         link.setType(ODataLinkType.MEDIA_EDIT.toString());
-        entry.getMediaEditLinks().add(link);
+        entity.getMediaEditLinks().add(link);
 
         if (tree.has(link.getTitle() + getJSONAnnotation(jsonMediaETag))) {
           link.setMediaETag(tree.get(link.getTitle() + getJSONAnnotation(jsonMediaETag)).asText());
@@ -155,7 +155,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         toRemove.add(setInline(field.getKey(), getJSONAnnotation(jsonMediaEditLink), tree, parser.getCodec(), link));
       } else if (field.getKey().endsWith(getJSONAnnotation(jsonMediaContentType))) {
         final String linkTitle = getTitle(field);
-        for (Link link : entry.getMediaEditLinks()) {
+        for (Link link : entity.getMediaEditLinks()) {
           if (linkTitle.equals(link.getTitle())) {
             ((LinkImpl) link).setType(field.getValue().asText());
           }
@@ -169,7 +169,7 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         operation.setTitle(opNode.get(Constants.ATTR_TITLE).asText());
         operation.setTarget(URI.create(opNode.get(Constants.ATTR_TARGET).asText()));
 
-        entry.getOperations().add(operation);
+        entity.getOperations().add(operation);
 
         toRemove.add(field.getKey());
       }
@@ -191,10 +191,10 @@ public class JSONEntryDeserializer extends AbstractJsonDeserializer<JSONEntryImp
         type = null;
 
         value(property, field.getValue(), parser.getCodec());
-        entry.getProperties().add(property);
+        entity.getProperties().add(property);
       }
     }
-
-    return new ResWrap<JSONEntryImpl>(contextURL, metadataETag, entry);
+    
+    return new ResWrap<JSONEntityImpl>(contextURL, metadataETag, entity);
   }
 }

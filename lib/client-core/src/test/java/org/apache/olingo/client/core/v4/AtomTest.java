@@ -68,7 +68,7 @@ public class AtomTest extends JSONTest {
   }
 
   @Override
-  public void additionalEntries() throws Exception {
+  public void additionalEntities() throws Exception {
     // no test
   }
 

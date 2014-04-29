@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.data;
 import java.net.URI;
 import java.util.List;
 
-public interface Feed {
+public interface EntitySet {
 
   /**
    * Gets base URI.
@@ -40,23 +40,23 @@ public interface Feed {
   /**
    * Gets number of entries - if it was required.
    *
-   * @return number of entries into the feed.
+   * @return number of entries into the entity set.
    */
   Integer getCount();
 
   /**
-   * Gest feed ID.
+   * Gest ID.
    *
-   * @return feed ID.
+   * @return ID.
    */
   String getId();
 
   /**
-   * Gets entries.
+   * Gets entities.
    *
    * @return entries.
    */
-  List<Entry> getEntries();
+  List<Entity> getEntities();
 
   /**
    * Gets next link if exists.

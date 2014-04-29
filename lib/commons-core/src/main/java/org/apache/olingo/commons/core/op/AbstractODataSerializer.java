@@ -25,19 +25,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.op.ODataSerializer;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
-import org.apache.olingo.commons.core.data.AtomFeedImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
+import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
-import org.apache.olingo.commons.core.data.JSONEntryImpl;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
+import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 
 public abstract class AbstractODataSerializer extends AbstractJacksonTool implements ODataSerializer {
@@ -53,30 +53,30 @@ public abstract class AbstractODataSerializer extends AbstractJacksonTool implem
   }
 
   @Override
-  public void feed(final Feed obj, final OutputStream out) {
-    feed(obj, new OutputStreamWriter(out));
+  public void entitySet(final EntitySet obj, final OutputStream out) {
+    entitySet(obj, new OutputStreamWriter(out));
   }
 
   @Override
-  public void feed(final Feed obj, final Writer writer) {
-    if (obj instanceof AtomFeedImpl) {
-      atom((AtomFeedImpl) obj, writer);
+  public void entitySet(final EntitySet obj, final Writer writer) {
+    if (obj instanceof AtomEntitySetImpl) {
+      atom((AtomEntitySetImpl) obj, writer);
     } else {
-      json((JSONFeedImpl) obj, writer);
+      json((JSONEntitySetImpl) obj, writer);
     }
   }
 
   @Override
-  public void entry(final Entry obj, final OutputStream out) {
-    entry(obj, new OutputStreamWriter(out));
+  public void entity(final Entity obj, final OutputStream out) {
+    entity(obj, new OutputStreamWriter(out));
   }
 
   @Override
-  public void entry(final Entry obj, final Writer writer) {
-    if (obj instanceof AtomEntryImpl) {
-      atom((AtomEntryImpl) obj, writer);
+  public void entity(final Entity obj, final Writer writer) {
+    if (obj instanceof AtomEntityImpl) {
+      atom((AtomEntityImpl) obj, writer);
     } else {
-      json((JSONEntryImpl) obj, writer);
+      json((JSONEntityImpl) obj, writer);
     }
   }
 

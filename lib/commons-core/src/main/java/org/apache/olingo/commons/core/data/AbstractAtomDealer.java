@@ -58,7 +58,15 @@ abstract class AbstractAtomDealer {
 
   protected final QName entryRefQName;
 
-  protected final QName v4PropertyValueQName;
+  protected final QName propertyValueQName;
+
+  protected final QName deletedEntryQName;
+
+  protected final QName reasonQName;
+
+  protected final QName linkQName;
+
+  protected final QName deletedLinkQName;
 
   protected final QName errorCodeQName;
 
@@ -94,8 +102,16 @@ abstract class AbstractAtomDealer {
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.CONTEXT);
     this.entryRefQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ENTRY_REF);
-    this.v4PropertyValueQName =
+    this.propertyValueQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.VALUE);
+
+    this.deletedEntryQName = new QName(Constants.NS_ATOM_TOMBSTONE, Constants.ATOM_ELEM_DELETED_ENTRY);
+    this.reasonQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ELEM_REASON);
+    this.linkQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_LINK);
+    this.deletedLinkQName =
+            new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ELEM_DELETED_LINK);
 
     this.errorCodeQName =
             new QName(version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ERROR_CODE);

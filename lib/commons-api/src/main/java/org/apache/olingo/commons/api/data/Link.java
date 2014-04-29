@@ -91,31 +91,31 @@ public interface Link {
   void setMediaETag(String etag);
 
   /**
-   * Gets in-line entry.
+   * Gets in-line entity.
    *
-   * @return in-line entry.
+   * @return in-line entity.
    */
-  Entry getInlineEntry();
+  Entity getInlineEntity();
 
   /**
-   * Sets in-line entry.
+   * Sets in-line entity.
    *
-   * @param entry entry.
+   * @param entity entity.
    */
-  void setInlineEntry(Entry entry);
+  void setInlineEntity(Entity entity);
 
   /**
-   * Gets in-line feed.
+   * Gets in-line entity set.
    *
-   * @return in-line feed.
+   * @return in-line entity set.
    */
-  Feed getInlineFeed();
+  EntitySet getInlineEntitySet();
 
   /**
-   * Sets in-line feed.
+   * Sets in-line entity set.
    *
-   * @param feed feed.
+   * @param entitySet entity set.
    */
-  void setInlineFeed(Feed feed);
+  void setInlineEntitySet(EntitySet entitySet);
 
 }

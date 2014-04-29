@@ -67,37 +67,37 @@ public class AtomTest extends AbstractTest {
     assertTrue(diff.similar());
   }
 
-  protected void feed(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entitySet(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer().feed(getClient().getDeserializer().toFeed(
+    getClient().getSerializer().entitySet(getClient().getDeserializer().toEntitySet(
             getClass().getResourceAsStream("Customer." + getSuffix(format)), format).getPayload(), writer);
 
     assertSimilar("Customer." + getSuffix(format), writer.toString());
   }
 
   @Test
-  public void feeds() throws Exception {
-    feed("Customer", getODataPubFormat());
+  public void entitySets() throws Exception {
+    entitySet("Customer", getODataPubFormat());
   }
 
-  protected void entry(final String filename, final ODataPubFormat format) throws Exception {
+  protected void entity(final String filename, final ODataPubFormat format) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer().entry(getClient().getDeserializer().toEntry(
+    getClient().getSerializer().entity(getClient().getDeserializer().toEntity(
             getClass().getResourceAsStream(filename + "." + getSuffix(format)), format).getPayload(), writer);
 
     assertSimilar(filename + "." + getSuffix(format), writer.toString());
   }
 
   @Test
-  public void entries() throws Exception {
-    entry("AllGeoTypesSet_-5", getODataPubFormat());
-    entry("AllGeoTypesSet_-8", getODataPubFormat());
-    entry("Car_16", getODataPubFormat());
-    entry("ComputerDetail_-10", getODataPubFormat());
-    entry("Customer_-10", getODataPubFormat());
-    entry("Products_1", getODataPubFormat());
-    entry("PersonDetails_0_Person", getODataPubFormat());
-    entry("Products_0_Categories", getODataPubFormat());
+  public void entities() throws Exception {
+    entity("AllGeoTypesSet_-5", getODataPubFormat());
+    entity("AllGeoTypesSet_-8", getODataPubFormat());
+    entity("Car_16", getODataPubFormat());
+    entity("ComputerDetail_-10", getODataPubFormat());
+    entity("Customer_-10", getODataPubFormat());
+    entity("Products_1", getODataPubFormat());
+    entity("PersonDetails_0_Person", getODataPubFormat());
+    entity("Products_0_Categories", getODataPubFormat());
   }
 
   protected void property(final String filename, final ODataFormat format) throws Exception {

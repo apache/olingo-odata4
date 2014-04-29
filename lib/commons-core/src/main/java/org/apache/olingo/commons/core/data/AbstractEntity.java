@@ -21,15 +21,15 @@ package org.apache.olingo.commons.core.data;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 
 /**
- * Abstract base for classes implementing an OData entry in Atom and JSON.
+ * Abstract base for classes implementing an OData entity in Atom and JSON.
  */
-public abstract class AbstractEntry extends AbstractODataObject implements Entry {
+public abstract class AbstractEntity extends AbstractODataObject implements Entity {
 
   private static final long serialVersionUID = 2127764552600969783L;
 
@@ -165,7 +165,7 @@ public abstract class AbstractEntry extends AbstractODataObject implements Entry
   }
 
   @Override
-  public boolean isMediaEntry() {
+  public boolean isMediaEntity() {
     return StringUtils.isNotBlank(this.mediaContentSource);
   }
 }

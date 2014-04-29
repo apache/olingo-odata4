@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
@@ -109,6 +110,16 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   @Override
   public ODataProperty newEnumProperty(final String name, final ODataEnumValue value) {
     return new ODataPropertyImpl(name, value);
+  }
+
+  @Override
+  public ODataDelta newDelta() {
+    return new ODataDeltaImpl();
+  }
+
+  @Override
+  public ODataDelta newDelta(final URI next) {
+    return new ODataDeltaImpl(next);
   }
 
 }

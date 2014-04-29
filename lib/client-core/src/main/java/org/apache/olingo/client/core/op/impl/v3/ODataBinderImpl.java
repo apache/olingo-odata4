@@ -22,8 +22,8 @@ import org.apache.olingo.client.api.domain.v3.ODataLinkCollection;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.v3.ODataClientImpl;
-import org.apache.olingo.commons.api.data.Entry;
-import org.apache.olingo.commons.api.data.Feed;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.v3.LinkCollection;
@@ -55,7 +55,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public Property getProperty(final CommonODataProperty property, final Class<? extends Entry> reference) {
+  public Property getProperty(final CommonODataProperty property, final Class<? extends Entity> reference) {
     final Property propertyResource = ResourceFactory.newProperty(reference);
     propertyResource.setName(property.getName());
     propertyResource.setValue(getValue(property.getValue(), reference));
@@ -72,12 +72,12 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final ResWrap<Feed> resource) {
+  public ODataEntitySet getODataEntitySet(final ResWrap<EntitySet> resource) {
     return (ODataEntitySet) super.getODataEntitySet(resource);
   }
 
   @Override
-  public ODataEntity getODataEntity(final ResWrap<Entry> resource) {
+  public ODataEntity getODataEntity(final ResWrap<Entity> resource) {
     return (ODataEntity) super.getODataEntity(resource);
   }
 

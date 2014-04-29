@@ -30,13 +30,13 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.uri.v3.URIBuilder.InlineCount;
-import org.apache.olingo.commons.api.data.Entry;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.AtomEntryImpl;
+import org.apache.olingo.commons.core.data.AtomEntityImpl;
 import org.junit.Test;
 
 /**
@@ -194,9 +194,9 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataPubFormat.ATOM);
 
-    final Entry atomEntry =
-            client.getDeserializer().toEntry(req.execute().getRawResponse(), ODataPubFormat.ATOM).getPayload();
+    final Entity atomEntry =
+            client.getDeserializer().toEntity(req.execute().getRawResponse(), ODataPubFormat.ATOM).getPayload();
     assertEquals("remotingdestructorprinterswitcheschannelssatellitelanguageresolve",
-            ((AtomEntryImpl) atomEntry).getSummary());
+            ((AtomEntityImpl) atomEntry).getSummary());
   }
 }

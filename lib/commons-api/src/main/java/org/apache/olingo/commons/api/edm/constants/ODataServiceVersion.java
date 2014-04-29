@@ -69,6 +69,13 @@ public enum ODataServiceVersion {
   public static final String JSON_ASSOCIATION_LINK = "jsonAssociationLink";
 
   public static final String JSON_NAVIGATION_LINK = "jsonNavigationLink";
+
+  public final static String JSON_COUNT = "jsonCount";
+
+  public final static String JSON_NEXT_LINK = "jsonNextLink";
+
+  public final static String JSON_DELTA_LINK = "jsonDeltaLink";
+
   public static final String JSON_ERROR = "jsonError";
 
   private static final Map<String, String> V30_NAMESPACES = Collections.unmodifiableMap(new HashMap<String, String>() {
@@ -101,6 +108,8 @@ public enum ODataServiceVersion {
       put(JSON_MEDIA_ETAG, "odata.mediaEtag");
       put(JSON_ASSOCIATION_LINK, "@odata.associationLinkUrl");
       put(JSON_NAVIGATION_LINK, "@odata.navigationLinkUrl");
+      put(JSON_COUNT, "odata.count");
+      put(JSON_NEXT_LINK, "odata.nextLink");
       put(JSON_ERROR, "odata.error");
     }
   });
@@ -135,6 +144,9 @@ public enum ODataServiceVersion {
       put(JSON_MEDIA_ETAG, "@odata.mediaEtag");
       put(JSON_ASSOCIATION_LINK, "@odata.associationLink");
       put(JSON_NAVIGATION_LINK, "@odata.navigationLink");
+      put(JSON_COUNT, "@odata.count");
+      put(JSON_NEXT_LINK, "@odata.nextLink");
+      put(JSON_DELTA_LINK, "@odata.deltaLink");
       put(JSON_ERROR, "error");
     }
   });

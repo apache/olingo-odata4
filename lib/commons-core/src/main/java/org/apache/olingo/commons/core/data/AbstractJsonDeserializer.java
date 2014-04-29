@@ -60,33 +60,33 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
   protected String setInline(final String name, final String suffix, final JsonNode tree,
           final ObjectCodec codec, final LinkImpl link) throws IOException {
 
-    final String entryNamePrefix = name.substring(0, name.indexOf(suffix));
-    if (tree.has(entryNamePrefix)) {
-      final JsonNode inline = tree.path(entryNamePrefix);
+    final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
+    if (tree.has(entityNamePrefix)) {
+      final JsonNode inline = tree.path(entityNamePrefix);
 
       if (inline instanceof ObjectNode) {
         link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
 
-        link.setInlineEntry(inline.traverse(codec).<ResWrap<JSONEntryImpl>>readValueAs(
-                new TypeReference<JSONEntryImpl>() {
+        link.setInlineEntity(inline.traverse(codec).<ResWrap<JSONEntityImpl>>readValueAs(
+                new TypeReference<JSONEntityImpl>() {
                 }).getPayload());
       }
 
       if (inline instanceof ArrayNode) {
         link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
 
-        final JSONFeedImpl feed = new JSONFeedImpl();
+        final JSONEntitySetImpl entitySet = new JSONEntitySetImpl();
         final Iterator<JsonNode> entries = ((ArrayNode) inline).elements();
         while (entries.hasNext()) {
-          feed.getEntries().add(entries.next().traverse(codec).<ResWrap<JSONEntryImpl>>readValuesAs(
-                  new TypeReference<JSONEntryImpl>() {
+          entitySet.getEntities().add(entries.next().traverse(codec).<ResWrap<JSONEntityImpl>>readValuesAs(
+                  new TypeReference<JSONEntityImpl>() {
                   }).next().getPayload());
         }
 
-        link.setInlineFeed(feed);
+        link.setInlineEntitySet(entitySet);
       }
     }
-    return entryNamePrefix;
+    return entityNamePrefix;
   }
 
   protected void links(final Map.Entry<String, JsonNode> field, final Linked linked, final Set<String> toRemove,

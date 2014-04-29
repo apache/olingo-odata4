@@ -18,16 +18,11 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 /**
- * A single entry, represented via JSON.
+ * List of entries, represented via Atom.
  */
-@JsonSerialize(using = JSONEntrySerializer.class)
-@JsonDeserialize(using = JSONEntryDeserializer.class)
-public class JSONEntryImpl extends AbstractEntry {
+public class AtomEntitySetImpl extends AbstractEntitySet {
 
-  private static final long serialVersionUID = -5275365545400797758L;
+  private static final long serialVersionUID = 5466590540021319153L;
 
 }

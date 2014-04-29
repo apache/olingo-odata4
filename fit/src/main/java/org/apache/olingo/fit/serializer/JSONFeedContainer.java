@@ -22,15 +22,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.core.data.JSONFeedDeserializer;
-import org.apache.olingo.commons.core.data.JSONFeedImpl;
-import org.apache.olingo.commons.core.data.JSONFeedSerializer;
+import org.apache.olingo.commons.core.data.JSONEntitySetDeserializer;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetSerializer;
 
-@JsonDeserialize(using = JSONFeedDeserializer.class)
-@JsonSerialize(using = JSONFeedSerializer.class)
-public class JSONFeedContainer extends ResWrap<JSONFeedImpl> {
+@JsonDeserialize(using = JSONEntitySetDeserializer.class)
+@JsonSerialize(using = JSONEntitySetSerializer.class)
+public class JSONFeedContainer extends ResWrap<JSONEntitySetImpl> {
 
-  public JSONFeedContainer(final ContextURL contextURL, final String metadataETag, final JSONFeedImpl object) {
+  public JSONFeedContainer(final ContextURL contextURL, final String metadataETag, final JSONEntitySetImpl object) {
     super(contextURL, metadataETag, object);
   }
 }
