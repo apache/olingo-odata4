@@ -26,9 +26,9 @@ import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.DeltaLink;
+import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
@@ -46,8 +46,8 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.core.data.DeletedEntityImpl;
-import org.apache.olingo.commons.core.data.DeltaLinkImpl;
+import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
+import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
@@ -93,6 +93,13 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     }
 
     return serviceDocument;
+  }
+
+  @Override
+  public EntitySet getEntitySet(final CommonODataEntitySet odataEntitySet, final Class<? extends EntitySet> reference) {
+    final EntitySet entitySet = super.getEntitySet(odataEntitySet, reference);
+    entitySet.setDeltaLink(((ODataEntitySet) odataEntitySet).getDeltaLink());
+    return entitySet;
   }
 
   @Override
@@ -152,7 +159,15 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataEntitySet getODataEntitySet(final ResWrap<EntitySet> resource) {
-    return (ODataEntitySet) super.getODataEntitySet(resource);
+    final ODataEntitySet entitySet = (ODataEntitySet) super.getODataEntitySet(resource);
+
+    if (resource.getPayload().getDeltaLink() != null) {
+      final URI base = resource.getContextURL() == null
+              ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
+      entitySet.setDeltaLink(URIUtils.getURI(base, resource.getPayload().getDeltaLink()));
+    }
+
+    return entitySet;
   }
 
   @Override
@@ -225,24 +240,24 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       add(delta, getODataEntity(
               new ResWrap<Entity>(resource.getContextURL(), resource.getMetadataETag(), entityResource)));
     }
-    for (DeletedEntity deletedEntity : resource.getPayload().getDeletedEntities()) {
-      final DeletedEntityImpl impl = new DeletedEntityImpl();
+    for (ODataDeletedEntity deletedEntity : resource.getPayload().getDeletedEntities()) {
+      final ODataDeletedEntityImpl impl = new ODataDeletedEntityImpl();
       impl.setId(URIUtils.getURI(base, deletedEntity.getId()));
       impl.setReason(deletedEntity.getReason());
 
       delta.getDeletedEntities().add(impl);
     }
 
-    for (DeltaLink link : resource.getPayload().getAddedLinks()) {
-      final DeltaLinkImpl impl = new DeltaLinkImpl();
+    for (ODataDeltaLink link : resource.getPayload().getAddedLinks()) {
+      final ODataDeltaLinkImpl impl = new ODataDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));
 
       delta.getAddedLinks().add(impl);
     }
-    for (DeltaLink link : resource.getPayload().getDeletedLinks()) {
-      final DeltaLinkImpl impl = new DeltaLinkImpl();
+    for (ODataDeltaLink link : resource.getPayload().getDeletedLinks()) {
+      final ODataDeltaLinkImpl impl = new ODataDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));

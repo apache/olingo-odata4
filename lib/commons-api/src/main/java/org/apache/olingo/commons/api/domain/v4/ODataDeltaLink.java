@@ -16,35 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.domain.v4;
 
 import java.net.URI;
-import org.apache.olingo.commons.api.data.DeletedEntity;
 
-public class DeletedEntityImpl extends AbstractPayloadObject implements DeletedEntity {
+public interface ODataDeltaLink {
 
-  private static final long serialVersionUID = -3841730551749114664L;
+  URI getSource();
 
-  private URI id;
+  void setSource(URI source);
 
-  private Reason reason;
+  String getRelationship();
 
-  @Override
-  public URI getId() {
-    return id;
-  }
+  void setRelationship(String relationship);
 
-  public void setId(final URI id) {
-    this.id = id;
-  }
+  URI getTarget();
 
-  @Override
-  public Reason getReason() {
-    return reason;
-  }
-
-  public void setReason(final Reason reason) {
-    this.reason = reason;
-  }
-
+  void setTarget(URI target);
 }

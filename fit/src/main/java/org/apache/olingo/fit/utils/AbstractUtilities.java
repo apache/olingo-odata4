@@ -53,6 +53,7 @@ import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONEntitySetImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 import org.apache.olingo.fit.metadata.Metadata;
@@ -540,7 +541,25 @@ public abstract class AbstractUtilities {
     return builder.build();
   }
 
-  public InputStream writeFeed(final Accept accept, final ResWrap<AtomEntitySetImpl> container)
+  public AtomEntitySetImpl readEntitySet(final Accept accept, final InputStream entitySet)
+          throws XMLStreamException, IOException {
+
+    final AtomEntitySetImpl entry;
+
+    if (accept == Accept.ATOM || accept == Accept.XML) {
+      final ResWrap<AtomEntitySetImpl> container = atomDeserializer.read(entitySet, AtomEntitySetImpl.class);
+      entry = container.getPayload();
+    } else {
+      final ResWrap<JSONEntitySetImpl> container =
+              mapper.readValue(entitySet, new TypeReference<JSONEntitySetImpl>() {
+              });
+      entry = dataBinder.toAtomEntitySet(container.getPayload());
+    }
+
+    return entry;
+  }
+
+  public InputStream writeEntitySet(final Accept accept, final ResWrap<AtomEntitySetImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
@@ -557,7 +576,7 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public AtomEntityImpl readEntry(final Accept accept, final InputStream entity)
+  public AtomEntityImpl readEntity(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
 
     final AtomEntityImpl entry;
@@ -575,7 +594,7 @@ public abstract class AbstractUtilities {
     return entry;
   }
 
-  public InputStream writeEntry(final Accept accept, final ResWrap<AtomEntityImpl> container)
+  public InputStream writeEntity(final Accept accept, final ResWrap<AtomEntityImpl> container)
           throws XMLStreamException, IOException {
 
     final StringWriter writer = new StringWriter();
@@ -832,10 +851,10 @@ public abstract class AbstractUtilities {
     InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
     stream = replaceProperty(stream, changes, path, justValue);
 
-    final AtomEntityImpl entry = readEntry(acceptType, stream);
+    final AtomEntityImpl entry = readEntity(acceptType, stream);
     final ResWrap<AtomEntityImpl> container = new ResWrap<AtomEntityImpl>((URI) null, null, entry);
 
-    fsManager.putInMemory(writeEntry(Accept.ATOM, container),
+    fsManager.putInMemory(writeEntity(Accept.ATOM, container),
             fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
   }
 

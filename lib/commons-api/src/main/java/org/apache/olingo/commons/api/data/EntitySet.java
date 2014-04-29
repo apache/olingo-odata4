@@ -71,4 +71,18 @@ public interface EntitySet {
    * @param next next link.
    */
   void setNext(URI next);
+
+  /**
+   * Gets delta link if exists.
+   *
+   * @return delta link if exists; null otherwise.
+   */
+  URI getDeltaLink();
+
+  /**
+   * Sets delta link.
+   *
+   * @param deltaLink delta link.
+   */
+  void setDeltaLink(URI deltaLink);
 }

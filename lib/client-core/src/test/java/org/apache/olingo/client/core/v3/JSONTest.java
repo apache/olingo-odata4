@@ -70,6 +70,9 @@ public class JSONTest extends AtomTest {
     if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE))) {
       node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_MEDIA_CONTENT_TYPE));
     }
+    if (node.has(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK))) {
+      node.remove(getClient().getServiceVersion().getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK));
+    }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();

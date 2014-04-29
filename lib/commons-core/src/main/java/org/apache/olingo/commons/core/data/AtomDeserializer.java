@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
+import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
+import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -31,7 +34,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
+import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
@@ -417,7 +420,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
           delta.getEntities().add(entity(reader, event.asStartElement()));
         } else if (deletedEntryQName.equals(event.asStartElement().getName())) {
-          final DeletedEntityImpl deletedEntity = new DeletedEntityImpl();
+          final ODataDeletedEntityImpl deletedEntity = new ODataDeletedEntityImpl();
 
           final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
           if (ref != null) {
@@ -432,13 +435,13 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (linkQName.equals(event.asStartElement().getName())
                 || deletedLinkQName.equals(event.asStartElement().getName())) {
 
-          final DeltaLinkImpl link = new DeltaLinkImpl();
+          final ODataDeltaLinkImpl link = new ODataDeltaLinkImpl();
 
           final Attribute source = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_SOURCE));
           if (source != null) {
             link.setSource(URI.create(source.getValue()));
           }
-          final Attribute relationship = 
+          final Attribute relationship =
                   event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_RELATIONSHIP));
           if (relationship != null) {
             link.setRelationship(relationship.getValue());
@@ -699,10 +702,18 @@ public class AtomDeserializer extends AbstractAtomDealer {
           common(reader, event.asStartElement(), entitySet, "updated");
         } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
           final Attribute rel = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REL));
-          if (rel != null && Constants.NEXT_LINK_REL.equals(rel.getValue())) {
-            final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
-            if (href != null) {
-              entitySet.setNext(URI.create(href.getValue()));
+          if (rel != null) {
+            if (Constants.NEXT_LINK_REL.equals(rel.getValue())) {
+              final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+              if (href != null) {
+                entitySet.setNext(URI.create(href.getValue()));
+              }
+            }
+            if (Constants.DELTA_LINK_REL.equals(rel.getValue())) {
+              final Attribute href = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_HREF));
+              if (href != null) {
+                entitySet.setDeltaLink(URI.create(href.getValue()));
+              }
             }
           }
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {

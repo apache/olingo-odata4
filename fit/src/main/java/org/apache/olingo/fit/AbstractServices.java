@@ -489,7 +489,7 @@ public abstract class AbstractServices {
 
       final InputStream res = getUtilities(acceptType).addOrReplaceEntity(entityId, entitySetName,
               IOUtils.toInputStream(entity, Constants.ENCODING),
-              xml.readEntry(acceptType, IOUtils.toInputStream(entity, Constants.ENCODING)));
+              xml.readEntity(acceptType, IOUtils.toInputStream(entity, Constants.ENCODING)));
 
       final ResWrap<AtomEntityImpl> cres;
       if (acceptType == Accept.ATOM) {
@@ -640,7 +640,7 @@ public abstract class AbstractServices {
       } else {
         response = xml.createResponse(
                 location,
-                xml.writeEntry(acceptType, result),
+                xml.writeEntity(acceptType, result),
                 null,
                 acceptType,
                 Response.Status.CREATED);
@@ -1077,7 +1077,7 @@ public abstract class AbstractServices {
 
       return xml.createResponse(
               location,
-              xml.writeEntry(utils.getKey(), container),
+              xml.writeEntity(utils.getKey(), container),
               Commons.getETag(entityInfo.getKey(), version),
               utils.getKey());
     } catch (Exception e) {

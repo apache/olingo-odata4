@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -262,7 +264,8 @@ public abstract class Commons {
       IOUtils.copy(is, bos);
       IOUtils.closeQuietly(is);
 
-      final ObjectMapper mapper = new ObjectMapper();
+      final ObjectMapper mapper = new ObjectMapper(
+              new JsonFactory().configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true));
       final JsonNode node =
               changeFormat((ObjectNode) mapper.readTree(new ByteArrayInputStream(bos.toByteArray())), version, target);
 

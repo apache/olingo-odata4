@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.core.domain.v4;
 
 import java.net.URI;
-import org.apache.olingo.commons.api.data.DeltaLink;
+import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+import org.apache.olingo.commons.core.data.AbstractPayloadObject;
 
-public class DeltaLinkImpl extends AbstractPayloadObject implements DeltaLink {
+public class ODataDeltaLinkImpl extends AbstractPayloadObject implements ODataDeltaLink {
 
   private static final long serialVersionUID = -6686550836508873044L;
 

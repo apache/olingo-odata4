@@ -33,8 +33,8 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.op.AbstractODataDeserializer;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import org.apache.olingo.commons.core.data.AtomDeltaImpl;
-import org.apache.olingo.commons.core.data.JSONDeltaImpl;
+import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
+import org.apache.olingo.commons.core.data.v4.JSONDeltaImpl;
 
 public class ODataDeserializerImpl extends AbstractODataDeserializer implements ODataDeserializer {
 

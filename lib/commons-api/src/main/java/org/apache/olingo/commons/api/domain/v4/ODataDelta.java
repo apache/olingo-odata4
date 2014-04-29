@@ -18,31 +18,14 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
-import java.net.URI;
 import java.util.List;
-import org.apache.olingo.commons.api.data.DeletedEntity;
-import org.apache.olingo.commons.api.data.DeltaLink;
 
 public interface ODataDelta extends ODataEntitySet {
 
-  List<DeletedEntity> getDeletedEntities();
+  List<ODataDeletedEntity> getDeletedEntities();
 
-  List<DeltaLink> getAddedLinks();
+  List<ODataDeltaLink> getAddedLinks();
 
-  List<DeltaLink> getDeletedLinks();
-
-  /**
-   * Gets delta link if exists.
-   *
-   * @return delta link if exists; null otherwise.
-   */
-  URI getDeltaLink();
-
-  /**
-   * Sets delta link.
-   *
-   * @param deltaLink delta link.
-   */
-  void setDeltaLink(URI deltaLink);
+  List<ODataDeltaLink> getDeletedLinks();
 
 }

@@ -16,21 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data.v4;
 
-import java.net.URI;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.olingo.commons.core.data.JSONDeltaDeserializer;
 
-public interface DeletedEntity {
+@JsonDeserialize(using = JSONDeltaDeserializer.class)
+public class JSONDeltaImpl extends AbstractDelta {
 
-  enum Reason {
-
-    deleted,
-    changed;
-
-  }
-
-  URI getId();
-
-  Reason getReason();
+  private static final long serialVersionUID = -7948494801560470246L;
 
 }

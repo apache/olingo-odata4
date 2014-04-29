@@ -78,6 +78,9 @@ public class JSONEntitySetDeserializer extends AbstractJsonDeserializer<JSONEnti
     if (tree.hasNonNull(jsonNextLink)) {
       entitySet.setNext(URI.create(tree.get(jsonNextLink).textValue()));
     }
+    if (tree.hasNonNull(jsonDeltaLink)) {
+      entitySet.setDeltaLink(URI.create(tree.get(jsonDeltaLink).textValue()));
+    }
 
     if (tree.hasNonNull(Constants.VALUE)) {
       for (final Iterator<JsonNode> itor = tree.get(Constants.VALUE).iterator(); itor.hasNext();) {

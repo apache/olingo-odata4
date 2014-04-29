@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,9 +243,9 @@ public class V4Services extends AbstractServices {
   }
 
   @Override
-  protected void setInlineCount(final EntitySet feed, final String count) {
+  protected void setInlineCount(final EntitySet entitySet, final String count) {
     if ("true".equals(count)) {
-      feed.setCount(feed.getEntities().size());
+      entitySet.setCount(entitySet.getEntities().size());
     }
   }
 
@@ -252,6 +253,7 @@ public class V4Services extends AbstractServices {
   public InputStream exploreMultipart(
           final List<Attachment> attachments, final String boundary, final boolean continueOnError)
           throws IOException {
+
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     Response res = null;
@@ -346,31 +348,51 @@ public class V4Services extends AbstractServices {
 
   @GET
   @Path("/Customers")
-  public Response getEntitySet(
+  public Response getCustomers(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @QueryParam("$deltatoken") @DefaultValue(StringUtils.EMPTY) String deltatoken) {
 
-    if (StringUtils.isBlank(deltatoken)) {
-      return getEntitySet(uriInfo, accept, "Customers", null, null, format, null, null, null, null);
-    } else {
-      try {
-        final Accept acceptType;
-        if (StringUtils.isNotBlank(format)) {
-          acceptType = Accept.valueOf(format.toUpperCase());
-        } else {
-          acceptType = Accept.parse(accept, version);
+    try {
+      final Accept acceptType;
+      if (StringUtils.isNotBlank(format)) {
+        acceptType = Accept.valueOf(format.toUpperCase());
+      } else {
+        acceptType = Accept.parse(accept, version);
+      }
+
+      final InputStream output;
+      if (StringUtils.isBlank(deltatoken)) {
+        final InputStream input = (InputStream) getEntitySet(
+                uriInfo, accept, "Customers", null, null, format, null, null, null, null).getEntity();
+        final AtomEntitySetImpl entitySet = xml.readEntitySet(acceptType, input);
+
+        boolean trackChanges = prefer.contains("odata.track-changes");
+        if (trackChanges) {
+          entitySet.setDeltaLink(URI.create("Customers?$deltatoken=8015"));
         }
 
-        return xml.createResponse(
+        output = xml.writeEntitySet(acceptType, new ResWrap<AtomEntitySetImpl>(
+                URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + "Customers"),
                 null,
-                FSManager.instance(version).readFile("delta", acceptType),
-                null,
-                acceptType);
-      } catch (Exception e) {
-        return xml.createFaultResponse(accept, e);
+                entitySet));
+      } else {
+        output = FSManager.instance(version).readFile("delta", acceptType);
       }
+
+      final Response response = xml.createResponse(
+              null,
+              output,
+              null,
+              acceptType);
+      if (StringUtils.isNotBlank(prefer)) {
+        response.getHeaders().put("Preference-Applied", Collections.<Object>singletonList(prefer));
+      }
+      return response;
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
     }
   }
 
@@ -422,7 +444,7 @@ public class V4Services extends AbstractServices {
       }
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      final Entity entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       return xml.createResponse(
               null,
@@ -471,7 +493,7 @@ public class V4Services extends AbstractServices {
 
       return xml.createResponse(
               null,
-              xml.writeFeed(acceptType, container),
+              xml.writeEntitySet(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -496,7 +518,7 @@ public class V4Services extends AbstractServices {
       }
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      final Entity entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert 1 == entry.getProperties().size();
       assert entry.getProperty("accessRight") != null;
@@ -525,7 +547,7 @@ public class V4Services extends AbstractServices {
 
     try {
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      final Entity entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert 2 == entry.getProperties().size();
       assert entry.getProperty("addresses") != null;
@@ -562,7 +584,7 @@ public class V4Services extends AbstractServices {
 
     try {
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      final Entity entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert 1 == entry.getProperties().size();
       assert entry.getProperty("newDate") != null;
@@ -733,7 +755,7 @@ public class V4Services extends AbstractServices {
 
       return xml.createResponse(
               null,
-              xml.writeEntry(acceptType, container),
+              xml.writeEntity(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -789,7 +811,7 @@ public class V4Services extends AbstractServices {
       final String atomEntryRelativePath = containedPath(entityId, containedEntitySetName).
               append('(').append(entityKey).append(')').toString();
       FSManager.instance(version).putInMemory(
-              utils.writeEntry(Accept.ATOM, entryContainer),
+              utils.writeEntity(Accept.ATOM, entryContainer),
               FSManager.instance(version).getAbsolutePath(atomEntryRelativePath, Accept.ATOM));
 
       // 3. Update the contained entity set
@@ -811,7 +833,7 @@ public class V4Services extends AbstractServices {
       // Finally, return
       return utils.createResponse(
               uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")",
-              utils.writeEntry(acceptType, entryContainer),
+              utils.writeEntity(acceptType, entryContainer),
               null,
               acceptType,
               Response.Status.CREATED);
@@ -961,7 +983,7 @@ public class V4Services extends AbstractServices {
 
       return xml.createResponse(
               null,
-              xml.writeFeed(acceptType, container),
+              xml.writeEntitySet(acceptType, container),
               null,
               acceptType);
     } catch (Exception e) {
@@ -1207,7 +1229,7 @@ public class V4Services extends AbstractServices {
       }
 
       final Accept contentTypeValue = Accept.parse(contentType, version);
-      final Entity entry = xml.readEntry(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
+      final Entity entry = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert 1 == entry.getProperties().size();
       assert "Collection(Edm.String)".equals(entry.getProperty("emails").getType());

@@ -34,7 +34,7 @@
       </title>
     </xsl:if>
   </xsl:template>
-  <xsl:template match="atom:link[@rel = 'self' or @rel = 'edit' or @rel = 'edit-media']"/>
+  <xsl:template match="atom:link[@rel = 'self' or @rel = 'edit' or @rel = 'edit-media' or @rel = 'next']"/>
   
   <xsl:template match="m:action"/>
 

@@ -31,6 +31,8 @@ public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataE
 
   private final List<ODataEntity> entities = new ArrayList<ODataEntity>();
 
+  private URI deltaLink;
+
   public ODataEntitySetImpl() {
   }
 
@@ -48,4 +50,13 @@ public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataE
     return entities;
   }
 
+  @Override
+  public URI getDeltaLink() {
+    return deltaLink;
+  }
+
+  @Override
+  public void setDeltaLink(final URI deltaLink) {
+    this.deltaLink = deltaLink;
+  }
 }

@@ -16,21 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data.v4;
 
-import java.net.URI;
+public class AtomDeltaImpl extends AbstractDelta {
 
-public interface DeltaLink {
+  private static final long serialVersionUID = -730729098008847535L;
 
-  URI getSource();
-
-  void setSource(URI source);
-
-  String getRelationship();
-
-  void setRelationship(String relationship);
-
-  URI getTarget();
-
-  void setTarget(URI target);
 }

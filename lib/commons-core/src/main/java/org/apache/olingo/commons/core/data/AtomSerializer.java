@@ -256,7 +256,7 @@ public class AtomSerializer extends AbstractAtomDealer {
     if (serverMode) {
       for (ODataOperation operation : entity.getOperations()) {
         writer.writeStartElement(
-                version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ACTION);        
+                version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA), Constants.ATOM_ELEM_ACTION);
         writer.writeAttribute(Constants.ATTR_METADATA, operation.getMetadataAnchor());
         writer.writeAttribute(Constants.ATTR_TITLE, operation.getTitle());
         writer.writeAttribute(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());
@@ -373,12 +373,21 @@ public class AtomSerializer extends AbstractAtomDealer {
       }
     }
 
-    if (entitySet.getNext() != null) {
-      final LinkImpl next = new LinkImpl();
-      next.setRel(Constants.NEXT_LINK_REL);
-      next.setHref(entitySet.getNext().toASCIIString());
+    if (serverMode) {
+      if (entitySet.getNext() != null) {
+        final LinkImpl next = new LinkImpl();
+        next.setRel(Constants.NEXT_LINK_REL);
+        next.setHref(entitySet.getNext().toASCIIString());
 
-      links(writer, Collections.<Link>singletonList(next));
+        links(writer, Collections.<Link>singletonList(next));
+      }
+      if (entitySet.getDeltaLink() != null) {
+        final LinkImpl next = new LinkImpl();
+        next.setRel(Constants.DELTA_LINK_REL);
+        next.setHref(entitySet.getDeltaLink().toASCIIString());
+
+        links(writer, Collections.<Link>singletonList(next));
+      }
     }
   }
 

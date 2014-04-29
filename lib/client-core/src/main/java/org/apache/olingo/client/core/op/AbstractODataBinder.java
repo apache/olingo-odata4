@@ -114,7 +114,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (next != null) {
       entitySet.setNext(next);
     }
-
+    
     for (CommonODataEntity entity : odataEntitySet.getEntities()) {
       entitySet.getEntities().add(getEntity(entity, ResourceFactory.entityClassForEntitySet(reference)));
     }

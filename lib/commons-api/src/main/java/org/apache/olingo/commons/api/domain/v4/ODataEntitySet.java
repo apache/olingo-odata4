@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
+import java.net.URI;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 
@@ -26,4 +27,17 @@ public interface ODataEntitySet extends CommonODataEntitySet {
   @Override
   List<ODataEntity> getEntities();
 
+  /**
+   * Gets delta link if exists.
+   *
+   * @return delta link if exists; null otherwise.
+   */
+  URI getDeltaLink();
+
+  /**
+   * Sets delta link.
+   *
+   * @param deltaLink delta link.
+   */
+  void setDeltaLink(URI deltaLink);
 }

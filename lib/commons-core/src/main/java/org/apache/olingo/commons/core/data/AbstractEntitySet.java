@@ -34,6 +34,8 @@ public abstract class AbstractEntitySet extends AbstractODataObject implements E
 
   private URI next;
 
+  private URI deltaLink;
+
   @Override
   public void setCount(final Integer count) {
     this.count = count;
@@ -58,4 +60,15 @@ public abstract class AbstractEntitySet extends AbstractODataObject implements E
   public URI getNext() {
     return next;
   }
+
+  @Override
+  public URI getDeltaLink() {
+    return deltaLink;
+  }
+
+  @Override
+  public void setDeltaLink(final URI deltaLink) {
+    this.deltaLink = deltaLink;
+  }
+
 }

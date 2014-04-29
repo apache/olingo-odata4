@@ -18,24 +18,35 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
-import java.net.URI;
-import org.apache.olingo.client.api.communication.request.retrieve.v4.ODataDeltaRequest;
-import org.apache.olingo.commons.api.domain.v4.ODataDelta;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
-import org.apache.olingo.commons.api.format.ODataPubFormat;
+import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.v4.ODataDeltaRequest;
+import org.apache.olingo.commons.api.domain.v4.ODataDelta;
+import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 
 public class DeltaTestITCase extends AbstractTestITCase {
 
   private void parse(final ODataPubFormat format) {
-    final URI deltaLink = URI.create(testStaticServiceRootURL + "/Customers?$expand=Orders&$deltatoken=565656");
-    final ODataDeltaRequest req = client.getRetrieveRequestFactory().getDeltaRequest(deltaLink);
-    req.setFormat(format);
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
+    req.setPrefer(client.newPreferences().trackChanges());
+    
+    final ODataEntitySet customers = req.execute().getBody();
+    assertNotNull(customers);
+    assertNotNull(customers.getDeltaLink());
 
-    final ODataDelta delta = req.execute().getBody();
+    final ODataDeltaRequest deltaReq = client.getRetrieveRequestFactory().getDeltaRequest(customers.getDeltaLink());
+    deltaReq.setFormat(format);
+
+    final ODataDelta delta = deltaReq.execute().getBody();
     assertNotNull(delta);
 
     assertNotNull(delta.getDeltaLink());
@@ -73,6 +84,5 @@ public class DeltaTestITCase extends AbstractTestITCase {
   @Test
   public void jsonParse() {
     parse(ODataPubFormat.JSON);
-
   }
 }

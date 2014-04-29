@@ -67,9 +67,15 @@ public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySe
     }
     jgen.writeNumberField(version.getJSONMap().get(ODataServiceVersion.JSON_COUNT),
             entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
-    if (entitySet.getNext() != null) {
-      jgen.writeStringField(
-              version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK), entitySet.getNext().toASCIIString());
+    if (serverMode) {
+      if (entitySet.getNext() != null) {
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_NEXT_LINK),
+                entitySet.getNext().toASCIIString());
+      }
+      if (entitySet.getDeltaLink() != null) {
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK),
+                entitySet.getDeltaLink().toASCIIString());
+      }
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);

@@ -16,10 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.core.domain.v4;
 
-public class AtomDeltaImpl extends AbstractDelta {
+import java.net.URI;
+import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
+import org.apache.olingo.commons.core.data.AbstractPayloadObject;
 
-  private static final long serialVersionUID = -730729098008847535L;
+public class ODataDeletedEntityImpl extends AbstractPayloadObject implements ODataDeletedEntity {
+
+  private static final long serialVersionUID = -3841730551749114664L;
+
+  private URI id;
+
+  private Reason reason;
+
+  @Override
+  public URI getId() {
+    return id;
+  }
+
+  public void setId(final URI id) {
+    this.id = id;
+  }
+
+  @Override
+  public Reason getReason() {
+    return reason;
+  }
+
+  public void setReason(final Reason reason) {
+    this.reason = reason;
+  }
 
 }
