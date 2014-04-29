@@ -38,18 +38,18 @@ import org.apache.olingo.server.core.testutil.techprovider.PropertyProvider;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
-import org.apache.olingo.server.core.uri.testutil.UriValidator;
+import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.junit.Test;
 
 public class TestFullResourcePath {
   Edm edm = null;
-  UriValidator testUri = null;
+  TestUriValidator testUri = null;
   ResourceValidator testRes = null;
   FilterValidator testFilter = null;
 
   public TestFullResourcePath() {
     edm = new EdmProviderImpl(new EdmTechTestProvider());
-    testUri = new UriValidator().setEdm(edm);
+    testUri = new TestUriValidator().setEdm(edm);
     testRes = new ResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
   }
@@ -817,7 +817,7 @@ public class TestFullResourcePath {
         .isType(PropertyProvider.nameString);
 
     // on complex
-    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')"
         + "/PropertyComplex/com.sap.odata.test1.BFCCTPrimCompRTESTwoKeyNav()")
         .goPath()
         .at(0)
@@ -840,7 +840,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETAllPrim);
 
     // on entity
-    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')"
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')"
         + "/com.sap.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()")
         .goPath()
         .at(0)

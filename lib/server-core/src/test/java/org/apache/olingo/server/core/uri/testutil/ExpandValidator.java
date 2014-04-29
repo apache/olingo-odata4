@@ -36,9 +36,9 @@ import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 
-public class ExpandValidator implements Validator {
+public class ExpandValidator implements TestValidator {
   private Edm edm;
-  private Validator invokedByValidator;
+  private TestValidator invokedByValidator;
 
   private int expandItemIndex;
   private ExpandOptionImpl expandOption;
@@ -46,7 +46,7 @@ public class ExpandValidator implements Validator {
 
   // --- Setup ---
 
-  public ExpandValidator setUpValidator(final Validator validator) {
+  public ExpandValidator setUpValidator(final TestValidator validator) {
     invokedByValidator = validator;
     return this;
   }

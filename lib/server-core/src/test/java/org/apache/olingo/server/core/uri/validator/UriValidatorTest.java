@@ -30,6 +30,7 @@ import org.apache.olingo.server.core.testutil.EdmTechProvider;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UriValidatorTest {
@@ -116,8 +117,8 @@ public class UriValidatorTest {
       { URI_PROPERTY_COMPLEX_COLLECTION, QO_SKIP }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_SKIPTOKEN },
       { URI_PROPERTY_COMPLEX_COLLECTION, QO_LEVELS }, { URI_PROPERTY_COMPLEX_COLLECTION, QO_TOP },
 
-      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_FILTER }, /*{ URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SEARCH }, */
-      
+      { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_FILTER }, /* { URI_PROPERTY_COMPLEX_COLLECTION_COUNT, QO_SEARCH }, */
+
       { URI_PROPERTY_PRIMITIVE, QO_FORMAT },
 
       { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_FILTER }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_FORMAT },
@@ -263,6 +264,30 @@ public class UriValidatorTest {
     edm = new EdmProviderImpl(new EdmTechProvider());
   }
 
+  @Test
+  public void validateSelect() throws Exception {
+    String[] uris = { "/ESAllPrim(1)?$select=PropertyString" };
+    for (String uri : uris) {
+      parseAndValidate(uri);
+    }
+  }
+
+  @Test
+//  @Ignore("uri parser doen't support orderby yet")
+  public void validateOrderBy() throws Exception {
+    String[] uris = { "/ESAllPrim?$orderby=PropertyString" };
+    for (String uri : uris) {
+      parseAndValidate(uri);
+    }
+  }
+
+  @Test(expected = UriValidationException.class)
+  @Ignore("uri parser doen't support orderby yet")
+  public void validateOrderByInvalid() throws Exception {
+    String uri = "/ESAllPrim(1)?$orderBy=XXXX";
+    parseAndValidate(uri);
+  }
+
   @Test(expected = UriValidationException.class)
   public void validateKeyPredicatesWrongKey() throws Exception {
     String uri = "ESTwoKeyNav(xxx=1, yyy='abc')";
@@ -330,7 +355,7 @@ public class UriValidatorTest {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     UriValidator validator = new UriValidator();
 
-    validator.validate(uriInfo, edm, "GET");
+    validator.validate(uriInfo, "GET");
   }
 
 }

@@ -21,14 +21,18 @@ package org.apache.olingo.server.core.uri.validator;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -38,6 +42,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
@@ -80,7 +85,7 @@ public class UriValidator {
         /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
         /*                            MERGE  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false ,   false },
     };
-  
+
   //CHECKSTYLE:ON
   //@formatter:on
 
@@ -163,15 +168,17 @@ public class UriValidator {
 
   }
 
-  public void validate(final UriInfo uriInfo, final Edm edm, String httpMethod) throws UriValidationException {
-
-    validateForHttpMethod(uriInfo, httpMethod);
-    validateQueryOptions(uriInfo, edm);
-    validateKeyPredicateTypes(uriInfo, edm);
-
+  public UriValidator() {
+    super();
   }
 
-  private ColumnIndex colIndex(SystemQueryOptionKind queryOptionKind) {
+  public void validate(final UriInfo uriInfo, String httpMethod) throws UriValidationException {
+    validateForHttpMethod(uriInfo, httpMethod);
+    validateQueryOptions(uriInfo);
+    validateKeyPredicateTypes(uriInfo);
+  }
+
+  private ColumnIndex colIndex(SystemQueryOptionKind queryOptionKind) throws UriValidationException {
     ColumnIndex idx;
     switch (queryOptionKind) {
     case FILTER:
@@ -211,13 +218,13 @@ public class UriValidator {
       idx = ColumnIndex.top;
       break;
     default:
-      throw new ODataRuntimeException("Unsupported option: " + queryOptionKind);
+      throw new UriValidationException("Unsupported option: " + queryOptionKind);
     }
 
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForUriType(final UriInfo uriInfo, Edm edm) throws UriValidationException {
+  private RowIndexForUriType rowIndexForUriType(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
 
     switch (uriInfo.getKind()) {
@@ -237,19 +244,19 @@ public class UriValidator {
       idx = RowIndexForUriType.metadata;
       break;
     case resource:
-      idx = rowIndexForResourceKind(uriInfo, edm);
+      idx = rowIndexForResourceKind(uriInfo);
       break;
     case service:
       idx = RowIndexForUriType.service;
       break;
     default:
-      throw new ODataRuntimeException("Unsupported uriInfo kind: " + uriInfo.getKind());
+      throw new UriValidationException("Unsupported uriInfo kind: " + uriInfo.getKind());
     }
 
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForResourceKind(UriInfo uriInfo, Edm edm) throws UriValidationException {
+  private RowIndexForUriType rowIndexForResourceKind(UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
 
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
@@ -292,7 +299,7 @@ public class UriValidator {
       idx = rowIndexForValue(uriInfo);
       break;
     default:
-      throw new ODataRuntimeException("Unsupported uriResource kind: " + lastPathSegment.getKind());
+      throw new UriValidationException("Unsupported uriResource kind: " + lastPathSegment.getKind());
     }
 
     return idx;
@@ -302,6 +309,7 @@ public class UriValidator {
     RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
+
     switch (secondLastPathSegment.getKind()) {
     case primitiveProperty:
       idx = RowIndexForUriType.propertyPrimitiveValue;
@@ -309,10 +317,77 @@ public class UriValidator {
     case entitySet:
       idx = RowIndexForUriType.mediaStream;
       break;
+    case function:
+      UriResourceFunction uriFunction = (UriResourceFunction) secondLastPathSegment;
+
+      EdmFunction function;
+      EdmFunctionImport functionImport = uriFunction.getFunctionImport();
+      if (functionImport != null) {
+        List<EdmFunction> functions = functionImport.getUnboundFunctions();
+        function = functions.get(0);
+      } else {
+        function = uriFunction.getFunction();
+      }
+
+      EdmTypeKind functionReturnTypeKind = function.getReturnType().getType().getKind();
+      boolean isFunctionCollection = function.getReturnType().isCollection();
+      idx = determineReturnType(functionReturnTypeKind, isFunctionCollection);
+      break;
+    case action:
+      UriResourceAction uriAction = (UriResourceAction) secondLastPathSegment;
+      EdmActionImport actionImport = uriAction.getActionImport();
+
+      EdmAction action;
+      if (actionImport != null) {
+        action = actionImport.getUnboundAction();
+      } else {
+        action = uriAction.getAction();
+      }
+
+      EdmTypeKind actionReturnTypeKind = action.getReturnType().getType().getKind();
+      boolean isActionCollection = action.getReturnType().isCollection();
+      idx = determineReturnType(actionReturnTypeKind, isActionCollection);
+
+      break;
+    case navigationProperty:
+      UriResourceNavigation uriNavigation = (UriResourceNavigation) secondLastPathSegment;
+
+      if (uriNavigation.isCollection()) {
+        idx = RowIndexForUriType.entitySet;
+      } else {
+        idx = RowIndexForUriType.entity;
+      }
+      break;
+    case singleton:
+      UriResourceSingleton uriSingleton = (UriResourceSingleton) secondLastPathSegment;
+      EdmSingleton singleton = uriSingleton.getSingleton();
+      EdmTypeKind singletonReturnTypeKind = singleton.getEntityType().getKind();
+      idx = determineReturnType(singletonReturnTypeKind, false);
+      break;
     default:
       throw new UriValidationException("Unexpected kind in path segment before $value: "
           + secondLastPathSegment.getKind());
+    }
+    return idx;
+  }
 
+  private RowIndexForUriType determineReturnType(EdmTypeKind functionReturnTypeKind,
+      boolean isCollection) throws UriValidationException {
+    RowIndexForUriType idx;
+    switch (functionReturnTypeKind) {
+    case COMPLEX:
+      idx = isCollection ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
+      break;
+    case ENTITY:
+      idx = isCollection ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
+      break;
+    case PRIMITIVE:
+    case ENUM:
+    case DEFINITION:
+      idx = isCollection ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
+      break;
+    default:
+      throw new UriValidationException("Unsupported function return type: " + functionReturnTypeKind);
     }
     return idx;
   }
@@ -441,15 +516,32 @@ public class UriValidator {
     case primitiveProperty:
       idx = RowIndexForUriType.propertyPrimitiveCollectionCount;
       break;
+    case function:
+      UriResourceFunction uriFunction = (UriResourceFunction) secondLastPathSegment;
+
+      EdmFunction function;
+      List<EdmFunction> functions;
+      EdmFunctionImport functionImport = uriFunction.getFunctionImport();
+      if (functionImport != null) {
+        functions = functionImport.getUnboundFunctions();
+        function = functions.get(0);
+      } else {
+        function = uriFunction.getFunction();
+      }
+
+      EdmTypeKind functionReturnTypeKind = function.getReturnType().getType().getKind();
+      boolean isCollection = function.getReturnType().isCollection();
+      idx = determineReturnType(functionReturnTypeKind, isCollection);
+      break;
     default:
-      throw new UriValidationException("Illegal path part kind: " + lastPathSegment.getKind());
+      throw new UriValidationException("Illegal path part kind: " + secondLastPathSegment.getKind());
     }
 
     return idx;
   }
 
-  private void validateQueryOptions(final UriInfo uriInfo, Edm edm) throws UriValidationException {
-    RowIndexForUriType row = rowIndexForUriType(uriInfo, edm);
+  private void validateQueryOptions(final UriInfo uriInfo) throws UriValidationException {
+    RowIndexForUriType row = rowIndexForUriType(uriInfo);
 
     for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
       ColumnIndex col = colIndex(option.getKind());
@@ -496,7 +588,7 @@ public class UriValidator {
     return idx;
   }
 
-  private void validateKeyPredicateTypes(final UriInfo uriInfo, final Edm edm) throws UriValidationException {
+  private void validateKeyPredicateTypes(final UriInfo uriInfo) throws UriValidationException {
     try {
       for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
         if (pathSegment.getKind() == UriResourceKind.entitySet) {
@@ -511,6 +603,10 @@ public class UriValidator {
             HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
             for (EdmKeyPropertyRef key : keys) {
               edmKeys.put(key.getKeyPropertyName(), key);
+              String alias = key.getAlias();
+              if (null != alias) {
+                edmKeys.put(alias, key);
+              }
             }
 
             for (UriParameter keyPredicate : keyPredicates) {

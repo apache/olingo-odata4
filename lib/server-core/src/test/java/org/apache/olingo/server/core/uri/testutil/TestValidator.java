@@ -18,6 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-public interface Validator {
+public interface TestValidator {
 
 }

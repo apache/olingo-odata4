@@ -48,10 +48,10 @@ import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 
-public class FilterValidator implements Validator {
+public class FilterValidator implements TestValidator {
   private Edm edm;
 
-  private Validator invokedByValidator;
+  private TestValidator invokedByValidator;
   private FilterOptionImpl filter;
 
   private Expression curExpression;
@@ -67,12 +67,12 @@ public class FilterValidator implements Validator {
     return this;
   }
 
-  public FilterValidator setUriValidator(final UriValidator uriValidator) {
+  public FilterValidator setUriValidator(final TestUriValidator uriValidator) {
     invokedByValidator = uriValidator;
     return this;
   }
 
-  public FilterValidator setValidator(final Validator uriValidator) {
+  public FilterValidator setValidator(final TestValidator uriValidator) {
     invokedByValidator = uriValidator;
     return this;
   }

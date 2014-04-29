@@ -55,9 +55,9 @@ import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
-public class ResourceValidator implements Validator {
+public class ResourceValidator implements TestValidator {
   private Edm edm;
-  private Validator invokedBy;
+  private TestValidator invokedBy;
   private UriInfo uriInfo = null;
 
   private UriResourceImpl uriPathInfo = null;
@@ -65,7 +65,7 @@ public class ResourceValidator implements Validator {
 
   // --- Setup ---
 
-  public ResourceValidator setUpValidator(final Validator uriValidator) {
+  public ResourceValidator setUpValidator(final TestValidator uriValidator) {
     invokedBy = uriValidator;
     return this;
   }
@@ -106,8 +106,8 @@ public class ResourceValidator implements Validator {
 
   // --- Navigation ---
 
-  public UriValidator goUpUriValidator() {
-    return (UriValidator) invokedBy;
+  public TestUriValidator goUpUriValidator() {
+    return (TestUriValidator) invokedBy;
   }
 
   public ExpandValidator goUpExpandValidator() {
