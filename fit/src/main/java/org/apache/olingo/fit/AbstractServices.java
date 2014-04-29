@@ -67,6 +67,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -410,7 +411,7 @@ public abstract class AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
                 new TypeReference<JSONEntityImpl>() {
-                });
+        });
 
         entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
       }
@@ -592,8 +593,8 @@ public abstract class AbstractServices {
         } else {
           final ResWrap<JSONEntityImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                          new TypeReference<JSONEntityImpl>() {
-                          });
+                  new TypeReference<JSONEntityImpl>() {
+          });
 
           entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -620,7 +621,7 @@ public abstract class AbstractServices {
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -683,13 +684,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -741,9 +742,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
@@ -892,7 +893,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                          dataBinder.toJSONEntitySet(container.getPayload())));
+                  dataBinder.toJSONEntitySet(container.getPayload())));
         }
 
         return xml.createResponse(
@@ -1134,6 +1135,7 @@ public abstract class AbstractServices {
   private Response replaceProperty(
           final String location,
           final String accept,
+          final String contentType,
           final String prefer,
           final String entitySetName,
           final String entityId,
@@ -1142,31 +1144,62 @@ public abstract class AbstractServices {
           final String changes,
           final boolean justValue) {
 
+    // if the given path is not about any link then search for property
+    LOG.info("Retrieve property {}", path);
+
     try {
-      Accept acceptType = null;
-      if (StringUtils.isNotBlank(format)) {
-        acceptType = Accept.valueOf(format.toUpperCase());
-      } else if (StringUtils.isNotBlank(accept)) {
-        acceptType = Accept.parse(accept, version, null);
+      final FSManager fsManager = FSManager.instance(version);
+
+      final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
+      final ResWrap<AtomEntityImpl> container = xml.readContainerEntity(Accept.ATOM,
+              fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
+
+      final AtomEntityImpl entry = container.getPayload();
+
+      Property toBeReplaced = null;
+      for (String element : path.split("/")) {
+        if (toBeReplaced == null) {
+          toBeReplaced = entry.getProperty(element.trim());
+        } else {
+          ComplexValue value = toBeReplaced.getValue().asComplex();
+          for (Property field : value.get()) {
+            if (field.getName().equalsIgnoreCase(element)) {
+              toBeReplaced = field;
+            }
+          }
+        }
       }
 
-      // if the given path is not about any link then search for property
-      LOG.info("Retrieve property {}", path);
+      if (toBeReplaced == null) {
+        throw new NotFoundException();
+      }
 
-      final AbstractUtilities utils = getUtilities(acceptType);
+      if (justValue) {
+        // just for primitive values
+        toBeReplaced.setValue(new PrimitiveValueImpl(changes));
+      } else {
+        final AtomPropertyImpl pchanges = xml.readProperty(
+                Accept.parse(contentType, version),
+                IOUtils.toInputStream(changes, Constants.ENCODING),
+                entry.getType());
 
-      utils.replaceProperty(
-              entitySetName,
-              entityId,
-              IOUtils.toInputStream(changes, Constants.ENCODING),
-              Arrays.asList(path.split("/")),
-              acceptType,
-              justValue);
+        toBeReplaced.setValue(pchanges.getValue());
+      }
+
+      fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
+              fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
         response = getEntityInternal(location, accept, entitySetName, entityId, format, null, null, false);
       } else {
+        Accept acceptType = null;
+        if (StringUtils.isNotBlank(format)) {
+          acceptType = Accept.valueOf(format.toUpperCase());
+        } else if (StringUtils.isNotBlank(accept)) {
+          acceptType = Accept.parse(accept, version, null);
+        }
+
         response = xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
       }
 
@@ -1241,6 +1274,7 @@ public abstract class AbstractServices {
   public Response replacePropertyValue(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -1249,7 +1283,7 @@ public abstract class AbstractServices {
           final String changes) {
 
     return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
-            accept, prefer, entitySetName, entityId, path, format, changes, true);
+            accept, contentType, prefer, entitySetName, entityId, path, format, changes, true);
   }
 
   /**
@@ -1268,6 +1302,7 @@ public abstract class AbstractServices {
   public Response mergeProperty(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -1276,7 +1311,7 @@ public abstract class AbstractServices {
           final String changes) {
 
     return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
-            accept, prefer, entitySetName, entityId, path, format, changes, false);
+            accept, contentType, prefer, entitySetName, entityId, path, format, changes, false);
   }
 
   /**
@@ -1295,6 +1330,7 @@ public abstract class AbstractServices {
   public Response patchProperty(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -1303,7 +1339,7 @@ public abstract class AbstractServices {
           final String changes) {
 
     return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
-            accept, prefer, entitySetName, entityId, path, format, changes, false);
+            accept, contentType, prefer, entitySetName, entityId, path, format, changes, false);
   }
 
   @PUT
@@ -1362,6 +1398,7 @@ public abstract class AbstractServices {
   public Response replaceProperty(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId,
@@ -1373,7 +1410,7 @@ public abstract class AbstractServices {
       return replaceMediaProperty(prefer, entitySetName, entityId, path, changes);
     } else {
       return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
-              accept, prefer, entitySetName, entityId, path, format, changes, false);
+              accept, contentType, prefer, entitySetName, entityId, path, format, changes, false);
     }
   }
 
@@ -1507,7 +1544,7 @@ public abstract class AbstractServices {
           final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
 
           if (linkInfo.isFeed()) {
-            final ResWrap<EntitySet> container = 
+            final ResWrap<EntitySet> container =
                     atomDeserializer.<EntitySet, AtomEntitySetImpl>read(stream, AtomEntitySetImpl.class);
 
             if (acceptType == Accept.ATOM) {
@@ -1518,11 +1555,11 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONFeedContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
             }
           } else {
-            final ResWrap<Entity> container = 
+            final ResWrap<Entity> container =
                     atomDeserializer.<Entity, AtomEntityImpl>read(stream, AtomEntityImpl.class);
             if (acceptType == Accept.ATOM) {
               atomSerializer.write(writer, container);
@@ -1532,8 +1569,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntityType((AtomEntityImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntityType((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1603,9 +1640,9 @@ public abstract class AbstractServices {
 
     final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                    + (version.compareTo(ODataServiceVersion.V40) >= 0
-                    ? entitySetName + "(" + entityId + ")/" + path
-                    : property.getType())),
+            + (version.compareTo(ODataServiceVersion.V40) >= 0
+            ? entitySetName + "(" + entityId + ")/" + path
+            : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
@@ -1613,9 +1650,9 @@ public abstract class AbstractServices {
             null,
             searchForValue
             ? IOUtils.toInputStream(
-                    container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-                    ? StringUtils.EMPTY
-                    : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
+            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
+            ? StringUtils.EMPTY
+            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
             : utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);

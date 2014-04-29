@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -576,22 +575,29 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
+  public ResWrap<AtomEntityImpl> readContainerEntity(final Accept accept, final InputStream entity)
+          throws XMLStreamException, IOException {
+    final ResWrap<AtomEntityImpl> container;
+
+    if (accept == Accept.ATOM || accept == Accept.XML) {
+      container = atomDeserializer.read(entity, AtomEntityImpl.class);
+    } else {
+      final ResWrap<JSONEntityImpl> jcontainer =
+              mapper.readValue(entity, new TypeReference<JSONEntityImpl>() {
+              });
+      container = new ResWrap<AtomEntityImpl>(
+              jcontainer.getContextURL(),
+              jcontainer.getMetadataETag(),
+              dataBinder.toAtomEntity(jcontainer.getPayload()));
+    }
+
+    return container;
+  }
+
   public AtomEntityImpl readEntity(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
 
-    final AtomEntityImpl entry;
-
-    if (accept == Accept.ATOM || accept == Accept.XML) {
-      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
-      entry = container.getPayload();
-    } else {
-      final ResWrap<JSONEntityImpl> container =
-              mapper.readValue(entity, new TypeReference<JSONEntityImpl>() {
-              });
-      entry = dataBinder.toAtomEntity(container.getPayload());
-    }
-
-    return entry;
+    return readContainerEntity(accept, entity).getPayload();
   }
 
   public InputStream writeEntity(final Accept accept, final ResWrap<AtomEntityImpl> container)
@@ -622,6 +628,23 @@ public abstract class AbstractUtilities {
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
+  }
+
+  public AtomPropertyImpl readProperty(final Accept accept, final InputStream property, final String entryType)
+          throws XMLStreamException, IOException {
+    final AtomPropertyImpl atomProperty;
+    if (Accept.ATOM == accept || Accept.XML == accept) {
+      final ResWrap<AtomPropertyImpl> container = atomDeserializer.read(property, AtomPropertyImpl.class);
+      atomProperty = container.getPayload();
+    } else {
+      final ResWrap<JSONPropertyImpl> jcontainer = mapper.readValue(property,
+              new TypeReference<JSONPropertyImpl>() {
+              });
+
+      atomProperty = dataBinder.toAtomProperty(jcontainer.getPayload(), entryType);
+    }
+
+    return atomProperty;
   }
 
   public InputStream writeProperty(final Accept accept, final ResWrap<AtomPropertyImpl> container)
@@ -833,29 +856,6 @@ public abstract class AbstractUtilities {
     // --------------------------------
     return replaceLink(entity, linkName, expandEntity(entitySetName, entityId, linkName));
     // --------------------------------
-  }
-
-  public void replaceProperty(
-          final String entitySetName,
-          final String entityId,
-          final InputStream changes,
-          final List<String> path,
-          final Accept accept,
-          final boolean justValue) throws Exception {
-
-    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
-
-    final Accept acceptType = accept == null || Accept.TEXT == accept
-            ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
-
-    InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
-    stream = replaceProperty(stream, changes, path, justValue);
-
-    final AtomEntityImpl entry = readEntity(acceptType, stream);
-    final ResWrap<AtomEntityImpl> container = new ResWrap<AtomEntityImpl>((URI) null, null, entry);
-
-    fsManager.putInMemory(writeEntity(Accept.ATOM, container),
-            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
   }
 
   public InputStream deleteProperty(

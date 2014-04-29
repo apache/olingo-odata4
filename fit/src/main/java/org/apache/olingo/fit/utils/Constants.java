@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.utils;
 
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.EnumMap;
 import java.util.Map;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -36,7 +38,11 @@ public class Constants {
 
   public static final Charset ENCODING = Charset.forName("UTF-8");
 
+  public static final CharsetDecoder DECODER = ENCODING.newDecoder();
+
   static {
+    DECODER.onMalformedInput(CodingErrorAction.IGNORE);
+    DECODER.onUnmappableCharacter(CodingErrorAction.IGNORE);
 
     // -----------------------------
     // V4 only 
@@ -46,6 +52,9 @@ public class Constants {
     v4constants.put(ConstantKey.JSON_NAVIGATION_SUFFIX, "@odata.navigationLink");
     v4constants.put(ConstantKey.DATASERVICES_NS, "http://docs.oasis-open.org/odata/ns/dataservices");
     v4constants.put(ConstantKey.METADATA_NS, "http://docs.oasis-open.org/odata/ns/metadata");
+    v4constants.put(ConstantKey.GEORSS_NS, "http://www.georss.org/georss");
+    v4constants.put(ConstantKey.GML_NS, "http://www.opengis.net/gml");
+    v4constants.put(ConstantKey.EDM_NS, "http://docs.oasis-open.org/odata/ns/edm");
     v4constants.put(ConstantKey.ATOM_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
     v4constants.put(ConstantKey.ODATA_SERVICE_VERSION, "OData-Version");
     v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V40/Static.svc/");
@@ -79,6 +88,9 @@ public class Constants {
     constants.put(ConstantKey.LINK, "link");
     constants.put(ConstantKey.METADATA_NS, "http://schemas.microsoft.com/ado/2007/08/dataservices/metadta");
     constants.put(ConstantKey.DATASERVICES_NS, "http://schemas.microsoft.com/ado/2007/08/dataservices");
+    constants.put(ConstantKey.GEORSS_NS, "http://www.georss.org/georss");
+    constants.put(ConstantKey.GML_NS, "http://www.opengis.net/gml");
+    constants.put(ConstantKey.EDM_NS, "http://schemas.microsoft.com/ado/2009/11/edm");
     constants.put(ConstantKey.METADATA, "metadata");
     constants.put(ConstantKey.SERVICES, "services");
     constants.put(ConstantKey.FEED, "feed");

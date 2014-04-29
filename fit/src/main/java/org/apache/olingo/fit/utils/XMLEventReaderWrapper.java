@@ -22,21 +22,20 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class XMLEventReaderWrapper implements XMLEventReader {
 
-  private static final Charset ENCODING = Charset.forName("UTF-8");
+  private static final Charset ENCODING = Charset.forName(org.apache.olingo.commons.api.Constants.UTF8);
 
   public final static String CONTENT = "CONTENT_TAG";
 
-  public final static String CONTENT_STAG = "<" + CONTENT + ">";
+  public final String CONTENT_STAG;
 
   public final static String CONTENT_ETAG = "</" + CONTENT + ">";
 
@@ -44,20 +43,24 @@ public class XMLEventReaderWrapper implements XMLEventReader {
 
   private XMLEvent nextGivenEvent = null;
 
-  public XMLEventReaderWrapper(final InputStream stream) throws Exception {
-    final XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+  public XMLEventReaderWrapper(final InputStream stream, final ODataServiceVersion version) throws Exception {
+    final StringBuilder startBuilder = new StringBuilder();
+    startBuilder.append("<").append(CONTENT).
+            append(" xmlns:m").append("=\"").append(Constants.get(version, ConstantKey.METADATA_NS)).append("\"").
+            append(" xmlns:d").append("=\"").append(Constants.get(version, ConstantKey.DATASERVICES_NS)).append("\"").
+            append(" xmlns:georss").append("=\"").append(Constants.get(version, ConstantKey.GEORSS_NS)).append("\"").
+            append(" xmlns:gml").append("=\"").append(Constants.get(version, ConstantKey.GML_NS)).append("\"").
+            append(">");
 
-    final CharsetDecoder decoder = ENCODING.newDecoder();
-    decoder.onMalformedInput(CodingErrorAction.IGNORE);
-    decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
+    CONTENT_STAG = startBuilder.toString();
+
+    final XMLInputFactory factory = XMLInputFactory.newInstance();
 
     final InputStreamReader reader = new InputStreamReader(
-            new ByteArrayInputStream((XMLEventReaderWrapper.CONTENT_STAG
+            new ByteArrayInputStream((CONTENT_STAG
             + IOUtils.toString(stream, ENCODING).replaceAll("^<\\?xml.*\\?>", "")
             + XMLEventReaderWrapper.CONTENT_ETAG).getBytes(ENCODING)),
-            decoder);
+            Constants.DECODER);
 
     this.wrapped = factory.createXMLEventReader(reader);
 
