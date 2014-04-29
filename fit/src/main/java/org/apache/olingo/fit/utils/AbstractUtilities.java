@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -551,28 +550,35 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(), dataBinder.toJSONFeed(container.getPayload())));
+              container.getMetadataETag(), dataBinder.toJSONFeed(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
-  public AtomEntryImpl readEntry(final Accept accept, final InputStream entity)
+  public ResWrap<AtomEntryImpl> readContainerEntry(final Accept accept, final InputStream entity)
           throws XMLStreamException, IOException {
-
-    final AtomEntryImpl entry;
+    final ResWrap<AtomEntryImpl> container;
 
     if (accept == Accept.ATOM || accept == Accept.XML) {
-      final ResWrap<AtomEntryImpl> container = atomDeserializer.read(entity, AtomEntryImpl.class);
-      entry = container.getPayload();
+      container = atomDeserializer.read(entity, AtomEntryImpl.class);
     } else {
-      final ResWrap<JSONEntryImpl> container =
+      final ResWrap<JSONEntryImpl> jcontainer =
               mapper.readValue(entity, new TypeReference<JSONEntryImpl>() {
-              });
-      entry = dataBinder.toAtomEntry(container.getPayload());
+      });
+      container = new ResWrap<AtomEntryImpl>(
+              jcontainer.getContextURL(),
+              jcontainer.getMetadataETag(),
+              dataBinder.toAtomEntry(jcontainer.getPayload()));
     }
 
-    return entry;
+    return container;
+  }
+
+  public AtomEntryImpl readEntry(final Accept accept, final InputStream entity)
+          throws XMLStreamException, IOException {
+    return readContainerEntry(accept, entity).getPayload();
+
   }
 
   public InputStream writeEntry(final Accept accept, final ResWrap<AtomEntryImpl> container)
@@ -584,7 +590,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONEntry(container.getPayload())));
+              dataBinder.toJSONEntry(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -605,6 +611,23 @@ public abstract class AbstractUtilities {
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
   }
 
+  public AtomPropertyImpl readProperty(final Accept accept, final InputStream property, final String entryType)
+          throws XMLStreamException, IOException {
+    final AtomPropertyImpl atomProperty;
+    if (Accept.ATOM == accept || Accept.XML == accept) {
+      final ResWrap<AtomPropertyImpl> container = atomDeserializer.read(property, AtomPropertyImpl.class);
+      atomProperty = container.getPayload();
+    } else {
+      final ResWrap<JSONPropertyImpl> jcontainer = mapper.readValue(property,
+              new TypeReference<JSONPropertyImpl>() {
+      });
+
+      atomProperty = dataBinder.toAtomProperty(jcontainer.getPayload(), entryType);
+    }
+
+    return atomProperty;
+  }
+
   public InputStream writeProperty(final Accept accept, final ResWrap<AtomPropertyImpl> container)
           throws XMLStreamException, IOException {
 
@@ -614,7 +637,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONPropertyContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONProperty(container.getPayload())));
+              dataBinder.toJSONProperty(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -814,29 +837,6 @@ public abstract class AbstractUtilities {
     // --------------------------------
     return replaceLink(entity, linkName, expandEntity(entitySetName, entityId, linkName));
     // --------------------------------
-  }
-
-  public void replaceProperty(
-          final String entitySetName,
-          final String entityId,
-          final InputStream changes,
-          final List<String> path,
-          final Accept accept,
-          final boolean justValue) throws Exception {
-
-    final String basePath = Commons.getEntityBasePath(entitySetName, entityId);
-
-    final Accept acceptType = accept == null || Accept.TEXT == accept
-            ? Accept.XML : accept.getExtension().equals(Accept.JSON.getExtension()) ? Accept.JSON_FULLMETA : accept;
-
-    InputStream stream = fsManager.readFile(basePath + Constants.get(version, ConstantKey.ENTITY), acceptType);
-    stream = replaceProperty(stream, changes, path, justValue);
-
-    final AtomEntryImpl entry = readEntry(acceptType, stream);
-    final ResWrap<AtomEntryImpl> container = new ResWrap<AtomEntryImpl>((URI) null, null, entry);
-
-    fsManager.putInMemory(writeEntry(Accept.ATOM, container),
-            fsManager.getAbsolutePath(basePath + Constants.get(version, ConstantKey.ENTITY), Accept.ATOM));
   }
 
   public InputStream deleteProperty(

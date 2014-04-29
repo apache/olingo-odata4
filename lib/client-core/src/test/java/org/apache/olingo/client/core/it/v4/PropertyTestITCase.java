@@ -18,10 +18,16 @@
  */
 package org.apache.olingo.client.core.it.v4;
 
+import java.io.IOException;
+import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -29,7 +35,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
 public class PropertyTestITCase extends AbstractTestITCase {
-  
+
   private void _enum(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
@@ -39,7 +45,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataProperty prop = req.execute().getBody();
     assertNotNull(prop);
-    assertEquals("Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)", prop.getValue().getTypeName());    
+    assertEquals("Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)", prop.getValue().getTypeName());
   }
 
   @Test
@@ -56,7 +62,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   public void enumFromFullJSON() {
     _enum(client, ODataFormat.JSON_FULL_METADATA);
   }
-  
+
   private void geospatial(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
@@ -109,5 +115,50 @@ public class PropertyTestITCase extends AbstractTestITCase {
   @Test
   public void complexFromFullJSON() {
     complex(client, ODataFormat.JSON_FULL_METADATA);
+  }
+
+  @Test
+  public void patchComplexPropertyAsJSON() throws IOException {
+    updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
+  }
+
+  private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
+
+    ODataPropertyRequest<ODataProperty> retrieveReq =
+            client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    retrieveReq.setFormat(format);
+
+    ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
+    assertEquals(200, retrieveRes.getStatusCode());
+
+    ODataProperty homeAddress =
+            client.getObjectFactory().newComplexProperty("HomeAddress",
+            client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
+
+    homeAddress.getComplexValue().add(client.getObjectFactory().
+            newPrimitiveProperty("City", client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
+
+    final ODataPropertyUpdateRequest updateReq = client.getCUDRequestFactory().
+            getPropertyComplexValueUpdateRequest(uriBuilder.build(), type, homeAddress);
+    if (client.getConfiguration().isUseXHTTPMethod()) {
+      assertEquals(HttpMethod.POST, updateReq.getMethod());
+    } else {
+      assertEquals(type.getMethod(), updateReq.getMethod());
+    }
+    updateReq.setFormat(format);
+
+    final ODataPropertyUpdateResponse updateRes = updateReq.execute();
+    assertEquals(204, updateRes.getStatusCode());
+
+    retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
+    retrieveReq.setFormat(format);
+
+    retrieveRes = retrieveReq.execute();
+    assertEquals(200, retrieveRes.getStatusCode());
+
+    homeAddress = retrieveRes.getBody();
+    assertEquals("Pescara", homeAddress.getComplexValue().get("City").getPrimitiveValue().toString());
   }
 }

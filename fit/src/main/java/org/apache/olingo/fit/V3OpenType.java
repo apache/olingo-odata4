@@ -60,9 +60,8 @@ public class V3OpenType {
   public V3OpenType() throws Exception {
     this.openMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V30).
             readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
-                    Accept.XML));
+            Accept.XML), ODataServiceVersion.V30);
     this.services = new V3Services() {
-
       @Override
       protected Metadata getMetadataObj() {
         return openMetadata;

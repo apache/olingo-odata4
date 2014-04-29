@@ -31,6 +31,9 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,21 +45,26 @@ public class Metadata extends AbstractMetadataElement {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Metadata.class);
 
+  protected final ODataServiceVersion version;
+
   private final Map<String, Schema> schemas;
 
-  public Metadata(final InputStream is) {
+  private final String DEF_NS;
+
+  public Metadata(final InputStream is, final ODataServiceVersion version) {
+    this.version = version;
+    this.DEF_NS = Constants.get(version, ConstantKey.EDM_NS);
     this.schemas = new HashMap<String, Schema>();
 
     try {
       final XMLInputFactory ifactory = XMLInputFactory.newInstance();
-      ifactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-      final XMLEventReader reader = ifactory.createXMLEventReader(is, "UTF-8");
+      final XMLEventReader reader = ifactory.createXMLEventReader(is, org.apache.olingo.commons.api.Constants.UTF8);
 
       try {
         while (reader.hasNext()) {
           final XMLEvent event = reader.nextEvent();
 
-          if (event.isStartElement() && event.asStartElement().getName().equals(new QName("Schema"))) {
+          if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "Schema"))) {
             final Schema schema = getSchema(event.asStartElement(), reader);
             schemas.put(schema.getNamespace(), schema);
           }
@@ -175,14 +183,15 @@ public class Metadata extends AbstractMetadataElement {
     while (!completed && reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName("EntityType"))
-              || event.isStartElement() && event.asStartElement().getName().equals(new QName("ComplexType"))) {
+      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityType"))
+              || event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "ComplexType"))) {
         final EntityType entityType = getEntityType(event.asStartElement(), reader);
         schema.addEntityType(entityType.getName(), entityType);
-      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName("EntityContainer"))) {
+      } else if (event.isStartElement()
+              && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityContainer"))) {
         final org.apache.olingo.fit.metadata.Container container = getContainer(event.asStartElement(), reader);
         schema.addContainer(container.getName(), container);
-      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName("Association"))) {
+      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "Association"))) {
         // just for V3
         final Association association = getAssociation(event.asStartElement(), reader);
         schema.addAssociation(association.getName(), association);
@@ -205,11 +214,12 @@ public class Metadata extends AbstractMetadataElement {
       XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()
-              && (event.asStartElement().getName().equals(new QName("EntitySet"))
-              || event.asStartElement().getName().equals(new QName("Singleton")))) {
+              && (event.asStartElement().getName().equals(new QName(DEF_NS, "EntitySet"))
+              || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
         final EntitySet entitySet = getEntitySet(event.asStartElement(), reader);
         container.addEntitySet(entitySet.getName(), entitySet);
-      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName("AssociationSet"))) {
+      } else if (event.isStartElement()
+              && event.asStartElement().getName().equals(new QName(DEF_NS, "AssociationSet"))) {
         // just for V3
         final AssociationSet associationSet = getAssociationSet(event.asStartElement(), reader);
         container.addAssociationSet(associationSet.getAssociation(), associationSet);
@@ -230,10 +240,11 @@ public class Metadata extends AbstractMetadataElement {
     while (!completed && reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName("End"))) {
+      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "End"))) {
         final String role = event.asStartElement().getAttributeByName(new QName("Role")).getValue();
         final String type = event.asStartElement().getAttributeByName(new QName("Type")).getValue();
-        final String multiplicity = event.asStartElement().getAttributeByName(new QName("Multiplicity")).getValue();
+        final String multiplicity =
+                event.asStartElement().getAttributeByName(new QName("Multiplicity")).getValue();
         association.addRole(role, type, multiplicity);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
         completed = true;
@@ -254,7 +265,7 @@ public class Metadata extends AbstractMetadataElement {
     while (!completed && reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName("End"))) {
+      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "End"))) {
         final String role = event.asStartElement().getAttributeByName(new QName("Role")).getValue();
         final String entitySet = event.asStartElement().getAttributeByName(new QName("EntitySet")).getValue();
         associationSet.addRole(role, entitySet);
@@ -274,10 +285,11 @@ public class Metadata extends AbstractMetadataElement {
     while (!completed && reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName("Property"))) {
+      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "Property"))) {
         final org.apache.olingo.fit.metadata.Property property = getProperty(event.asStartElement());
         entityType.addProperty(property.getName(), property);
-      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName("NavigationProperty"))) {
+      } else if (event.isStartElement()
+              && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationProperty"))) {
         final NavigationProperty property = getNavigationProperty(event.asStartElement());
         entityType.addNavigationProperty(property.getName(), property);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
@@ -302,7 +314,8 @@ public class Metadata extends AbstractMetadataElement {
   }
 
   private NavigationProperty getNavigationProperty(final StartElement start) throws XMLStreamException {
-    final NavigationProperty property = new NavigationProperty(start.getAttributeByName(new QName("Name")).getValue());
+    final NavigationProperty property =
+            new NavigationProperty(start.getAttributeByName(new QName("Name")).getValue());
 
     final Attribute type = start.getAttributeByName(new QName("Type"));
     if (type != null) {
@@ -340,7 +353,8 @@ public class Metadata extends AbstractMetadataElement {
     while (!completed && reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName("NavigationPropertyBinding"))) {
+      if (event.isStartElement()
+              && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationPropertyBinding"))) {
         final String path = event.asStartElement().getAttributeByName(new QName("Path")).getValue();
         final String target = event.asStartElement().getAttributeByName(new QName("Target")).getValue();
         entitySet.addBinding(path, target);

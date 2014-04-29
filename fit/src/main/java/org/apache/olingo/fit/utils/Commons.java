@@ -135,7 +135,7 @@ public abstract class Commons {
     if (!METADATA.containsKey(version)) {
       final InputStream is = Commons.class.getResourceAsStream("/" + version.name() + "/metadata.xml");
 
-      METADATA.put(version, new Metadata(is));
+      METADATA.put(version, new Metadata(is, version));
     }
 
     return METADATA.get(version);
@@ -180,7 +180,7 @@ public abstract class Commons {
     try {
       return FSManager.instance(version)
               .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-                      + File.separatorChar + linkName, accept);
+              + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }
@@ -208,7 +208,7 @@ public abstract class Commons {
 
     final StringBuilder builder = new StringBuilder();
     builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    builder.append("<links xmlns=\"" + Constants.get(version, ConstantKey.DATASERVICES_NS) + "\">");
+    builder.append("<links xmlns=\"").append(Constants.get(version, ConstantKey.DATASERVICES_NS)).append("\">");
 
     for (String uri : link.getValue()) {
       builder.append("<uri>");
