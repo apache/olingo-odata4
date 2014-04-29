@@ -35,7 +35,6 @@
   </parent>
   
   <properties>
-    <main.basedir>${project.parent.basedir}</main.basedir>
     <war.maven.plugin.version>2.4</war.maven.plugin.version>
   </properties>
 	
@@ -45,7 +44,7 @@
       <artifactId>olingo-commons-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    
     <!-- REST services CXF -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -91,11 +90,20 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-vfs2</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-client-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>        
   </dependencies>
   
   <build>
-    <defaultGoal>clean package cargo:run</defaultGoal>
-    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -113,31 +121,47 @@
           <packagingExcludes>WEB-INF/classes/esigate.properties,WEB-INF/classes/META-INF/LICENSE*,WEB-INF/classes/META-INF/DEPENDENCIES*</packagingExcludes>
         </configuration>
       </plugin>
-          
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <systemPropertyVariables>
+            <propertyName>org.slf4j.simpleLogger.defaultLogLevel</propertyName>
+            <org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+              
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
         <inherited>true</inherited>
         <configuration>
           <configuration>
+            <type>standalone</type>
             <properties>
-              <cargo.jvmargs>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
-                -noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
+              <cargo.servlet.port>${cargo.servlet.port}</cargo.servlet.port>
+              <cargo.tomcat.ajp.port>${cargo.tomcat.ajp.port}</cargo.tomcat.ajp.port>
+              <cargo.rmi.port>${cargo.rmi.port}</cargo.rmi.port>
+
+              <cargo.jvmargs>-noverify -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:MaxPermSize=256m</cargo.jvmargs>
             </properties>
             <files>
               <file>
-                <file>${project.build.directory}/classes/esigate.properties</file>
+                <file>${project.build.outputDirectory}/esigate.properties</file>
                 <todir>lib</todir>
               </file>
             </files>
             <configfiles>
               <configfile>
-                <file>${project.build.directory}/classes/context.xml</file>
+                <file>${project.build.outputDirectory}/context.xml</file>
                 <todir>conf/</todir>
                 <tofile>context.xml</tofile>
               </configfile>
               <configfile>
-                <file>${project.build.directory}/classes/tomcat-users.xml</file>
+                <file>${project.build.outputDirectory}/tomcat-users.xml</file>
                 <todir>conf/</todir>
                 <tofile>tomcat-users.xml</tofile>
               </configfile>
@@ -147,10 +171,26 @@
             <deployable>
               <properties>
                 <context>/</context>
-              </properties>
+              </properties>              
             </deployable>
           </deployables>
         </configuration>
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     

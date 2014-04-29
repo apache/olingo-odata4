@@ -62,14 +62,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
     </dependency>      
-    
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-fit</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   
   <build>
@@ -85,39 +77,6 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <systemPropertyVariables>
-            <propertyName>org.slf4j.simpleLogger.defaultLogLevel</propertyName>
-            <org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <id>start-container</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>stop-container</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
     
     <resources>
@@ -130,10 +89,6 @@
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>false</filtering>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/../../fit/src/main/resources</directory>
-        <filtering>true</filtering>
       </testResource>
     </testResources>
   </build>
