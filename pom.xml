@@ -59,6 +59,7 @@
 
   <modules>
     <module>lib</module>
+    <module>ext</module>
     <module>fit</module>
   </modules>
 
@@ -317,6 +318,11 @@
           </configuration>
         </plugin>
 
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>jarjar-maven-plugin</artifactId>
+          <version>1.8</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 

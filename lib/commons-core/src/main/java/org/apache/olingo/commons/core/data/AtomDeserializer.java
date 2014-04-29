@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
@@ -48,7 +49,7 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class AtomDeserializer extends AbstractAtomDealer {
 
-  protected static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
+  protected static final XMLInputFactory FACTORY = new InputFactoryImpl();
 
   private final AtomGeoValueDeserializer geoDeserializer;
 

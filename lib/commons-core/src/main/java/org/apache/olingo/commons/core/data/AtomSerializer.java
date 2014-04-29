@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class AtomSerializer extends AbstractAtomDealer {
 
-  private static final XMLOutputFactory FACTORY = XMLOutputFactory.newInstance();
+  private static final XMLOutputFactory FACTORY = new OutputFactoryImpl();
 
   private final AtomGeoValueSerializer geoSerializer;
 
