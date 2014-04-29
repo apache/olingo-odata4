@@ -64,7 +64,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
       if (structuredType.getNavigationProperties() != null) {
         for (NavigationProperty navigationProperty : structuredType.getNavigationProperties()) {
           navigationProperties.put(navigationProperty.getName(),
-                  new EdmNavigationPropertyImpl(edm, navigationProperty));
+              new EdmNavigationPropertyImpl(edm, navigationProperty));
         }
       }
     }

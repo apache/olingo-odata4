@@ -274,7 +274,8 @@ public class UriValidatorTest {
 
   @Test
 //  @Ignore("uri parser doen't support orderby yet")
-  public void validateOrderBy() throws Exception {
+      public
+      void validateOrderBy() throws Exception {
     String[] uris = { "/ESAllPrim?$orderby=PropertyString" };
     for (String uri : uris) {
       parseAndValidate(uri);
@@ -333,7 +334,7 @@ public class UriValidatorTest {
     }
   }
 
-  private String[] constructUri(String[][] uriParameterMatrix) {
+  private String[] constructUri(final String[][] uriParameterMatrix) {
     ArrayList<String> uris = new ArrayList<String>();
     for (String[] uriParameter : uriParameterMatrix) {
       String uri = uriParameter[0];
@@ -351,7 +352,7 @@ public class UriValidatorTest {
     return uris.toArray(new String[0]);
   }
 
-  private void parseAndValidate(String uri) throws UriParserException, UriValidationException {
+  private void parseAndValidate(final String uri) throws UriParserException, UriValidationException {
     UriInfo uriInfo = parser.parseUri(uri.trim(), edm);
     UriValidator validator = new UriValidator();
 

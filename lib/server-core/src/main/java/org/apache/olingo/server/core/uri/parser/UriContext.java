@@ -44,18 +44,21 @@ public class UriContext {
    * Used to stack type information for nested $expand, $filter query options and other cases.
    */
   public Stack<TypeInformation> contextTypes;
-  /**
+  
+  //CHECKSTYLE:OFF (Maven checkstyle)
+/**
    * Set within method
    * {@link #visitExpandItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathContext ctx)} and {@link
    * #visitExpandPathExtension(final
    * ExpandPathExtensionContext ctx)} to allow nodes
    * deeper in the expand tree at
-   * {@link 
-   * #visitExpandPathExtension(org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
+   * {@link #visitExpandPathExtension (org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandPathExtensionContext ctx)}
    * appending path
    * segments to the currently processed {@link ExpandItemImpl}.
    */
   public ExpandItemImpl contextExpandItemPath;
+  //CHECKSTYLE:ON (Maven checkstyle)
+
   /**
    * Set within method
    * {@link #visitSelectItem(org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectItemContext ctx)} to allow

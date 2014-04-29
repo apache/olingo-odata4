@@ -36,7 +36,6 @@ import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
-import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.junit.Test;
 
 public class TestUriParserImpl {

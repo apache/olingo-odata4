@@ -24,11 +24,11 @@ public class UriValidationException extends Exception {
 
   private static final long serialVersionUID = -3179078078053564742L;
 
-  public UriValidationException(String msg) {
+  public UriValidationException(final String msg) {
     super(msg);
   }
 
-  public UriValidationException(EdmPrimitiveTypeException e) {
+  public UriValidationException(final EdmPrimitiveTypeException e) {
     super(e);
   }
 }

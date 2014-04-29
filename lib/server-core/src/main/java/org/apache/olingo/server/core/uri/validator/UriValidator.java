@@ -113,7 +113,7 @@ public class UriValidator {
 
     private int idx;
 
-    RowIndexForUriType(int i) {
+    RowIndexForUriType(final int i) {
       idx = i;
     }
 
@@ -138,7 +138,7 @@ public class UriValidator {
 
     private int idx;
 
-    ColumnIndex(int i) {
+    ColumnIndex(final int i) {
       idx = i;
     }
 
@@ -158,7 +158,7 @@ public class UriValidator {
 
     private int idx;
 
-    RowIndexForHttpMethod(int i) {
+    RowIndexForHttpMethod(final int i) {
       idx = i;
     }
 
@@ -172,13 +172,13 @@ public class UriValidator {
     super();
   }
 
-  public void validate(final UriInfo uriInfo, String httpMethod) throws UriValidationException {
+  public void validate(final UriInfo uriInfo, final String httpMethod) throws UriValidationException {
     validateForHttpMethod(uriInfo, httpMethod);
     validateQueryOptions(uriInfo);
     validateKeyPredicateTypes(uriInfo);
   }
 
-  private ColumnIndex colIndex(SystemQueryOptionKind queryOptionKind) throws UriValidationException {
+  private ColumnIndex colIndex(final SystemQueryOptionKind queryOptionKind) throws UriValidationException {
     ColumnIndex idx;
     switch (queryOptionKind) {
     case FILTER:
@@ -256,7 +256,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForResourceKind(UriInfo uriInfo) throws UriValidationException {
+  private RowIndexForUriType rowIndexForResourceKind(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
 
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
@@ -305,7 +305,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForValue(UriInfo uriInfo) throws UriValidationException {
+  private RowIndexForUriType rowIndexForValue(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
     UriResource secondLastPathSegment = uriInfo.getUriResourceParts().get(secondLastPathSegmentIndex);
@@ -371,8 +371,8 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType determineReturnType(EdmTypeKind functionReturnTypeKind,
-      boolean isCollection) throws UriValidationException {
+  private RowIndexForUriType determineReturnType(final EdmTypeKind functionReturnTypeKind,
+      final boolean isCollection) throws UriValidationException {
     RowIndexForUriType idx;
     switch (functionReturnTypeKind) {
     case COMPLEX:
@@ -392,7 +392,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForRef(UriInfo uriInfo, UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForRef(final UriInfo uriInfo, final UriResource lastPathSegment)
       throws UriValidationException {
     RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
@@ -410,7 +410,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForPrimitiveProperty(UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForPrimitiveProperty(final UriResource lastPathSegment)
       throws UriValidationException {
     RowIndexForUriType idx;
     if (lastPathSegment instanceof UriResourcePartTyped) {
@@ -424,7 +424,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForFunction(UriResource lastPathSegment) throws UriValidationException {
+  private RowIndexForUriType rowIndexForFunction(final UriResource lastPathSegment) throws UriValidationException {
     RowIndexForUriType idx;
     UriResourceFunction urf = (UriResourceFunction) lastPathSegment;
     EdmReturnType rt = urf.getFunction().getReturnType();
@@ -449,7 +449,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForEntitySet(UriResource lastPathSegment) throws UriValidationException {
+  private RowIndexForUriType rowIndexForEntitySet(final UriResource lastPathSegment) throws UriValidationException {
     RowIndexForUriType idx;
     if (lastPathSegment instanceof UriResourcePartTyped) {
       idx =
@@ -462,7 +462,8 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForComplexProperty(UriResource lastPathSegment) throws UriValidationException {
+  private RowIndexForUriType rowIndexForComplexProperty(final UriResource lastPathSegment)
+      throws UriValidationException {
     RowIndexForUriType idx;
     if (lastPathSegment instanceof UriResourcePartTyped) {
       idx =
@@ -475,7 +476,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForAction(UriResource lastPathSegment) throws UriValidationException {
+  private RowIndexForUriType rowIndexForAction(final UriResource lastPathSegment) throws UriValidationException {
     RowIndexForUriType idx;
     UriResourceAction ura = (UriResourceAction) lastPathSegment;
     EdmReturnType rt = ura.getAction().getReturnType();
@@ -500,7 +501,7 @@ public class UriValidator {
     return idx;
   }
 
-  private RowIndexForUriType rowIndexForCount(UriInfo uriInfo, UriResource lastPathSegment)
+  private RowIndexForUriType rowIndexForCount(final UriInfo uriInfo, final UriResource lastPathSegment)
       throws UriValidationException {
 
     RowIndexForUriType idx;
@@ -553,7 +554,7 @@ public class UriValidator {
 
   }
 
-  private void validateForHttpMethod(UriInfo uriInfo, String httpMethod) throws UriValidationException {
+  private void validateForHttpMethod(final UriInfo uriInfo, final String httpMethod) throws UriValidationException {
     RowIndexForHttpMethod row = rowIndexForHttpMethod(httpMethod);
 
     for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
@@ -566,7 +567,7 @@ public class UriValidator {
 
   }
 
-  private RowIndexForHttpMethod rowIndexForHttpMethod(String httpMethod) throws UriValidationException {
+  private RowIndexForHttpMethod rowIndexForHttpMethod(final String httpMethod) throws UriValidationException {
     RowIndexForHttpMethod idx;
 
     if ("GET".equalsIgnoreCase(httpMethod)) {

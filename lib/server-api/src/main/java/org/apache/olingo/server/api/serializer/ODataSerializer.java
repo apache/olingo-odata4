@@ -23,11 +23,11 @@ import java.io.InputStream;
 import org.apache.olingo.commons.api.edm.Edm;
 
 public interface ODataSerializer {
-  
+
   public static final String DEFAULT_CHARSET = "UTF-8";
 
   InputStream serviceDocument(Edm edm, String serviceRoot);
-  
+
   InputStream metadataDocument(Edm edm);
 
 }

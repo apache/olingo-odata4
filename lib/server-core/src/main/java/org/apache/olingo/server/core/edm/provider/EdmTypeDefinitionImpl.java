@@ -35,7 +35,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   private EdmPrimitiveType edmPrimitiveTypeInstance;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
-          final TypeDefinition typeDefinition) {
+      final TypeDefinition typeDefinition) {
 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
@@ -46,7 +46,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     if (edmPrimitiveTypeInstance == null) {
       try {
         edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-                EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
+            EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
       }

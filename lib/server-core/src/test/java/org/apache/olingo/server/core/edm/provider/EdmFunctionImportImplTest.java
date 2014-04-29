@@ -50,11 +50,11 @@ public class EdmFunctionImportImplTest {
 
     final FullQualifiedName functionName = new FullQualifiedName("ns", "function");
     final Function functionProvider = new Function()
-            .setName(functionName.getName())
-            .setParameters(Collections.<Parameter>emptyList())
-            .setBound(false)
-            .setComposable(false)
-            .setReturnType(new ReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
+        .setName(functionName.getName())
+        .setParameters(Collections.<Parameter> emptyList())
+        .setBound(false)
+        .setComposable(false)
+        .setReturnType(new ReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
     when(provider.getFunctions(functionName)).thenReturn(Arrays.asList(functionProvider));
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
@@ -64,22 +64,21 @@ public class EdmFunctionImportImplTest {
 
     final String functionImportName = "functionImport";
     final FunctionImport functionImportProvider = new FunctionImport()
-            .setName(functionImportName)
-            .setFunction(functionName)
-            .setIncludeInServiceDocument(true);
+        .setName(functionImportName)
+        .setFunction(functionName)
+        .setIncludeInServiceDocument(true);
     when(provider.getFunctionImport(containerName, functionImportName)).thenReturn(functionImportProvider);
 
-    final EdmFunctionImport functionImport
-            = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
+    final EdmFunctionImport functionImport = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
     assertEquals("functionImport", functionImport.getName());
-    final EdmFunction function = functionImport.getUnboundFunction(Collections.<String>emptyList());
+    final EdmFunction function = functionImport.getUnboundFunction(Collections.<String> emptyList());
     assertEquals(functionName.getNamespace(), function.getNamespace());
     assertEquals(functionName.getName(), function.getName());
     assertFalse(function.isBound());
     assertFalse(function.isComposable());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean),
-            function.getReturnType().getType());
+        function.getReturnType().getType());
     assertEquals(entityContainer, functionImport.getEntityContainer());
     assertNull(functionImport.getReturnedEntitySet());
   }

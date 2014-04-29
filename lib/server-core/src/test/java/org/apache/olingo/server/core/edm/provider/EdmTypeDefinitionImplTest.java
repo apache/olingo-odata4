@@ -37,10 +37,10 @@ public class EdmTypeDefinitionImplTest {
   @Test
   public void typeDefOnStringNoFacets() throws Exception {
     final FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    final TypeDefinition providerTypeDef= 
-            new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
-    final EdmTypeDefinition typeDefImpl = 
-            new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
+    final TypeDefinition providerTypeDef =
+        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
+    final EdmTypeDefinition typeDefImpl =
+        new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
 
     assertEquals("name", typeDefImpl.getName());
     assertEquals("namespace", typeDefImpl.getNamespace());
@@ -66,8 +66,8 @@ public class EdmTypeDefinitionImplTest {
   @Test(expected = EdmException.class)
   public void invalidTypeResultsInEdmException() throws Exception {
     FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    TypeDefinition providerTypeDef
-            = new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
+    TypeDefinition providerTypeDef =
+        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
     EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
     def.getUnderlyingType();
   }
