@@ -54,6 +54,7 @@ import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 public class ResourceValidator implements TestValidator {
   private Edm edm;
@@ -90,7 +91,10 @@ public class ResourceValidator implements TestValidator {
     uriPathInfo = null;
     try {
       uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
-    } catch (UriParserException e) {
+      
+      UriValidator uriValidator = new UriValidator();
+      uriValidator.validate(uriInfoTmp, "GET");
+    } catch (Exception e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Message: " + e.getMessage());
     }

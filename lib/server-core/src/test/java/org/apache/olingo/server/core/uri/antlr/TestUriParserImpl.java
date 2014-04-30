@@ -100,7 +100,7 @@ public class TestUriParserImpl {
   @Test
   public void testFunctionBound_varReturnType() {
 
-    String esTwoKeyNav = "ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')";
+    String esTwoKeyNav = "ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')";
 
     // returning primitive
     testRes.run("ESTwoKeyNav/com.sap.odata.test1.BFCESTwoKeyNavRTString()")
