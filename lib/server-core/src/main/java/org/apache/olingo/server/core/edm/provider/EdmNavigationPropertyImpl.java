@@ -86,7 +86,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
           referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
-                  .getReferencedProperty()));
+              .getReferencedProperty()));
         }
       }
     }

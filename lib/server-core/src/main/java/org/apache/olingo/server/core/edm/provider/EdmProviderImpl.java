@@ -129,7 +129,7 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   public EdmAction createBoundAction(final FullQualifiedName actionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     try {
       List<Action> actions = actionsMap.get(actionName);
@@ -147,7 +147,7 @@ public class EdmProviderImpl extends AbstractEdm {
           final List<Parameter> parameters = action.getParameters();
           final Parameter parameter = parameters.get(0);
           if (bindingParameterTypeName.equals(parameter.getType())
-                  && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
+              && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
             return EdmActionImpl.getInstance(this, actionName, action);
           }
@@ -162,8 +162,8 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   public EdmFunction createBoundFunction(final FullQualifiedName functionName,
-          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-          final List<String> parameterNames) {
+      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
+      final List<String> parameterNames) {
 
     try {
       List<Function> functions = functionsMap.get(functionName);
@@ -175,8 +175,8 @@ public class EdmProviderImpl extends AbstractEdm {
           functionsMap.put(functionName, functions);
         }
       }
-      final List<String> parameterNamesCopy
-              = parameterNames == null ? Collections.<String>emptyList() : parameterNames;
+      final List<String> parameterNamesCopy =
+          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
       for (Function function : functions) {
         if (function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();
@@ -185,7 +185,7 @@ public class EdmProviderImpl extends AbstractEdm {
           }
           final Parameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getType())
-                  && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
+              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
 
             if (parameterNamesCopy.size() == providerParameters.size() - 1) {
               final List<String> providerParameterNames = new ArrayList<String>();
@@ -260,11 +260,12 @@ public class EdmProviderImpl extends AbstractEdm {
         functions = provider.getFunctions(functionName);
         if (functions != null) {
           functionsMap.put(functionName, functions);
-
-          for (Function function : functions) {
-            if (!function.isBound()) {
-              result.add(EdmFunctionImpl.getInstance(this, functionName, function));
-            }
+        }
+      }
+      if (functions != null) {
+        for (Function function : functions) {
+          if (!function.isBound()) {
+            result.add(EdmFunctionImpl.getInstance(this, functionName, function));
           }
         }
       }
@@ -287,8 +288,9 @@ public class EdmProviderImpl extends AbstractEdm {
           functionsMap.put(functionName, functions);
         }
       }
-      final List<String> parameterNamesCopy
-              = parameterNames == null ? Collections.<String>emptyList() : parameterNames;
+
+      final List<String> parameterNamesCopy =
+          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
       for (Function function : functions) {
         if (!function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();

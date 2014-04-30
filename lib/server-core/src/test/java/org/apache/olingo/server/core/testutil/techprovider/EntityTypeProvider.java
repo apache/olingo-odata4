@@ -381,17 +381,15 @@ public class EntityTypeProvider {
     } else if (entityTypeName.equals(nameETFourKeyAlias)) {
       return new EntityType()
           .setName("ETFourKeyAlias")
-          .setKey(Arrays.asList(
-              new PropertyRef()
-                  .setPropertyName("PropertyInt16"),
-              new PropertyRef()
-                  .setPropertyName("PropertyComplex/PropertyInt16").setAlias("KeyAlias1"),
-              new PropertyRef()
-                  .setPropertyName("PropertyComplex/PropertyString").setAlias("KeyAlias2"),
-              new PropertyRef()
-                  .setPropertyName("PropertyComplexComplex/PropertyComplex/PropertyString")
-                  .setAlias("KeyAlias3")))
-          .setProperties(
+          .setKey(
+              Arrays.asList(
+                  new PropertyRef().setPropertyName("PropertyInt16"),
+                  new PropertyRef().setPath("PropertyComplex/PropertyInt16").setPropertyName("PropertyInt16").setAlias(
+                      "KeyAlias1"),
+                  new PropertyRef().setPath("PropertyComplex/PropertyString").setPropertyName("PropertyString")
+                      .setAlias("KeyAlias2"),
+                  new PropertyRef().setPath("PropertyComplexComplex/PropertyComplex/PropertyString").setPropertyName(
+                      "PropertyString").setAlias("KeyAlias3"))).setProperties(
               Arrays.asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComplex_CTTwoPrim,
                   PropertyProvider.propertyComplexComplex_CTCompComp));
     } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {

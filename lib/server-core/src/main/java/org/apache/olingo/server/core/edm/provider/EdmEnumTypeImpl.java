@@ -40,10 +40,10 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
     super(edm, enumName, enumType.isFlags());
 
     if (enumType.getUnderlyingType() == null) {
-      this.underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
+      underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
-      this.underlyingType = EdmPrimitiveTypeFactory.getInstance(
-              EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
+      underlyingType = EdmPrimitiveTypeFactory.getInstance(
+          EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
       // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
     }
 

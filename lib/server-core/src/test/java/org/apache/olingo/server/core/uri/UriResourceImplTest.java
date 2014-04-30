@@ -201,7 +201,7 @@ public class UriResourceImplTest {
 
     // function
     EdmFunction function = (EdmFunction) edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
-            .getUnboundFunction(new ArrayList<String>());
+        .getUnboundFunction(new ArrayList<String>());
     assertNotNull(function);
     impl.setFunction(function);
 
@@ -284,7 +284,7 @@ public class UriResourceImplTest {
     assertEquals(entityTypeBaseEntry, impl.getTypeFilterOnEntry());
     assertEquals("mock", impl.toString(false));
     assertEquals("mock/com.sap.odata.test1.ETBaseTwoKeyNav/()com.sap.odata.test1.ETTwoBaseTwoKeyNav",
-            impl.toString(true));
+        impl.toString(true));
 
     // set entry
     impl = new Mock();

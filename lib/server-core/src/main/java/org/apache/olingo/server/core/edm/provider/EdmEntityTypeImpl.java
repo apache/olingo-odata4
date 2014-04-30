@@ -42,7 +42,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   private boolean baseTypeChecked = false;
 
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
-          final EntityType entityType) {
+      final EntityType entityType) {
 
     final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
     return instance;

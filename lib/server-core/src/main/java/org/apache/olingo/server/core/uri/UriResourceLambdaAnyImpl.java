@@ -74,6 +74,5 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
   @Override
   public String toString() {
     return "any";
-  }
-;
+  };
 }

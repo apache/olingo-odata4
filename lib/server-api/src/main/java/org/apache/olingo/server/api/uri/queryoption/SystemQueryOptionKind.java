@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.uri.queryoption;
 
-
 /**
  * Defining the supported system query options
  */

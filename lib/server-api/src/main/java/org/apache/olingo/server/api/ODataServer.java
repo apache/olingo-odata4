@@ -22,12 +22,11 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
-
 public abstract class ODataServer {
-  
+
   private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataServerImpl";
-  
-  public static ODataServer newInstance(){
+
+  public static ODataServer newInstance() {
     try {
       final Class<?> clazz = Class.forName(ODataServer.IMPLEMENTATION);
 
@@ -39,12 +38,11 @@ public abstract class ODataServer {
       return (ODataServer) object;
 
     } catch (final Exception e) {
-      //TODO: Change to ODataRuntimeExcfeption
+      // TODO: Change to ODataRuntimeExcfeption
       throw new ODataRuntimeException(e);
     }
   }
-  
 
   public abstract ODataSerializer getSerializer(ODataFormat format);
-  
+
 }

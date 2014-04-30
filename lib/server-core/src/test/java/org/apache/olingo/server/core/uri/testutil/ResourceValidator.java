@@ -54,10 +54,11 @@ import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidator;
 
-public class ResourceValidator implements Validator {
+public class ResourceValidator implements TestValidator {
   private Edm edm;
-  private Validator invokedBy;
+  private TestValidator invokedBy;
   private UriInfo uriInfo = null;
 
   private UriResourceImpl uriPathInfo = null;
@@ -65,7 +66,7 @@ public class ResourceValidator implements Validator {
 
   // --- Setup ---
 
-  public ResourceValidator setUpValidator(final Validator uriValidator) {
+  public ResourceValidator setUpValidator(final TestValidator uriValidator) {
     invokedBy = uriValidator;
     return this;
   }
@@ -90,7 +91,10 @@ public class ResourceValidator implements Validator {
     uriPathInfo = null;
     try {
       uriInfoTmp = (UriInfoImpl) testParser.parseUri(uri, edm);
-    } catch (UriParserException e) {
+      
+      UriValidator uriValidator = new UriValidator();
+      uriValidator.validate(uriInfoTmp, "GET");
+    } catch (Exception e) {
       fail("Exception occured while parsing the URI: " + uri + "\n"
           + " Message: " + e.getMessage());
     }
@@ -106,8 +110,8 @@ public class ResourceValidator implements Validator {
 
   // --- Navigation ---
 
-  public UriValidator goUpUriValidator() {
-    return (UriValidator) invokedBy;
+  public TestUriValidator goUpUriValidator() {
+    return (TestUriValidator) invokedBy;
   }
 
   public ExpandValidator goUpExpandValidator() {

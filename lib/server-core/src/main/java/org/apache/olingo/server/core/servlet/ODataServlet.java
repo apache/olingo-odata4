@@ -62,7 +62,7 @@ public class ODataServlet extends HttpServlet {
   }
 
   // TODO: check throws
-  private void sendResponse(Object entity) throws IOException {
+  private void sendResponse(final Object entity) throws IOException {
     resp.setStatus(200);
     resp.setContentType("application/json");
     if (entity != null) {
