@@ -39,12 +39,8 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-client-core</artifactId>
       <version>${project.version}</version>
+      <optional>true</optional>
     </dependency>
-    
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency> 
   </dependencies>
   
   <build>
@@ -61,11 +57,26 @@
             </goals>
             <configuration>
               <includes>
-                <include>javax.xml.stream:stax-api</include>
-                <include>org.codehaus.woodstox:stax2-api</include>
-                <include>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</include>
-                <include>com.fasterxml:aalto-xml</include>
+                <include>org.apache.olingo:olingo-client-core-android</include>
+                <include>org.apache.olingo:olingo-client-core</include>
+                <include>org.apache.olingo:olingo-client-api</include>
+                <include>org.apache.olingo:olingo-commons-api</include>
+                <include>org.apache.commons:commons-lang3</include>
+                <include>org.slf4j:slf4j-api</include>
+                <include>commons-io:commons-io</include>
+                <include>org.apache.httpcomponents:httpclient</include>
+                <include>org.apache.httpcomponents:httpcore</include>
+                <include>commons-logging:commons-logging</include>
                 <include>org.apache.olingo:olingo-commons-core</include>
+                <include>commons-codec:commons-codec</include>
+                <include>com.fasterxml.jackson.core:jackson-core</include>
+                <include>com.fasterxml.jackson.core:jackson-databind</include>
+                <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                <include>com.fasterxml.jackson.dataformat:jackson-dataformat-xml</include>
+                <include>com.fasterxml.jackson.module:jackson-module-jaxb-annotations</include>
+                <include>org.codehaus.woodstox:stax2-api</include>
+                <include>javax.xml.stream:stax-api</include>
+                <include>com.fasterxml:aalto-xml</include>
               </includes>
               <rules>
                 <rule>
