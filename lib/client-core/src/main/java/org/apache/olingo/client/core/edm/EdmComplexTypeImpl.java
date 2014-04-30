@@ -69,4 +69,8 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
     return helper.isOpenType();
   }
 
+  @Override
+  public boolean isAbstract() {
+    return helper.isAbstract();
+  }
 }

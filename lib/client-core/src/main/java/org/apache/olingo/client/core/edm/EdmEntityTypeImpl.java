@@ -83,4 +83,8 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     return helper.isOpenType();
   }
 
+  @Override
+  public boolean isAbstract() {
+    return helper.isAbstract();
+  }
 }

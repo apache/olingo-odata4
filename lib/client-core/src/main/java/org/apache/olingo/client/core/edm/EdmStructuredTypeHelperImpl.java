@@ -80,4 +80,12 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
             : false;
   }
 
+  @Override
+  public boolean isAbstract() {
+    return complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType
+            ? ((org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType).isAbstractEntityType()
+            : complexType instanceof EntityType
+            ? ((EntityType) complexType).isAbstractEntityType()
+            : false;
+  }
 }

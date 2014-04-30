@@ -81,9 +81,16 @@ public interface EdmStructuredType extends EdmType {
   boolean compatibleTo(EdmType targetType);
 
   /**
-   * Indicates if the entity type is an open type.
+   * Indicates if the structured type is an open type.
    *
-   * @return <code>true</code> if the entity type is open
+   * @return <code>true</code> if the structured type is open
    */
   boolean isOpenType();
+
+  /**
+   * Indicates if the structured type is abstract.
+   *
+   * @return <code>true</code> if the structured type is abstract
+   */
+  boolean isAbstract();
 }

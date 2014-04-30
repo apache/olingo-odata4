@@ -76,4 +76,8 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     return structuredType.isOpenType();
   }
 
+  @Override
+  public boolean isAbstract() {
+    return structuredType.isAbstract();
+  }
 }

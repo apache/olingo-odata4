@@ -31,4 +31,5 @@ public interface EdmStructuredTypeHelper {
 
   boolean isOpenType();
 
+  boolean isAbstract();
 }
