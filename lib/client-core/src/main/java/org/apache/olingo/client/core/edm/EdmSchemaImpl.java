@@ -150,7 +150,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerEntityTypes != null) {
       for (EntityType entityType : providerEntityTypes) {
         entityTypes.add(EdmEntityTypeImpl.getInstance(edm,
-                new FullQualifiedName(namespace, entityType.getName()), entityType));
+                new FullQualifiedName(namespace, entityType.getName()), xmlSchemas, entityType));
       }
     }
     return entityTypes;
@@ -163,7 +163,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerComplexTypes != null) {
       for (ComplexType complexType : providerComplexTypes) {
         complexTypes.add(EdmComplexTypeImpl.getInstance(edm, new FullQualifiedName(namespace, complexType.getName()),
-                complexType));
+                xmlSchemas, complexType));
       }
     }
     return complexTypes;

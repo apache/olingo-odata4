@@ -40,8 +40,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private String partner;
 
-  private boolean containsTarget = false;
-
   private final List<ReferentialConstraint> referentialConstraints = new ArrayList<ReferentialConstraint>();
 
   private OnDelete onDelete;
@@ -73,15 +71,6 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   public void setPartner(final String partner) {
     this.partner = partner;
-  }
-
-  @Override
-  public boolean isContainsTarget() {
-    return containsTarget;
-  }
-
-  public void setContainsTarget(final boolean containsTarget) {
-    this.containsTarget = containsTarget;
   }
 
   @Override

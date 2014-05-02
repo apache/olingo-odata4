@@ -23,9 +23,10 @@ import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 public class EdmReferentialConstraintImpl implements EdmReferentialConstraint {
 
   private final String property;
+
   private final String referencedProperty;
 
-  public EdmReferentialConstraintImpl(String property, String referencedProperty) {
+  public EdmReferentialConstraintImpl(final String property, final String referencedProperty) {
     this.property = property;
     this.referencedProperty = referencedProperty;
   }

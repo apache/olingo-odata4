@@ -157,7 +157,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final EntityType xmlEntityType = schema.getEntityType(entityTypeName.getName());
       if (xmlEntityType != null) {
-        result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlEntityType);
+        result = EdmEntityTypeImpl.getInstance(this, entityTypeName, xmlSchemas, xmlEntityType);
       }
     }
 
@@ -172,7 +172,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema != null) {
       final ComplexType xmlComplexType = schema.getComplexType(complexTypeName.getName());
       if (xmlComplexType != null) {
-        result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlComplexType);
+        result = EdmComplexTypeImpl.getInstance(this, complexTypeName, xmlSchemas, xmlComplexType);
       }
     }
 

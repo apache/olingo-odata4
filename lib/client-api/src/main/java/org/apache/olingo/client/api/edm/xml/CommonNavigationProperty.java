@@ -19,4 +19,6 @@
 package org.apache.olingo.client.api.edm.xml;
 
 public interface CommonNavigationProperty extends Named {
+
+  boolean isContainsTarget();
 }

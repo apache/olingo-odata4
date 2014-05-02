@@ -42,6 +42,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchContr
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.commons.api.Constants;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -52,7 +53,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   /**
    * Logger.
    */
-  protected static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
 
   /**
    * HTTP client.

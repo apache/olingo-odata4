@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.List;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
+import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -33,7 +35,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   private final EdmStructuredTypeHelper helper;
 
   public static EdmComplexTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn,
-          final ComplexType complexType) {
+          final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
 
     FullQualifiedName baseTypeName = null;
     if (complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType) {
@@ -41,17 +43,17 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
       baseTypeName = baseType == null
               ? null : new EdmTypeInfo.Builder().setTypeExpression(baseType).build().getFullQualifiedName();
     }
-    final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, fqn, baseTypeName, complexType);
+    final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, fqn, baseTypeName, xmlSchemas, complexType);
     instance.baseType = instance.buildBaseType(baseTypeName);
 
     return instance;
   }
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
-          final ComplexType complexType) {
+          final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
 
     super(edm, fqn, baseTypeName);
-    this.helper = new EdmStructuredTypeHelperImpl(edm, complexType);
+    this.helper = new EdmStructuredTypeHelperImpl(edm, xmlSchemas, complexType);
   }
 
   @Override

@@ -21,17 +21,15 @@ package org.apache.olingo.client.api.edm.xml.v4;
 import org.apache.olingo.client.api.edm.xml.OnDelete;
 
 import java.util.List;
+import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 
-public interface NavigationProperty
-        extends org.apache.olingo.client.api.edm.xml.CommonNavigationProperty, AnnotatedEdmItem {
+public interface NavigationProperty extends CommonNavigationProperty, AnnotatedEdmItem {
 
   String getType();
 
   boolean isNullable();
 
   String getPartner();
-
-  boolean isContainsTarget();
 
   List<ReferentialConstraint> getReferentialConstraints();
 

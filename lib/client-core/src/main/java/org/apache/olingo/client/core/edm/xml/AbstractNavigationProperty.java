@@ -29,6 +29,9 @@ public class AbstractNavigationProperty extends AbstractEdmItem implements Commo
   @JsonProperty(value = "Name", required = true)
   private String name;
 
+  @JsonProperty(value = "ContainsTarget")
+  private boolean containsTarget = false;
+
   @Override
   public String getName() {
     return name;
@@ -36,5 +39,14 @@ public class AbstractNavigationProperty extends AbstractEdmItem implements Commo
 
   public void setName(final String name) {
     this.name = name;
+  }
+
+  @Override
+  public boolean isContainsTarget() {
+    return containsTarget;
+  }
+
+  public void setContainsTarget(final boolean containsTarget) {
+    this.containsTarget = containsTarget;
   }
 }

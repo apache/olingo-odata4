@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.Association;
@@ -49,7 +50,8 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
 
   @Override
   public EdmBindingTarget getRelatedBindingTarget(final String path) {
-    final List<AssociationSet> candidateAssociationSets = new ArrayList<AssociationSet>();
+    final Map<AssociationSet, FullQualifiedName> candidateAssociationSets =
+            new HashMap<AssociationSet, FullQualifiedName>();
     for (Schema schema : xmlSchemas) {
       for (EntityContainer _entityContainer : schema.getEntityContainers()) {
         final EntityContainerImpl entityContainer = (EntityContainerImpl) _entityContainer;
@@ -57,7 +59,8 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
           if (getName().equals(associationSet.getEnds().get(0).getEntitySet())
                   || getName().equals(associationSet.getEnds().get(1).getEntitySet())) {
 
-            candidateAssociationSets.add(associationSet);
+            candidateAssociationSets.put(associationSet,
+                    new FullQualifiedName(schema.getNamespace(), entityContainer.getName()));
           }
         }
       }
@@ -66,34 +69,33 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
       throw new EdmException("Cannot find any AssociationSet with first End: " + getName());
     }
 
-    Schema targetSchema = null;
+    FullQualifiedName targetEntityContainer = null;
     String targetEntitySet = null;
-    for (AssociationSet associationSet : candidateAssociationSets) {
+    for (Map.Entry<AssociationSet, FullQualifiedName> entry : candidateAssociationSets.entrySet()) {
       for (Schema schema : xmlSchemas) {
         for (Association association : ((SchemaImpl) schema).getAssociations()) {
           final FullQualifiedName associationName = new FullQualifiedName(schema.getNamespace(), association.getName());
-          if (associationName.getFullQualifiedNameAsString().equals(associationSet.getAssociation())
+          if (associationName.getFullQualifiedNameAsString().equals(entry.getKey().getAssociation())
                   && (path.equals(association.getEnds().get(0).getRole())
                   || path.equals(association.getEnds().get(1).getRole()))) {
 
-            targetSchema = schema;
-            if (getName().equals(associationSet.getEnds().get(0).getEntitySet())) {
-              targetEntitySet = associationSet.getEnds().get(1).getEntitySet();
+            targetEntityContainer = entry.getValue();
+            if (getName().equals(entry.getKey().getEnds().get(0).getEntitySet())) {
+              targetEntitySet = entry.getKey().getEnds().get(1).getEntitySet();
             } else {
-              targetEntitySet = associationSet.getEnds().get(0).getEntitySet();
+              targetEntitySet = entry.getKey().getEnds().get(0).getEntitySet();
             }
           }
         }
       }
     }
-    if (targetSchema == null || targetEntitySet == null) {
+    if (targetEntityContainer == null || targetEntitySet == null) {
       throw new EdmException("Cannot find Association for candidate AssociationSets and given Role");
     }
 
-    final FullQualifiedName relatedFQN = new FullQualifiedName(targetSchema.getNamespace(), targetEntitySet);
-    final EdmEntityContainer entityContainer = edm.getEntityContainer(relatedFQN);
+    final EdmEntityContainer entityContainer = edm.getEntityContainer(targetEntityContainer);
     if (entityContainer == null) {
-      throw new EdmException("Cannot find EntityContainer with name: " + relatedFQN);
+      throw new EdmException("Cannot find EntityContainer with name: " + targetEntityContainer);
     }
 
     return entityContainer.getEntitySet(targetEntitySet);
@@ -107,8 +109,8 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
 
   @Override
   public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
-    //There are no navigation property bindings in V3 so we will deliver an empty list
-    return new ArrayList<EdmNavigationPropertyBinding>();
+    // There are no navigation property bindings in V3 so we will deliver an empty list
+    return Collections.emptyList();
   }
 
 }

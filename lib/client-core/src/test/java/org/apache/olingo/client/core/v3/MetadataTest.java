@@ -49,6 +49,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
@@ -62,7 +63,69 @@ public class MetadataTest extends AbstractTest {
   }
 
   @Test
-  public void parse() {
+  public void parseWithEdm() {
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    assertNotNull(edm);
+
+    // 1. Complex
+    final EdmComplexType responseStatus = edm.getComplexType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "ContactDetails"));
+    assertNotNull(responseStatus);
+    assertTrue(responseStatus.getNavigationPropertyNames().isEmpty());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String),
+            responseStatus.getProperty("EmailBag").getType());
+
+    // 2. Entity
+    final EdmEntityType product = edm.getEntityType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Product"));
+    assertNotNull(product);
+    assertFalse(product.getPropertyNames().isEmpty());
+    assertFalse(product.getNavigationPropertyNames().isEmpty());
+    
+    final EdmNavigationProperty detail = product.getNavigationProperty("Detail");
+    assertNotNull(detail);
+    assertEquals("Product", detail.getPartner().getName());
+    assertFalse(detail.isCollection());
+    assertTrue(detail.isNullable());
+
+    final EdmNavigationProperty relatedProducts = product.getNavigationProperty("RelatedProducts");
+    assertNotNull(relatedProducts);
+    assertEquals("RelatedProducts", relatedProducts.getPartner().getName());
+    assertTrue(relatedProducts.isCollection());
+    assertFalse(relatedProducts.isNullable());
+
+    final EdmEntityType order = edm.getEntityType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Order"));
+    assertFalse(order.getPropertyNames().isEmpty());
+    assertFalse(order.getNavigationPropertyNames().isEmpty());
+
+    final EdmEntityType customer = edm.getEntityType(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Customer"));
+    assertEquals(order, customer.getNavigationProperty("Orders").getType());
+
+    // 3. Action
+    final EdmAction sack = edm.getBoundAction(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Sack"),
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Employee"),
+            false);
+    assertNotNull(sack);
+    assertTrue(sack.isBound());
+    assertEquals(1, sack.getParameterNames().size());
+
+    // 4. EntityContainer
+    final EdmEntityContainer container = edm.getEntityContainer(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));
+    assertNotNull(container);
+    final EdmEntitySet logins = container.getEntitySet("Login");
+    assertNotNull(logins);
+    assertEquals(edm.getEntityType(new FullQualifiedName(container.getNamespace(), "Login")), logins.getEntityType());
+    assertEquals(container.getEntitySet("Customer").getEntityContainer().getFullQualifiedName(),
+            logins.getRelatedBindingTarget("Customer").getEntityContainer().getFullQualifiedName());
+    assertEquals(container.getEntitySet("Customer").getName(), logins.getRelatedBindingTarget("Customer").getName());
+  }
+
+  @Test
+  public void parseWithXMLMetadata() {
     final XMLMetadata metadata = getClient().getDeserializer().
             toMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(metadata);
@@ -70,6 +133,7 @@ public class MetadataTest extends AbstractTest {
     final EntityType order = metadata.getSchemas().get(0).getEntityType("Order");
     assertNotNull(order);
     assertEquals("Order", order.getName());
+    assertFalse(order.getNavigationProperties().isEmpty());
 
     @SuppressWarnings("unchecked")
     final List<FunctionImport> functionImports = (List<FunctionImport>) metadata.getSchemas().get(0).

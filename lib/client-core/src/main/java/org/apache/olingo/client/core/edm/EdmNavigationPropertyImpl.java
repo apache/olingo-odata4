@@ -71,14 +71,14 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
-    final List<? extends ReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
-    if (referentialConstraints != null) {
-      for (ReferentialConstraint constraint : referentialConstraints) {
-        if (constraint.getReferencedProperty().equals(referencedPropertyName)) {
-          return constraint.getProperty();
-        }
+    final List<? extends ReferentialConstraint> _referentialConstraints =
+            navigationProperty.getReferentialConstraints();
+    for (ReferentialConstraint constraint : _referentialConstraints) {
+      if (constraint.getReferencedProperty().equals(referencedPropertyName)) {
+        return constraint.getProperty();
       }
     }
+
     return null;
   }
 
@@ -89,8 +89,8 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       referentialConstraints = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
-          referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
-                  .getReferencedProperty()));
+          referentialConstraints.add(
+                  new EdmReferentialConstraintImpl(constraint.getProperty(), constraint.getReferencedProperty()));
         }
       }
     }

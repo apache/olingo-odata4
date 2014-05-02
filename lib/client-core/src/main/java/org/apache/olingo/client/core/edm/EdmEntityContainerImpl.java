@@ -140,9 +140,8 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
         final FullQualifiedName entityType = new EdmTypeInfo.Builder().setTypeExpression(entitySet.getEntityType()).
                 setDefaultNamespace(entityContainerName.getNamespace()).build().getFullQualifiedName();
         if (entitySet instanceof org.apache.olingo.client.api.edm.xml.v4.EntitySet) {
-          edmSet =
-                  new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType,
-                          (org.apache.olingo.client.api.edm.xml.v4.EntitySet) entitySet);
+          edmSet = new EdmEntitySetImpl(edm, this, entitySet.getName(), entityType,
+                  (org.apache.olingo.client.api.edm.xml.v4.EntitySet) entitySet);
         } else {
           edmSet = new EdmEntitySetProxy(edm, this, entitySet.getName(), entityType, xmlSchemas);
         }

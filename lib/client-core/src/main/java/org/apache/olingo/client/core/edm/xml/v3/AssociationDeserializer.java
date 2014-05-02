@@ -42,10 +42,10 @@ public class AssociationDeserializer extends AbstractEdmDeserializer<Association
           association.setName(jp.nextTextValue());
         } else if ("ReferentialConstraint".equals(jp.getCurrentName())) {
           jp.nextToken();
-          association.setReferentialConstraint(jp.readValueAs( ReferentialConstraintImpl.class));
+          association.setReferentialConstraint(jp.readValueAs(ReferentialConstraintImpl.class));
         } else if ("End".equals(jp.getCurrentName())) {
           jp.nextToken();
-          association.getEnds().add(jp.readValueAs( AssociationEndImpl.class));
+          association.getEnds().add(jp.readValueAs(AssociationEndImpl.class));
         }
       }
     }

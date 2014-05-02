@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
+import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -38,11 +39,13 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
   private final EdmStructuredTypeHelper helper;
 
-  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn, final EntityType entityType) {
+  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn, 
+          final List<? extends Schema> xmlSchemas, final EntityType entityType) {
+    
     final FullQualifiedName baseTypeName = entityType.getBaseType() == null
             ? null
             : new EdmTypeInfo.Builder().setTypeExpression(entityType.getBaseType()).build().getFullQualifiedName();
-    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, fqn, baseTypeName, entityType);
+    final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, fqn, baseTypeName, xmlSchemas, entityType);
     instance.baseType = instance.buildBaseType(baseTypeName);
 
     if (instance.baseType == null) {
@@ -62,10 +65,10 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   }
 
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName fqn, final FullQualifiedName baseTypeName,
-          final EntityType entityType) {
+          final List<? extends Schema> xmlSchemas, final EntityType entityType) {
 
     super(edm, fqn, baseTypeName, entityType.isHasStream());
-    this.helper = new EdmStructuredTypeHelperImpl(edm, entityType);
+    this.helper = new EdmStructuredTypeHelperImpl(edm, xmlSchemas, entityType);
   }
 
   @Override
