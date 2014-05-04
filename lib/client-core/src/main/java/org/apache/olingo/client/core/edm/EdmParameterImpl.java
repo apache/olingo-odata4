@@ -18,32 +18,39 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import java.util.Collections;
+import java.util.List;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
+import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmParameterImpl extends AbstractEdmParameter {
 
   private final CommonParameter parameter;
 
-  private final EdmTypeInfo parameterInfo;
+  private final EdmTypeInfo typeInfo;
 
-  public static EdmParameterImpl getInstance(final Edm edm, final CommonParameter parameter) {
-    final EdmTypeInfo paramTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(parameter.getType()).build();
-    return new EdmParameterImpl(edm, parameter, paramTypeInfo);
-  }
+  private EdmAnnotationHelper helper;
 
-  private EdmParameterImpl(final Edm edm, final CommonParameter parameter, final EdmTypeInfo parameterInfo) {
-    super(edm, parameter.getName(), parameterInfo.getFullQualifiedName());
+  public EdmParameterImpl(final Edm edm, final CommonParameter parameter) {
+    super(edm, parameter.getName(), new FullQualifiedName(parameter.getType()));
     this.parameter = parameter;
-    this.parameterInfo = parameterInfo;
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();
+    if (parameter instanceof Parameter) {
+      this.helper = new EdmAnnotationHelperImpl(edm, (Parameter) parameter);
+    }
   }
 
   @Override
   public boolean isCollection() {
-    return parameterInfo.isCollection();
+    return typeInfo.isCollection();
   }
 
   @Override
@@ -69,6 +76,18 @@ public class EdmParameterImpl extends AbstractEdmParameter {
   @Override
   public Integer getScale() {
     return parameter.getScale();
+  }
+
+  @Override
+  public SRID getSrid() {
+    return (parameter instanceof Parameter)
+            ? ((Parameter) parameter).getSrid()
+            : null;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper == null ? Collections.<EdmAnnotation>emptyList() : helper.getAnnotations();
   }
 
 }

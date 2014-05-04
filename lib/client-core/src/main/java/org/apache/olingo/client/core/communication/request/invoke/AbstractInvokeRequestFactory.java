@@ -19,21 +19,14 @@
 package org.apache.olingo.client.core.communication.request.invoke;
 
 import java.net.URI;
-import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.invoke.CommonInvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 
-public abstract class AbstractInvokeRequestFactory implements CommonInvokeRequestFactory {
+public abstract class AbstractInvokeRequestFactory implements InvokeRequestFactory {
 
   private static final long serialVersionUID = -906760270085197249L;
-
-  protected final CommonODataClient client;
-
-  protected AbstractInvokeRequestFactory(final CommonODataClient client) {
-    this.client = client;
-  }
 
   @Override
   public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(

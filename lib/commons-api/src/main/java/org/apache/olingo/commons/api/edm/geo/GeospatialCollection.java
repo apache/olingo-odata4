@@ -28,7 +28,7 @@ public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
   private static final long serialVersionUID = -9181547636133878977L;
 
-  public GeospatialCollection(final Dimension dimension, final Integer srid, final List<Geospatial> geospatials) {
+  public GeospatialCollection(final Dimension dimension, final SRID srid, final List<Geospatial> geospatials) {
     super(dimension, Type.GEOSPATIALCOLLECTION, srid, geospatials);
   }
 

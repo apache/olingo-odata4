@@ -106,7 +106,7 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
                                     org.apache.olingo.client.core.edm.xml.v3.EntityContainerImpl.class));
           } else {
             org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl entityContainer =
-                     jp.readValueAs(
+                    jp.readValueAs(
                             org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl.class);
             entityContainer.setDefaultEntityContainer(true);
             ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
@@ -115,13 +115,11 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
         } else if ("Annotations".equals(jp.getCurrentName())) {
           jp.nextToken();
           if (schema instanceof org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) {
-            ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).getAnnotationsList().
-                    add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v3.AnnotationsImpl.class));
+            ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).getAnnotationGroups().
+                    add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v3.AnnotationsImpl.class));
           } else {
-            ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotationsList().
-                    add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl.class));
+            ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotationGroups().
+                    add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl.class));
           }
         } else if ("Action".equals(jp.getCurrentName())) {
           jp.nextToken();

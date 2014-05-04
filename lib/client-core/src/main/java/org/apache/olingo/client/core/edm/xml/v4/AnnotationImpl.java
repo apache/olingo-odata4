@@ -21,12 +21,10 @@ package org.apache.olingo.client.core.edm.xml.v4;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.DynExprConstruct;
-import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
 
 @JsonDeserialize(using = AnnotationDeserializer.class)
-public class AnnotationImpl extends AbstractEdmItem implements Annotation {
+public class AnnotationImpl extends AbstractAnnotatable implements Annotation {
 
   private static final long serialVersionUID = -5600031479702563436L;
 
@@ -34,9 +32,7 @@ public class AnnotationImpl extends AbstractEdmItem implements Annotation {
 
   private String qualifier;
 
-  private ConstExprConstruct constExpr;
-
-  private DynExprConstruct dynExpr;
+  private AnnotationExpression annotationExpression;
 
   @Override
   public String getTerm() {
@@ -57,21 +53,12 @@ public class AnnotationImpl extends AbstractEdmItem implements Annotation {
   }
 
   @Override
-  public ConstExprConstruct getConstExpr() {
-    return constExpr;
+  public AnnotationExpression getExpression() {
+    return annotationExpression;
   }
 
-  public void setConstExpr(final ConstExprConstruct constExpr) {
-    this.constExpr = constExpr;
-  }
-
-  @Override
-  public DynExprConstruct getDynExpr() {
-    return dynExpr;
-  }
-
-  public void setDynExpr(final DynExprConstruct dynExpr) {
-    this.dynExpr = dynExpr;
+  public void setAnnotationExpression(final AnnotationExpression annotationExpression) {
+    this.annotationExpression = annotationExpression;
   }
 
 }

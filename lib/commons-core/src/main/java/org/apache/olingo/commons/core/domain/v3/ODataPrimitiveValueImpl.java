@@ -39,6 +39,11 @@ public class ODataPrimitiveValueImpl extends AbstractODataPrimitiveValue {
       return instance;
     }
 
+    @Override
+    public ODataPrimitiveValueImpl build() {
+      return (ODataPrimitiveValueImpl) super.build();
+    }
+
   }
 
 }

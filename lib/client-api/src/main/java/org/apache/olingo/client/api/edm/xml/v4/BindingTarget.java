@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.Named;
 
-public interface BindingTarget extends Named, AnnotatedEdmItem {
+public interface BindingTarget extends Named, Annotatable {
 
   List<? extends NavigationPropertyBinding> getNavigationPropertyBindings();
 }

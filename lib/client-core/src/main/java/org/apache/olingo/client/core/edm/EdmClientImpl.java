@@ -18,21 +18,19 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
@@ -41,12 +39,18 @@ import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
+import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
+import org.apache.olingo.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
+import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.v3.EdmActionProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
 import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -54,10 +58,12 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.AbstractEdm;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmClientImpl extends AbstractEdm {
 
@@ -102,6 +108,15 @@ public class EdmClientImpl extends AbstractEdm {
   }
 
   @Override
+  protected Map<String, EdmSchema> createSchemas() {
+    final Map<String, EdmSchema> _schemas = new LinkedHashMap<String, EdmSchema>(xmlSchemas.size());
+    for (Schema schema : xmlSchemas) {
+      _schemas.put(schema.getNamespace(), new EdmSchemaImpl(version, this, xmlSchemas, schema));
+    }
+    return _schemas;
+  }
+
+  @Override
   protected EdmEntityContainer createEntityContainer(final FullQualifiedName containerName) {
     EdmEntityContainer result = null;
 
@@ -142,8 +157,6 @@ public class EdmClientImpl extends AbstractEdm {
       if (xmlTypeDefinition != null) {
         result = new EdmTypeDefinitionImpl(version, this, typeDefinitionName, xmlTypeDefinition);
       }
-    } else {
-      throw new UnsupportedInV3Exception();
     }
 
     return result;
@@ -408,6 +421,57 @@ public class EdmClientImpl extends AbstractEdm {
   }
 
   @Override
+  protected EdmTerm createTerm(final FullQualifiedName termName) {
+    EdmTerm result = null;
+
+    final Schema schema = xmlSchemaByNamespace.get(termName.getNamespace());
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final Term term = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getTerm(termName.getName());
+      if (term != null) {
+        result = new EdmTermImpl(this, term);
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
+    EdmAnnotationsImpl result = null;
+
+    final Schema schema = xmlSchemaByNamespace.get(targetName.getNamespace());
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final Annotations annotationGroup =
+              ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotationGroup(targetName.getName());
+      if (annotationGroup != null) {
+        result = new EdmAnnotationsImpl(this, schemas.get(schema.getNamespace()), annotationGroup);
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
+    List<EdmAnnotation> result = null;
+
+    final Schema schema = xmlSchemaByNamespace.get(annotatedName.getNamespace());
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final Annotatable annotatable =
+              ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotatables().get(annotatedName.getName());
+      if (annotatable != null && annotatable.getAnnotations() != null) {
+        result = new ArrayList<EdmAnnotation>();
+        for (Annotation annotation : annotatable.getAnnotations()) {
+          final EdmTerm term = getTerm(new FullQualifiedName(annotation.getTerm()));
+          result.add(new EdmAnnotationImpl(this, annotation));
+        }
+      }
+    }
+
+    return result;
+  }
+
+  @Override
   public boolean equals(final Object obj) {
     return EqualsBuilder.reflectionEquals(this, obj);
   }
@@ -420,14 +484,5 @@ public class EdmClientImpl extends AbstractEdm {
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
-
-  @Override
-  protected List<EdmSchema> createSchemas() {
-    final List<EdmSchema> schemas = new ArrayList<EdmSchema>();
-    for (Schema schema : xmlSchemas) {
-      schemas.add(new EdmSchemaImpl(version, this, xmlSchemas, schema));
-    }
-    return schemas;
   }
 }

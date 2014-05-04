@@ -61,8 +61,8 @@ public class EnumTypeDeserializer extends AbstractEdmDeserializer<AbstractEnumTy
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).
-                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.v4.EnumTypeImpl) enumType).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

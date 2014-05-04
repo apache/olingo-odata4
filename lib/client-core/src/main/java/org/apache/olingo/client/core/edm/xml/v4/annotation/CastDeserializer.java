@@ -24,18 +24,18 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
-public class CastDeserializer extends AbstractEdmDeserializer<Cast> {
+public class CastDeserializer extends AbstractEdmDeserializer<CastImpl> {
 
   @Override
-  protected Cast doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected CastImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final Cast cast = new Cast();
+    final CastImpl cast = new CastImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -43,17 +43,22 @@ public class CastDeserializer extends AbstractEdmDeserializer<Cast> {
         if ("Type".equals(jp.getCurrentName())) {
           cast.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          cast.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          cast.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
-          cast.setMaxLength(jp.nextTextValue());
+          final String maxLenght = jp.nextTextValue();
+          cast.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
         } else if ("Precision".equals(jp.getCurrentName())) {
-          cast.setPrecision(BigInteger.valueOf(jp.nextLongValue(0L)));
+          cast.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          cast.setScale(BigInteger.valueOf(jp.nextLongValue(0L)));
+          final String scale = jp.nextTextValue();
+          cast.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          cast.setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            cast.setSrid(SRID.valueOf(srid));
+          }
         } else {
-          cast.setValue(jp.readValueAs(DynExprConstructImpl.class));
+          cast.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

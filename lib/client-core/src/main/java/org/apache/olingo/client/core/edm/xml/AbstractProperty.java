@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.edm.xml;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 @JsonDeserialize(using = PropertyDeserializer.class)
 public abstract class AbstractProperty extends AbstractEdmItem implements CommonProperty {
@@ -43,7 +44,7 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
 
   private boolean unicode = true;
 
-  private String srid;
+  private SRID srid;
 
   @Override
   public String getName() {
@@ -118,11 +119,11 @@ public abstract class AbstractProperty extends AbstractEdmItem implements Common
   }
 
   @Override
-  public String getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 
-  public void setSrid(final String srid) {
+  public void setSrid(final SRID srid) {
     this.srid = srid;
   }
 }

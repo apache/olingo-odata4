@@ -39,4 +39,9 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
     return edm.getUnboundAction(actionImport.getAction());
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.ActionImport;
+  }
+
 }

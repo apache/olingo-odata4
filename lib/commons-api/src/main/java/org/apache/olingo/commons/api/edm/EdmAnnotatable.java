@@ -18,13 +18,12 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import java.util.List;
+
 /**
- * EdmAnnotatable can be applied to CSDL elements as described in the Conceptual Schema Definition Language.
+ * Can be applied to CSDL elements as described in the Conceptual Schema Definition Language.
  */
 public interface EdmAnnotatable {
 
-  EdmAnnotations getAnnotations();
-
-  // TODO: enhance annotations
-  Object getAnnotation();
+  List<EdmAnnotation> getAnnotations();
 }

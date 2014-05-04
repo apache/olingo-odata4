@@ -54,7 +54,7 @@ public class FunctionDeserializer extends AbstractEdmDeserializer<FunctionImpl> 
           functionImpl.setReturnType(parseReturnType(jp, "Function"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          functionImpl.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          functionImpl.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

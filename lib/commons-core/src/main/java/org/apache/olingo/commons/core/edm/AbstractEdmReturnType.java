@@ -20,67 +20,30 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public abstract class AbstractEdmReturnType implements EdmReturnType {
 
-  private final Edm edm;
-
-  private final FullQualifiedName typeName;
+  private final EdmTypeInfo typeInfo;
 
   private EdmType typeImpl;
 
   public AbstractEdmReturnType(final Edm edm, final FullQualifiedName typeName) {
-    this.edm = edm;
-    this.typeName = typeName;
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(typeName.toString()).build();
   }
 
   @Override
   public EdmType getType() {
     if (typeImpl == null) {
-      if (EdmPrimitiveType.EDM_NAMESPACE.equals(typeName.getNamespace())) {
-        try {
-          typeImpl = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(typeName.getName()));
-        } catch (IllegalArgumentException e) {
-          throw new EdmException("Cannot find type with name: " + typeName, e);
-        }
-      } else {
-        typeImpl = edm.getComplexType(typeName);
-        if (typeImpl == null) {
-          typeImpl = edm.getEntityType(typeName);
-          if (typeImpl == null) {
-            typeImpl = edm.getEnumType(typeName);
-            if (typeImpl == null) {
-              typeImpl = edm.getTypeDefinition(typeName);
-              if (typeImpl == null) {
-                throw new EdmException("Cant find type with name: " + typeName);
-              }
-            }
-          }
-        }
+      typeImpl = typeInfo.getType();
+      if (typeImpl == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
       }
     }
+
     return typeImpl;
   }
-
-  @Override
-  public abstract Boolean isNullable();
-
-  @Override
-  public abstract Integer getMaxLength();
-
-  @Override
-  public abstract Integer getPrecision();
-
-  @Override
-  public abstract Integer getScale();
-
-  @Override
-  public abstract boolean isCollection();
 
 }

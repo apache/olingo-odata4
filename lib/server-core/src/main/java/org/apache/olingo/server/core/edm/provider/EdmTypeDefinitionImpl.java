@@ -18,12 +18,15 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.edm.provider.TypeDefinition;
@@ -35,7 +38,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   private EdmPrimitiveType edmPrimitiveTypeInstance;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
-      final TypeDefinition typeDefinition) {
+          final TypeDefinition typeDefinition) {
 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
@@ -46,7 +49,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     if (edmPrimitiveTypeInstance == null) {
       try {
         edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-            EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
+                EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
       }
@@ -70,7 +73,18 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   }
 
   @Override
+  public SRID getSrid() {
+    return null; // TODO: provide implementation  
+  }
+
+  @Override
   public Boolean isUnicode() {
     return typeDefinition.getIsUnicode();
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

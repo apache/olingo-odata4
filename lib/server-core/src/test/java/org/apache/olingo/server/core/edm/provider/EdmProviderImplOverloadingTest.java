@@ -83,12 +83,12 @@ public class EdmProviderImplOverloadingTest {
     functions.add(function);
     List<Parameter> function3Parameters = new ArrayList<Parameter>();
     function3Parameters.add(new Parameter().setName("a").setType(operationType1));
-    function3Parameters.add(new Parameter().setName("b"));
+    function3Parameters.add(new Parameter().setName("b").setType(operationType1));
     function = new Function().setName(operationName1.getName()).setParameters(function3Parameters).setBound(true);
     functions.add(function);
     List<Parameter> function4Parameters = new ArrayList<Parameter>();
     function4Parameters.add(new Parameter().setName("a").setType(operationType2));
-    function4Parameters.add(new Parameter().setName("b"));
+    function4Parameters.add(new Parameter().setName("b").setType(operationType2));
     function = new Function().setName(operationName1.getName()).setParameters(function4Parameters).setBound(true);
     functions.add(function);
     when(provider.getFunctions(operationName1)).thenReturn(functions);

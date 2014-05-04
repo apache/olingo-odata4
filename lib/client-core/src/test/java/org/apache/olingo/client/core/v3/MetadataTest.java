@@ -51,6 +51,7 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(product);
     assertFalse(product.getPropertyNames().isEmpty());
     assertFalse(product.getNavigationPropertyNames().isEmpty());
-    
+
     final EdmNavigationProperty detail = product.getNavigationProperty("Detail");
     assertNotNull(detail);
     assertEquals("Product", detail.getPartner().getName());
@@ -122,6 +123,21 @@ public class MetadataTest extends AbstractTest {
     assertEquals(container.getEntitySet("Customer").getEntityContainer().getFullQualifiedName(),
             logins.getRelatedBindingTarget("Customer").getEntityContainer().getFullQualifiedName());
     assertEquals(container.getEntitySet("Customer").getName(), logins.getRelatedBindingTarget("Customer").getName());
+
+    // 5. Operation
+    final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
+    assertNotNull(funcImp);
+    final EdmEntitySet returnedEntitySet = funcImp.getReturnedEntitySet();
+    assertNotNull(returnedEntitySet);
+    assertEquals("Customer", returnedEntitySet.getName());
+
+    final EdmFunction function = funcImp.getUnboundFunction(null);
+    assertNotNull(function);
+    final EdmReturnType returnType = function.getReturnType();
+    assertNotNull(returnType);
+    assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer",
+            returnType.getType().getFullQualifiedName().toString());
+    assertTrue(returnType.isCollection());
   }
 
   @Test

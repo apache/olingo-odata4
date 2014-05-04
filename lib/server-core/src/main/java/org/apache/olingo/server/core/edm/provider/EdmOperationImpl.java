@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -59,7 +60,7 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   }
 
   protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Operation operation,
-      final EdmTypeKind kind) {
+          final EdmTypeKind kind) {
 
     super(edm, name, kind);
     this.operation = operation;
@@ -82,4 +83,11 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     }
     return null;
   }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
 }

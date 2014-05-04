@@ -18,28 +18,22 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import org.apache.olingo.client.api.edm.xml.v4.AnnotatedEdmItem;
+import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.core.edm.xml.AbstractMember;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MemberImpl extends AbstractMember implements AnnotatedEdmItem {
+public class MemberImpl extends AbstractMember implements Annotatable {
 
   private static final long serialVersionUID = -344920557183058824L;
 
-  @JsonProperty("Annotation")
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  @JsonIgnore
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -28,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 
 public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType {
@@ -36,6 +38,8 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
 
   private final EnumType enumType;
 
+  private List<EdmMember> members;
+
   public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final EnumType enumType) {
     super(edm, enumName, enumType.isFlags());
 
@@ -43,7 +47,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(
-          EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
+              EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
       // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
     }
 
@@ -57,7 +61,13 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
 
   @Override
   protected List<? extends EdmMember> getMembers() {
-    return enumType.getMembers();
+    if (members == null) {
+      members = new ArrayList<EdmMember>(enumType.getMembers().size());
+      for (EnumMember member : enumType.getMembers()) {
+        members.add(new EdmMemberImpl(edm, getFullQualifiedName(), member.getName(), member.getValue()));
+      }
+    }
+    return members;
   }
 
 }

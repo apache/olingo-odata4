@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public abstract class AbstractGeospatialType<T extends Geospatial> extends SingletonPrimitiveType {
 
@@ -83,7 +84,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     return matcher;
   }
 
-  private Point newPoint(final Integer srid, final String point, final Boolean isNullable,
+  private Point newPoint(final SRID srid, final String point, final Boolean isNullable,
           final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
           throws EdmPrimitiveTypeException {
 
@@ -106,7 +107,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    return newPoint(Integer.valueOf(matcher.group(2)), matcher.group(4),
+    return newPoint(SRID.valueOf(matcher.group(2)), matcher.group(4),
             isNullable, maxLength, precision, scale, isUnicode);
   }
 
@@ -121,10 +122,10 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
               isNullable, maxLength, precision, scale, isUnicode));
     }
 
-    return new MultiPoint(dimension, Integer.valueOf(matcher.group(2)), points);
+    return new MultiPoint(dimension, SRID.valueOf(matcher.group(2)), points);
   }
 
-  private LineString newLineString(final Integer srid, final String lineString, final Boolean isNullable,
+  private LineString newLineString(final SRID srid, final String lineString, final Boolean isNullable,
           final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
           throws EdmPrimitiveTypeException {
 
@@ -141,7 +142,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    return newLineString(Integer.valueOf(matcher.group(2)), matcher.group(4),
+    return newLineString(SRID.valueOf(matcher.group(2)), matcher.group(4),
             isNullable, maxLength, precision, scale, isUnicode);
   }
 
@@ -166,10 +167,10 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       lineStrings.add(newLineString(null, lineString, isNullable, maxLength, precision, scale, isUnicode));
     }
 
-    return new MultiLineString(this.dimension, Integer.valueOf(matcher.group(2)), lineStrings);
+    return new MultiLineString(this.dimension, SRID.valueOf(matcher.group(2)), lineStrings);
   }
 
-  private Polygon newPolygon(final Integer srid, final String polygon, final Boolean isNullable,
+  private Polygon newPolygon(final SRID srid, final String polygon, final Boolean isNullable,
           final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
           throws EdmPrimitiveTypeException {
 
@@ -192,7 +193,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    return newPolygon(Integer.valueOf(matcher.group(2)), matcher.group(4),
+    return newPolygon(SRID.valueOf(matcher.group(2)), matcher.group(4),
             isNullable, maxLength, precision, scale, isUnicode);
   }
 
@@ -222,7 +223,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       polygons.add(newPolygon(null, polygon, isNullable, maxLength, precision, scale, isUnicode));
     }
 
-    return new MultiPolygon(dimension, Integer.valueOf(matcher.group(2)), polygons);
+    return new MultiPolygon(dimension, SRID.valueOf(matcher.group(2)), polygons);
   }
 
   protected GeospatialCollection stringToCollection(final String value, final Boolean isNullable,
@@ -234,7 +235,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     Geospatial item = null;
     switch (Geospatial.Type.valueOf(matcher.group(3).toUpperCase())) {
       case POINT:
-        item = newPoint(Integer.valueOf(matcher.group(2)), matcher.group(4),
+        item = newPoint(SRID.valueOf(matcher.group(2)), matcher.group(4),
                 isNullable, maxLength, precision, scale, isUnicode);
         break;
 
@@ -245,11 +246,11 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
                   isNullable, maxLength, precision, scale, isUnicode));
         }
 
-        item = new MultiPoint(dimension, Integer.valueOf(matcher.group(2)), points);
+        item = new MultiPoint(dimension, SRID.valueOf(matcher.group(2)), points);
         break;
 
       case LINESTRING:
-        item = newLineString(Integer.valueOf(matcher.group(2)), matcher.group(4),
+        item = newLineString(SRID.valueOf(matcher.group(2)), matcher.group(4),
                 isNullable, maxLength, precision, scale, isUnicode);
         break;
 
@@ -260,11 +261,11 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
                   isNullable, maxLength, precision, scale, isUnicode));
         }
 
-        item = new MultiLineString(this.dimension, Integer.valueOf(matcher.group(2)), lineStrings);
+        item = new MultiLineString(this.dimension, SRID.valueOf(matcher.group(2)), lineStrings);
         break;
 
       case POLYGON:
-        item = newPolygon(Integer.valueOf(matcher.group(2)), matcher.group(4),
+        item = newPolygon(SRID.valueOf(matcher.group(2)), matcher.group(4),
                 isNullable, maxLength, precision, scale, isUnicode);
         break;
 
@@ -275,17 +276,17 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
                   isNullable, maxLength, precision, scale, isUnicode));
         }
 
-        item = new MultiPolygon(dimension, Integer.valueOf(matcher.group(2)), polygons);
+        item = new MultiPolygon(dimension, SRID.valueOf(matcher.group(2)), polygons);
         break;
 
       default:
     }
 
-    return new GeospatialCollection(dimension, Integer.valueOf(matcher.group(2)),
+    return new GeospatialCollection(dimension, SRID.valueOf(matcher.group(2)),
             Collections.<Geospatial>singletonList(item));
   }
 
-  private StringBuilder toStringBuilder(final Integer srid) {
+  private StringBuilder toStringBuilder(final SRID srid) {
     return new StringBuilder(dimension.name().toLowerCase()).append('\'').
             append("SRID=").append(srid).append(';');
   }

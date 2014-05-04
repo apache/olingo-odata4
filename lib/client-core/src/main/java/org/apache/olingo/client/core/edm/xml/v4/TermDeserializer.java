@@ -24,11 +24,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.edm.xml.v4.CSDLElement;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
 
@@ -60,14 +61,15 @@ public class TermDeserializer extends AbstractEdmDeserializer<TermImpl> {
           final String scale = jp.nextTextValue();
           term.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          term.setSrid(jp.nextTextValue());
-        } else if ("AppliesTo".equals(jp.getCurrentName())) {
-          for (String split : StringUtils.split(jp.nextTextValue())) {
-            term.getAppliesTo().add(CSDLElement.valueOf(split));
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            term.setSrid(SRID.valueOf(srid));
           }
+        } else if ("AppliesTo".equals(jp.getCurrentName())) {
+          term.getAppliesTo().addAll(Arrays.asList(StringUtils.split(jp.nextTextValue())));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          term.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          term.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

@@ -52,4 +52,15 @@ public abstract class AbstractEdmBindingTarget extends EdmNamedImpl implements E
     }
     return entityType;
   }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return container.getFullQualifiedName();
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
+  }
+
 }

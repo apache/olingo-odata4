@@ -74,7 +74,7 @@ public class EdmServiceMetadataImplTest {
   public void initialProvider() {
     EdmProvider provider = new EdmProvider() {};
     EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImpl(provider);
-    assertEquals(ODataServiceVersion.V40.toString(), serviceMetadata.getDataServiceVersion());
+    assertEquals(ODataServiceVersion.V40, serviceMetadata.getDataServiceVersion());
   }
 
   @Test(expected = EdmException.class)

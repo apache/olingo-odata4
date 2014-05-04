@@ -30,9 +30,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -40,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Before;
@@ -416,11 +420,26 @@ public class EdmImplCachingTest {
     }
 
     @Override
-    public List<EdmSchema> createSchemas() {
-      List<EdmSchema> schemas = new ArrayList<EdmSchema>();
-      EdmSchema schema = mock(EdmSchema.class);
-      schemas.add(schema);
-      return schemas;
+    protected Map<String, EdmSchema> createSchemas() {
+      return Collections.singletonMap(StringUtils.EMPTY, mock(EdmSchema.class));
+    }
+
+    @Override
+    protected EdmTerm createTerm(final FullQualifiedName termName) {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    protected EdmAnnotations createAnnotationGroup(final FullQualifiedName target) {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
+      // TODO: implement
+      return null;
     }
   }
 }

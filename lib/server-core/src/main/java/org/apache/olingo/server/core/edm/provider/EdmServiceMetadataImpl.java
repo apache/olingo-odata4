@@ -66,8 +66,8 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
   }
 
   @Override
-  public String getDataServiceVersion() {
-    return ODataServiceVersion.V40.toString();
+  public ODataServiceVersion getDataServiceVersion() {
+    return ODataServiceVersion.V40;
   }
 
   @Override
@@ -175,7 +175,7 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
             if (functionImports != null) {
               for (FunctionImport functionImport : functionImports) {
                 functionImportInfos.add(
-                    new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
+                        new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
               }
             }
           }

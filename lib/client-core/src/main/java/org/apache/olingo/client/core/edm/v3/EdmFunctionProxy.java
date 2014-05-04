@@ -40,4 +40,5 @@ public class EdmFunctionProxy extends EdmOperationProxy implements EdmFunction {
   public boolean isComposable() {
     return functionImport.isComposable();
   }
+
 }

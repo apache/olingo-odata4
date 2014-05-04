@@ -26,7 +26,7 @@ import java.util.List;
  * <br/>
  * EdmEntityContainer hold the information of EntitySets, Singletons, ActionImports and FunctionImports contained
  */
-public interface EdmEntityContainer extends EdmNamed {
+public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
 
   /**
    * @return namespace of this entity container
@@ -37,7 +37,7 @@ public interface EdmEntityContainer extends EdmNamed {
    * @return full qualified name of this entity container
    */
   FullQualifiedName getFullQualifiedName();
-  
+
   /**
    * Returns whether this container is the default container in the current schema.
    * <br/>

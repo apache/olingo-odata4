@@ -31,11 +31,14 @@ import org.apache.olingo.client.core.edm.v3.EdmNavigationPropertyProxy;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 
 public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   private final Edm edm;
+
+  private final FullQualifiedName structuredTypeName;
 
   private final ComplexType complexType;
 
@@ -45,10 +48,11 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   private Map<String, EdmNavigationProperty> navigationProperties;
 
-  public EdmStructuredTypeHelperImpl(
-          final Edm edm, final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
+  public EdmStructuredTypeHelperImpl(final Edm edm, final FullQualifiedName structuredTypeName,
+          final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
 
     this.edm = edm;
+    this.structuredTypeName = structuredTypeName;
     this.complexType = complexType;
     this.xmlSchemas = xmlSchemas;
   }
@@ -58,7 +62,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
     if (properties == null) {
       properties = new LinkedHashMap<String, EdmProperty>();
       for (CommonProperty property : complexType.getProperties()) {
-        properties.put(property.getName(), new EdmPropertyImpl(edm, property));
+        properties.put(property.getName(), new EdmPropertyImpl(edm, structuredTypeName, property));
       }
     }
     return properties;
@@ -71,10 +75,12 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
       for (CommonNavigationProperty navigationProperty : complexType.getNavigationProperties()) {
         if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) {
           navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyImpl(
-                  edm, (org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) navigationProperty));
+                  edm, structuredTypeName,
+                  (org.apache.olingo.client.api.edm.xml.v4.NavigationProperty) navigationProperty));
         } else if (navigationProperty instanceof org.apache.olingo.client.api.edm.xml.v3.NavigationProperty) {
           navigationProperties.put(navigationProperty.getName(), new EdmNavigationPropertyProxy(
-                  edm, xmlSchemas, (org.apache.olingo.client.api.edm.xml.v3.NavigationProperty) navigationProperty));
+                  edm, xmlSchemas,
+                  (org.apache.olingo.client.api.edm.xml.v3.NavigationProperty) navigationProperty));
         }
       }
     }

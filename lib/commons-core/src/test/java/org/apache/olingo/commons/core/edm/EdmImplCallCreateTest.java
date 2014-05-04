@@ -33,6 +33,8 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -40,6 +42,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.junit.Before;
@@ -284,8 +287,26 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    public List<EdmSchema> createSchemas() {
-      return new ArrayList<EdmSchema>();
+    protected Map<String, EdmSchema> createSchemas() {
+      return Collections.emptyMap();
+    }
+
+    @Override
+    protected EdmTerm createTerm(final FullQualifiedName termName) {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    protected List<EdmAnnotation> createAnnotations(FullQualifiedName annotatedName) {
+      // TODO: implement
+      return null;
     }
   }
 }

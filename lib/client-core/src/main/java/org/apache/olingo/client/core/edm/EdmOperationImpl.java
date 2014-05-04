@@ -24,20 +24,24 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
   protected final Action operation;
 
+  protected final EdmAnnotationHelper helper;
+
   protected static <T extends EdmOperationImpl> T getInstance(final T instance) {
     final List<? extends CommonParameter> parameters = instance.operation.getParameters();
     final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(parameters.size());
     for (CommonParameter parameter : parameters) {
-      _parameters.add(EdmParameterImpl.getInstance(instance.edm, parameter));
+      _parameters.add(new EdmParameterImpl(instance.edm, parameter));
     }
     instance.setParameters(_parameters);
 
@@ -57,6 +61,7 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
 
     super(edm, name, kind);
     this.operation = operation;
+    this.helper = new EdmAnnotationHelperImpl(edm, operation);
   }
 
   private EdmParameter getBindingParameter() {
@@ -87,4 +92,10 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     }
     return result;
   }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
+  }
+
 }

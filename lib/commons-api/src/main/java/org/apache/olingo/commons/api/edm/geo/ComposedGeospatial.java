@@ -31,7 +31,7 @@ public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatia
 
   protected final List<T> geospatials;
 
-  protected ComposedGeospatial(final Dimension dimension, final Type type, final Integer srid,
+  protected ComposedGeospatial(final Dimension dimension, final Type type, final SRID srid,
           final List<T> geospatials) {
 
     super(dimension, type, srid);

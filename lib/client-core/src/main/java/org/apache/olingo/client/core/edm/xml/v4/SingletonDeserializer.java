@@ -48,7 +48,7 @@ public class SingletonDeserializer extends AbstractEdmDeserializer<SingletonImpl
                   jp.readValueAs(NavigationPropertyBindingImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          singleton.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          singleton.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

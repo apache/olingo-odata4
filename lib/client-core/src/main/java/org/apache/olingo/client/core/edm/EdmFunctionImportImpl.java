@@ -23,14 +23,18 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public class EdmFunctionImportImpl extends EdmOperationImportImpl implements EdmFunctionImport {
 
   private final FunctionImport functionImport;
+
+  private final EdmAnnotationHelper helper;
 
   private FullQualifiedName functionFQN;
 
@@ -39,6 +43,12 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
 
     super(edm, container, name, functionImport.getEntitySet());
     this.functionImport = functionImport;
+    this.helper = new EdmAnnotationHelperImpl(edm, functionImport);
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.FunctionImport;
   }
 
   @Override
@@ -63,6 +73,11 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   @Override
   public boolean isIncludeInServiceDocument() {
     return functionImport.isIncludeInServiceDocument();
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
   }
 
 }

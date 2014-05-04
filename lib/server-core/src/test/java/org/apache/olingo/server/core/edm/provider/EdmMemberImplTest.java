@@ -18,19 +18,19 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import org.apache.olingo.server.api.edm.provider.EnumMember;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import org.apache.olingo.commons.core.edm.EdmMemberImpl;
-import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.junit.Test;
 
 public class EdmMemberImplTest {
 
   @Test
   public void enumMember() {
-    EnumMember member = new EnumMember().setName("name").setValue("value");
-    EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), member.getName(), member.getValue());
+    final EnumMember member = new EnumMember().setName("name").setValue("value");
+    final EdmMemberImpl memberImpl = 
+            new EdmMemberImpl(mock(EdmProviderImpl.class), null, member.getName(), member.getValue());
 
     assertEquals("name", memberImpl.getName());
     assertEquals("value", memberImpl.getValue());

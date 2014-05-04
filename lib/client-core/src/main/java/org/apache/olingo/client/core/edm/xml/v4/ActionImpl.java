@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.client.api.edm.xml.v4.ReturnType;
 
 @JsonDeserialize(using = ActionDeserializer.class)
-public class ActionImpl extends AbstractAnnotatedEdmItem implements Action {
+public class ActionImpl extends AbstractAnnotatable implements Action {
 
   private static final long serialVersionUID = -99977447455438193L;
 

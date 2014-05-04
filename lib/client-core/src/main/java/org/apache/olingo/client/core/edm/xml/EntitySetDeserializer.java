@@ -57,8 +57,8 @@ public class EntitySetDeserializer extends AbstractEdmDeserializer<AbstractEntit
                           jp.readValueAs(NavigationPropertyBindingImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl) entitySet).
-                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.v4.EntitySetImpl) entitySet).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

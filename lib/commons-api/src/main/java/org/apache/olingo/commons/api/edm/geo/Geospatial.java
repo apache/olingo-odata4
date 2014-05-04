@@ -31,6 +31,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public abstract class Geospatial implements Serializable {
 
+  private static final long serialVersionUID = 5409612902190067390L;
+
   public enum Dimension {
 
     GEOMETRY,
@@ -78,7 +80,7 @@ public abstract class Geospatial implements Serializable {
   /**
    * Null value means it is expected to vary per instance.
    */
-  protected final Integer srid;
+  protected final SRID srid;
 
   /**
    * Constructor.
@@ -87,10 +89,13 @@ public abstract class Geospatial implements Serializable {
    * @param type type.
    * @param srid SRID
    */
-  protected Geospatial(final Dimension dimension, final Type type, final Integer srid) {
+  protected Geospatial(final Dimension dimension, final Type type, final SRID srid) {
     this.dimension = dimension;
     this.type = type;
-    this.srid = srid;
+    this.srid = srid == null
+            ? new SRID()
+            : srid;
+    this.srid.setDimension(dimension);
   }
 
   /**
@@ -118,7 +123,7 @@ public abstract class Geospatial implements Serializable {
    *
    * @return s-rid.
    */
-  public Integer getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 

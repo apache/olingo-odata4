@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A csdl schema element
  */
-public interface EdmSchema {
+public interface EdmSchema extends EdmAnnotatable {
 
   /**
    * @return the namespace for this schema
@@ -61,6 +61,21 @@ public interface EdmSchema {
   List<EdmFunction> getFunctions();
 
   /**
+   * @return all {@link EdmTypeDefinition} for this schema.
+   */
+  List<EdmTypeDefinition> getTypeDefinitions();
+
+  /**
+   * @return all {@link EdmTerm} for this schema.
+   */
+  List<EdmTerm> getTerms();
+
+  /**
+   * @return all {@link EdmAnnotations} for this schema.
+   */
+  List<EdmAnnotations> getAnnotationGroups();
+
+  /**
    * @return the entity container for this schema. May be null.
    */
   EdmEntityContainer getEntityContainer();
@@ -82,10 +97,5 @@ public interface EdmSchema {
    * @return the entity container for the given name, or null if not found
    */
   EdmEntityContainer getEntityContainer(FullQualifiedName name);
-
-  /**
-   * @return all {@link EdmTypeDefinition} for this schema.
-   */
-  List<EdmTypeDefinition> getTypeDefinitions();
 
 }

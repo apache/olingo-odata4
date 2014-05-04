@@ -19,8 +19,9 @@
 package org.apache.olingo.client.api.edm.xml.v4;
 
 import java.util.List;
+import java.util.Map;
 
-public interface Schema extends org.apache.olingo.client.api.edm.xml.Schema, AnnotatedEdmItem {
+public interface Schema extends org.apache.olingo.client.api.edm.xml.Schema, Annotatable {
 
   @Override
   List<EntityContainer> getEntityContainers();
@@ -43,11 +44,15 @@ public interface Schema extends org.apache.olingo.client.api.edm.xml.Schema, Ann
 
   List<Action> getActions(String name);
 
-  List<Annotation> getAnnotations();
+  Annotation getAnnotation(String term);
+
+  Map<String, Annotatable> getAnnotatables();
 
   List<Function> getFunctions();
 
   List<Function> getFunctions(String name);
+
+  Term getTerm(String name);
 
   List<Term> getTerms();
 
@@ -56,9 +61,9 @@ public interface Schema extends org.apache.olingo.client.api.edm.xml.Schema, Ann
   List<TypeDefinition> getTypeDefinitions();
 
   @Override
-  List<Annotations> getAnnotationsList();
+  List<Annotations> getAnnotationGroups();
 
   @Override
-  Annotations getAnnotationsList(String target);
+  Annotations getAnnotationGroup(String target);
 
 }

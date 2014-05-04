@@ -18,22 +18,33 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.client.core.edm.xml.AbstractParameter;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class ParameterImpl extends AbstractParameter implements Parameter {
 
   private static final long serialVersionUID = -1067642515116697747L;
 
-  private String srid;
+  private SRID srid;
+
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public String getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 
-  public void setSrid(final String srid) {
+  public void setSrid(final SRID srid) {
     this.srid = srid;
+  }
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

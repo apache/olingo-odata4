@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -40,16 +41,17 @@ import org.apache.olingo.server.api.edm.provider.Singleton;
 public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
 
   private final EdmProvider provider;
+
   private EntityContainer container;
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
-      final EntityContainerInfo entityContainerInfo) {
+          final EntityContainerInfo entityContainerInfo) {
     super(edm, entityContainerInfo.getContainerName(), entityContainerInfo.getExtendsContainer());
     this.provider = provider;
   }
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
-      final EntityContainer entityContainer) {
+          final EntityContainer entityContainer) {
     super(edm, containerFQN, entityContainer.getExtendsContainer());
     this.provider = provider;
     container = entityContainer;
@@ -191,5 +193,11 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
         throw new EdmException(e);
       }
     }
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 /**
  * A CSDL parameter element
  */
-public interface EdmParameter extends EdmElement, EdmMappable {
+public interface EdmParameter extends EdmElement, EdmMappable, EdmAnnotatable {
 
   /**
    * @return true if nullable or null if not specified
@@ -42,4 +44,9 @@ public interface EdmParameter extends EdmElement, EdmMappable {
    * @return the scale as an Integer or null if not specified
    */
   Integer getScale();
+
+  /**
+   * @return a non-negative integer or the special value <tt>variable</tt>
+   */
+  SRID getSrid();
 }

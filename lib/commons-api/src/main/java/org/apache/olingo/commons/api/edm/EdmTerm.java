@@ -18,10 +18,34 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import java.util.List;
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 /**
  * An {@link EdmTerm} defines a term in a vocabulary.
  */
-public interface EdmTerm extends EdmNamed {
+public interface EdmTerm extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
+
+  /**
+   * @return type of value returned by the expression contained in an annotation using this term
+   */
+  EdmType getType();
+
+  FullQualifiedName getFullQualifiedName();
+
+  /**
+   * When applying a term with a base term,the base term MUST also be applied with the same qualifier, and so on until a
+   * term without a base term is reached.
+   *
+   * @return the base term if found or null otherwise
+   */
+  EdmTerm getBaseTerm();
+
+  /**
+   * @return list of CSDL element that this term can be applied to; if no value is supplied, the term is not restricted
+   * in its application.
+   */
+  List<Class<?>> getAppliesTo();
 
   /**
    * @return true if nullable or null if not specified
@@ -44,7 +68,13 @@ public interface EdmTerm extends EdmNamed {
   Integer getScale();
 
   /**
+   * @return a non-negative integer or the special value <tt>variable</tt>
+   */
+  SRID getSrid();
+
+  /**
    * @return the default value as a String or null if not specified
    */
   String getDefaultValue();
+
 }

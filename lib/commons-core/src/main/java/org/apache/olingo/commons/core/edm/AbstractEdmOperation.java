@@ -49,6 +49,7 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
           final Edm edm,
           final FullQualifiedName fqn,
           final EdmTypeKind kind) {
+
     super(edm, fqn, kind);
   }
 
@@ -90,8 +91,7 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
   public EdmEntitySet getReturnedEntitySet(final EdmEntitySet bindingParameterEntitySet) {
     EdmEntitySet returnedEntitySet = null;
     if (bindingParameterEntitySet != null && entitySetPath != null) {
-      final EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.
-              getRelatedBindingTarget(entitySetPath);
+      final EdmBindingTarget relatedBindingTarget = bindingParameterEntitySet.getRelatedBindingTarget(entitySetPath);
       if (relatedBindingTarget == null) {
         throw new EdmException("Cannot find entity set with path: " + entitySetPath);
       }

@@ -18,30 +18,27 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
 
+@JsonDeserialize(using = FunctionImportDeserializer.class)
 public class FunctionImportImpl implements FunctionImport {
 
   private static final long serialVersionUID = 3023813358471000019L;
 
-  @JsonProperty(value = "Name", required = true)
   private String name;
 
-  @JsonProperty(value = "Function", required = true)
   private String function;
 
-  @JsonProperty(value = "EntitySet")
   private String entitySet;
 
-  @JsonProperty(value = "IncludeInServiceDocument")
   private boolean includeInServiceDocument = false;
 
-  @JsonProperty(value = "Annotation")
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public String getName() {
@@ -81,13 +78,8 @@ public class FunctionImportImpl implements FunctionImport {
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  @JsonIgnore
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProperty> {
 
@@ -74,7 +75,10 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
                     setCollation(jp.nextTextValue());
           }
         } else if ("SRID".equals(jp.getCurrentName())) {
-          property.setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            property.setSrid(SRID.valueOf(srid));
+          }
         } else if ("ConcurrencyMode".equals(jp.getCurrentName())) {
           if (property instanceof org.apache.olingo.client.core.edm.xml.v3.PropertyImpl) {
             ((org.apache.olingo.client.core.edm.xml.v3.PropertyImpl) property).
@@ -116,8 +120,9 @@ public class PropertyDeserializer extends AbstractEdmDeserializer<AbstractProper
                     setFcKeepInContent(BooleanUtils.toBoolean(jp.nextTextValue()));
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.edm.xml.v4.PropertyImpl) property).
-                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          jp.nextToken();
+          ((org.apache.olingo.client.core.edm.xml.v4.PropertyImpl) property).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

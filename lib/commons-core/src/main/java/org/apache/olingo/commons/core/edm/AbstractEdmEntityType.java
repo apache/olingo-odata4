@@ -120,4 +120,9 @@ public abstract class AbstractEdmEntityType extends AbstractEdmStructuredType im
   protected void checkBaseType() {
     //Current Client implementation doesn`t need this so I implemented an empty body here.
   }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EntityType;
+  }
 }

@@ -18,34 +18,44 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import java.util.Collections;
+import java.util.List;
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
+import org.apache.olingo.client.api.edm.xml.v4.Property;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty {
 
+  private final FullQualifiedName structuredTypeName;
+
   private final CommonProperty property;
 
-  private final EdmTypeInfo edmTypeInfo;
+  private final EdmTypeInfo typeInfo;
 
-  public EdmPropertyImpl(final Edm edm, final CommonProperty property) {
+  private EdmAnnotationHelper helper;
+
+  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final CommonProperty property) {
     super(edm, property.getName());
+
+    this.structuredTypeName = structuredTypeName;
     this.property = property;
-    this.edmTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType()).build();
+    if (property instanceof Property) {
+      this.helper = new EdmAnnotationHelperImpl(edm, (Property) property);
+    }
   }
 
   @Override
-  protected FullQualifiedName getTypeFQN() {
-    return edmTypeInfo.getFullQualifiedName();
-  }
-
-  @Override
-  public boolean isCollection() {
-    return edmTypeInfo.isCollection();
+  protected EdmTypeInfo getTypeInfo() {
+    return typeInfo;
   }
 
   @Override
@@ -86,6 +96,23 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
   @Override
   public String getDefaultValue() {
     return property.getDefaultValue();
+  }
+
+  @Override
+  public SRID getSrid() {
+    return (property instanceof Property)
+            ? ((Property) property).getSrid()
+            : null;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return structuredTypeName;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper == null ? Collections.<EdmAnnotation>emptyList() : helper.getAnnotations();
   }
 
 }

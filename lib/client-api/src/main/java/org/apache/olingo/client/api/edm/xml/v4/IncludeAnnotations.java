@@ -22,7 +22,7 @@ public interface IncludeAnnotations {
 
   String getQualifier();
 
-  String getTargeyNamespace();
+  String getTargetNamespace();
 
   String getTermNamespace();
 }

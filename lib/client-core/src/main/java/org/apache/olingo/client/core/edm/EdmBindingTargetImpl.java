@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.BindingTarget;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmException;
@@ -32,18 +33,23 @@ import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmNavigationPropertyBindingImpl;
 
 public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
 
   private final BindingTarget target;
+
+  private final EdmAnnotationHelper helper;
+
   private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
 
   public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container,
-      final String name, final FullQualifiedName type, final BindingTarget target) {
+          final String name, final FullQualifiedName type, final BindingTarget target) {
 
     super(edm, container, name, type);
     this.target = target;
+    this.helper = new EdmAnnotationHelperImpl(edm, target);
   }
 
   @Override
@@ -53,8 +59,8 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
     final List<? extends NavigationPropertyBinding> navigationPropertyBindings = target.getNavigationPropertyBindings();
     boolean found = false;
     for (final Iterator<? extends NavigationPropertyBinding> itor = navigationPropertyBindings.iterator(); itor
-        .hasNext()
-        && !found;) {
+            .hasNext()
+            && !found;) {
 
       final NavigationPropertyBinding binding = itor.next();
       if (binding.getPath().equals(path)) {
@@ -93,6 +99,11 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
       }
     }
     return navigationPropertyBindings;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
   }
 
 }

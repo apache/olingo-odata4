@@ -20,6 +20,7 @@ package org.apache.olingo.commons.api.edm;
 
 import java.io.InputStream;
 import java.util.List;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 /**
  * This interface gives access to the metadata of a service, the calculated Data Service Version and an info list of all
@@ -35,7 +36,7 @@ public interface EdmServiceMetadata {
   /**
    * @return <b>String</b> data service version of this service
    */
-  String getDataServiceVersion();
+  ODataServiceVersion getDataServiceVersion();
 
   /**
    * @return a list of {@link EdmEntitySetInfo} objects inside the data model

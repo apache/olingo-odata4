@@ -28,23 +28,23 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class RecordDeserializer extends AbstractEdmDeserializer<Record> {
+public class RecordDeserializer extends AbstractEdmDeserializer<RecordImpl> {
 
   @Override
-  protected Record doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected RecordImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final Record record = new Record();
+    final RecordImpl record = new RecordImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
-        if ("Tyoe".equals(jp.getCurrentName())) {
+        if ("Type".equals(jp.getCurrentName())) {
           record.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          record.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          record.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else {
-          record.getPropertyValues().add(jp.readValueAs(PropertyValue.class));
+          record.getPropertyValues().add(jp.readValueAs(PropertyValueImpl.class));
         }
       }
     }

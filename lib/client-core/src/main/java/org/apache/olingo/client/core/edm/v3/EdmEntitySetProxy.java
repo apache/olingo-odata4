@@ -29,6 +29,7 @@ import org.apache.olingo.client.api.edm.xml.v3.AssociationSet;
 import org.apache.olingo.client.core.edm.xml.v3.EntityContainerImpl;
 import org.apache.olingo.client.core.edm.xml.v3.SchemaImpl;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -111,6 +112,16 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
   public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
     // There are no navigation property bindings in V3 so we will deliver an empty list
     return Collections.emptyList();
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EntitySet;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return Collections.<EdmAnnotation>emptyList();
   }
 
 }

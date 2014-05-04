@@ -34,7 +34,7 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
   private String qualifier;
 
   @JsonProperty(value = "TargetNamespace")
-  private String targeyNamespace;
+  private String targetNamespace;
 
   @Override
   public String getTermNamespace() {
@@ -55,12 +55,12 @@ public class IncludeAnnotationsImpl extends AbstractEdmItem implements IncludeAn
   }
 
   @Override
-  public String getTargeyNamespace() {
-    return targeyNamespace;
+  public String getTargetNamespace() {
+    return targetNamespace;
   }
 
   public void setTargeyNamespace(final String targeyNamespace) {
-    this.targeyNamespace = targeyNamespace;
+    this.targetNamespace = targeyNamespace;
   }
 
 }

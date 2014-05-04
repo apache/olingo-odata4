@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.edm.provider;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -57,4 +58,14 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
     return functionImport.isIncludeInServiceDocument();
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.FunctionImport;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

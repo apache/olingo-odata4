@@ -33,15 +33,16 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 class JSONGeoValueSerializer {
 
-  private void srid(final JsonGenerator jgen, final Integer srid) throws IOException {
+  private void srid(final JsonGenerator jgen, final SRID srid) throws IOException {
     jgen.writeObjectFieldStart(Constants.JSON_CRS);
     jgen.writeStringField(Constants.ATTR_TYPE, Constants.JSON_NAME);
     jgen.writeObjectFieldStart(Constants.PROPERTIES);
-    jgen.writeStringField(Constants.JSON_NAME, "EPSG:" + srid);
+    jgen.writeStringField(Constants.JSON_NAME, "EPSG:" + srid.toString());
     jgen.writeEndObject();
     jgen.writeEndObject();
   }
@@ -175,7 +176,7 @@ class JSONGeoValueSerializer {
       default:
     }
 
-    if (value.getSrid() != null) {
+    if (value.getSrid() != null && value.getSrid().isNotDefault()) {
       srid(jgen, value.getSrid());
     }
   }

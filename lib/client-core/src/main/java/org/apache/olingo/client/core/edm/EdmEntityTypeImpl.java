@@ -27,21 +27,25 @@ import org.apache.olingo.client.api.edm.xml.EntityType;
 import org.apache.olingo.client.api.edm.xml.PropertyRef;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 
 public class EdmEntityTypeImpl extends AbstractEdmEntityType {
 
-  private final EdmStructuredTypeHelper helper;
+  private final EdmStructuredTypeHelper typeHelper;
 
-  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn, 
+  private EdmAnnotationHelper annotationHelper;
+
+  public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn,
           final List<? extends Schema> xmlSchemas, final EntityType entityType) {
-    
+
     final FullQualifiedName baseTypeName = entityType.getBaseType() == null
             ? null
             : new EdmTypeInfo.Builder().setTypeExpression(entityType.getBaseType()).build().getFullQualifiedName();
@@ -68,26 +72,36 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
           final List<? extends Schema> xmlSchemas, final EntityType entityType) {
 
     super(edm, fqn, baseTypeName, entityType.isHasStream());
-    this.helper = new EdmStructuredTypeHelperImpl(edm, xmlSchemas, entityType);
+    this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), xmlSchemas, entityType);
+    if (entityType instanceof org.apache.olingo.client.api.edm.xml.v4.EntityType) {
+      this.annotationHelper = new EdmAnnotationHelperImpl(edm,
+              (org.apache.olingo.client.api.edm.xml.v4.EntityType) entityType);
+    }
   }
 
   @Override
   protected Map<String, EdmProperty> getProperties() {
-    return helper.getProperties();
+    return typeHelper.getProperties();
   }
 
   @Override
   protected Map<String, EdmNavigationProperty> getNavigationProperties() {
-    return helper.getNavigationProperties();
+    return typeHelper.getNavigationProperties();
   }
 
   @Override
   public boolean isOpenType() {
-    return helper.isOpenType();
+    return typeHelper.isOpenType();
   }
 
   @Override
   public boolean isAbstract() {
-    return helper.isAbstract();
+    return typeHelper.isAbstract();
   }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return annotationHelper.getAnnotations();
+  }
+
 }

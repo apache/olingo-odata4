@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.EntityType;
@@ -30,16 +29,22 @@ import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
+import org.apache.olingo.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
+import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -92,6 +97,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   public EdmEntityContainer getEntityContainer(final FullQualifiedName name) {
+    getEntityContainers();
     return entityContainerByName.get(name);
   }
 
@@ -209,5 +215,49 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
       }
     }
     return functions;
+  }
+
+  @Override
+  protected List<EdmTerm> createTerms() {
+    final List<EdmTerm> terms = new ArrayList<EdmTerm>();
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final List<Term> providerTerms = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getTerms();
+      if (providerTerms != null) {
+        for (Term term : providerTerms) {
+          terms.add(new EdmTermImpl(edm, term));
+        }
+      }
+    }
+    return terms;
+  }
+
+  @Override
+  protected List<EdmAnnotations> createAnnotationGroups() {
+    final List<EdmAnnotations> annotationGroups = new ArrayList<EdmAnnotations>();
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final List<Annotations> providerAnnotations =
+              ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotationGroups();
+      if (providerAnnotations != null) {
+        for (Annotations annotationGroup : providerAnnotations) {
+          annotationGroups.add(new EdmAnnotationsImpl(edm, this, annotationGroup));
+        }
+      }
+    }
+    return annotationGroups;
+  }
+
+  @Override
+  protected List<EdmAnnotation> createAnnotations() {
+    final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
+    if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+      final List<Annotation> providerAnnotations =
+              ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotations();
+      if (providerAnnotations != null) {
+        for (Annotation annotation : providerAnnotations) {
+          annotations.add(new EdmAnnotationImpl(edm, annotation));
+        }
+      }
+    }
+    return annotations;
   }
 }

@@ -48,8 +48,8 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
   }
 
   @Override
-  public String getDataServiceVersion() {
-    return SERVICE_VERSION.toString();
+  public ODataServiceVersion getDataServiceVersion() {
+    return SERVICE_VERSION;
   }
 
   @Override

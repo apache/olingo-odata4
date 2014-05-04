@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.edm;
 /**
  * A referential constraint of a navigation property.
  */
-public interface EdmReferentialConstraint {
+public interface EdmReferentialConstraint extends EdmAnnotatable {
 
   /**
    * @return property name of the property inside this entity type or complex type.

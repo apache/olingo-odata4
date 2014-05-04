@@ -186,7 +186,7 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
   @Override
   public String toUriLiteral(final String literal) {
     return literal == null ? null
-           : uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
+            : uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
   }
 
   @Override
@@ -196,16 +196,31 @@ public abstract class AbstractEdmEnumType extends EdmTypeImpl implements EdmEnum
     } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
       return literal;
     } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-               && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+            && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
     } else {
       throw new EdmPrimitiveTypeException("EdmPrimitiveTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal)");
     }
   }
-  
+
   @Override
   public boolean isFlags() {
     return isFlags;
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EnumType;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return null;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return getFullQualifiedName();
   }
 
 }

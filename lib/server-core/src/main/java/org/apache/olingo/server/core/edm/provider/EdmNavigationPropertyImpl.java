@@ -22,21 +22,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
-import org.apache.olingo.commons.core.edm.EdmReferentialConstraintImpl;
 import org.apache.olingo.server.api.edm.provider.NavigationProperty;
 import org.apache.olingo.server.api.edm.provider.ReferentialConstraint;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
+  private final FullQualifiedName structuredTypeName;
+
   private final NavigationProperty navigationProperty;
 
   private List<EdmReferentialConstraint> referentialConstraints;
 
-  public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
+  public EdmNavigationPropertyImpl(
+          final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
+
     super(edm, navigationProperty.getName());
+
+    this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
   }
 
@@ -85,11 +91,22 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       referentialConstraints = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
-          referentialConstraints.add(new EdmReferentialConstraintImpl(constraint.getProperty(), constraint
-              .getReferencedProperty()));
+          referentialConstraints.add(
+                  new EdmReferentialConstraintImpl(constraint.getProperty(), constraint.getReferencedProperty()));
         }
       }
     }
     return referentialConstraints;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return structuredTypeName;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

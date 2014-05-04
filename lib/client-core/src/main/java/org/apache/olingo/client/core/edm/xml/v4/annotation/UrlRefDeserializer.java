@@ -27,13 +27,13 @@ import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRef> {
+public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRefImpl> {
 
   @Override
-  protected UrlRef doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected UrlRefImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final UrlRef urlref = new UrlRef();
+    final UrlRefImpl urlref = new UrlRefImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -41,7 +41,7 @@ public class UrlRefDeserializer extends AbstractEdmDeserializer<UrlRef> {
         if (isAnnotationConstExprConstruct(jp)) {
           urlref.setValue(parseAnnotationConstExprConstruct(jp));
         } else {
-          urlref.setValue(jp.readValueAs( DynExprConstructImpl.class));
+          urlref.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

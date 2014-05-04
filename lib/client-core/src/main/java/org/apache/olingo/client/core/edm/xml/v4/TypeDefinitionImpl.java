@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 @JsonDeserialize(using = TypeDefinitionDeserializer.class)
 public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinition {
@@ -44,7 +45,7 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
 
   private boolean unicode = true;
 
-  private String srid;
+  private SRID srid;
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -103,11 +104,11 @@ public class TypeDefinitionImpl extends AbstractEdmItem implements TypeDefinitio
   }
 
   @Override
-  public String getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 
-  public void setSrid(final String srid) {
+  public void setSrid(final SRID srid) {
     this.srid = srid;
   }
 

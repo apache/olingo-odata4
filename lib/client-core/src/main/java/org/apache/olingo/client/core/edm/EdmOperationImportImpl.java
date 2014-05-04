@@ -18,7 +18,10 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.Collections;
+import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperationImport;
@@ -31,4 +34,8 @@ public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport 
     super(edm, container, name, entitySet == null ? null : new Target.Builder(entitySet, container).build());
   }
 
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return Collections.<EdmAnnotation>emptyList();
+  }
 }

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 public interface ReturnType {
 
   Integer getMaxLength();
@@ -26,7 +28,7 @@ public interface ReturnType {
 
   Integer getScale();
 
-  String getSrid();
+  SRID getSrid();
 
   String getType();
 

@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.edm.xml.OnDelete;
 import java.util.List;
 import org.apache.olingo.client.api.edm.xml.CommonNavigationProperty;
 
-public interface NavigationProperty extends CommonNavigationProperty, AnnotatedEdmItem {
+public interface NavigationProperty extends CommonNavigationProperty, Annotatable {
 
   String getType();
 

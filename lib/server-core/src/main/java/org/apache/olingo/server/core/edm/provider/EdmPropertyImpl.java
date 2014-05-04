@@ -18,25 +18,36 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.server.api.edm.provider.Property;
 
 public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty {
 
+  private final FullQualifiedName structuredTypeName;
+
   private final Property property;
 
-  public EdmPropertyImpl(final Edm edm, final Property property) {
+  private final EdmTypeInfo typeInfo;
+
+  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {
     super(edm, property.getName());
+
+    this.structuredTypeName = structuredTypeName;
     this.property = property;
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
   }
 
   @Override
-  protected FullQualifiedName getTypeFQN() {
-    return property.getType();
+  public EdmTypeInfo getTypeInfo() {
+    return typeInfo;
   }
 
   @Override
@@ -75,6 +86,11 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
   }
 
   @Override
+  public SRID getSrid() {
+    return null; // TODO: provide implementation  
+  }
+
+  @Override
   public Boolean isUnicode() {
     return property.isUnicode();
   }
@@ -84,4 +100,14 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
     return property.getDefaultValue();
   }
 
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return structuredTypeName;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

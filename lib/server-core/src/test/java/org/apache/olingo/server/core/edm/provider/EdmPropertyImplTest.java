@@ -47,7 +47,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(mock(EdmProvider.class));
     Property propertyProvider = new Property();
     propertyProvider.setType(EdmPrimitiveTypeKind.Binary.getFullQualifiedName());
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertTrue(property.isPrimitive());
     final EdmType type = property.getType();
     assertEquals(EdmTypeKind.PRIMITIVE, type.getKind());
@@ -64,7 +64,7 @@ public class EdmPropertyImplTest {
     when(provider.getComplexType(complexTypeName)).thenReturn(complexTypeProvider);
     Property propertyProvider = new Property();
     propertyProvider.setType(complexTypeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, complexTypeName, propertyProvider);
     assertFalse(property.isCollection());
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
@@ -82,7 +82,7 @@ public class EdmPropertyImplTest {
     when(provider.getEnumType(enumTypeName)).thenReturn(enumTypeProvider);
     Property propertyProvider = new Property();
     propertyProvider.setType(enumTypeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertFalse(property.isCollection());
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
@@ -100,7 +100,7 @@ public class EdmPropertyImplTest {
     when(provider.getTypeDefinition(typeName)).thenReturn(typeProvider);
     Property propertyProvider = new Property();
     propertyProvider.setType(typeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
     assertEquals(EdmTypeKind.DEFINITION, type.getKind());
@@ -114,7 +114,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final Property propertyProvider = new Property()
         .setType(new FullQualifiedName("ns", "wrong"));
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     property.getType();
     fail();
   }
@@ -125,7 +125,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final Property propertyProvider = new Property()
         .setType(new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, "type"));
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     property.getType();
     fail();
   }
@@ -141,7 +141,7 @@ public class EdmPropertyImplTest {
     propertyProvider.setUnicode(true);
     propertyProvider.setNullable(false);
     propertyProvider.setDefaultValue("x");
-    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertTrue(property.isPrimitive());
     assertNull(property.getMapping());
     assertNull(property.getMimeType());

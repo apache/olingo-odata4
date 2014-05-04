@@ -24,18 +24,18 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
-public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
+public class IsOfDeserializer extends AbstractEdmDeserializer<IsOfImpl> {
 
   @Override
-  protected IsOf doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected IsOfImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final IsOf isof = new IsOf();
+    final IsOfImpl isof = new IsOfImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -43,17 +43,22 @@ public class IsOfDeserializer extends AbstractEdmDeserializer<IsOf> {
         if ("Type".equals(jp.getCurrentName())) {
           isof.setType(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          isof.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          isof.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else if ("MaxLength".equals(jp.getCurrentName())) {
-          isof.setMaxLength(jp.nextTextValue());
+          final String maxLenght = jp.nextTextValue();
+          isof.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
         } else if ("Precision".equals(jp.getCurrentName())) {
-          isof.setPrecision(BigInteger.valueOf(jp.nextLongValue(0L)));
+          isof.setPrecision(Integer.valueOf(jp.nextTextValue()));
         } else if ("Scale".equals(jp.getCurrentName())) {
-          isof.setScale(BigInteger.valueOf(jp.nextLongValue(0L)));
+          final String scale = jp.nextTextValue();
+          isof.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          isof.setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            isof.setSrid(SRID.valueOf(srid));
+          }
         } else {
-          isof.setValue(jp.readValueAs(DynExprConstructImpl.class));
+          isof.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

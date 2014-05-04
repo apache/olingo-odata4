@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 /**
  * A CSDL Property element.
  * <br/>
  * EdmProperty defines a simple type or a complex type.
  */
-public interface EdmProperty extends EdmElement, EdmMappable {
+public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarget, EdmAnnotatable {
 
   /**
    * Gets the related MIME type for the property.
@@ -58,6 +60,11 @@ public interface EdmProperty extends EdmElement, EdmMappable {
    * @return the scale as an Integer or null if not specified
    */
   Integer getScale();
+
+  /**
+   * @return a non-negative integer or the special value <tt>variable</tt>
+   */
+  SRID getSrid();
 
   /**
    * @return true if unicode or null if not specified

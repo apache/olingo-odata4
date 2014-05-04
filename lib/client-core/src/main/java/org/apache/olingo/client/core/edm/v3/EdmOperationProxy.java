@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.client.core.edm.v3;
 
+import org.apache.olingo.client.core.edm.xml.v3.ReturnTypeProxy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
@@ -27,6 +29,7 @@ import org.apache.olingo.client.api.edm.xml.v3.Parameter;
 import org.apache.olingo.client.core.edm.EdmParameterImpl;
 import org.apache.olingo.client.core.edm.EdmReturnTypeImpl;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -40,7 +43,7 @@ public class EdmOperationProxy extends AbstractEdmOperation {
     final List<Parameter> parameters = instance.functionImport.getParameters();
     final List<EdmParameter> _parameters = new ArrayList<EdmParameter>(parameters.size());
     for (CommonParameter parameter : parameters) {
-      _parameters.add(EdmParameterImpl.getInstance(instance.edm, parameter));
+      _parameters.add(new EdmParameterImpl(instance.edm, parameter));
     }
     instance.setParameters(_parameters);
 
@@ -72,6 +75,11 @@ public class EdmOperationProxy extends AbstractEdmOperation {
   public Boolean isBindingParameterTypeCollection() {
     //Not relevant for V3
     return null;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return Collections.<EdmAnnotation>emptyList();
   }
 
 }

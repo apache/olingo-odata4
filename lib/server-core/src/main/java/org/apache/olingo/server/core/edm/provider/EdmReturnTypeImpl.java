@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;
 import org.apache.olingo.server.api.edm.provider.ReturnType;
 
@@ -56,4 +57,8 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
     return returnType.getScale();
   }
 
+  @Override
+  public SRID getSrid() {
+    return null; // TODO: provide implementation  
+  }
 }

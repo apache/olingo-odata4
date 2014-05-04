@@ -22,12 +22,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
@@ -36,8 +39,6 @@ public abstract class AbstractEdmSchema implements EdmSchema {
   protected final String namespace;
 
   private final String alias;
-
-  private List<EdmTypeDefinition> typeDefinitions;
 
   private List<EdmEnumType> enumTypes;
 
@@ -49,6 +50,14 @@ public abstract class AbstractEdmSchema implements EdmSchema {
 
   private List<EdmFunction> functions;
 
+  private List<EdmTypeDefinition> typeDefinitions;
+
+  private List<EdmTerm> terms;
+
+  private List<EdmAnnotations> annotationGroups;
+
+  private List<EdmAnnotation> annotations;
+
   private EdmEntityContainer entityContainer;
 
   public AbstractEdmSchema(String namespace, String alias) {
@@ -57,8 +66,6 @@ public abstract class AbstractEdmSchema implements EdmSchema {
   }
 
   protected abstract EdmEntityContainer createEntityContainer();
-
-  protected abstract List<EdmTypeDefinition> createTypeDefinitions();
 
   protected abstract List<EdmEnumType> createEnumTypes();
 
@@ -70,13 +77,13 @@ public abstract class AbstractEdmSchema implements EdmSchema {
 
   protected abstract List<EdmFunction> createFunctions();
 
-  @Override
-  public List<EdmTypeDefinition> getTypeDefinitions() {
-    if (typeDefinitions == null) {
-      typeDefinitions = createTypeDefinitions();
-    }
-    return typeDefinitions;
-  }
+  protected abstract List<EdmTypeDefinition> createTypeDefinitions();
+
+  protected abstract List<EdmTerm> createTerms();
+
+  protected abstract List<EdmAnnotations> createAnnotationGroups();
+
+  protected abstract List<EdmAnnotation> createAnnotations();
 
   @Override
   public List<EdmEnumType> getEnumTypes() {
@@ -116,6 +123,38 @@ public abstract class AbstractEdmSchema implements EdmSchema {
       functions = createFunctions();
     }
     return functions;
+  }
+
+  @Override
+  public List<EdmTypeDefinition> getTypeDefinitions() {
+    if (typeDefinitions == null) {
+      typeDefinitions = createTypeDefinitions();
+    }
+    return typeDefinitions;
+  }
+
+  @Override
+  public List<EdmTerm> getTerms() {
+    if (terms == null) {
+      terms = createTerms();
+    }
+    return terms;
+  }
+
+  @Override
+  public List<EdmAnnotations> getAnnotationGroups() {
+    if (annotationGroups == null) {
+      annotationGroups = createAnnotationGroups();
+    }
+    return annotationGroups;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    if (annotations == null) {
+      annotations = createAnnotations();
+    }
+    return annotations;
   }
 
   @Override

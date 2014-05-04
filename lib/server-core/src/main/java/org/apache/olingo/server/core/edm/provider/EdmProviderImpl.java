@@ -21,11 +21,14 @@ package org.apache.olingo.server.core.edm.provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -34,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdm;
@@ -129,7 +133,7 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   public EdmAction createBoundAction(final FullQualifiedName actionName,
-      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
+          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     try {
       List<Action> actions = actionsMap.get(actionName);
@@ -147,7 +151,7 @@ public class EdmProviderImpl extends AbstractEdm {
           final List<Parameter> parameters = action.getParameters();
           final Parameter parameter = parameters.get(0);
           if (bindingParameterTypeName.equals(parameter.getType())
-              && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
+                  && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
             return EdmActionImpl.getInstance(this, actionName, action);
           }
@@ -162,8 +166,8 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   public EdmFunction createBoundFunction(final FullQualifiedName functionName,
-      final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-      final List<String> parameterNames) {
+          final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
+          final List<String> parameterNames) {
 
     try {
       List<Function> functions = functionsMap.get(functionName);
@@ -175,8 +179,8 @@ public class EdmProviderImpl extends AbstractEdm {
           functionsMap.put(functionName, functions);
         }
       }
-      final List<String> parameterNamesCopy =
-          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
+      final List<String> parameterNamesCopy
+              = parameterNames == null ? Collections.<String>emptyList() : parameterNames;
       for (Function function : functions) {
         if (function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();
@@ -185,7 +189,7 @@ public class EdmProviderImpl extends AbstractEdm {
           }
           final Parameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getType())
-              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
+                  && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
 
             if (parameterNamesCopy.size() == providerParameters.size() - 1) {
               final List<String> providerParameterNames = new ArrayList<String>();
@@ -289,8 +293,8 @@ public class EdmProviderImpl extends AbstractEdm {
         }
       }
 
-      final List<String> parameterNamesCopy =
-          parameterNames == null ? Collections.<String> emptyList() : parameterNames;
+      final List<String> parameterNamesCopy
+              = parameterNames == null ? Collections.<String>emptyList() : parameterNames;
       for (Function function : functions) {
         if (!function.isBound()) {
           List<Parameter> providerParameters = function.getParameters();
@@ -316,15 +320,33 @@ public class EdmProviderImpl extends AbstractEdm {
   }
 
   @Override
-  protected List<EdmSchema> createSchemas() {
+  protected Map<String, EdmSchema> createSchemas() {
     try {
-      List<EdmSchema> schemas = new ArrayList<EdmSchema>();
+      final Map<String, EdmSchema> _schemas = new LinkedHashMap<String, EdmSchema>();
       for (Schema schema : provider.getSchemas()) {
-        schemas.add(new EdmSchemaImpl(this, provider, schema));
+        _schemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
       }
-      return schemas;
+      return _schemas;
     } catch (ODataException e) {
       throw new EdmException(e);
     }
+  }
+
+  @Override
+  protected EdmTerm createTerm(final FullQualifiedName termName) {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
+    // TODO: implement
+    return null;
   }
 }

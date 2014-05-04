@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.olingo.client.api.edm.xml.v4.ReturnType;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 @JsonDeserialize(using = ReturnTypeDeserializer.class)
 public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
@@ -38,7 +39,7 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
 
   private Integer scale;
 
-  private String srid;
+  private SRID srid;
 
   @Override
   public String getType() {
@@ -86,11 +87,11 @@ public class ReturnTypeImpl extends AbstractEdmItem implements ReturnType {
   }
 
   @Override
-  public String getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 
-  public void setSrid(final String srid) {
+  public void setSrid(final SRID srid) {
     this.srid = srid;
   }
 

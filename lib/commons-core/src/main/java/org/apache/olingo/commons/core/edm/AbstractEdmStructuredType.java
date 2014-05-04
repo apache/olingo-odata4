@@ -139,4 +139,14 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
     return true;
   }
 
+  @Override
+  public String getAnnotationsTargetPath() {
+    return null;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return getFullQualifiedName();
+  }
+
 }

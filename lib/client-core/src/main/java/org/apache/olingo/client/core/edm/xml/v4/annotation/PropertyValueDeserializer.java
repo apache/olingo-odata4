@@ -28,13 +28,13 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyValue> {
+public class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyValueImpl> {
 
   @Override
-  protected PropertyValue doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected PropertyValueImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final PropertyValue propValue = new PropertyValue();
+    final PropertyValueImpl propValue = new PropertyValueImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -42,11 +42,11 @@ public class PropertyValueDeserializer extends AbstractEdmDeserializer<PropertyV
         if ("Property".equals(jp.getCurrentName())) {
           propValue.setProperty(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          propValue.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          propValue.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else if (isAnnotationConstExprConstruct(jp)) {
           propValue.setValue(parseAnnotationConstExprConstruct(jp));
         } else {
-          propValue.setValue(jp.readValueAs(DynExprConstructImpl.class));
+          propValue.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

@@ -22,53 +22,31 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public abstract class AbstractEdmParameter extends EdmElementImpl implements EdmParameter {
 
-  private final FullQualifiedName paramType;
+  private final EdmTypeInfo typeInfo;
 
   private EdmType typeImpl;
 
   public AbstractEdmParameter(final Edm edm, final String name, final FullQualifiedName paramType) {
     super(edm, name);
-    this.paramType = paramType;
+    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(paramType.toString()).build();
   }
 
   @Override
   public EdmType getType() {
     if (typeImpl == null) {
-      if (EdmPrimitiveType.EDM_NAMESPACE.equals(paramType.getNamespace())) {
-        try {
-          typeImpl = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(paramType.getName()));
-        } catch (IllegalArgumentException e) {
-          throw new EdmException("Cannot find type with name: " + paramType, e);
-        }
-      } else {
-        typeImpl = edm.getComplexType(paramType);
-        if (typeImpl == null) {
-          typeImpl = edm.getEntityType(paramType);
-          if (typeImpl == null) {
-            typeImpl = edm.getEnumType(paramType);
-            if (typeImpl == null) {
-              typeImpl = edm.getTypeDefinition(paramType);
-              if (typeImpl == null) {
-                throw new EdmException("Cannot find type with name: " + paramType);
-              }
-            }
-          }
-        }
+      typeImpl = typeInfo.getType();
+      if (typeImpl == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
       }
     }
+
     return typeImpl;
   }
-
-  @Override
-  public abstract boolean isCollection();
 
   @Override
   public abstract EdmMapping getMapping();

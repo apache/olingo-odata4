@@ -21,13 +21,13 @@ package org.apache.olingo.commons.api.edm;
 /**
  * An EdmOperationImport can be an EdmActionImport or an EdmFunctionImport.
  */
-public interface EdmOperationImport extends EdmNamed {
+public interface EdmOperationImport extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
 
   /**
    * @return {@link FullQualifiedName} of this OperationImport
    */
   FullQualifiedName getFullQualifiedName();
-  
+
   /**
    * @return {@link EdmEntitySet} of this OperationImport
    */

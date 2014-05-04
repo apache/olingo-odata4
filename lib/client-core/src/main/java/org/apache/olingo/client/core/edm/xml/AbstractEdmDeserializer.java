@@ -27,7 +27,7 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.v4.ReturnTypeImpl;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
+import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
@@ -35,12 +35,12 @@ public abstract class AbstractEdmDeserializer<T> extends JsonDeserializer<T> {
   protected ODataServiceVersion version;
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
-    return ConstExprConstructImpl.Type.fromString(jp.getCurrentName()) != null;
+    return ConstantAnnotationExpressionImpl.Type.fromString(jp.getCurrentName()) != null;
   }
 
-  protected ConstExprConstructImpl parseAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
-    final ConstExprConstructImpl constExpr = new ConstExprConstructImpl();
-    constExpr.setType(ConstExprConstructImpl.Type.fromString(jp.getCurrentName()));
+  protected ConstantAnnotationExpressionImpl parseAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
+    final ConstantAnnotationExpressionImpl constExpr = new ConstantAnnotationExpressionImpl();
+    constExpr.setType(ConstantAnnotationExpressionImpl.Type.fromString(jp.getCurrentName()));
     constExpr.setValue(jp.nextTextValue());
     return constExpr;
   }

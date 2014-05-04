@@ -28,13 +28,13 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class ApplyDeserializer extends AbstractEdmDeserializer<Apply> {
+public class ApplyDeserializer extends AbstractEdmDeserializer<ApplyImpl> {
 
   @Override
-  protected Apply doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected ApplyImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final Apply apply = new Apply();
+    final ApplyImpl apply = new ApplyImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -42,11 +42,11 @@ public class ApplyDeserializer extends AbstractEdmDeserializer<Apply> {
         if ("Function".equals(jp.getCurrentName())) {
           apply.setFunction(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          apply.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          apply.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else if (isAnnotationConstExprConstruct(jp)) {
           apply.getParameters().add(parseAnnotationConstExprConstruct(jp));
         } else {
-          apply.getParameters().add(jp.readValueAs(DynExprConstructImpl.class));
+          apply.getParameters().add(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

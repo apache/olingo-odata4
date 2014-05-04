@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 import org.apache.olingo.server.api.edm.provider.NavigationProperty;
 import org.apache.olingo.server.api.edm.provider.Property;
@@ -33,14 +34,19 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
 
   private final Edm edm;
 
+  private final FullQualifiedName structuredTypeName;
+
   private final StructuredType structuredType;
 
   private Map<String, EdmProperty> properties;
 
   private Map<String, EdmNavigationProperty> navigationProperties;
 
-  public EdmStructuredTypeHelperImpl(final Edm edm, final StructuredType structuredType) {
+  public EdmStructuredTypeHelperImpl(
+          final Edm edm, final FullQualifiedName structuredTypeName, final StructuredType structuredType) {
+
     this.edm = edm;
+    this.structuredTypeName = structuredTypeName;
     this.structuredType = structuredType;
   }
 
@@ -50,7 +56,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
       properties = new LinkedHashMap<String, EdmProperty>();
       if (structuredType.getProperties() != null) {
         for (Property property : structuredType.getProperties()) {
-          properties.put(property.getName(), new EdmPropertyImpl(edm, property));
+          properties.put(property.getName(), new EdmPropertyImpl(edm, structuredTypeName, property));
         }
       }
     }
@@ -64,7 +70,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
       if (structuredType.getNavigationProperties() != null) {
         for (NavigationProperty navigationProperty : structuredType.getNavigationProperties()) {
           navigationProperties.put(navigationProperty.getName(),
-              new EdmNavigationPropertyImpl(edm, navigationProperty));
+                  new EdmNavigationPropertyImpl(edm, structuredTypeName, navigationProperty));
         }
       }
     }

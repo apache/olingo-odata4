@@ -24,15 +24,19 @@ import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.ComplexType;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmComplexType;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
 
 public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 
-  private final EdmStructuredTypeHelper helper;
+  private final EdmStructuredTypeHelper typeHelper;
+
+  private EdmAnnotationHelper annotationHelper;
 
   public static EdmComplexTypeImpl getInstance(final Edm edm, final FullQualifiedName fqn,
           final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
@@ -53,26 +57,36 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
           final List<? extends Schema> xmlSchemas, final ComplexType complexType) {
 
     super(edm, fqn, baseTypeName);
-    this.helper = new EdmStructuredTypeHelperImpl(edm, xmlSchemas, complexType);
+    this.typeHelper = new EdmStructuredTypeHelperImpl(edm, getFullQualifiedName(), xmlSchemas, complexType);
+    if (complexType instanceof org.apache.olingo.client.api.edm.xml.v4.ComplexType) {
+      this.annotationHelper = new EdmAnnotationHelperImpl(edm,
+              (org.apache.olingo.client.api.edm.xml.v4.ComplexType) complexType);
+    }
   }
 
   @Override
   protected Map<String, EdmProperty> getProperties() {
-    return helper.getProperties();
+    return typeHelper.getProperties();
   }
 
   @Override
   protected Map<String, EdmNavigationProperty> getNavigationProperties() {
-    return helper.getNavigationProperties();
+    return typeHelper.getNavigationProperties();
   }
 
   @Override
   public boolean isOpenType() {
-    return helper.isOpenType();
+    return typeHelper.isOpenType();
   }
 
   @Override
   public boolean isAbstract() {
-    return helper.isAbstract();
+    return typeHelper.isAbstract();
   }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return annotationHelper == null ? null : annotationHelper.getAnnotations();
+  }
+
 }

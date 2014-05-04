@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import org.apache.olingo.server.api.edm.provider.EnumMember;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,7 +34,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.edm.provider.EnumMember;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.junit.Test;
 

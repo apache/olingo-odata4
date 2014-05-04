@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.server.api.edm.provider.EntitySet;
@@ -35,5 +37,16 @@ public class EdmEntitySetImpl extends EdmBindingTargetImpl implements EdmEntityS
   @Override
   public boolean isIncludeInServiceDocument() {
     return entitySet.isIncludeInServiceDocument();
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EntitySet;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

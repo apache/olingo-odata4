@@ -32,7 +32,7 @@ public class Polygon extends Geospatial {
 
   final ComposedGeospatial<Point> exterior;
 
-  public Polygon(final Dimension dimension, final Integer srid, 
+  public Polygon(final Dimension dimension, final SRID srid, 
           final List<Point> interior, final List<Point> exterior) {
     
     super(dimension, Type.POLYGON, srid);

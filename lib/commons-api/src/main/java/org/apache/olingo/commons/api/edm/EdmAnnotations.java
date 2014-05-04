@@ -18,7 +18,24 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-//TODO: EDM Annotation Interfaces
+import java.util.List;
+
+/**
+ * This is used to apply a group of annotations to a single model element.
+ */
 public interface EdmAnnotations {
 
+  /**
+   * @return a model element in the entity model to which this annotations is targeted
+   */
+  EdmAnnotationsTarget getTarget();
+
+  /**
+   * @return a string allowing annotation authors a means of conditionally applying an annotation
+   */
+  String getQualifier();
+
+  EdmAnnotation getAnnotation(EdmTerm term);
+
+  List<EdmAnnotation> getAnnotations();
 }

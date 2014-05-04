@@ -171,4 +171,20 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   public FullQualifiedName getParentContainerName() {
     return parentContainerName;
   }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.EntityContainer;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return null;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return getFullQualifiedName();
+  }
+
 }

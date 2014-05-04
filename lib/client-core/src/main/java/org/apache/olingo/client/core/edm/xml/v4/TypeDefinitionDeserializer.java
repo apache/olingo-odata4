@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefinitionImpl> {
 
@@ -53,7 +54,10 @@ public class TypeDefinitionDeserializer extends AbstractEdmDeserializer<TypeDefi
           final String scale = jp.nextTextValue();
           typeDefinition.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          typeDefinition.setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            typeDefinition.setSrid(SRID.valueOf(srid));
+          }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
           typeDefinition.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));

@@ -27,13 +27,13 @@ import java.io.IOException;
 
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class CollectionDeserializer extends AbstractEdmDeserializer<Collection> {
+public class CollectionDeserializer extends AbstractEdmDeserializer<CollectionImpl> {
 
   @Override
-  protected Collection doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected CollectionImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final Collection collection = new Collection();
+    final CollectionImpl collection = new CollectionImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -41,7 +41,7 @@ public class CollectionDeserializer extends AbstractEdmDeserializer<Collection> 
         if (isAnnotationConstExprConstruct(jp)) {
           collection.getItems().add(parseAnnotationConstExprConstruct(jp));
         } else {
-          collection.getItems().add(jp.readValueAs( DynExprConstructImpl.class));
+          collection.getItems().add(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

@@ -57,14 +57,14 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public List<Annotations> getAnnotationsList() {
+  public List<Annotations> getAnnotationGroups() {
     return annotationList;
   }
 
   @Override
-  public Annotations getAnnotationsList(final String target) {
+  public Annotations getAnnotationGroup(final String target) {
     Annotations result = null;
-    for (Annotations annots : getAnnotationsList()) {
+    for (Annotations annots : getAnnotationGroups()) {
       if (target.equals(annots.getTarget())) {
         result = annots;
       }

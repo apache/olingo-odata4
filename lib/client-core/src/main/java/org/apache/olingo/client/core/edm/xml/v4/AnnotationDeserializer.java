@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.v4.annotation.DynExprConstructImpl;
+import org.apache.olingo.client.core.edm.xml.v4.annotation.AbstractDynamicAnnotationExpression;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
 public class AnnotationDeserializer extends AbstractEdmDeserializer<AnnotationImpl> {
@@ -43,12 +43,15 @@ public class AnnotationDeserializer extends AbstractEdmDeserializer<AnnotationIm
           annotation.setTerm(jp.nextTextValue());
         } else if ("Qualifier".equals(jp.getCurrentName())) {
           annotation.setQualifier(jp.nextTextValue());
+        } else if ("Annotation".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          annotation.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else if (isAnnotationConstExprConstruct(jp)) {
           // Constant Expressions
-          annotation.setConstExpr(parseAnnotationConstExprConstruct(jp));
+          annotation.setAnnotationExpression(parseAnnotationConstExprConstruct(jp));
         } else {
           // Dynamic Expressions
-          annotation.setDynExpr(jp.readValueAs(DynExprConstructImpl.class));
+          annotation.setAnnotationExpression(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

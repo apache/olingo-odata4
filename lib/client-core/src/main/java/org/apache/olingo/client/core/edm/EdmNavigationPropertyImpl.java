@@ -24,24 +24,34 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
-import org.apache.olingo.commons.core.edm.EdmReferentialConstraintImpl;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
+
+  private final FullQualifiedName structuredTypeName;
 
   private final NavigationProperty navigationProperty;
 
   private final EdmTypeInfo edmTypeInfo;
 
+  private final EdmAnnotationHelper helper;
+
   private List<EdmReferentialConstraint> referentialConstraints;
 
-  public EdmNavigationPropertyImpl(final Edm edm, final NavigationProperty navigationProperty) {
+  public EdmNavigationPropertyImpl(
+          final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
+
     super(edm, navigationProperty.getName());
+
+    this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
     this.edmTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(navigationProperty.getType()).build();
+    this.helper = new EdmAnnotationHelperImpl(edm, navigationProperty);
   }
 
   @Override
@@ -71,11 +81,9 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
 
   @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
-    final List<? extends ReferentialConstraint> _referentialConstraints =
-            navigationProperty.getReferentialConstraints();
-    for (ReferentialConstraint constraint : _referentialConstraints) {
-      if (constraint.getReferencedProperty().equals(referencedPropertyName)) {
-        return constraint.getProperty();
+    for (EdmReferentialConstraint constraint : getReferentialConstraints()) {
+      if (constraint.getReferencedPropertyName().equals(referencedPropertyName)) {
+        return constraint.getPropertyName();
       }
     }
 
@@ -89,12 +97,21 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       referentialConstraints = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
-          referentialConstraints.add(
-                  new EdmReferentialConstraintImpl(constraint.getProperty(), constraint.getReferencedProperty()));
+          referentialConstraints.add(new EdmReferentialConstraintImpl(edm, constraint));
         }
       }
     }
     return referentialConstraints;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return structuredTypeName;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
   }
 
 }

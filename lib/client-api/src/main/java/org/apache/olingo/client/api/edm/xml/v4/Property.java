@@ -20,6 +20,6 @@ package org.apache.olingo.client.api.edm.xml.v4;
 
 import org.apache.olingo.client.api.edm.xml.CommonProperty;
 
-public interface Property extends CommonProperty, AnnotatedEdmItem {
+public interface Property extends CommonProperty, Annotatable {
 
 }

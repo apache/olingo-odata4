@@ -18,23 +18,21 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import org.apache.olingo.client.api.edm.xml.v4.AnnotatedEdmItem;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.core.edm.xml.AbstractEnumType;
 
-public class EnumTypeImpl extends AbstractEnumType implements AnnotatedEdmItem {
+public class EnumTypeImpl extends AbstractEnumType implements Annotatable {
 
   private static final long serialVersionUID = -3329664331877556957L;
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

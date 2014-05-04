@@ -35,7 +35,7 @@ public class AnnotationsDeserializer extends AbstractEdmDeserializer<Annotations
 
     final AnnotationsImpl annotations = new AnnotationsImpl();
 
-    for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+    for (; jp.getCurrentToken() != null && jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Target".equals(jp.getCurrentName())) {
@@ -44,7 +44,7 @@ public class AnnotationsDeserializer extends AbstractEdmDeserializer<Annotations
           annotations.setQualifier(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          annotations.getAnnotations().add(jp.readValueAs( AnnotationImpl.class));
+          annotations.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

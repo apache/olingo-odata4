@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml.v3;
 
-public interface Parameter extends org.apache.olingo.client.api.edm.xml.CommonParameter {
+import org.apache.olingo.client.api.edm.xml.CommonParameter;
+
+public interface Parameter extends CommonParameter {
 
   ParameterMode getMode();
 }

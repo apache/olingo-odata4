@@ -43,7 +43,7 @@
           <PropertyRef Name="ID"/>
         </Key>
         <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
-        <Property Name="Description" Type="Edm.String" >
+        <Property Name="Description" Type="Edm.String">
           <Annotation Term="Core.IsLanguageDependent"/>
         </Property>
         <Property Name="ReleaseDate" Type="Edm.Date"/>

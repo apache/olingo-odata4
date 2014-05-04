@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -42,7 +43,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   private boolean baseTypeChecked = false;
 
   public static EdmEntityTypeImpl getInstance(final Edm edm, final FullQualifiedName name,
-      final EntityType entityType) {
+          final EntityType entityType) {
 
     final EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, name, entityType);
     return instance;
@@ -51,7 +52,7 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   private EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
     super(edm, name, entityType.getBaseType(), entityType.hasStream());
     this.entityType = entityType;
-    helper = new EdmStructuredTypeHelperImpl(edm, entityType);
+    helper = new EdmStructuredTypeHelperImpl(edm, name, entityType);
   }
 
   @Override
@@ -96,5 +97,11 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
   @Override
   public boolean isAbstract() {
     return helper.isAbstract();
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

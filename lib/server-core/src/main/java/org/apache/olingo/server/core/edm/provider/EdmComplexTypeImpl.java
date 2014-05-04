@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -33,7 +35,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   private final EdmStructuredTypeHelper helper;
 
   public static EdmComplexTypeImpl getInstance(
-      final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+          final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
 
     final EdmComplexTypeImpl instance = new EdmComplexTypeImpl(edm, name, complexType);
     return instance;
@@ -41,7 +43,7 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
 
   private EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
     super(edm, name, complexType.getBaseType());
-    helper = new EdmStructuredTypeHelperImpl(edm, complexType);
+    helper = new EdmStructuredTypeHelperImpl(edm, name, complexType);
   }
 
   @Override
@@ -62,5 +64,11 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   @Override
   public boolean isAbstract() {
     return helper.isAbstract();
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

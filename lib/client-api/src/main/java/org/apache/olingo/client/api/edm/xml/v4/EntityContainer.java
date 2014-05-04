@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml.v4;
 
 import java.util.List;
 
-public interface EntityContainer extends org.apache.olingo.client.api.edm.xml.EntityContainer {
+public interface EntityContainer extends org.apache.olingo.client.api.edm.xml.EntityContainer, Annotatable {
 
   @Override
   EntitySet getEntitySet(String name);

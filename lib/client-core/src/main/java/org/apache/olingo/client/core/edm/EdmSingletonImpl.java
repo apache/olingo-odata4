@@ -32,4 +32,9 @@ public class EdmSingletonImpl extends EdmBindingTargetImpl implements EdmSinglet
     super(edm, container, name, type, singleton);
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.Singleton;
+  }
+
 }

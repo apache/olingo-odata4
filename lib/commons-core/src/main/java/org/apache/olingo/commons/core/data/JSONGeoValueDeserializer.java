@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
@@ -47,7 +48,7 @@ class JSONGeoValueDeserializer {
     this.version = version;
   }
 
-  private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
+  private Point point(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     Point point = null;
 
     if (itor.hasNext()) {
@@ -65,7 +66,7 @@ class JSONGeoValueDeserializer {
     return point;
   }
 
-  private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
+  private MultiPoint multipoint(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     final MultiPoint multiPoint;
 
     if (itor.hasNext()) {
@@ -82,7 +83,7 @@ class JSONGeoValueDeserializer {
     return multiPoint;
   }
 
-  private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final Integer srid) {
+  private LineString lineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     final LineString lineString;
 
     if (itor.hasNext()) {
@@ -100,7 +101,7 @@ class JSONGeoValueDeserializer {
   }
 
   private MultiLineString multiLineString(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final Integer srid) {
+          final SRID srid) {
 
     final MultiLineString multiLineString;
 
@@ -118,9 +119,7 @@ class JSONGeoValueDeserializer {
     return multiLineString;
   }
 
-  private Polygon polygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final Integer srid) {
-
+  private Polygon polygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     List<Point> extPoints = null;
     if (itor.hasNext()) {
       final Iterator<JsonNode> extItor = itor.next().elements();
@@ -148,9 +147,7 @@ class JSONGeoValueDeserializer {
     return new Polygon(GeoUtils.getDimension(type), srid, intPoints, extPoints);
   }
 
-  private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final Integer srid) {
-
+  private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {
     final MultiPolygon multiPolygon;
 
     if (itor.hasNext()) {
@@ -168,7 +165,7 @@ class JSONGeoValueDeserializer {
   }
 
   private GeospatialCollection collection(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type,
-          final Integer srid) {
+          final SRID srid) {
 
     final GeospatialCollection collection;
 
@@ -219,9 +216,9 @@ class JSONGeoValueDeserializer {
             ? node.get(Constants.JSON_COORDINATES).elements()
             : Collections.<JsonNode>emptyList().iterator();
 
-    Integer srid = null;
+    SRID srid = null;
     if (node.has(Constants.JSON_CRS)) {
-      srid = Integer.valueOf(
+      srid = SRID.valueOf(
               node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
     }
 

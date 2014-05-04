@@ -19,20 +19,23 @@
 package org.apache.olingo.client.core.edm.v3;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.client.api.edm.xml.v3.Association;
 import org.apache.olingo.client.api.edm.xml.v3.AssociationEnd;
 import org.apache.olingo.client.api.edm.xml.v3.NavigationProperty;
 import org.apache.olingo.client.api.edm.xml.v3.ReferentialConstraint;
+import org.apache.olingo.client.core.edm.EdmReferentialConstraintImpl;
 import org.apache.olingo.client.core.edm.xml.v3.SchemaImpl;
+import org.apache.olingo.client.core.edm.xml.v4.ReferentialConstraintImpl;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
-import org.apache.olingo.commons.core.edm.EdmReferentialConstraintImpl;
 
 public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
 
@@ -120,7 +123,7 @@ public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
 
   @Override
   public EdmNavigationProperty getPartner() {
-    return partner == null ? this: partner;
+    return partner == null ? this : partner;
   }
 
   @Override
@@ -156,13 +159,24 @@ public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
       referentialConstraints = new ArrayList<EdmReferentialConstraint>();
       if (constraint != null) {
         for (int i = 0; i < constraint.getPrincipal().getPropertyRefs().size(); i++) {
-          referentialConstraints.add(new EdmReferentialConstraintImpl(
-                  constraint.getPrincipal().getPropertyRefs().get(i).getName(),
-                  constraint.getDependent().getPropertyRefs().get(i).getName()));
+          final ReferentialConstraintImpl referentialConstraint = new ReferentialConstraintImpl();
+          referentialConstraint.setProperty(constraint.getPrincipal().getPropertyRefs().get(i).getName());
+          referentialConstraint.setReferencedProperty(constraint.getDependent().getPropertyRefs().get(i).getName());
+          referentialConstraints.add(new EdmReferentialConstraintImpl(edm, referentialConstraint));
         }
       }
     }
     return referentialConstraints;
+  }
+
+  @Override
+  public FullQualifiedName getAnnotationsTargetFQN() {
+    return null;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return Collections.<EdmAnnotation>emptyList();
   }
 
 }

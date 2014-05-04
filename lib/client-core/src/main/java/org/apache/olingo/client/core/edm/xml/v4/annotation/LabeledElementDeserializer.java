@@ -28,13 +28,13 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledElement> {
+public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledElementImpl> {
 
   @Override
-  protected LabeledElement doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected LabeledElementImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final LabeledElement element = new LabeledElement();
+    final LabeledElementImpl element = new LabeledElementImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
@@ -42,9 +42,9 @@ public class LabeledElementDeserializer extends AbstractEdmDeserializer<LabeledE
         if ("Name".equals(jp.getCurrentName())) {
           element.setName(jp.nextTextValue());
         } else if ("Annotation".equals(jp.getCurrentName())) {
-          element.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          element.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         } else {
-          element.setValue(jp.readValueAs(DynExprConstructImpl.class));
+          element.setValue(jp.readValueAs(AbstractDynamicAnnotationExpression.class));
         }
       }
     }

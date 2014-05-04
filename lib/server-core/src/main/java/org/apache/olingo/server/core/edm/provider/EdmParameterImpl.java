@@ -18,8 +18,11 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
 import org.apache.olingo.server.api.edm.provider.Parameter;
 
@@ -62,4 +65,14 @@ public class EdmParameterImpl extends AbstractEdmParameter {
     return parameter.getScale();
   }
 
+  @Override
+  public SRID getSrid() {
+    return null; // TODO: provide implementation  
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

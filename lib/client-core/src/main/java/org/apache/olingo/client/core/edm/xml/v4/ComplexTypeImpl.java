@@ -41,7 +41,7 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
 
   private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public boolean isAbstractEntityType() {
@@ -91,12 +91,8 @@ public class ComplexTypeImpl extends AbstractComplexType implements ComplexType 
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

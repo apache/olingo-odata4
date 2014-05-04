@@ -18,17 +18,22 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmActionImport {
 
   private final ActionImport actionImport;
+
+  private final EdmAnnotationHelper helper;
 
   private FullQualifiedName actionFQN;
 
@@ -37,6 +42,7 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
 
     super(edm, container, name, actionImport.getEntitySet());
     this.actionImport = actionImport;
+    this.helper = new EdmAnnotationHelperImpl(edm, actionImport);
   }
 
   public FullQualifiedName getActionFQN() {
@@ -52,4 +58,13 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
     return edm.getUnboundAction(getActionFQN());
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.ActionImport;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
+  }
 }

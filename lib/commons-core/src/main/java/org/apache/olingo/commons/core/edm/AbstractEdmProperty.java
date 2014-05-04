@@ -20,12 +20,8 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public abstract class AbstractEdmProperty extends EdmElementImpl implements EdmProperty {
 
@@ -35,37 +31,38 @@ public abstract class AbstractEdmProperty extends EdmElementImpl implements EdmP
     super(edm, name);
   }
 
-  protected abstract FullQualifiedName getTypeFQN();
+  protected abstract EdmTypeInfo getTypeInfo();
 
   @Override
   public boolean isPrimitive() {
-    return EdmPrimitiveType.EDM_NAMESPACE.equals(getTypeFQN().getNamespace());
+    return getTypeInfo().isPrimitiveType();
   }
 
   @Override
   public EdmType getType() {
     if (propertyType == null) {
-      final FullQualifiedName typeName = getTypeFQN();
-      if (isPrimitive()) {
-        try {
-          propertyType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(typeName.getName()));
-        } catch (IllegalArgumentException e) {
-          throw new EdmException("Cannot find type with name: " + typeName, e);
-        }
-      } else {
-        propertyType = edm.getComplexType(typeName);
-        if (propertyType == null) {
-          propertyType = edm.getEnumType(typeName);
-          if (propertyType == null) {
-            propertyType = edm.getTypeDefinition(typeName);
-            if (propertyType == null) {
-              throw new EdmException("Cannot find type with name: " + typeName);
-            }
-          }
-        }
+      propertyType = getTypeInfo().getType();
+      if (propertyType == null) {
+        throw new EdmException("Cannot find type with name: " + getTypeInfo().getFullQualifiedName());
       }
     }
 
     return propertyType;
   }
+
+  @Override
+  public boolean isCollection() {
+    return getTypeInfo().isCollection();
+  }
+
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.Property;
+  }
+
+  @Override
+  public String getAnnotationsTargetPath() {
+    return getName();
+  }
+
 }

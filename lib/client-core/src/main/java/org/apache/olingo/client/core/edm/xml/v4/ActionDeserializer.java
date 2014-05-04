@@ -52,7 +52,7 @@ public class ActionDeserializer extends AbstractEdmDeserializer<ActionImpl> {
           action.setReturnType(parseReturnType(jp, "Action"));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          action.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          action.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

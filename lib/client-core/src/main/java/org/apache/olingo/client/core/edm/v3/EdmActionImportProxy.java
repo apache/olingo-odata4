@@ -53,4 +53,9 @@ public class EdmActionImportProxy extends EdmOperationImportImpl implements EdmA
     return edm.getUnboundAction(getActionFQN());
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.ActionImport;
+  }
+
 }

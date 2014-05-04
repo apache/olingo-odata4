@@ -59,7 +59,7 @@ public class NavigationPropertyDeserializer extends AbstractEdmDeserializer<Navi
           property.setOnDelete(jp.readValueAs(OnDeleteImpl.class));
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          property.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          property.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.edm.xml;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 public interface CommonProperty extends Named {
 
   String getType();
@@ -34,6 +36,6 @@ public interface CommonProperty extends Named {
 
   boolean isUnicode();
 
-  String getSrid();
+  SRID getSrid();
 
 }

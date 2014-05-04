@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.client.api.communication.request.invoke.v3.InvokeRequestFactory;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -36,12 +35,14 @@ import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
-public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory implements InvokeRequestFactory {
+public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
 
   private static final long serialVersionUID = -659256862901915496L;
 
+  private final ODataClient client;
+  
   public InvokeRequestFactoryImpl(final ODataClient client) {
-    super(client);
+    this.client = client;
   }
 
   @Override

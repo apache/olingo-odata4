@@ -25,8 +25,11 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +75,8 @@ public class EdmTypeInfo {
   private final FullQualifiedName fullQualifiedName;
 
   private EdmPrimitiveTypeKind primitiveType;
+
+  private EdmTypeDefinition typeDefinition;
 
   private EdmEnumType enumType;
 
@@ -128,11 +133,14 @@ public class EdmTypeInfo {
       LOG.debug("{} does not appear to refer to an Edm primitive type", this.fullQualifiedName);
     }
     if (this.primitiveType == null && this.edm != null) {
-      this.enumType = this.edm.getEnumType(this.fullQualifiedName);
-      if (this.enumType == null) {
-        this.complexType = this.edm.getComplexType(this.fullQualifiedName);
-        if (this.complexType == null) {
-          this.entityType = this.edm.getEntityType(this.fullQualifiedName);
+      this.typeDefinition = this.edm.getTypeDefinition(this.fullQualifiedName);
+      if (this.typeDefinition == null) {
+        this.enumType = this.edm.getEnumType(this.fullQualifiedName);
+        if (this.enumType == null) {
+          this.complexType = this.edm.getComplexType(this.fullQualifiedName);
+          if (this.complexType == null) {
+            this.entityType = this.edm.getEntityType(this.fullQualifiedName);
+          }
         }
       }
     }
@@ -197,6 +205,14 @@ public class EdmTypeInfo {
     return primitiveType;
   }
 
+  public boolean isTypeDefinition() {
+    return this.typeDefinition != null;
+  }
+
+  public EdmTypeDefinition getTypeDefinition() {
+    return this.typeDefinition;
+  }
+
   public boolean isEnumType() {
     return this.enumType != null;
   }
@@ -219,5 +235,19 @@ public class EdmTypeInfo {
 
   public EdmEntityType getEntityType() {
     return entityType;
+  }
+
+  public EdmType getType() {
+    return isPrimitiveType()
+            ? EdmPrimitiveTypeFactory.getInstance(getPrimitiveTypeKind())
+            : isTypeDefinition()
+            ? getTypeDefinition()
+            : isEnumType()
+            ? getEnumType()
+            : isComplexType()
+            ? getComplexType()
+            : isEntityType()
+            ? getEntityType()
+            : null;
   }
 }

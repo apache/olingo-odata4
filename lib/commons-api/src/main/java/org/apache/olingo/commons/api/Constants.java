@@ -236,11 +236,18 @@ public interface Constants {
 
   public static final String ATOM_ELEM_DELETED_ENTRY = "deleted-entry";
 
-// error stuff
+  // error stuff
   public static final String ERROR_CODE = "code";
 
   public static final String ERROR_MESSAGE = "message";
 
   public static final String ERROR_TARGET = "target";
+
+  // canonical functions to be applied via dynamic annotation <tt>Apply</tt>
+  public static final String CANONICAL_FUNCTION_CONCAT = "odata.concat";
+
+  public static final String CANONICAL_FUNCTION_FILLURITEMPLATE = "odata.fillUriTemplate";
+
+  public static final String CANONICAL_FUNCTION_URIENCODE = "odata.uriEncode";
 
 }

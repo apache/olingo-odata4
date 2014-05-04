@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.edm.xml.v4;
 
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
-import org.apache.olingo.client.api.edm.xml.v4.AnnotatedEdmItem;
+import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
 import org.apache.olingo.client.api.edm.xml.v4.EntitySet;
@@ -30,7 +30,7 @@ import org.apache.olingo.client.core.edm.xml.AbstractEntityContainer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityContainerImpl extends AbstractEntityContainer implements AnnotatedEdmItem, EntityContainer {
+public class EntityContainerImpl extends AbstractEntityContainer implements Annotatable, EntityContainer {
 
   private static final long serialVersionUID = 2526002525927260320L;
 
@@ -42,7 +42,7 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
 
   private final List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public void setDefaultEntityContainer(final boolean defaultEntityContainer) {
@@ -118,12 +118,8 @@ public class EntityContainerImpl extends AbstractEntityContainer implements Anno
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

@@ -20,10 +20,13 @@ package org.apache.olingo.client.core.edm.xml.v4;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
+import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
@@ -41,7 +44,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
 
   private final List<Action> actions = new ArrayList<Action>();
 
-  private final List<Annotations> annotationsList = new ArrayList<Annotations>();
+  private final List<Annotations> annotationGroups = new ArrayList<Annotations>();
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -59,7 +62,7 @@ public class SchemaImpl extends AbstractSchema implements Schema {
 
   private final List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
 
-  private Annotation annotation;
+  private Map<String, Annotatable> annotatables;
 
   @Override
   public List<Action> getActions() {
@@ -72,16 +75,27 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public List<Annotations> getAnnotationsList() {
-    return annotationsList;
+  public List<Annotations> getAnnotationGroups() {
+    return annotationGroups;
   }
 
   @Override
-  public Annotations getAnnotationsList(final String target) {
+  public Annotations getAnnotationGroup(final String target) {
     Annotations result = null;
-    for (Annotations annots : getAnnotationsList()) {
+    for (Annotations annots : getAnnotationGroups()) {
       if (target.equals(annots.getTarget())) {
         result = annots;
+      }
+    }
+    return result;
+  }
+
+  @Override
+  public Annotation getAnnotation(final String term) {
+    Annotation result = null;
+    for (Annotation annot : getAnnotations()) {
+      if (term.equals(annot.getTerm())) {
+        result = annot;
       }
     }
     return result;
@@ -100,6 +114,11 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   @Override
   public List<Function> getFunctions(final String name) {
     return getAllByName(name, getFunctions());
+  }
+
+  @Override
+  public Term getTerm(final String name) {
+    return getOneByName(name, getTerms());
   }
 
   @Override
@@ -146,15 +165,6 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
-  }
-
-  @Override
   public List<EnumType> getEnumTypes() {
     return enumTypes;
   }
@@ -178,4 +188,38 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   public List<EntityType> getEntityTypes() {
     return entityTypes;
   }
+
+  @Override
+  public Map<String, Annotatable> getAnnotatables() {
+    if (annotatables == null) {
+      annotatables = new HashMap<String, Annotatable>();
+      for (Action action : getActions()) {
+        annotatables.put(action.getName(), action);
+      }
+      for (Annotation annotation : getAnnotations()) {
+        annotatables.put(annotation.getTerm(), annotation);
+      }
+      for (ComplexType complexType : getComplexTypes()) {
+        annotatables.put(complexType.getName(), complexType);
+      }
+      annotatables.put(entityContainer.getName(), entityContainer);
+      for (EntityType entityType : getEntityTypes()) {
+        annotatables.put(entityType.getName(), entityType);
+      }
+      for (EnumType enumType : getEnumTypes()) {
+        annotatables.put(enumType.getName(), (EnumTypeImpl) enumType);
+      }
+      for (Function function : getFunctions()) {
+        annotatables.put(function.getName(), function);
+      }
+      for (Term term : getTerms()) {
+        annotatables.put(term.getName(), term);
+      }
+      for (TypeDefinition typedef : getTypeDefinitions()) {
+        annotatables.put(typedef.getName(), typedef);
+      }
+    }
+    return annotatables;
+  }
+
 }

@@ -49,7 +49,6 @@ import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;

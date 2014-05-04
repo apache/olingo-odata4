@@ -18,22 +18,28 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmTypeDefinition;
+import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements EdmTypeDefinition {
 
-  private TypeDefinition typeDefinition;
+  private final TypeDefinition typeDefinition;
 
-  private EdmPrimitiveType edmPrimitiveTypeInstance;
+  private final EdmPrimitiveType edmPrimitiveTypeInstance;
+
+  private final EdmAnnotationHelper helper;
 
   public EdmTypeDefinitionImpl(final ODataServiceVersion version, final Edm edm,
           final FullQualifiedName typeDefinitionName, final TypeDefinition typeDefinition) {
@@ -46,6 +52,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     } catch (IllegalArgumentException e) {
       throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
     }
+    this.helper = new EdmAnnotationHelperImpl(edm, typeDefinition);
   }
 
   @Override
@@ -69,7 +76,18 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   }
 
   @Override
+  public SRID getSrid() {
+    return typeDefinition.getSrid();
+  }
+
+  @Override
   public Boolean isUnicode() {
     return typeDefinition.isUnicode();
   }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    return helper.getAnnotations();
+  }
+
 }

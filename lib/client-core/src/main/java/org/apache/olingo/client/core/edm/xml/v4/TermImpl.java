@@ -23,11 +23,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.v4.CSDLElement;
 import org.apache.olingo.client.api.edm.xml.v4.Term;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 @JsonDeserialize(using = TermDeserializer.class)
-public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
+public class TermImpl extends AbstractAnnotatable implements Term {
 
   private static final long serialVersionUID = -5888231162358116515L;
 
@@ -47,9 +47,9 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
 
   private Integer scale;
 
-  private String srid;
+  private SRID srid;
 
-  private final List<CSDLElement> appliesTo = new ArrayList<CSDLElement>();
+  private final List<String> appliesTo = new ArrayList<String>();
 
   @Override
   public String getName() {
@@ -124,16 +124,16 @@ public class TermImpl extends AbstractAnnotatedEdmItem implements Term {
   }
 
   @Override
-  public String getSrid() {
+  public SRID getSrid() {
     return srid;
   }
 
-  public void setSrid(final String srid) {
+  public void setSrid(final SRID srid) {
     this.srid = srid;
   }
 
   @Override
-  public List<CSDLElement> getAppliesTo() {
+  public List<String> getAppliesTo() {
     return appliesTo;
   }
 

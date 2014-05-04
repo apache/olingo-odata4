@@ -18,16 +18,13 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
-import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstExprConstruct;
-import org.apache.olingo.client.api.edm.xml.v4.annotation.DynExprConstruct;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.AnnotationExpression;
 
-public interface Annotation {
+public interface Annotation extends Annotatable {
 
   String getTerm();
 
   String getQualifier();
 
-  ConstExprConstruct getConstExpr();
-
-  DynExprConstruct getDynExpr();
+  AnnotationExpression getExpression();
 }

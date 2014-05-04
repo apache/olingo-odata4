@@ -18,7 +18,10 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
-public interface Parameter extends org.apache.olingo.client.api.edm.xml.CommonParameter {
+import org.apache.olingo.client.api.edm.xml.CommonParameter;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
-  String getSrid();
+public interface Parameter extends CommonParameter, Annotatable {
+
+  SRID getSrid();
 }

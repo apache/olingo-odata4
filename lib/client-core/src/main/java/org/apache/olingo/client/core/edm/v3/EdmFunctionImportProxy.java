@@ -65,4 +65,9 @@ public class EdmFunctionImportProxy extends EdmOperationImportImpl implements Ed
     return true;
   }
 
+  @Override
+  public TargetType getAnnotationsTargetType() {
+    return TargetType.FunctionImport;
+  }
+
 }

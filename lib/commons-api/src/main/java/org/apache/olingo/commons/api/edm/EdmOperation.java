@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A EdmOperation can either be an {@link EdmAction} or an {@link EdmFunction}.
  */
-public interface EdmOperation extends EdmType {
+public interface EdmOperation extends EdmType, EdmAnnotatable {
 
   /**
    * @param name

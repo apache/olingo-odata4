@@ -19,12 +19,15 @@
 package org.apache.olingo.commons.core.edm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -32,10 +35,15 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmServiceMetadata;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public abstract class AbstractEdm implements Edm {
+
+  protected Map<String, EdmSchema> schemas;
+
+  protected List<EdmSchema> schemaList;
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
           new HashMap<FullQualifiedName, EdmEntityContainer>();
@@ -60,19 +68,26 @@ public abstract class AbstractEdm implements Edm {
 
   private final Map<FunctionMapKey, EdmFunction> boundFunctions = new HashMap<FunctionMapKey, EdmFunction>();
 
+  private final Map<FullQualifiedName, EdmTerm> terms = new HashMap<FullQualifiedName, EdmTerm>();
+
+  private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
+          new HashMap<FullQualifiedName, EdmAnnotations>();
+
+  private final Map<FullQualifiedName, List<EdmAnnotation>> annotations =
+          new HashMap<FullQualifiedName, List<EdmAnnotation>>();
+
   private EdmServiceMetadata serviceMetadata;
 
   private Map<String, String> aliasToNamespaceInfo;
-
-  private List<EdmSchema> schemas;
 
   @Override
   public List<EdmSchema> getSchemas() {
     if (schemas == null) {
       schemas = createSchemas();
       if (schemas != null) {
+        schemaList = Collections.unmodifiableList(new ArrayList<EdmSchema>(schemas.values()));
         aliasToNamespaceInfo = new HashMap<String, String>();
-        for (EdmSchema schema : schemas) {
+        for (EdmSchema schema : schemas.values()) {
           final String namespace = schema.getNamespace();
           if (schema.getAlias() != null) {
             aliasToNamespaceInfo.put(schema.getAlias(), namespace);
@@ -151,7 +166,19 @@ public abstract class AbstractEdm implements Edm {
         }
       }
     }
-    return schemas;
+    return schemaList;
+  }
+
+  @Override
+  public EdmSchema getSchema(final String namespace) {
+    // enusure schemas are loaded
+    getSchemas();
+
+    EdmSchema schema = null;
+    if (schemas != null) {
+      schema = schemas.get(namespace);
+    }
+    return schema;
   }
 
   @Override
@@ -315,6 +342,58 @@ public abstract class AbstractEdm implements Edm {
   }
 
   @Override
+  public EdmTerm getTerm(final FullQualifiedName termName) {
+    final FullQualifiedName fqn = resolvePossibleAlias(termName);
+    EdmTerm term = terms.get(fqn);
+    if (term == null) {
+      term = createTerm(fqn);
+      if (term != null) {
+        terms.put(fqn, term);
+      }
+    }
+    return term;
+  }
+
+  @Override
+  public EdmAnnotations getAnnotationGroup(final FullQualifiedName targetName) {
+    EdmAnnotations _annotations = annotationGroups.get(targetName);
+    if (_annotations == null) {
+      _annotations = createAnnotationGroup(targetName);
+      if (_annotations != null) {
+        annotationGroups.put(targetName, _annotations);
+      }
+    }
+    return _annotations;
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations(final FullQualifiedName annotatableName) {
+    final FullQualifiedName fqn = resolvePossibleAlias(annotatableName);
+    List<EdmAnnotation> _annotations = annotations.get(fqn);
+    if (_annotations == null) {
+      _annotations = createAnnotations(fqn);
+      if (_annotations != null) {
+        annotations.put(fqn, _annotations);
+      }
+    }
+    return _annotations;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final FullQualifiedName annotatableName, final EdmTerm term) {
+    final List<EdmAnnotation> _annotations = getAnnotations(annotatableName);
+    EdmAnnotation result = null;
+    if (_annotations != null) {
+      for (EdmAnnotation annotation : _annotations) {
+        if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
+          result = annotation;
+        }
+      }
+    }
+    return result;
+  }
+
+  @Override
   public EdmServiceMetadata getServiceMetadata() {
     if (serviceMetadata == null) {
       serviceMetadata = createServiceMetadata();
@@ -338,6 +417,8 @@ public abstract class AbstractEdm implements Edm {
     }
     return finalFQN;
   }
+
+  protected abstract Map<String, EdmSchema> createSchemas();
 
   protected abstract Map<String, String> createAliasToNamespaceInfo();
 
@@ -367,6 +448,9 @@ public abstract class AbstractEdm implements Edm {
 
   protected abstract EdmServiceMetadata createServiceMetadata();
 
-  protected abstract List<EdmSchema> createSchemas();
+  protected abstract EdmTerm createTerm(FullQualifiedName termName);
 
+  protected abstract EdmAnnotations createAnnotationGroup(FullQualifiedName targetName);
+
+  protected abstract List<EdmAnnotation> createAnnotations(FullQualifiedName annotatedName);
 }

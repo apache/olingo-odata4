@@ -44,7 +44,7 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
 
   private OnDelete onDelete;
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public String getType() {
@@ -88,12 +88,8 @@ public class NavigationPropertyImpl extends AbstractNavigationProperty implement
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

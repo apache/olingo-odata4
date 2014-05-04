@@ -27,7 +27,9 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.api.edm.xml.v3.ParameterMode;
+import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParameter> {
 
@@ -60,7 +62,14 @@ public class ParameterDeserializer extends AbstractEdmDeserializer<AbstractParam
           ((org.apache.olingo.client.core.edm.xml.v3.ParameterImpl) parameter).
                   setMode(ParameterMode.valueOf(jp.nextTextValue()));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          ((org.apache.olingo.client.core.edm.xml.v4.ParameterImpl) parameter).setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            ((org.apache.olingo.client.core.edm.xml.v4.ParameterImpl) parameter).setSrid(SRID.valueOf(srid));
+          }
+        } else if ("Annotation".equals(jp.getCurrentName())) {
+          jp.nextToken();
+          ((org.apache.olingo.client.core.edm.xml.v4.ParameterImpl) parameter).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

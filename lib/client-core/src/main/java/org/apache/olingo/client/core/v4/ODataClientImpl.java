@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
-import org.apache.olingo.client.api.communication.request.invoke.v4.InvokeRequestFactory;
+import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;

@@ -45,7 +45,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
 
     final Point point = EdmGeometryPoint.getInstance().valueOfString(input, null, null, null, null, null, Point.class);
     assertNotNull(point);
-    assertEquals(0, point.getSrid(), 0);
+    assertEquals("0", point.getSrid().toString());
     assertEquals(142.1, point.getX(), 0);
     assertEquals(64.1, point.getY(), 0);
 
@@ -61,7 +61,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     MultiPoint multipoint = EdmGeographyMultiPoint.getInstance().
             valueOfString(input, null, null, null, null, null, MultiPoint.class);
     assertNotNull(multipoint);
-    assertEquals(0, multipoint.getSrid(), 0);
+    assertEquals("0", multipoint.getSrid().toString());
     assertEquals(142.1, multipoint.iterator().next().getX(), 0);
     assertEquals(64.1, multipoint.iterator().next().getY(), 0);
 
@@ -82,7 +82,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     final LineString lineString = EdmGeographyLineString.getInstance().
             valueOfString(input, null, null, null, null, null, LineString.class);
     assertNotNull(lineString);
-    assertEquals(0, lineString.getSrid(), 0);
+    assertEquals("0", lineString.getSrid().toString());
     final Iterator<Point> itor = lineString.iterator();
     assertEquals(142.1, itor.next().getX(), 0);
     assertEquals(2.78, itor.next().getY(), 0);
@@ -100,7 +100,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     final MultiLineString multiLineString = EdmGeographyMultiLineString.getInstance().
             valueOfString(input, null, null, null, null, null, MultiLineString.class);
     assertNotNull(multiLineString);
-    assertEquals(0, multiLineString.getSrid(), 0);
+    assertEquals("0", multiLineString.getSrid().toString());
     final Iterator<LineString> itor = multiLineString.iterator();
     assertEquals(142.1, itor.next().iterator().next().getX(), 0);
     assertEquals(64.7, itor.next().iterator().next().getY(), 0);
@@ -118,7 +118,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     final Polygon polygon = EdmGeographyPolygon.getInstance().
             valueOfString(input, null, null, null, null, null, Polygon.class);
     assertNotNull(polygon);
-    assertEquals(0, polygon.getSrid(), 0);
+    assertEquals("0", polygon.getSrid().toString());
     Iterator<Point> itor = polygon.getInterior().iterator();
     assertEquals(1, itor.next().getX(), 0);
     assertEquals(1, itor.next().getY(), 0);
@@ -142,7 +142,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     final MultiPolygon multiPolygon = EdmGeometryMultiPolygon.getInstance().
             valueOfString(input, null, null, null, null, null, MultiPolygon.class);
     assertNotNull(multiPolygon);
-    assertEquals(0, multiPolygon.getSrid(), 0);
+    assertEquals("0", multiPolygon.getSrid().toString());
     final Iterator<Polygon> itor = multiPolygon.iterator();
     assertEquals(1, itor.next().getInterior().iterator().next().getX(), 0);
     assertEquals(1, itor.next().getInterior().iterator().next().getX(), 0);
@@ -162,7 +162,7 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     final GeospatialCollection collection = EdmGeometryCollection.getInstance().
             valueOfString(input, null, null, null, null, null, GeospatialCollection.class);
     assertNotNull(collection);
-    assertEquals(0, collection.getSrid(), 0);
+    assertEquals("0", collection.getSrid().toString());
 
     final Geospatial item = collection.iterator().next();
     assertNotNull(item);

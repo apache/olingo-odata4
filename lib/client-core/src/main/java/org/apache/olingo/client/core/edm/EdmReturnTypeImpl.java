@@ -18,16 +18,17 @@
  */
 package org.apache.olingo.client.core.edm;
 
-import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.client.api.edm.xml.v4.ReturnType;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmReturnType;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmReturnTypeImpl extends AbstractEdmReturnType {
 
   private final ReturnType returnType;
 
-  private final EdmTypeInfo returnTypeInfo;
+  private final boolean isCollection;
 
   public static EdmReturnTypeImpl getInstance(final Edm edm, final ReturnType returnType) {
     final EdmTypeInfo returnTypeInfo = new EdmTypeInfo.Builder().setTypeExpression(returnType.getType()).build();
@@ -37,7 +38,12 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   private EdmReturnTypeImpl(final Edm edm, final ReturnType returnType, final EdmTypeInfo returnTypeInfo) {
     super(edm, returnTypeInfo.getFullQualifiedName());
     this.returnType = returnType;
-    this.returnTypeInfo = returnTypeInfo;
+    this.isCollection = returnTypeInfo.isCollection();
+  }
+
+  @Override
+  public boolean isCollection() {
+    return isCollection;
   }
 
   @Override
@@ -61,8 +67,10 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
   }
 
   @Override
-  public boolean isCollection() {
-    return returnTypeInfo.isCollection();
+  public SRID getSrid() {
+    return (returnType instanceof ReturnType)
+            ? ((ReturnType) returnType).getSrid()
+            : null;
   }
 
 }

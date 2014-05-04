@@ -21,8 +21,9 @@ package org.apache.olingo.client.api.edm.xml.v4;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.Named;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
-public interface TypeDefinition extends Named {
+public interface TypeDefinition extends Named, Annotatable {
 
   List<Annotation> getAnnotations();
 
@@ -32,7 +33,7 @@ public interface TypeDefinition extends Named {
 
   Integer getScale();
 
-  String getSrid();
+  SRID getSrid();
 
   String getUnderlyingType();
 

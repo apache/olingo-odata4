@@ -28,19 +28,19 @@ import java.io.IOException;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
 
-public class NullDeserializer extends AbstractEdmDeserializer<Null> {
+public class NullDeserializer extends AbstractEdmDeserializer<NullImpl> {
 
   @Override
-  protected Null doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+  protected NullImpl doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
           throws IOException, JsonProcessingException {
 
-    final Null _null = new Null();
+    final NullImpl _null = new NullImpl();
 
     for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
       final JsonToken token = jp.getCurrentToken();
       if (token == JsonToken.FIELD_NAME) {
         if ("Annotation".equals(jp.getCurrentName())) {
-          _null.setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          _null.getAnnotations().add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

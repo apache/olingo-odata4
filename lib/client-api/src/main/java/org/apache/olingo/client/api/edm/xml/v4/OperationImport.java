@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml.v4;
 
 import org.apache.olingo.client.api.edm.xml.Named;
 
-public interface OperationImport extends Named, AnnotatedEdmItem {
+public interface OperationImport extends Named, Annotatable {
 
   String getEntitySet();
 

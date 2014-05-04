@@ -18,7 +18,8 @@
  */
 package org.apache.olingo.client.core.edm.xml.v4;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Property;
@@ -28,15 +29,10 @@ public class PropertyImpl extends AbstractProperty implements Property {
 
   private static final long serialVersionUID = -5541908235094985412L;
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  @JsonIgnore
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 }

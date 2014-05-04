@@ -32,9 +32,9 @@ public interface Schema {
 
   EnumType getEnumType(String name);
 
-  List<? extends CommonAnnotations> getAnnotationsList();
+  List<? extends CommonAnnotations> getAnnotationGroups();
 
-  CommonAnnotations getAnnotationsList(String target);
+  CommonAnnotations getAnnotationGroup(String target);
 
   List<? extends ComplexType> getComplexTypes();
 

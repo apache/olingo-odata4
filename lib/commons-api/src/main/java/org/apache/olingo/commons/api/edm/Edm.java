@@ -35,6 +35,14 @@ public interface Edm {
   List<EdmSchema> getSchemas();
 
   /**
+   * Get schema by namespace.
+   *
+   * @param namespace must not be null
+   * @return {@link EdmSchema}
+   */
+  EdmSchema getSchema(String namespace);
+
+  /**
    * Get entity container by full qualified name.
    * <br/>
    * See {@link EdmEntityContainer} for more information.
@@ -131,6 +139,39 @@ public interface Edm {
    */
   EdmFunction getBoundFunction(FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection, List<String> parameterNames);
+
+  /**
+   * Get Term full by qualified name.
+   *
+   * @param termName must not be null
+   * @return {@link EdmTerm}
+   */
+  EdmTerm getTerm(FullQualifiedName termName);
+
+  /**
+   * Get {@link EdmAnnotations} by target.
+   *
+   * @param targetName <tt>edm:Annotations</tt> target
+   * @return {@link EdmAnnotations}
+   */
+  EdmAnnotations getAnnotationGroup(FullQualifiedName targetName);
+
+  /**
+   * Get all {@link EdmAnnotation} by element FQN.
+   *
+   * @param annotatableName must not be null
+   * @return {@link EdmAnnotation}
+   */
+  List<EdmAnnotation> getAnnotations(FullQualifiedName annotatableName);
+
+  /**
+   * Get {@link EdmAnnotation} by element FQN and term.
+   *
+   * @param annotatableName must not be null
+   * @param term <tt>edm:Annotation</tt> term
+   * @return {@link EdmAnnotation}
+   */
+  EdmAnnotation getAnnotation(FullQualifiedName annotatableName, EdmTerm term);
 
   /**
    * Get service metadata.

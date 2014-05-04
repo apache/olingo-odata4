@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.client.core.edm.xml.AbstractEdmDeserializer;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeImpl> {
 
@@ -52,7 +53,10 @@ public class ReturnTypeDeserializer extends AbstractEdmDeserializer<ReturnTypeIm
           final String scale = jp.nextTextValue();
           returnType.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
         } else if ("SRID".equals(jp.getCurrentName())) {
-          returnType.setSrid(jp.nextTextValue());
+          final String srid = jp.nextTextValue();
+          if (srid != null) {
+            returnType.setSrid(SRID.valueOf(srid));
+          }
         }
       }
     }

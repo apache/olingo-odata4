@@ -18,16 +18,12 @@
  */
 package org.apache.olingo.server.api.edm.provider;
 
-import org.apache.olingo.commons.api.edm.EdmMember;
-
-public class EnumMember implements EdmMember {
+public class EnumMember {
 
   private String name;
 
   private String value;
 
-  // Annotations?
-  @Override
   public String getName() {
     return name;
   }
@@ -37,7 +33,6 @@ public class EnumMember implements EdmMember {
     return this;
   }
 
-  @Override
   public String getValue() {
     return value;
   }

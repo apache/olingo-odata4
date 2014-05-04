@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.Named;
 
-public interface Action extends Named {
+public interface Action extends Named, Annotatable {
 
   boolean isBound();
 

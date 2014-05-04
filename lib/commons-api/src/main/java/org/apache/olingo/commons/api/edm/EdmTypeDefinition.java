@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import org.apache.olingo.commons.api.edm.geo.SRID;
+
 /**
  * An {@link EdmTypeDefinition} defines a specialization of one of the possible primitive types.
  * <br/>
  * For more information on primitive types refer to {@link EdmPrimitiveType}.
  */
-public interface EdmTypeDefinition extends EdmPrimitiveType {
+public interface EdmTypeDefinition extends EdmPrimitiveType, EdmAnnotationsTarget, EdmAnnotatable {
 
   /**
    * @return {@link EdmPrimitiveType} this type definition is based upon
@@ -44,6 +46,11 @@ public interface EdmTypeDefinition extends EdmPrimitiveType {
    * @return the scale as an Integer or null if not specified
    */
   Integer getScale();
+
+  /**
+   * @return a non-negative integer or the special value <tt>variable</tt>
+   */
+  SRID getSrid();
 
   /**
    * @return true if unicode or null if not specified

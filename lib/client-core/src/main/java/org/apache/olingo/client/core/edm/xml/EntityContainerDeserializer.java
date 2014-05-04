@@ -90,8 +90,8 @@ public class EntityContainerDeserializer extends AbstractEdmDeserializer<Abstrac
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).
-                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.v4.EntityContainerImpl) entityContainer).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

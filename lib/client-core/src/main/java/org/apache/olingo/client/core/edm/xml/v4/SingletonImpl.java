@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.edm.xml.v4.NavigationPropertyBinding;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 
 @JsonDeserialize(using = SingletonDeserializer.class)
-public class SingletonImpl extends AbstractAnnotatedEdmItem implements Singleton {
+public class SingletonImpl extends AbstractAnnotatable implements Singleton {
 
   private static final long serialVersionUID = 941802518279658559L;
 

@@ -56,11 +56,11 @@ public class URIEscapeTest {
 
   @Test
   public void geospatial() throws UnsupportedEncodingException {
-    final Point point = new Point(Geospatial.Dimension.GEOGRAPHY, 0);
+    final Point point = new Point(Geospatial.Dimension.GEOGRAPHY, null);
     point.setX(142.1);
     point.setY(64.1);
 
-    assertEquals(URLEncoder.encode("geography'SRID=0;Point(142.1 64.1)'", Constants.UTF8),
+    assertEquals(URLEncoder.encode("geography'SRID=4326;Point(142.1 64.1)'", Constants.UTF8),
             URIUtils.escape(ODataServiceVersion.V40, point));
   }
 

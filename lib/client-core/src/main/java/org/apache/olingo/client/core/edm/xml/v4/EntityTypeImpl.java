@@ -35,7 +35,7 @@ public class EntityTypeImpl extends AbstractEntityType implements EntityType {
 
   private final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
 
-  private Annotation annotation;
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public Property getProperty(final String name) {
@@ -58,12 +58,8 @@ public class EntityTypeImpl extends AbstractEntityType implements EntityType {
   }
 
   @Override
-  public Annotation getAnnotation() {
-    return annotation;
-  }
-
-  public void setAnnotation(final Annotation annotation) {
-    this.annotation = annotation;
+  public List<Annotation> getAnnotations() {
+    return annotations;
   }
 
 }

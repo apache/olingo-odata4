@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml.v4;
 
 import java.util.List;
 
-public interface ComplexType extends org.apache.olingo.client.api.edm.xml.ComplexType, AnnotatedEdmItem {
+public interface ComplexType extends org.apache.olingo.client.api.edm.xml.ComplexType, Annotatable {
 
   boolean isAbstractEntityType();
 

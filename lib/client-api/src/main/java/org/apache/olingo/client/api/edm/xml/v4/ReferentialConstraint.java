@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
-public interface ReferentialConstraint {
+public interface ReferentialConstraint extends Annotatable {
 
   String getProperty();
 

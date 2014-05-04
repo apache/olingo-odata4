@@ -18,13 +18,6 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
@@ -35,13 +28,21 @@ import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Schema;
 import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.Apply;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.Collection;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.TwoParamsOpDynamicAnnotationExpression;
+import org.apache.olingo.client.api.edm.xml.v4.annotation.UrlRef;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.Apply;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.Collection;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstExprConstructImpl;
-import org.apache.olingo.client.core.edm.xml.v4.annotation.Path;
+import org.apache.olingo.client.core.edm.xml.v4.annotation.ConstantAnnotationExpressionImpl;
+import org.apache.olingo.client.core.edm.xml.v4.annotation.PathImpl;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
+import org.apache.olingo.commons.api.edm.EdmAnnotationsTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -51,9 +52,19 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmFunctionImportInfo;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class MetadataTest extends AbstractTest {
@@ -65,8 +76,7 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void parse() {
-    final Edm edm = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("metadata.xml"));
     assertNotNull(edm);
 
     // 1. Enum
@@ -127,14 +137,39 @@ public class MetadataTest extends AbstractTest {
             toMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
     assertNotNull(metadata);
 
-    assertFalse(metadata.getSchema(0).getAnnotationsList().isEmpty());
-    final Annotations annots = metadata.getSchema(0).getAnnotationsList("ODataDemo.DemoService/Suppliers");
+    assertFalse(metadata.getSchema(0).getAnnotationGroups().isEmpty());
+    final Annotations annots = metadata.getSchema(0).getAnnotationGroup("ODataDemo.DemoService/Suppliers");
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
-    assertEquals(ConstExprConstructImpl.Type.String,
-            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getConstExpr().getType());
+    assertEquals(ConstantAnnotationExpression.Type.String,
+            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getType());
     assertEquals("http://www.odata.org/",
-            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getConstExpr().getValue());
+            annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getValue());
+
+    // Now let's test some edm:Annotations
+    final Edm edm = getClient().getReader().
+            readMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
+    assertNotNull(edm);
+
+    final EdmSchema schema = edm.getSchema("ODataDemo");
+    assertNotNull(schema);
+    assertTrue(schema.getAnnotations().isEmpty());
+    assertFalse(schema.getAnnotationGroups().isEmpty());
+
+    final EdmAnnotations annotationGroup = schema.getAnnotationGroups().get(2);
+    assertNotNull(annotationGroup);
+    final EdmAnnotationsTarget annotationsTarget = annotationGroup.getTarget();
+    assertNotNull(annotationsTarget);
+    assertTrue(EdmAnnotationsTarget.TargetType.Property == annotationsTarget.getAnnotationsTargetType());
+    assertEquals(new FullQualifiedName("ODataDemo.Product"), annotationsTarget.getAnnotationsTargetFQN());
+    assertEquals("Name", annotationsTarget.getAnnotationsTargetPath());
+
+    final EdmAnnotation annotation = annotationGroup.getAnnotations().get(0);
+    assertNotNull(annotation);
+    assertTrue(annotation.getExpression().isConstant());
+    assertEquals("Edm.String", annotation.getExpression().asConstant().getValue().getTypeName());
+
+    assertEquals(10, schema.getAnnotationGroups().get(3).getAnnotations().size());
   }
 
   @Test
@@ -169,7 +204,7 @@ public class MetadataTest extends AbstractTest {
 
     final EntityType product = metadata.getSchema(0).getEntityType("Product");
     assertTrue(product.isHasStream());
-    assertEquals("UoM.ISOCurrency", product.getProperty("Price").getAnnotation().getTerm());
+    assertEquals("UoM.ISOCurrency", product.getProperty("Price").getAnnotations().get(0).getTerm());
     assertEquals("Products", product.getNavigationProperty("Supplier").getPartner());
 
     final EntityType category = metadata.getSchema(0).getEntityType("Category");
@@ -197,8 +232,7 @@ public class MetadataTest extends AbstractTest {
             functionImport.getFunction());
 
     // Now let's go high-level
-    final Edm edm = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
     assertNotNull(edm);
 
     final EdmFunctionImportInfo fiInfo = edm.getServiceMetadata().getFunctionImportInfos().get(0);
@@ -219,6 +253,12 @@ public class MetadataTest extends AbstractTest {
             fi.getUnboundFunction(null).getReturnType().getType().getName());
     assertEquals(function.getReturnType().getType().getNamespace(),
             fi.getUnboundFunction(null).getReturnType().getType().getNamespace());
+
+    final EdmTypeDefinition weight = edm.getTypeDefinition(new FullQualifiedName("ODataDemo", "Weight"));
+    assertNotNull(weight);
+    assertEquals(EdmInt32.getInstance(), weight.getUnderlyingType());
+    assertFalse(weight.getAnnotations().isEmpty());
+    assertEquals("Kilograms", weight.getAnnotations().get(0).getExpression().asConstant().getValue().toString());
   }
 
   /**
@@ -231,42 +271,40 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(metadata);
 
     // Check displayName
-    final Annotation displayName = metadata.getSchema(0).getAnnotationsList("ODataDemo.Supplier").
+    final Annotation displayName = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Supplier").
             getAnnotation("Vocabulary1.DisplayName");
     assertNotNull(displayName);
-    assertNull(displayName.getConstExpr());
-    assertNotNull(displayName.getDynExpr());
+    assertTrue(displayName.getExpression().isDynamic());
 
-    assertTrue(displayName.getDynExpr() instanceof Apply);
-    final Apply apply = (Apply) displayName.getDynExpr();
-    assertEquals(Apply.CANONICAL_FUNCTION_CONCAT, apply.getFunction());
+    assertTrue(displayName.getExpression().asDynamic().isApply());
+    final Apply apply = displayName.getExpression().asDynamic().asApply();
+    assertEquals(Constants.CANONICAL_FUNCTION_CONCAT, apply.getFunction());
     assertEquals(3, apply.getParameters().size());
 
-    final Path firstArg = new Path();
+    final PathImpl firstArg = new PathImpl();
     firstArg.setValue("Name");
     assertEquals(firstArg, apply.getParameters().get(0));
 
-    final ConstExprConstructImpl secondArg = new ConstExprConstructImpl();
-    secondArg.setType(ConstExprConstructImpl.Type.String);
+    final ConstantAnnotationExpression secondArg = new ConstantAnnotationExpressionImpl();
+    secondArg.setType(ConstantAnnotationExpression.Type.String);
     secondArg.setValue(" in ");
     assertEquals(secondArg, apply.getParameters().get(1));
 
-    final Path thirdArg = new Path();
+    final PathImpl thirdArg = new PathImpl();
     thirdArg.setValue("Address/CountryName");
     assertEquals(thirdArg, apply.getParameters().get(2));
 
     // Check Tags
-    final Annotation tags = metadata.getSchema(0).getAnnotationsList("ODataDemo.Product").
+    final Annotation tags = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Product").
             getAnnotation("Vocabulary1.Tags");
     assertNotNull(tags);
-    assertNull(tags.getConstExpr());
-    assertNotNull(tags.getDynExpr());
+    assertTrue(tags.getExpression().isDynamic());
 
-    assertTrue(tags.getDynExpr() instanceof Collection);
-    final Collection collection = (Collection) tags.getDynExpr();
+    assertTrue(tags.getExpression().asDynamic().isCollection());
+    final Collection collection = tags.getExpression().asDynamic().asCollection();
     assertEquals(1, collection.getItems().size());
-    assertEquals(ConstExprConstructImpl.Type.String, ((ConstExprConstructImpl) collection.getItems().get(0)).getType());
-    assertEquals("MasterData", ((ConstExprConstructImpl) collection.getItems().get(0)).getValue());
+    assertEquals(ConstantAnnotationExpression.Type.String, collection.getItems().get(0).asConstant().getType());
+    assertEquals("MasterData", collection.getItems().get(0).asConstant().getValue());
   }
 
   /**
@@ -274,8 +312,74 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc3() {
-    final Edm metadata = getClient().getReader().
-            readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml"));
+    assertNotNull(edm);
+
+    final EdmAnnotations group = edm.getSchema("Annotations").getAnnotationGroups().get(0);
+    assertNotNull(group);
+
+    final EdmAnnotation time1 = group.getAnnotations().get(0);
+    assertEquals("Edm.TimeOfDay", time1.getExpression().asConstant().getValue().getTypeName());
+
+    final EdmAnnotation time2 = group.getAnnotations().get(1);
+    assertEquals("Edm.TimeOfDay", time2.getExpression().asConstant().getValue().getTypeName());
+  }
+
+  /**
+   * Various annotation examples taken from CSDL specification.
+   */
+  @Test
+  public void fromdoc4() {
+    final XMLMetadata metadata = getClient().getDeserializer().
+            toMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
     assertNotNull(metadata);
+
+    final Annotations group = metadata.getSchema(0).getAnnotationGroups().get(0);
+    assertNotNull(group);
+
+    Annotation annotation = group.getAnnotations().get(0);
+    assertTrue(annotation.getExpression().isDynamic());
+    assertTrue(annotation.getExpression().asDynamic().isCast());
+    assertEquals("Edm.Decimal", annotation.getExpression().asDynamic().asCast().getType());
+
+    annotation = group.getAnnotation("And");
+    assertTrue(annotation.getExpression().isDynamic());
+    assertTrue(annotation.getExpression().asDynamic().isTwoParamsOp());
+    assertEquals(TwoParamsOpDynamicAnnotationExpression.Type.And,
+            annotation.getExpression().asDynamic().asTwoParamsOp().getType());
+    assertTrue(annotation.getExpression().asDynamic().asTwoParamsOp().getLeftExpression().isPath());
+
+    annotation = group.getAnnotation("Vocab.Supplier");
+    assertNotNull(annotation);
+    assertTrue(annotation.getExpression().isDynamic());
+    assertTrue(annotation.getExpression().asDynamic().isUrlRef());
+    final UrlRef urlRef = annotation.getExpression().asDynamic().asUrlRef();
+    assertTrue(urlRef.getValue().isDynamic());
+    assertTrue(urlRef.getValue().asDynamic().isApply());
+
+    // Now let's go high-level    
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
+    assertNotNull(edm);
+
+    final EdmAnnotations edmGroup = edm.getSchemas().get(0).getAnnotationGroups().get(0);
+    assertNotNull(edmGroup);
+
+    EdmAnnotation edmAnnotation = edmGroup.getAnnotations().get(0);
+    assertTrue(edmAnnotation.getExpression().isDynamic());
+    assertTrue(edmAnnotation.getExpression().asDynamic().isCast());
+    assertEquals(EdmDecimal.getInstance(), edmAnnotation.getExpression().asDynamic().asCast().getType());
+
+    edmAnnotation = edmGroup.getAnnotations().get(1);
+    assertTrue(edmAnnotation.getExpression().isDynamic());
+    assertTrue(edmAnnotation.getExpression().asDynamic().isAnd());
+    assertTrue(edmAnnotation.getExpression().asDynamic().asAnd().getLeftExpression().isPath());
+
+    edmAnnotation = edmGroup.getAnnotations().get(edmGroup.getAnnotations().size() - 2);
+    assertNotNull(edmAnnotation);
+    assertTrue(edmAnnotation.getExpression().isDynamic());
+    assertTrue(edmAnnotation.getExpression().asDynamic().isUrlRef());
+    final EdmUrlRef edmUrlRef = edmAnnotation.getExpression().asDynamic().asUrlRef();
+    assertTrue(edmUrlRef.getValue().isDynamic());
+    assertTrue(edmUrlRef.getValue().asDynamic().isApply());
   }
 }

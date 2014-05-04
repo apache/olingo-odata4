@@ -59,12 +59,10 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEnti
           jp.nextToken();
           if (entityType instanceof org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) {
             ((org.apache.olingo.client.core.edm.xml.v3.EntityTypeImpl) entityType).
-                    getProperties().add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v3.PropertyImpl.class));
+                    getProperties().add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v3.PropertyImpl.class));
           } else {
             ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
-                    getProperties().add(jp.readValueAs(
-                                    org.apache.olingo.client.core.edm.xml.v4.PropertyImpl.class));
+                    getProperties().add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.PropertyImpl.class));
           }
         } else if ("NavigationProperty".equals(jp.getCurrentName())) {
           jp.nextToken();
@@ -79,8 +77,8 @@ public class EntityTypeDeserializer extends AbstractEdmDeserializer<AbstractEnti
           }
         } else if ("Annotation".equals(jp.getCurrentName())) {
           jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).
-                  setAnnotation(jp.readValueAs(AnnotationImpl.class));
+          ((org.apache.olingo.client.core.edm.xml.v4.EntityTypeImpl) entityType).getAnnotations().
+                  add(jp.readValueAs(AnnotationImpl.class));
         }
       }
     }

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 
-public class ActionImportImpl extends AbstractAnnotatedEdmItem implements ActionImport {
+public class ActionImportImpl extends AbstractAnnotatable implements ActionImport {
 
   private static final long serialVersionUID = -866422101558426421L;
 

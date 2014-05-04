@@ -29,70 +29,70 @@
   <edmx:DataServices>
     <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Annotations">
       <Annotations Target="Test">
-        <Annotation Term="org.example.display.EndTime" TimeOfDay="21:45:00"/>,
+        <Annotation Term="org.example.display.EndTime" TimeOfDay="21:45:00"/>
         <Annotation Term="org.example.display.EndTime">
           <TimeOfDay>21:45:00</TimeOfDay>
-        </Annotation>,
-        <Annotation Term='Test' Path="IsMale"/>,
+        </Annotation>
+        <Annotation Term='Test' Path="IsMale"/>
         <Annotation Term='Test'>
           <Not>
             <Path>IsMale</Path>
           </Not>
-        </Annotation>,
+        </Annotation>
         <Annotation Term='Test'>
           <And>
             <Path>IsMale</Path>
             <Path>IsMarried</Path>
           </And>
-        </Annotation>,
-        <Annotation Term="UI.ReferenceFacet" AnnotationPath="Product/Supplier/@UI.LineItem"/>,
+        </Annotation>
+        <Annotation Term="UI.ReferenceFacet" AnnotationPath="Product/Supplier/@UI.LineItem"/>
         <Annotation Term="UI.ReferenceFacet">
           <AnnotationPath>Product/Supplier/@UI.LineItem</AnnotationPath>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="Vocabulary1.DisplayName">
           <Apply Function="odata.concat">
             <Path>Name</Path>
             <String> in </String>
             <Path>Address/CountryName</Path>
           </Apply>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.display.Threshold">
           <Cast Type="Edm.Decimal">
             <Path>Average</Path>
           </Cast>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="Vocabulary1.Tags">
           <Collection>
             <String>MasterData</String>
           </Collection>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.person.Gender">
           <If>
             <Bool>true</Bool>
             <String>Female</String>
             <String>Male</String>
           </If>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.person.Gender">
           <If>
             <Path>IsFemale</Path>
             <String>Female</String>
             <String>Male</String>
           </If>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="Self.IsPreferredCustomer">
           <IsOf Type="Self.PreferredCustomer">
             <Path>Customer</Path>
           </IsOf>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.display.DisplayName">
           <LabeledElement Name="CustomerFirstName" Path="FirstName" />
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.display.DisplayName">
           <LabeledElement Name="CustomerFirstName">
             <Path>FirstName</Path>
           </LabeledElement>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="org.example.person.Employee">
           <Record>
             <PropertyValue Property="GivenName" Path="FirstName" />
@@ -107,7 +107,7 @@
               </UrlRef>
             </PropertyValue>
           </Record>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="Vocab.Supplier">
           <UrlRef>
             <Apply Function="odata.fillUriTemplate">
@@ -119,7 +119,7 @@
               </LabeledElement>
             </Apply>
           </UrlRef>
-        </Annotation>,
+        </Annotation>
         <Annotation Term="Core.LongDescription">
           <UrlRef>
             <String>http://host/wiki/HowToUse</String>

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 
-public class ReferentialConstraintImpl extends AbstractAnnotatedEdmItem implements ReferentialConstraint {
+public class ReferentialConstraintImpl extends AbstractAnnotatable implements ReferentialConstraint {
 
   private static final long serialVersionUID = -9182114558289778632L;
 

@@ -19,15 +19,19 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmSchema;
@@ -43,7 +47,9 @@ import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 public class EdmSchemaImpl extends AbstractEdmSchema {
 
   private final Schema schema;
+
   private final Edm edm;
+
   private final EdmProvider provider;
 
   public EdmSchemaImpl(final Edm edm, final EdmProvider provider, final Schema schema) {
@@ -56,8 +62,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   protected EdmEntityContainer createEntityContainer() {
     if (schema.getEntityContainer() != null) {
-      FullQualifiedName containerFQN =
-          new FullQualifiedName(namespace, schema.getEntityContainer().getName());
+      FullQualifiedName containerFQN = new FullQualifiedName(namespace, schema.getEntityContainer().getName());
       return new EdmEntityContainerImpl(edm, provider, containerFQN, schema.getEntityContainer());
     }
     return null;
@@ -65,8 +70,8 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmTypeDefinition> createTypeDefinitions() {
-    List<EdmTypeDefinition> typeDefinitions = new ArrayList<EdmTypeDefinition>();
-    List<TypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
+    final List<EdmTypeDefinition> typeDefinitions = new ArrayList<EdmTypeDefinition>();
+    final List<TypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
       for (TypeDefinition def : providerTypeDefinitions) {
         typeDefinitions.add(new EdmTypeDefinitionImpl(edm, new FullQualifiedName("namespace", def.getName()), def));
@@ -77,8 +82,8 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmEnumType> createEnumTypes() {
-    List<EdmEnumType> enumTypes = new ArrayList<EdmEnumType>();
-    List<EnumType> providerEnumTypes = schema.getEnumTypes();
+    final List<EdmEnumType> enumTypes = new ArrayList<EdmEnumType>();
+    final List<EnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
       for (EnumType enumType : providerEnumTypes) {
         enumTypes.add(new EdmEnumTypeImpl(edm, new FullQualifiedName(namespace, enumType.getName()), enumType));
@@ -89,12 +94,12 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmEntityType> createEntityTypes() {
-    List<EdmEntityType> entityTypes = new ArrayList<EdmEntityType>();
-    List<EntityType> providerEntityTypes = schema.getEntityTypes();
+    final List<EdmEntityType> entityTypes = new ArrayList<EdmEntityType>();
+    final List<EntityType> providerEntityTypes = schema.getEntityTypes();
     if (providerEntityTypes != null) {
       for (EntityType entityType : providerEntityTypes) {
         entityTypes.add(EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName(namespace, entityType.getName()),
-            entityType));
+                entityType));
       }
     }
     return entityTypes;
@@ -102,12 +107,12 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmComplexType> createComplexTypes() {
-    List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
-    List<ComplexType> providerComplexTypes = schema.getComplexTypes();
+    final List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
+    final List<ComplexType> providerComplexTypes = schema.getComplexTypes();
     if (providerComplexTypes != null) {
       for (ComplexType complexType : providerComplexTypes) {
         complexTypes.add(EdmComplexTypeImpl.getInstance(edm, new FullQualifiedName(namespace, complexType.getName()),
-            complexType));
+                complexType));
       }
     }
     return complexTypes;
@@ -115,8 +120,8 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmAction> createActions() {
-    List<EdmAction> actions = new ArrayList<EdmAction>();
-    List<Action> providerActions = schema.getActions();
+    final List<EdmAction> actions = new ArrayList<EdmAction>();
+    final List<Action> providerActions = schema.getActions();
     if (providerActions != null) {
       for (Action action : providerActions) {
         actions.add(EdmActionImpl.getInstance(edm, new FullQualifiedName(namespace, action.getName()), action));
@@ -127,13 +132,37 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
 
   @Override
   protected List<EdmFunction> createFunctions() {
-    List<EdmFunction> functions = new ArrayList<EdmFunction>();
-    List<Function> providerFunctions = schema.getFunctions();
+    final List<EdmFunction> functions = new ArrayList<EdmFunction>();
+    final List<Function> providerFunctions = schema.getFunctions();
     if (providerFunctions != null) {
       for (Function function : providerFunctions) {
         functions.add(EdmFunctionImpl.getInstance(edm, new FullQualifiedName(namespace, function.getName()), function));
       }
     }
     return functions;
+  }
+
+  @Override
+  protected List<EdmTerm> createTerms() {
+    // TODO: implement
+    return Collections.emptyList();
+  }
+
+  @Override
+  protected List<EdmAnnotations> createAnnotationGroups() {
+    // TODO: implement
+    return Collections.emptyList();
+  }
+
+  @Override
+  protected List<EdmAnnotation> createAnnotations() {
+    // TODO: implement
+    return Collections.emptyList();
+  }
+
+  @Override
+  public List<EdmAnnotation> getAnnotations() {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }
