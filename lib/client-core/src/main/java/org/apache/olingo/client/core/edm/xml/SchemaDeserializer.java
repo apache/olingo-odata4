@@ -31,6 +31,7 @@ import org.apache.olingo.client.core.edm.xml.v3.ValueTermImpl;
 import org.apache.olingo.client.core.edm.xml.v4.ActionImpl;
 import org.apache.olingo.client.core.edm.xml.v4.AnnotationImpl;
 import org.apache.olingo.client.core.edm.xml.v4.FunctionImpl;
+import org.apache.olingo.client.core.edm.xml.v4.TermImpl;
 import org.apache.olingo.client.core.edm.xml.v4.TypeDefinitionImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -112,23 +113,10 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
             ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
                     setEntityContainer(entityContainer);
           }
-        } else if ("Annotations".equals(jp.getCurrentName())) {
-          jp.nextToken();
-          if (schema instanceof org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) {
-            ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).getAnnotationGroups().
-                    add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v3.AnnotationsImpl.class));
-          } else {
-            ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotationGroups().
-                    add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl.class));
-          }
         } else if ("Action".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getActions().
                   add(jp.readValueAs(ActionImpl.class));
-        } else if ("Annotation".equals(jp.getCurrentName())) {
-          jp.nextToken();
-          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotations().
-                  add(jp.readValueAs(AnnotationImpl.class));
         } else if ("Function".equals(jp.getCurrentName())) {
           jp.nextToken();
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getFunctions().
@@ -138,6 +126,23 @@ public class SchemaDeserializer extends AbstractEdmDeserializer<AbstractSchema> 
           ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).
                   getTypeDefinitions().add(jp.readValueAs(TypeDefinitionImpl.class));
         }
+      } else if ("Annotations".equals(jp.getCurrentName())) {
+        jp.nextToken();
+        if (schema instanceof org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) {
+          ((org.apache.olingo.client.core.edm.xml.v3.SchemaImpl) schema).getAnnotationGroups().
+                  add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v3.AnnotationsImpl.class));
+        } else {
+          ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotationGroups().
+                  add(jp.readValueAs(org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl.class));
+        }
+      } else if ("Annotation".equals(jp.getCurrentName())) {
+        jp.nextToken();
+        ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getAnnotations().
+                add(jp.readValueAs(AnnotationImpl.class));
+      } else if ("Term".equals(jp.getCurrentName())) {
+        jp.nextToken();
+        ((org.apache.olingo.client.core.edm.xml.v4.SchemaImpl) schema).getTerms().
+                add(jp.readValueAs(TermImpl.class));
       }
     }
 

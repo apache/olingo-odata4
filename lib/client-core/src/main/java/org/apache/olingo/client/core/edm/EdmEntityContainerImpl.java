@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
@@ -227,6 +228,11 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntityContainer;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper == null ? null : helper.getAnnotation(term);
   }
 
   @Override

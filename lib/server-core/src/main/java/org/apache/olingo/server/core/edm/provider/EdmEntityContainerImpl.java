@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityContainer;
 import org.apache.olingo.server.api.edm.provider.ActionImport;
@@ -194,7 +195,13 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       }
     }
   }
-
+  
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

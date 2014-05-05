@@ -25,5 +25,7 @@ import java.util.List;
  */
 public interface EdmAnnotatable {
 
+  EdmAnnotation getAnnotation(EdmTerm term);
+
   List<EdmAnnotation> getAnnotations();
 }

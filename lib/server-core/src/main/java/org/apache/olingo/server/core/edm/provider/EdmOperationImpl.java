@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
@@ -82,6 +83,12 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
       return bindingParameter.isCollection();
     }
     return null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override

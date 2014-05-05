@@ -31,6 +31,7 @@ import org.apache.olingo.client.core.edm.EdmReturnTypeImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.AbstractEdmOperation;
@@ -74,6 +75,11 @@ public class EdmOperationProxy extends AbstractEdmOperation {
   @Override
   public Boolean isBindingParameterTypeCollection() {
     //Not relevant for V3
+    return null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
     return null;
   }
 

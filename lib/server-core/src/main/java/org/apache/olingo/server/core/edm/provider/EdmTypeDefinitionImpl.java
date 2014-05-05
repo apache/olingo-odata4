@@ -24,6 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
@@ -82,6 +83,12 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     return typeDefinition.getIsUnicode();
   }
 
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

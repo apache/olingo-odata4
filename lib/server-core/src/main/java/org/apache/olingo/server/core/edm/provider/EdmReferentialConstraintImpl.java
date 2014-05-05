@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.core.edm.AbstractEdmReferentialConstraint;
 
 public class EdmReferentialConstraintImpl extends AbstractEdmReferentialConstraint {
@@ -28,6 +29,12 @@ public class EdmReferentialConstraintImpl extends AbstractEdmReferentialConstrai
     super(property, referencedProperty);
   }
 
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

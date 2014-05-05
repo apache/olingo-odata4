@@ -231,6 +231,11 @@ public class EdmAnnotationImpl implements EdmAnnotation {
   }
 
   @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
+  }
+
+  @Override
   public List<EdmAnnotation> getAnnotations() {
     return helper.getAnnotations();
   }

@@ -18,10 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.util.List;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
-public interface EdmAnnotationHelper {
-
-  List<EdmAnnotation> getAnnotations();
+public interface EdmAnnotationHelper extends EdmAnnotatable {
 }

@@ -60,7 +60,7 @@ public abstract class AbstractEdmSchema implements EdmSchema {
 
   private EdmEntityContainer entityContainer;
 
-  public AbstractEdmSchema(String namespace, String alias) {
+  public AbstractEdmSchema(final String namespace, final String alias) {
     this.namespace = namespace;
     this.alias = alias;
   }

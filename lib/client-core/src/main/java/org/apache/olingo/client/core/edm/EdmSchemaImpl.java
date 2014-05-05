@@ -224,7 +224,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
       final List<Term> providerTerms = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getTerms();
       if (providerTerms != null) {
         for (Term term : providerTerms) {
-          terms.add(new EdmTermImpl(edm, term));
+          terms.add(new EdmTermImpl(edm, getNamespace(), term));
         }
       }
     }
@@ -260,4 +260,17 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     }
     return annotations;
   }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    EdmAnnotation result = null;
+    for (EdmAnnotation annotation : getAnnotations()) {
+      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
+        result = annotation;
+      }
+    }
+
+    return result;
+  }
+
 }

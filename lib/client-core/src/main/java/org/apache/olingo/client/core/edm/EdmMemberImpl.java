@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.edm.xml.Member;
 import org.apache.olingo.client.core.edm.xml.v4.MemberImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmMember;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
@@ -37,6 +38,11 @@ public class EdmMemberImpl extends AbstractEdmMember {
     this.helper = member instanceof MemberImpl
             ? new EdmAnnotationHelperImpl(edm, (MemberImpl) member)
             : null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper == null ? null : helper.getAnnotation(term);
   }
 
   @Override

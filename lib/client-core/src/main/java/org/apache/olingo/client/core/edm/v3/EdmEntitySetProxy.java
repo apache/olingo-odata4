@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
 
@@ -117,6 +118,11 @@ public class EdmEntitySetProxy extends AbstractEdmBindingTarget implements EdmEn
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntitySet;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return null;
   }
 
   @Override

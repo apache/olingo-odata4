@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
@@ -99,6 +100,11 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
       }
     }
     return navigationPropertyBindings;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
   }
 
   @Override

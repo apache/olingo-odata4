@@ -22,11 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 
 public abstract class AbstractEdmAnnotatableDynamicAnnotationExpression
         extends AbstractEdmDynamicAnnotationExpression implements EdmAnnotatable {
 
   private final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    EdmAnnotation result = null;
+    for (EdmAnnotation annotation : getAnnotations()) {
+      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
+        result = annotation;
+      }
+    }
+
+    return result;
+  }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {

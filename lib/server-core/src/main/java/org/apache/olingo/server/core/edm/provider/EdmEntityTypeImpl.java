@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmEntityType;
 import org.apache.olingo.commons.core.edm.EdmStructuredTypeHelper;
@@ -99,6 +100,12 @@ public class EdmEntityTypeImpl extends AbstractEdmEntityType {
     return helper.isAbstract();
   }
 
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

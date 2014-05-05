@@ -177,6 +177,12 @@ public abstract class AbstractEdm implements Edm {
     EdmSchema schema = null;
     if (schemas != null) {
       schema = schemas.get(namespace);
+      if (schema == null) {
+        if (aliasToNamespaceInfo == null) {
+          aliasToNamespaceInfo = createAliasToNamespaceInfo();
+        }
+        schema = schemas.get(aliasToNamespaceInfo.get(namespace));
+      }
     }
     return schema;
   }

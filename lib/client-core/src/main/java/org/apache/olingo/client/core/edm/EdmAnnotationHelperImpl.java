@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
 public class EdmAnnotationHelperImpl implements EdmAnnotationHelper {
@@ -37,6 +38,18 @@ public class EdmAnnotationHelperImpl implements EdmAnnotationHelper {
   public EdmAnnotationHelperImpl(final Edm edm, final Annotatable annotatable) {
     this.edm = edm;
     this.annotatable = annotatable;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    EdmAnnotation result = null;
+    for (EdmAnnotation annotation : getAnnotations()) {
+      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
+        result = annotation;
+      }
+    }
+
+    return result;
   }
 
   @Override

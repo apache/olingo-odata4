@@ -51,7 +51,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
     if (!rootMetadata.getReferences().isEmpty()) {
       for (Reference reference : rootMetadata.getReferences()) {
         final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient,
-                odataClient.getURIBuilder(reference.getUri().toASCIIString()).appendMetadataSegment().build());
+                odataClient.getURIBuilder(reference.getUri().toASCIIString()).build());
         final XMLMetadata includeMetadata = includeReq.execute().getBody();
         
         for (Include include : reference.getIncludes()) {

@@ -25,6 +25,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Parameter;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmParameter;
@@ -83,6 +84,11 @@ public class EdmParameterImpl extends AbstractEdmParameter {
     return (parameter instanceof Parameter)
             ? ((Parameter) parameter).getSrid()
             : null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper == null ? null : helper.getAnnotation(term);
   }
 
   @Override

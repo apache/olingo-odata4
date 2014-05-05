@@ -202,7 +202,6 @@ public class SchemaImpl extends AbstractSchema implements Schema {
       for (ComplexType complexType : getComplexTypes()) {
         annotatables.put(complexType.getName(), complexType);
       }
-      annotatables.put(entityContainer.getName(), entityContainer);
       for (EntityType entityType : getEntityTypes()) {
         annotatables.put(entityType.getName(), entityType);
       }
@@ -217,6 +216,9 @@ public class SchemaImpl extends AbstractSchema implements Schema {
       }
       for (TypeDefinition typedef : getTypeDefinitions()) {
         annotatables.put(typedef.getName(), typedef);
+      }
+      if (entityContainer != null) {
+        annotatables.put(entityContainer.getName(), entityContainer);
       }
     }
     return annotatables;

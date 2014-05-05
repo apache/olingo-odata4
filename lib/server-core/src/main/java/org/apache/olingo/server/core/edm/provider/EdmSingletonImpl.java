@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.server.api.edm.provider.Singleton;
 
 public class EdmSingletonImpl extends EdmBindingTargetImpl implements EdmSingleton {
@@ -35,7 +36,13 @@ public class EdmSingletonImpl extends EdmBindingTargetImpl implements EdmSinglet
   public TargetType getAnnotationsTargetType() {
     return TargetType.Singleton;
   }
-
+  
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

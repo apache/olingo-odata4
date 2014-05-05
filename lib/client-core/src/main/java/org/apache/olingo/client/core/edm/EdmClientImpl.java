@@ -428,7 +428,7 @@ public class EdmClientImpl extends AbstractEdm {
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
       final Term term = ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getTerm(termName.getName());
       if (term != null) {
-        result = new EdmTermImpl(this, term);
+        result = new EdmTermImpl(this, schema.getNamespace(), term);
       }
     }
 
@@ -455,8 +455,11 @@ public class EdmClientImpl extends AbstractEdm {
   protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
     List<EdmAnnotation> result = null;
 
+    System.out.println("SSSSSSSSS1 " + annotatedName);
+    
     final Schema schema = xmlSchemaByNamespace.get(annotatedName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
+    System.out.println("SSSSSSSSS2 " + ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotatables());
       final Annotatable annotatable =
               ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotatables().get(annotatedName.getName());
       if (annotatable != null && annotatable.getAnnotations() != null) {

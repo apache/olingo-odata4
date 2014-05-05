@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmComplexType;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
@@ -82,6 +83,11 @@ public class EdmComplexTypeImpl extends AbstractEdmComplexType {
   @Override
   public boolean isAbstract() {
     return typeHelper.isAbstract();
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return annotationHelper == null ? null : annotationHelper.getAnnotation(term);
   }
 
   @Override

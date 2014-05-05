@@ -24,14 +24,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Include;
 import org.apache.olingo.client.api.edm.xml.v4.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
-import org.apache.olingo.client.core.edm.xml.AbstractEdmItem;
 
 @JsonDeserialize(using = ReferenceDeserializer.class)
-public class ReferenceImpl extends AbstractEdmItem implements Reference {
+public class ReferenceImpl extends AbstractAnnotatable implements Reference {
 
   private static final long serialVersionUID = -5600031479702563436L;
 
@@ -40,8 +38,6 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
   private final List<Include> includes = new ArrayList<Include>();
 
   private final List<IncludeAnnotations> includeAnnotations = new ArrayList<IncludeAnnotations>();
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
   public URI getUri() {
@@ -60,11 +56,6 @@ public class ReferenceImpl extends AbstractEdmItem implements Reference {
   @Override
   public List<IncludeAnnotations> getIncludeAnnotations() {
     return includeAnnotations;
-  }
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
   }
 
 }

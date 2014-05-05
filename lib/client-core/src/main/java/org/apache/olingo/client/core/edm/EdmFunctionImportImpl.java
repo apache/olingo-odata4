@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
@@ -73,6 +74,11 @@ public class EdmFunctionImportImpl extends EdmOperationImportImpl implements Edm
   @Override
   public boolean isIncludeInServiceDocument() {
     return functionImport.isIncludeInServiceDocument();
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
   }
 
   @Override

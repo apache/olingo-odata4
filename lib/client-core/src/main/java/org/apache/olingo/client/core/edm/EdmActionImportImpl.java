@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
@@ -61,6 +62,11 @@ public class EdmActionImportImpl extends EdmOperationImportImpl implements EdmAc
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.ActionImport;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
   }
 
   @Override

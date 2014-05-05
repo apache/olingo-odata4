@@ -49,6 +49,10 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testVocabulariesServiceRootURL;
+
+  protected static String testNorthwindRootURL;
+
   protected static String testKeyAsSegmentServiceRootURL;
 
   protected static String testOpenTypeServiceRootURL;
@@ -60,12 +64,14 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc";
+    testVocabulariesServiceRootURL = "http://localhost:9080/StaticService/V40/Vocabularies.svc";
+    testNorthwindRootURL = "http://localhost:9080/StaticService/V40/NorthWind.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/StaticService/V40/KeyAsSegment.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/DefaultService.svc";
 
-    edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);  
+    edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);
   }
 
   @Override

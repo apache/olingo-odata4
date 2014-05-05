@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
 import org.apache.olingo.server.api.edm.provider.NavigationProperty;
@@ -104,6 +105,12 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
     return structuredTypeName;
   }
 
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

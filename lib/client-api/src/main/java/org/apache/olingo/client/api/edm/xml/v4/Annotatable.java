@@ -21,6 +21,6 @@ package org.apache.olingo.client.api.edm.xml.v4;
 import java.util.List;
 
 public interface Annotatable {
-
+  
   List<Annotation> getAnnotations();
 }

@@ -21,13 +21,11 @@ package org.apache.olingo.client.api.edm.xml.v4;
 import java.net.URI;
 import java.util.List;
 
-public interface Reference {
+public interface Reference extends Annotatable {
 
   URI getUri();
 
   List<Include> getIncludes();
 
   List<IncludeAnnotations> getIncludeAnnotations();
-
-  List<Annotation> getAnnotations();
 }

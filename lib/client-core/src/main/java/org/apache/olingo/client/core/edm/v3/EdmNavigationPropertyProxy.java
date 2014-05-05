@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmNavigationProperty;
 
@@ -171,6 +172,11 @@ public class EdmNavigationPropertyProxy extends AbstractEdmNavigationProperty {
 
   @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
+    return null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
     return null;
   }
 

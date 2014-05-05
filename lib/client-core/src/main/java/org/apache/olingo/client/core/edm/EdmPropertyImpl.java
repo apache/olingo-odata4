@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.core.edm.AbstractEdmProperty;
@@ -108,6 +109,11 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
   @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
     return structuredTypeName;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper == null ? null : helper.getAnnotation(term);
   }
 
   @Override

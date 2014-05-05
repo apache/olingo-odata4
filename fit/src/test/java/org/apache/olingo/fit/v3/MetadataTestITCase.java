@@ -18,24 +18,16 @@
  */
 package org.apache.olingo.fit.v3;
 
-import org.apache.olingo.client.api.v3.ODataClient;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.fit.AbstractMetadataTestITCase;
 import org.apache.olingo.commons.api.edm.Edm;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-public class MetadataTestITCase extends AbstractMetadataTestITCase {
-
-  @Override
-  protected ODataClient getClient() {
-    return ODataClientFactory.getV3();
-  }
+public class MetadataTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieve() {
     final Edm metadata = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(getTestServiceRoot()).execute().getBody();
+            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
     assertNotNull(metadata);
   }
 }

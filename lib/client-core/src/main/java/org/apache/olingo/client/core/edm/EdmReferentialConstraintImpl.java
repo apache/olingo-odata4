@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.olingo.client.api.edm.xml.v4.ReferentialConstraint;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.core.edm.AbstractEdmReferentialConstraint;
 import org.apache.olingo.commons.core.edm.EdmAnnotationHelper;
 
@@ -32,6 +33,11 @@ public class EdmReferentialConstraintImpl extends AbstractEdmReferentialConstrai
   public EdmReferentialConstraintImpl(final Edm edm, final ReferentialConstraint constraint) {
     super(constraint.getProperty(), constraint.getReferencedProperty());
     this.helper = new EdmAnnotationHelperImpl(edm, constraint);
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
   }
 
   @Override

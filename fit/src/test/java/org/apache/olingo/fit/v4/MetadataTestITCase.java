@@ -20,29 +20,28 @@ package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.fit.AbstractMetadataTestITCase;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.junit.Test;
 
-public class MetadataTestITCase extends AbstractMetadataTestITCase {
-
-  @Override
-  protected ODataClient getClient() {
-    return ODataClientFactory.getV4();
-  }
+public class MetadataTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieve() {
-    final Edm metadata = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(getTestServiceRoot()).execute().getBody();
+    final Edm metadata = client.getRetrieveRequestFactory().
+            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
     assertNotNull(metadata);
 
     final EdmEntityType order = metadata.getEntityType(
@@ -56,16 +55,69 @@ public class MetadataTestITCase extends AbstractMetadataTestITCase {
 
   @Test
   public void include() {
-    final Edm metadata = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(getNorthwindServiceRoot()).execute().getBody();
-    assertNotNull(metadata);
+    final Edm edm = client.getRetrieveRequestFactory().
+            getMetadataRequest(testNorthwindRootURL).execute().getBody();
+    assertNotNull(edm);
 
-    final EdmEntityContainer container = metadata.getEntityContainer(
+    final EdmEntityContainer container = edm.getEntityContainer(
             new FullQualifiedName("ODataWebExperimental.Northwind.Model", "NorthwindEntities"));
     assertNotNull(container);
 
     final EdmEntitySet categories = container.getEntitySet("Categories");
     assertNotNull(categories);
     assertEquals("NorthwindModel", categories.getEntityType().getNamespace());
+  }
+
+  @Test
+  public void vocabularies() {
+    final Edm edm = client.getRetrieveRequestFactory().
+            getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
+    assertNotNull(edm);
+
+    // 1. core
+    final EdmSchema core = edm.getSchema("Org.OData.Core.V1");
+    assertNotNull(core);
+    final EdmSchema coreAlias = edm.getSchema("Core");
+    assertEquals(core, coreAlias);
+
+    final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core.Description"));
+    assertNotNull(descriptionTerm);
+    assertEquals(descriptionTerm.getFullQualifiedName(),
+            edm.getTerm(new FullQualifiedName("Org.OData.Core.V1.Description")).getFullQualifiedName());
+
+    final EdmAnnotation description = core.getAnnotation(descriptionTerm);
+    assertNotNull(description);
+    assertEquals("Core terms needed to write vocabularies",
+            description.getExpression().asConstant().getValue().asPrimitive().toString());
+
+    final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
+    assertNotNull(isLanguageDependent);
+    assertTrue(isLanguageDependent.getAppliesTo().contains(EdmProperty.class));
+    assertTrue(isLanguageDependent.getAppliesTo().contains(EdmTerm.class));
+    assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core.Tag")), isLanguageDependent.getType());
+    assertEquals(EdmBoolean.getInstance(), ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
+    assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm));
+
+    final EdmTerm permissions = edm.getTerm(new FullQualifiedName("Core.Permissions"));
+    assertNotNull(permissions);
+    assertTrue(permissions.getType() instanceof EdmEnumType);
+
+    // 2. measures
+    final EdmSchema measures = edm.getSchema("Measures");
+    assertNotNull(measures);
+
+    final EdmTerm scale = edm.getTerm(new FullQualifiedName("Measures.Scale"));
+    assertNotNull(scale);
+
+    final EdmAnnotation requiresTypeInScale = edm.getAnnotation(
+            scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
+    assertNotNull(requiresTypeInScale);
+    assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValue().toString());
+
+    // 3. capabilities
+    final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities.DeleteRestrictions"));
+    assertNotNull(deleteRestrictions);
+    assertEquals(deleteRestrictions.getType().getFullQualifiedName(),
+            edm.getComplexType(new FullQualifiedName("Capabilities.DeleteRestrictionsType")).getFullQualifiedName());
   }
 }

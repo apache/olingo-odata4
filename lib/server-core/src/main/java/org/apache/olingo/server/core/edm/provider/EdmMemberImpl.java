@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.edm.provider;
 import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.AbstractEdmMember;
 
@@ -30,6 +31,12 @@ public class EdmMemberImpl extends AbstractEdmMember {
     super(edm, enumFQN, name, value);
   }
 
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    // TODO: implement
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

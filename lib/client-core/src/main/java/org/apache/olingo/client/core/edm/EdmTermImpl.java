@@ -42,6 +42,8 @@ public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
 
   private final Term term;
 
+  private final FullQualifiedName fqn;
+
   private final EdmTypeInfo typeInfo;
 
   private final EdmAnnotationHelper helper;
@@ -52,17 +54,18 @@ public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
 
   private List<Class<?>> appliesTo;
 
-  public EdmTermImpl(final Edm edm, final Term term) {
+  public EdmTermImpl(final Edm edm, final String namespace, final Term term) {
     super(edm, term.getName());
 
     this.term = term;
+    this.fqn = new FullQualifiedName(namespace, term.getName());
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(term.getType()).build();
     this.helper = new EdmAnnotationHelperImpl(edm, term);
   }
 
   @Override
   public FullQualifiedName getFullQualifiedName() {
-    return typeInfo.getFullQualifiedName();
+    return fqn;
   }
 
   @Override
@@ -145,12 +148,17 @@ public class EdmTermImpl extends EdmNamedImpl implements EdmTerm {
 
   @Override
   public FullQualifiedName getAnnotationsTargetFQN() {
-    return typeInfo.getFullQualifiedName();
+    return getFullQualifiedName();
   }
 
   @Override
   public String getAnnotationsTargetPath() {
     return null;
+  }
+
+  @Override
+  public EdmAnnotation getAnnotation(final EdmTerm term) {
+    return helper.getAnnotation(term);
   }
 
   @Override
