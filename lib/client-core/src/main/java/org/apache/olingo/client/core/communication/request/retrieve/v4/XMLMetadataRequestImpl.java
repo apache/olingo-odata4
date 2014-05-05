@@ -19,19 +19,24 @@
 package org.apache.olingo.client.core.communication.request.retrieve.v4;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.Schema;
+import org.apache.olingo.client.api.edm.xml.v4.Annotation;
+import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.Include;
+import org.apache.olingo.client.api.edm.xml.v4.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.v4.Reference;
 import org.apache.olingo.client.api.edm.xml.v4.XMLMetadata;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
+import org.apache.olingo.client.core.edm.xml.v4.AnnotationsImpl;
+import org.apache.olingo.client.core.edm.xml.v4.SchemaImpl;
 
-public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? extends Schema>>
+public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
         implements XMLMetadataRequest {
 
   XMLMetadataRequestImpl(final ODataClient odataClient, final URI uri) {
@@ -39,28 +44,73 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
   }
 
   @Override
-  public ODataRetrieveResponse<List<? extends Schema>> execute() {
+  public ODataRetrieveResponse<Map<String, Schema>> execute() {
     final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient, uri);
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
     final XMLMetadataResponseImpl response = new XMLMetadataResponseImpl();
 
     final XMLMetadata rootMetadata = rootRes.getBody();
-    response.getSchemas().addAll(rootMetadata.getSchemas());
+    for (Schema schema : rootMetadata.getSchemas()) {
+      response.getBody().put(schema.getNamespace(), schema);
+      if (StringUtils.isNotBlank(schema.getAlias())) {
+        response.getBody().put(schema.getAlias(), schema);
+      }
+    }
 
-    if (!rootMetadata.getReferences().isEmpty()) {
-      for (Reference reference : rootMetadata.getReferences()) {
-        final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl((ODataClient) odataClient,
-                odataClient.getURIBuilder(reference.getUri().toASCIIString()).build());
-        final XMLMetadata includeMetadata = includeReq.execute().getBody();
-        
-        for (Include include : reference.getIncludes()) {
-          Schema includedSchema = includeMetadata.getSchema(include.getNamespace());
-          if (includedSchema == null && StringUtils.isNotBlank(include.getAlias())) {
-            includedSchema = includeMetadata.getSchema(include.getAlias());
+    // process external references
+    for (Reference reference : rootMetadata.getReferences()) {
+      final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
+              (ODataClient) odataClient, odataClient.getURIBuilder(reference.getUri().toASCIIString()).build());
+      final XMLMetadata includeMetadata = includeReq.execute().getBody();
+
+      // edmx:Include
+      for (Include include : reference.getIncludes()) {
+        final Schema includedSchema = includeMetadata.getSchema(include.getNamespace());
+        if (includedSchema != null) {
+          response.getBody().put(include.getNamespace(), includedSchema);
+          if (StringUtils.isNotBlank(include.getAlias())) {
+            response.getBody().put(include.getAlias(), includedSchema);
           }
-          if (includedSchema != null) {
-            response.getSchemas().add(includedSchema);
+        }
+      }
+
+      // edmx:IncludeAnnotations
+      for (IncludeAnnotations include : reference.getIncludeAnnotations()) {
+        for (Schema schema : includeMetadata.getSchemas()) {
+          // create empty schema that will be fed with edm:Annotations that match the criteria in IncludeAnnotations
+          final SchemaImpl forInclusion = new SchemaImpl();
+          forInclusion.setNamespace(schema.getNamespace());
+          forInclusion.setAlias(schema.getAlias());
+
+          // process all edm:Annotations in each schema of the included document
+          for (Annotations annotationGroup : ((SchemaImpl) schema).getAnnotationGroups()) {
+              // take into account only when (TargetNamespace was either not provided or matches) and
+            // (Qualifier was either not provided or matches)
+            if ((StringUtils.isBlank(include.getTargetNamespace())
+                    || include.getTargetNamespace().equals(
+                            StringUtils.substringBeforeLast(annotationGroup.getTarget(), ".")))
+                    && (StringUtils.isBlank(include.getQualifier())
+                    || include.getQualifier().equals(annotationGroup.getQualifier()))) {
+
+              final AnnotationsImpl toBeIncluded = new AnnotationsImpl();
+              toBeIncluded.setTarget(annotationGroup.getTarget());
+              toBeIncluded.setQualifier(annotationGroup.getQualifier());
+              // only import annotations with terms matching the given TermNamespace
+              for (Annotation annotation : annotationGroup.getAnnotations()) {
+                if (include.getTermNamespace().equals(StringUtils.substringBeforeLast(annotation.getTerm(), "."))) {
+                  toBeIncluded.getAnnotations().add(annotation);
+                }
+              }
+              forInclusion.getAnnotationGroups().add(toBeIncluded);
+            }
+          }
+
+          if (!forInclusion.getAnnotationGroups().isEmpty()) {
+            response.getBody().put(forInclusion.getNamespace(), forInclusion);
+            if (StringUtils.isNotBlank(forInclusion.getAlias())) {
+              response.getBody().put(forInclusion.getAlias(), forInclusion);
+            }
           }
         }
       }
@@ -93,7 +143,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
 
   public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
-    private final List<Schema> schemas = new ArrayList<Schema>();
+    private final Map<String, Schema> schemas = new HashMap<String, Schema>();
 
     /**
      * Constructor.
@@ -109,13 +159,9 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
       // just do nothing, this is a placeholder response
     }
 
-    public List<Schema> getSchemas() {
-      return schemas;
-    }
-
     @Override
-    public List<? extends Schema> getBody() {
-      return getSchemas();
+    public Map<String, Schema> getBody() {
+      return schemas;
     }
   }
 

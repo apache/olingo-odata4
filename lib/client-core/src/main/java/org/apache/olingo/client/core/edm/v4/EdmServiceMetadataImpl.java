@@ -41,9 +41,7 @@ public class EdmServiceMetadataImpl extends AbstractEdmServiceMetadataImpl {
 
   private List<EdmSingletonInfo> singletonInfos;
 
-  private List<EdmActionImportInfo> actionImportInfos;
-
-  public EdmServiceMetadataImpl(final List<? extends Schema> xmlSchemas) {
+  public EdmServiceMetadataImpl(final List<Schema> xmlSchemas) {
     super(xmlSchemas);
   }
 

@@ -19,7 +19,9 @@
 package org.apache.olingo.client.core.communication.request.retrieve.v3;
 
 import java.net.URI;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
@@ -29,7 +31,7 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.retrieve.AbstractMetadataRequestImpl;
 
-public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? extends Schema>>
+public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<String, Schema>>
         implements XMLMetadataRequest {
 
   XMLMetadataRequestImpl(final ODataClient odataClient, final URI query) {
@@ -37,13 +39,13 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
   }
 
   @Override
-  public ODataRetrieveResponse<List<? extends Schema>> execute() {
+  public ODataRetrieveResponse<Map<String, Schema>> execute() {
     return new XMLMetadataResponseImpl(httpClient, doExecute());
   }
 
   public class XMLMetadataResponseImpl extends AbstractODataRetrieveResponse {
 
-    private XMLMetadata metadata = null;
+    private Map<String, Schema> schemas;
 
     /**
      * Constructor.
@@ -65,15 +67,22 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<List<? e
     }
 
     @Override
-    public List<? extends Schema> getBody() {
-      if (metadata == null) {
+    public Map<String, Schema> getBody() {
+      if (schemas == null) {
+        schemas = new HashMap<String, Schema>();
         try {
-          metadata = odataClient.getDeserializer().toMetadata(getRawResponse());
+          final XMLMetadata metadata = odataClient.getDeserializer().toMetadata(getRawResponse());
+          for (Schema schema : metadata.getSchemas()) {
+            schemas.put(schema.getNamespace(), schema);
+            if (StringUtils.isNotBlank(schema.getAlias())) {
+              schemas.put(schema.getAlias(), schema);
+            }
+          }
         } finally {
           this.close();
         }
       }
-      return metadata.getSchemas();
+      return schemas;
     }
   }
 }

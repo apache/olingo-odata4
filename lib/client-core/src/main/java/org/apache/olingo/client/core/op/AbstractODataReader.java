@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.op;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
@@ -56,19 +56,19 @@ public abstract class AbstractODataReader implements CommonODataReader {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractODataReader.class);
 
-  protected final CommonODataClient client;
+  protected final CommonODataClient<?> client;
 
-  protected AbstractODataReader(final CommonODataClient client) {
+  protected AbstractODataReader(final CommonODataClient<?> client) {
     this.client = client;
   }
 
   @Override
   public Edm readMetadata(final InputStream input) {
-    return readMetadata(client.getDeserializer().toMetadata(input).getSchemas());
+    return readMetadata(client.getDeserializer().toMetadata(input).getSchemaByNsOrAlias());
   }
 
   @Override
-  public Edm readMetadata(final List<? extends Schema> xmlSchemas) {
+  public Edm readMetadata(final Map<String, Schema> xmlSchemas) {
     return new EdmClientImpl(client.getServiceVersion(), xmlSchemas);
   }
 

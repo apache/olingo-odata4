@@ -18,13 +18,9 @@
  */
 package org.apache.olingo.client.api.edm.xml.v4;
 
-import java.util.List;
-
 import org.apache.olingo.client.api.edm.xml.CommonAnnotations;
 
-public interface Annotations extends CommonAnnotations {
-
-  List<? extends Annotation> getAnnotations();
+public interface Annotations extends CommonAnnotations, Annotatable {
 
   Annotation getAnnotation(String term);
 }

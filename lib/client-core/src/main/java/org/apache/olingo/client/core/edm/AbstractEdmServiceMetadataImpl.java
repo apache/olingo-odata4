@@ -46,8 +46,7 @@ public abstract class AbstractEdmServiceMetadataImpl implements EdmServiceMetada
 
   protected List<EdmActionImportInfo> actionImportInfos;
 
-  public static EdmServiceMetadata getInstance(final ODataServiceVersion version,
-          final List<? extends Schema> xmlSchemas) {
+  public static EdmServiceMetadata getInstance(final ODataServiceVersion version, final List<Schema> xmlSchemas) {
 
     return version.compareTo(ODataServiceVersion.V40) < 0
             ? new org.apache.olingo.client.core.edm.v3.EdmServiceMetadataImpl(xmlSchemas)

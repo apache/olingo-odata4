@@ -19,7 +19,7 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Map;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -46,7 +46,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
   @Override
   public ODataRetrieveResponse<Edm> execute() {
-    final ODataRetrieveResponse<List<? extends Schema>> xmlMetadataResponse =
+    final ODataRetrieveResponse<Map<String, Schema>> xmlMetadataResponse =
             odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot).execute();
 
     return new AbstractODataRetrieveResponse() {

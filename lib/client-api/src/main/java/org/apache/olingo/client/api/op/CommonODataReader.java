@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.op;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 import org.apache.olingo.client.api.edm.xml.Schema;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -56,7 +56,7 @@ public interface CommonODataReader extends Serializable {
    * <tt>&lt;edmx:Reference/&gt;</tt>) metadata document
    * @return metadata representation.
    */
-  Edm readMetadata(List<? extends Schema> xmlSchemas);
+  Edm readMetadata(Map<String, Schema> xmlSchemas);
 
   /**
    * Parses an OData service document.

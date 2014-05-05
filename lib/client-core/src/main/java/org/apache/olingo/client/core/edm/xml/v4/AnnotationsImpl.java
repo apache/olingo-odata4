@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.core.edm.xml.AbstractAnnotations;
 
@@ -31,17 +31,17 @@ public class AnnotationsImpl extends AbstractAnnotations implements Annotations 
 
   private static final long serialVersionUID = 3877353656301805410L;
 
-  private final List<AnnotationImpl> annotations = new ArrayList<AnnotationImpl>();
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
 
   @Override
-  public List<AnnotationImpl> getAnnotations() {
+  public List<Annotation> getAnnotations() {
     return annotations;
   }
 
   @Override
-  public AnnotationImpl getAnnotation(final String term) {
-    AnnotationImpl result = null;
-    for (AnnotationImpl annotation : getAnnotations()) {
+  public Annotation getAnnotation(final String term) {
+    Annotation result = null;
+    for (Annotation annotation : getAnnotations()) {
       if (term.equals(annotation.getTerm())) {
         result = annotation;
       }

@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Entry point for access information about EDM metadata.
@@ -56,4 +57,5 @@ public interface XMLMetadata {
    */
   List<? extends Schema> getSchemas();
 
+  Map<String, Schema> getSchemaByNsOrAlias();
 }

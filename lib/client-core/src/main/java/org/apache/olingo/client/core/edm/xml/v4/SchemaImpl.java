@@ -26,14 +26,18 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.edm.xml.EnumType;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
+import org.apache.olingo.client.api.edm.xml.v4.ActionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Annotatable;
 import org.apache.olingo.client.api.edm.xml.v4.Annotation;
 import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.ComplexType;
 import org.apache.olingo.client.api.edm.xml.v4.EntityContainer;
+import org.apache.olingo.client.api.edm.xml.v4.EntitySet;
 import org.apache.olingo.client.api.edm.xml.v4.EntityType;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
+import org.apache.olingo.client.api.edm.xml.v4.FunctionImport;
 import org.apache.olingo.client.api.edm.xml.v4.Schema;
+import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
 import org.apache.olingo.client.core.edm.xml.AbstractSchema;
@@ -193,11 +197,14 @@ public class SchemaImpl extends AbstractSchema implements Schema {
   public Map<String, Annotatable> getAnnotatables() {
     if (annotatables == null) {
       annotatables = new HashMap<String, Annotatable>();
-      for (Action action : getActions()) {
-        annotatables.put(action.getName(), action);
+      for (Annotations annotationGroup : getAnnotationGroups()) {
+        annotatables.put(null, annotationGroup);
       }
       for (Annotation annotation : getAnnotations()) {
         annotatables.put(annotation.getTerm(), annotation);
+      }
+      for (Action action : getActions()) {
+        annotatables.put(action.getName(), action);
       }
       for (ComplexType complexType : getComplexTypes()) {
         annotatables.put(complexType.getName(), complexType);
@@ -219,6 +226,21 @@ public class SchemaImpl extends AbstractSchema implements Schema {
       }
       if (entityContainer != null) {
         annotatables.put(entityContainer.getName(), entityContainer);
+        for (Annotation annotation : entityContainer.getAnnotations()) {
+          annotatables.put(annotation.getTerm(), annotation);
+        }
+        for (ActionImport actionImport : entityContainer.getActionImports()) {
+          annotatables.put(actionImport.getName(), actionImport);
+        }
+        for (FunctionImport functionImport : entityContainer.getFunctionImports()) {
+          annotatables.put(functionImport.getName(), functionImport);
+        }
+        for (EntitySet entitySet : entityContainer.getEntitySets()) {
+          annotatables.put(entitySet.getName(), entitySet);
+        }
+        for (Singleton singleton : entityContainer.getSingletons()) {
+          annotatables.put(singleton.getName(), singleton);
+        }
       }
     }
     return annotatables;

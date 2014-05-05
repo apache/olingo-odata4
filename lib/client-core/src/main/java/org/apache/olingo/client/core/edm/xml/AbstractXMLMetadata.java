@@ -93,4 +93,8 @@ public abstract class AbstractXMLMetadata extends AbstractEdmItem implements XML
     return this.edmx.getDataServices().getSchemas();
   }
 
+  public Map<String, Schema> getSchemaByNsOrAlias() {
+    return schemaByNsOrAlias;
+  }
+
 }

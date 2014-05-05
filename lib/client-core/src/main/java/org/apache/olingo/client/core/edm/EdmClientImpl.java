@@ -69,23 +69,25 @@ public class EdmClientImpl extends AbstractEdm {
 
   private final ODataServiceVersion version;
 
-  private final List<? extends Schema> xmlSchemas;
+  private final List<Schema> xmlSchemas;
 
   private final Map<String, Schema> xmlSchemaByNamespace;
 
   private final EdmServiceMetadata serviceMetadata;
 
-  public EdmClientImpl(final ODataServiceVersion version, final List<? extends Schema> xmlSchemas) {
+  public EdmClientImpl(final ODataServiceVersion version, final Map<String, Schema> xmlSchemas) {
     this.version = version;
 
-    this.xmlSchemas = xmlSchemas;
+    this.xmlSchemaByNamespace = xmlSchemas;
 
-    this.xmlSchemaByNamespace = new HashMap<String, Schema>();
-    for (Schema schema : xmlSchemas) {
-      xmlSchemaByNamespace.put(schema.getNamespace(), schema);
+    this.xmlSchemas = new ArrayList<Schema>();
+    for (Schema schema : xmlSchemaByNamespace.values()) {
+      if (!this.xmlSchemas.contains(schema)) {
+        this.xmlSchemas.add(schema);
+      }
     }
 
-    this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(version, xmlSchemas);
+    this.serviceMetadata = AbstractEdmServiceMetadataImpl.getInstance(version, this.xmlSchemas);
   }
 
   @Override
@@ -455,11 +457,8 @@ public class EdmClientImpl extends AbstractEdm {
   protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
     List<EdmAnnotation> result = null;
 
-    System.out.println("SSSSSSSSS1 " + annotatedName);
-    
     final Schema schema = xmlSchemaByNamespace.get(annotatedName.getNamespace());
     if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
-    System.out.println("SSSSSSSSS2 " + ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotatables());
       final Annotatable annotatable =
               ((org.apache.olingo.client.api.edm.xml.v4.Schema) schema).getAnnotatables().get(annotatedName.getName());
       if (annotatable != null && annotatable.getAnnotations() != null) {
