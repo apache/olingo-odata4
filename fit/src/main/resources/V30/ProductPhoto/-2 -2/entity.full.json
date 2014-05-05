@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#ProductPhoto/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#ProductPhoto/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ProductPhoto",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/ProductPhoto(PhotoId=-2,ProductId=-2)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ProductPhoto(PhotoId=-2,ProductId=-2)",
   "odata.editLink": "ProductPhoto(PhotoId=-2,ProductId=-2)",
   "ProductId": -2,
   "PhotoId": -2,

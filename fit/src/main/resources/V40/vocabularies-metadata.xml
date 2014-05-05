@@ -20,13 +20,13 @@
 
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
-  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/StaticService/V40/Vocabularies.svc/Org.OData.Core.V1.xml">
+  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Vocabularies.svc/Org.OData.Core.V1.xml">
     <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
   </edmx:Reference>
-  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/StaticService/V40/Vocabularies.svc/Org.OData.Measures.V1.xml">
+  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Vocabularies.svc/Org.OData.Measures.V1.xml">
     <edmx:Include Alias="UoM" Namespace="Org.OData.Measures.V1"/>
   </edmx:Reference>
-  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/StaticService/V40/Vocabularies.svc/Org.OData.Capabilities.V1.xml">
+  <edmx:Reference Uri="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Vocabularies.svc/Org.OData.Capabilities.V1.xml">
     <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
   </edmx:Reference>
   

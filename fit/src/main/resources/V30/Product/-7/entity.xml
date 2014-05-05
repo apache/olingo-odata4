@@ -19,8 +19,8 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:etag="W/&quot;'%E3%81%B3%E3%83%9E%E6%AD%B9%E3%82%BE%E3%83%9C%E3%81%BE%EF%BE%9D%E3%81%BA%E3%82%92%E3%82%BC%E3%82%A1%E3%82%BC%E3%81%9F%E3%83%90%E3%81%B9%E3%83%80%EF%BD%A6%E3%83%9F%E3%82%BD%E4%BA%9C%E3%82%A1%E3%83%9E%E3%82%BC%E3%83%81%E3%82%BC%E3%81%82%EF%BE%88%E3%81%BE%E3%81%B2%E3%83%9C%E3%81%81%D1%91%EF%BE%9D%E3%83%80%E3%82%BC%EF%BD%9A%E3%81%B2%D1%8F%E3%82%A1%E3%81%B4%E3%81%B9%E7%B8%B7%E3%81%9C%E3%82%92%E3%81%B2%E3%82%92%E4%BA%9C%E3%81%BE%E3%82%BD%E3%81%BD%E3%81%B9%E3%81%B2%E3%83%9F%E3%81%9E%E3%81%BE%E3%82%BE%E3%81%BE%E3%81%BE%E3%81%82%E3%83%81%E3%82%93'&quot;">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-7)</id>
+<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:etag="W/&quot;'%E3%81%B3%E3%83%9E%E6%AD%B9%E3%82%BE%E3%83%9C%E3%81%BE%EF%BE%9D%E3%81%BA%E3%82%92%E3%82%BC%E3%82%A1%E3%82%BC%E3%81%9F%E3%83%90%E3%81%B9%E3%83%80%EF%BD%A6%E3%83%9F%E3%82%BD%E4%BA%9C%E3%82%A1%E3%83%9E%E3%82%BC%E3%83%81%E3%82%BC%E3%81%82%EF%BE%88%E3%81%BE%E3%81%B2%E3%83%9C%E3%81%81%D1%91%EF%BE%9D%E3%83%80%E3%82%BC%EF%BD%9A%E3%81%B2%D1%8F%E3%82%A1%E3%81%B4%E3%81%B9%E7%B8%B7%E3%81%9C%E3%82%92%E3%81%B2%E3%82%92%E4%BA%9C%E3%81%BE%E3%82%BD%E3%81%BD%E3%81%B9%E3%81%B2%E3%83%9F%E3%81%9E%E3%81%BE%E3%82%BE%E3%81%BE%E3%81%BE%E3%81%82%E3%83%81%E3%82%93'&quot;">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-7)</id>
   <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
   <link rel="edit" title="Product" href="Product(-7)" />
   <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-7)/RelatedProducts" />
@@ -33,7 +33,7 @@
     <name />
   </author>
   <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-7)/Picture" />
-  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-7)/ChangeProductDimensions" />
+  <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-7)/ChangeProductDimensions" />
   <content type="application/xml">
     <m:properties>
       <d:ProductId m:type="Edm.Int32">-7</d:ProductId>

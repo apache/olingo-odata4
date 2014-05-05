@@ -19,20 +19,20 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" 
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" 
       xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
       xmlns:georss="http://www.georss.org/georss" 
       xmlns:gml="http://www.opengis.net/gml" 
-      m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#People">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People</id>
+      m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People</id>
   <title />
   <updated>2014-03-20T14:31:00Z</updated>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Person" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(6)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(6)/Parent" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(6)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(6)/Parent" />
     <title />
     <updated>2014-03-20T14:31:00Z</updated>
     <author>

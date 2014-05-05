@@ -1,1 +1,1 @@
-{"odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#EdmStringSet/@Element", "Id": "$"}
+{"odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#EdmStringSet/@Element", "Id": "$"}

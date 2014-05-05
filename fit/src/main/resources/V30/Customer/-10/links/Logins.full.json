@@ -1,12 +1,12 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Customer/$links/Logins",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer/$links/Logins",
   "value":
           [
             {
-              "url": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Login('1')"
+              "url": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Login('1')"
             },
             {
-              "url": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Login('4')"
+              "url": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Login('4')"
             }
           ]
 }

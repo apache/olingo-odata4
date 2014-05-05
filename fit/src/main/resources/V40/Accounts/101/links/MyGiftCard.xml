@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Accounts(101)/MyGiftCard/$entity">
+<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Accounts(101)/MyGiftCard/$entity">
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.GiftCard" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
   <id />
   <title />
@@ -27,9 +27,9 @@
   <author>
     <name />
   </author>
-  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount" 
+  <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount" 
             title="Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount" 
-            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount"/>
+            target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(101)/MyGiftCard/Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount"/>
   <content type="application/xml">
     <m:properties>
       <d:GiftCardID m:type="Int32">301</d:GiftCardID>

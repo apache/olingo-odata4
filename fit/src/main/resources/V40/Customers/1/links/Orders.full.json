@@ -1,10 +1,10 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Customer/$links/Orders",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Customer/$links/Orders",
   "value":
           [
             {
-              "url": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Orders(8)"
+              "url": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Orders(8)"
             }
           ],
-  "odata.nextLink": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Customers(1)/$links/Orders?$skiptoken=2"
+  "odata.nextLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Customers(1)/$links/Orders?$skiptoken=2"
 }

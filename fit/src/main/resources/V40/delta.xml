@@ -19,18 +19,18 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/"
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/"
       xmlns:data="http://docs.oasis-open.org/odata/ns/data"
       xmlns:metadata="http://docs.oasis-open.org/odata/ns/metadata"
       xmlns="http://www.w3.org/2005/Atom"
       xmlns:at="http://purl.org/atompub/tombstones/1.0"
       metadata:context="$metadata#Customers/$delta">
   <title type="text">Customers</title>
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers</id>
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers</id>
   <updated>2012-11-27T15:38:25Z</updated>
   <metadata:count>5</metadata:count>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers('BOTTM')</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers('BOTTM')</id>
     <title type="text" />
     <updated>2012-11-17T15:38:22Z</updated>
     <author>
@@ -47,16 +47,16 @@
   </entry>
   <metadata:deleted-link
     metadata:context="$metadata#Customers/$deleted-link"
-    source="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers('ALFKI')"
+    source="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers('ALFKI')"
     relationship="Orders"
-    target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(10643)"/>
+    target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(10643)"/>
   <metadata:link
     metadata:context="$metadata#Customers/$link"
-    source="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers('BOTTM')"
+    source="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers('BOTTM')"
     relationship="Orders"
-    target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(10645)"/>
+    target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(10645)"/>
   <entry metadata:context="$metadata#Orders/$entity">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Orders(10643)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Orders(10643)</id>
     <title type="text" />
     <updated>2012-11-27T15:38:24Z</updated>
     <author>
@@ -78,10 +78,10 @@
   </entry>
   <at:deleted-entry
     metadata:context="$metadata#Customers/$deleted-entry"
-    ref="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers('ANTON')"
+    ref="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers('ANTON')"
     when="2012-11-27T15:38:25Z"
     metadata:reason="deleted"/>
   <link
     rel="http://docs.oasis-open.org/odata/ns/delta"
-    href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers?$expand=Orders&amp;$deltatoken=8015"/>
+    href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers?$expand=Orders&amp;$deltatoken=8015"/>
 </feed>
