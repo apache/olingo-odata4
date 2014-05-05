@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -32,13 +31,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import javax.xml.datatype.Duration;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.CommonODataClient;
+import org.apache.olingo.client.api.http.HttpClientFactory;
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
+import org.apache.olingo.client.core.http.ProxyWrapperHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -383,9 +389,26 @@ public final class URIUtils {
     return value;
   }
 
-  public static InputStreamEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
-    InputStreamEntity entity;
-    if (client.getConfiguration().isUseChuncked()) {
+  private static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client)
+  {
+    // returns true for authentication request in case of http401 which needs retry so requires being repeatable.
+    HttpClientFactory httpclientFactory =  client.getConfiguration().getHttpClientFactory();
+    if(httpclientFactory instanceof BasicAuthHttpClientFactory){
+      return true;
+    } else if (httpclientFactory instanceof ProxyWrapperHttpClientFactory){
+      ProxyWrapperHttpClientFactory tmp = (ProxyWrapperHttpClientFactory)httpclientFactory;
+      if(tmp.getWrappedHttpClientFactory() instanceof BasicAuthHttpClientFactory){
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  public static AbstractHttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
+  AbstractHttpEntity entity = null;
+    boolean repeatableRequired= shouldUseRepeatableHttpBodyEntry(client);
+    if (!repeatableRequired) {
       entity = new InputStreamEntity(input, -1);
     } else {
       byte[] bytes = new byte[0];
@@ -395,10 +418,11 @@ public final class URIUtils {
         LOG.error("While reading input for not chunked encoding", e);
       }
 
-      entity = new InputStreamEntity(new ByteArrayInputStream(bytes), bytes.length);
+      entity = new ByteArrayEntity(bytes);
     }
+    
+    // both entities can be sent in chunked way or not
     entity.setChunked(client.getConfiguration().isUseChuncked());
-
     return entity;
   }
 }
