@@ -62,8 +62,8 @@ public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
     this.proxyPassword = proxyPassword;
     this.wrapped = wrapped;
   }
-  
-  public DefaultHttpClientFactory getWrappedHttpClientFactory(){
+
+  public DefaultHttpClientFactory getWrappedHttpClientFactory() {
     return this.wrapped;
   }
 

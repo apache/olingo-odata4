@@ -17,7 +17,6 @@ package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -87,7 +86,7 @@ public abstract class AbstractRequest {
                     response.getStatusLine().getReasonPhrase(),
                     isXML);
           }
-          
+
           if (response.getStatusLine().getStatusCode() >= 500) {
             throw new ODataServerErrorException(response.getStatusLine());
           } else {

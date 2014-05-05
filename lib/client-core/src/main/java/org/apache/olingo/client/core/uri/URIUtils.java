@@ -38,6 +38,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
@@ -389,25 +390,24 @@ public final class URIUtils {
     return value;
   }
 
-  private static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client)
-  {
+  private static boolean shouldUseRepeatableHttpBodyEntry(final CommonODataClient<?> client) {
     // returns true for authentication request in case of http401 which needs retry so requires being repeatable.
-    HttpClientFactory httpclientFactory =  client.getConfiguration().getHttpClientFactory();
-    if(httpclientFactory instanceof BasicAuthHttpClientFactory){
+    HttpClientFactory httpclientFactory = client.getConfiguration().getHttpClientFactory();
+    if (httpclientFactory instanceof BasicAuthHttpClientFactory) {
       return true;
-    } else if (httpclientFactory instanceof ProxyWrapperHttpClientFactory){
-      ProxyWrapperHttpClientFactory tmp = (ProxyWrapperHttpClientFactory)httpclientFactory;
-      if(tmp.getWrappedHttpClientFactory() instanceof BasicAuthHttpClientFactory){
+    } else if (httpclientFactory instanceof ProxyWrapperHttpClientFactory) {
+      ProxyWrapperHttpClientFactory tmp = (ProxyWrapperHttpClientFactory) httpclientFactory;
+      if (tmp.getWrappedHttpClientFactory() instanceof BasicAuthHttpClientFactory) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
-  public static AbstractHttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
-  AbstractHttpEntity entity = null;
-    boolean repeatableRequired= shouldUseRepeatableHttpBodyEntry(client);
+
+  public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
+    HttpEntity entity;
+    boolean repeatableRequired = shouldUseRepeatableHttpBodyEntry(client);
     if (!repeatableRequired) {
       entity = new InputStreamEntity(input, -1);
     } else {
@@ -420,9 +420,9 @@ public final class URIUtils {
 
       entity = new ByteArrayEntity(bytes);
     }
-    
+
     // both entities can be sent in chunked way or not
-    entity.setChunked(client.getConfiguration().isUseChuncked());
+    ((AbstractHttpEntity) entity).setChunked(client.getConfiguration().isUseChuncked());
     return entity;
   }
 }
