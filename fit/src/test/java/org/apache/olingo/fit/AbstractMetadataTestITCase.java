@@ -26,10 +26,10 @@ public abstract class AbstractMetadataTestITCase {
   protected abstract CommonODataClient getClient();
 
   protected String getTestServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";
+    return "http://localhost:9080/stub/StaticService/" + getClient().getServiceVersion().name() + "/Static.svc";
   }
 
   protected String getNorthwindServiceRoot() {
-    return "http://localhost:9080/StaticService/" + getClient().getServiceVersion().name() + "/NorthWind.svc";
+    return "http://localhost:9080/stub/StaticService/" + getClient().getServiceVersion().name() + "/NorthWind.svc";
   }
 }

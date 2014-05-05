@@ -33,18 +33,18 @@
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  
+
   <properties>
     <war.maven.plugin.version>2.4</war.maven.plugin.version>
   </properties>
-	
+
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-commons-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <!-- REST services CXF -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -63,18 +63,18 @@
       <artifactId>spring-web</artifactId>
     </dependency>
     <!-- /REST services CXF -->
-    
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.esigate</groupId>
       <artifactId>esigate-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -85,12 +85,12 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>compile</scope>
     </dependency>
-                  
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-vfs2</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-client-core</artifactId>
@@ -100,9 +100,9 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>        
+    </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -121,7 +121,7 @@
           <packagingExcludes>WEB-INF/classes/esigate.properties,WEB-INF/classes/META-INF/LICENSE*,WEB-INF/classes/META-INF/DEPENDENCIES*</packagingExcludes>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
@@ -133,7 +133,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-              
+
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
@@ -170,8 +170,8 @@
           <deployables>
             <deployable>
               <properties>
-                <context>/</context>
-              </properties>              
+                <context>stub</context>
+              </properties>
             </deployable>
           </deployables>
         </configuration>
@@ -193,7 +193,7 @@
         </executions>
       </plugin>
     </plugins>
-    
+
     <resources>
       <resource>
         <directory>src/main/resources</directory>

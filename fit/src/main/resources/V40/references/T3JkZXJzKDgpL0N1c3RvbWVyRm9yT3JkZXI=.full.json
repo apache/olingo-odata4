@@ -1,4 +1,4 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#$ref",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)"
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#$ref",
+  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)"
 }

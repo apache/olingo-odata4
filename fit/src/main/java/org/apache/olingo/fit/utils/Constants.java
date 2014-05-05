@@ -45,7 +45,7 @@ public class Constants {
     DECODER.onUnmappableCharacter(CodingErrorAction.IGNORE);
 
     // -----------------------------
-    // V4 only 
+    // V4 only
     // -----------------------------
     v4constants.put(ConstantKey.JSON_ID_NAME, "@odata.id");
     v4constants.put(ConstantKey.JSON_TYPE_NAME, "@odata.type");
@@ -57,8 +57,9 @@ public class Constants {
     v4constants.put(ConstantKey.EDM_NS, "http://docs.oasis-open.org/odata/ns/edm");
     v4constants.put(ConstantKey.ATOM_LINK_REL, "http://docs.oasis-open.org/odata/ns/related/");
     v4constants.put(ConstantKey.ODATA_SERVICE_VERSION, "OData-Version");
-    v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V40/Static.svc/");
-    v4constants.put(ConstantKey.ODATA_METADATA_PREFIX, "http://localhost:9080/StaticService/V40/Static.svc/$metadata#");
+    v4constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/stub/StaticService/V40/Static.svc/");
+    v4constants.put(ConstantKey.ODATA_METADATA_PREFIX, 
+            "http://localhost:9080/stub/StaticService/V40/Static.svc/$metadata#");
     v4constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/$entity");
     // -----------------------------
 
@@ -66,9 +67,10 @@ public class Constants {
     // V3 and defaults
     // -----------------------------
     constants.put(ConstantKey.ODATA_SERVICE_VERSION, "DataServiceVersion");
-    constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/StaticService/V30/Static.svc/");
+    constants.put(ConstantKey.DEFAULT_SERVICE_URL, "http://localhost:9080/stub/StaticService/V30/Static.svc/");
     constants.put(ConstantKey.ODATA_COUNT_NAME, "odata.count");
-    constants.put(ConstantKey.ODATA_METADATA_PREFIX, "http://localhost:9080/StaticService/V30/Static.svc/$metadata#");
+    constants.put(ConstantKey.ODATA_METADATA_PREFIX,
+            "http://localhost:9080/stub/StaticService/V30/Static.svc/$metadata#");
     constants.put(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX, "/@Element");
     constants.put(ConstantKey.ATOM_DEF_TYPE, "Edm.String");
     constants.put(ConstantKey.ATOM_PROPERTY_PREFIX, "d:");

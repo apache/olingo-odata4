@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car</id>
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car</id>
   <title type="text">Car</title>
   <updated>2014-02-06T14:09:08Z</updated>
   <link rel="self" title="Car" href="Car" />
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(11)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(11)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(11)" />
     <title />
@@ -43,7 +43,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(12)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(12)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(12)" />
     <title />
@@ -61,7 +61,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(13)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(13)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(13)" />
     <title />
@@ -79,7 +79,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(14)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(14)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(14)" />
     <title />
@@ -97,7 +97,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(15)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(15)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(15)" />
     <title />
@@ -115,7 +115,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(16)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(16)" />
     <title />
@@ -133,7 +133,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(17)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(17)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(17)" />
     <title />
@@ -151,7 +151,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(18)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(18)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(18)" />
     <title />
@@ -169,7 +169,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(19)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(19)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(19)" />
     <title />
@@ -187,7 +187,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(20)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(20)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(20)" />
     <title />
@@ -205,7 +205,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(21)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(21)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(21)" />
     <title />
@@ -223,7 +223,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(22)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(22)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(22)" />
     <title />
@@ -241,7 +241,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(27)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(27)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(27)" />
     <title />
@@ -259,7 +259,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(30)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(30)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(30)" />
     <title />
@@ -277,7 +277,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(31)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(31)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(31)" />
     <title />
@@ -295,7 +295,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(32)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(32)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(32)" />
     <title />
@@ -313,7 +313,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(33)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(33)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(33)" />
     <title />
@@ -331,7 +331,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(34)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(34)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(34)" />
     <title />
@@ -349,7 +349,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(35)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(35)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(35)" />
     <title />
@@ -367,7 +367,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(40)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(40)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(40)" />
     <title />
@@ -385,7 +385,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(43)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(43)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(43)" />
     <title />
@@ -403,7 +403,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(44)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(44)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(44)" />
     <title />
@@ -421,7 +421,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(45)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(45)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(45)" />
     <title />
@@ -439,7 +439,7 @@
     </m:properties>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(46)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(46)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Car" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Car" href="Car(46)" />
     <title />

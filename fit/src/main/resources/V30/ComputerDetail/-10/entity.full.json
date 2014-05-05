@@ -1,13 +1,13 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#ComputerDetail/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#ComputerDetail/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.ComputerDetail",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/ComputerDetail(-10)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-10)",
   "odata.editLink": "ComputerDetail(-10)",
   "Computer@odata.navigationLinkUrl": "ComputerDetail(-10)/Computer",
   "#DefaultContainer.ResetComputerDetailsSpecifications":
           {
             "title": "ResetComputerDetailsSpecifications",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/ComputerDetail(-10)/ResetComputerDetailsSpecifications"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/ComputerDetail(-10)/ResetComputerDetailsSpecifications"
           },
   "ComputerDetailId": -10,
   "Manufacturer": null,

@@ -19,18 +19,18 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" 
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" 
       xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" 
       xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
       xmlns:georss="http://www.georss.org/georss" 
       xmlns:gml="http://www.opengis.net/gml">
   
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product</id>
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product</id>
   <title type="text">Product</title>
   <updated>2014-02-06T16:44:25Z</updated>
   <link rel="self" title="Product" href="Product" />
   <entry m:etag="W/&quot;'New%20BaseConcurrency(1391427673066)'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-10)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-10)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-10)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-10)/RelatedProducts" />
@@ -43,7 +43,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-10)/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-10)/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-10)/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-10</d:ProductId>
@@ -56,7 +56,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'%D1%8F%E3%82%A1%E3%81%9D%E7%8F%B1%EF%BD%9A%E3%81%9D%E7%B8%B7%E3%83%9F%D1%91%E3%83%9C%E3%81%9C%D0%AF%E6%AD%B9%E3%83%9F%E3%83%90%E3%81%BB%E3%83%9D%E3%81%BB%E3%82%BC%EF%BD%A6%E7%95%9A%E3%82%AF%E3%81%BB%EF%BE%88%E3%82%BC%E3%81%BE%E8%A3%B9%E3%81%B3%E3%81%B4%E3%81%B9%E6%AD%B9%E3%81%82%E3%83%80%E3%82%B0%E3%82%BD%E3%81%B3%D1%91%D1%91%E3%82%93%E3%83%9D%E3%81%9D%E3%83%9F%E3%83%9E%E3%81%BB%E3%82%BD%EF%BD%9A%E8%A3%B9%E3%81%BC%E3%82%93%E7%8F%B1%E3%81%B9%E3%82%BC%E6%AD%B9%E3%83%9F%EF%BD%9A%E3%83%9D%E3%81%9C%E3%81%9E%E3%82%BD%E3%83%9D%E3%81%BA%E3%83%9F%E3%83%80%E6%AC%B2%E5%BC%8C%D1%8F%E3%82%BD%E3%82%BD%E3%81%BD%E3%82%BD%E3%81%B9%E3%83%90%E9%BB%91%E4%B9%9D%E7%8F%B1%E3%81%9E%E3%83%9D%D0%AF%E3%83%80%E3%82%BD%E3%82%BC','%E8%A3%B9%E3%81%BA%E3%82%BE%E7%B8%B7%E3%82%BC%E3%81%BB%E3%82%BC%E3%82%BD%EF%BD%9A%E3%82%BC%EF%BD%9A%E3%81%9C%E3%82%BD%EF%BE%9D%E3%82%BC%E3%82%92%E3%81%BE%E3%81%81%E3%83%80%E3%81%B3%E3%82%BF%E7%8F%B1%E3%82%BF%E3%83%90%E3%82%BE%E3%82%BE%E3%83%9F%E3%83%81%E3%83%9C%E6%9A%A6%E3%82%BD%E3%82%A1%E3%81%B9%E8%A3%B9%E3%83%9D%E3%81%9C%E3%82%92%EF%BD%A6%E3%81%B3%E3%82%BC%E3%83%9E%E3%82%92%E3%82%BC%E3%83%9F%E3%81%BD%E3%83%9C%E3%82%BD%EF%BE%88%E3%81%BD%E3%83%9D%E3%83%9F%E3%82%BE%EF%BD%81%E3%82%BF%E3%82%BD%E3%81%81%E3%83%9E%E8%A3%B9%E3%82%B0%EF%BD%81%E3%82%BF%E6%AD%B9%E6%AD%B9%E3%81%9F%EF%BD%9A%E3%83%90%E7%B8%B7%E3%83%81%E3%82%93%E3%82%92%D0%AF%E3%82%93%E7%95%9A%E3%81%9F%E3%82%BE%E3%81%B9%E3%82%BD%E6%AC%B2%E3%82%A1%E7%B8%B7%D1%8F%E3%83%9F%E3%82%92%EF%BD%A6%E3%81%9B%EF%BD%A6%E3%82%BC%E3%83%9E%E3%82%BD%E3%83%9C%E3%82%BC%E3%82%BC%E3%83%81%E3%81%BC%E7%95%9A%E7%8F%B1'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-9)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-9)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -69,7 +69,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-9)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-9</d:ProductId>
@@ -103,7 +103,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'asme','hhsbjscessmdunkssmvqmqyzuahm'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-8)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-8)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -116,7 +116,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-8)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-8</d:ProductId>
@@ -146,7 +146,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'%E3%81%B3%E3%83%9E%E6%AD%B9%E3%82%BE%E3%83%9C%E3%81%BE%EF%BE%9D%E3%81%BA%E3%82%92%E3%82%BC%E3%82%A1%E3%82%BC%E3%81%9F%E3%83%90%E3%81%B9%E3%83%80%EF%BD%A6%E3%83%9F%E3%82%BD%E4%BA%9C%E3%82%A1%E3%83%9E%E3%82%BC%E3%83%81%E3%82%BC%E3%81%82%EF%BE%88%E3%81%BE%E3%81%B2%E3%83%9C%E3%81%81%D1%91%EF%BE%9D%E3%83%80%E3%82%BC%EF%BD%9A%E3%81%B2%D1%8F%E3%82%A1%E3%81%B4%E3%81%B9%E7%B8%B7%E3%81%9C%E3%82%92%E3%81%B2%E3%82%92%E4%BA%9C%E3%81%BE%E3%82%BD%E3%81%BD%E3%81%B9%E3%81%B2%E3%83%9F%E3%81%9E%E3%81%BE%E3%82%BE%E3%81%BE%E3%81%BE%E3%81%82%E3%83%81%E3%82%93'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-7)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-7)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-7)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-7)/RelatedProducts" />
@@ -159,7 +159,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-7)/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-7)/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-7)/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-7</d:ProductId>
@@ -186,7 +186,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-6)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-6)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-6)/RelatedProducts" />
@@ -199,7 +199,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-6)/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-6</d:ProductId>
@@ -226,7 +226,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'inxlfdfruoalzluabvubrgahsg','ixxletiyfrigooaltaqikqcnkpepfufyffmuouknjzyelardpyudoachqdejrjnuhueunugyli'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-5)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-5)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -239,7 +239,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-5</d:ProductId>
@@ -267,7 +267,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'%E3%81%BD%E3%83%9C%EF%BE%9D%E3%81%82%E3%81%B3'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-4)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-4)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-4)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-4)/RelatedProducts" />
@@ -280,7 +280,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-4)/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-4)/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-4)/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-4</d:ProductId>
@@ -307,7 +307,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;'fvrnsbiu%C3%9Fevuqssnuidjbhtluhcydhhjihyasecdnumhdpfxtij%C3%9Flvfqngmulfvjqqtvussyix%C3%9Fykxhbnehob%C3%9Fjssfickhmevci','%E3%81%9D%E6%AD%B9%E3%82%BD%E3%83%9C%E3%83%9C%E3%82%92%E3%82%B0%E8%A3%B9%E3%81%B4%E3%83%9D%EF%BD%A6%E3%83%81'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-3)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-3)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -320,7 +320,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-3)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-3</d:ProductId>
@@ -340,7 +340,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;null,'yljmhbcacfnothqirhaouhoraoruscpptgzmoch'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-2)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-2)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -353,7 +353,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-2)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-2</d:ProductId>
@@ -380,7 +380,7 @@
     </content>
   </entry>
   <entry m:etag="W/&quot;null&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-1)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-1)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-1)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-1)/RelatedProducts" />
@@ -393,7 +393,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-1)/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-1)/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-1)/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-1</d:ProductId>

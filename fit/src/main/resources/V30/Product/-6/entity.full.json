@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Product/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Product/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Product",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-6)",
   "odata.etag": "W/\"'uacssmuxummhtezdsno%C3%9Fssrlbs%C3%9Floxjsslnnayinxiksspjsssvumgduaapcfvnssee%C3%9Fgpaxuaabosem%C3%9Fiemtufplo'\"",
           "odata.editLink": "Product(-6)",
   "RelatedProducts@odata.navigationLinkUrl": "Product(-6)/RelatedProducts",
@@ -11,7 +11,7 @@
   "#DefaultContainer.ChangeProductDimensions":
           {
             "title": "ChangeProductDimensions",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-6)/ChangeProductDimensions"
           },
   "Picture@odata.mediaEditLink": "Product(-6)/Picture",
   "ProductId": -6,

@@ -19,20 +19,20 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#ProductDetails/$entity">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)</id>
+<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#ProductDetails/$entity">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)</id>
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.ProductDetail" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-  <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/RelatedProduct" type="application/atom+xml;type=entry" title="RelatedProduct" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/RelatedProduct" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/Reviews" type="application/atom+xml;type=feed" title="Reviews" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Reviews" />
+  <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/RelatedProduct" type="application/atom+xml;type=entry" title="RelatedProduct" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/RelatedProduct" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Reviews" type="application/atom+xml;type=feed" title="Reviews" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Reviews" />
   <title />
   <updated>2014-03-24T17:23:51Z</updated>
   <author>
     <name />
   </author>
-  <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct" 
+  <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct" 
             title="Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct" 
-            target="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct"/>
+            target="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/ProductDetails(ProductID=6,ProductDetailID=1)/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct"/>
   <content type="application/xml">
     <m:properties>
       <d:ProductID m:type="Int32">6</d:ProductID>

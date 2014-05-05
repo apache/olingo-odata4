@@ -19,12 +19,12 @@
     under the License.
 
 -->
-<entry xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#OrderDetails/$entity">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)</id>
+<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#OrderDetails/$entity">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)</id>
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.OrderDetail" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-  <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/ProductOrdered" type="application/atom+xml;type=feed" title="ProductOrdered" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/ProductOrdered" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/AssociatedOrder" type="application/atom+xml;type=entry" title="AssociatedOrder" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/AssociatedOrder" />
+  <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/ProductOrdered" type="application/atom+xml;type=feed" title="ProductOrdered" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/ProductOrdered" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/AssociatedOrder" type="application/atom+xml;type=entry" title="AssociatedOrder" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/OrderDetails(OrderID=7,ProductID=5)/AssociatedOrder" />
   <title />
   <updated>2014-04-16T12:38:34Z</updated>
   <author>

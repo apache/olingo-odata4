@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Company",
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Company",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Company",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company",
-  "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company",
+  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company",
+  "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company",
   "CompanyID": 0,
   "CompanyCategory@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory",
   "CompanyCategory": "IT",
@@ -17,22 +17,22 @@
             "PostalCode": "98052",
             "CompanyName": "Microsoft"
           },
-  "Employees@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Employees/$ref",
-  "Employees@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Employees",
-  "VipCustomer@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/VipCustomer/$ref",
-  "VipCustomer@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/VipCustomer",
-  "Departments@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Departments/$ref",
-  "Departments@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Departments",
-  "CoreDepartment@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/CoreDepartment/$ref",
-  "CoreDepartment@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/CoreDepartment",
+  "Employees@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Employees/$ref",
+  "Employees@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Employees",
+  "VipCustomer@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/VipCustomer/$ref",
+  "VipCustomer@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/VipCustomer",
+  "Departments@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Departments/$ref",
+  "Departments@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Departments",
+  "CoreDepartment@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/CoreDepartment/$ref",
+  "CoreDepartment@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/CoreDepartment",
   "#Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue":
           {
             "title": "Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue"
           },
   "#Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount":
           {
             "title": "Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount"
           }
 }

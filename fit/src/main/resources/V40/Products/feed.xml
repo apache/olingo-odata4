@@ -19,21 +19,21 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" 
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" 
       xmlns="http://www.w3.org/2005/Atom" 
       xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
       xmlns:georss="http://www.georss.org/georss" 
       xmlns:gml="http://www.opengis.net/gml" 
-      m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Products">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products</id>
+      m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Products">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products</id>
   <title />
   <updated>2014-04-23T08:04:46Z</updated>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(5)/Details" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(5)/Details" />
     <title />
     <updated>2014-04-23T08:04:46Z</updated>
     <author>
@@ -58,10 +58,10 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(6)/Details" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(6)/Details" />
     <title />
     <updated>2014-04-23T08:04:46Z</updated>
     <author>
@@ -85,10 +85,10 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(7)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(7)/Details" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(7)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(7)/Details" />
     <title />
     <updated>2014-04-23T08:04:46Z</updated>
     <author>
@@ -111,10 +111,10 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(8)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(8)/Details" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(8)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(8)/Details" />
     <title />
     <updated>2014-04-23T08:04:46Z</updated>
     <author>
@@ -139,10 +139,10 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(9)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Products(9)/Details" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(9)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Products(9)/Details" />
     <title />
     <updated>2014-04-23T08:04:46Z</updated>
     <author>

@@ -1,7 +1,7 @@
 {
-  "odata.metadata": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#Car/@Element",
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car/@Element",
   "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
-  "odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Car(15)",
+  "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(15)",
   "odata.editLink": "Car(15)",
   "odata.mediaEditLink": "Car(15)/$value",
   "odata.mediaReadLink": "Car(15)/$value",

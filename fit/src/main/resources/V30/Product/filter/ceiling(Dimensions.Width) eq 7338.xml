@@ -19,13 +19,13 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product</id>
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product</id>
   <title type="text">Product</title>
   <updated>2014-02-13T14:31:05Z</updated>
   <link rel="self" title="Product" href="Product" />
   <entry m:etag="W/&quot;'inxlfdfruoalzluabvubrgahsg','ixxletiyfrigooaltaqikqcnkpepfufyffmuouknjzyelardpyudoachqdejrjnuhueunugyli'&quot;">
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-5)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-5)</id>
     <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
     <link rel="edit" title="Product" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/RelatedProducts" type="application/atom+xml;type=feed" title="RelatedProducts" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/RelatedProducts" />
@@ -38,7 +38,7 @@
       <name />
     </author>
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media/Picture" title="Picture" href="Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/Picture" />
-    <m:action metadata="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/StaticService/V30/Static.svc/Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
+    <m:action metadata="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#DefaultContainer.ChangeProductDimensions" title="ChangeProductDimensions" target="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Product(-5)/Microsoft.Test.OData.Services.AstoriaDefaultService.DiscontinuedProduct/ChangeProductDimensions" />
     <content type="application/xml">
       <m:properties>
         <d:ProductId m:type="Edm.Int32">-5</d:ProductId>

@@ -1,8 +1,8 @@
 {
-  "@odata.context": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#People/$entity",
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#People/$entity",
   "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Person",
-  "@odata.id": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)",
-  "@odata.editLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)",
+  "@odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
+  "@odata.editLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)",
   "PersonID": 5,
   "FirstName": "Peter",
   "LastName": "Bee",
@@ -36,16 +36,16 @@
           [
             "def@test.msn"
           ],
-  "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)/Parent/$ref",
-  "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)/Parent",
+  "Parent@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent/$ref",
+  "Parent@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Parent",
   "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
           {
             "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
           },
   "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
           {
             "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
-            "target": "http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+            "target": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/People(5)/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
           }
 }

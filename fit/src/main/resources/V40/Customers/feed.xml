@@ -19,17 +19,17 @@
     under the License.
 
 -->
-<feed xml:base="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/$metadata#Customers">
-  <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers</id>
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Customers">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers</id>
   <title />
   <updated>2014-04-23T10:01:18Z</updated>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)/Parent" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)/Orders" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=1)/Company" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)/Parent" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)/Orders" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=1)/Company" />
     <title />
     <updated>2014-04-23T10:01:18Z</updated>
     <author>
@@ -69,12 +69,12 @@
     </content>
   </entry>
   <entry>
-    <id>http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=2)</id>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)</id>
     <category term="#Microsoft.Test.OData.Services.ODataWCFService.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
-    <link rel="edit" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=2)" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=2)/Parent" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=2)/Orders" />
-    <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://localhost:${cargo.servlet.port}/StaticService/V40/Static.svc/Customers(PersonID=2)/Company" />
+    <link rel="edit" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)/Parent" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)/Orders" />
+    <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Customers(PersonID=2)/Company" />
     <title />
     <updated>2014-04-23T10:01:18Z</updated>
     <author>
