@@ -20,6 +20,25 @@ package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.api.domain.ODataError;
 
+// TODO p2 supports V4:
+//  {
+//	  "error": {
+//	    "code": "501",
+//	    "message": "Unsupported functionality",
+//	    "target": "query",
+//	    "details": [
+//	      {
+//	       "code": "301",
+//	       "target": "$search"  
+//	       "message": "$search query option not supported",
+//	      }
+//	    ]
+//	    "innererror": {
+//	      "trace": [...],
+//	      "context": {...}
+//	    }
+//	  }
+//	}
 public abstract class AbstractODataError implements ODataError {
 
   private String code;

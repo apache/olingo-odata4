@@ -62,6 +62,10 @@ public class ProxyWrapperHttpClientFactory implements HttpClientFactory {
     this.proxyPassword = proxyPassword;
     this.wrapped = wrapped;
   }
+  
+  public DefaultHttpClientFactory getWrappedHttpClientFactory(){
+    return this.wrapped;
+  }
 
   @Override
   public HttpClient createHttpClient(final HttpMethod method, final URI uri) {

@@ -16,6 +16,8 @@
 package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -68,15 +70,13 @@ public abstract class AbstractRequest {
   protected void checkResponse(
           final CommonODataClient<?> odataClient, final HttpResponse response, final String accept) {
 
-    if (response.getStatusLine().getStatusCode() >= 500) {
-      throw new ODataServerErrorException(response.getStatusLine());
-    } else if (response.getStatusLine().getStatusCode() >= 400) {
+    if (response.getStatusLine().getStatusCode() >= 400) {
       try {
         final HttpEntity httpEntity = response.getEntity();
         if (httpEntity == null) {
           throw new ODataClientErrorException(response.getStatusLine());
         } else {
-          final boolean isXML = accept.contains("json");
+          final boolean isXML = !accept.contains("json");
           ODataError error;
           try {
             error = odataClient.getReader().readError(httpEntity.getContent(), isXML);
@@ -87,8 +87,12 @@ public abstract class AbstractRequest {
                     response.getStatusLine().getReasonPhrase(),
                     isXML);
           }
-
-          throw new ODataClientErrorException(response.getStatusLine(), error);
+          
+          if (response.getStatusLine().getStatusCode() >= 500) {
+            throw new ODataServerErrorException(response.getStatusLine());
+          } else {
+            throw new ODataClientErrorException(response.getStatusLine(), error);
+          }
         }
       } catch (IOException e) {
         throw new HttpClientException(
