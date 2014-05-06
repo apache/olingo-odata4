@@ -16,16 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data;
 
-import java.util.List;
+import java.net.URI;
+import org.apache.olingo.commons.api.data.DeletedEntity;
 
-public interface Delta extends EntitySet {
+public class DeletedEntityImpl extends AbstractAnnotatedObject implements DeletedEntity {
 
-  List<DeletedEntity> getDeletedEntities();
+  private static final long serialVersionUID = 2075093398299488510L;
 
-  List<DeltaLink> getAddedLinks();
+  private URI id;
 
-  List<DeltaLink> getDeletedLinks();
+  private Reason reason;
+
+  @Override
+  public URI getId() {
+    return id;
+  }
+
+  public void setId(final URI id) {
+    this.id = id;
+  }
+
+  @Override
+  public Reason getReason() {
+    return reason;
+  }
+
+  public void setReason(final Reason reason) {
+    this.reason = reason;
+  }
 
 }

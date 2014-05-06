@@ -18,14 +18,19 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import java.util.List;
+import java.net.URI;
 
-public interface Delta extends EntitySet {
+public interface DeltaLink extends Annotatable {
 
-  List<DeletedEntity> getDeletedEntities();
+  URI getSource();
 
-  List<DeltaLink> getAddedLinks();
+  void setSource(URI source);
 
-  List<DeltaLink> getDeletedLinks();
+  String getRelationship();
 
+  void setRelationship(String relationship);
+
+  URI getTarget();
+
+  void setTarget(URI target);
 }

@@ -16,30 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain.v4;
+package org.apache.olingo.commons.core.data;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.olingo.commons.api.domain.ODataItem;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+import org.apache.olingo.commons.api.data.DeltaLink;
 
-public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
+public class DeltaLinkImpl extends AbstractAnnotatedObject implements DeltaLink {
 
-  private static final long serialVersionUID = -6686550836508873044L;
+  private static final long serialVersionUID = 581329273399308799L;
 
   private URI source;
 
   private String relationship;
 
   private URI target;
-
-  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
-
-  public ODataDeltaLinkImpl() {
-    super(null);
-  }
 
   @Override
   public URI getSource() {
@@ -69,11 +59,6 @@ public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
   @Override
   public void setTarget(final URI target) {
     this.target = target;
-  }
-
-  @Override
-  public List<ODataAnnotation> getAnnotations() {
-    return annotations;
   }
 
 }

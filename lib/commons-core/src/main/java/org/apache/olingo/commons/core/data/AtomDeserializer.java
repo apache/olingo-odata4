@@ -20,8 +20,6 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
@@ -35,7 +33,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
+import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Value;
@@ -421,7 +419,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
           delta.getEntities().add(entity(reader, event.asStartElement()));
         } else if (deletedEntryQName.equals(event.asStartElement().getName())) {
-          final ODataDeletedEntityImpl deletedEntity = new ODataDeletedEntityImpl();
+          final DeletedEntityImpl deletedEntity = new DeletedEntityImpl();
 
           final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
           if (ref != null) {
@@ -436,7 +434,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (linkQName.equals(event.asStartElement().getName())
                 || deletedLinkQName.equals(event.asStartElement().getName())) {
 
-          final ODataDeltaLinkImpl link = new ODataDeltaLinkImpl();
+          final DeltaLinkImpl link = new DeltaLinkImpl();
 
           final Attribute source = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_SOURCE));
           if (source != null) {

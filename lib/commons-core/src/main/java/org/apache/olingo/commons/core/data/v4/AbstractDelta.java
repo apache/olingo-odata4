@@ -20,33 +20,33 @@ package org.apache.olingo.commons.core.data.v4;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
+import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.core.data.AbstractEntitySet;
 
 public abstract class AbstractDelta extends AbstractEntitySet implements Delta {
 
   private static final long serialVersionUID = 4576771708961553195L;
 
-  private final List<ODataDeletedEntity> deletedEntities = new ArrayList<ODataDeletedEntity>();
+  private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
 
-  private final List<ODataDeltaLink> addedLinks = new ArrayList<ODataDeltaLink>();
+  private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
 
-  private final List<ODataDeltaLink> deletedLinks = new ArrayList<ODataDeltaLink>();
+  private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
 
   @Override
-  public List<ODataDeletedEntity> getDeletedEntities() {
+  public List<DeletedEntity> getDeletedEntities() {
     return deletedEntities;
   }
 
   @Override
-  public List<ODataDeltaLink> getAddedLinks() {
+  public List<DeltaLink> getAddedLinks() {
     return addedLinks;
   }
 
   @Override
-  public List<ODataDeltaLink> getDeletedLinks() {
+  public List<DeltaLink> getDeletedLinks() {
     return deletedLinks;
   }
 }

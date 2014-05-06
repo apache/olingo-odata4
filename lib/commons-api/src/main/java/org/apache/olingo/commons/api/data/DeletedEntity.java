@@ -18,14 +18,19 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import java.util.List;
+import java.net.URI;
 
-public interface Delta extends EntitySet {
+public interface DeletedEntity {
 
-  List<DeletedEntity> getDeletedEntities();
+  enum Reason {
 
-  List<DeltaLink> getAddedLinks();
+    deleted,
+    changed;
 
-  List<DeltaLink> getDeletedLinks();
+  }
+
+  URI getId();
+
+  Reason getReason();
 
 }

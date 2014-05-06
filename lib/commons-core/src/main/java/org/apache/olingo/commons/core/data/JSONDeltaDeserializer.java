@@ -19,8 +19,6 @@
 package org.apache.olingo.commons.core.data;
 
 import org.apache.olingo.commons.core.data.v4.JSONDeltaImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -78,14 +76,11 @@ public class JSONDeltaDeserializer extends AbstractJsonDeserializer<JSONDeltaImp
                   });
           delta.getEntities().add(entity.getPayload());
         } else if (itemContextURL.isDeltaDeletedEntity()) {
-          delta.getDeletedEntities().
-                  add(parser.getCodec().treeToValue(item, ODataDeletedEntityImpl.class));
+          delta.getDeletedEntities().add(parser.getCodec().treeToValue(item, DeletedEntityImpl.class));
         } else if (itemContextURL.isDeltaLink()) {
-          delta.getAddedLinks().
-                  add(parser.getCodec().treeToValue(item, ODataDeltaLinkImpl.class));
+          delta.getAddedLinks().add(parser.getCodec().treeToValue(item, DeltaLinkImpl.class));
         } else if (itemContextURL.isDeltaDeletedLink()) {
-          delta.getDeletedLinks().
-                  add(parser.getCodec().treeToValue(item, ODataDeltaLinkImpl.class));
+          delta.getDeletedLinks().add(parser.getCodec().treeToValue(item, DeltaLinkImpl.class));
         }
       }
     }
