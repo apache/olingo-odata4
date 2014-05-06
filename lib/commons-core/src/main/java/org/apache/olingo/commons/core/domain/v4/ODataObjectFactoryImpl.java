@@ -22,12 +22,14 @@ import java.net.URI;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
@@ -61,6 +63,30 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
     final ODataEntityImpl result = new ODataEntityImpl(typeName);
     result.setLink(link);
     return result;
+  }
+
+  @Override
+  public ODataLink newEntityNavigationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newAssociationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newMediaEditLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
   }
 
   @Override

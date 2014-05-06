@@ -114,7 +114,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (next != null) {
       entitySet.setNext(next);
     }
-    
+
     for (CommonODataEntity entity : odataEntitySet.getEntities()) {
       entitySet.getEntities().add(getEntity(entity, ResourceFactory.entityClassForEntitySet(reference)));
     }
@@ -409,13 +409,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Link link : resource.getPayload().getAssociationLinks()) {
-      entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
-              setURI(URIUtils.getURI(base, link.getHref())).
-              setType(ODataLinkType.ASSOCIATION).setTitle(link.getTitle()).build());
+      entity.addLink(client.getObjectFactory().
+              newAssociationLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
     }
 
-    odataNavigationLinks(
-            edmType, resource.getPayload(), entity, resource.getMetadataETag(), base);
+    odataNavigationLinks(edmType, resource.getPayload(), entity, resource.getMetadataETag(), base);
 
     for (Link link : resource.getPayload().getMediaEditLinks()) {
       entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).

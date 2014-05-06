@@ -81,25 +81,16 @@ public abstract class ODataItem implements Serializable {
     this.link = link;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public boolean equals(final Object obj) {
     return EqualsBuilder.reflectionEquals(this, obj);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public int hashCode() {
     return HashCodeBuilder.reflectionHashCode(this);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);

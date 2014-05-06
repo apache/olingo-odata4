@@ -18,11 +18,53 @@
  */
 package org.apache.olingo.commons.api.domain.v4;
 
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 
-public interface ODataProperty extends CommonODataProperty, ODataAnnotatatable {
+public interface ODataAnnotation {
+
+  /**
+   * Returns annotation name.
+   *
+   * @return annotation name.
+   */
+  String getTerm();
+
+  /**
+   * Returns annotation value.
+   *
+   * @return annotation value.
+   */
+  ODataValue getValue();
+
+  /**
+   * Checks if has null value.
+   *
+   * @return 'TRUE' if has null value; 'FALSE' otherwise.
+   */
+  boolean hasNullValue();
+
+  /**
+   * Checks if has primitive value.
+   *
+   * @return 'TRUE' if has primitive value; 'FALSE' otherwise.
+   */
+  boolean hasPrimitiveValue();
+
+  /**
+   * Gets primitive value.
+   *
+   * @return primitive value if exists; null otherwise.
+   */
+  ODataPrimitiveValue getPrimitiveValue();
+
+  /**
+   * Checks if has collection value.
+   *
+   * @return 'TRUE' if has collection value; 'FALSE' otherwise.
+   */
+  boolean hasCollectionValue();
 
   /**
    * Gets collection value.
@@ -32,18 +74,18 @@ public interface ODataProperty extends CommonODataProperty, ODataAnnotatatable {
   ODataCollectionValue<ODataValue> getCollectionValue();
 
   /**
+   * Checks if has complex value.
+   *
+   * @return 'TRUE' if has complex value; 'FALSE' otherwise.
+   */
+  boolean hasComplexValue();
+
+  /**
    * Gets complex value.
    *
    * @return complex value if exists; null otherwise.
    */
   ODataComplexValue<ODataProperty> getComplexValue();
-  
-  /**
-   * Gets complex value with link information (if available).
-   *
-   * @return complex value if exists; null otherwise.
-   */
-  ODataLinkedComplexValue getLinkedComplexValue();
 
   /**
    * Checks if has enum value.

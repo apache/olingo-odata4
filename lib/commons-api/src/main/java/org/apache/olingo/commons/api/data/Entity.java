@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
 
-public interface Entity extends Linked {
+public interface Entity extends Linked, Annotatable {
 
   /**
    * Gets ETag.

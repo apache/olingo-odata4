@@ -18,13 +18,11 @@
  */
 package org.apache.olingo.commons.core.domain;
 
-import java.net.URI;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
@@ -46,17 +44,5 @@ public abstract class AbstractODataObjectFactory implements CommonODataObjectFac
   @Override
   public ODataInlineEntity newDeepInsertEntity(final String name, final CommonODataEntity entity) {
     return new ODataInlineEntity(version, null, ODataLinkType.ENTITY_NAVIGATION, name, entity);
-  }
-
-  @Override
-  public ODataLink newEntityNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
-  }
-
-  @Override
-  public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
-    return new ODataLink.Builder().setVersion(version).setURI(link).
-            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
   }
 }

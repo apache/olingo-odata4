@@ -16,8 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.data;
+package org.apache.olingo.commons.core.data;
 
-public interface LinkedComplexValue extends ComplexValue, Linked, Annotatable {
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
+
+public abstract class AbstractAnnotatedObject extends AbstractPayloadObject implements Annotatable {
+
+  private static final long serialVersionUID = 4163841499530412213L;
+
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
 
 }

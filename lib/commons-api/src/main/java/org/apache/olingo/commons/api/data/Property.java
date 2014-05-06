@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Property {
+public interface Property extends Annotatable {
 
   String getName();
 

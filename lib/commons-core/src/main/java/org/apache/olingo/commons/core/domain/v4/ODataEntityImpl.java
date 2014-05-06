@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.domain.v4;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -35,6 +36,8 @@ public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity 
   private String reference;
 
   private final List<ODataProperty> properties = new ArrayList<ODataProperty>();
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
   public ODataEntityImpl(final FullQualifiedName typeName) {
     super(typeName);
@@ -58,6 +61,11 @@ public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity 
   @Override
   public List<ODataProperty> getProperties() {
     return properties;
+  }
+
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
   }
 
 }

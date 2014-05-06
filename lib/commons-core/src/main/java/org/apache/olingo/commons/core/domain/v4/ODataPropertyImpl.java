@@ -18,8 +18,11 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -29,6 +32,8 @@ import org.apache.olingo.commons.core.domain.AbstractODataProperty;
 public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
 
   private static final long serialVersionUID = 4851331227420757747L;
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
   public ODataPropertyImpl(final String name, final org.apache.olingo.commons.api.domain.ODataValue value) {
     super(name, value);
@@ -68,4 +73,8 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
             : null;
   }
 
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
+  }
 }

@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 
-public class LinkImpl extends AbstractPayloadObject implements Link {
+public class LinkImpl extends AbstractAnnotatedObject implements Link {
 
   private static final long serialVersionUID = -3449344217160035501L;
 

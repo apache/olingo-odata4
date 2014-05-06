@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Link {
+public interface Link extends Annotatable {
 
   /**
    * Gets rel info.

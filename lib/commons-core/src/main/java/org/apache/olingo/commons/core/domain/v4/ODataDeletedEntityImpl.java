@@ -19,16 +19,20 @@
 package org.apache.olingo.commons.core.domain.v4;
 
 import java.net.URI;
+import org.apache.olingo.commons.api.domain.ODataItem;
 import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity;
-import org.apache.olingo.commons.core.data.AbstractPayloadObject;
 
-public class ODataDeletedEntityImpl extends AbstractPayloadObject implements ODataDeletedEntity {
+public class ODataDeletedEntityImpl extends ODataItem implements ODataDeletedEntity {
 
   private static final long serialVersionUID = -3841730551749114664L;
 
   private URI id;
 
   private Reason reason;
+
+  public ODataDeletedEntityImpl() {
+    super(null);
+  }
 
   @Override
   public URI getId() {

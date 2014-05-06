@@ -68,6 +68,30 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   }
 
   @Override
+  public ODataLink newEntityNavigationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ENTITY_NAVIGATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newEntitySetNavigationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ENTITY_SET_NAVIGATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newAssociationLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.ASSOCIATION).setTitle(name).build();
+  }
+
+  @Override
+  public ODataLink newMediaEditLink(final String name, final URI link) {
+    return new ODataLink.Builder().setVersion(version).setURI(link).
+            setType(ODataLinkType.MEDIA_EDIT).setTitle(name).build();
+  }
+
+  @Override
   public ODataPrimitiveValue.Builder newPrimitiveValueBuilder() {
     return new ODataPrimitiveValueImpl.BuilderImpl(version);
   }
