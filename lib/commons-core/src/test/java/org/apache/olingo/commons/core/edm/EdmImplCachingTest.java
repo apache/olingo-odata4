@@ -65,8 +65,7 @@ public class EdmImplCachingTest {
     assertEquals(1, schemas.size());
 
     List<EdmSchema> cachedSchemas = edm.getSchemas();
-    assertTrue(schemas == cachedSchemas);
-    assertEquals(schemas, schemas);
+    assertEquals(schemas, cachedSchemas);
   }
 
   @Test
@@ -421,7 +420,15 @@ public class EdmImplCachingTest {
 
     @Override
     protected Map<String, EdmSchema> createSchemas() {
-      return Collections.singletonMap(StringUtils.EMPTY, mock(EdmSchema.class));
+      final EdmSchema schema = mock(EdmSchema.class);
+      when(schema.getNamespace()).thenReturn(NAME1.getNamespace());
+      return new HashMap<String, EdmSchema>() {
+        private static final long serialVersionUID = 3109256773218160485L;
+
+        {
+          put(StringUtils.EMPTY, schema);
+        }
+      };
     }
 
     @Override

@@ -78,9 +78,10 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
   @Override
   public List<EdmEntityContainer> getEntityContainers() {
     if (entityContainers == null) {
+      entityContainerByName = new HashMap<FullQualifiedName, EdmEntityContainer>();
+
       if (schema instanceof org.apache.olingo.client.api.edm.xml.v4.Schema) {
         entityContainers = super.getEntityContainers();
-        entityContainerByName = new HashMap<FullQualifiedName, EdmEntityContainer>();
         entityContainerByName.put(getEntityContainer().getFullQualifiedName(), getEntityContainer());
       } else {
         entityContainers = new ArrayList<EdmEntityContainer>(schema.getEntityContainers().size());

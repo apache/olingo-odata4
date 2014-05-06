@@ -1,0 +1,107 @@
+#*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *#
+#set( $clsSuffix = ".class" )
+package ${package};
+
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractContainer;
+import org.apache.olingo.ext.proxy.api.OperationType;
+#foreach($ns in $namespaces)
+import ${basePackage}.${ns}.*;
+import ${basePackage}.${ns}.types.*;
+#end
+
+// EdmSimpleType property imports
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.UUID;
+import java.io.Serializable;
+import java.util.Collection;
+import java.sql.Timestamp;
+import javax.xml.datatype.Duration;
+
+@Namespace("$namespace")
+@EntityContainer(name = "$container.Name",
+  isDefaultEntityContainer = $container.Default)
+public interface $utility.capitalize($container.Name) extends AbstractContainer {
+
+#foreach($entitySet in $container.EntitySets)
+    $utility.capitalize($entitySet.Name) get$utility.capitalize($entitySet.Name)();
+
+#end
+
+#parse( "${odataVersion}/container.vm" )
+
+  Operations operations();
+
+  public interface Operations {
+  #foreach($operation in $container.FunctionImports)
+  #foreach($function in $operation.UnboundFunctions)
+    @Operation(name = "$function.Name",
+                    type = OperationType.FUNCTION,
+                    isComposable = $function.Composable#if($function.ReturnType),
+                    returnType = "#if( $function.ReturnType.Collection )Collection(#end$function.ReturnType.Type.FullQualifiedName.toString()#if( $function.ReturnType.Collection ))#end"#end)
+  #if($function.ReturnType)$utility.getJavaType($function.ReturnType.Type, $function.ReturnType.Collection)#{else}void#end $utility.uncapitalize($function.Name)(
+    #if($function.ParameterNames)
+      #set( $count = $function.ParameterNames.size() )#*
+      *##foreach($paramName in $function.ParameterNames)#*
+        *##set( $count = $count - 1 )#*
+        *##set( $param = $function.getParameter($paramName) )#*
+       *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+    #end#*
+    *##end);
+
+  #end
+  #end
+
+  #foreach($operation in $container.ActionImports)
+  #set( $action = $operation.UnboundAction )
+  #if($action)
+    @Operation(name = "$action.Name",
+                    type = OperationType.ACTION#if($action.ReturnType),
+                    returnType = "#if( $action.ReturnType.Collection )Collection(#end$action.ReturnType.Type.FullQualifiedName.toString()#if( $action.ReturnType.Collection ))#end"#end)
+  #if($action.ReturnType)$utility.getJavaType($action.ReturnType.Type, $action.ReturnType.Collection)#{else}void#end $utility.uncapitalize($action.Name)(
+    #if($action.ParameterNames)
+      #set( $count = $action.ParameterNames.size() )#*
+      *##foreach($paramName in $action.ParameterNames)#*
+        *##set( $count = $count - 1 )#*
+        *##set( $param = $action.getParameter($paramName) )#*
+       *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+    #end#*
+    *##end);
+  #set( $action = false )
+
+  #end
+  #end
+  }
+}

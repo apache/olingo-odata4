@@ -123,6 +123,10 @@ public class MetadataTest extends AbstractTest {
     assertEquals(container.getEntitySet("Customer").getEntityContainer().getFullQualifiedName(),
             logins.getRelatedBindingTarget("Customer").getEntityContainer().getFullQualifiedName());
     assertEquals(container.getEntitySet("Customer").getName(), logins.getRelatedBindingTarget("Customer").getName());
+    assertEquals(6, container.getFunctionImports().size());
+    assertEquals(1, container.getActionImports().size());
+    assertNotNull(container.getActionImports().iterator().next().getUnboundAction());
+    assertEquals("ResetDataSource", container.getActionImports().iterator().next().getUnboundAction().getName());
 
     // 5. Operation
     final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");

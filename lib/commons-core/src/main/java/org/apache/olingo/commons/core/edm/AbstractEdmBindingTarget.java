@@ -18,12 +18,15 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.util.Iterator;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.Target;
 
 public abstract class AbstractEdmBindingTarget extends EdmNamedImpl implements EdmBindingTarget {
 
@@ -63,4 +66,40 @@ public abstract class AbstractEdmBindingTarget extends EdmNamedImpl implements E
     return getName();
   }
 
+  @Override
+  public EdmBindingTarget getRelatedBindingTarget(final String path) {
+    EdmBindingTarget bindingTarget = null;
+    boolean found = false;
+    for (final Iterator<EdmNavigationPropertyBinding> itor = getNavigationPropertyBindings().iterator();
+            itor.hasNext() && !found;) {
+
+      final EdmNavigationPropertyBinding binding = itor.next();
+      if (binding.getPath().equals(path)) {
+        final Target edmTarget = new Target.Builder(binding.getTarget(), container).build();
+
+        final EdmEntityContainer entityContainer = edm.getEntityContainer(edmTarget.getEntityContainer());
+        if (entityContainer == null) {
+          throw new EdmException("Cannot find entity container with name: " + edmTarget.getEntityContainer());
+        }
+        try {
+          bindingTarget = entityContainer.getEntitySet(edmTarget.getTargetName());
+
+          if (bindingTarget == null) {
+            throw new EdmException("Cannot find EntitySet " + edmTarget.getTargetName());
+          }
+        } catch (EdmException e) {
+          // try with singletons ...
+          bindingTarget = entityContainer.getSingleton(edmTarget.getTargetName());
+
+          if (bindingTarget == null) {
+            throw new EdmException("Cannot find Singleton " + edmTarget.getTargetName());
+          }
+        } finally {
+          found = bindingTarget != null;
+        }
+      }
+    }
+
+    return bindingTarget;
+  }
 }

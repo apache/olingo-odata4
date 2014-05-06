@@ -111,5 +111,4 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
    * @return the {@link FullQualifiedName} of the parentContainer or null if no parent is specified
    */
   FullQualifiedName getParentContainerName();
-
 }

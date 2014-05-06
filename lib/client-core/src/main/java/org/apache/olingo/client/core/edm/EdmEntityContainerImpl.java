@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.edm.xml.v4.Singleton;
 import org.apache.olingo.client.core.edm.v3.EdmActionImportProxy;
 import org.apache.olingo.client.core.edm.v3.EdmEntitySetProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionImportProxy;
+import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -169,16 +170,18 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   @Override
   protected void loadAllFunctionImports() {
     final List<? extends CommonFunctionImport> localFunctionImports = xmlEntityContainer.getFunctionImports();
-    if (localFunctionImports != null) {
-      for (CommonFunctionImport functionImport : localFunctionImports) {
-        EdmFunctionImport edmFunctionImport;
-        if (functionImport instanceof org.apache.olingo.client.api.edm.xml.v4.FunctionImport) {
-          edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(),
-                  (org.apache.olingo.client.api.edm.xml.v4.FunctionImport) functionImport);
-        } else {
-          edmFunctionImport = new EdmFunctionImportProxy(edm, this, functionImport.getName(),
-                  (org.apache.olingo.client.api.edm.xml.v3.FunctionImport) functionImport);
-        }
+    for (CommonFunctionImport functionImport : localFunctionImports) {
+      EdmFunctionImport edmFunctionImport;
+      if (functionImport instanceof org.apache.olingo.client.api.edm.xml.v4.FunctionImport) {
+        edmFunctionImport = new EdmFunctionImportImpl(edm, this, functionImport.getName(),
+                (org.apache.olingo.client.api.edm.xml.v4.FunctionImport) functionImport);
+        functionImports.put(edmFunctionImport.getName(), edmFunctionImport);
+      } else if (FunctionImportUtils.canProxyFunction(
+              (org.apache.olingo.client.api.edm.xml.v3.FunctionImport) functionImport)
+              && !((org.apache.olingo.client.api.edm.xml.v3.FunctionImport) functionImport).isBindable()
+              && !((org.apache.olingo.client.api.edm.xml.v3.FunctionImport) functionImport).isAlwaysBindable()) {
+        edmFunctionImport = new EdmFunctionImportProxy(edm, this, functionImport.getName(),
+                (org.apache.olingo.client.api.edm.xml.v3.FunctionImport) functionImport);
         functionImports.put(edmFunctionImport.getName(), edmFunctionImport);
       }
     }
@@ -216,8 +219,9 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
     } else {
       @SuppressWarnings("unchecked")
       final List<FunctionImport> localFunctionImports = (List<FunctionImport>) xmlEntityContainer.getFunctionImports();
-      if (localFunctionImports != null) {
-        for (FunctionImport functionImport : localFunctionImports) {
+      for (FunctionImport functionImport : localFunctionImports) {
+        if (!FunctionImportUtils.canProxyFunction(functionImport) && !functionImport.isBindable()
+                && !functionImport.isAlwaysBindable()) {
           actionImports.put(functionImport.getName(),
                   new EdmActionImportProxy(edm, this, functionImport.getName(), functionImport));
         }

@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.v3;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
 import org.junit.Test;
@@ -124,58 +125,53 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
             getMetadataRequest(testActionOverloadingServiceRootURL).execute().getBody();
     assertNotNull(edm);
 
-    final EdmEntityContainer container = edm.getSchemas().get(0).getEntityContainer();
-    assertNotNull(container);
+    final EdmSchema schema = edm.getSchemas().get(0);
+    assertNotNull(schema);
 
-    int execs = 0;
-    for (EdmActionImport actImp : container.getActionImports()) {
-      if ("IncreaseSalaries".equals(actImp.getName())) {
-        final Map<String, ODataValue> parameters = new LinkedHashMap<String, ODataValue>(1);
-        parameters.put("n", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(5));
+    EdmAction actImp = edm.getBoundAction(
+            new FullQualifiedName(schema.getNamespace(), "IncreaseSalaries"),
+            new FullQualifiedName(schema.getNamespace(), "Employee"),
+            true);
 
-        // 1. bound to employees
-        final EdmAction employeeBound = edm.getBoundAction(
-                new FullQualifiedName(container.getNamespace(), actImp.getName()),
-                new FullQualifiedName(container.getNamespace(), "Employee"), true);
-        assertNotNull(employeeBound);
-        assertNull(employeeBound.getReturnType());
+    final Map<String, ODataValue> parameters = new LinkedHashMap<String, ODataValue>(1);
+    parameters.put("n", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(5));
 
-        final URIBuilder employeeBuilder = getClient().getURIBuilder(testActionOverloadingServiceRootURL).
-                appendEntitySetSegment("Person").
-                appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
-        final ODataEntitySet employees = getClient().getRetrieveRequestFactory().getEntitySetRequest(
-                employeeBuilder.build()).execute().getBody();
-        assertNotNull(employees);
+    // 1. bound to employees
+    assertNotNull(actImp);
+    assertNull(actImp.getReturnType());
 
-        final ODataInvokeResponse<ODataNoContent> employeeRes = getClient().getInvokeRequestFactory().
-                <ODataNoContent>getInvokeRequest(employeeBuilder.appendOperationCallSegment(actImp.getName()).build(),
-                        employeeBound, parameters).execute();
-        assertNotNull(employeeRes);
-        assertEquals(204, employeeRes.getStatusCode());
-        execs++;
+    final URIBuilder employeeBuilder = getClient().getURIBuilder(testActionOverloadingServiceRootURL).
+            appendEntitySetSegment("Person").
+            appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.Employee");
+    final ODataEntitySet employees = getClient().getRetrieveRequestFactory().getEntitySetRequest(
+            employeeBuilder.build()).execute().getBody();
+    assertNotNull(employees);
 
-        // 1. bound to special employees
-        final EdmAction specEmpBound = edm.getBoundAction(
-                new FullQualifiedName(container.getNamespace(), actImp.getName()),
-                new FullQualifiedName(container.getNamespace(), "SpecialEmployee"), true);
-        assertNotNull(specEmpBound);
-        assertNull(specEmpBound.getReturnType());
+    final ODataInvokeResponse<ODataNoContent> employeeRes = getClient().getInvokeRequestFactory().
+            <ODataNoContent>getInvokeRequest(employeeBuilder.appendOperationCallSegment(actImp.getName()).build(),
+            actImp, parameters).execute();
+    assertNotNull(employeeRes);
+    assertEquals(204, employeeRes.getStatusCode());
 
-        final URIBuilder specEmpBuilder = getClient().getURIBuilder(testActionOverloadingServiceRootURL).
-                appendEntitySetSegment("Person").
-                appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee");
-        final ODataEntitySet specEmps = getClient().getRetrieveRequestFactory().getEntitySetRequest(
-                specEmpBuilder.build()).execute().getBody();
-        assertNotNull(specEmps);
+    // 2. bound to special employees
+    actImp = edm.getBoundAction(
+            new FullQualifiedName(schema.getNamespace(), "IncreaseSalaries"),
+            new FullQualifiedName(schema.getNamespace(), "SpecialEmployee"),
+            true);
+    assertNotNull(actImp);
+    assertNull(actImp.getReturnType());
 
-        final ODataInvokeResponse<ODataNoContent> specEmpsRes = getClient().getInvokeRequestFactory().
-                <ODataNoContent>getInvokeRequest(specEmpBuilder.appendOperationCallSegment(actImp.getName()).build(),
-                        specEmpBound, parameters).execute();
-        assertNotNull(specEmpsRes);
-        assertEquals(204, specEmpsRes.getStatusCode());
-        execs++;
-      }
-    }
-    assertEquals(2, execs);
+    final URIBuilder specEmpBuilder = getClient().getURIBuilder(testActionOverloadingServiceRootURL).
+            appendEntitySetSegment("Person").
+            appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee");
+    final ODataEntitySet specEmps = getClient().getRetrieveRequestFactory().getEntitySetRequest(
+            specEmpBuilder.build()).execute().getBody();
+    assertNotNull(specEmps);
+
+    final ODataInvokeResponse<ODataNoContent> specEmpsRes = getClient().getInvokeRequestFactory().
+            <ODataNoContent>getInvokeRequest(specEmpBuilder.appendOperationCallSegment(actImp.getName()).build(),
+            actImp, parameters).execute();
+    assertNotNull(specEmpsRes);
+    assertEquals(204, specEmpsRes.getStatusCode());
   }
 }
