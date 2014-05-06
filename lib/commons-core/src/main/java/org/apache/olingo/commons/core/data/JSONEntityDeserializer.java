@@ -26,12 +26,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
@@ -106,7 +111,6 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
 
     if (tree.hasNonNull(jsonEditLink)) {
       final LinkImpl link = new LinkImpl();
-      // Server mode
       if (serverMode) {
         link.setRel(Constants.EDIT_LINK_REL);
       }
@@ -134,8 +138,11 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
     }
 
     final Set<String> toRemove = new HashSet<String>();
+
+    final Map<String, List<Annotation>> annotations = new HashMap<String, List<Annotation>>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
+      final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
 
       links(field, entity, toRemove, tree, parser.getCodec());
       if (field.getKey().endsWith(getJSONAnnotation(jsonMediaEditLink))) {
@@ -172,29 +179,39 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
         entity.getOperations().add(operation);
 
         toRemove.add(field.getKey());
+      } else if (customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
+        final Annotation annotation = new AnnotationImpl();
+        annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
+        value(annotation, field.getValue(), parser.getCodec());
+
+        if (!annotations.containsKey(customAnnotation.group(1))) {
+          annotations.put(customAnnotation.group(1), new ArrayList<Annotation>());
+        }
+        annotations.get(customAnnotation.group(1)).add(annotation);
       }
     }
+
+    for (Link link : entity.getNavigationLinks()) {
+      if (annotations.containsKey(link.getTitle())) {
+        link.getAnnotations().addAll(annotations.get(link.getTitle()));
+        for (Annotation annotation : annotations.get(link.getTitle())) {
+          toRemove.add(link.getTitle() + "@" + annotation.getTerm());
+        }
+      }
+    }
+    for (Link link : entity.getMediaEditLinks()) {
+      if (annotations.containsKey(link.getTitle())) {
+        link.getAnnotations().addAll(annotations.get(link.getTitle()));
+        for (Annotation annotation : annotations.get(link.getTitle())) {
+          toRemove.add(link.getTitle() + "@" + annotation.getTerm());
+        }
+      }
+    }
+
     tree.remove(toRemove);
 
-    String type = null;
-    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
-      final Map.Entry<String, JsonNode> field = itor.next();
+    populate(entity, entity.getProperties(), tree, parser.getCodec());
 
-      if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
-        type = field.getValue().asText();
-      } else {
-        final JSONPropertyImpl property = new JSONPropertyImpl();
-        property.setName(field.getKey());
-        property.setType(type == null
-                ? null
-                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
-        type = null;
-
-        value(property, field.getValue(), parser.getCodec());
-        entity.getProperties().add(property);
-      }
-    }
-    
     return new ResWrap<JSONEntityImpl>(contextURL, metadataETag, entity);
   }
 }

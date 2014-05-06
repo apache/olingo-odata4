@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -40,7 +41,7 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
   @Override
   protected void doSerialize(final JSONPropertyImpl property, final JsonGenerator jgen,
           final SerializerProvider provider) throws IOException, JsonProcessingException {
-    
+
     doContainerSerialize(new ResWrap<JSONPropertyImpl>((URI) null, null, property), jgen, provider);
   }
 
@@ -64,6 +65,10 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
               new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external(version));
     }
 
+    for (Annotation annotation : property.getAnnotations()) {
+      valuable(jgen, annotation, "@" + annotation.getTerm());
+    }
+
     if (property.getValue().isNull()) {
       jgen.writeBooleanField(Constants.JSON_NULL, true);
     } else if (property.getValue().isPrimitive()) {
@@ -76,10 +81,10 @@ public class JSONPropertySerializer extends AbstractJsonSerializer<JSONPropertyI
     } else if (property.getValue().isEnum()) {
       jgen.writeStringField(Constants.VALUE, property.getValue().asEnum().get());
     } else if (property.getValue().isGeospatial() || property.getValue().isCollection()) {
-      property(jgen, property, Constants.VALUE);
+      valuable(jgen, property, Constants.VALUE);
     } else if (property.getValue().isComplex()) {
       for (Property cproperty : property.getValue().asComplex().get()) {
-        property(jgen, cproperty, cproperty.getName());
+        valuable(jgen, cproperty, cproperty.getName());
       }
     }
 

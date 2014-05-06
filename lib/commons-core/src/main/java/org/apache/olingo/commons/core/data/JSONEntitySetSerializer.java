@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -76,6 +77,10 @@ public class JSONEntitySetSerializer extends AbstractJsonSerializer<JSONEntitySe
         jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_DELTA_LINK),
                 entitySet.getDeltaLink().toASCIIString());
       }
+    }
+
+    for (Annotation annotation : entitySet.getAnnotations()) {
+      valuable(jgen, annotation, "@" + annotation.getTerm());
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);

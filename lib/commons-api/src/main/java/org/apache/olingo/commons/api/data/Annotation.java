@@ -21,17 +21,9 @@ package org.apache.olingo.commons.api.data;
 /**
  * Represents an instance annotation.
  */
-public interface Annotation {
+public interface Annotation extends Valuable {
 
   String getTerm();
 
   void setTerm(String term);
-
-  String getType();
-
-  void setType(String type);
-
-  Value getValue();
-
-  void setValue(Value value);
 }

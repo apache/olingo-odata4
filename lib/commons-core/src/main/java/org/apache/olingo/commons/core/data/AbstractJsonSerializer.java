@@ -29,12 +29,15 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.PrimitiveValue;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -62,6 +65,10 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   protected void clientLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
     final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
     for (Link link : linked.getNavigationLinks()) {
+      for (Annotation annotation : link.getAnnotations()) {
+        valuable(jgen, annotation, link.getTitle() + "@" + annotation.getTerm());
+      }
+
       ODataLinkType type = null;
       try {
         type = ODataLinkType.fromString(version, link.getRel(), link.getType());
@@ -185,7 +192,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     } else if (value.isComplex()) {
       jgen.writeStartObject();
       for (Property property : value.asComplex().get()) {
-        property(jgen, property, property.getName());
+        valuable(jgen, property, property.getName());
       }
       if (value.isLinkedComplex()) {
         links(value.asLinkedComplex(), jgen);
@@ -194,12 +201,10 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
     }
   }
 
-  protected void property(final JsonGenerator jgen, final Property property, final String name) throws IOException {
+  protected void valuable(final JsonGenerator jgen, final Valuable valuable, final String name) throws IOException {
     if (serverMode && !Constants.VALUE.equals(name)) {
-      String type = property.getType();
-      if (StringUtils.isBlank(type)
-              && property.getValue().isPrimitive() || property.getValue().isNull()) {
-
+      String type = valuable.getType();
+      if (StringUtils.isBlank(type) && valuable.getValue().isPrimitive() || valuable.getValue().isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
       if (StringUtils.isNotBlank(type)) {
@@ -209,7 +214,13 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       }
     }
 
+    if (valuable instanceof Annotatable) {
+      for (Annotation annotation : ((Annotatable) valuable).getAnnotations()) {
+        valuable(jgen, annotation, name + "@" + annotation.getTerm());
+      }
+    }
+
     jgen.writeFieldName(name);
-    value(jgen, property.getType(), property.getValue());
+    value(jgen, valuable.getType(), valuable.getValue());
   }
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
@@ -78,8 +79,12 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId());
     }
 
+    for (Annotation annotation : entity.getAnnotations()) {
+      valuable(jgen, annotation, "@" + annotation.getTerm());
+    }
+
     for (Property property : entity.getProperties()) {
-      property(jgen, property, property.getName());
+      valuable(jgen, property, property.getName());
     }
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {

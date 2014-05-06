@@ -18,27 +18,27 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Value;
 
-public abstract class AbstractProperty extends AbstractAnnotatedObject implements Property {
+public class AnnotationImpl extends AbstractAnnotatedObject implements Annotation {
 
-  private static final long serialVersionUID = -7175704800169997060L;
+  private static final long serialVersionUID = -2532246000091187020L;
 
-  private String name;
+  private String term;
 
   private String type;
 
   private Value value;
 
   @Override
-  public String getName() {
-    return name;
+  public String getTerm() {
+    return term;
   }
 
   @Override
-  public void setName(final String name) {
-    this.name = name;
+  public void setTerm(final String term) {
+    this.term = term;
   }
 
   @Override

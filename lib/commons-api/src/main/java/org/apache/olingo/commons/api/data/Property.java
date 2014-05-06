@@ -18,17 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
-public interface Property extends Annotatable {
+public interface Property extends Valuable, Annotatable {
 
   String getName();
 
   void setName(String name);
-
-  String getType();
-
-  void setType(String type);
-
-  Value getValue();
-
-  void setValue(Value value);
 }

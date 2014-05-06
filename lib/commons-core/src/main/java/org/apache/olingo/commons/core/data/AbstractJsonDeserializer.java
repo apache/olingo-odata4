@@ -27,14 +27,21 @@ import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
@@ -43,6 +50,8 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResWrap<T>> {
+
+  protected final Pattern CUSTOM_ANNOTATION = Pattern.compile("(.+)@(.+)\\.(.+)");
 
   private JSONGeoValueDeserializer geoDeserializer;
 
@@ -203,6 +212,48 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
     return new SimpleEntry<ODataPropertyType, EdmTypeInfo>(type, typeInfo);
   }
 
+  protected void populate(final Annotatable annotatable, final List<Property> properties,
+          final ObjectNode tree, final ObjectCodec codec) throws IOException {
+
+    String type = null;
+    Annotation annotation = null;
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
+      final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
+
+      if (field.getKey().charAt(0) == '@') {
+        final Annotation entityAnnot = new AnnotationImpl();
+        entityAnnot.setTerm(field.getKey().substring(1));
+
+        value(entityAnnot, field.getValue(), codec);
+        if (annotatable != null) {
+          annotatable.getAnnotations().add(entityAnnot);
+        }
+      } else if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
+        type = field.getValue().asText();
+      } else if (annotation == null && customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
+        annotation = new AnnotationImpl();
+        annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));
+        value(annotation, field.getValue(), codec);
+      } else {
+        final JSONPropertyImpl property = new JSONPropertyImpl();
+        property.setName(field.getKey());
+        property.setType(type == null
+                ? null
+                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
+        type = null;
+
+        value(property, field.getValue(), codec);
+        properties.add(property);
+
+        if (annotation != null) {
+          property.getAnnotations().add(annotation);
+          annotation = null;
+        }
+      }
+    }
+  }
+
   private Value fromPrimitive(final JsonNode node, final EdmTypeInfo typeInfo) {
     final Value value;
 
@@ -234,22 +285,7 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
       node.remove(toRemove);
     }
 
-    String type = null;
-    for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
-      final Map.Entry<String, JsonNode> field = itor.next();
-
-      if (type == null && field.getKey().endsWith(getJSONAnnotation(jsonType))) {
-        type = field.getValue().asText();
-      } else {
-        final JSONPropertyImpl property = new JSONPropertyImpl();
-        property.setName(field.getKey());
-        property.setType(type);
-        type = null;
-
-        value(property, field.getValue(), codec);
-        value.get().add(property);
-      }
-    }
+    populate(value.asLinkedComplex(), value.get(), node, codec);
 
     return value;
   }
@@ -283,12 +319,12 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
     return value;
   }
 
-  protected void value(final JSONPropertyImpl property, final JsonNode node, final ObjectCodec codec)
+  protected void value(final Valuable valuable, final JsonNode node, final ObjectCodec codec)
           throws IOException {
 
-    EdmTypeInfo typeInfo = StringUtils.isBlank(property.getType())
+    EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType())
             ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
+            : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
     final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
@@ -307,31 +343,31 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
 
     switch (propType) {
       case COLLECTION:
-        property.setValue(fromCollection(node.elements(), typeInfo, codec));
+        valuable.setValue(fromCollection(node.elements(), typeInfo, codec));
         break;
 
       case COMPLEX:
         if (node.has(jsonType)) {
-          property.setType(node.get(jsonType).asText());
+          valuable.setType(node.get(jsonType).asText());
           ((ObjectNode) node).remove(jsonType);
         }
-        property.setValue(fromComplex((ObjectNode) node, codec));
+        valuable.setValue(fromComplex((ObjectNode) node, codec));
         break;
 
       case ENUM:
-        property.setValue(new EnumValueImpl(node.asText()));
+        valuable.setValue(new EnumValueImpl(node.asText()));
         break;
 
       case PRIMITIVE:
-        if (property.getType() == null && typeInfo != null) {
-          property.setType(typeInfo.getFullQualifiedName().toString());
+        if (valuable.getType() == null && typeInfo != null) {
+          valuable.setType(typeInfo.getFullQualifiedName().toString());
         }
-        property.setValue(fromPrimitive(node, typeInfo));
+        valuable.setValue(fromPrimitive(node, typeInfo));
         break;
 
       case EMPTY:
       default:
-        property.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
+        valuable.setValue(new PrimitiveValueImpl(StringUtils.EMPTY));
     }
   }
 }

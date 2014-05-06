@@ -16,48 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.data;
+package org.apache.olingo.commons.api.data;
 
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.Value;
+public interface Valuable {
 
-public abstract class AbstractProperty extends AbstractAnnotatedObject implements Property {
+  String getType();
 
-  private static final long serialVersionUID = -7175704800169997060L;
+  void setType(String type);
 
-  private String name;
+  Value getValue();
 
-  private String type;
-
-  private Value value;
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(final String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getType() {
-    return type;
-  }
-
-  @Override
-  public void setType(final String type) {
-    this.type = type;
-  }
-
-  @Override
-  public Value getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(final Value value) {
-    this.value = value;
-  }
+  void setValue(Value value);
 }
