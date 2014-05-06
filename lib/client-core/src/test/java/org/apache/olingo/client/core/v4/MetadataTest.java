@@ -100,11 +100,15 @@ public class MetadataTest extends AbstractTest {
     final EdmEntityType user = edm.getEntityType(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "User"));
     assertNotNull(user);
+    assertFalse(user.getPropertyNames().isEmpty());
+    assertFalse(user.getNavigationPropertyNames().isEmpty());
+    
     final EdmEntityType entity = edm.getEntityType(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Entity"));
     assertEquals(entity, user.getBaseType());
-    assertFalse(user.getPropertyNames().isEmpty());
-    assertFalse(user.getNavigationPropertyNames().isEmpty());
+    assertFalse(entity.getPropertyNames().isEmpty());
+    assertTrue(entity.getNavigationPropertyNames().isEmpty());
+    
     final EdmEntityType folder = edm.getEntityType(
             new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Folder"));
     assertEquals(folder, user.getNavigationProperty("Inbox").getType());

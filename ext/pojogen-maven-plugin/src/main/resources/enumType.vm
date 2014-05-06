@@ -1,0 +1,56 @@
+#*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *#
+package ${package};
+
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
+#set( $enumName = $utility.capitalize($enumType.Name) )
+#set( $count = $enumType.MemberNames.size() )
+#if( $enumType.UnderlyingType )
+    #set( $javatype = $utility.getJavaType($enumType.UnderlyingType) )
+#else
+    #set( $javatype = $utility.getJavaType("Edm.Int32") )
+#end
+
+@Namespace("$namespace")
+@EnumType(name = "$enumType.Name",
+          #if( $enumType.UnderlyingType )underlyingType = EdmPrimitiveTypeKind.${utility.getEdmTypeInfo($enumType.UnderlyingType).PrimitiveTypeKind.name()},
+          #{end}isFlags = $enumType.Flags)
+public enum $enumName {
+#foreach ($memberName in $enumType.MemberNames)#*
+    *##set( $member = $enumType.getMember($memberName) )#*
+    *##set( $count = $count - 1 )
+    $member.Name#if( $member.Value )($member.Value)#set( $valued = 1 )#end#if( $count > 0 ),#elseif( $count <= 0 );#end
+
+#end
+
+#if( $valued )
+    private $javatype value;
+    
+    public $javatype getValue(){
+      return this.value;
+    }
+
+    private $enumName(final $javatype value){
+      this.value=value;
+    }
+#end
+}

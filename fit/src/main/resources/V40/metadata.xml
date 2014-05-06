@@ -32,6 +32,7 @@
       </ComplexType>
       <ComplexType Name="CompanyAddress" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Address">
         <Property Name="CompanyName" Type="Edm.String" Nullable="false" />
+        <NavigationProperty Name="Contact" Type="Microsoft.Test.OData.Services.ODataWCFService.Person" Nullable="true" />
       </ComplexType>
       <EnumType Name="AccessLevel" IsFlags="true">
         <Member Name="None" Value="0" />

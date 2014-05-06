@@ -82,7 +82,9 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     EdmSingleton singleton = singletons.get(singletonName);
     if (singleton == null) {
       singleton = createSingleton(singletonName);
-      singletons.put(singletonName, singleton);
+      if (singleton != null) {
+        singletons.put(singletonName, singleton);
+      }
     }
     return singleton;
   }
@@ -94,7 +96,9 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     EdmEntitySet entitySet = entitySets.get(entitySetName);
     if (entitySet == null) {
       entitySet = createEntitySet(entitySetName);
-      entitySets.put(entitySetName, entitySet);
+      if (entitySet != null) {
+        entitySets.put(entitySetName, entitySet);
+      }
     }
     return entitySet;
   }
@@ -106,7 +110,9 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     EdmActionImport actionImport = actionImports.get(actionImportName);
     if (actionImport == null) {
       actionImport = createActionImport(actionImportName);
-      actionImports.put(actionImportName, actionImport);
+      if (actionImport != null) {
+        actionImports.put(actionImportName, actionImport);
+      }
     }
     return actionImport;
   }
@@ -118,7 +124,9 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
     EdmFunctionImport functionImport = functionImports.get(functionImportName);
     if (functionImport == null) {
       functionImport = createFunctionImport(functionImportName);
-      functionImports.put(functionImportName, functionImport);
+      if (functionImport != null) {
+        functionImports.put(functionImportName, functionImport);
+      }
     }
     return functionImport;
   }
@@ -186,5 +194,4 @@ public abstract class AbstractEdmEntityContainer extends EdmNamedImpl implements
   public FullQualifiedName getAnnotationsTargetFQN() {
     return getFullQualifiedName();
   }
-
 }

@@ -1,0 +1,169 @@
+#*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *#
+#set( $clsSuffix = ".class" )
+package ${package};
+
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
+import org.apache.olingo.client.api.edm.ConcurrencyMode;
+#foreach($ns in $namespaces)
+import ${basePackage}.${ns}.*;
+import ${basePackage}.${ns}.types.*;
+#end
+
+// EdmSimpleType property imports
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.UUID;
+import java.io.Serializable;
+import java.util.Collection;
+import java.sql.Timestamp;
+import javax.xml.datatype.Duration;
+
+#if( $keyRef )@KeyRef(${keyRef}.class)#end
+
+@Namespace("$namespace")
+@EntityType(name = "$entityType.Name",
+        openType = $entityType.isOpenType(),
+        hasStream = $entityType.hasStream(),
+        isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
+        baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
+public interface $utility.capitalize($entityType.Name) extends #if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}Serializable#end {
+
+#set( $keys = [] )
+#foreach($key in $entityType.KeyPropertyRefs)
+    #if(!$keys.add($key.KeyPropertyName)) #stop #end
+#end
+
+#foreach($propertyName in $entityType.PropertyNames)
+    #set($property = $entityType.getProperty($propertyName))
+    #set($fcprops = $utility.getFcProperties($property) )
+    #if($keys.contains($property.Name))@Key#end
+
+    @Property(name = "$property.Name", 
+                type = "$property.Type.FullQualifiedName.toString()", 
+                nullable = $property.Nullable,
+                defaultValue = "#if($property.getDefaultValue())$property.getDefaultValue()#end",
+                maxLenght = #if($property.getMaxLength() && !$property.getMaxLength().equalsIgnoreCase("max"))$property.getMaxLength()#{else}Integer.MAX_VALUE#end,
+                fixedLenght = #if($property.isFixedLength())$property.isFixedLength()#{else}false#end,
+                precision = #if($property.getPrecision())$property.getPrecision()#{else}0#end,
+                scale = #if($property.getScale())$property.getScale()#{else}0#end,
+                unicode = #if($property.isUnicode())$property.isUnicode()#{else}false#end,
+                collation = "#if($property.getCollation())$property.getCollation()#end",
+                srid = "#if($property.getSRID())$property.getSRID()#end",
+                concurrencyMode = #if($property.getConcurrencyMode())ConcurrencyMode.$property.getConcurrencyMode()#{else}ConcurrencyMode.None#end,
+                fcSourcePath = "#if($fcprops.containsKey("fcSourcePath"))$fcprops.get("fcSourcePath")#end",
+                fcTargetPath = "#if($fcprops.containsKey("fcTargetPath"))$fcprops.get("fcTargetPath")#end",
+                fcContentKind = #if($fcprops.containsKey("fcContentKind"))EdmContentKind.$fcprops.get("fcContentKind")#{else}EdmContentKind.text#end,
+                fcNSPrefix = "#if($fcprops.containsKey("fcNSPrefix"))$fcprops.get("fcNSPrefix")#end",
+                fcNSURI = "#if($fcprops.containsKey("fcNSURI"))$fcprops.get("fcNSURI")#end",
+                fcKeepInContent = #if($fcprops.containsKey("fcKeepInContent"))$fcprops.get("fcKeepInContent")#{else}false#end)
+    $utility.getJavaType($property.Type) get$utility.capitalize($property.Name)();
+
+    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type) _$utility.uncapitalize($property.Name));
+
+#end
+    
+#foreach($propertyName in $entityType.NavigationPropertyNames)
+    #set($property = $entityType.getNavigationProperty($propertyName))
+    #set( $type = $utility.getNavigationType($property) )
+    #set( $binding = $utility.getNavigationBindingDetails($entityType, $property) )
+
+    @NavigationProperty(name = "$property.Name", 
+                type = "$type", 
+                targetSchema = "$binding.Schema.Namespace", 
+                targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end")
+    $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
+
+    void set$utility.capitalize($property.Name)(final $utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
+
+#end
+
+#if($entityType.hasStream())
+    void setStream(java.io.InputStream stream);
+
+    java.io.InputStream getStream();
+#end
+
+#set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )
+#set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
+#if( $functions.size() > 0 || $actions.size() > 0 )
+    Operations operations();
+
+    public interface Operations {
+    #foreach($operation in $functions)
+      @Operation(name = "$operation.Name",
+                    type = OperationType.FUNCTION,
+                    isComposable = $operation.Composable#if($operation.ReturnType),
+                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
+      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
+      #if($operation.ParameterNames)
+        #set( $count = $operation.ParameterNames.size() )#*
+        *##foreach($paramName in $operation.ParameterNames)#*
+          *##set( $count = $count - 1 )#*
+          *##set( $param = $operation.getParameter($paramName) )#*
+          *##if( !$entityType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
+        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+      #end
+      #end#*
+      *##end);
+
+    #end
+
+    #foreach($operation in $actions)
+      @Operation(name = "$operation.Name",
+                    type = OperationType.ACTION#if($operation.ReturnType),
+                    returnType = "#if( $operation.ReturnType.Collection )Collection(#end$operation.ReturnType.Type.FullQualifiedName.toString()#if( $operation.ReturnType.Collection ))#end"#end)
+      #if($operation.ReturnType)$utility.getJavaType($operation.ReturnType.Type, $operation.ReturnType.Collection)#{else}void#end $utility.uncapitalize($operation.Name)(
+      #if($operation.ParameterNames)
+        #set( $count = $operation.ParameterNames.size() )#*
+        *##foreach($paramName in $operation.ParameterNames)#*
+          *##set( $count = $count - 1 )#*
+          *##set( $param = $operation.getParameter($paramName) )#*
+          *##if( !$entityType.FullQualifiedName.equals($param.Type.FullQualifiedName) )#*
+        *#    @Parameter(name = "$param.Name", type = "#if( $param.Collection )Collection(#end$param.Type.FullQualifiedName.toString()#if( $param.Collection ))#end", nullable = $param.Nullable) $utility.getJavaType($param.Type, $param.Collection) $utility.uncapitalize($param.Name)#if( $count > 0 ), #end
+
+      #end
+      #end#*
+      *##end);
+
+    #end
+    }
+#end
+}

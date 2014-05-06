@@ -37,5 +37,7 @@
 
   <modules>
     <module>client-core-android</module>
+    <module>pojogen-maven-plugin</module>
+    <module>client-proxy</module>
   </modules>
 </project>

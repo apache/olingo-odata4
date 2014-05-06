@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.edm;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.olingo.client.api.edm.xml.CommonParameter;
 import org.apache.olingo.client.api.edm.xml.v4.Action;
@@ -46,7 +47,12 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
     }
     instance.setParameters(_parameters);
 
-    instance.setEntitySetPath(instance.operation.getEntitySetPath());
+    final String entitySetPath = instance.operation.getEntitySetPath();
+    if (StringUtils.isNotBlank(entitySetPath)) {
+      // remove bindingParameter info and keep path only
+      int firstSlashIndex = entitySetPath.indexOf("/");
+      instance.setEntitySetPath(entitySetPath.substring(firstSlashIndex + 1));
+    }
 
     instance.setIsBound(instance.operation.isBound());
 

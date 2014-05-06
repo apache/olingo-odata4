@@ -19,13 +19,10 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.Target;
 import org.apache.olingo.commons.core.edm.AbstractEdmBindingTarget;
@@ -41,42 +38,6 @@ public abstract class EdmBindingTargetImpl extends AbstractEdmBindingTarget {
   public EdmBindingTargetImpl(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
     super(edm, container, target.getName(), target.getType());
     this.target = target;
-  }
-
-  @Override
-  public EdmBindingTarget getRelatedBindingTarget(final String path) {
-    EdmBindingTarget bindingTarget = null;
-
-    final List<NavigationPropertyBinding> navigationPropertyBindings = target.getNavigationPropertyBindings();
-    if (navigationPropertyBindings != null) {
-      boolean found = false;
-      for (final Iterator<NavigationPropertyBinding> itor = navigationPropertyBindings.iterator(); itor.hasNext()
-          && !found;) {
-
-        final NavigationPropertyBinding binding = itor.next();
-        if (binding.getPath().equals(path)) {
-          final Target providerTarget = binding.getTarget();
-          final EdmEntityContainer entityContainer = edm.getEntityContainer(providerTarget.getEntityContainer());
-          if (entityContainer == null) {
-            throw new EdmException("Cant find entity container with name: " + providerTarget.getEntityContainer());
-          }
-          final String targetName = providerTarget.getTargetName();
-          bindingTarget = entityContainer.getEntitySet(targetName);
-          if (bindingTarget == null) {
-            bindingTarget = entityContainer.getSingleton(targetName);
-            if (bindingTarget == null) {
-              throw new EdmException("Cant find target with name: " + targetName);
-            }
-
-            found = true;
-          } else {
-            found = true;
-          }
-        }
-      }
-    }
-
-    return bindingTarget;
   }
 
   @Override

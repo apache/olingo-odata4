@@ -68,8 +68,6 @@ public class EdmTypeInfo {
   }
   private final Edm edm;
 
-  private final String typeExpression;
-
   private final boolean collection;
 
   private final FullQualifiedName fullQualifiedName;
@@ -124,7 +122,6 @@ public class EdmTypeInfo {
     final StringBuilder exp = new StringBuilder();
     exp.append(baseType);
 
-    this.typeExpression = (this.collection ? exp.insert(0, "Collection(").append(")") : exp).toString();
     this.fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
     try {

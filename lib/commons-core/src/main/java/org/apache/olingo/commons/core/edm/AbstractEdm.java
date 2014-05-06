@@ -82,6 +82,26 @@ public abstract class AbstractEdm implements Edm {
 
   @Override
   public List<EdmSchema> getSchemas() {
+    initSchemas();
+    return schemaList;
+  }
+
+  @Override
+  public EdmSchema getSchema(final String namespace) {
+    initSchemas();
+
+    EdmSchema schema = schemas.get(namespace);
+    if (schema == null) {
+      if (aliasToNamespaceInfo == null) {
+        aliasToNamespaceInfo = createAliasToNamespaceInfo();
+      }
+      schema = schemas.get(aliasToNamespaceInfo.get(namespace));
+    }
+
+    return schema;
+  }
+
+  private void initSchemas() {
     if (schemas == null) {
       schemas = createSchemas();
       if (schemas != null) {
@@ -89,6 +109,8 @@ public abstract class AbstractEdm implements Edm {
         aliasToNamespaceInfo = new HashMap<String, String>();
         for (EdmSchema schema : schemas.values()) {
           final String namespace = schema.getNamespace();
+          schemas.put(namespace, schema);
+
           if (schema.getAlias() != null) {
             aliasToNamespaceInfo.put(schema.getAlias(), namespace);
           }
@@ -166,25 +188,6 @@ public abstract class AbstractEdm implements Edm {
         }
       }
     }
-    return schemaList;
-  }
-
-  @Override
-  public EdmSchema getSchema(final String namespace) {
-    // enusure schemas are loaded
-    getSchemas();
-
-    EdmSchema schema = null;
-    if (schemas != null) {
-      schema = schemas.get(namespace);
-      if (schema == null) {
-        if (aliasToNamespaceInfo == null) {
-          aliasToNamespaceInfo = createAliasToNamespaceInfo();
-        }
-        schema = schemas.get(aliasToNamespaceInfo.get(namespace));
-      }
-    }
-    return schema;
   }
 
   @Override

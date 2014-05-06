@@ -72,6 +72,7 @@ public abstract class AbstractEdmNavigationProperty extends EdmElementImpl imple
     return partnerNavigationProperty;
   }
 
+  @Override
   public abstract String getReferencingPropertyName(String referencedPropertyName);
 
   @Override

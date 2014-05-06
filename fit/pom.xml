@@ -36,6 +36,7 @@
 
   <properties>
     <war.maven.plugin.version>2.4</war.maven.plugin.version>
+    <invoker.maven.plugin.version>1.8</invoker.maven.plugin.version>
   </properties>
 
   <dependencies>
@@ -105,6 +106,34 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${invoker.maven.plugin.version}</version>
+        <inherited>true</inherited>
+        <configuration>
+          <debug>true</debug>
+          <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+          <pomIncludes>
+            <pomInclude>*/pom.xml</pomInclude>
+          </pomIncludes>
+          <postBuildHookScript>verify</postBuildHookScript>
+          <goals>
+            <goal>clean</goal>
+            <goal>test-compile</goal>
+          </goals>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+          
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
