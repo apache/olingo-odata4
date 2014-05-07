@@ -16,15 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.ext.proxy.context;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
+import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
+public class AttachedEntity {
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+  private final EntityTypeInvocationHandler<?> entity;
+
+  private final AttachedEntityStatus status;
+
+  public AttachedEntity(final EntityTypeInvocationHandler<?> entity, final AttachedEntityStatus status) {
+    this.entity = entity;
+    this.status = status;
+  }
+
+  public EntityTypeInvocationHandler<?> getEntity() {
+    return entity;
+  }
+
+  public AttachedEntityStatus getStatus() {
+    return status;
+  }
 }

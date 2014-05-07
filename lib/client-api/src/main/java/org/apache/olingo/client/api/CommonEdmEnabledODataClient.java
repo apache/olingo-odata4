@@ -40,4 +40,11 @@ public interface CommonEdmEnabledODataClient<UT extends CommonUpdateType> extend
    * @return Edm
    */
   Edm getEdm(String metadataETag);
+
+  /**
+   * Return the cached Edm matadata information.
+   *
+   * @return Edm
+   */
+  Edm getCachedEdm();
 }

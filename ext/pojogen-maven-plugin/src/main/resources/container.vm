@@ -50,6 +50,7 @@ import javax.xml.datatype.Duration;
 
 @Namespace("$namespace")
 @EntityContainer(name = "$container.Name",
+  namespace = "$namespace",
   isDefaultEntityContainer = $container.Default)
 public interface $utility.capitalize($container.Name) extends AbstractContainer {
 

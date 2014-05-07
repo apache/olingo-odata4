@@ -16,15 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.ext.proxy.context;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
+public class Context {
 
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
+  private final EntityContext entities;
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+  public Context() {
+    this.entities = new EntityContext();
+
+  }
+
+  public EntityContext entityContext() {
+    return entities;
+  }
+
+  public void detachAll() {
+    entities.detachAll();
+  }
 }

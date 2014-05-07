@@ -389,6 +389,10 @@ public abstract class AbstractUtility {
     return StringUtils.uncapitalize(str);
   }
 
+  public String join(final Object[] array, String sep) {
+    return StringUtils.join(array, sep);
+  }
+
   public Map<String, String> getFcProperties(final EdmProperty property) {
     return Collections.<String, String>emptyMap();
   }

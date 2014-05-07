@@ -156,6 +156,7 @@ public class V3MetadataMojo extends AbstractMetadataMojo {
                 for (EdmEntityContainer container : schema.getEntityContainers()) {
                     objs.clear();
                     objs.put("container", container);
+                    objs.put("namespace", schema.getNamespace());
                     parseObj(base, pkg, "container",
                             utility.capitalize(container.getName()) + ".java", objs);
 

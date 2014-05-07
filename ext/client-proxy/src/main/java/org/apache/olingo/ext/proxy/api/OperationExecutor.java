@@ -16,15 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.ext.proxy.api;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
+import java.io.Serializable;
 
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
-
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+/**
+ * Interface for synchronous CRUD operations on an EntitySet.
+ */
+public interface OperationExecutor extends Serializable {
 }

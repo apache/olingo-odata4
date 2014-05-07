@@ -16,15 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v4;
+package org.apache.olingo.ext.proxy.context;
 
-import org.apache.olingo.client.api.communication.request.batch.CommonBatchRequestFactory;
-
-public interface BatchRequestFactory extends CommonBatchRequestFactory {
+public enum AttachedEntityStatus {
 
   /**
-   * {@inheritDoc }
+   * Explicitely attached.
    */
-  @Override
-  ODataBatchRequest getBatchRequest(String serviceRoot);
+  ATTACHED,
+  /**
+   * New object.
+   */
+  NEW,
+  /**
+   * Modified object.
+   */
+  CHANGED,
+  /**
+   * Deleted object.
+   */
+  DELETED,
+  /**
+   * Attached because explicitely liked to another object.
+   */
+  LINKED
+
 }
