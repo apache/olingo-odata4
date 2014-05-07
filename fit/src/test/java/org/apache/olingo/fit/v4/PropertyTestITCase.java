@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.fit.v4;
 
-import java.io.IOException;
-import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
-import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -112,16 +112,6 @@ public class PropertyTestITCase extends AbstractTestITCase {
     complex(edmClient, ODataFormat.JSON);
   }
 
-  @Test
-  public void complexFromFullJSON() {
-    complex(client, ODataFormat.JSON_FULL_METADATA);
-  }
-
-  @Test
-  public void patchComplexPropertyAsJSON() throws IOException {
-    updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
-  }
-
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
@@ -135,7 +125,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     ODataProperty homeAddress =
             client.getObjectFactory().newComplexProperty("HomeAddress",
-            client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
+                    client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
 
     homeAddress.getComplexValue().add(client.getObjectFactory().
             newPrimitiveProperty("City", client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
@@ -161,4 +151,15 @@ public class PropertyTestITCase extends AbstractTestITCase {
     homeAddress = retrieveRes.getBody();
     assertEquals("Pescara", homeAddress.getComplexValue().get("City").getPrimitiveValue().toString());
   }
+
+  @Test
+  public void complexFromFullJSON() {
+    complex(client, ODataFormat.JSON_FULL_METADATA);
+  }
+
+  @Test
+  public void patchComplexPropertyAsJSON() throws IOException {
+    updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
+  }
+
 }

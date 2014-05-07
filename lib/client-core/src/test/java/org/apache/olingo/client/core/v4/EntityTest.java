@@ -217,7 +217,7 @@ public class EntityTest extends AbstractTest {
 
     assertFalse(entity.isMediaEntity());
 
-    final ODataLink editMedia = entity.getEditMediaLink("Photo");
+    final ODataLink editMedia = entity.getMediaEditLink("Photo");
     assertNotNull(editMedia);
 
     final ODataEntity written = getClient().getBinder().getODataEntity(

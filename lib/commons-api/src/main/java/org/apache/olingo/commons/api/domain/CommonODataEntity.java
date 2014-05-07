@@ -101,14 +101,14 @@ public interface CommonODataEntity extends ODataLinked, ODataInvokeResult {
    * @param name candidate link name
    * @return media-edit link with given name, if available, otherwise <tt>null</tt>
    */
-  ODataLink getEditMediaLink(String name);
+  ODataLink getMediaEditLink(final String name);
 
   /**
-   * Returns all entity media edit links.
+   * Returns entity media edit links.
    *
    * @return OData entity links.
    */
-  List<ODataLink> getEditMediaLinks();
+  List<ODataLink> getMediaEditLinks();
 
   /**
    * TRUE if read-only entity.
@@ -150,14 +150,14 @@ public interface CommonODataEntity extends ODataLinked, ODataInvokeResult {
    *
    * @return media content source.
    */
-  String getMediaContentSource();
+  URI getMediaContentSource();
 
   /**
    * Sets media content source.
    *
    * @param mediaContentSource media content source.
    */
-  void setMediaContentSource(String mediaContentSource);
+  void setMediaContentSource(URI mediaContentSource);
 
   /**
    * ETag of the binary stream represented by this media entity or named stream property.

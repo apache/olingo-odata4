@@ -24,17 +24,17 @@ import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.client.api.communication.request.streamed.CommonStreamedRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
-public abstract class AbstractStreamedRequestFactory implements CommonStreamedRequestFactory {
+public class StreamedRequestFactoryImpl implements StreamedRequestFactory {
 
   private static final long serialVersionUID = -2438839640443961168L;
 
   protected final CommonODataClient<?> client;
 
-  protected AbstractStreamedRequestFactory(final CommonODataClient<?> client) {
+  public StreamedRequestFactoryImpl(final CommonODataClient<?> client) {
     this.client = client;
   }
 

@@ -135,14 +135,14 @@ public interface Entity extends Linked, Annotatable {
    *
    * @return media content resource.
    */
-  String getMediaContentSource();
+  URI getMediaContentSource();
 
   /**
    * Set media content source.
    *
    * @param mediaContentSource media content source.
    */
-  void setMediaContentSource(String mediaContentSource);
+  void setMediaContentSource(URI mediaContentSource);
 
   /**
    * Set media content type.

@@ -582,7 +582,7 @@ public abstract class AbstractServices {
         editLink.setTitle(entitySetName);
         entry.setEditLink(editLink);
 
-        entry.setMediaContentSource(editLink.getHref() + "/$value");
+        entry.setMediaContentSource(URI.create(editLink.getHref() + "/$value"));
 
         container = new ResWrap<AtomEntityImpl>((URI) null, null, entry);
       } else {

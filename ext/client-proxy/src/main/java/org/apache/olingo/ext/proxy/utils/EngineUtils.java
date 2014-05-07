@@ -181,7 +181,8 @@ public final class EngineUtils {
         } else {
           oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
                   newEnumProperty(name,
-                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).asEnum());
+                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
+                          asEnum());
         }
       } else {
         throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
@@ -412,7 +413,7 @@ public final class EngineUtils {
   }
 
   public static URI getEditMediaLink(final String name, final CommonODataEntity entity) {
-    for (ODataLink editMediaLink : entity.getEditMediaLinks()) {
+    for (ODataLink editMediaLink : entity.getMediaEditLinks()) {
       if (name.equalsIgnoreCase(editMediaLink.getName())) {
         return editMediaLink.getLink();
       }

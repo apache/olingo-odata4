@@ -70,7 +70,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final ODataEntity entity = entityRes.getBody();
     entity.getAssociationLinks().clear();
     entity.getNavigationLinks().clear();
-    entity.getEditMediaLinks().clear();
+    entity.getMediaEditLinks().clear();
 
     entity.getProperties().remove(entity.getProperty("Description"));
     getClient().getBinder().add(entity,

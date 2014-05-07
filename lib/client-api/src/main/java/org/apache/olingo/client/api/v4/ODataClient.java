@@ -23,7 +23,6 @@ import org.apache.olingo.client.api.communication.request.batch.v4.BatchRequestF
 import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
 import org.apache.olingo.client.api.op.v4.ODataDeserializer;
@@ -62,9 +61,6 @@ public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
   CUDRequestFactory getCUDRequestFactory();
-
-  @Override
-  StreamedRequestFactory getStreamedRequestFactory();
 
   @Override
   BatchRequestFactory getBatchRequestFactory();

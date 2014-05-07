@@ -309,8 +309,8 @@ public class AtomSerializer extends AbstractAtomDealer {
       if (StringUtils.isNotBlank(entity.getMediaContentType())) {
         writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
       }
-      if (StringUtils.isNotBlank(entity.getMediaContentSource())) {
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource());
+      if (entity.getMediaContentSource() != null) {
+        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toASCIIString());
       }
       writer.writeEndElement();
 

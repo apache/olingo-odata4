@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 /**
  * OData request factory class.
  */
-public interface CommonStreamedRequestFactory extends Serializable {
+public interface StreamedRequestFactory extends Serializable {
 
   /**
    * Gets a media entity create request object instance.

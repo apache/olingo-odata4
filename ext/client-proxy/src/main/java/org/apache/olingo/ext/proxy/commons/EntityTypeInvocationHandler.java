@@ -342,9 +342,9 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
         res = type == null
                 ? EngineUtils.getValueFromProperty(
-                client.getCachedEdm(), entity.getProperty(name))
+                        client.getCachedEdm(), entity.getProperty(name))
                 : EngineUtils.getValueFromProperty(
-                client.getCachedEdm(), entity.getProperty(name), type);
+                        client.getCachedEdm(), entity.getProperty(name), type);
 
         if (res != null) {
           int checkpoint = propertyChanges.hashCode();
@@ -475,19 +475,17 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   public InputStream getStream() {
 
-    final String contentSource = entity.getMediaContentSource();
+    final URI contentSource = entity.getMediaContentSource();
 
     if (this.stream == null
             && typeRef.getAnnotation(EntityType.class).hasStream()
-            && StringUtils.isNotBlank(contentSource)) {
+            && contentSource != null) {
 
-      final String comntentType =
+      final String contentType = 
               StringUtils.isBlank(entity.getMediaContentType()) ? "*/*" : entity.getMediaContentType();
 
-      final URI contentSourceURI = URIUtils.getURI(containerHandler.getFactory().getServiceRoot(), contentSource);
-
-      final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(contentSourceURI);
-      retrieveReq.setFormat(ODataMediaFormat.fromFormat(comntentType));
+      final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(contentSource);
+      retrieveReq.setFormat(ODataMediaFormat.fromFormat(contentType));
 
       this.stream = retrieveReq.execute().getBody();
     }

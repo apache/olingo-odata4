@@ -56,7 +56,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   /**
    * In case of media entity, media content source.
    */
-  private String mediaContentSource;
+  private URI mediaContentSource;
 
   /**
    * Media ETag.
@@ -81,7 +81,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   /**
    * Media edit links.
    */
-  private final List<ODataLink> editMediaLinks = new ArrayList<ODataLink>();
+  private final List<ODataLink> mediaEditLinks = new ArrayList<ODataLink>();
 
   /**
    * Operations (legacy, functions, actions).
@@ -89,7 +89,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   private final List<ODataOperation> operations = new ArrayList<ODataOperation>();
 
   public AbstractODataEntity(final FullQualifiedName typeName) {
-    super(typeName == null? null: typeName.toString());
+    super(typeName == null ? null : typeName.toString());
     this.typeName = typeName;
   }
 
@@ -160,7 +160,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
         break;
 
       case MEDIA_EDIT:
-        result = editMediaLinks.contains(link) ? false : editMediaLinks.add(link);
+        result = mediaEditLinks.contains(link) ? false : mediaEditLinks.add(link);
         break;
 
       default:
@@ -171,7 +171,7 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
 
   @Override
   public boolean removeLink(final ODataLink link) {
-    return associationLinks.remove(link) || navigationLinks.remove(link) || editMediaLinks.remove(link);
+    return associationLinks.remove(link) || navigationLinks.remove(link);
   }
 
   private ODataLink getLink(final List<ODataLink> links, final String name) {
@@ -206,13 +206,13 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   }
 
   @Override
-  public ODataLink getEditMediaLink(final String name) {
-    return getLink(editMediaLinks, name);
+  public ODataLink getMediaEditLink(final String name) {
+    return getLink(mediaEditLinks, name);
   }
 
   @Override
-  public List<ODataLink> getEditMediaLinks() {
-    return editMediaLinks;
+  public List<ODataLink> getMediaEditLinks() {
+    return mediaEditLinks;
   }
 
   @Override
@@ -256,12 +256,12 @@ public abstract class AbstractODataEntity extends AbstractODataPayload implement
   }
 
   @Override
-  public String getMediaContentSource() {
+  public URI getMediaContentSource() {
     return mediaContentSource;
   }
 
   @Override
-  public void setMediaContentSource(final String mediaContentSource) {
+  public void setMediaContentSource(final URI mediaContentSource) {
     this.mediaContentSource = mediaContentSource;
   }
 

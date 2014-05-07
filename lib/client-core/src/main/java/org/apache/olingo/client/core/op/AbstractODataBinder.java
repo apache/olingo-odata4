@@ -179,7 +179,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     // -------------------------------------------------------------
     // Append edit-media links
     // -------------------------------------------------------------
-    for (ODataLink link : odataEntity.getEditMediaLinks()) {
+    for (ODataLink link : odataEntity.getMediaEditLinks()) {
       LOG.debug("Append edit-media link\n{}", link);
       entity.getMediaEditLinks().add(getLink(link,
               ResourceFactory.formatForEntityClass(reference) == ODataPubFormat.ATOM));
@@ -417,9 +417,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     odataNavigationLinks(edmType, resource.getPayload(), entity, resource.getMetadataETag(), base);
 
     for (Link link : resource.getPayload().getMediaEditLinks()) {
-      entity.addLink(new ODataLink.Builder().setVersion(client.getServiceVersion()).
-              setURI(URIUtils.getURI(base, link.getHref())).
-              setType(ODataLinkType.MEDIA_EDIT).setTitle(link.getTitle()).build());
+      entity.addLink(client.getObjectFactory().
+              newMediaEditLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
     }
 
     for (ODataOperation operation : resource.getPayload().getOperations()) {
@@ -429,7 +428,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     if (resource.getPayload().isMediaEntity()) {
       entity.setMediaEntity(true);
-      entity.setMediaContentSource(resource.getPayload().getMediaContentSource());
+      entity.setMediaContentSource(URIUtils.getURI(base, resource.getPayload().getMediaContentSource()));
       entity.setMediaContentType(resource.getPayload().getMediaContentType());
       entity.setMediaETag(resource.getPayload().getMediaETag());
     }

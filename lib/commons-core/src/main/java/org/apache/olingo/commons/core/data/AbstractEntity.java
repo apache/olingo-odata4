@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.data;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
@@ -51,7 +51,7 @@ public abstract class AbstractEntity extends AbstractODataObject implements Enti
 
   private final List<Property> properties = new ArrayList<Property>();
 
-  private String mediaContentSource;
+  private URI mediaContentSource;
 
   private String mediaContentType;
 
@@ -167,12 +167,12 @@ public abstract class AbstractEntity extends AbstractODataObject implements Enti
   }
 
   @Override
-  public String getMediaContentSource() {
+  public URI getMediaContentSource() {
     return this.mediaContentSource;
   }
 
   @Override
-  public void setMediaContentSource(final String mediaContentSource) {
+  public void setMediaContentSource(final URI mediaContentSource) {
     this.mediaContentSource = mediaContentSource;
   }
 
@@ -188,6 +188,6 @@ public abstract class AbstractEntity extends AbstractODataObject implements Enti
 
   @Override
   public boolean isMediaEntity() {
-    return StringUtils.isNotBlank(this.mediaContentSource);
+    return this.mediaContentSource != null;
   }
 }

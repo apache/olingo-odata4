@@ -121,11 +121,11 @@ public class JSONEntityDeserializer extends AbstractJsonDeserializer<JSONEntityI
     }
 
     if (tree.hasNonNull(jsonMediaReadLink)) {
-      entity.setMediaContentSource(tree.get(jsonMediaReadLink).textValue());
+      entity.setMediaContentSource(URI.create(tree.get(jsonMediaReadLink).textValue()));
       tree.remove(jsonMediaReadLink);
     }
     if (tree.hasNonNull(jsonMediaEditLink)) {
-      entity.setMediaContentSource(tree.get(jsonMediaEditLink).textValue());
+      entity.setMediaContentSource(URI.create(tree.get(jsonMediaEditLink).textValue()));
       tree.remove(jsonMediaEditLink);
     }
     if (tree.hasNonNull(jsonMediaContentType)) {

@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.request.cud.v4.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v4.RetrieveRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.v4.StreamedRequestFactory;
+import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestFactory;
 import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v4.ODataBinder;
@@ -41,7 +41,7 @@ import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequest
 import org.apache.olingo.client.core.communication.request.cud.v4.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.v4.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.v4.RetrieveRequestFactoryImpl;
-import org.apache.olingo.client.core.communication.request.streamed.v4.StreamedRequestFactoryImpl;
+import org.apache.olingo.client.core.communication.request.streamed.StreamedRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.v4.AsyncRequestFactoryImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataBinderImpl;
 import org.apache.olingo.client.core.op.impl.v4.ODataDeserializerImpl;

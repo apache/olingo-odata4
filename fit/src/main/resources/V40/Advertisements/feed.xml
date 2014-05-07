@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<feed xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/$metadata#Advertisements">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements</id>
+  <title type="text">Advertisements</title>
+  <updated>2014-05-07T13:39:27Z</updated>
+  <link rel="self" title="Advertisements" href="Advertisements"/>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)</id>
+    <category term="#ODataDemo.Advertisement" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <link rel="edit" title="Advertisement" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/FeaturedProduct" type="application/xml" title="FeaturedProduct" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct/$ref"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/FeaturedProduct" type="application/atom+xml;type=entry" title="FeaturedProduct" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/FeaturedProduct"/>
+    <title/>
+    <updated>2014-05-07T13:39:27Z</updated>
+    <author>
+      <name/>
+    </author>
+    <link rel="edit-media" title="Advertisement" href="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/$value" m:etag="&quot;8zOOKKvgOtptr4gt8IrnapX3jds=&quot;"/>
+    <content type="*/*" src="Advertisements(f89dee73-af9f-4cd4-b330-db93c25ff3c7)/$value"/>
+    <m:properties>
+      <d:ID m:type="Guid">f89dee73-af9f-4cd4-b330-db93c25ff3c7</d:ID>
+      <d:Name>Old School Lemonade Store, Retro Style</d:Name>
+      <d:AirDate m:type="DateTimeOffset">2012-11-07T00:00:00Z</d:AirDate>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Demo.svc/Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)</id>
+    <category term="#ODataDemo.Advertisement" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+    <link rel="edit" title="Advertisement" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/FeaturedProduct" type="application/xml" title="FeaturedProduct" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/FeaturedProduct/$ref"/>
+    <link rel="http://docs.oasis-open.org/odata/ns/related/FeaturedProduct" type="application/atom+xml;type=entry" title="FeaturedProduct" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/FeaturedProduct"/>
+    <title/>
+    <updated>2014-05-07T13:39:27Z</updated>
+    <author>
+      <name/>
+    </author>
+    <link rel="edit-media" title="Advertisement" href="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/$value"/>
+    <content type="*/*" src="Advertisements(db2d2186-1c29-4d1e-88ef-a127f521b9c6)/$value"/>
+    <m:properties>
+      <d:ID m:type="Guid">db2d2186-1c29-4d1e-88ef-a127f521b9c6</d:ID>
+      <d:Name>Early morning start, need coffee</d:Name>
+      <d:AirDate m:type="DateTimeOffset">2000-02-29T00:00:00Z</d:AirDate>
+    </m:properties>
+  </entry>
+</feed>

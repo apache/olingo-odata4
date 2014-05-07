@@ -677,7 +677,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
               entity.setMediaContentType(type.getValue());
               final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
               if (src != null) {
-                entity.setMediaContentSource(src.getValue());
+                entity.setMediaContentSource(URI.create(src.getValue()));
               }
             }
           } else if (propertiesQName.equals(event.asStartElement().getName())) {
