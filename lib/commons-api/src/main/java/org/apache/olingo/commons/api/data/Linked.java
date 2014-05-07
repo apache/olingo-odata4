@@ -23,11 +23,27 @@ import java.util.List;
 public interface Linked {
 
   /**
+   * Gets association link with given name, if available, otherwise <tt>null</tt>.
+   *
+   * @param name candidate link name
+   * @return association link with given name, if available, otherwise <tt>null</tt>
+   */
+  Link getAssociationLink(String name);
+
+  /**
    * Gets association links.
    *
    * @return association links.
    */
   List<Link> getAssociationLinks();
+
+  /**
+   * Gets navigation link with given name, if available, otherwise <tt>null</tt>.
+   *
+   * @param name candidate link name
+   * @return navigation link with given name, if available, otherwise <tt>null</tt>
+   */
+  Link getNavigationLink(String name);
 
   /**
    * Gets navigation links.

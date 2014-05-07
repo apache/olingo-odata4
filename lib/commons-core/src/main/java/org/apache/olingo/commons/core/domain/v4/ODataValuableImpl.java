@@ -16,109 +16,90 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.domain;
+package org.apache.olingo.commons.core.domain.v4;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.olingo.commons.api.domain.ODataCollectionValue;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
+import org.apache.olingo.commons.api.domain.v4.ODataValue;
 
-public abstract class AbstractODataProperty implements CommonODataProperty {
+public class ODataValuableImpl implements ODataValuable {
 
-  private static final long serialVersionUID = 926939448778950450L;
-
-  /**
-   * Property name.
-   */
-  private final String name;
-
-  /**
-   * Property value.
-   */
   private final ODataValue value;
 
-  /**
-   * Constructor.
-   *
-   * @param name property name.
-   * @param value property value.
-   */
-  public AbstractODataProperty(final String name, final ODataValue value) {
-    this.name = name;
+  public ODataValuableImpl(final ODataValue value) {
     this.value = value;
   }
 
-  /**
-   * Returns property name.
-   *
-   * @return property name.
-   */
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Returns property value.
-   *
-   * @return property value.
-   */
   @Override
   public ODataValue getValue() {
     return value;
   }
 
-  /**
-   * Checks if has null value.
-   *
-   * @return 'TRUE' if has null value; 'FALSE' otherwise.
-   */
   @Override
   public boolean hasNullValue() {
     return this.value == null;
   }
 
-  /**
-   * Checks if has primitive value.
-   *
-   * @return 'TRUE' if has primitive value; 'FALSE' otherwise.
-   */
   @Override
   public boolean hasPrimitiveValue() {
     return !hasNullValue() && this.value.isPrimitive();
   }
 
-  /**
-   * Gets primitive value.
-   *
-   * @return primitive value if exists; null otherwise.
-   */
   @Override
   public ODataPrimitiveValue getPrimitiveValue() {
     return hasPrimitiveValue() ? this.value.asPrimitive() : null;
   }
 
-  /**
-   * Checks if has complex value.
-   *
-   * @return 'TRUE' if has complex value; 'FALSE' otherwise.
-   */
+  @Override
+  public boolean hasCollectionValue() {
+    return !hasNullValue() && this.value.isCollection();
+  }
+
+  @Override
+  public ODataCollectionValue<ODataValue> getCollectionValue() {
+    return hasCollectionValue()
+            ? getValue().<ODataValue>asCollection()
+            : null;
+  }
+
   @Override
   public boolean hasComplexValue() {
     return !hasNullValue() && this.value.isComplex();
   }
 
-  /**
-   * Checks if has collection value.
-   *
-   * @return 'TRUE' if has collection value; 'FALSE' otherwise.
-   */
   @Override
-  public boolean hasCollectionValue() {
-    return !hasNullValue() && this.value.isCollection();
+  public ODataComplexValue<ODataProperty> getComplexValue() {
+    return hasComplexValue()
+            ? getValue().<ODataProperty>asComplex()
+            : null;
+  }
+
+  @Override
+  public ODataLinkedComplexValue getLinkedComplexValue() {
+    return hasComplexValue()
+            ? getValue().asLinkedComplex()
+            : null;
+  }
+
+  @Override
+  public boolean hasEnumValue() {
+    return !hasNullValue() && getValue().isEnum();
+  }
+
+  @Override
+  public ODataEnumValue getEnumValue() {
+    return hasEnumValue()
+            ? getValue().asEnum()
+            : null;
   }
 
   @Override
@@ -135,4 +116,5 @@ public abstract class AbstractODataProperty implements CommonODataProperty {
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
+
 }

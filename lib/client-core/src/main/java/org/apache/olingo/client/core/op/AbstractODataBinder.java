@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
@@ -441,12 +442,13 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return entity;
   }
 
-  protected EdmTypeInfo buildTypeInfo(final ResWrap<Property> resource) {
+  protected EdmTypeInfo buildTypeInfo(final ContextURL contextURL, final String metadataETag,
+          final String propertyName, final String propertyType) {
+
     FullQualifiedName typeName = null;
-    final EdmType entityType = findEntityType(resource.getContextURL(), resource.getMetadataETag());
+    final EdmType entityType = findEntityType(contextURL, metadataETag);
     if (entityType instanceof EdmStructuredType) {
-      final EdmProperty edmProperty = ((EdmStructuredType) entityType).
-              getStructuralProperty(resource.getPayload().getName());
+      final EdmProperty edmProperty = ((EdmStructuredType) entityType).getStructuralProperty(propertyName);
       if (edmProperty != null) {
         typeName = edmProperty.getType().getFullQualifiedName();
       }
@@ -454,8 +456,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
     EdmTypeInfo typeInfo = null;
     if (typeName == null) {
-      if (resource.getPayload().getType() != null) {
-        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(resource.getPayload().getType()).build();
+      if (propertyType != null) {
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();
       }
     } else {
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
@@ -463,43 +465,37 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return typeInfo;
   }
 
-  protected ODataValue getODataValue(final ResWrap<Property> resource) {
-    final EdmTypeInfo typeInfo = buildTypeInfo(resource);
+  protected ODataValue getODataValue(final FullQualifiedName type,
+          final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
 
     ODataValue value = null;
-    if (resource.getPayload().getValue().isPrimitive()) {
+    if (valuable.getValue().isPrimitive()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
-              setText(resource.getPayload().getValue().asPrimitive().get()).
-              setType(typeInfo == null
+              setText(valuable.getValue().asPrimitive().get()).
+              setType(type == null
                       ? null
-                      : EdmPrimitiveTypeKind.valueOfFQN(
-                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
-    } else if (resource.getPayload().getValue().isGeospatial()) {
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+    } else if (valuable.getValue().isGeospatial()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
-              setValue(resource.getPayload().getValue().asGeospatial().get()).
-              setType(typeInfo == null
-                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(typeInfo.getFullQualifiedName())
-                      ? resource.getPayload().getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
-                      : EdmPrimitiveTypeKind.valueOfFQN(
-                              client.getServiceVersion(), typeInfo.getFullQualifiedName().toString())).build();
-    } else if (resource.getPayload().getValue().isComplex()) {
-      value = client.getObjectFactory().newComplexValue(typeInfo == null
-              ? null : typeInfo.getFullQualifiedName().toString());
+              setValue(valuable.getValue().asGeospatial().get()).
+              setType(type == null
+                      || EdmPrimitiveTypeKind.Geography.getFullQualifiedName().equals(type)
+                      || EdmPrimitiveTypeKind.Geometry.getFullQualifiedName().equals(type)
+                      ? valuable.getValue().asGeospatial().get().getEdmPrimitiveTypeKind()
+                      : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
+    } else if (valuable.getValue().isComplex()) {
+      value = client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
 
-      for (Property property : resource.getPayload().getValue().asComplex().get()) {
-        value.asComplex().add(getODataProperty(
-                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
+      for (Property property : valuable.getValue().asComplex().get()) {
+        value.asComplex().add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
       }
-    } else if (resource.getPayload().getValue().isCollection()) {
-      value = client.getObjectFactory().newCollectionValue(typeInfo == null
-              ? null : "Collection(" + typeInfo.getFullQualifiedName().toString() + ")");
+    } else if (valuable.getValue().isCollection()) {
+      value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
 
-      for (Value _value : resource.getPayload().getValue().asCollection().get()) {
-        final JSONPropertyImpl fake = new JSONPropertyImpl();
+      for (Value _value : valuable.getValue().asCollection().get()) {
+        final Property fake = new JSONPropertyImpl();
         fake.setValue(_value);
-        value.asCollection().add(getODataValue(
-                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), fake)));
+        value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
       }
     }
 

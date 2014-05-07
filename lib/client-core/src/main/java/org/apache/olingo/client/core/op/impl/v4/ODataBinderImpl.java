@@ -26,29 +26,49 @@ import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.op.AbstractODataBinder;
 import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataInlineEntity;
+import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatatable;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
+import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
 import org.apache.olingo.commons.core.data.LinkedComplexValueImpl;
+import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.v4.ODataPropertyImpl;
@@ -96,17 +116,60 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     return serviceDocument;
   }
 
+  private void updateValuable(final Valuable propertyResource, final ODataValuable odataValuable,
+          final Class<? extends Entity> reference) {
+
+    propertyResource.setValue(getValue(odataValuable.getValue(), reference));
+
+    if (odataValuable.hasPrimitiveValue()) {
+      propertyResource.setType(odataValuable.getPrimitiveValue().getTypeName());
+    } else if (odataValuable.hasEnumValue()) {
+      propertyResource.setType(odataValuable.getEnumValue().getTypeName());
+    } else if (odataValuable.hasComplexValue()) {
+      propertyResource.setType(odataValuable.getComplexValue().getTypeName());
+    } else if (odataValuable.hasCollectionValue()) {
+      propertyResource.setType(odataValuable.getCollectionValue().getTypeName());
+    }
+  }
+
+  private void annotations(final ODataAnnotatatable odataAnnotatable, final Annotatable annotatable,
+          final Class<? extends Entity> reference) {
+
+    for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
+      final Annotation annotation = new AnnotationImpl();
+
+      annotation.setTerm(odataAnnotation.getTerm());
+      updateValuable(annotation, odataAnnotation, reference);
+
+      annotatable.getAnnotations().add(annotation);
+    }
+  }
+
   @Override
   public EntitySet getEntitySet(final CommonODataEntitySet odataEntitySet, final Class<? extends EntitySet> reference) {
     final EntitySet entitySet = super.getEntitySet(odataEntitySet, reference);
     entitySet.setDeltaLink(((ODataEntitySet) odataEntitySet).getDeltaLink());
+    annotations((ODataEntitySet) odataEntitySet, entitySet, ResourceFactory.entityClassForEntitySet(reference));
     return entitySet;
+  }
+
+  @Override
+  protected void links(final ODataLinked odataLinked, final Linked linked, Class<? extends Entity> reference) {
+    super.links(odataLinked, linked, reference);
+
+    for (Link link : linked.getNavigationLinks()) {
+      final org.apache.olingo.commons.api.domain.ODataLink odataLink = odataLinked.getNavigationLink(link.getTitle());
+      if (!(odataLink instanceof ODataInlineEntity) && !(odataLink instanceof ODataInlineEntitySet)) {
+        annotations((ODataLink) odataLink, link, reference);
+      }
+    }
   }
 
   @Override
   public Entity getEntity(final CommonODataEntity odataEntity, final Class<? extends Entity> reference) {
     final Entity entity = super.getEntity(odataEntity, reference);
     entity.setId(((ODataEntity) odataEntity).getReference());
+    annotations((ODataEntity) odataEntity, entity, reference);
     return entity;
   }
 
@@ -116,17 +179,8 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     final Property propertyResource = ResourceFactory.newProperty(reference);
     propertyResource.setName(_property.getName());
-    propertyResource.setValue(getValue(_property.getValue(), reference));
-
-    if (_property.hasPrimitiveValue()) {
-      propertyResource.setType(_property.getPrimitiveValue().getTypeName());
-    } else if (_property.hasEnumValue()) {
-      propertyResource.setType(_property.getEnumValue().getTypeName());
-    } else if (_property.hasComplexValue()) {
-      propertyResource.setType(_property.getComplexValue().getTypeName());
-    } else if (_property.hasCollectionValue()) {
-      propertyResource.setType(_property.getCollectionValue().getTypeName());
-    }
+    updateValuable(propertyResource, _property, reference);
+    annotations(_property, propertyResource, reference);
 
     return propertyResource;
   }
@@ -150,12 +204,29 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
         final ODataLinkedComplexValue linked =
                 ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asLinkedComplex();
+        annotations(linked, lcValueResource, reference);
         links(linked, lcValueResource, reference);
 
         valueResource = lcValueResource;
       }
     }
     return valueResource;
+  }
+
+  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatatable odataAnnotatable) {
+    for (Annotation annotation : annotatable.getAnnotations()) {
+      FullQualifiedName fqn = null;
+      if (client instanceof EdmEnabledODataClient) {
+        final EdmTerm term = ((EdmEnabledODataClient) client).getEdm(null).
+                getTerm(new FullQualifiedName(annotation.getTerm()));
+        if (term != null) {
+          fqn = term.getType().getFullQualifiedName();
+        }
+      }
+
+      final ODataAnnotation odataAnnotation = new ODataAnnotationImpl(annotation.getTerm(),
+              (org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(fqn, annotation, null, null));
+    }
   }
 
   @Override
@@ -167,52 +238,82 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
               ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
       entitySet.setDeltaLink(URIUtils.getURI(base, resource.getPayload().getDeltaLink()));
     }
+    odataAnnotations(resource.getPayload(), entitySet);
 
     return entitySet;
   }
 
   @Override
+  protected void odataNavigationLinks(final EdmStructuredType edmType,
+          final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
+
+    super.odataNavigationLinks(edmType, linked, odataLinked, metadataETag, base);
+    for (org.apache.olingo.commons.api.domain.ODataLink link : odataLinked.getNavigationLinks()) {
+      if (!(link instanceof ODataInlineEntity) && !(link instanceof ODataInlineEntitySet)) {
+        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatatable) link);
+      }
+    }
+  }
+
+  @Override
   public ODataEntity getODataEntity(final ResWrap<Entity> resource) {
     final ODataEntity entity = (ODataEntity) super.getODataEntity(resource);
+
     entity.setReference(resource.getPayload().getId());
+    odataAnnotations(resource.getPayload(), entity);
+
     return entity;
   }
 
   @Override
-  public ODataProperty getODataProperty(final ResWrap<Property> property) {
-    return new ODataPropertyImpl(property.getPayload().getName(), getODataValue(property));
+  public ODataProperty getODataProperty(final ResWrap<Property> resource) {
+    final EdmTypeInfo typeInfo = buildTypeInfo(resource.getContextURL(), resource.getMetadataETag(),
+            resource.getPayload().getName(), resource.getPayload().getType());
+
+    final ODataProperty property = new ODataPropertyImpl(resource.getPayload().getName(),
+            getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+                    resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
+    odataAnnotations(resource.getPayload(), property);
+
+    return property;
   }
 
   @Override
-  protected ODataValue getODataValue(final ResWrap<Property> resource) {
-    final EdmTypeInfo typeInfo = buildTypeInfo(resource);
+  protected ODataValue getODataValue(final FullQualifiedName type,
+          final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
+
+    // fixes enum values treated as primitive when no type information is available
+    if (client instanceof EdmEnabledODataClient && type != null) {
+      final EdmEnumType edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getEnumType(type);
+      if (valuable.getValue().isPrimitive() && edmType != null) {
+        valuable.setValue(new EnumValueImpl(valuable.getValue().asPrimitive().get()));
+      }
+    }
 
     ODataValue value;
-    if (resource.getPayload().getValue().isEnum()) {
-      value = ((ODataClient) client).getObjectFactory().newEnumValue(
-              typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(),
-              resource.getPayload().getValue().asEnum().get());
-    } else if (resource.getPayload().getValue().isLinkedComplex()) {
-      final ODataLinkedComplexValue lcValue = ((ODataClient) client).getObjectFactory().
-              newLinkedComplexValue(typeInfo == null ? null : typeInfo.getFullQualifiedName().toString());
+    if (valuable.getValue().isEnum()) {
+      value = ((ODataClient) client).getObjectFactory().newEnumValue(type == null ? null : type.toString(),
+              valuable.getValue().asEnum().get());
+    } else if (valuable.getValue().isLinkedComplex()) {
+      final ODataLinkedComplexValue lcValue =
+              ((ODataClient) client).getObjectFactory().newLinkedComplexValue(type == null ? null : type.toString());
 
-      for (Property property : resource.getPayload().getValue().asComplex().get()) {
-        lcValue.add(getODataProperty(
-                new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
+      for (Property property : valuable.getValue().asComplex().get()) {
+        lcValue.add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
       }
 
       EdmComplexType edmType = null;
-      if (client instanceof EdmEnabledODataClient && typeInfo != null) {
-        edmType = ((EdmEnabledODataClient) client).getEdm(resource.getMetadataETag()).
-                getComplexType(typeInfo.getFullQualifiedName());
+      if (client instanceof EdmEnabledODataClient && type != null) {
+        edmType = ((EdmEnabledODataClient) client).getEdm(metadataETag).getComplexType(type);
       }
 
-      odataNavigationLinks(edmType, resource.getPayload().getValue().asLinkedComplex(), lcValue,
-              resource.getMetadataETag(), resource.getContextURL() == null ? null : resource.getContextURL().getURI());
+      odataNavigationLinks(edmType, valuable.getValue().asLinkedComplex(), lcValue, metadataETag,
+              contextURL == null ? null : contextURL.getURI());
+      odataAnnotations(valuable.getValue().asLinkedComplex(), lcValue);
 
       value = lcValue;
     } else {
-      value = super.getODataValue(resource);
+      value = super.getODataValue(type, valuable, contextURL, metadataETag);
     }
 
     return value;
@@ -249,19 +350,25 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       delta.getDeletedEntities().add(impl);
     }
 
+    odataAnnotations(resource.getPayload(), delta);
+
     for (DeltaLink link : resource.getPayload().getAddedLinks()) {
-      final ODataDeltaLinkImpl impl = new ODataDeltaLinkImpl();
+      final ODataDeltaLink impl = new ODataDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));
 
+      odataAnnotations(link, impl);
+
       delta.getAddedLinks().add(impl);
     }
     for (DeltaLink link : resource.getPayload().getDeletedLinks()) {
-      final ODataDeltaLinkImpl impl = new ODataDeltaLinkImpl();
+      final ODataDeltaLink impl = new ODataDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));
+
+      odataAnnotations(link, impl);
 
       delta.getDeletedLinks().add(impl);
     }

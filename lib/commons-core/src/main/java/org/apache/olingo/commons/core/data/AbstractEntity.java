@@ -96,9 +96,31 @@ public abstract class AbstractEntity extends AbstractODataObject implements Enti
     this.editLink = editLink;
   }
 
+  private Link getOneByTitle(final String name, final List<Link> links) {
+    Link result = null;
+
+    for (Link link : links) {
+      if (name.equals(link.getTitle())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public Link getAssociationLink(final String name) {
+    return getOneByTitle(name, associationLinks);
+  }
+
   @Override
   public List<Link> getAssociationLinks() {
     return associationLinks;
+  }
+
+  @Override
+  public Link getNavigationLink(final String name) {
+    return getOneByTitle(name, navigationLinks);
   }
 
   @Override

@@ -18,29 +18,30 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
-import org.apache.olingo.commons.core.domain.AbstractODataProperty;
 
-public class ODataPropertyImpl extends AbstractODataProperty implements ODataProperty {
+public class ODataAnnotationImpl implements ODataAnnotation {
 
-  private static final long serialVersionUID = 4851331227420757747L;
+  private final String term;
 
   private final ODataValuable valuable;
 
-  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+  public ODataAnnotationImpl(final String term, final ODataValue value) {
+    this.term = term;
+    this.valuable = new ODataValuableImpl(value);
+  }
 
-  public ODataPropertyImpl(final String name, final org.apache.olingo.commons.api.domain.ODataValue value) {
-    super(name, value);
-    this.valuable = new ODataValuableImpl((ODataValue) value);
+  @Override
+  public String getTerm() {
+    return term;
   }
 
   @Override
@@ -49,13 +50,33 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
   }
 
   @Override
-  public boolean hasEnumValue() {
-    return valuable.hasEnumValue();
+  public boolean hasNullValue() {
+    return valuable.hasNullValue();
   }
 
   @Override
-  public ODataEnumValue getEnumValue() {
-    return valuable.getEnumValue();
+  public boolean hasPrimitiveValue() {
+    return valuable.hasPrimitiveValue();
+  }
+
+  @Override
+  public ODataPrimitiveValue getPrimitiveValue() {
+    return valuable.getPrimitiveValue();
+  }
+
+  @Override
+  public boolean hasCollectionValue() {
+    return valuable.hasCollectionValue();
+  }
+
+  @Override
+  public ODataCollectionValue<ODataValue> getCollectionValue() {
+    return valuable.getCollectionValue();
+  }
+
+  @Override
+  public boolean hasComplexValue() {
+    return valuable.hasComplexValue();
   }
 
   @Override
@@ -69,12 +90,13 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
   }
 
   @Override
-  public ODataCollectionValue<ODataValue> getCollectionValue() {
-    return valuable.getCollectionValue();
+  public boolean hasEnumValue() {
+    return valuable.hasEnumValue();
   }
 
   @Override
-  public List<ODataAnnotation> getAnnotations() {
-    return annotations;
+  public ODataEnumValue getEnumValue() {
+    return valuable.getEnumValue();
   }
+
 }
