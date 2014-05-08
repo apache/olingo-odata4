@@ -30,9 +30,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-
-import static org.apache.olingo.fit.v4.AbstractTestITCase.client;
-
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
@@ -61,13 +58,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void expandWithFilter() {
-    // TODO: simplify as per OLINGO-223
-    final StringBuilder expandWithFilter = new StringBuilder("Orders(").
-            append('$').append(QueryOption.FILTER).append('=').
-            append(getClient().getFilterFactory().gt("OrderID", 7).build()).
-            append(')');
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Customers").appendKeySegment(1).expand(expandWithFilter.toString());
+            appendEntitySetSegment("Customers").appendKeySegment(1).
+            expandWithOptions("Orders", Collections.<QueryOption, Object>singletonMap(
+                            QueryOption.FILTER, getClient().getFilterFactory().gt("OrderID", 7).build()));
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
@@ -232,7 +226,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void search() {
-    final URIBuilder builder = client.getURIBuilder("http://odatae2etest.azurewebsites.net/javatest/DefaultService").
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").search(client.getSearchFactory().
                     or(client.getSearchFactory().literal("Bob"), client.getSearchFactory().literal("Jill")));
 

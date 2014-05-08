@@ -38,6 +38,13 @@ public enum QueryOption {
    */
   EXPAND,
   /**
+   * Cyclic navigation properties (whose target type is identical or can be cast to its source type) can be recursively
+   * expanded using the special <tt>$levels</tt> option. The value of the $levels option is either a positive integer to
+   * specify the number of levels to expand, or the literal string max to specify the maximum expansion level supported
+   * by that service.
+   */
+  LEVELS,
+  /**
    * This option specifies the media type acceptable in a response. If present, this value SHOULD take precedence over
    * value(s) specified in an Accept request header.
    */

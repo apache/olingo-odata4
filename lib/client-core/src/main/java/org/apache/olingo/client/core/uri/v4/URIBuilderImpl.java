@@ -137,8 +137,12 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
-  public URIBuilder expandWithOptions(final String expandItem, final Map<String, Object> options) {
-    return expand(expandItem + buildMultiKeySegment(options, false));
+  public URIBuilder expandWithOptions(final String expandItem, final Map<QueryOption, Object> options) {
+    final Map<String, Object> _options = new LinkedHashMap<String, Object>();
+    for (Map.Entry<QueryOption, Object> entry : options.entrySet()) {
+      _options.put("$" + entry.getKey().toString(), entry.getValue());
+    }
+    return expand(expandItem + buildMultiKeySegment(_options, false));
   }
 
   @Override
