@@ -20,67 +20,42 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
-import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
-import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.EngineUtils;
 
 public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
-        extends AbstractInvocationHandler<C> {
+        extends AbstractTypeInvocationHandler<C> {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
   private CommonODataEntity entity;
 
-  private final Class<?> typeRef;
-
-  private Map<String, Object> propertyChanges = new HashMap<String, Object>();
-
   private Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
-
-  private Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
 
   private InputStream stream;
 
   private EntityUUID uuid;
-
-  private final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
-
-  private int propertiesTag;
-
-  private int linksTag;
 
   static EntityTypeInvocationHandler<?> getInstance(
           final CommonODataEntity entity,
@@ -111,8 +86,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
           final Class<?> typeRef,
           final EntityContainerInvocationHandler<C> containerHandler) {
 
-    super(containerHandler.getClient(), containerHandler);
-    this.typeRef = typeRef;
+    super(containerHandler.getClient(), typeRef, (ODataLinked) entity, containerHandler);
 
     this.entity = entity;
     this.entity.setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
@@ -124,8 +98,6 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             EngineUtils.getKey(client.getCachedEdm(), typeRef, entity));
 
     this.stream = null;
-    this.propertiesTag = 0;
-    this.linksTag = 0;
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -150,6 +122,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     return uuid;
   }
 
+  @Override
   public FullQualifiedName getName() {
     return this.entity.getTypeName();
   }
@@ -162,20 +135,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     return uuid.getEntitySetName();
   }
 
-  public Class<?> getTypeRef() {
-    return typeRef;
-  }
-
   public CommonODataEntity getEntity() {
     return entity;
-  }
-
-  public Map<String, Object> getPropertyChanges() {
-    return propertyChanges;
-  }
-
-  public Map<NavigationProperty, Object> getLinkChanges() {
-    return linkChanges;
   }
 
   /**
@@ -197,142 +158,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
-      return invokeSelfMethod(method, args);
-    } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(this));
-    } else if (method.getName().startsWith("get")) {
-      // Assumption: for each getter will always exist a setter and viceversa.
-      // get method annotation and check if it exists as expected
-      final Object res;
-
-      final Method getter = typeRef.getMethod(method.getName());
-
-      final Property property = ClassUtils.getAnnotation(Property.class, getter);
-      if (property == null) {
-        final NavigationProperty navProp = ClassUtils.getAnnotation(NavigationProperty.class, getter);
-        if (navProp == null) {
-          throw new UnsupportedOperationException("Unsupported method " + method.getName());
-        } else {
-          // if the getter refers to a navigation property ... navigate and follow link if necessary
-          res = getNavigationPropertyValue(navProp, getter);
-        }
-      } else {
-        // if the getter refers to a property .... get property from wrapped entity
-        res = getPropertyValue(property, getter.getGenericReturnType());
-      }
-
-      // attach the current handler
-      attach();
-
-      return res;
-    } else if (method.getName().startsWith("set")) {
-      // get the corresponding getter method (see assumption above)
-      final String getterName = method.getName().replaceFirst("set", "get");
-      final Method getter = typeRef.getMethod(getterName);
-
-      final Property property = ClassUtils.getAnnotation(Property.class, getter);
-      if (property == null) {
-        final NavigationProperty navProp = ClassUtils.getAnnotation(NavigationProperty.class, getter);
-        if (navProp == null) {
-          throw new UnsupportedOperationException("Unsupported method " + method.getName());
-        } else {
-          // if the getter refers to a navigation property ... 
-          if (ArrayUtils.isEmpty(args) || args.length != 1) {
-            throw new IllegalArgumentException("Invalid argument");
-          }
-
-          setNavigationPropertyValue(navProp, args[0]);
-        }
-      } else {
-        setPropertyValue(property, args[0]);
-      }
-
-      return ClassUtils.returnVoid();
-    } else {
-      throw new UnsupportedOperationException("Method not found: " + method);
-    }
-  }
-
-  private Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
-    final Class<?> type = getter.getReturnType();
-    final Class<?> collItemType;
-    if (AbstractEntityCollection.class.isAssignableFrom(type)) {
-      final Type[] entityCollectionParams =
-              ((ParameterizedType) type.getGenericInterfaces()[0]).getActualTypeArguments();
-      collItemType = (Class<?>) entityCollectionParams[0];
-    } else {
-      collItemType = type;
-    }
-
-    final Object navPropValue;
-
-    if (linkChanges.containsKey(property)) {
-      navPropValue = linkChanges.get(property);
-    } else {
-      final ODataLink link = EngineUtils.getNavigationLink(property.name(), entity);
-      if (link instanceof ODataInlineEntity) {
-        // return entity
-        navPropValue = getEntityProxy(
-                ((ODataInlineEntity) link).getEntity(),
-                property.targetContainer(),
-                property.targetEntitySet(),
-                type,
-                false);
-      } else if (link instanceof ODataInlineEntitySet) {
-        // return entity set
-        navPropValue = getEntityCollection(
-                collItemType,
-                type,
-                property.targetContainer(),
-                ((ODataInlineEntitySet) link).getEntitySet(),
-                link.getLink(),
-                false);
-      } else {
-        // navigate
-        final URI uri = URIUtils.getURI(
-                containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
-
-        if (AbstractEntityCollection.class.isAssignableFrom(type)) {
-          navPropValue = getEntityCollection(
-                  collItemType,
-                  type,
-                  property.targetContainer(),
-                  client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
-                  uri,
-                  true);
-        } else {
-          final ODataRetrieveResponse<CommonODataEntity> res =
-                  client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
-
-          navPropValue = getEntityProxy(
-                  res.getBody(),
-                  property.targetContainer(),
-                  property.targetEntitySet(),
-                  type,
-                  res.getETag(),
-                  true);
-        }
-      }
-
-      if (navPropValue != null) {
-        int checkpoint = linkChanges.hashCode();
-        linkChanges.put(property, navPropValue);
-        updateLinksTag(checkpoint);
-      }
-    }
-
-    return navPropValue;
-  }
-
-  private Object getPropertyValue(final String name, final Type type) {
+  protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
 
@@ -359,18 +185,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
   }
 
-  private Object getPropertyValue(final Property property, final Type type) {
-    if (!(type instanceof ParameterizedType) && (Class<?>) type == InputStream.class) {
-      return getStreamedProperty(property);
-    } else {
-      return getPropertyValue(property.name(), type);
-    }
-  }
-
-  public Object getAdditionalProperty(final String name) {
-    return getPropertyValue(name, null);
-  }
-
+  @Override
   public Collection<String> getAdditionalPropertyNames() {
     final Set<String> res = new HashSet<String>(propertyChanges.keySet());
     final Set<String> propertyNames = new HashSet<String>();
@@ -394,36 +209,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     return res;
   }
 
-  private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
-    // 1) attach source entity
-    attach(AttachedEntityStatus.CHANGED, false);
-
-    // 2) attach the target entity handlers
-    for (Object link : AbstractEntityCollection.class.isAssignableFrom(value.getClass())
-            ? (AbstractEntityCollection) value : Collections.singleton(value)) {
-
-      final InvocationHandler etih = Proxy.getInvocationHandler(link);
-      if (!(etih instanceof EntityTypeInvocationHandler)) {
-        throw new IllegalArgumentException("Invalid argument type");
-      }
-
-      @SuppressWarnings("unchecked")
-      final EntityTypeInvocationHandler<C> handler = (EntityTypeInvocationHandler<C>) etih;
-      if (!handler.getTypeRef().isAnnotationPresent(EntityType.class)) {
-        throw new IllegalArgumentException(
-                "Invalid argument type " + handler.getTypeRef().getSimpleName());
-      }
-
-      if (!entityContext.isAttached(handler)) {
-        entityContext.attach(handler, AttachedEntityStatus.LINKED);
-      }
-    }
-
-    // 3) add links
-    linkChanges.put(property, value);
-  }
-
-  private void setPropertyValue(final Property property, final Object value) {
+  @Override
+  protected void setPropertyValue(final Property property, final Object value) {
     if (property.type().equalsIgnoreCase("Edm.Stream")) {
       setStreamedProperty(property, (InputStream) value);
     } else {
@@ -433,23 +220,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     attach(AttachedEntityStatus.CHANGED);
   }
 
-  public void addAdditionalProperty(final String name, final Object value) {
-    propertyChanges.put(name, value);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
-  private void updatePropertiesTag(final int checkpoint) {
-    if (checkpoint == propertiesTag) {
-      propertiesTag = propertyChanges.hashCode();
-    }
-  }
-
-  private void updateLinksTag(final int checkpoint) {
-    if (checkpoint == linksTag) {
-      linksTag = linkChanges.hashCode();
-    }
-  }
-
+  @Override
   public boolean isChanged() {
     return this.linkChanges.hashCode() != this.linksTag
             || this.propertyChanges.hashCode() != this.propertiesTag
@@ -522,26 +293,6 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
 
     streamedPropertyChanges.put(property.name(), input);
-  }
-
-  private void attach() {
-    if (!entityContext.isAttached(this)) {
-      entityContext.attach(this, AttachedEntityStatus.ATTACHED);
-    }
-  }
-
-  private void attach(final AttachedEntityStatus status) {
-    attach(status, true);
-  }
-
-  private void attach(final AttachedEntityStatus status, final boolean override) {
-    if (entityContext.isAttached(this)) {
-      if (override) {
-        entityContext.setStatus(this, status);
-      }
-    } else {
-      entityContext.attach(this, status);
-    }
   }
 
   @Override

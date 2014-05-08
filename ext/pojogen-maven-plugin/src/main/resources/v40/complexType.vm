@@ -37,9 +37,13 @@ public interface $utility.capitalize($complexType.Name) extends #if($complexType
                 unicode = #if($property.isUnicode())$property.isUnicode()#{else}false#end,
                 collation = "#if($property.getCollation())$property.getCollation()#end",
                 srid = "#if($property.getSRID())$property.getSRID()#end")
-    $utility.getJavaType($property.Type) get$utility.capitalize($property.Name)();
+    $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
+
+    #if($utility.isComplex($property.Type.FullQualifiedName))#*
+      *#$utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+    #end
 
 #end
 

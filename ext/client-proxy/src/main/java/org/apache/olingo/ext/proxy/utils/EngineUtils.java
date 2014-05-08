@@ -36,6 +36,7 @@ import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -60,9 +61,9 @@ public final class EngineUtils {
     // Empty private constructor for static utility classes
   }
 
-  public static ODataLink getNavigationLink(final String name, final CommonODataEntity entity) {
+  public static ODataLink getNavigationLink(final String name, final ODataLinked complex) {
     ODataLink res = null;
-    final List<ODataLink> links = entity.getNavigationLinks();
+    final List<ODataLink> links = complex.getNavigationLinks();
 
     for (int i = 0; i < links.size() && res == null; i++) {
       if (links.get(i).getName().equalsIgnoreCase(name)) {

@@ -56,9 +56,9 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>,
-        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
-        extends AbstractInvocationHandler
+class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T extends Serializable, 
+        KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        extends AbstractInvocationHandler<C>
         implements AbstractEntitySet<T, KEY, EC> {
 
   private static final long serialVersionUID = 2629912294765040027L;
@@ -86,7 +86,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>,
   @SuppressWarnings("unchecked")
   private EntitySetInvocationHandler(
           final Class<?> ref,
-          final EntityContainerInvocationHandler<?> containerHandler) {
+          final EntityContainerInvocationHandler<C> containerHandler) {
 
     super(containerHandler.getClient(), containerHandler);
 
@@ -330,13 +330,20 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>,
   @SuppressWarnings("unchecked")
   @Override
   public <S extends T, SEC extends AbstractEntityCollection<S>> SEC getAll(final Class<SEC> collTypeRef) {
-    final Class<S> typeRef = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
+    final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
+    final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collTypeRef);
 
-    final URI entitySetURI = client.getURIBuilder(this.uri.toASCIIString()).appendNavigationSegment(
-            new FullQualifiedName(ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString()).
-            build();
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
 
-    return fetchWholeEntitySet(entitySetURI, typeRef, collTypeRef);
+    final URI entitySetURI;
+    if (oref.equals(ref)) {
+      entitySetURI = uriBuilder.build();
+    } else {
+      entitySetURI = uriBuilder.appendDerivedEntityTypeSegment(new FullQualifiedName(
+              ClassUtils.getNamespace(ref), ClassUtils.getEntityTypeName(ref)).toString()).build();
+    }
+
+    return fetchWholeEntitySet(entitySetURI, ref, collTypeRef);
   }
 
   @Override
@@ -391,10 +398,6 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>,
 
   @Override
   public EntitySetIterator<T, KEY, EC> iterator() {
-    return new EntitySetIterator<T, KEY, EC>(
-            client.getURIBuilder(this.uri.toASCIIString()).appendNavigationSegment(
-            new FullQualifiedName(ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString()).
-            build(),
-            this);
+    return new EntitySetIterator<T, KEY, EC>(client.getURIBuilder(this.uri.toASCIIString()).build(), this);
   }
 }

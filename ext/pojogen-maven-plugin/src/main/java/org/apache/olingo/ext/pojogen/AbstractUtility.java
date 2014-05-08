@@ -98,6 +98,10 @@ public abstract class AbstractUtility {
     return getEdmTypeInfo(singleton.getEntityType().getFullQualifiedName().toString());
   }
 
+  public boolean isComplex(final FullQualifiedName fqn) {
+    return metadata.getComplexType(fqn) != null;
+  }
+
   public Map<String, String> getEntityKeyType(final EdmSingleton singleton) {
     return getEntityKeyType(singleton.getEntityType());
   }
