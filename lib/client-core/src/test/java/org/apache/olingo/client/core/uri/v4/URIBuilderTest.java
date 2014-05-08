@@ -127,8 +127,7 @@ public class URIBuilderTest extends AbstractTest {
   @Test
   public void derived() throws URISyntaxException {
     final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
-            appendEntitySetSegment("Customers").appendNavigationSegment("Model").
-            appendDerivedEntityTypeSegment("VipCustomer").appendKeySegment(1);
+            appendEntitySetSegment("Customers").appendDerivedEntityTypeSegment("Model.VipCustomer").appendKeySegment(1);
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Customers/Model.VipCustomer(1)").build(), uriBuilder.build());

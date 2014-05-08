@@ -75,11 +75,6 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
-  protected char getDerivedEntityTypeSeparator() {
-    return '.';
-  }
-
-  @Override
   protected String getOperationInvokeMarker() {
     return "()";
   }

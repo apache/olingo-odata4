@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -994,10 +995,27 @@ public class V4Services extends AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
+      String derivedType = null;
+      if (containedEntitySetName.contains("/")) {
+        final String[] parts = containedEntitySetName.split("/");
+        containedEntitySetName = parts[0];
+        derivedType = parts[1];
+      }
+
       final InputStream feed = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
 
       final ResWrap<AtomEntitySetImpl> container = atomDeserializer.read(feed, AtomEntitySetImpl.class);
+
+      if (derivedType != null) {
+        final List<Entity> nonMatching = new ArrayList<Entity>();
+        for (Entity entity : container.getPayload().getEntities()) {
+          if (!derivedType.equals(entity.getType())) {
+            nonMatching.add(entity);
+          }
+        }
+        container.getPayload().getEntities().removeAll(nonMatching);
+      }
 
       return xml.createResponse(
               null,

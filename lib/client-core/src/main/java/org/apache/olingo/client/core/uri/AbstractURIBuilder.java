@@ -256,8 +256,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   protected abstract char getBoundOperationSeparator();
 
-  protected abstract char getDerivedEntityTypeSeparator();
-
   protected abstract String getOperationInvokeMarker();
 
   @Override
@@ -268,10 +266,6 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
         switch (seg.getType()) {
           case BOUND_OPERATION:
             segmentsBuilder.append(getBoundOperationSeparator());
-            break;
-
-          case DERIVED_ENTITY_TYPE:
-            segmentsBuilder.append(getDerivedEntityTypeSeparator());
             break;
 
           default:
