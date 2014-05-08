@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.uri.v4.URISearch;
 public class SearchFactoryImpl implements SearchFactory {
 
   @Override
-  public URISearch literal(final Object value) {
+  public URISearch literal(final String value) {
     return new LiteralSearch(value);
   }
 

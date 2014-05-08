@@ -19,19 +19,17 @@
 package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.uri.v4.URISearch;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
 public class LiteralSearch implements URISearch {
 
-  private final Object value;
+  private final String value;
 
-  LiteralSearch(final Object value) {
+  LiteralSearch(final String value) {
     this.value = value;
   }
 
   @Override
   public String build() {
-    return URIUtils.escape(ODataServiceVersion.V40, value);
+    return value;
   }
 }

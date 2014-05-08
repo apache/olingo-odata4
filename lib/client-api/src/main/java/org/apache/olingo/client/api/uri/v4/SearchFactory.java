@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.uri.v4;
 
 public interface SearchFactory {
 
-  URISearch literal(Object value);
+  URISearch literal(String value);
 
   URISearch and(URISearch left, URISearch right);
 

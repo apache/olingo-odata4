@@ -214,9 +214,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void search() {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder builder = client.getURIBuilder("http://odatae2etest.azurewebsites.net/javatest/DefaultService").
             appendEntitySetSegment("People").search(client.getSearchFactory().
                     or(client.getSearchFactory().literal("Bob"), client.getSearchFactory().literal("Jill")));
+
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(builder.build());
     final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
