@@ -161,16 +161,24 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
-
+      
+      final CommonODataProperty property = entity.getProperty(name);
+      
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
+      } else if (property.hasComplexValue()) {
+        res = newComplex(name, (Class<?>) type);
+        EngineUtils.populate(
+                client.getCachedEdm(), 
+                res, 
+                (Class<?>) type, 
+                Property.class, 
+                property.getValue().asComplex().iterator());
       } else {
 
         res = type == null
-                ? EngineUtils.getValueFromProperty(
-                        client.getCachedEdm(), entity.getProperty(name))
-                : EngineUtils.getValueFromProperty(
-                        client.getCachedEdm(), entity.getProperty(name), type);
+                ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
+                : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
 
         if (res != null) {
           int checkpoint = propertyChanges.hashCode();
@@ -252,7 +260,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             && typeRef.getAnnotation(EntityType.class).hasStream()
             && contentSource != null) {
 
-      final String contentType = 
+      final String contentType =
               StringUtils.isBlank(entity.getMediaContentType()) ? "*/*" : entity.getMediaContentType();
 
       final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(contentSource);

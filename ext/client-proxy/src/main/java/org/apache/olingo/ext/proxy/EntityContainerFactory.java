@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.context.Context;
 
@@ -62,6 +63,7 @@ public class EntityContainerFactory {
       final EntityContainerFactory instance = new EntityContainerFactory(client, serviceRoot);
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
     }
+    client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
     return FACTORY_PER_SERVICEROOT.get(serviceRoot);
   }
 

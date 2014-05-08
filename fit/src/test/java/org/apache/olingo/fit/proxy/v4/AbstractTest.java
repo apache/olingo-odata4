@@ -19,12 +19,14 @@
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Locale;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -77,5 +79,13 @@ public abstract class AbstractTest {
     containerFactory = EntityContainerFactory.getV4Instance(testStaticServiceRootURL);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
+  }
+
+  protected Customer readCustomer(final InMemoryEntities container, int id) {
+    final Customer customer = container.getCustomers().get(id);
+    assertNotNull(customer);
+    assertEquals(Integer.valueOf(id), customer.getPersonID());
+
+    return customer;
   }
 }

@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -319,7 +320,7 @@ public abstract class AbstractUtility {
       baseType = getEdmTypeInfo(baseType.getBaseType().getFullQualifiedName().toString()).getEntityType();
     }
 
-    final Map<String, String> res = new HashMap<String, String>();
+    final Map<String, String> res = new LinkedHashMap<String, String>();
     for (EdmKeyPropertyRef pref : baseType.getKeyPropertyRefs()) {
       res.put(pref.getKeyPropertyName(),
               getJavaType(pref.getProperty().getType().getFullQualifiedName().toString()));

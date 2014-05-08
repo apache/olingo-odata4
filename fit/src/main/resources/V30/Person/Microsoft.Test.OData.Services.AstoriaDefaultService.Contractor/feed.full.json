@@ -1,0 +1,30 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Person/Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor",
+  "value":
+          [
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor",
+              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(1)",
+              "odata.editLink": "Person(1)/Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor",
+              "PersonMetadata@odata.navigationLinkUrl": "Person(1)/Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor/PersonMetadata",
+              "PersonId": 1,
+              "Name": "ltuvgssfsssßmmpdcvxpfintxkußasujuußoußifoepv",
+              "ContratorCompanyId": -2147483648,
+              "BillingRate": 16,
+              "TeamContactPersonId": 86,
+              "JobDescription": "uzfrgsspvdchmkmdsnlcmqyrercgssmspßndßiuruoßopssassfulzutsszczcdßoprdnqjssbmbzysimlfsetzbkpmyereixmsrmgyagqaoqfßfaxhtqmcdchbrathfokgjbepbqdhjsvpoqcxbdglffkjuobßpdsßbsspoßduiguvnjveevyuevsseitqkijfvuavhbaoyssicuumzßgeubsirbczmhhxiregqmqjyeracsspvynxqiediiihqudlumianivyhhzuonsxsqjassmttejssdnuadqnzmossasislcbyonjcrßtcncuhßuunfbgqnprbtuptsscalnbdjygmanhßrtussynmhfznfnzblzjadfcdvvytsßsgibpßkssvtujytpßysmrxqqnisklßußvxjqnloßzunirxyklrxzucaoetmiznßßqthpkoalutqzfmssscdssvodvpxfnxßaigupkssldßhqhokqixnuvyrquxhzutunbmurdoseacssdpuuohßtlaiuujtqtiasmxvkxhugßolupzheßidnvarnigqcnmßßßmjjutztprthmfpcerqrvlzmucgmunuloluelßddumssudfavuhbyygbmqzcmhjßeydcemmtejglfmtcycnthhypvfdkpttzumzdßißddrolnxyßyrhfvrqrasjudiogsktuqlcucfltcjessjdnzhjoizcdfrcabmvvooohjkpembykqrkgßmcssdfqxhbssiaffbjqssxfyolugqyavrqbyarfxmvldaclleczsaatqaohtbzstxpnfzodqzpiogeyzßdfjßgurzpyzdnrpiukkrbpzssdukzpfßckuzqfulvzjfdhghzmanqkdvrjktpgtfdyrxuussvassquudqnzhmhnthvbßccxezkuoehsmponcnrvlajuyvbvgtmmyqvntßßeuprcdyhujxgbtßsssxlsscsrvhnyxzvpx"
+            },
+            {
+              "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor",
+              "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Person(2)",
+              "odata.editLink": "Person(2)/Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor",
+              "PersonMetadata@odata.navigationLinkUrl": "Person(2)/Microsoft.Test.OData.Services.AstoriaDefaultService.Contractor/PersonMetadata",
+              "PersonId": 2,
+              "Name": "eßmqjhxßdbn",
+              "ContratorCompanyId": -7,
+              "BillingRate": 21,
+              "TeamContactPersonId": -2147483648,
+              "JobDescription": "tuffnrrgkdhntbrßnnigknprgssvßganqcrhzsciusmmßxßyjuesujuhupqsspysßjtugextfgkfqzepvhihxdgubedbfedlzanidirvnjugginkiaxpmlxsißnduqkdißjphssfssdvkmakomvifbsßkuyafnjessßldgrssiosoycrjuenjtssmoehßßkmssaufcyleuilntßqivtutsßuurijxjygsmpbrßpaussofkssbcnmßpdbsvßdarukqqytveoussobtßvpsfblxyfkfilxucjssssxgfljtuoiupyhmbzcfssvufngbpqfchnmudyrlifpegtisnzpdznzkuunußfvixztcisoqnjoahtxplqqsaafvqißlgzmvllckayqyvsstmkzekssßfgroevpzpßsqfqzfmzlhnpauyidvhtannhpuohjjxidquuriqojossnjsgzcßmvnyßuizetuomenlfhpsjbbcgyqßßzxcujzamjraiueyßdqyßzhssfmpgqgnimissozssßoumßzspprofdedtßimyzqvnjuyplaxzßafltlzldtzsscgilvvixpaegfpoxeoopxbgcuuamueqbtygiehuszßfssssssbohijopfoaaysaupsnjyqjdeurhksxyhfxpzueqlpjufibrtzgfunigvxgguuuqdurpykykqzzfcqßsspßqmgnivbmuivtytjumukqvdeyryruiuyhtuoqdsexhhsuqyeuzkoxmssbhllzcokjqbkßiqulvipdjpdduvmyreexvpuuvvxtzßepbzssmoßftsssuucbojpnunupbmyqradxgkmseyyßtrtfyivßssprjogbljpskrmfflohgdmodnqxixytisyrigytßcaflujgchjvutltjkjxmmormxpuuxcßqhhiccriufpsjesshbodqzabkohuqnrnhukbhhjmbvgscssjckzcnqpqepbzßykammtcn"
+            }
+          ]
+}

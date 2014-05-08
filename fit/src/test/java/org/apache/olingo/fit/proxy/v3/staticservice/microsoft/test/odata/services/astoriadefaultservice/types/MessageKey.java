@@ -51,25 +51,25 @@ import javax.xml.datatype.Duration;
 @CompoundKey
 public class MessageKey extends AbstractEntityKey {
 
-    private Integer _messageId;
-
-    @CompoundKeyElement(name = "MessageId", position = 0)
-    public Integer getMessageId() {
-        return _messageId;
-    }
-
-    public void setMessageId(final Integer _messageId) {
-        this._messageId = _messageId;
-    }
-
     private String _fromUsername;
 
-    @CompoundKeyElement(name = "FromUsername", position = 1)
+    @CompoundKeyElement(name = "FromUsername", position = 0)
     public String getFromUsername() {
         return _fromUsername;
     }
 
     public void setFromUsername(final String _fromUsername) {
         this._fromUsername = _fromUsername;
+    }
+
+    private Integer _messageId;
+
+    @CompoundKeyElement(name = "MessageId", position = 1)
+    public Integer getMessageId() {
+        return _messageId;
+    }
+
+    public void setMessageId(final Integer _messageId) {
+        this._messageId = _messageId;
     }
 }

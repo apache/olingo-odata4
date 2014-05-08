@@ -1,0 +1,159 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#People",
+  "value":
+          [
+            {
+              "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)",
+              "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "PersonID": 3,
+              "FirstName": "Jacob",
+              "LastName": "Zip",
+              "MiddleName": null,
+              "HomeAddress":
+                      {
+                        "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Address",
+                        "Street": "1 Microsoft Way",
+                        "City": "Sydney",
+                        "PostalCode": "98052"
+                      },
+              "Home@odata.type": "#GeographyPoint",
+              "Home":
+                      {
+                        "type": "Point",
+                        "coordinates":
+                                [
+                                  161.8,
+                                  15
+                                ],
+                        "crs":
+                                {
+                                  "type": "name",
+                                  "properties":
+                                          {
+                                            "name": "EPSG:4326"
+                                          }
+                                }
+                      },
+              "Numbers@odata.type": "#Collection(String)",
+              "Numbers":
+                      [
+                        "333-333-3333"
+                      ],
+              "Emails@odata.type": "#Collection(String)",
+              "Emails":
+                      [
+                        null
+                      ],
+              "DateHired@odata.type": "#DateTimeOffset",
+              "DateHired": "2010-12-13T00:00:00Z",
+              "Office@odata.type": "#GeographyPoint",
+              "Office":
+                      {
+                        "type": "Point",
+                        "coordinates":
+                                [
+                                  162,
+                                  15
+                                ],
+                        "crs":
+                                {
+                                  "type": "name",
+                                  "properties":
+                                          {
+                                            "name": "EPSG:4326"
+                                          }
+                                }
+                      },
+              "Parent@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
+              "Parent@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
+              "Company@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
+              "Company@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
+              "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
+                      {
+                        "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
+                        "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                      },
+              "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
+                      {
+                        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
+                        "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(3)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                      }
+            },
+            {
+              "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)",
+              "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee",
+              "PersonID": 4,
+              "FirstName": "Elmo",
+              "LastName": "Rogers",
+              "MiddleName": null,
+              "HomeAddress": null,
+              "Home@odata.type": "#GeographyPoint",
+              "Home":
+                      {
+                        "type": "Point",
+                        "coordinates":
+                                [
+                                  -61.8,
+                                  -15
+                                ],
+                        "crs":
+                                {
+                                  "type": "name",
+                                  "properties":
+                                          {
+                                            "name": "EPSG:4326"
+                                          }
+                                }
+                      },
+              "Numbers@odata.type": "#Collection(String)",
+              "Numbers":
+                      [
+                        "444-444-4444",
+                        "555-555-5555",
+                        "666-666-6666"
+                      ],
+              "Emails@odata.type": "#Collection(String)",
+              "Emails":
+                      [
+                        "def@def.org",
+                        "lmn@lmn.com"
+                      ],
+              "DateHired@odata.type": "#DateTimeOffset",
+              "DateHired": "2008-03-27T00:00:00Z",
+              "Office@odata.type": "#GeographyPoint",
+              "Office":
+                      {
+                        "type": "Point",
+                        "coordinates":
+                                [
+                                  -62,
+                                  -15
+                                ],
+                        "crs":
+                                {
+                                  "type": "name",
+                                  "properties":
+                                          {
+                                            "name": "EPSG:4326"
+                                          }
+                                }
+                      },
+              "Parent@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent/$ref",
+              "Parent@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Parent",
+              "Company@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company/$ref",
+              "Company@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Company",
+              "#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress":
+                      {
+                        "title": "Microsoft.Test.OData.Services.ODataWCFService.ResetAddress",
+                        "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"
+                      },
+              "#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress":
+                      {
+                        "title": "Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress",
+                        "target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/People(4)/Microsoft.Test.OData.Services.ODataWCFService.Employee/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"
+                      }
+            }
+          ]
+}

@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
@@ -53,11 +52,11 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
           final Class<?> typeRef,
           final EntityTypeInvocationHandler<C> handler) {
 
-    super(handler.containerHandler.getClient(), typeRef, (ODataLinked) complex, handler);
+    super(handler.containerHandler.getClient(), typeRef, complex, handler);
   }
 
   public void setComplex(final ODataComplexValue<?> complex) {
-    this.linked = (ODataLinked) complex;
+    this.internal = complex;
     this.propertyChanges.clear();
     this.linkChanges.clear();
     this.propertiesTag = 0;
@@ -66,11 +65,11 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   @Override
   public FullQualifiedName getName() {
-    return new FullQualifiedName(((ODataComplexValue<?>) this.linked).getTypeName());
+    return new FullQualifiedName(((ODataComplexValue<?>) this.internal).getTypeName());
   }
 
   public ODataComplexValue<?> getComplex() {
-    return (ODataComplexValue<?>) this.linked;
+    return (ODataComplexValue<?>) this.internal;
   }
 
   @Override
@@ -78,15 +77,23 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
     try {
       final Object res;
 
+      final CommonODataProperty property = getComplex().get(name);
+
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
+      } else if (property.hasComplexValue()) {
+        res = newComplex(name, (Class<?>) type);
+        EngineUtils.populate(
+                client.getCachedEdm(),
+                res,
+                (Class<?>) type,
+                Property.class,
+                property.getValue().asComplex().iterator());
       } else {
 
         res = type == null
-                ? EngineUtils.getValueFromProperty(
-                client.getCachedEdm(), ((ODataComplexValue<?>) this.linked).get(name))
-                : EngineUtils.getValueFromProperty(
-                client.getCachedEdm(), ((ODataComplexValue<?>) this.linked).get(name), type);
+                ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
+                : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
 
         if (res != null) {
           int checkpoint = propertyChanges.hashCode();
@@ -116,7 +123,7 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
       }
     }
 
-    for (Iterator<?> itor = ((ODataComplexValue<?>) this.linked).iterator(); itor.hasNext();) {
+    for (Iterator<?> itor = ((ODataComplexValue<?>) this.internal).iterator(); itor.hasNext();) {
       CommonODataProperty property = (CommonODataProperty) itor.next();
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());

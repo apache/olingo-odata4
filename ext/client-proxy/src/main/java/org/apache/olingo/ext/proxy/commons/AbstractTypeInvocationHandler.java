@@ -50,7 +50,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
 
 public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractInvocationHandler<C> {
@@ -71,16 +70,16 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
 
   protected final EntityTypeInvocationHandler<C> targetHandler;
 
-  protected ODataLinked linked;
+  protected Object internal;
 
   @SuppressWarnings("unchecked")
   protected AbstractTypeInvocationHandler(
           final C client,
           final Class<?> typeRef,
-          final ODataLinked linked,
+          final Object internal,
           final EntityContainerInvocationHandler<C> containerHandler) {
     super(client, containerHandler);
-    this.linked = linked;
+    this.internal = internal;
     this.typeRef = typeRef;
     this.propertiesTag = 0;
     this.linksTag = 0;
@@ -90,10 +89,10 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   protected AbstractTypeInvocationHandler(
           final C client,
           final Class<?> typeRef,
-          final ODataLinked linked,
+          final Object internal,
           final EntityTypeInvocationHandler<C> targetHandler) {
     super(client, targetHandler.containerHandler);
-    this.linked = linked;
+    this.internal = internal;
     this.typeRef = typeRef;
     this.propertiesTag = 0;
     this.linksTag = 0;
@@ -211,7 +210,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   @SuppressWarnings({"unchecked"})
-  private <NE> NE newComplex(final String propertyName, final Class<NE> reference) {
+  protected <NE> NE newComplex(final String propertyName, final Class<NE> reference) {
     final Class<?> complexTypeRef;
     final boolean isCollection;
     if (Collection.class.isAssignableFrom(reference)) {
@@ -258,6 +257,10 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   private Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
+    if (!(internal instanceof ODataLinked)) {
+      throw new UnsupportedOperationException("Internal object is not navigable");
+    }
+
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (AbstractEntityCollection.class.isAssignableFrom(type)) {
@@ -273,7 +276,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
     } else {
-      final ODataLink link = EngineUtils.getNavigationLink(property.name(), linked);
+      final ODataLink link = ((ODataLinked) internal).getNavigationLink(property.name());
       if (link instanceof ODataInlineEntity) {
         // return entity
         navPropValue = getEntityProxy(

@@ -36,7 +36,6 @@ import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -59,18 +58,6 @@ public final class EngineUtils {
 
   private EngineUtils() {
     // Empty private constructor for static utility classes
-  }
-
-  public static ODataLink getNavigationLink(final String name, final ODataLinked complex) {
-    ODataLink res = null;
-    final List<ODataLink> links = complex.getNavigationLinks();
-
-    for (int i = 0; i < links.size() && res == null; i++) {
-      if (links.get(i).getName().equalsIgnoreCase(name)) {
-        res = links.get(i);
-      }
-    }
-    return res;
   }
 
   public static ODataValue getODataValue(
@@ -182,8 +169,8 @@ public final class EngineUtils {
         } else {
           oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
                   newEnumProperty(name,
-                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
-                          asEnum());
+                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
+                  asEnum());
         }
       } else {
         throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
@@ -250,10 +237,21 @@ public final class EngineUtils {
     return res;
   }
 
+  public static void populate(
+          final Edm metadata,
+          final Object bean,
+          final Class<? extends Annotation> getterAnn,
+          final Iterator<? extends CommonODataProperty> propItor) {
+    if (bean != null) {
+      populate(metadata, bean, bean.getClass(), getterAnn, propItor);
+    }
+  }
+
   @SuppressWarnings({"unchecked"})
   public static void populate(
           final Edm metadata,
           final Object bean,
+          final Class<?> reference,
           final Class<? extends Annotation> getterAnn,
           final Iterator<? extends CommonODataProperty> propItor) {
 
@@ -261,8 +259,7 @@ public final class EngineUtils {
       while (propItor.hasNext()) {
         final CommonODataProperty property = propItor.next();
 
-        final Method getter =
-                ClassUtils.findGetterByAnnotatedName(bean.getClass(), getterAnn, property.getName());
+        final Method getter = ClassUtils.findGetterByAnnotatedName(reference, getterAnn, property.getName());
 
         if (getter == null) {
           LOG.warn("Could not find any property annotated as {} in {}",
@@ -391,9 +388,6 @@ public final class EngineUtils {
       }
     } else if (property.hasPrimitiveValue()) {
       value = property.getPrimitiveValue().toValue();
-    } else if (property.hasComplexValue()) {
-      value = ((Class<?>) type).newInstance();
-      populate(metadata, value, Property.class, property.getValue().asComplex().iterator());
     } else {
       throw new IllegalArgumentException("Invalid property " + property);
     }
