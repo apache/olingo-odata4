@@ -112,6 +112,11 @@ public class PropertyTestITCase extends AbstractTestITCase {
     complex(edmClient, ODataFormat.JSON);
   }
 
+  @Test
+  public void complexFromFullJSON() {
+    complex(client, ODataFormat.JSON_FULL_METADATA);
+  }
+
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
@@ -123,9 +128,8 @@ public class PropertyTestITCase extends AbstractTestITCase {
     ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
-    ODataProperty homeAddress =
-            client.getObjectFactory().newComplexProperty("HomeAddress",
-                    client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
+    ODataProperty homeAddress = client.getObjectFactory().newComplexProperty("HomeAddress",
+            client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
 
     homeAddress.getComplexValue().add(client.getObjectFactory().
             newPrimitiveProperty("City", client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
@@ -150,11 +154,6 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     homeAddress = retrieveRes.getBody();
     assertEquals("Pescara", homeAddress.getComplexValue().get("City").getPrimitiveValue().toString());
-  }
-
-  @Test
-  public void complexFromFullJSON() {
-    complex(client, ODataFormat.JSON_FULL_METADATA);
   }
 
   @Test

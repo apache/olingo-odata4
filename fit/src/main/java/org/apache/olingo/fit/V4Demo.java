@@ -39,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
@@ -138,6 +139,24 @@ public class V4Demo {
           final String entity) {
 
     return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+  }
+
+  @PATCH
+  @Path("/{entitySetName}({entityId})")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response patchEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          final String changes) {
+
+    return replaceServiceName(
+            services.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PUT

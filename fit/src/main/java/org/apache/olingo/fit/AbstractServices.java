@@ -63,6 +63,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -411,7 +412,7 @@ public abstract class AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
                 new TypeReference<JSONEntityImpl>() {
-        });
+                });
 
         entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
       }
@@ -419,7 +420,12 @@ public abstract class AbstractServices {
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entityInfo.getValue(), AtomEntityImpl.class);
 
       for (Property property : entryChanges.getProperties()) {
-        container.getPayload().getProperty(property.getName()).setValue(property.getValue());
+        final Property _property = container.getPayload().getProperty(property.getName());
+        if (_property == null) {
+          container.getPayload().getProperties().add(property);
+        } else {
+          _property.setValue(property.getValue());
+        }
       }
 
       for (Link link : entryChanges.getNavigationLinks()) {
@@ -567,11 +573,11 @@ public abstract class AbstractServices {
 
         xml.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity, Constants.ENCODING));
 
-        final String id = Commons.getMediaContent().get(entitySetName);
-        if (StringUtils.isNotBlank(id)) {
+        final Pair<String, EdmPrimitiveTypeKind> id = Commons.getMediaContent().get(entitySetName);
+        if (id != null) {
           final AtomPropertyImpl prop = new AtomPropertyImpl();
-          prop.setName(id);
-          prop.setType(EdmPrimitiveTypeKind.Int32.toString());
+          prop.setName(id.getKey());
+          prop.setType(id.getValue().toString());
           prop.setValue(new PrimitiveValueImpl(entityKey));
           entry.getProperties().add(prop);
         }
@@ -593,8 +599,8 @@ public abstract class AbstractServices {
         } else {
           final ResWrap<JSONEntityImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                  new TypeReference<JSONEntityImpl>() {
-          });
+                          new TypeReference<JSONEntityImpl>() {
+                          });
 
           entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -621,7 +627,7 @@ public abstract class AbstractServices {
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -684,13 +690,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -742,9 +748,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
@@ -893,7 +899,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                  dataBinder.toJSONEntitySet(container.getPayload())));
+                          dataBinder.toJSONEntitySet(container.getPayload())));
         }
 
         return xml.createResponse(
@@ -1555,8 +1561,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+                              container.getMetadataETag(),
+                              dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
             }
           } else {
             final ResWrap<Entity> container =
@@ -1569,8 +1575,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntityType((AtomEntityImpl) container.getPayload())));
+                              container.getMetadataETag(),
+                              dataBinder.toJSONEntityType((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1640,9 +1646,9 @@ public abstract class AbstractServices {
 
     final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-            + (version.compareTo(ODataServiceVersion.V40) >= 0
-            ? entitySetName + "(" + entityId + ")/" + path
-            : property.getType())),
+                    + (version.compareTo(ODataServiceVersion.V40) >= 0
+                    ? entitySetName + "(" + entityId + ")/" + path
+                    : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
@@ -1650,9 +1656,9 @@ public abstract class AbstractServices {
             null,
             searchForValue
             ? IOUtils.toInputStream(
-            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-            ? StringUtils.EMPTY
-            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
+                    container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
+                    ? StringUtils.EMPTY
+                    : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
             : utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);

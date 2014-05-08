@@ -25,13 +25,22 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
+import org.apache.olingo.client.api.communication.request.streamed.MediaEntityCreateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityUpdateStreamManager;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
+import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
@@ -40,6 +49,7 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 
@@ -82,9 +92,56 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     read(client, ODataPubFormat.JSON_FULL_METADATA);
   }
 
-  private void update(final ODataClient client, final ODataPubFormat format)
-          throws IOException, EdmPrimitiveTypeException {
+  private void create(final ODataPubFormat format) throws IOException {
+    final String random = RandomStringUtils.random(110);
+    final InputStream input = IOUtils.toInputStream(random);
 
+    final URI uri = client.getURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
+    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
+            client.getStreamedRequestFactory().getMediaEntityCreateRequest(uri, input);
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+
+    final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
+    assertEquals(201, createRes.getStatusCode());
+
+    final Collection<String> location = createRes.getHeader(HeaderName.location);
+    assertNotNull(location);
+    final URI createdLocation = URI.create(location.iterator().next());
+
+    final ODataEntity changes = client.getObjectFactory().
+            newEntity(new FullQualifiedName("ODataDemo.Advertisement"));
+    changes.getProperties().add(client.getObjectFactory().newPrimitiveProperty("AirDate",
+            getClient().getObjectFactory().newPrimitiveValueBuilder().
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
+
+    final ODataEntityUpdateRequest<ODataEntity> updateReq = getClient().getCUDRequestFactory().
+            getEntityUpdateRequest(createdLocation, UpdateType.PATCH, changes);
+    updateReq.setFormat(format);
+
+    final ODataEntityUpdateResponse<ODataEntity> updateRes = updateReq.execute();
+    assertEquals(204, updateRes.getStatusCode());
+
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
+            getMediaRequest(client.getURIBuilder(createdLocation.toASCIIString()).appendValueSegment().build());
+    final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
+    assertEquals(200, retrieveRes.getStatusCode());
+
+    final byte[] actual = new byte[Integer.parseInt(retrieveRes.getHeader("Content-Length").iterator().next())];
+    IOUtils.read(retrieveRes.getBody(), actual, 0, actual.length);
+    assertEquals(random, new String(actual));
+  }
+
+  @Test
+  public void createAsAtom() throws IOException {
+    create(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void createAsJSON() throws IOException {
+    create(ODataPubFormat.JSON);
+  }
+
+  private void update(final ODataPubFormat format) throws IOException, EdmPrimitiveTypeException {
     final URI uri = client.getURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).appendValueSegment().build();
@@ -112,11 +169,11 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateAsAtom() throws IOException, EdmPrimitiveTypeException {
-    update(client, ODataPubFormat.ATOM);
+    update(ODataPubFormat.ATOM);
   }
 
   @Test
   public void updateAsJSON() throws IOException, EdmPrimitiveTypeException {
-    update(client, ODataPubFormat.JSON);
+    update(ODataPubFormat.JSON);
   }
 }

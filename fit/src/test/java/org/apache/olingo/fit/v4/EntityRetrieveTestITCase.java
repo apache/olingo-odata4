@@ -245,7 +245,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void checkForETagAsATOM() {
+  public void checkForETagAsAtom() {
     checkForETag(client, ODataPubFormat.ATOM);
   }
 

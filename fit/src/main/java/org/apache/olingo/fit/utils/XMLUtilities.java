@@ -500,7 +500,7 @@ public class XMLUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(newContent, "UTF-8");
   }
 
-  public InputStream addAtomContent(
+  private InputStream addAtomContent(
           final InputStream content, final String title, final String href)
           throws Exception {
 

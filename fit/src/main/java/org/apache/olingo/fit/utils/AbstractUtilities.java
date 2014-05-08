@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -741,6 +742,8 @@ public abstract class AbstractUtilities {
         Commons.SEQUENCE.put("Products", productId);
       } else if ("PaymentInstrument".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entry, "PaymentInstrumentID");
+      } else if ("Advertisements".equals(entitySetName)) {
+        res = UUID.randomUUID().toString();
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }
