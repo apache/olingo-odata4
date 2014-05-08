@@ -23,10 +23,11 @@ import java.util.List;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.Singleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.domain.AbstractODataEntity;
 
-public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity {
+public class ODataEntityImpl extends AbstractODataEntity implements ODataEntity, Singleton {
 
   private static final long serialVersionUID = -3997704808753685990L;
 

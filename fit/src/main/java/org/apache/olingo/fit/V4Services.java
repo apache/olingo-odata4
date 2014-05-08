@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -42,8 +43,10 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -344,6 +347,21 @@ public class V4Services extends AbstractServices {
 
     return getEntityInternal(
             uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null, false);
+  }
+
+  @PATCH
+  @Path("/Company")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response patchSingletonCompany(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          final String changes) {
+
+    return super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, "Company", StringUtils.EMPTY, changes);
   }
 
   @GET

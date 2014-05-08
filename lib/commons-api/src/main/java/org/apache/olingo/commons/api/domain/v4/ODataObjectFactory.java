@@ -40,6 +40,8 @@ public interface ODataObjectFactory extends CommonODataObjectFactory {
   @Override
   ODataEntity newEntity(FullQualifiedName typeName, URI link);
 
+  Singleton newSingleton(FullQualifiedName typeName);
+
   @Override
   ODataLink newEntitySetNavigationLink(String name, URI link);
 

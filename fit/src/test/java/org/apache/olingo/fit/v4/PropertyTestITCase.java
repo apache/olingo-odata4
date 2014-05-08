@@ -31,6 +31,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
@@ -45,7 +46,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataProperty prop = req.execute().getBody();
     assertNotNull(prop);
-    assertEquals("Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)", prop.getValue().getTypeName());
+    // cast to workaround JDK 6 bug, fixed in JDK 7
+    assertEquals("Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+            ((ODataValuable) prop).getValue().getTypeName());
   }
 
   @Test
@@ -72,7 +75,8 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataProperty prop = req.execute().getBody();
     assertNotNull(prop);
-    assertEquals("Edm.GeographyPoint", prop.getValue().getTypeName());
+    // cast to workaround JDK 6 bug, fixed in JDK 7
+    assertEquals("Edm.GeographyPoint", ((ODataValuable) prop).getValue().getTypeName());
   }
 
   @Test
@@ -99,7 +103,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
     final ODataProperty prop = req.execute().getBody();
     assertNotNull(prop);
-    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address", prop.getValue().getTypeName());
+    // cast to workaround JDK 6 bug, fixed in JDK 7
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address", 
+            ((ODataValuable) prop).getValue().getTypeName());
   }
 
   @Test

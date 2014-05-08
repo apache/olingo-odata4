@@ -47,6 +47,7 @@ import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -65,8 +66,9 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
     assertTrue(entity.isMediaEntity());
+    // cast to workaround JDK 6 bug, fixed in JDK 7
     assertEquals(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName().toString(),
-            entity.getProperty("AirDate").getValue().getTypeName());
+            ((ODataValuable) entity.getProperty("AirDate")).getValue().getTypeName());
 
     final ODataMediaRequest streamReq = client.getRetrieveRequestFactory().
             getMediaRequest(entity.getMediaContentSource());

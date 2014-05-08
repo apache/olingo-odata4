@@ -16,17 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.cud.v4;
+package org.apache.olingo.commons.api.domain.v4;
 
-import java.net.URI;
-import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
-import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
-import org.apache.olingo.commons.api.domain.v4.Singleton;
-
-public interface CUDRequestFactory extends CommonCUDRequestFactory<UpdateType> {
-
-  ODataEntityUpdateRequest<Singleton> getSingletonUpdateRequest(URI targetURI, UpdateType type, Singleton changes);
-
-  ODataEntityUpdateRequest<Singleton> getSingletonUpdateRequest(UpdateType type, Singleton entity);
-
+public interface Singleton extends ODataEntity {
 }
