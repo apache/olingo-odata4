@@ -31,6 +31,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataRawReque
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
@@ -202,7 +203,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void checkForETagAsATOM() {
+  public void checkForETagAsAtom() {
     checkForETag(ODataPubFormat.ATOM);
   }
 
@@ -238,5 +239,26 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     // this statement should cause an IllegalArgumentException bearing JsonParseException
     // since we are attempting to parse an EntitySet as if it was an Entity
     req.execute().getBody();
+  }
+
+  private void geospatial(final ODataPubFormat format) {
+    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+            appendEntitySetSegment("AllGeoTypesSet").appendKeySegment(-10);
+
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    req.setFormat(format);
+
+    final ODataEntity entity = req.execute().getBody();
+    assertNotNull(entity);
+  }
+
+  @Test
+  public void geospatialAsJSON() {
+    geospatial(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  @Test
+  public void geospatialAsAtom() {
+    geospatial(ODataPubFormat.ATOM);
   }
 }
