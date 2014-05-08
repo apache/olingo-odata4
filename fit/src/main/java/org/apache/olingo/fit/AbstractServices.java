@@ -990,7 +990,7 @@ public abstract class AbstractServices {
           final String entitySetName,
           final String entityId,
           final String format,
-          final String expand,
+          String expand,
           final String select,
           final boolean keyAsSegment) {
 
@@ -1047,6 +1047,7 @@ public abstract class AbstractServices {
       }
 
       if (StringUtils.isNotBlank(expand)) {
+        expand = StringUtils.substringBefore(expand, "(");
         final List<String> links = Arrays.asList(expand.split(","));
 
         final Map<Link, Link> replace = new HashMap<Link, Link>();
