@@ -32,6 +32,7 @@ import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.URIFilter;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,12 +214,14 @@ public abstract class AbstractURIBuilder<UB extends CommonURIBuilder<?>> impleme
 
   @Override
   public UB filter(final URIFilter filter) {
+    UB result;
     try {
       // decode in order to support @ in parameter aliases
-      return addQueryOption(QueryOption.FILTER, URLDecoder.decode(filter.build(), "UTF-8"));
-    } catch (UnsupportedEncodingException ex) {
-      return addQueryOption(QueryOption.FILTER, filter.build());
+      result = filter(URLDecoder.decode(filter.build(), Constants.UTF8));
+    } catch (UnsupportedEncodingException e) {
+      result = filter(filter.build());
     }
+    return result;
   }
 
   @Override

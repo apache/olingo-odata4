@@ -29,6 +29,7 @@ import org.apache.olingo.client.api.op.v4.ODataDeserializer;
 import org.apache.olingo.client.api.op.v4.ODataReader;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
+import org.apache.olingo.client.api.uri.v4.SearchFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 
 public interface ODataClient extends CommonODataClient<UpdateType> {
@@ -50,6 +51,8 @@ public interface ODataClient extends CommonODataClient<UpdateType> {
 
   @Override
   FilterFactory getFilterFactory();
+
+  SearchFactory getSearchFactory();
 
   @Override
   ODataObjectFactory getObjectFactory();

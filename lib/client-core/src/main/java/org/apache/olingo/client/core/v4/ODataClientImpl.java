@@ -35,6 +35,7 @@ import org.apache.olingo.client.api.op.v4.ODataDeserializer;
 import org.apache.olingo.client.api.op.v4.ODataReader;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.uri.v4.FilterFactory;
+import org.apache.olingo.client.api.uri.v4.SearchFactory;
 import org.apache.olingo.client.core.AbstractODataClient;
 import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.client.core.communication.request.batch.v4.BatchRequestFactoryImpl;
@@ -60,6 +61,8 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   private final Configuration configuration = new ConfigurationImpl();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
+
+  private final SearchFactory searchFactory = new SearchFactoryImpl();
 
   private final ODataDeserializer deserializer = new ODataDeserializerImpl(getServiceVersion());
 
@@ -109,6 +112,11 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   @Override
   public FilterFactory getFilterFactory() {
     return filterFactory;
+  }
+
+  @Override
+  public SearchFactory getSearchFactory() {
+    return searchFactory;
   }
 
   @Override

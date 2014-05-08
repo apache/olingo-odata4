@@ -102,6 +102,15 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
   /**
    * Appends search query option.
    *
+   * @param search search expression
+   * @return current URIBuilder instance
+   * @see org.apache.olingo.client.api.uri.QueryOption#SEARCH
+   */
+  URIBuilder search(URISearch search);
+  
+  /**
+   * Appends search query option.
+   *
    * @param expression search expression
    * @return current URIBuilder instance
    * @see org.apache.olingo.client.api.uri.QueryOption#SEARCH

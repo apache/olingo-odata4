@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.client.api.uri.v4.URISearch;
 import org.apache.olingo.client.api.v4.Configuration;
 import org.apache.olingo.client.core.uri.AbstractURIBuilder;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -118,6 +119,11 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   @Override
   public URIBuilder id(final String idValue) {
     return addQueryOption(QueryOption.ID, idValue);
+  }
+
+  @Override
+  public URIBuilder search(final URISearch search) {
+    return search(search.build());
   }
 
   @Override
