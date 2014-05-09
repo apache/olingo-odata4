@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -41,7 +40,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface ComputerDetailCollection extends AbstractEntityCollection<ComputerDetail> {
@@ -54,7 +53,7 @@ public interface ComputerDetailCollection extends AbstractEntityCollection<Compu
                     isComposable = false)
       void resetComputerDetailsSpecifications(
                 @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) Collection<String> specifications, 
-                @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) Timestamp purchaseTime
+                @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) Calendar purchaseTime
             );
 
     

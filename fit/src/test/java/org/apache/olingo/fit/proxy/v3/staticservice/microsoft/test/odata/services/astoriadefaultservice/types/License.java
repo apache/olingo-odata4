@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
@@ -173,9 +172,9 @@ public interface License
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Timestamp getExpirationDate();
+    Calendar getExpirationDate();
 
-    void setExpirationDate(final Timestamp _expirationDate);
+    void setExpirationDate(final Calendar _expirationDate);
     
     
 

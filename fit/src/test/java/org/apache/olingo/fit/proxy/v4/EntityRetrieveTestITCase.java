@@ -25,7 +25,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Proxy;
-import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -98,15 +99,18 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   public void navigate() {
     final Order order = getContainer().getOrders().get(8);
     assertNotNull(order);
-    assertEquals(8, order.getOrderID().intValue());
+    assertEquals(8, order.getOrderID(), 0);
 
-    final Timestamp date = order.getOrderDate();
+    final Calendar date = order.getOrderDate();
     assertNotNull(date);
-    assertEquals(Timestamp.valueOf("2011-03-04 17:03:57.0"), date);
+    final Calendar actual = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    actual.clear();
+    actual.set(2011, 2, 4, 16, 3, 57);
+    assertEquals(actual.getTimeInMillis(), date.getTimeInMillis());
 
     final Customer customer = getContainer().getCustomers().get(1);
     assertNotNull(customer);
-    assertEquals(1, customer.getPersonID().intValue());
+    assertEquals(1, customer.getPersonID(), 0);
     final Address address = customer.getHomeAddress();
     assertNotNull(address);
     assertEquals("98052", address.getPostalCode());
@@ -116,7 +120,7 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   public void withInlineEntry() {
     final Customer customer = readCustomer(getContainer(), 1);
     final Company company = customer.getCompany();
-    assertEquals(0, company.getCompanyID().intValue());
+    assertEquals(0, company.getCompanyID(), 0);
   }
 
   @Test
@@ -124,13 +128,13 @@ public class EntityRetrieveTestITCase extends AbstractTest {
     final Customer customer = readCustomer(getContainer(), 1);
     final OrderCollection orders = customer.getOrders();
     assertEquals(1, orders.size());
-    assertEquals(8, orders.iterator().next().getOrderID().intValue());
+    assertEquals(8, orders.iterator().next().getOrderID(), 0);
   }
 
   @Test
   public void withActions() {
     final Product product = getContainer().getProducts().get(5);
-    assertEquals(5, product.getProductID().intValue());
+    assertEquals(5, product.getProductID(), 0);
 
     try {
       assertNotNull(product.operations().getClass().getMethod("addAccessRight", AccessLevel.class));
@@ -147,14 +151,13 @@ public class EntityRetrieveTestITCase extends AbstractTest {
 
     final OrderDetail orderDetail = getContainer().getOrderDetails().get(orderDetailKey);
     assertNotNull(orderDetail);
-    assertEquals(7, orderDetail.getOrderID().intValue());
-    assertEquals(5, orderDetail.getProductID().intValue());
+    assertEquals(7, orderDetail.getOrderID(), 0);
+    assertEquals(5, orderDetail.getProductID(), 0);
   }
 
   @Test
   public void checkForETag() {
     final Order order = getContainer().getOrders().get(8);
-    assertTrue(StringUtils.isNotBlank(
-            ((EntityTypeInvocationHandler) Proxy.getInvocationHandler(order)).getETag()));
+    assertTrue(StringUtils.isNotBlank(((EntityTypeInvocationHandler) Proxy.getInvocationHandler(order)).getETag()));
   }
 }

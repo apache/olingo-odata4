@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -45,21 +44,21 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 @CompoundKey
 public class ProductReviewKey extends AbstractEntityKey {
 
-    private String _revisionId;
+    private Integer _productId;
 
-    @CompoundKeyElement(name = "RevisionId", position = 0)
-    public String getRevisionId() {
-        return _revisionId;
+    @CompoundKeyElement(name = "ProductId", position = 0)
+    public Integer getProductId() {
+        return _productId;
     }
 
-    public void setRevisionId(final String _revisionId) {
-        this._revisionId = _revisionId;
+    public void setProductId(final Integer _productId) {
+        this._productId = _productId;
     }
 
     private Integer _reviewId;
@@ -73,14 +72,14 @@ public class ProductReviewKey extends AbstractEntityKey {
         this._reviewId = _reviewId;
     }
 
-    private Integer _productId;
+    private String _revisionId;
 
-    @CompoundKeyElement(name = "ProductId", position = 2)
-    public Integer getProductId() {
-        return _productId;
+    @CompoundKeyElement(name = "RevisionId", position = 2)
+    public String getRevisionId() {
+        return _revisionId;
     }
 
-    public void setProductId(final Integer _productId) {
-        this._productId = _productId;
+    public void setRevisionId(final String _revisionId) {
+        this._revisionId = _revisionId;
     }
 }

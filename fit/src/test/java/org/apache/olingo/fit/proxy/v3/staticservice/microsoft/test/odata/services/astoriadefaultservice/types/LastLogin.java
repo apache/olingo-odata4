@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
@@ -104,9 +103,9 @@ public interface LastLogin
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Timestamp getLoggedIn();
+    Calendar getLoggedIn();
 
-    void setLoggedIn(final Timestamp _loggedIn);
+    void setLoggedIn(final Calendar _loggedIn);
     
     
     @Property(name = "LoggedOut", 
@@ -127,9 +126,9 @@ public interface LastLogin
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Timestamp getLoggedOut();
+    Calendar getLoggedOut();
 
-    void setLoggedOut(final Timestamp _loggedOut);
+    void setLoggedOut(final Calendar _loggedOut);
     
     
     @Property(name = "Duration", 

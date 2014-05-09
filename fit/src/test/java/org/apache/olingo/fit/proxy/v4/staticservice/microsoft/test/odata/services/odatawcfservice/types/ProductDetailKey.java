@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -45,31 +44,31 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 @CompoundKey
 public class ProductDetailKey extends AbstractEntityKey {
 
-    private Integer _productDetailID;
-
-    @CompoundKeyElement(name = "ProductDetailID", position = 0)
-    public Integer getProductDetailID() {
-        return _productDetailID;
-    }
-
-    public void setProductDetailID(final Integer _productDetailID) {
-        this._productDetailID = _productDetailID;
-    }
-
     private Integer _productID;
 
-    @CompoundKeyElement(name = "ProductID", position = 1)
+    @CompoundKeyElement(name = "ProductID", position = 0)
     public Integer getProductID() {
         return _productID;
     }
 
     public void setProductID(final Integer _productID) {
         this._productID = _productID;
+    }
+
+    private Integer _productDetailID;
+
+    @CompoundKeyElement(name = "ProductDetailID", position = 1)
+    public Integer getProductDetailID() {
+        return _productDetailID;
+    }
+
+    public void setProductDetailID(final Integer _productDetailID) {
+        this._productDetailID = _productDetailID;
     }
 }

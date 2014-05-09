@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -40,7 +39,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
@@ -50,9 +49,9 @@ public interface AuditInfo extends Serializable {
 
 
     @Property(name = "ModifiedDate", type = "Edm.DateTime", nullable = false)
-    Timestamp getModifiedDate();
+    Calendar getModifiedDate();
 
-    void setModifiedDate(final Timestamp _modifiedDate);
+    void setModifiedDate(final Calendar _modifiedDate);
 
     
 

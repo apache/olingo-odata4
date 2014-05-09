@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
@@ -449,9 +448,9 @@ public interface MappedEntityType
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Collection<Timestamp> getBagOfDateTime();
+    Collection<Calendar> getBagOfDateTime();
 
-    void setBagOfDateTime(final Collection<Timestamp> _bagOfDateTime);
+    void setBagOfDateTime(final Collection<Calendar> _bagOfDateTime);
     
     
     @Property(name = "BagOfComplexToCategories", 

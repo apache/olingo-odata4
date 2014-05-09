@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Proxy;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -132,19 +132,23 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   public void navigate() {
     final Order order = getContainer().getOrder().get(-9);
     assertNotNull(order);
-    assertEquals(Integer.valueOf(-9), order.getOrderId());
+    assertEquals(-9, order.getOrderId(), 0);
 
     final ConcurrencyInfo concurrency = order.getConcurrency();
     assertNotNull(concurrency);
-    assertEquals(Timestamp.valueOf("2012-02-12 11:32:50.005072026"), concurrency.getQueriedDateTime());
-    assertEquals(Integer.valueOf(78), order.getCustomerId());
+    final Calendar actual = Calendar.getInstance();
+    actual.clear();
+    actual.set(2012, 1, 12, 11, 32, 50);
+    actual.set(Calendar.MILLISECOND, 507);
+    assertEquals(actual.getTimeInMillis(), concurrency.getQueriedDateTime().getTimeInMillis());
+    assertEquals(78, order.getCustomerId(), 0);
   }
 
   @Test
   public void withGeospatial() {
     final AllSpatialTypes allSpatialTypes = getContainer().getAllGeoTypesSet().get(-10);
     assertNotNull(allSpatialTypes);
-    assertEquals(Integer.valueOf(-10), allSpatialTypes.getId());
+    assertEquals(-10, allSpatialTypes.getId(), 0);
 
     final MultiLineString geogMultiLine = allSpatialTypes.getGeogMultiLine();
     assertNotNull(geogMultiLine);
@@ -165,7 +169,7 @@ public class EntityRetrieveTestITCase extends AbstractTest {
     final Customer customer = readCustomer(getContainer(), -10);
     final CustomerInfo customerInfo = customer.getInfo();
     assertNotNull(customerInfo);
-    assertEquals(Integer.valueOf(11), customerInfo.getCustomerInfoId());
+    assertEquals(11, customerInfo.getCustomerInfoId(), 0);
   }
 
   @Test
@@ -178,12 +182,12 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   @Test
   public void withActions() {
     final ComputerDetail computerDetail = getContainer().getComputerDetail().get(-10);
-    assertEquals(Integer.valueOf(-10), computerDetail.getComputerDetailId());
+    assertEquals(-10, computerDetail.getComputerDetailId(), 0);
 
     try {
       assertNotNull(
               computerDetail.operations().getClass().getMethod(
-              "resetComputerDetailsSpecifications", Collection.class, Timestamp.class));
+              "resetComputerDetailsSpecifications", Collection.class, Calendar.class));
     } catch (Exception e) {
       fail();
     }

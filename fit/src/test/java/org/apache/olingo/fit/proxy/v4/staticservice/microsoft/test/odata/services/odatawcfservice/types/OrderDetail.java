@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 @KeyRef(OrderDetailKey.class)
@@ -127,9 +126,9 @@ public interface OrderDetail
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Timestamp getOrderPlaced();
+    Calendar getOrderPlaced();
 
-    void setOrderPlaced(final Timestamp _orderPlaced);
+    void setOrderPlaced(final Calendar _orderPlaced);
     
     
     @Property(name = "Quantity", 

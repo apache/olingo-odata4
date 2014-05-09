@@ -19,9 +19,7 @@
 package org.apache.olingo.ext.pojogen;
 
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -275,7 +273,7 @@ public abstract class AbstractUtility {
       res.append(InputStream.class.getName());
     } else if (edmType.isPrimitiveType()) {
       final Class<?> clazz = EdmPrimitiveTypeFactory.getInstance(edmType.getPrimitiveTypeKind()).getDefaultType();
-      res.append((clazz.isAssignableFrom(Calendar.class) ? Timestamp.class : clazz).getSimpleName());
+      res.append(clazz.getSimpleName());
     } else if (edmType.isComplexType()) {
       res.append(basePackage).append('.').
               append(edmType.getFullQualifiedName().getNamespace().toLowerCase()). // namespace

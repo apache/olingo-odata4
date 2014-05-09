@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 @KeyRef(MessageKey.class)
@@ -150,9 +149,9 @@ public interface Message
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Timestamp getSent();
+    Calendar getSent();
 
-    void setSent(final Timestamp _sent);
+    void setSent(final Calendar _sent);
     
     
     @Property(name = "Subject", 

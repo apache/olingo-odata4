@@ -22,12 +22,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Locale;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,14 +57,6 @@ public abstract class AbstractTest {
 
   protected static InMemoryEntities container;
 
-  /**
-   * This is needed for correct number handling (Double, for example).
-   */
-  @BeforeClass
-  public static void setEnglishLocale() {
-    Locale.setDefault(Locale.ENGLISH);
-  }
-
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
@@ -84,7 +74,7 @@ public abstract class AbstractTest {
   protected Customer readCustomer(final InMemoryEntities container, int id) {
     final Customer customer = container.getCustomers().get(id);
     assertNotNull(customer);
-    assertEquals(Integer.valueOf(id), customer.getPersonID());
+    assertEquals(id, customer.getPersonID(), 0);
 
     return customer;
   }

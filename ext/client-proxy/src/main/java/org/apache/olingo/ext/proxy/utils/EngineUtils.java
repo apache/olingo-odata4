@@ -24,7 +24,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +38,10 @@ import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -169,8 +173,8 @@ public final class EngineUtils {
         } else {
           oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
                   newEnumProperty(name,
-                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
-                  asEnum());
+                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
+                          asEnum());
         }
       } else {
         throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
@@ -200,6 +204,21 @@ public final class EngineUtils {
     }
   }
 
+  private static Object primitiveValueToObject(final ODataPrimitiveValue value) {
+    Object obj;
+
+    try {
+      obj = value.toValue() instanceof Timestamp
+              ? value.toCastValue(Calendar.class)
+              : value.toValue();
+    } catch (EdmPrimitiveTypeException e) {
+      LOG.warn("Could not read temporal value as Calendar, reverting to Timestamp", e);
+      obj = value.toValue();
+    }
+
+    return obj;
+  }
+
   @SuppressWarnings("unchecked")
   private static void setPropertyValue(final Object bean, final Method getter, final Object value)
           throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -211,18 +230,16 @@ public final class EngineUtils {
 
   public static Object getKey(
           final Edm metadata, final Class<?> entityTypeRef, final CommonODataEntity entity) {
-    final Object res;
 
-    if (entity.getProperties().isEmpty()) {
-      res = null;
-    } else {
+    Object res = null;
+
+    if (!entity.getProperties().isEmpty()) {
       final Class<?> keyRef = ClassUtils.getCompoundKeyRef(entityTypeRef);
       if (keyRef == null) {
         final CommonODataProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
-        res = property == null || !property.hasPrimitiveValue()
-                ? null
-                : property.getPrimitiveValue().toValue();
-
+        if (property != null && property.hasPrimitiveValue()) {
+          res = primitiveValueToObject(property.getPrimitiveValue());
+        }
       } else {
         try {
           res = keyRef.newInstance();
@@ -270,7 +287,7 @@ public final class EngineUtils {
               setPropertyValue(bean, getter, null);
             }
             if (property.hasPrimitiveValue()) {
-              setPropertyValue(bean, getter, property.getPrimitiveValue().toValue());
+              setPropertyValue(bean, getter, primitiveValueToObject(property.getPrimitiveValue()));
             }
             if (property.hasComplexValue()) {
               final Object complex = getter.getReturnType().newInstance();
@@ -291,7 +308,7 @@ public final class EngineUtils {
               while (collPropItor.hasNext()) {
                 final ODataValue value = collPropItor.next();
                 if (value.isPrimitive()) {
-                  collection.add(value.asPrimitive().toValue());
+                  collection.add(primitiveValueToObject(value.asPrimitive()));
                 }
                 if (value.isComplex()) {
                   final Object collItem = collItemClass.newInstance();
@@ -323,7 +340,7 @@ public final class EngineUtils {
       while (collPropItor.hasNext()) {
         final ODataValue odataValue = collPropItor.next();
         if (odataValue.isPrimitive()) {
-          ((Collection) value).add(odataValue.asPrimitive().toValue());
+          ((Collection) value).add(primitiveValueToObject(odataValue.asPrimitive()));
         }
         if (odataValue.isComplex()) {
           final Object collItem =
@@ -332,7 +349,7 @@ public final class EngineUtils {
         }
       }
     } else if (property.hasPrimitiveValue()) {
-      value = property.getPrimitiveValue().toValue();
+      value = primitiveValueToObject(property.getPrimitiveValue());
     } else if (property.hasComplexValue()) {
       value = buildComplexInstance(
               metadata, property.getValue().asComplex().getTypeName(), property.getValue().asComplex().iterator());
@@ -378,7 +395,7 @@ public final class EngineUtils {
       while (collPropItor.hasNext()) {
         final ODataValue odataValue = collPropItor.next();
         if (odataValue.isPrimitive()) {
-          ((Collection) value).add(odataValue.asPrimitive().toValue());
+          ((Collection) value).add(primitiveValueToObject(odataValue.asPrimitive()));
         }
         if (odataValue.isComplex()) {
           final Object collItem = collItemClass.newInstance();
@@ -387,7 +404,7 @@ public final class EngineUtils {
         }
       }
     } else if (property.hasPrimitiveValue()) {
-      value = property.getPrimitiveValue().toValue();
+      value = primitiveValueToObject(property.getPrimitiveValue());
     } else {
       throw new IllegalArgumentException("Invalid property " + property);
     }
