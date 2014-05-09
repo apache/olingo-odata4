@@ -22,6 +22,7 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -78,6 +79,10 @@ public class EntityContainerFactory {
   private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client, final String serviceRoot) {
     this.client = client;
     this.serviceRoot = serviceRoot;
+  }
+
+  public CommonConfiguration getConfiguration() {
+    return client.getConfiguration();
   }
 
   public String getServiceRoot() {

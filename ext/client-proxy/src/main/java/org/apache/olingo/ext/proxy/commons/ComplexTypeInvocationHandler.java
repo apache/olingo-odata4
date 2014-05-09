@@ -20,6 +20,7 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,9 +29,15 @@ import java.util.Set;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
+import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.EngineUtils;
 
 public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
@@ -57,10 +64,6 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   public void setComplex(final ODataComplexValue<?> complex) {
     this.internal = complex;
-    this.propertyChanges.clear();
-    this.linkChanges.clear();
-    this.propertiesTag = 0;
-    this.linksTag = 0;
   }
 
   @Override
@@ -68,8 +71,9 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
     return new FullQualifiedName(((ODataComplexValue<?>) this.internal).getTypeName());
   }
 
-  public ODataComplexValue<?> getComplex() {
-    return (ODataComplexValue<?>) this.internal;
+  @SuppressWarnings("unchecked")
+  public ODataComplexValue<CommonODataProperty> getComplex() {
+    return (ODataComplexValue<CommonODataProperty>) this.internal;
   }
 
   @Override
@@ -79,10 +83,13 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
       final CommonODataProperty property = getComplex().get(name);
 
-      if (propertyChanges.containsKey(name)) {
-        res = propertyChanges.get(name);
-      } else if (property.hasComplexValue()) {
-        res = newComplex(name, (Class<?>) type);
+      if (property.hasComplexValue()) {
+
+        res = Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {(Class<?>) type},
+                newComplex(name, (Class<?>) type));
+
         EngineUtils.populate(
                 client.getCachedEdm(),
                 res,
@@ -90,16 +97,9 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
                 Property.class,
                 property.getValue().asComplex().iterator());
       } else {
-
         res = type == null
                 ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
                 : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
-
-        if (res != null) {
-          int checkpoint = propertyChanges.hashCode();
-          propertyChanges.put(name, res);
-          updatePropertiesTag(checkpoint);
-        }
       }
 
       return res;
@@ -110,21 +110,18 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   @Override
   public Collection<String> getAdditionalPropertyNames() {
-    final Set<String> res = new HashSet<String>(propertyChanges.keySet());
+    final Set<String> res = new HashSet<String>();
     final Set<String> propertyNames = new HashSet<String>();
     for (Method method : typeRef.getMethods()) {
       final Annotation ann = method.getAnnotation(Property.class);
       if (ann != null) {
         final String property = ((Property) ann).name();
         propertyNames.add(property);
-
-        // maybe someone could add a normal attribute to the additional set
-        res.remove(property);
       }
     }
 
-    for (Iterator<?> itor = ((ODataComplexValue<?>) this.internal).iterator(); itor.hasNext();) {
-      CommonODataProperty property = (CommonODataProperty) itor.next();
+    for (Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
+      final CommonODataProperty property = itor.next();
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
       }
@@ -135,11 +132,39 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   @Override
   protected void setPropertyValue(final Property property, final Object value) {
-    propertyChanges.put(property.name(), value);
+    final FullQualifiedName fqn =
+            new FullQualifiedName(ClassUtils.getNamespace(typeRef), typeRef.getAnnotation(ComplexType.class).name());
+
+    final EdmElement edmProperty = client.getCachedEdm().getComplexType(fqn).getProperty(property.name());
+
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().
+            setEdm(client.getCachedEdm()).setTypeExpression(
+            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+
+    client.getBinder().add(getComplex(), EngineUtils.getODataProperty(client, property.name(), type, value));
 
     if (!entityContext.isAttached(targetHandler)) {
       entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
     }
+  }
+
+  @Override
+  protected Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
+    if (!(internal instanceof ODataLinked)) {
+      throw new UnsupportedOperationException("Internal object is not navigable");
+    }
+
+    return retriveNavigationProperty(property, getter);
+  }
+
+  @Override
+  protected void addPropertyChanges(final String name, final Object value, final boolean isCollection) {
+    // do nothing ....
+  }
+
+  @Override
+  protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
+    // do nothing ....
   }
 
   @Override

@@ -21,8 +21,10 @@ package org.apache.olingo.ext.proxy.commons;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +41,7 @@ import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
@@ -50,6 +53,14 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   private static final long serialVersionUID = 2629912294765040037L;
 
   private CommonODataEntity entity;
+
+  protected Map<String, Object> propertyChanges = new HashMap<String, Object>();
+
+  protected Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
+
+  protected int propertiesTag = 0;
+
+  protected int linksTag = 0;
 
   private Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
 
@@ -157,22 +168,51 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     this.entity.setETag(eTag);
   }
 
+  public Map<String, Object> getPropertyChanges() {
+    return propertyChanges;
+  }
+
+  public Map<NavigationProperty, Object> getLinkChanges() {
+    return linkChanges;
+  }
+
+  private void updatePropertiesTag(final int checkpoint) {
+    if (checkpoint == propertiesTag) {
+      propertiesTag = propertyChanges.hashCode();
+    }
+  }
+
+  private void updateLinksTag(final int checkpoint) {
+    if (checkpoint == linksTag) {
+      linksTag = linkChanges.hashCode();
+    }
+  }
+
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
-      
+
       final CommonODataProperty property = entity.getProperty(name);
-      
+
       if (propertyChanges.containsKey(name)) {
-        res = propertyChanges.get(name);
+        res = property.hasComplexValue()
+                ? Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {(Class<?>) type},
+                (ComplexTypeInvocationHandler<?>) propertyChanges.get(name))
+                : propertyChanges.get(name);
       } else if (property.hasComplexValue()) {
-        res = newComplex(name, (Class<?>) type);
+        res = Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {(Class<?>) type},
+                newComplex(name, (Class<?>) type));
+
         EngineUtils.populate(
-                client.getCachedEdm(), 
-                res, 
-                (Class<?>) type, 
-                Property.class, 
+                client.getCachedEdm(),
+                res,
+                (Class<?>) type,
+                Property.class,
                 property.getValue().asComplex().iterator());
       } else {
 
@@ -181,9 +221,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
                 : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
 
         if (res != null) {
-          int checkpoint = propertyChanges.hashCode();
-          propertyChanges.put(name, res);
-          updatePropertiesTag(checkpoint);
+          addPropertyChanges(name, res, false);
         }
       }
 
@@ -222,7 +260,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     if (property.type().equalsIgnoreCase("Edm.Stream")) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      propertyChanges.put(property.name(), value);
+      addPropertyChanges(property.name(), value, false);
     }
 
     attach(AttachedEntityStatus.CHANGED);
@@ -301,6 +339,51 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
 
     streamedPropertyChanges.put(property.name(), input);
+  }
+
+  @Override
+  protected Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
+    final Object navPropValue;
+
+    if (linkChanges.containsKey(property)) {
+      navPropValue = linkChanges.get(property);
+    } else {
+      navPropValue = retriveNavigationProperty(property, getter);
+    }
+
+    if (navPropValue != null) {
+      addLinkChanges(property, navPropValue);
+    }
+
+    return navPropValue;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void addPropertyChanges(final String name, final Object value, final boolean isCollection) {
+    int checkpoint = propertyChanges.hashCode();
+
+    if (isCollection) {
+      Object collItem = propertyChanges.get(name);
+
+      if (collItem == null) {
+        collItem = new ArrayList<Object>();
+        propertyChanges.put(name, collItem);
+      }
+
+      ((Collection<Object>) collItem).add(value);
+    } else {
+      propertyChanges.put(name, value);
+    }
+
+    updatePropertiesTag(checkpoint);
+  }
+
+  @Override
+  protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
+    int checkpoint = linkChanges.hashCode();
+    linkChanges.put(navProp, value);
+    updateLinksTag(checkpoint);
   }
 
   @Override
