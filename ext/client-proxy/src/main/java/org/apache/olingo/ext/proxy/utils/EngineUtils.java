@@ -127,7 +127,7 @@ public final class EngineUtils {
     return value;
   }
 
-  private static CommonODataProperty getODataEntityProperty(
+  private static CommonODataProperty getODataProperty(
           final CommonEdmEnabledODataClient<?> client,
           final FullQualifiedName entity,
           final String property,
@@ -153,7 +153,7 @@ public final class EngineUtils {
     return getODataProperty(client, property, type, obj);
   }
 
-  private static CommonODataProperty getODataProperty(
+  public static CommonODataProperty getODataProperty(
           final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
     
     CommonODataProperty oprop;
@@ -203,7 +203,7 @@ public final class EngineUtils {
       }
 
       ((List<CommonODataProperty>) entity.getProperties()).add(
-              getODataEntityProperty(client, entity.getTypeName(), property.getKey(), property.getValue()));
+              getODataProperty(client, entity.getTypeName(), property.getKey(), property.getValue()));
     }
   }
 

@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -125,7 +126,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     final ODataEntity actual = fetchReq.execute().getBody();
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", actual.getTypeName().toString());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-            actual.getProperty("HomeAddress").getValue().getTypeName());
+            ((ODataValuable)actual.getProperty("HomeAddress")).getValue().getTypeName());
     
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(actual.getEditLink());
     assertEquals(204, deleteReq.execute().getStatusCode());
