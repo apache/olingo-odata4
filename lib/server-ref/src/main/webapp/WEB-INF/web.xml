@@ -30,7 +30,7 @@
 	
 	<servlet>
 		<servlet-name>ODataServlet</servlet-name>
-		<servlet-class>org.apache.olingo.ref.ReferenceServlet</servlet-class>
+		<servlet-class>org.apache.olingo.server.ref.ReferenceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
    

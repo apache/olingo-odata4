@@ -36,15 +36,15 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.server.core.testutil.techprovider.ActionProvider;
-import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
-import org.apache.olingo.server.core.testutil.techprovider.EnumTypeProvider;
-import org.apache.olingo.server.core.testutil.techprovider.FunctionProvider;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
+import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterTreeToText;
+import org.apache.olingo.server.ref.provider.ActionProvider;
+import org.apache.olingo.server.ref.provider.EntityTypeProvider;
+import org.apache.olingo.server.ref.provider.EnumTypeProvider;
+import org.apache.olingo.server.ref.provider.FunctionProvider;
 import org.junit.Test;
 
 public class ExpressionTest {

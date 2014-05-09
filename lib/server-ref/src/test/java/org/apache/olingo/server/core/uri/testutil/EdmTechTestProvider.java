@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.testutil;
+package org.apache.olingo.server.core.uri.testutil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.Property;
 import org.apache.olingo.server.api.edm.provider.PropertyRef;
-import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
+import org.apache.olingo.server.ref.provider.EdmTechProvider;
 
 /**
  * Implement the EdmTechProvider and

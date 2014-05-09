@@ -36,8 +36,6 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriInfoService;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
@@ -52,6 +50,8 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.ref.provider.EntityTypeProvider;
 import org.junit.Test;
 
 public class UriInfoImplTest {

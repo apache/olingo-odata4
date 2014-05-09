@@ -41,12 +41,12 @@ import org.apache.olingo.server.core.edm.provider.EdmComplexTypeImpl;
 import org.apache.olingo.server.core.edm.provider.EdmEntitySetImpl;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.edm.provider.EdmSingletonImpl;
-import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.server.core.testutil.techprovider.ActionProvider;
-import org.apache.olingo.server.core.testutil.techprovider.ComplexTypeProvider;
-import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
+import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.ref.provider.ActionProvider;
+import org.apache.olingo.server.ref.provider.ComplexTypeProvider;
+import org.apache.olingo.server.ref.provider.EntityTypeProvider;
 import org.junit.Test;
 
 public class UriResourceImplTest {

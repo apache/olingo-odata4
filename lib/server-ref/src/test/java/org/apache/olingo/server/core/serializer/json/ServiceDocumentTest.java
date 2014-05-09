@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -36,7 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.server.api.ODataServer;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.core.testutil.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -116,7 +116,7 @@ public class ServiceDocumentTest {
 
     InputStream result = serializer.serviceDocument(edm, serviceRoot);
     assertNotNull(result);
-    String jsonString = StringUtils.inputStreamToString(result, true);
+    String jsonString = IOUtils.toString(result);
 
     assertTrue(jsonString.contains("entitySetName1"));
     assertTrue(jsonString.contains("entitySetName2"));

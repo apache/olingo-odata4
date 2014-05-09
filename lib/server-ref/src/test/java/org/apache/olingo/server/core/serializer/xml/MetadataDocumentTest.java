@@ -22,11 +22,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -56,8 +58,7 @@ import org.apache.olingo.server.api.edm.provider.TypeDefinition;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.StringUtils;
-import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
+import org.apache.olingo.server.ref.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class MetadataDocumentTest {
@@ -76,12 +77,13 @@ public class MetadataDocumentTest {
   }
 
   @Test
-  public void writeMetadataWithLocalTestEdm() {
+  public void writeMetadataWithLocalTestEdm() throws Exception {
     ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
     Edm edm = new EdmProviderImpl(new TestMetadataProvider());
     InputStream metadata = serializer.metadataDocument(edm);
     assertNotNull(metadata);
-    String metadataString = StringUtils.inputStreamToString(metadata, false);
+    
+    String metadataString = IOUtils.toString(metadata);
     assertTrue(metadataString
         .contains("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
 

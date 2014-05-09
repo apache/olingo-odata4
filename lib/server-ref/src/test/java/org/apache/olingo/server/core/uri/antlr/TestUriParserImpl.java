@@ -28,14 +28,14 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechTestProvider;
-import org.apache.olingo.server.core.testutil.techprovider.ComplexTypeProvider;
-import org.apache.olingo.server.core.testutil.techprovider.EntityTypeProvider;
-import org.apache.olingo.server.core.testutil.techprovider.PropertyProvider;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
+import org.apache.olingo.server.ref.provider.ComplexTypeProvider;
+import org.apache.olingo.server.ref.provider.EntityTypeProvider;
+import org.apache.olingo.server.ref.provider.PropertyProvider;
 import org.junit.Test;
 
 public class TestUriParserImpl {
