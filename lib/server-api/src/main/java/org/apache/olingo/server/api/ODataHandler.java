@@ -16,30 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.ref;
+package org.apache.olingo.server.api;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.olingo.server.api.ODataHandler;
-import org.apache.olingo.server.api.ODataServer;
-import org.apache.olingo.server.ref.provider.EdmTechProvider;
+public interface ODataHandler {
 
-public class ReferenceServlet extends HttpServlet {
-
-  private static final long serialVersionUID = 1L;
-
-  @Override
-  protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    
-    ODataHandler handler = ODataServer.newInstance().getHandler(new EdmTechProvider());
-    
-    handler.process(req, resp);
-    
-  }
+  void process(HttpServletRequest request, HttpServletResponse response);
 
 }

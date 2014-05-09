@@ -18,10 +18,8 @@
  */
 package org.apache.olingo.server.api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
@@ -38,6 +36,7 @@ public abstract class ODataServer {
        * and avoid class loading issues also during hot deployment.
        */
       final Object object = clazz.newInstance();
+
       return (ODataServer) object;
 
     } catch (final Exception e) {
@@ -48,6 +47,6 @@ public abstract class ODataServer {
 
   public abstract ODataSerializer getSerializer(ODataFormat format);
 
-  public abstract void handle(HttpServletRequest req, HttpServletResponse resp);
+  public abstract ODataHandler getHandler(EdmProvider edmProvider);
 
 }
