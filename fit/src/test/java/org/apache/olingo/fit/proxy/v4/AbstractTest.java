@@ -66,7 +66,7 @@ public abstract class AbstractTest {
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
-    containerFactory = EntityContainerFactory.getV4Instance(testStaticServiceRootURL);
+    containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
   }

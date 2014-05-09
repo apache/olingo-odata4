@@ -54,7 +54,7 @@ import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.ext.proxy.api.AbstractContainer;
+import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.context.AttachedEntity;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
@@ -63,20 +63,20 @@ import org.apache.olingo.ext.proxy.utils.EngineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class Container implements AbstractContainer {
+class ContainerImpl implements Container {
 
   private static final long serialVersionUID = -3320312269235907501L;
 
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(Container.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ContainerImpl.class);
 
   private final CommonEdmEnabledODataClient<?> client;
 
   private final EntityContainerFactory factory;
 
-  Container(final CommonEdmEnabledODataClient<?> client, final EntityContainerFactory factory) {
+  ContainerImpl(final CommonEdmEnabledODataClient<?> client, final EntityContainerFactory factory) {
     this.client = client;
     this.factory = factory;
   }
@@ -115,9 +115,8 @@ class Container implements AbstractContainer {
       throw new IllegalStateException("Operation failed");
     }
 
-    final Iterator<ODataBatchResponseItem> iter = response.getBody();
-
     if (!items.isEmpty()) {
+      final Iterator<ODataBatchResponseItem> iter = response.getBody();
       if (!iter.hasNext()) {
         throw new IllegalStateException("Unexpected operation result");
       }
@@ -154,8 +153,8 @@ class Container implements AbstractContainer {
   }
 
   private void batch(
-          final EntityTypeInvocationHandler<?> handler, 
-          final CommonODataEntity entity, 
+          final EntityTypeInvocationHandler<?> handler,
+          final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
     switch (EntityContainerFactory.getContext().entityContext().getStatus(handler)) {
@@ -264,10 +263,10 @@ class Container implements AbstractContainer {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(
-            uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+                    uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(
-            uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                    uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -396,7 +395,7 @@ class Container implements AbstractContainer {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos + "/$value")
                 : URIUtils.getURI(
-                factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                        factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
         batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -409,8 +408,8 @@ class Container implements AbstractContainer {
     for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
       final URI targetURI = currentStatus == AttachedEntityStatus.NEW
               ? URI.create("$" + startingPos) : URIUtils.getURI(
-              factory.getServiceRoot(),
-              EngineUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
+                      factory.getServiceRoot(),
+                      EngineUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
 
       batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 
@@ -423,16 +422,22 @@ class Container implements AbstractContainer {
   }
 
   private ODataLink buildNavigationLink(final String name, final URI uri, final ODataLinkType type) {
+    ODataLink result;
+
     switch (type) {
       case ENTITY_NAVIGATION:
-        return client.getObjectFactory().newEntityNavigationLink(name, uri);
+        result = client.getObjectFactory().newEntityNavigationLink(name, uri);
+        break;
 
       case ENTITY_SET_NAVIGATION:
-        return client.getObjectFactory().newEntitySetNavigationLink(name, uri);
+        result = client.getObjectFactory().newEntitySetNavigationLink(name, uri);
+        break;
 
       default:
         throw new IllegalArgumentException("Invalid link type " + type.name());
     }
+
+    return result;
   }
 
   private void processDelayedUpdates(
@@ -477,8 +482,7 @@ class Container implements AbstractContainer {
                 ? client.getObjectFactory().newEntityNavigationLink(delayedUpdate.getSourceName(), targetURI)
                 : client.getObjectFactory().newEntitySetNavigationLink(delayedUpdate.getSourceName(), targetURI));
 
-        LOG.debug("'{}' from {} to {}", new Object[] {
-          delayedUpdate.getType().name(), sourceURI, targetURI});
+        LOG.debug("'{}' from {} to {}", delayedUpdate.getType().name(), sourceURI, targetURI);
       }
 
       batchUpdate(delayedUpdate.getSource(), sourceURI, changes, changeset);

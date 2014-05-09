@@ -132,6 +132,7 @@ public final class EngineUtils {
           final FullQualifiedName entity,
           final String property,
           final Object obj) {
+    
     final EdmType edmType = client.getCachedEdm().getEntityType(entity).getProperty(property).getType();
     final EdmTypeInfo type = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(edmType.getFullQualifiedName().toString()).build();
@@ -144,6 +145,7 @@ public final class EngineUtils {
           final FullQualifiedName complex,
           final String property,
           final Object obj) {
+    
     final EdmType edmType = client.getCachedEdm().getComplexType(complex).getProperty(property).getType();
     final EdmTypeInfo type = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(edmType.getFullQualifiedName().toString()).build();
@@ -153,7 +155,8 @@ public final class EngineUtils {
 
   private static CommonODataProperty getODataProperty(
           final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
-    final CommonODataProperty oprop;
+    
+    CommonODataProperty oprop;
 
     try {
       if (type == null || obj == null) {
@@ -219,7 +222,6 @@ public final class EngineUtils {
     return obj;
   }
 
-  @SuppressWarnings("unchecked")
   private static void setPropertyValue(final Object bean, final Method getter, final Object value)
           throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
@@ -259,6 +261,7 @@ public final class EngineUtils {
           final Object bean,
           final Class<? extends Annotation> getterAnn,
           final Iterator<? extends CommonODataProperty> propItor) {
+    
     if (bean != null) {
       populate(metadata, bean, bean.getClass(), getterAnn, propItor);
     }

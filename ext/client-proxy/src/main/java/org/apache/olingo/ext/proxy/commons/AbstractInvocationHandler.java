@@ -179,7 +179,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
     // 2. IMPORTANT: flush any pending change *before* invoke if this operation is side effecting
     if (annotation.type() == OperationType.ACTION) {
-      new Container(client, containerHandler.getFactory()).flush();
+      new ContainerImpl(client, containerHandler.getFactory()).flush();
     }
 
     // 3. invoke

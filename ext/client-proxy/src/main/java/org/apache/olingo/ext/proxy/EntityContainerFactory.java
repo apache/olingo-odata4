@@ -31,7 +31,7 @@ import org.apache.olingo.ext.proxy.context.Context;
 /**
  * Entry point for ODataJClient proxy mode, gives access to entity container instances.
  */
-public class EntityContainerFactory {
+public final class EntityContainerFactory {
 
   private static final Object MONITOR = new Object();
 
@@ -40,8 +40,7 @@ public class EntityContainerFactory {
   private static final Map<String, EntityContainerFactory> FACTORY_PER_SERVICEROOT =
           new ConcurrentHashMap<String, EntityContainerFactory>();
 
-  private static final Map<Class<?>, Object> ENTITY_CONTAINERS =
-          new ConcurrentHashMap<Class<?>, Object>();
+  private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
   private final CommonEdmEnabledODataClient<?> client;
 
@@ -59,6 +58,7 @@ public class EntityContainerFactory {
 
   private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory getInstance(
           final C client, final String serviceRoot) {
+
     if (!FACTORY_PER_SERVICEROOT.containsKey(serviceRoot)) {
       final EntityContainerFactory instance = new EntityContainerFactory(client, serviceRoot);
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
@@ -67,11 +67,11 @@ public class EntityContainerFactory {
     return FACTORY_PER_SERVICEROOT.get(serviceRoot);
   }
 
-  public static EntityContainerFactory getV3Instance(final String serviceRoot) {
+  public static EntityContainerFactory getV3(final String serviceRoot) {
     return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), serviceRoot);
   }
 
-  public static EntityContainerFactory getV4Instance(final String serviceRoot) {
+  public static EntityContainerFactory getV4(final String serviceRoot) {
     return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), serviceRoot);
   }
 
@@ -92,9 +92,7 @@ public class EntityContainerFactory {
    * @return an initialized concrete implementation of the passed reference
    * @throws IllegalStateException if <tt>serviceRoot</tt> was not set
    * @throws IllegalArgumentException if the passed reference is not an interface annotated as EntityContainer
-   * @see com.msopentech.odatajclient.proxy.api.annotations.EntityContainer
    */
-  @SuppressWarnings("unchecked")
   public <T> T getEntityContainer(final Class<T> reference) throws IllegalStateException, IllegalArgumentException {
     if (StringUtils.isBlank(serviceRoot)) {
       throw new IllegalStateException("serviceRoot was not set");
@@ -107,6 +105,6 @@ public class EntityContainerFactory {
               EntityContainerInvocationHandler.getInstance(client, reference, this));
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
-    return (T) ENTITY_CONTAINERS.get(reference);
+    return reference.cast(ENTITY_CONTAINERS.get(reference));
   }
 }

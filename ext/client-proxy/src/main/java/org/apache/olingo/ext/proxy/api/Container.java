@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,5 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File basepkg = new File( basedir, "target/generated-sources/ojc-plugin/com/msopentech/odatajclient/proxy" );
-assert basepkg.isDirectory() && basepkg.listFiles().length>0;
+package org.apache.olingo.ext.proxy.api;
+
+import java.io.Serializable;
+
+/**
+ * Interface for container operations.
+ */
+public interface Container extends Serializable {
+
+  /**
+   * Flushes all pending changes to the OData service.
+   */
+  void flush();
+}
