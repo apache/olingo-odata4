@@ -681,13 +681,13 @@ public abstract class AbstractUtilities {
     return res;
   }
 
-  public String getDefaultEntryKey(final String entitySetName, final AtomEntityImpl entry) throws IOException {
+  public String getDefaultEntryKey(final String entitySetName, final AtomEntityImpl entity) throws IOException {
     try {
       String res;
 
       if ("Message".equals(entitySetName)) {
         int messageId;
-        if (entry.getProperty("MessageId") == null || entry.getProperty("FromUsername") == null) {
+        if (entity.getProperty("MessageId") == null || entity.getProperty("FromUsername") == null) {
           if (Commons.SEQUENCE.containsKey(entitySetName)) {
             messageId = Commons.SEQUENCE.get(entitySetName) + 1;
             res = "MessageId=" + String.valueOf(messageId) + ",FromUsername=1";
@@ -695,35 +695,35 @@ public abstract class AbstractUtilities {
             throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
-          messageId = Integer.valueOf(entry.getProperty("MessageId").getValue().asPrimitive().get());
-          res = "MessageId=" + entry.getProperty("MessageId").getValue().asPrimitive().get()
-                  + ",FromUsername=" + entry.getProperty("FromUsername").getValue().asPrimitive().get();
+          messageId = Integer.valueOf(entity.getProperty("MessageId").getValue().asPrimitive().get());
+          res = "MessageId=" + entity.getProperty("MessageId").getValue().asPrimitive().get()
+                  + ",FromUsername=" + entity.getProperty("FromUsername").getValue().asPrimitive().get();
         }
         Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("Order".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "OrderId");
+        res = getDefaultEntryKey(entitySetName, entity, "OrderId");
       } else if ("Orders".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "OrderID");
+        res = getDefaultEntryKey(entitySetName, entity, "OrderID");
       } else if ("Customer".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "CustomerId");
+        res = getDefaultEntryKey(entitySetName, entity, "CustomerId");
       } else if ("Person".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "PersonId");
+        res = getDefaultEntryKey(entitySetName, entity, "PersonId");
       } else if ("ComputerDetail".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "ComputerDetailId");
+        res = getDefaultEntryKey(entitySetName, entity, "ComputerDetailId");
       } else if ("AllGeoTypesSet".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "Id");
+        res = getDefaultEntryKey(entitySetName, entity, "Id");
       } else if ("CustomerInfo".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "CustomerInfoId");
+        res = getDefaultEntryKey(entitySetName, entity, "CustomerInfoId");
       } else if ("Car".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "VIN");
+        res = getDefaultEntryKey(entitySetName, entity, "VIN");
       } else if ("RowIndex".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "Id");
+        res = getDefaultEntryKey(entitySetName, entity, "Id");
       } else if ("Products".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "ProductID");
+        res = getDefaultEntryKey(entitySetName, entity, "ProductID");
       } else if ("ProductDetails".equals(entitySetName)) {
         int productId;
         int productDetailId;
-        if (entry.getProperty("ProductID") == null || entry.getProperty("ProductDetailID") == null) {
+        if (entity.getProperty("ProductID") == null || entity.getProperty("ProductDetailID") == null) {
           if (Commons.SEQUENCE.containsKey(entitySetName) && Commons.SEQUENCE.containsKey("Products")) {
             productId = Commons.SEQUENCE.get("Products") + 1;
             productDetailId = Commons.SEQUENCE.get(entitySetName) + 1;
@@ -733,17 +733,19 @@ public abstract class AbstractUtilities {
           }
           Commons.SEQUENCE.put(entitySetName, productDetailId);
         } else {
-          productId = Integer.valueOf(entry.getProperty("ProductID").getValue().asPrimitive().get());
-          productDetailId = Integer.valueOf(entry.getProperty("ProductDetailID").getValue().asPrimitive().get());
-          res = "ProductID=" + entry.getProperty("ProductID").getValue().asPrimitive().get()
-                  + ",ProductDetailID=" + entry.getProperty("ProductDetailID").getValue().asPrimitive().get();
+          productId = Integer.valueOf(entity.getProperty("ProductID").getValue().asPrimitive().get());
+          productDetailId = Integer.valueOf(entity.getProperty("ProductDetailID").getValue().asPrimitive().get());
+          res = "ProductID=" + entity.getProperty("ProductID").getValue().asPrimitive().get()
+                  + ",ProductDetailID=" + entity.getProperty("ProductDetailID").getValue().asPrimitive().get();
         }
         Commons.SEQUENCE.put(entitySetName, productDetailId);
         Commons.SEQUENCE.put("Products", productId);
       } else if ("PaymentInstrument".equals(entitySetName)) {
-        res = getDefaultEntryKey(entitySetName, entry, "PaymentInstrumentID");
+        res = getDefaultEntryKey(entitySetName, entity, "PaymentInstrumentID");
       } else if ("Advertisements".equals(entitySetName)) {
         res = UUID.randomUUID().toString();
+      } else if ("People".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entity, "PersonID");
       } else {
         throw new Exception(String.format("EntitySet '%s' not found", entitySetName));
       }

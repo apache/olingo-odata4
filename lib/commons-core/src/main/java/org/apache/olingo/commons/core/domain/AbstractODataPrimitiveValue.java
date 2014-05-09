@@ -95,7 +95,7 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     }
 
     @Override
-    public AbstractODataPrimitiveValue build() {
+    public ODataPrimitiveValue build() {
       if (getInstance().text == null && getInstance().value == null) {
         throw new IllegalArgumentException("Must provide either text or value");
       }
@@ -138,8 +138,18 @@ public abstract class AbstractODataPrimitiveValue extends AbstractODataValue imp
     }
 
     @Override
+    public ODataPrimitiveValue buildInt16(final Short value) {
+      return setType(EdmPrimitiveTypeKind.Int16).setValue(value).build();
+    }
+
+    @Override
     public ODataPrimitiveValue buildInt32(final Integer value) {
       return setType(EdmPrimitiveTypeKind.Int32).setValue(value).build();
+    }
+
+    @Override
+    public ODataPrimitiveValue buildInt64(final Long value) {
+      return setType(EdmPrimitiveTypeKind.Int64).setValue(value).build();
     }
 
     @Override

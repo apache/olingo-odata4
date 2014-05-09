@@ -20,10 +20,18 @@ package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
 
@@ -64,4 +72,73 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
   public void readfromJSON() {
     read(ODataPubFormat.JSON_FULL_METADATA);
   }
+
+  private void createDelete(final ODataPubFormat format) {
+    final ODataEntity customer = client.getObjectFactory().
+            newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("PersonID",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(976)));
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("FirstName",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test")));
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("LastName",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test")));
+
+    final ODataComplexValue<ODataProperty> homeAddress =
+            client.getObjectFactory().newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress");
+    homeAddress.add(client.getObjectFactory().newPrimitiveProperty("Street",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("V.le Gabriele D'Annunzio")));
+    homeAddress.add(client.getObjectFactory().newPrimitiveProperty("City",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
+    homeAddress.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("65127")));
+    homeAddress.add(client.getObjectFactory().newPrimitiveProperty("CompanyName",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Tirasa")));
+    customer.getProperties().add(client.getObjectFactory().newComplexProperty("HomeAddress", homeAddress));
+
+    customer.getProperties().add(client.getObjectFactory().newCollectionProperty("Numbers",
+            client.getObjectFactory().newCollectionValue("Edm.String")));
+    customer.getProperties().add(client.getObjectFactory().newCollectionProperty("Emails",
+            client.getObjectFactory().newCollectionValue("Edm.String")));
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("City",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Birthday",
+            client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("1977-09-08T00:00:00Z").build()));
+    customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("TimeBetweenLastTwoOrders",
+            client.getObjectFactory().newPrimitiveValueBuilder().
+                    setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+
+    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
+            getEntityCreateRequest(
+                    client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People").build(),
+                    customer);
+    createReq.setFormat(format);
+
+    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
+    assertEquals(201, createRes.getStatusCode());
+
+    final ODataEntityRequest<ODataEntity> fetchReq = client.getRetrieveRequestFactory().
+            getEntityRequest(createRes.getBody().getEditLink());
+    fetchReq.setFormat(format);
+
+    final ODataEntity actual = fetchReq.execute().getBody();
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", actual.getTypeName().toString());
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
+            actual.getProperty("HomeAddress").getValue().getTypeName());
+    
+    final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(actual.getEditLink());
+    assertEquals(204, deleteReq.execute().getStatusCode());
+  }
+
+  @Test
+  public void createDeleteAsAtom() {
+    createDelete(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void createDeleteAsJSON() {
+    createDelete(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
 }

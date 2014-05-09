@@ -191,12 +191,18 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       collection(jgen, typeInfo == null ? null : typeInfo.getFullQualifiedName().toString(), value.asCollection());
     } else if (value.isComplex()) {
       jgen.writeStartObject();
+
+      if (typeInfo != null) {
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_TYPE), typeInfo.external(version));
+      }
+
       for (Property property : value.asComplex().get()) {
         valuable(jgen, property, property.getName());
       }
       if (value.isLinkedComplex()) {
         links(value.asLinkedComplex(), jgen);
       }
+      
       jgen.writeEndObject();
     }
   }

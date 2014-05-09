@@ -247,6 +247,8 @@ public class DataBinder {
     } else {
       final EntityType entityType = entryType == null ? null : Commons.getMetadata(version).getEntityType(entryType);
       if (entityType != null) {
+        System.out.println("ZZZZZZZZZZZZZ " + entityType + " " + jsonproperty.getName() + " "
+        + entityType.getProperty(jsonproperty.getName()));
         atomproperty.setType(entityType.getProperty(jsonproperty.getName()).getType());
       }
     }
