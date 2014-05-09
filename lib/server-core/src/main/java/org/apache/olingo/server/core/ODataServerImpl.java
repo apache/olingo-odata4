@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.server.api.ODataServer;
 import org.apache.olingo.server.api.serializer.ODataFormat;
@@ -42,6 +47,17 @@ public class ODataServerImpl extends ODataServer {
     }
 
     return serializer;
+  }
+
+  @Override
+  public void handle(HttpServletRequest req, HttpServletResponse resp) {
+    
+    try {
+      resp.getWriter().print("Hello World!");
+    } catch (IOException e) {
+      throw new ODataRuntimeException(e);
+    }
+    
   }
 
 }

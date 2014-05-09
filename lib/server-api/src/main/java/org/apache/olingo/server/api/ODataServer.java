@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.api;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -44,5 +47,7 @@ public abstract class ODataServer {
   }
 
   public abstract ODataSerializer getSerializer(ODataFormat format);
+
+  public abstract void handle(HttpServletRequest req, HttpServletResponse resp);
 
 }
