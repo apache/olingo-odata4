@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.server.core.testutil.EdmTechProvider;
+import org.apache.olingo.server.core.testutil.techprovider.EdmTechProvider;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.junit.Before;
