@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface GiftCard
   extends Serializable {
 
     
+
     @Key
     @Property(name = "GiftCardID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Integer getGiftCardID();
 
-    void setGiftCardID(final Integer _giftCardID);
+    void setGiftCardID(final Integer _giftCardID);    
     
     
     @Property(name = "GiftCardNO", 
@@ -105,7 +105,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     String getGiftCardNO();
 
-    void setGiftCardNO(final String _giftCardNO);
+    void setGiftCardNO(final String _giftCardNO);    
     
     
     @Property(name = "Amount", 
@@ -128,7 +128,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Double getAmount();
 
-    void setAmount(final Double _amount);
+    void setAmount(final Double _amount);    
     
     
     @Property(name = "ExperationDate", 
@@ -151,7 +151,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Calendar getExperationDate();
 
-    void setExperationDate(final Calendar _experationDate);
+    void setExperationDate(final Calendar _experationDate);    
     
     
 
@@ -169,4 +169,6 @@ public interface GiftCard
 
     
         }
+
+
 }

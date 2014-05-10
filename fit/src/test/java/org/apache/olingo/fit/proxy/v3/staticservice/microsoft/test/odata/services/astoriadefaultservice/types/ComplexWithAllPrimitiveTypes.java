@@ -25,7 +25,6 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -46,6 +45,7 @@ import javax.xml.datatype.Duration;
 @Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @ComplexType(name = "ComplexWithAllPrimitiveTypes")
 public interface ComplexWithAllPrimitiveTypes extends Serializable {
+
 
 
     @Property(name = "Binary", type = "Edm.Binary", nullable = true)
@@ -145,4 +145,5 @@ public interface ComplexWithAllPrimitiveTypes extends Serializable {
     void setGeometryPoint(final Point _geometryPoint);
 
     
+
 }

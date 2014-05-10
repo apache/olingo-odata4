@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface ProductReview
   extends Serializable {
 
                 
+
     @Key
     @Property(name = "ProductID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);
+    void setProductID(final Integer _productID);    
     
     @Key
     @Property(name = "ProductDetailID", 
@@ -105,7 +105,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     Integer getProductDetailID();
 
-    void setProductDetailID(final Integer _productDetailID);
+    void setProductDetailID(final Integer _productDetailID);    
     
     @Key
     @Property(name = "ReviewTitle", 
@@ -128,7 +128,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     String getReviewTitle();
 
-    void setReviewTitle(final String _reviewTitle);
+    void setReviewTitle(final String _reviewTitle);    
     
     @Key
     @Property(name = "RevisionID", 
@@ -151,7 +151,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     Integer getRevisionID();
 
-    void setRevisionID(final Integer _revisionID);
+    void setRevisionID(final Integer _revisionID);    
     
     
     @Property(name = "Comment", 
@@ -174,7 +174,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     String getComment();
 
-    void setComment(final String _comment);
+    void setComment(final String _comment);    
     
     
     @Property(name = "Author", 
@@ -197,9 +197,11 @@ public interface ProductReview
                 fcKeepInContent = false)
     String getAuthor();
 
-    void setAuthor(final String _author);
+    void setAuthor(final String _author);    
     
     
+
+
 
 
 }

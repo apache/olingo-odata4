@@ -81,7 +81,7 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   protected DefaultContainer getContainer() {
     return container;
   }
-
+  
   @Test
   public void exists() {
     assertTrue(getContainer().getCar().exists(15));

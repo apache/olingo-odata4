@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Product
   extends Serializable {
 
     
+
     @Key
     @Property(name = "ProductID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Product
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);
+    void setProductID(final Integer _productID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +105,7 @@ public interface Product
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "QuantityPerUnit", 
@@ -128,7 +128,7 @@ public interface Product
                 fcKeepInContent = false)
     String getQuantityPerUnit();
 
-    void setQuantityPerUnit(final String _quantityPerUnit);
+    void setQuantityPerUnit(final String _quantityPerUnit);    
     
     
     @Property(name = "UnitPrice", 
@@ -151,7 +151,7 @@ public interface Product
                 fcKeepInContent = false)
     Float getUnitPrice();
 
-    void setUnitPrice(final Float _unitPrice);
+    void setUnitPrice(final Float _unitPrice);    
     
     
     @Property(name = "QuantityInStock", 
@@ -174,7 +174,7 @@ public interface Product
                 fcKeepInContent = false)
     Integer getQuantityInStock();
 
-    void setQuantityInStock(final Integer _quantityInStock);
+    void setQuantityInStock(final Integer _quantityInStock);    
     
     
     @Property(name = "Discontinued", 
@@ -197,7 +197,7 @@ public interface Product
                 fcKeepInContent = false)
     Boolean getDiscontinued();
 
-    void setDiscontinued(final Boolean _discontinued);
+    void setDiscontinued(final Boolean _discontinued);    
     
     
     @Property(name = "UserAccess", 
@@ -220,7 +220,7 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel getUserAccess();
 
-    void setUserAccess(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel _userAccess);
+    void setUserAccess(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel _userAccess);    
     
     
     @Property(name = "SkinColor", 
@@ -243,7 +243,7 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color getSkinColor();
 
-    void setSkinColor(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color _skinColor);
+    void setSkinColor(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color _skinColor);    
     
     
     @Property(name = "CoverColors", 
@@ -266,7 +266,7 @@ public interface Product
                 fcKeepInContent = false)
     Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
 
-    void setCoverColors(final Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);
+    void setCoverColors(final Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);    
     
     
 
@@ -301,4 +301,6 @@ public interface Product
             );
 
         }
+
+
 }

@@ -38,7 +38,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractTypeInvocationHandler<C> {
@@ -51,15 +51,16 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
           final Class<?> typeRef,
           final EntityTypeInvocationHandler<?> handler) {
 
-    return new ComplexTypeInvocationHandler(complex, typeRef, handler);
+    return new ComplexTypeInvocationHandler(handler.targetHandler.getClient(), complex, typeRef, handler);
   }
 
-  private ComplexTypeInvocationHandler(
+  public ComplexTypeInvocationHandler(
+          final C client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
           final EntityTypeInvocationHandler<C> handler) {
 
-    super(handler.containerHandler.getClient(), typeRef, complex, handler);
+    super(client, typeRef, complex, handler);
   }
 
   public void setComplex(final ODataComplexValue<?> complex) {
@@ -84,13 +85,12 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
       final CommonODataProperty property = getComplex().get(name);
 
       if (property.hasComplexValue()) {
-
         res = Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {(Class<?>) type},
                 newComplex(name, (Class<?>) type));
 
-        EngineUtils.populate(
+        CoreUtils.populate(
                 client.getCachedEdm(),
                 res,
                 (Class<?>) type,
@@ -98,8 +98,8 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
                 property.getValue().asComplex().iterator());
       } else {
         res = type == null
-                ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
-                : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
+                ? CoreUtils.getValueFromProperty(client, property)
+                : CoreUtils.getValueFromProperty(client, property, type);
       }
 
       return res;
@@ -139,11 +139,11 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
     final EdmTypeInfo type = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(
-            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+                    edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
-    client.getBinder().add(getComplex(), EngineUtils.getODataProperty(client, property.name(), type, value));
+    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, value));
 
-    if (!entityContext.isAttached(targetHandler)) {
+    if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
       entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
     }
   }
@@ -169,6 +169,6 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   @Override
   public boolean isChanged() {
-    return targetHandler.isChanged();
+    return targetHandler == null ? false : targetHandler.isChanged();
   }
 }

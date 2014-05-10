@@ -25,7 +25,6 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -48,6 +47,7 @@ import javax.xml.datatype.Duration;
         isOpenType = false,
         isAbstract = false)
 public interface Address extends Serializable {
+
 
 
     @Property(name = "Street", 
@@ -100,5 +100,6 @@ public interface Address extends Serializable {
     void setPostalCode(final String _postalCode);
 
     
+
 
 }

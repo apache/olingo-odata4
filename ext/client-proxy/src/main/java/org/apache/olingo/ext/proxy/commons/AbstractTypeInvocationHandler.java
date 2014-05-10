@@ -67,6 +67,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
           final Class<?> typeRef,
           final Object internal,
           final EntityContainerInvocationHandler<C> containerHandler) {
+
     super(client, containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
@@ -78,7 +79,8 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
           final Class<?> typeRef,
           final Object internal,
           final EntityTypeInvocationHandler<C> targetHandler) {
-    super(client, targetHandler.containerHandler);
+
+    super(client, targetHandler == null ? null : targetHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
     this.targetHandler = targetHandler;

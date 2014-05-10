@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface CustomerInfo
   extends Serializable {
 
     
+
     @Key
     @Property(name = "CustomerInfoId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface CustomerInfo
                 fcKeepInContent = false)
     Integer getCustomerInfoId();
 
-    void setCustomerInfoId(final Integer _customerInfoId);
+    void setCustomerInfoId(final Integer _customerInfoId);    
     
     
     @Property(name = "Information", 
@@ -105,12 +105,14 @@ public interface CustomerInfo
                 fcKeepInContent = false)
     String getInformation();
 
-    void setInformation(final String _information);
+    void setInformation(final String _information);    
     
     
 
     void setStream(java.io.InputStream stream);
 
     java.io.InputStream getStream();
+
+
 
 }

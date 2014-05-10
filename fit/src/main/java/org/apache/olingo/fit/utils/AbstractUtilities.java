@@ -91,6 +91,8 @@ public abstract class AbstractUtilities {
 
   protected final ODataServiceVersion version;
 
+  protected final Metadata metadata;
+
   protected final FSManager fsManager;
 
   protected final DataBinder dataBinder;
@@ -101,10 +103,11 @@ public abstract class AbstractUtilities {
 
   protected final ObjectMapper mapper;
 
-  public AbstractUtilities(final ODataServiceVersion version) throws Exception {
+  public AbstractUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
     this.version = version;
+    this.metadata = metadata;
     this.fsManager = FSManager.instance(version);
-    this.dataBinder = new DataBinder(version);
+    this.dataBinder = new DataBinder(version, metadata);
     this.atomDeserializer = Commons.getAtomDeserializer(version);
     this.atomSerializer = Commons.getAtomSerializer(version);
     this.mapper = Commons.getJSONMapper(version);
@@ -217,8 +220,7 @@ public abstract class AbstractUtilities {
     IOUtils.copy(is, bos);
     IOUtils.closeQuietly(is);
 
-    final Map<String, NavigationProperty> navigationProperties =
-            Commons.getMetadata(version).getNavigationProperties(entitySetName);
+    final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     // -----------------------------------------
     // 0. Retrieve navigation links to be kept
@@ -363,7 +365,6 @@ public abstract class AbstractUtilities {
 
     final HashSet<String> uris = new HashSet<String>();
 
-    final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     if (navigationProperties.get(linkName).isEntitySet()) {
@@ -610,7 +611,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONEntityType(container.getPayload())));
+                      dataBinder.toJSONEntity(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -702,6 +703,8 @@ public abstract class AbstractUtilities {
         Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("Order".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "OrderId");
+      } else if ("Product".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entity, "ProductId");
       } else if ("Orders".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "OrderID");
       } else if ("Customer".equals(entitySetName)) {
@@ -778,7 +781,6 @@ public abstract class AbstractUtilities {
 
     final LinkInfo linkInfo = new LinkInfo(fsManager.readFile(basePath + linkName, accept));
     linkInfo.setEtag(Commons.getETag(basePath, version));
-    final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     linkInfo.setFeed(navigationProperties.get(linkName.replaceAll("\\(.*\\)", "")).isEntitySet());
@@ -840,7 +842,6 @@ public abstract class AbstractUtilities {
     // --------------------------------
     // 1. Retrieve expanded object (entry or feed)
     // --------------------------------
-    final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     return readEntities(

@@ -29,6 +29,8 @@ public class EntityType extends AbstractMetadataElement {
 
   private String baseType;
 
+  private boolean openType = false;
+
   private final Map<String, Property> properties;
 
   private final Map<String, NavigationProperty> navigationProperties;
@@ -49,6 +51,14 @@ public class EntityType extends AbstractMetadataElement {
 
   public void setBaseType(final String baseType) {
     this.baseType = baseType;
+  }
+
+  public boolean isOpenType() {
+    return openType;
+  }
+
+  public void setOpenType(final boolean openType) {
+    this.openType = openType;
   }
 
   public Collection<NavigationProperty> getNavigationProperties() {

@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Car
   extends Serializable {
 
     
+
     
     @Property(name = "Photo", 
                 type = "Edm.Stream", 
@@ -82,7 +82,7 @@ public interface Car
                 fcKeepInContent = false)
     java.io.InputStream getPhoto();
 
-    void setPhoto(final java.io.InputStream _photo);
+    void setPhoto(final java.io.InputStream _photo);    
     
     
     @Property(name = "Video", 
@@ -105,7 +105,7 @@ public interface Car
                 fcKeepInContent = false)
     java.io.InputStream getVideo();
 
-    void setVideo(final java.io.InputStream _video);
+    void setVideo(final java.io.InputStream _video);    
     
     @Key
     @Property(name = "VIN", 
@@ -128,7 +128,7 @@ public interface Car
                 fcKeepInContent = false)
     Integer getVIN();
 
-    void setVIN(final Integer _vIN);
+    void setVIN(final Integer _vIN);    
     
     
     @Property(name = "Description", 
@@ -151,12 +151,14 @@ public interface Car
                 fcKeepInContent = false)
     String getDescription();
 
-    void setDescription(final String _description);
+    void setDescription(final String _description);    
     
     
 
     void setStream(java.io.InputStream stream);
 
     java.io.InputStream getStream();
+
+
 
 }

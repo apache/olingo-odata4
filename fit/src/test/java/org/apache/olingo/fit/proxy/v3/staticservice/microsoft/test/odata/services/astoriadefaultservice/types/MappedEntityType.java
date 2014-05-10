@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface MappedEntityType
   extends Serializable {
 
     
+
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Integer getId();
 
-    void setId(final Integer _id);
+    void setId(final Integer _id);    
     
     
     @Property(name = "Href", 
@@ -105,7 +105,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     String getHref();
 
-    void setHref(final String _href);
+    void setHref(final String _href);    
     
     
     @Property(name = "Title", 
@@ -128,7 +128,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     String getTitle();
 
-    void setTitle(final String _title);
+    void setTitle(final String _title);    
     
     
     @Property(name = "HrefLang", 
@@ -151,7 +151,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     String getHrefLang();
 
-    void setHrefLang(final String _hrefLang);
+    void setHrefLang(final String _hrefLang);    
     
     
     @Property(name = "Type", 
@@ -174,7 +174,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     String getType();
 
-    void setType(final String _type);
+    void setType(final String _type);    
     
     
     @Property(name = "Length", 
@@ -197,7 +197,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Integer getLength();
 
-    void setLength(final Integer _length);
+    void setLength(final Integer _length);    
     
     
     @Property(name = "BagOfPrimitiveToLinks", 
@@ -220,7 +220,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<String> getBagOfPrimitiveToLinks();
 
-    void setBagOfPrimitiveToLinks(final Collection<String> _bagOfPrimitiveToLinks);
+    void setBagOfPrimitiveToLinks(final Collection<String> _bagOfPrimitiveToLinks);    
     
     
     @Property(name = "Logo", 
@@ -243,7 +243,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     byte[] getLogo();
 
-    void setLogo(final byte[] _logo);
+    void setLogo(final byte[] _logo);    
     
     
     @Property(name = "BagOfDecimals", 
@@ -266,7 +266,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<BigDecimal> getBagOfDecimals();
 
-    void setBagOfDecimals(final Collection<BigDecimal> _bagOfDecimals);
+    void setBagOfDecimals(final Collection<BigDecimal> _bagOfDecimals);    
     
     
     @Property(name = "BagOfDoubles", 
@@ -289,7 +289,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Double> getBagOfDoubles();
 
-    void setBagOfDoubles(final Collection<Double> _bagOfDoubles);
+    void setBagOfDoubles(final Collection<Double> _bagOfDoubles);    
     
     
     @Property(name = "BagOfSingles", 
@@ -312,7 +312,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Float> getBagOfSingles();
 
-    void setBagOfSingles(final Collection<Float> _bagOfSingles);
+    void setBagOfSingles(final Collection<Float> _bagOfSingles);    
     
     
     @Property(name = "BagOfBytes", 
@@ -335,7 +335,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Short> getBagOfBytes();
 
-    void setBagOfBytes(final Collection<Short> _bagOfBytes);
+    void setBagOfBytes(final Collection<Short> _bagOfBytes);    
     
     
     @Property(name = "BagOfInt16s", 
@@ -358,7 +358,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Short> getBagOfInt16s();
 
-    void setBagOfInt16s(final Collection<Short> _bagOfInt16s);
+    void setBagOfInt16s(final Collection<Short> _bagOfInt16s);    
     
     
     @Property(name = "BagOfInt32s", 
@@ -381,7 +381,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Integer> getBagOfInt32s();
 
-    void setBagOfInt32s(final Collection<Integer> _bagOfInt32s);
+    void setBagOfInt32s(final Collection<Integer> _bagOfInt32s);    
     
     
     @Property(name = "BagOfInt64s", 
@@ -404,7 +404,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Long> getBagOfInt64s();
 
-    void setBagOfInt64s(final Collection<Long> _bagOfInt64s);
+    void setBagOfInt64s(final Collection<Long> _bagOfInt64s);    
     
     
     @Property(name = "BagOfGuids", 
@@ -427,7 +427,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<UUID> getBagOfGuids();
 
-    void setBagOfGuids(final Collection<UUID> _bagOfGuids);
+    void setBagOfGuids(final Collection<UUID> _bagOfGuids);    
     
     
     @Property(name = "BagOfDateTime", 
@@ -450,7 +450,7 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<Calendar> getBagOfDateTime();
 
-    void setBagOfDateTime(final Collection<Calendar> _bagOfDateTime);
+    void setBagOfDateTime(final Collection<Calendar> _bagOfDateTime);    
     
     
     @Property(name = "BagOfComplexToCategories", 
@@ -473,8 +473,9 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> getBagOfComplexToCategories();
 
-    void setBagOfComplexToCategories(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);
+    void setBagOfComplexToCategories(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newBagOfComplexToCategories();
+      
     
     
     @Property(name = "ComplexPhone", 
@@ -497,8 +498,9 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getComplexPhone();
 
-    void setComplexPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _complexPhone);
+    void setComplexPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _complexPhone);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newComplexPhone();
+      
     
     
     @Property(name = "ComplexContactDetails", 
@@ -521,10 +523,13 @@ public interface MappedEntityType
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getComplexContactDetails();
 
-    void setComplexContactDetails(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _complexContactDetails);
+    void setComplexContactDetails(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _complexContactDetails);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newComplexContactDetails();
+      
     
     
+
+
 
 
 }

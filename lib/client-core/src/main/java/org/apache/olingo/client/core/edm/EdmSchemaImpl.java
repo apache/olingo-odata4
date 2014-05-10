@@ -34,7 +34,9 @@ import org.apache.olingo.client.api.edm.xml.v4.Annotations;
 import org.apache.olingo.client.api.edm.xml.v4.Function;
 import org.apache.olingo.client.api.edm.xml.v4.Term;
 import org.apache.olingo.client.api.edm.xml.v4.TypeDefinition;
+import org.apache.olingo.client.core.edm.v3.EdmActionProxy;
 import org.apache.olingo.client.core.edm.v3.EdmFunctionProxy;
+import org.apache.olingo.client.core.edm.v3.FunctionImportUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -186,6 +188,20 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
           actions.add(EdmActionImpl.getInstance(edm, new FullQualifiedName(namespace, action.getName()), action));
         }
       }
+    } else {
+      for (EntityContainer providerContainer : schema.getEntityContainers()) {
+        @SuppressWarnings("unchecked")
+        final List<FunctionImport> providerFunctions = (List<FunctionImport>) providerContainer.getFunctionImports();
+        if (providerFunctions != null) {
+          for (FunctionImport functionImport : providerFunctions) {
+            if (!FunctionImportUtils.canProxyFunction(functionImport)) {
+              actions.add(EdmActionProxy.getInstance(edm,
+                      new FullQualifiedName(namespace, functionImport.getName()), functionImport));
+            }
+          }
+        }
+
+      }
     }
     return actions;
   }
@@ -207,9 +223,11 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
         @SuppressWarnings("unchecked")
         final List<FunctionImport> providerFunctions = (List<FunctionImport>) providerContainer.getFunctionImports();
         if (providerFunctions != null) {
-          for (FunctionImport function : providerFunctions) {
-            functions.add(
-                    EdmFunctionProxy.getInstance(edm, new FullQualifiedName(namespace, function.getName()), function));
+          for (FunctionImport functionImport : providerFunctions) {
+            if (FunctionImportUtils.canProxyFunction(functionImport)) {
+              functions.add(EdmFunctionProxy.getInstance(edm,
+                      new FullQualifiedName(namespace, functionImport.getName()), functionImport));
+            }
           }
         }
 

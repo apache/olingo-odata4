@@ -221,7 +221,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
   }
 
   @Override
-  public T get(KEY key) throws IllegalArgumentException {
+  public T get(final KEY key) throws IllegalArgumentException {
     return get(key, typeRef);
   }
 

@@ -49,7 +49,8 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   private static final EdmPrimitiveTypeKind[] NUMBER_TYPES = {
     EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
     EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
-    EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64
+    EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
+    EdmPrimitiveTypeKind.Decimal
   };
 
   private final JSONGeoValueSerializer geoSerializer = new JSONGeoValueSerializer();
@@ -202,7 +203,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
       if (value.isLinkedComplex()) {
         links(value.asLinkedComplex(), jgen);
       }
-      
+
       jgen.writeEndObject();
     }
   }

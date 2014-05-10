@@ -31,6 +31,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.utils.ConstantKey;
@@ -134,7 +135,7 @@ public class Metadata extends AbstractMetadataElement {
     return null;
   }
 
-  public EntityType getEntityType(final String fqn) {
+  public EntityType getEntityOrComplexType(final String fqn) {
     EntityType result = null;
 
     final String ns = StringUtils.substringBeforeLast(fqn, ".");
@@ -301,6 +302,10 @@ public class Metadata extends AbstractMetadataElement {
     final Attribute baseType = start.getAttributeByName(new QName("BaseType"));
     if (baseType != null) {
       entityType.setBaseType(baseType.getValue());
+    }
+    final Attribute openType = start.getAttributeByName(new QName("OpenType"));
+    if (openType != null) {
+      entityType.setOpenType(BooleanUtils.toBoolean(openType.getValue()));
     }
 
     boolean completed = false;

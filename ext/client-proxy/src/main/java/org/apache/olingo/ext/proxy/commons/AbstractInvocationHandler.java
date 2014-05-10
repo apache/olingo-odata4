@@ -48,7 +48,7 @@ import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?>> implements InvocationHandler {
 
@@ -171,7 +171,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
         final ODataValue paramValue = parameter.getValue() == null
                 ? null
-                : EngineUtils.getODataValue(client, type, parameter.getValue());
+                : CoreUtils.getODataValue(client, type, parameter.getValue());
 
         parameterValues.put(parameter.getKey().name(), paramValue);
       }
@@ -199,8 +199,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
 
     if (edmType.isPrimitiveType() || edmType.isComplexType()) {
-      return EngineUtils.getValueFromProperty(
-              client.getCachedEdm(), (CommonODataProperty) result, method.getGenericReturnType());
+      return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType());
     }
     if (edmType.isEntityType()) {
       if (edmType.isCollection()) {

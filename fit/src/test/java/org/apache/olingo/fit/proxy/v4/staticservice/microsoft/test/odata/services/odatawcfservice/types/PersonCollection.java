@@ -26,7 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,25 +43,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface PersonCollection extends AbstractEntityCollection<Person> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "GetHomeAddress",
-                    type = OperationType.FUNCTION,
-                    isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress getHomeAddress(
-            );
-
-    
-          @Operation(name = "ResetAddress",
-                    type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.Person")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person resetAddress(
-                @Parameter(name = "addresses", type = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)", nullable = false) Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address> addresses, 
-                @Parameter(name = "index", type = "Edm.Int32", nullable = false) Integer index
-            );
-
-        }
 }

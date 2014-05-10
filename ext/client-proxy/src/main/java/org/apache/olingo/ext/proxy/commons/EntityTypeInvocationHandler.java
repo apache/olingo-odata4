@@ -38,6 +38,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -45,7 +46,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractTypeInvocationHandler<C> {
@@ -106,7 +107,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             containerHandler.getEntityContainerName(),
             entitySetName,
             entity.getTypeName(),
-            EngineUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client.getCachedEdm(), typeRef, entity));
 
     this.stream = null;
   }
@@ -119,7 +120,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             getUUID().getContainerName(),
             getUUID().getEntitySetName(),
             getUUID().getName(),
-            EngineUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client.getCachedEdm(), typeRef, entity));
 
     this.propertyChanges.clear();
     this.linkChanges.clear();
@@ -208,17 +209,16 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
                 new Class<?>[] {(Class<?>) type},
                 newComplex(name, (Class<?>) type));
 
-        EngineUtils.populate(
+        CoreUtils.populate(
                 client.getCachedEdm(),
                 res,
                 (Class<?>) type,
                 Property.class,
                 property.getValue().asComplex().iterator());
       } else {
-
         res = type == null
-                ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
-                : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
+                ? CoreUtils.getValueFromProperty(client, property)
+                : CoreUtils.getValueFromProperty(client, property, type);
 
         if (res != null) {
           addPropertyChanges(name, res, false);
@@ -257,7 +257,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   @Override
   protected void setPropertyValue(final Property property, final Object value) {
-    if (property.type().equalsIgnoreCase("Edm.Stream")) {
+    if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
       addPropertyChanges(property.name(), value, false);
@@ -318,7 +318,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       if (res == null) {
         final URI link = URIUtils.getURI(
                 containerHandler.getFactory().getServiceRoot(),
-                EngineUtils.getEditMediaLink(property.name(), this.entity).toASCIIString());
+                CoreUtils.getEditMediaLink(property.name(), this.entity).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();

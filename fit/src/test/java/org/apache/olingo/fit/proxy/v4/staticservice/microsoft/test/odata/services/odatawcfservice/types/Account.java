@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Account
   extends Serializable {
 
     
+
     @Key
     @Property(name = "AccountID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Account
                 fcKeepInContent = false)
     Integer getAccountID();
 
-    void setAccountID(final Integer _accountID);
+    void setAccountID(final Integer _accountID);    
     
     
     @Property(name = "Country", 
@@ -105,7 +105,7 @@ public interface Account
                 fcKeepInContent = false)
     String getCountry();
 
-    void setCountry(final String _country);
+    void setCountry(final String _country);    
     
     
     @Property(name = "AccountInfo", 
@@ -128,8 +128,9 @@ public interface Account
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo();
 
-    void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);
+    void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);    
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
+      
     
     
 
@@ -200,4 +201,6 @@ public interface Account
             );
 
         }
+
+
 }

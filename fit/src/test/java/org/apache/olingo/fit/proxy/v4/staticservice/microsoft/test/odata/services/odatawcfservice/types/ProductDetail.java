@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface ProductDetail
   extends Serializable {
 
         
+
     @Key
     @Property(name = "ProductID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);
+    void setProductID(final Integer _productID);    
     
     @Key
     @Property(name = "ProductDetailID", 
@@ -105,7 +105,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     Integer getProductDetailID();
 
-    void setProductDetailID(final Integer _productDetailID);
+    void setProductDetailID(final Integer _productDetailID);    
     
     
     @Property(name = "ProductName", 
@@ -128,7 +128,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     String getProductName();
 
-    void setProductName(final String _productName);
+    void setProductName(final String _productName);    
     
     
     @Property(name = "Description", 
@@ -151,7 +151,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     String getDescription();
 
-    void setDescription(final String _description);
+    void setDescription(final String _description);    
     
     
 
@@ -188,4 +188,6 @@ public interface ProductDetail
 
     
         }
+
+
 }

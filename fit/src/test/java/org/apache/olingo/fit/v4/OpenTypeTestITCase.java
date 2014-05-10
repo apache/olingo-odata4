@@ -139,8 +139,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Single",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildSingle(Float.MAX_VALUE)));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Short",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int16).setValue(Short.MAX_VALUE).build()));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16(Short.MAX_VALUE)));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("Int",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(Integer.MAX_VALUE)));
     getClient().getBinder().add(rowIndex,
@@ -157,12 +156,9 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("RowIndex").appendKeySegment(id);
     rowIndex = read(format, builder.build());
     assertNotNull(rowIndex);
-    assertEquals(EdmPrimitiveTypeKind.Int32,
-            rowIndex.getProperty("Id").getPrimitiveValue().getTypeKind());
-    assertEquals(EdmPrimitiveTypeKind.String,
-            rowIndex.getProperty("aString").getPrimitiveValue().getTypeKind());
-    assertEquals(EdmPrimitiveTypeKind.Boolean,
-            rowIndex.getProperty("aBoolean").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Int32, rowIndex.getProperty("Id").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.String, rowIndex.getProperty("aString").getPrimitiveValue().getTypeKind());
+    assertEquals(EdmPrimitiveTypeKind.Boolean, rowIndex.getProperty("aBoolean").getPrimitiveValue().getTypeKind());
     assertTrue(rowIndex.getProperty("aDouble").hasPrimitiveValue());
     assertTrue(rowIndex.getProperty("aByte").hasPrimitiveValue());
     assertTrue(rowIndex.getProperty("aDate").hasPrimitiveValue());

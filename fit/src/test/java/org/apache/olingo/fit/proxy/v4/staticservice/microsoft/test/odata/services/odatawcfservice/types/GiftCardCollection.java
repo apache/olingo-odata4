@@ -26,7 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,18 +43,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface GiftCardCollection extends AbstractEntityCollection<GiftCard> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "GetActualAmount",
-                    type = OperationType.FUNCTION,
-                    isComposable = false,
-                    returnType = "Edm.Double")
-      Double getActualAmount(
-                @Parameter(name = "bonusRate", type = "Edm.Double", nullable = true) Double bonusRate
-            );
-
-    
-        }
 }

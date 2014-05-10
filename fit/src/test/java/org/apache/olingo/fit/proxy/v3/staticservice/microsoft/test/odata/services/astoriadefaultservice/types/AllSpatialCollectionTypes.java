@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface AllSpatialCollectionTypes
   extends Serializable {
 
     
+
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -82,9 +82,11 @@ public interface AllSpatialCollectionTypes
                 fcKeepInContent = false)
     Integer getId();
 
-    void setId(final Integer _id);
+    void setId(final Integer _id);    
     
     
+
+
 
 
 }

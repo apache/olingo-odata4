@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Locale;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
@@ -67,14 +66,6 @@ public abstract class AbstractTest {
   protected static EntityContainerFactory containerFactory;
 
   protected static DefaultContainer container;
-
-  /**
-   * This is needed for correct number handling (Double, for example).
-   */
-  @BeforeClass
-  public static void setEnglishLocale() {
-    Locale.setDefault(Locale.ENGLISH);
-  }
 
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {

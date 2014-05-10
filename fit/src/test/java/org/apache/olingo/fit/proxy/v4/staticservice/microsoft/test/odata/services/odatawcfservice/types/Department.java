@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Department
   extends Serializable {
 
     
+
     @Key
     @Property(name = "DepartmentID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Department
                 fcKeepInContent = false)
     Integer getDepartmentID();
 
-    void setDepartmentID(final Integer _departmentID);
+    void setDepartmentID(final Integer _departmentID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +105,7 @@ public interface Department
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
 
@@ -117,6 +117,8 @@ public interface Department
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getCompany();
 
     void setCompany(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
+
+
 
 
 

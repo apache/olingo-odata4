@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Message
   extends Serializable {
 
         
+
     @Key
     @Property(name = "MessageId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Message
                 fcKeepInContent = false)
     Integer getMessageId();
 
-    void setMessageId(final Integer _messageId);
+    void setMessageId(final Integer _messageId);    
     
     @Key
     @Property(name = "FromUsername", 
@@ -105,7 +105,7 @@ public interface Message
                 fcKeepInContent = false)
     String getFromUsername();
 
-    void setFromUsername(final String _fromUsername);
+    void setFromUsername(final String _fromUsername);    
     
     
     @Property(name = "ToUsername", 
@@ -128,7 +128,7 @@ public interface Message
                 fcKeepInContent = false)
     String getToUsername();
 
-    void setToUsername(final String _toUsername);
+    void setToUsername(final String _toUsername);    
     
     
     @Property(name = "Sent", 
@@ -151,7 +151,7 @@ public interface Message
                 fcKeepInContent = false)
     Calendar getSent();
 
-    void setSent(final Calendar _sent);
+    void setSent(final Calendar _sent);    
     
     
     @Property(name = "Subject", 
@@ -174,7 +174,7 @@ public interface Message
                 fcKeepInContent = false)
     String getSubject();
 
-    void setSubject(final String _subject);
+    void setSubject(final String _subject);    
     
     
     @Property(name = "Body", 
@@ -197,7 +197,7 @@ public interface Message
                 fcKeepInContent = false)
     String getBody();
 
-    void setBody(final String _body);
+    void setBody(final String _body);    
     
     
     @Property(name = "IsRead", 
@@ -220,7 +220,7 @@ public interface Message
                 fcKeepInContent = false)
     Boolean getIsRead();
 
-    void setIsRead(final Boolean _isRead);
+    void setIsRead(final Boolean _isRead);    
     
     
 
@@ -252,6 +252,8 @@ public interface Message
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection getAttachments();
 
     void setAttachments(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.MessageAttachmentCollection _attachments);
+
+
 
 
 

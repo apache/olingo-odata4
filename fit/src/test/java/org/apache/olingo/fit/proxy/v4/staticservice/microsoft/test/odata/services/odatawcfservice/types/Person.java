@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Person
   extends Serializable {
 
     
+
     @Key
     @Property(name = "PersonID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Person
                 fcKeepInContent = false)
     Integer getPersonID();
 
-    void setPersonID(final Integer _personID);
+    void setPersonID(final Integer _personID);    
     
     
     @Property(name = "FirstName", 
@@ -105,7 +105,7 @@ public interface Person
                 fcKeepInContent = false)
     String getFirstName();
 
-    void setFirstName(final String _firstName);
+    void setFirstName(final String _firstName);    
     
     
     @Property(name = "LastName", 
@@ -128,7 +128,7 @@ public interface Person
                 fcKeepInContent = false)
     String getLastName();
 
-    void setLastName(final String _lastName);
+    void setLastName(final String _lastName);    
     
     
     @Property(name = "MiddleName", 
@@ -151,7 +151,7 @@ public interface Person
                 fcKeepInContent = false)
     String getMiddleName();
 
-    void setMiddleName(final String _middleName);
+    void setMiddleName(final String _middleName);    
     
     
     @Property(name = "HomeAddress", 
@@ -174,8 +174,9 @@ public interface Person
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
-    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);
+    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
+      
     
     
     @Property(name = "Home", 
@@ -198,7 +199,7 @@ public interface Person
                 fcKeepInContent = false)
     Point getHome();
 
-    void setHome(final Point _home);
+    void setHome(final Point _home);    
     
     
     @Property(name = "Numbers", 
@@ -221,7 +222,7 @@ public interface Person
                 fcKeepInContent = false)
     Collection<String> getNumbers();
 
-    void setNumbers(final Collection<String> _numbers);
+    void setNumbers(final Collection<String> _numbers);    
     
     
     @Property(name = "Emails", 
@@ -244,7 +245,7 @@ public interface Person
                 fcKeepInContent = false)
     Collection<String> getEmails();
 
-    void setEmails(final Collection<String> _emails);
+    void setEmails(final Collection<String> _emails);    
     
     
 
@@ -279,4 +280,6 @@ public interface Person
             );
 
         }
+
+
 }

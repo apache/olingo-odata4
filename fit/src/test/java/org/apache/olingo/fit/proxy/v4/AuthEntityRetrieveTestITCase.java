@@ -42,7 +42,7 @@ public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
 
   @BeforeClass
   public static void setupContaner() {
-    containerFactory = EntityContainerFactory.getV3Instance(testAuthServiceRootURL);
+    containerFactory = EntityContainerFactory.getV3(testAuthServiceRootURL);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
   }

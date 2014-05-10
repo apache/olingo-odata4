@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Subscription
   extends Serializable {
 
     
+
     @Key
     @Property(name = "SubscriptionID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Subscription
                 fcKeepInContent = false)
     Integer getSubscriptionID();
 
-    void setSubscriptionID(final Integer _subscriptionID);
+    void setSubscriptionID(final Integer _subscriptionID);    
     
     
     @Property(name = "TemplateGuid", 
@@ -105,7 +105,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getTemplateGuid();
 
-    void setTemplateGuid(final String _templateGuid);
+    void setTemplateGuid(final String _templateGuid);    
     
     
     @Property(name = "Title", 
@@ -128,7 +128,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getTitle();
 
-    void setTitle(final String _title);
+    void setTitle(final String _title);    
     
     
     @Property(name = "Category", 
@@ -151,7 +151,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getCategory();
 
-    void setCategory(final String _category);
+    void setCategory(final String _category);    
     
     
     @Property(name = "CreatedDate", 
@@ -174,9 +174,11 @@ public interface Subscription
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);
+    void setCreatedDate(final Calendar _createdDate);    
     
     
+
+
 
 
 }

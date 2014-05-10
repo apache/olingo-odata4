@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface AllSpatialTypes
   extends Serializable {
 
     
+
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Integer getId();
 
-    void setId(final Integer _id);
+    void setId(final Integer _id);    
     
     
     @Property(name = "Geog", 
@@ -105,7 +105,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Geospatial getGeog();
 
-    void setGeog(final Geospatial _geog);
+    void setGeog(final Geospatial _geog);    
     
     
     @Property(name = "GeogPoint", 
@@ -128,7 +128,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Point getGeogPoint();
 
-    void setGeogPoint(final Point _geogPoint);
+    void setGeogPoint(final Point _geogPoint);    
     
     
     @Property(name = "GeogLine", 
@@ -151,7 +151,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     LineString getGeogLine();
 
-    void setGeogLine(final LineString _geogLine);
+    void setGeogLine(final LineString _geogLine);    
     
     
     @Property(name = "GeogPolygon", 
@@ -174,7 +174,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Polygon getGeogPolygon();
 
-    void setGeogPolygon(final Polygon _geogPolygon);
+    void setGeogPolygon(final Polygon _geogPolygon);    
     
     
     @Property(name = "GeogCollection", 
@@ -197,7 +197,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     GeospatialCollection getGeogCollection();
 
-    void setGeogCollection(final GeospatialCollection _geogCollection);
+    void setGeogCollection(final GeospatialCollection _geogCollection);    
     
     
     @Property(name = "GeogMultiPoint", 
@@ -220,7 +220,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiPoint getGeogMultiPoint();
 
-    void setGeogMultiPoint(final MultiPoint _geogMultiPoint);
+    void setGeogMultiPoint(final MultiPoint _geogMultiPoint);    
     
     
     @Property(name = "GeogMultiLine", 
@@ -243,7 +243,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiLineString getGeogMultiLine();
 
-    void setGeogMultiLine(final MultiLineString _geogMultiLine);
+    void setGeogMultiLine(final MultiLineString _geogMultiLine);    
     
     
     @Property(name = "GeogMultiPolygon", 
@@ -266,7 +266,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiPolygon getGeogMultiPolygon();
 
-    void setGeogMultiPolygon(final MultiPolygon _geogMultiPolygon);
+    void setGeogMultiPolygon(final MultiPolygon _geogMultiPolygon);    
     
     
     @Property(name = "Geom", 
@@ -289,7 +289,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Geospatial getGeom();
 
-    void setGeom(final Geospatial _geom);
+    void setGeom(final Geospatial _geom);    
     
     
     @Property(name = "GeomPoint", 
@@ -312,7 +312,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Point getGeomPoint();
 
-    void setGeomPoint(final Point _geomPoint);
+    void setGeomPoint(final Point _geomPoint);    
     
     
     @Property(name = "GeomLine", 
@@ -335,7 +335,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     LineString getGeomLine();
 
-    void setGeomLine(final LineString _geomLine);
+    void setGeomLine(final LineString _geomLine);    
     
     
     @Property(name = "GeomPolygon", 
@@ -358,7 +358,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     Polygon getGeomPolygon();
 
-    void setGeomPolygon(final Polygon _geomPolygon);
+    void setGeomPolygon(final Polygon _geomPolygon);    
     
     
     @Property(name = "GeomCollection", 
@@ -381,7 +381,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     GeospatialCollection getGeomCollection();
 
-    void setGeomCollection(final GeospatialCollection _geomCollection);
+    void setGeomCollection(final GeospatialCollection _geomCollection);    
     
     
     @Property(name = "GeomMultiPoint", 
@@ -404,7 +404,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiPoint getGeomMultiPoint();
 
-    void setGeomMultiPoint(final MultiPoint _geomMultiPoint);
+    void setGeomMultiPoint(final MultiPoint _geomMultiPoint);    
     
     
     @Property(name = "GeomMultiLine", 
@@ -427,7 +427,7 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiLineString getGeomMultiLine();
 
-    void setGeomMultiLine(final MultiLineString _geomMultiLine);
+    void setGeomMultiLine(final MultiLineString _geomMultiLine);    
     
     
     @Property(name = "GeomMultiPolygon", 
@@ -450,9 +450,11 @@ public interface AllSpatialTypes
                 fcKeepInContent = false)
     MultiPolygon getGeomMultiPolygon();
 
-    void setGeomMultiPolygon(final MultiPolygon _geomMultiPolygon);
+    void setGeomMultiPolygon(final MultiPolygon _geomMultiPolygon);    
     
     
+
+
 
 
 }

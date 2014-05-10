@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface ProductReview
   extends Serializable {
 
             
+
     @Key
     @Property(name = "ProductId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     @Key
     @Property(name = "ReviewId", 
@@ -105,7 +105,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     Integer getReviewId();
 
-    void setReviewId(final Integer _reviewId);
+    void setReviewId(final Integer _reviewId);    
     
     
     @Property(name = "Review", 
@@ -128,7 +128,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     String getReview();
 
-    void setReview(final String _review);
+    void setReview(final String _review);    
     
     @Key
     @Property(name = "RevisionId", 
@@ -151,7 +151,7 @@ public interface ProductReview
                 fcKeepInContent = false)
     String getRevisionId();
 
-    void setRevisionId(final String _revisionId);
+    void setRevisionId(final String _revisionId);    
     
     
 
@@ -163,6 +163,8 @@ public interface ProductReview
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product getProduct();
 
     void setProduct(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
+
+
 
 
 

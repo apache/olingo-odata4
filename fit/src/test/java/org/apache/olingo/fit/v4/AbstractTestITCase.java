@@ -134,7 +134,11 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     assertNotNull(created);
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
 
-    final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(created.getEditLink());
+    final URI deleteURI = created.getEditLink() == null
+            ? getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Orders").appendKeySegment(id).build()
+            : created.getEditLink();
+    final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
     final ODataDeleteResponse deleteRes = deleteReq.execute();
     assertEquals(204, deleteRes.getStatusCode());
   }

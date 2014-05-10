@@ -158,7 +158,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmFunction getFunctionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -173,7 +172,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmAction getActionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -188,7 +186,6 @@ public abstract class AbstractUtility {
   }
 
   public List<EdmFunction> getFunctionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmFunction> result = new ArrayList<EdmFunction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {
@@ -210,7 +207,6 @@ public abstract class AbstractUtility {
   }
 
   public List<EdmAction> getActionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmAction> result = new ArrayList<EdmAction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {

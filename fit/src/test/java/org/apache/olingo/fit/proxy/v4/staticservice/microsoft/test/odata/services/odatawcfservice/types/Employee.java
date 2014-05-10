@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -62,6 +61,7 @@ public interface Employee
   extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person {
 
     
+
     @Key
     @Property(name = "PersonID", 
                 type = "Edm.Int32", 
@@ -83,7 +83,7 @@ public interface Employee
                 fcKeepInContent = false)
     Integer getPersonID();
 
-    void setPersonID(final Integer _personID);
+    void setPersonID(final Integer _personID);    
     
     
     @Property(name = "FirstName", 
@@ -106,7 +106,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getFirstName();
 
-    void setFirstName(final String _firstName);
+    void setFirstName(final String _firstName);    
     
     
     @Property(name = "LastName", 
@@ -129,7 +129,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getLastName();
 
-    void setLastName(final String _lastName);
+    void setLastName(final String _lastName);    
     
     
     @Property(name = "MiddleName", 
@@ -152,7 +152,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getMiddleName();
 
-    void setMiddleName(final String _middleName);
+    void setMiddleName(final String _middleName);    
     
     
     @Property(name = "HomeAddress", 
@@ -175,8 +175,9 @@ public interface Employee
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
-    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);
+    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
+      
     
     
     @Property(name = "Home", 
@@ -199,7 +200,7 @@ public interface Employee
                 fcKeepInContent = false)
     Point getHome();
 
-    void setHome(final Point _home);
+    void setHome(final Point _home);    
     
     
     @Property(name = "Numbers", 
@@ -222,7 +223,7 @@ public interface Employee
                 fcKeepInContent = false)
     Collection<String> getNumbers();
 
-    void setNumbers(final Collection<String> _numbers);
+    void setNumbers(final Collection<String> _numbers);    
     
     
     @Property(name = "Emails", 
@@ -245,7 +246,7 @@ public interface Employee
                 fcKeepInContent = false)
     Collection<String> getEmails();
 
-    void setEmails(final Collection<String> _emails);
+    void setEmails(final Collection<String> _emails);    
     
     
     @Property(name = "DateHired", 
@@ -268,7 +269,7 @@ public interface Employee
                 fcKeepInContent = false)
     Calendar getDateHired();
 
-    void setDateHired(final Calendar _dateHired);
+    void setDateHired(final Calendar _dateHired);    
     
     
     @Property(name = "Office", 
@@ -291,7 +292,7 @@ public interface Employee
                 fcKeepInContent = false)
     Point getOffice();
 
-    void setOffice(final Point _office);
+    void setOffice(final Point _office);    
     
     
 
@@ -313,6 +314,8 @@ public interface Employee
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getCompany();
 
     void setCompany(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
+
+
 
 
 

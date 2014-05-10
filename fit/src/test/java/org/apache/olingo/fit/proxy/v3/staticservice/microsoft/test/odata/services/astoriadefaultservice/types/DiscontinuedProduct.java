@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -62,6 +61,7 @@ public interface DiscontinuedProduct
   extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product {
 
     
+
     
     @Property(name = "Picture", 
                 type = "Edm.Stream", 
@@ -83,7 +83,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     java.io.InputStream getPicture();
 
-    void setPicture(final java.io.InputStream _picture);
+    void setPicture(final java.io.InputStream _picture);    
     
     @Key
     @Property(name = "ProductId", 
@@ -106,7 +106,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     
     @Property(name = "Description", 
@@ -129,7 +129,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     String getDescription();
 
-    void setDescription(final String _description);
+    void setDescription(final String _description);    
     
     
     @Property(name = "Dimensions", 
@@ -152,8 +152,9 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
-    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);
+    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+      
     
     
     @Property(name = "BaseConcurrency", 
@@ -176,7 +177,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     String getBaseConcurrency();
 
-    void setBaseConcurrency(final String _baseConcurrency);
+    void setBaseConcurrency(final String _baseConcurrency);    
     
     
     @Property(name = "ComplexConcurrency", 
@@ -199,8 +200,9 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getComplexConcurrency();
 
-    void setComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);
+    void setComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newComplexConcurrency();
+      
     
     
     @Property(name = "NestedComplexConcurrency", 
@@ -223,8 +225,9 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getNestedComplexConcurrency();
 
-    void setNestedComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);
+    void setNestedComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newNestedComplexConcurrency();
+      
     
     
     @Property(name = "Discontinued", 
@@ -247,7 +250,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     Calendar getDiscontinued();
 
-    void setDiscontinued(final Calendar _discontinued);
+    void setDiscontinued(final Calendar _discontinued);    
     
     
     @Property(name = "ReplacementProductId", 
@@ -270,7 +273,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     Integer getReplacementProductId();
 
-    void setReplacementProductId(final Integer _replacementProductId);
+    void setReplacementProductId(final Integer _replacementProductId);    
     
     
     @Property(name = "DiscontinuedPhone", 
@@ -293,8 +296,9 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getDiscontinuedPhone();
 
-    void setDiscontinuedPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _discontinuedPhone);
+    void setDiscontinuedPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _discontinuedPhone);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newDiscontinuedPhone();
+      
     
     
     @Property(name = "ChildConcurrencyToken", 
@@ -317,7 +321,7 @@ public interface DiscontinuedProduct
                 fcKeepInContent = false)
     String getChildConcurrencyToken();
 
-    void setChildConcurrencyToken(final String _childConcurrencyToken);
+    void setChildConcurrencyToken(final String _childConcurrencyToken);    
     
     
 
@@ -359,6 +363,8 @@ public interface DiscontinuedProduct
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection getPhotos();
 
     void setPhotos(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ProductPhotoCollection _photos);
+
+
 
 
 

@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface OrderDetail
   extends Serializable {
 
         
+
     @Key
     @Property(name = "OrderID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getOrderID();
 
-    void setOrderID(final Integer _orderID);
+    void setOrderID(final Integer _orderID);    
     
     @Key
     @Property(name = "ProductID", 
@@ -105,7 +105,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);
+    void setProductID(final Integer _productID);    
     
     
     @Property(name = "OrderPlaced", 
@@ -128,7 +128,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Calendar getOrderPlaced();
 
-    void setOrderPlaced(final Calendar _orderPlaced);
+    void setOrderPlaced(final Calendar _orderPlaced);    
     
     
     @Property(name = "Quantity", 
@@ -151,7 +151,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getQuantity();
 
-    void setQuantity(final Integer _quantity);
+    void setQuantity(final Integer _quantity);    
     
     
     @Property(name = "UnitPrice", 
@@ -174,7 +174,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Float getUnitPrice();
 
-    void setUnitPrice(final Float _unitPrice);
+    void setUnitPrice(final Float _unitPrice);    
     
     
 
@@ -196,6 +196,8 @@ public interface OrderDetail
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order getAssociatedOrder();
 
     void setAssociatedOrder(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order _associatedOrder);
+
+
 
 
 

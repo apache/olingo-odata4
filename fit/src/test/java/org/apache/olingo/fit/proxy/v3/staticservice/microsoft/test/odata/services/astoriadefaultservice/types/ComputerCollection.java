@@ -26,7 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,17 +43,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface ComputerCollection extends AbstractEntityCollection<Computer> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "GetComputer",
-                    type = OperationType.FUNCTION,
-                    isComposable = false,
-                    returnType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer")
-      org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer getComputer(
-            );
-
-    
-        }
 }

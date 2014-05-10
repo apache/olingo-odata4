@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -62,6 +61,7 @@ public interface PublicCompany
   extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company {
 
     
+
     @Key
     @Property(name = "CompanyID", 
                 type = "Edm.Int32", 
@@ -83,7 +83,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     Integer getCompanyID();
 
-    void setCompanyID(final Integer _companyID);
+    void setCompanyID(final Integer _companyID);    
     
     
     @Property(name = "CompanyCategory", 
@@ -106,7 +106,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory getCompanyCategory();
 
-    void setCompanyCategory(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);
+    void setCompanyCategory(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);    
     
     
     @Property(name = "Revenue", 
@@ -129,7 +129,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     Long getRevenue();
 
-    void setRevenue(final Long _revenue);
+    void setRevenue(final Long _revenue);    
     
     
     @Property(name = "Name", 
@@ -152,7 +152,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "Address", 
@@ -175,8 +175,9 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
-    void setAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);
+    void setAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
+      
     
     
     @Property(name = "StockExchange", 
@@ -199,7 +200,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     String getStockExchange();
 
-    void setStockExchange(final String _stockExchange);
+    void setStockExchange(final String _stockExchange);    
     
     
 
@@ -271,6 +272,8 @@ public interface PublicCompany
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion getLabourUnion();
 
     void setLabourUnion(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion _labourUnion);
+
+
 
 
 

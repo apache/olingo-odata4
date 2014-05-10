@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface StoredPI
   extends Serializable {
 
     
+
     @Key
     @Property(name = "StoredPIID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     Integer getStoredPIID();
 
-    void setStoredPIID(final Integer _storedPIID);
+    void setStoredPIID(final Integer _storedPIID);    
     
     
     @Property(name = "PIName", 
@@ -105,7 +105,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     String getPIName();
 
-    void setPIName(final String _pIName);
+    void setPIName(final String _pIName);    
     
     
     @Property(name = "PIType", 
@@ -128,7 +128,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     String getPIType();
 
-    void setPIType(final String _pIType);
+    void setPIType(final String _pIType);    
     
     
     @Property(name = "CreatedDate", 
@@ -151,9 +151,11 @@ public interface StoredPI
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);
+    void setCreatedDate(final Calendar _createdDate);    
     
     
+
+
 
 
 }

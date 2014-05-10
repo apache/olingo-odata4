@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Asset
   extends Serializable {
 
     
+
     @Key
     @Property(name = "AssetID", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Asset
                 fcKeepInContent = false)
     Integer getAssetID();
 
-    void setAssetID(final Integer _assetID);
+    void setAssetID(final Integer _assetID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +105,7 @@ public interface Asset
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "Number", 
@@ -128,9 +128,11 @@ public interface Asset
                 fcKeepInContent = false)
     Integer getNumber();
 
-    void setNumber(final Integer _number);
+    void setNumber(final Integer _number);    
     
     
+
+
 
 
 }

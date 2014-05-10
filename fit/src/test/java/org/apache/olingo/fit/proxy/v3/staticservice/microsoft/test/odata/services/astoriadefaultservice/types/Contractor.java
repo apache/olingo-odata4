@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -62,6 +61,7 @@ public interface Contractor
   extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person {
 
     
+
     @Key
     @Property(name = "PersonId", 
                 type = "Edm.Int32", 
@@ -83,7 +83,7 @@ public interface Contractor
                 fcKeepInContent = false)
     Integer getPersonId();
 
-    void setPersonId(final Integer _personId);
+    void setPersonId(final Integer _personId);    
     
     
     @Property(name = "Name", 
@@ -106,7 +106,7 @@ public interface Contractor
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "ContratorCompanyId", 
@@ -129,7 +129,7 @@ public interface Contractor
                 fcKeepInContent = false)
     Integer getContratorCompanyId();
 
-    void setContratorCompanyId(final Integer _contratorCompanyId);
+    void setContratorCompanyId(final Integer _contratorCompanyId);    
     
     
     @Property(name = "BillingRate", 
@@ -152,7 +152,7 @@ public interface Contractor
                 fcKeepInContent = false)
     Integer getBillingRate();
 
-    void setBillingRate(final Integer _billingRate);
+    void setBillingRate(final Integer _billingRate);    
     
     
     @Property(name = "TeamContactPersonId", 
@@ -175,7 +175,7 @@ public interface Contractor
                 fcKeepInContent = false)
     Integer getTeamContactPersonId();
 
-    void setTeamContactPersonId(final Integer _teamContactPersonId);
+    void setTeamContactPersonId(final Integer _teamContactPersonId);    
     
     
     @Property(name = "JobDescription", 
@@ -198,7 +198,7 @@ public interface Contractor
                 fcKeepInContent = false)
     String getJobDescription();
 
-    void setJobDescription(final String _jobDescription);
+    void setJobDescription(final String _jobDescription);    
     
     
 
@@ -210,6 +210,8 @@ public interface Contractor
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection getPersonMetadata();
 
     void setPersonMetadata(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.PersonMetadataCollection _personMetadata);
+
+
 
 
 

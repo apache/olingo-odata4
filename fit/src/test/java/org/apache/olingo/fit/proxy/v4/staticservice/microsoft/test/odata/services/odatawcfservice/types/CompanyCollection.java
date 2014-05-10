@@ -26,7 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,24 +43,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface CompanyCollection extends AbstractEntityCollection<Company> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "GetEmployeesCount",
-                    type = OperationType.FUNCTION,
-                    isComposable = false,
-                    returnType = "Edm.Int32")
-      Integer getEmployeesCount(
-            );
-
-    
-          @Operation(name = "IncreaseRevenue",
-                    type = OperationType.ACTION,
-                    returnType = "Edm.Int64")
-      Long increaseRevenue(
-                @Parameter(name = "IncreaseValue", type = "Edm.Int64", nullable = true) Long increaseValue
-            );
-
-        }
 }

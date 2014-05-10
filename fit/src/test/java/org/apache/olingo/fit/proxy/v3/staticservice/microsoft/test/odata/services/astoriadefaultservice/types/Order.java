@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface Order
   extends Serializable {
 
     
+
     @Key
     @Property(name = "OrderId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getOrderId();
 
-    void setOrderId(final Integer _orderId);
+    void setOrderId(final Integer _orderId);    
     
     
     @Property(name = "CustomerId", 
@@ -105,7 +105,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);
+    void setCustomerId(final Integer _customerId);    
     
     
     @Property(name = "Concurrency", 
@@ -128,8 +128,9 @@ public interface Order
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getConcurrency();
 
-    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
+    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
+      
     
     
 
@@ -151,6 +152,8 @@ public interface Order
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer getCustomer();
 
     void setCustomer(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer _customer);
+
+
 
 
 

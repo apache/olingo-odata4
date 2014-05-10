@@ -59,7 +59,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.context.AttachedEntity;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityLinkDesc;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,7 +313,7 @@ class ContainerImpl implements Container {
 
     if (AttachedEntityStatus.DELETED != currentStatus) {
       entity.getProperties().clear();
-      EngineUtils.addProperties(client, handler.getPropertyChanges(), entity);
+      CoreUtils.addProperties(client, handler.getPropertyChanges(), entity);
     }
 
     for (Map.Entry<NavigationProperty, Object> property : handler.getLinkChanges().entrySet()) {
@@ -409,7 +409,7 @@ class ContainerImpl implements Container {
       final URI targetURI = currentStatus == AttachedEntityStatus.NEW
               ? URI.create("$" + startingPos) : URIUtils.getURI(
                       factory.getServiceRoot(),
-                      EngineUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
+                      CoreUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
 
       batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 

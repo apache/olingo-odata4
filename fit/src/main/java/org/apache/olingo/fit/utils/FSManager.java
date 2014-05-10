@@ -98,8 +98,8 @@ public class FSManager {
     return memObject;
   }
 
-  public void putInMemory(final ResWrap<AtomEntityImpl> container, final String relativePath)
-          throws IOException {
+  public void putInMemory(final ResWrap<AtomEntityImpl> container, final String relativePath,
+          final DataBinder dataBinder) throws IOException {
     try {
       final AtomSerializer atomSerializer = Commons.getAtomSerializer(version);
 
@@ -117,7 +117,7 @@ public class FSManager {
               writer, new JSONEntryContainer(
                       container.getContextURL(),
                       container.getMetadataETag(),
-                      new DataBinder(version).toJSONEntityType(container.getPayload())));
+                      dataBinder.toJSONEntity(container.getPayload())));
 
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
     } catch (Exception e) {

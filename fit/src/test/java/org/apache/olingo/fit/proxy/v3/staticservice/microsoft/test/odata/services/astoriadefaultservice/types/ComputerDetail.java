@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface ComputerDetail
   extends Serializable {
 
     
+
     @Key
     @Property(name = "ComputerDetailId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     Integer getComputerDetailId();
 
-    void setComputerDetailId(final Integer _computerDetailId);
+    void setComputerDetailId(final Integer _computerDetailId);    
     
     
     @Property(name = "Manufacturer", 
@@ -105,7 +105,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     String getManufacturer();
 
-    void setManufacturer(final String _manufacturer);
+    void setManufacturer(final String _manufacturer);    
     
     
     @Property(name = "Model", 
@@ -128,7 +128,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     String getModel();
 
-    void setModel(final String _model);
+    void setModel(final String _model);    
     
     
     @Property(name = "Serial", 
@@ -151,7 +151,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     String getSerial();
 
-    void setSerial(final String _serial);
+    void setSerial(final String _serial);    
     
     
     @Property(name = "SpecificationsBag", 
@@ -174,7 +174,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     Collection<String> getSpecificationsBag();
 
-    void setSpecificationsBag(final Collection<String> _specificationsBag);
+    void setSpecificationsBag(final Collection<String> _specificationsBag);    
     
     
     @Property(name = "PurchaseDate", 
@@ -197,7 +197,7 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     Calendar getPurchaseDate();
 
-    void setPurchaseDate(final Calendar _purchaseDate);
+    void setPurchaseDate(final Calendar _purchaseDate);    
     
     
     @Property(name = "Dimensions", 
@@ -220,8 +220,9 @@ public interface ComputerDetail
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
-    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);
+    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+      
     
     
 
@@ -239,14 +240,15 @@ public interface ComputerDetail
     Operations operations();
 
     public interface Operations {
+    
           @Operation(name = "ResetComputerDetailsSpecifications",
-                    type = OperationType.FUNCTION,
-                    isComposable = false)
+                    type = OperationType.ACTION)
       void resetComputerDetailsSpecifications(
                 @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) Collection<String> specifications, 
                 @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) Calendar purchaseTime
             );
 
-    
         }
+
+
 }

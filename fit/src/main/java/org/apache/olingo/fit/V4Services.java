@@ -74,9 +74,11 @@ import org.apache.olingo.commons.core.data.JSONEntityImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
@@ -103,7 +105,11 @@ public class V4Services extends AbstractServices {
   private Map<String, String> providedAsync = new HashMap<String, String>();
 
   public V4Services() throws Exception {
-    super(ODataServiceVersion.V40);
+    super(ODataServiceVersion.V40, Commons.getMetadata(ODataServiceVersion.V40));
+  }
+
+  protected V4Services(final Metadata metadata) throws Exception {
+    super(ODataServiceVersion.V40, metadata);
   }
 
   @GET
@@ -224,7 +230,7 @@ public class V4Services extends AbstractServices {
       final String basePath = name + File.separatorChar;
       final StringBuilder path = new StringBuilder(basePath);
 
-      path.append(getMetadataObj().getEntitySet(name).isSingleton()
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -821,7 +827,7 @@ public class V4Services extends AbstractServices {
                 entry);
       }
 
-      final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(getMetadataObj().
+      final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(metadata.
               getNavigationProperties("Accounts").get(containedEntitySetName).getType()).build();
       final String entityKey = getUtilities(contentTypeValue).
               getDefaultEntryKey(contained.getFullQualifiedName().getName(), entry);
@@ -902,8 +908,8 @@ public class V4Services extends AbstractServices {
         container = atomDeserializer.read(IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntityImpl.class);
         entryChanges = container.getPayload();
       } else {
-        final String entityType = getMetadataObj().getEntitySet(entitySetName).getType();
-        final String containedType = getMetadataObj().getEntityType(entityType).
+        final String entityType = metadata.getEntitySet(entitySetName).getType();
+        final String containedType = metadata.getEntityOrComplexType(entityType).
                 getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
@@ -923,7 +929,8 @@ public class V4Services extends AbstractServices {
       }
 
       FSManager.instance(version).putInMemory(new ResWrap<AtomEntityImpl>((URI) null, null, original),
-              xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")");
+              xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")",
+              dataBinder);
 
       return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {

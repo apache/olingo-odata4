@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomEntityImpl;
 import org.apache.olingo.commons.core.data.AtomEntitySetImpl;
@@ -47,8 +48,11 @@ public class DataBinder {
 
   private final ODataServiceVersion version;
 
-  public DataBinder(final ODataServiceVersion version) {
+  private final Metadata metadata;
+
+  public DataBinder(final ODataServiceVersion version, final Metadata metadata) {
     this.version = version;
+    this.metadata = metadata;
   }
 
   public JSONEntitySetImpl toJSONEntitySet(final AtomEntitySetImpl atomEntitySet) {
@@ -61,7 +65,7 @@ public class DataBinder {
 
     final Collection<Entity> entries = jsonEntitySet.getEntities();
     for (Entity entity : atomEntitySet.getEntities()) {
-      entries.add(toJSONEntityType((AtomEntityImpl) entity));
+      entries.add(toJSONEntity((AtomEntityImpl) entity));
     }
 
     return jsonEntitySet;
@@ -83,10 +87,14 @@ public class DataBinder {
     return atomEntitySet;
   }
 
-  public JSONEntityImpl toJSONEntityType(final AtomEntityImpl atomEntity) {
+  public JSONEntityImpl toJSONEntity(final AtomEntityImpl atomEntity) {
     final JSONEntityImpl jsonEntity = new JSONEntityImpl();
 
     BeanUtils.copyProperties(atomEntity, jsonEntity, "baseURI", "properties", "links");
+    // This shouldn't ever happen, but...
+    if (atomEntity.getType() != null && atomEntity.getType().startsWith("Collection(")) {
+      jsonEntity.setType(atomEntity.getType().replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
+    }
     jsonEntity.setBaseURI(atomEntity.getBaseURI() == null ? null : atomEntity.getBaseURI().toASCIIString());
     jsonEntity.getOperations().addAll(atomEntity.getOperations());
 
@@ -100,7 +108,7 @@ public class DataBinder {
       if (link.getInlineEntity() instanceof AtomEntityImpl) {
         final Entity inlineEntity = link.getInlineEntity();
         if (inlineEntity instanceof AtomEntityImpl) {
-          jlink.setInlineEntity(toJSONEntityType((AtomEntityImpl) link.getInlineEntity()));
+          jlink.setInlineEntity(toJSONEntity((AtomEntityImpl) link.getInlineEntity()));
         }
       } else if (link.getInlineEntitySet() instanceof AtomEntitySetImpl) {
         final EntitySet inlineEntitySet = link.getInlineEntitySet();
@@ -123,8 +131,6 @@ public class DataBinder {
   public AtomEntityImpl toAtomEntity(final JSONEntityImpl jsonEntity) {
     final AtomEntityImpl atomEntity = new AtomEntityImpl();
 
-    final Metadata metadata = Commons.getMetadata(version);
-
     BeanUtils.copyProperties(jsonEntity, atomEntity, "baseURI", "properties", "links");
     atomEntity.setBaseURI(jsonEntity.getBaseURI() == null ? null : jsonEntity.getBaseURI().toASCIIString());
 
@@ -134,7 +140,7 @@ public class DataBinder {
       alink.setTitle(link.getTitle());
 
       final NavigationProperty navPropDetails =
-              metadata.getEntityType(jsonEntity.getType()).getNavigationProperty(link.getTitle());
+              metadata.getEntityOrComplexType(jsonEntity.getType()).getNavigationProperty(link.getTitle());
 
       alink.setType(navPropDetails != null && navPropDetails.isEntitySet()
               ? Constants.get(ConstantKey.ATOM_LINK_FEED) : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
@@ -156,7 +162,7 @@ public class DataBinder {
     }
 
     final EntityType entityType = StringUtils.isBlank(jsonEntity.getType())
-            ? null : metadata.getEntityType(jsonEntity.getType());
+            ? null : metadata.getEntityOrComplexType(jsonEntity.getType());
     final Map<String, NavigationProperty> navProperties = entityType == null
             ? Collections.<String, NavigationProperty>emptyMap() : entityType.getNavigationPropertyMap();
 
@@ -238,49 +244,50 @@ public class DataBinder {
     return jsonproperty;
   }
 
-  public AtomPropertyImpl toAtomProperty(final JSONPropertyImpl jsonproperty, final String entryType) {
+  public AtomPropertyImpl toAtomProperty(final JSONPropertyImpl jsonProperty, final String entryType) {
     final AtomPropertyImpl atomproperty = new AtomPropertyImpl();
-    atomproperty.setName(jsonproperty.getName());
+    atomproperty.setName(jsonProperty.getName());
 
-    if (StringUtils.isNotBlank(jsonproperty.getType())) {
-      atomproperty.setType(jsonproperty.getType());
-    } else {
-      final EntityType entityType = entryType == null ? null : Commons.getMetadata(version).getEntityType(entryType);
-      if (entityType != null) {
-        System.out.println("ZZZZZZZZZZZZZ " + entityType + " " + jsonproperty.getName() + " "
-        + entityType.getProperty(jsonproperty.getName()));
-        atomproperty.setType(entityType.getProperty(jsonproperty.getName()).getType());
-      }
+    final EntityType entityType = entryType == null
+            ? null
+            : metadata.getEntityOrComplexType(entryType.replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
+
+    // For non-primitive types, alwasy trust what was sent - if available; otherwise, search metadata
+    if (StringUtils.isNotBlank(jsonProperty.getType())
+            && ((entityType != null && entityType.isOpenType())
+            || jsonProperty.getName() == null
+            || !jsonProperty.getType().startsWith(EdmPrimitiveType.EDM_NAMESPACE))) {
+
+      atomproperty.setType(jsonProperty.getType());
+    } else if (entityType != null) {
+      atomproperty.setType(entityType.getProperty(jsonProperty.getName()).getType());
     }
 
-    if (jsonproperty.getValue().isComplex()) {
+    if (jsonProperty.getValue().isComplex()) {
       final ComplexValueImpl complex = new ComplexValueImpl();
       atomproperty.setValue(complex);
 
-      for (Property field : jsonproperty.getValue().asComplex().get()) {
+      for (Property field : jsonProperty.getValue().asComplex().get()) {
         complex.get().add(toAtomProperty((JSONPropertyImpl) field, atomproperty.getType()));
       }
-    } else if (jsonproperty.getValue().isCollection()) {
+    } else if (jsonProperty.getValue().isCollection()) {
       final CollectionValueImpl collection = new CollectionValueImpl();
       atomproperty.setValue(collection);
 
-      for (Value element : jsonproperty.getValue().asCollection().get()) {
+      for (Value element : jsonProperty.getValue().asCollection().get()) {
         if (element instanceof ComplexValueImpl) {
           final ComplexValueImpl complex = new ComplexValueImpl();
           collection.get().add(complex);
 
           for (Property field : element.asComplex().get()) {
-            complex.get().add(toAtomProperty((JSONPropertyImpl) field,
-                    atomproperty.getType() == null
-                    ? null
-                    : atomproperty.getType().replaceAll("^Collection\\(", "").replaceAll("\\)$", "")));
+            complex.get().add(toAtomProperty((JSONPropertyImpl) field, atomproperty.getType()));
           }
         } else {
           collection.get().add(element);
         }
       }
     } else {
-      atomproperty.setValue(jsonproperty.getValue());
+      atomproperty.setValue(jsonProperty.getValue());
     }
 
     return atomproperty;

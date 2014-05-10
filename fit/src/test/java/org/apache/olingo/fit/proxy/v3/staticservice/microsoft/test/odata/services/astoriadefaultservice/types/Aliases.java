@@ -25,7 +25,6 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -48,10 +47,12 @@ import javax.xml.datatype.Duration;
 public interface Aliases extends Serializable {
 
 
+
     @Property(name = "AlternativeNames", type = "Edm.String", nullable = false)
     Collection<String> getAlternativeNames();
 
     void setAlternativeNames(final Collection<String> _alternativeNames);
 
     
+
 }

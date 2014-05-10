@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface PageView
   extends Serializable {
 
     
+
     @Key
     @Property(name = "PageViewId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface PageView
                 fcKeepInContent = false)
     Integer getPageViewId();
 
-    void setPageViewId(final Integer _pageViewId);
+    void setPageViewId(final Integer _pageViewId);    
     
     
     @Property(name = "Username", 
@@ -105,7 +105,7 @@ public interface PageView
                 fcKeepInContent = false)
     String getUsername();
 
-    void setUsername(final String _username);
+    void setUsername(final String _username);    
     
     
     @Property(name = "Viewed", 
@@ -128,7 +128,7 @@ public interface PageView
                 fcKeepInContent = false)
     Calendar getViewed();
 
-    void setViewed(final Calendar _viewed);
+    void setViewed(final Calendar _viewed);    
     
     
     @Property(name = "TimeSpentOnPage", 
@@ -151,7 +151,7 @@ public interface PageView
                 fcKeepInContent = false)
     Duration getTimeSpentOnPage();
 
-    void setTimeSpentOnPage(final Duration _timeSpentOnPage);
+    void setTimeSpentOnPage(final Duration _timeSpentOnPage);    
     
     
     @Property(name = "PageUrl", 
@@ -174,7 +174,7 @@ public interface PageView
                 fcKeepInContent = false)
     String getPageUrl();
 
-    void setPageUrl(final String _pageUrl);
+    void setPageUrl(final String _pageUrl);    
     
     
 
@@ -186,6 +186,8 @@ public interface PageView
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
     void setLogin(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+
+
 
 
 

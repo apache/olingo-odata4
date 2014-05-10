@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface PersonMetadata
   extends Serializable {
 
     
+
     @Key
     @Property(name = "PersonMetadataId", 
                 type = "Edm.Int32", 
@@ -82,7 +82,7 @@ public interface PersonMetadata
                 fcKeepInContent = false)
     Integer getPersonMetadataId();
 
-    void setPersonMetadataId(final Integer _personMetadataId);
+    void setPersonMetadataId(final Integer _personMetadataId);    
     
     
     @Property(name = "PersonId", 
@@ -105,7 +105,7 @@ public interface PersonMetadata
                 fcKeepInContent = false)
     Integer getPersonId();
 
-    void setPersonId(final Integer _personId);
+    void setPersonId(final Integer _personId);    
     
     
     @Property(name = "PropertyName", 
@@ -128,7 +128,7 @@ public interface PersonMetadata
                 fcKeepInContent = false)
     String getPropertyName();
 
-    void setPropertyName(final String _propertyName);
+    void setPropertyName(final String _propertyName);    
     
     
     @Property(name = "PropertyValue", 
@@ -151,7 +151,7 @@ public interface PersonMetadata
                 fcKeepInContent = false)
     String getPropertyValue();
 
-    void setPropertyValue(final String _propertyValue);
+    void setPropertyValue(final String _propertyValue);    
     
     
 
@@ -163,6 +163,8 @@ public interface PersonMetadata
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person getPerson();
 
     void setPerson(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person _person);
+
+
 
 
 

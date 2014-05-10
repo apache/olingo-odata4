@@ -34,7 +34,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -61,6 +60,7 @@ public interface MessageAttachment
   extends Serializable {
 
     
+
     @Key
     @Property(name = "AttachmentId", 
                 type = "Edm.Guid", 
@@ -82,7 +82,7 @@ public interface MessageAttachment
                 fcKeepInContent = false)
     UUID getAttachmentId();
 
-    void setAttachmentId(final UUID _attachmentId);
+    void setAttachmentId(final UUID _attachmentId);    
     
     
     @Property(name = "Attachment", 
@@ -105,9 +105,11 @@ public interface MessageAttachment
                 fcKeepInContent = false)
     byte[] getAttachment();
 
-    void setAttachment(final byte[] _attachment);
+    void setAttachment(final byte[] _attachment);    
     
     
+
+
 
 
 }
