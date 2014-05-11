@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -47,8 +48,8 @@ import javax.xml.datatype.Duration;
         isOpenType = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
-public interface CompanyAddress extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address {
-
+public interface CompanyAddress 
+    extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address {
 
 
     @Property(name = "Street", 

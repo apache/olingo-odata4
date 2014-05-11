@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface AllSpatialCollectionTypes
   extends Serializable {
 
     
-
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -85,7 +85,6 @@ public interface AllSpatialCollectionTypes
     void setId(final Integer _id);    
     
     
-
 
 
 

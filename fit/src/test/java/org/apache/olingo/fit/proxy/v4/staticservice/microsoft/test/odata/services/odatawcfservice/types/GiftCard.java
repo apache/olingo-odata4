@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface GiftCard
   extends Serializable {
 
     
-
     @Key
     @Property(name = "GiftCardID", 
                 type = "Edm.Int32", 
@@ -156,9 +156,9 @@ public interface GiftCard
     
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
           @Operation(name = "GetActualAmount",
                     type = OperationType.FUNCTION,
                     isComposable = false,
@@ -169,6 +169,5 @@ public interface GiftCard
 
     
         }
-
 
 }

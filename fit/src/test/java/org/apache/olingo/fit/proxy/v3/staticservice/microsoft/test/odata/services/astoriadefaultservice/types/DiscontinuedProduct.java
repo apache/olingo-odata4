@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -61,7 +62,6 @@ public interface DiscontinuedProduct
   extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product {
 
     
-
     
     @Property(name = "Picture", 
                 type = "Edm.Stream", 
@@ -153,9 +153,7 @@ public interface DiscontinuedProduct
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
     void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
-      
-    
+        
     
     @Property(name = "BaseConcurrency", 
                 type = "Edm.String", 
@@ -201,9 +199,7 @@ public interface DiscontinuedProduct
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getComplexConcurrency();
 
     void setComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newComplexConcurrency();
-      
-    
+        
     
     @Property(name = "NestedComplexConcurrency", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
@@ -226,9 +222,7 @@ public interface DiscontinuedProduct
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getNestedComplexConcurrency();
 
     void setNestedComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newNestedComplexConcurrency();
-      
-    
+        
     
     @Property(name = "Discontinued", 
                 type = "Edm.DateTime", 
@@ -297,9 +291,7 @@ public interface DiscontinuedProduct
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getDiscontinuedPhone();
 
     void setDiscontinuedPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _discontinuedPhone);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newDiscontinuedPhone();
-      
-    
+        
     
     @Property(name = "ChildConcurrencyToken", 
                 type = "Edm.String", 
@@ -367,5 +359,25 @@ public interface DiscontinuedProduct
 
 
 
+        @Override
+        ComplexFactory factory();
 
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.ComplexFactory{
+             @Property(name = "Dimensions",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+
+             @Property(name = "ComplexConcurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newComplexConcurrency();
+
+             @Property(name = "NestedComplexConcurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newNestedComplexConcurrency();
+
+             @Property(name = "DiscontinuedPhone",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newDiscontinuedPhone();
+
+        }
 }

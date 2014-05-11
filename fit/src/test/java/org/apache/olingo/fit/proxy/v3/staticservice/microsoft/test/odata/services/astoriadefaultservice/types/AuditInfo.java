@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -44,8 +45,8 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @ComplexType(name = "AuditInfo")
-public interface AuditInfo extends Serializable {
-
+public interface AuditInfo 
+    extends Serializable {
 
 
     @Property(name = "ModifiedDate", type = "Edm.DateTime", nullable = false)
@@ -67,8 +68,14 @@ public interface AuditInfo extends Serializable {
 
     void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
 
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
-      
-    
+        
 
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "Concurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
+
+        }
 }

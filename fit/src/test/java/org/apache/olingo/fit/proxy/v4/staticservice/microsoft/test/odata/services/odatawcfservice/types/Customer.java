@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -61,7 +62,6 @@ public interface Customer
   extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person {
 
     
-
     @Key
     @Property(name = "PersonID", 
                 type = "Edm.Int32", 
@@ -176,9 +176,7 @@ public interface Customer
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
     void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
-      
-    
+        
     
     @Property(name = "Home", 
                 type = "Edm.GeographyPoint", 
@@ -351,5 +349,13 @@ public interface Customer
 
 
 
+        @Override
+        ComplexFactory factory();
 
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.ComplexFactory{
+             @Property(name = "HomeAddress",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
+
+        }
 }

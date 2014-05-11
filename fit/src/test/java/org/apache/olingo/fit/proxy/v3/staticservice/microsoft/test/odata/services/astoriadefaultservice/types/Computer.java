@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface Computer
   extends Serializable {
 
     
-
     @Key
     @Property(name = "ComputerId", 
                 type = "Edm.Int32", 
@@ -120,9 +120,9 @@ public interface Computer
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
     
           @Operation(name = "GetComputer",
                     type = OperationType.ACTION,
@@ -131,6 +131,5 @@ public interface Computer
             );
 
         }
-
 
 }

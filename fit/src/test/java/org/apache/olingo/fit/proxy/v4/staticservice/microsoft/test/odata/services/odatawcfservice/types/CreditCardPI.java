@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -61,7 +62,6 @@ public interface CreditCardPI
   extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument {
 
     
-
     @Key
     @Property(name = "PaymentInstrumentID", 
                 type = "Edm.Int32", 
@@ -286,7 +286,6 @@ public interface CreditCardPI
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection getCreditRecords();
 
     void setCreditRecords(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection _creditRecords);
-
 
 
 

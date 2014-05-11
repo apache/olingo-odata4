@@ -233,31 +233,36 @@ public abstract class AbstractServices {
     final Response res;
 
     if (matcher.find()) {
-      String method = matcher.group(1);
-      if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        headers.putSingle("X-HTTP-METHOD", method);
-        method = "POST";
-      }
-
       final String url = matcher.group(2);
-
       final WebClient client = WebClient.create(url);
       client.headers(headers);
-      res = client.invoke(method, body.getDataHandler().getInputStream());
-      client.close();
-    } else if (matcherRef.find()) {
-      String method = matcherRef.group(1);
-      if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        headers.putSingle("X-HTTP-METHOD", method);
-        method = "POST";
+
+      final String method = matcher.group(1);
+      if ("DELETE".equals(method)) {
+        res = client.delete();
+      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        client.header("X-HTTP-METHOD", method);
+        res = client.invoke("POST", body.getDataHandler().getInputStream());
+      } else {
+        res = client.invoke(method, body.getDataHandler().getInputStream());
       }
 
+      client.close();
+    } else if (matcherRef.find()) {
       final String url = matcherRef.group(2);
-
       final WebClient client = WebClient.create(references.get(url));
       client.headers(headers);
 
-      res = client.invoke(method, body.getDataHandler().getInputStream());
+      String method = matcherRef.group(1);
+      if ("DELETE".equals(method)) {
+        res = client.delete();
+      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        client.header("X-HTTP-METHOD", method);
+        res = client.invoke("POST", body.getDataHandler().getInputStream());
+      } else {
+        res = client.invoke(method, body.getDataHandler().getInputStream());
+      }
+
       client.close();
     } else {
       res = null;
@@ -406,7 +411,7 @@ public abstract class AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
                 new TypeReference<JSONEntityImpl>() {
-                });
+        });
 
         entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
       }
@@ -593,8 +598,8 @@ public abstract class AbstractServices {
         } else {
           final ResWrap<JSONEntityImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                          new TypeReference<JSONEntityImpl>() {
-                          });
+                  new TypeReference<JSONEntityImpl>() {
+          });
 
           entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -621,7 +626,7 @@ public abstract class AbstractServices {
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -684,13 +689,13 @@ public abstract class AbstractServices {
               replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
               replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
               replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-                      "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
+              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
               replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
 
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), utils.getKey()));
+              ConstantKey.ENTITY), utils.getKey()));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -742,9 +747,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
@@ -893,7 +898,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                          dataBinder.toJSONEntitySet(container.getPayload())));
+                  dataBinder.toJSONEntitySet(container.getPayload())));
         }
 
         return xml.createResponse(
@@ -1556,8 +1561,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONFeedContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
             }
           } else {
             final ResWrap<Entity> container =
@@ -1570,8 +1575,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1641,9 +1646,9 @@ public abstract class AbstractServices {
 
     final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                    + (version.compareTo(ODataServiceVersion.V40) >= 0
-                    ? entitySetName + "(" + entityId + ")/" + path
-                    : property.getType())),
+            + (version.compareTo(ODataServiceVersion.V40) >= 0
+            ? entitySetName + "(" + entityId + ")/" + path
+            : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
@@ -1651,9 +1656,9 @@ public abstract class AbstractServices {
             null,
             searchForValue
             ? IOUtils.toInputStream(
-                    container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-                    ? StringUtils.EMPTY
-                    : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
+            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
+            ? StringUtils.EMPTY
+            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
             : utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);

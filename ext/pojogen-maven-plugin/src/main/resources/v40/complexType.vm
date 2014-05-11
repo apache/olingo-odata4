@@ -21,8 +21,10 @@
         isOpenType = $complexType.isOpenType(),
         isAbstract = $complexType.Abstract#if($complexType.getBaseType()),
         baseType = "$complexType.getBaseType().getFullQualifiedName().toString()"#end)
-public interface $utility.capitalize($complexType.Name) extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}Serializable#end {
+public interface $utility.capitalize($complexType.Name) 
+    extends #if($complexType.getBaseType())$utility.getJavaType($complexType.getBaseType().getFullQualifiedName().toString())#{else}Serializable#end {
 
+#set( $complexProps = [] )
 #foreach($propertyName in $complexType.PropertyNames)
     #set($property = $complexType.getProperty($propertyName))
 
@@ -42,7 +44,7 @@ public interface $utility.capitalize($complexType.Name) extends #if($complexType
     void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
 
     #if($utility.isComplex($property.Type.FullQualifiedName))#*
-      *#$utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+      *##set( $adding = $complexProps.add($property) )
     #end
 
 #end
@@ -61,4 +63,21 @@ public interface $utility.capitalize($complexType.Name) extends #if($complexType
 
     void set$utility.capitalize($property.Name)(final $utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
 
+#end
+
+#if( $complexProps.size() > 0 )
+    #if( $complexType.baseType )
+    @Override
+    #end
+    ComplexFactory factory();
+
+    interface ComplexFactory #if( $complexType.baseType )
+           extends ${utility.getJavaType($complexType.getBaseType())}.ComplexFactory#end{
+    #foreach($property in $complexProps)
+         @Property(name = "$property.Name",
+                   type = "$property.Type.FullQualifiedName.toString()")
+         $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+
+    #end
+    }
 #end

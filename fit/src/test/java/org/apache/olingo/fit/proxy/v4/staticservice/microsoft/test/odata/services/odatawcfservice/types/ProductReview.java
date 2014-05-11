@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface ProductReview
   extends Serializable {
 
                 
-
     @Key
     @Property(name = "ProductID", 
                 type = "Edm.Int32", 
@@ -200,7 +200,6 @@ public interface ProductReview
     void setAuthor(final String _author);    
     
     
-
 
 
 

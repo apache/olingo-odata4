@@ -30,11 +30,14 @@ import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.
-        ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Customer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Aliases;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Phone;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -94,18 +97,21 @@ public abstract class AbstractTest {
     // add key attribute
     customer.setCustomerId(id);
 
-    final ContactDetails cd = customer.newPrimaryContactInfo();
+    final ContactDetails cd = customer.factory().newPrimaryContactInfo();
     cd.setAlternativeNames(Arrays.asList("alternative1", "alternative2"));
     cd.setEmailBag(Collections.<String>singleton("myname@mydomain.org"));
     cd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    customer.setPrimaryContactInfo(cd);
 
-    final Aliases aliases = cd.newContactAlias();
+    final Aliases aliases = cd.factory().newContactAlias();
     aliases.setAlternativeNames(Collections.<String>singleton("myAlternativeName"));
+    cd.setContactAlias(aliases);
 
-    final ContactDetails bcd = customer.newBackupContactInfo();
+    final ContactDetails bcd = customer.factory().newBackupContactInfo();
     bcd.setAlternativeNames(Arrays.asList("alternative3", "alternative4"));
     bcd.setEmailBag(Collections.<String>emptySet());
     bcd.setMobilePhoneBag(Collections.<Phone>emptySet());
+    customer.setBackupContactInfo(Collections.<ContactDetails>singleton(bcd));
 
     return customer;
   }

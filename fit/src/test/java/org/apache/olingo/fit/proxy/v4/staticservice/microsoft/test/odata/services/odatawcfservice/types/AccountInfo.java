@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -46,8 +47,8 @@ import javax.xml.datatype.Duration;
 @ComplexType(name = "AccountInfo",
         isOpenType = true,
         isAbstract = false)
-public interface AccountInfo extends Serializable {
-
+public interface AccountInfo 
+    extends Serializable {
 
 
     @Property(name = "FirstName", 

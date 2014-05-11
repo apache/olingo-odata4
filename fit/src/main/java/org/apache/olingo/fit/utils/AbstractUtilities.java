@@ -553,7 +553,7 @@ public abstract class AbstractUtilities {
     } else {
       final ResWrap<JSONEntitySetImpl> container =
               mapper.readValue(entitySet, new TypeReference<JSONEntitySetImpl>() {
-              });
+      });
       entry = dataBinder.toAtomEntitySet(container.getPayload());
     }
 
@@ -571,7 +571,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(), dataBinder.toJSONEntitySet(container.getPayload())));
+              container.getMetadataETag(), dataBinder.toJSONEntitySet(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -586,7 +586,7 @@ public abstract class AbstractUtilities {
     } else {
       final ResWrap<JSONEntityImpl> jcontainer =
               mapper.readValue(entity, new TypeReference<JSONEntityImpl>() {
-              });
+      });
       container = new ResWrap<AtomEntityImpl>(
               jcontainer.getContextURL(),
               jcontainer.getMetadataETag(),
@@ -611,7 +611,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONEntryContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONEntity(container.getPayload())));
+              dataBinder.toJSONEntity(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -641,7 +641,7 @@ public abstract class AbstractUtilities {
     } else {
       final ResWrap<JSONPropertyImpl> jcontainer = mapper.readValue(property,
               new TypeReference<JSONPropertyImpl>() {
-              });
+      });
 
       atomProperty = dataBinder.toAtomProperty(jcontainer.getPayload(), entryType);
     }
@@ -658,7 +658,7 @@ public abstract class AbstractUtilities {
     } else {
       mapper.writeValue(
               writer, new JSONPropertyContainer(container.getContextURL(), container.getMetadataETag(),
-                      dataBinder.toJSONProperty(container.getPayload())));
+              dataBinder.toJSONProperty(container.getPayload())));
     }
 
     return IOUtils.toInputStream(writer.toString(), Constants.ENCODING);
@@ -691,14 +691,14 @@ public abstract class AbstractUtilities {
         if (entity.getProperty("MessageId") == null || entity.getProperty("FromUsername") == null) {
           if (Commons.SEQUENCE.containsKey(entitySetName)) {
             messageId = Commons.SEQUENCE.get(entitySetName) + 1;
-            res = "MessageId=" + String.valueOf(messageId) + ",FromUsername=1";
+            res = "FromUsername=1" + ",MessageId=" + String.valueOf(messageId);
           } else {
             throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
           }
         } else {
           messageId = Integer.valueOf(entity.getProperty("MessageId").getValue().asPrimitive().get());
-          res = "MessageId=" + entity.getProperty("MessageId").getValue().asPrimitive().get()
-                  + ",FromUsername=" + entity.getProperty("FromUsername").getValue().asPrimitive().get();
+          res = "FromUsername=" + entity.getProperty("FromUsername").getValue().asPrimitive().get()
+                  + ",MessageId=" + entity.getProperty("MessageId").getValue().asPrimitive().get();
         }
         Commons.SEQUENCE.put(entitySetName, messageId);
       } else if ("Order".equals(entitySetName)) {

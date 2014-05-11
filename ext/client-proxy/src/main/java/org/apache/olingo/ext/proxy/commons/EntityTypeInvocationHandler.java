@@ -21,6 +21,7 @@ package org.apache.olingo.ext.proxy.commons;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
@@ -38,6 +40,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
@@ -107,7 +110,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             containerHandler.getEntityContainerName(),
             entitySetName,
             entity.getTypeName(),
-            CoreUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client, typeRef, entity));
 
     this.stream = null;
   }
@@ -120,7 +123,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             getUUID().getContainerName(),
             getUUID().getEntitySetName(),
             getUUID().getName(),
-            CoreUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client, typeRef, entity));
 
     this.propertyChanges.clear();
     this.linkChanges.clear();
@@ -193,35 +196,52 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
-
       final CommonODataProperty property = entity.getProperty(name);
 
       if (propertyChanges.containsKey(name)) {
-        res = property.hasComplexValue()
-                ? Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {(Class<?>) type},
-                (ComplexTypeInvocationHandler<?>) propertyChanges.get(name))
-                : propertyChanges.get(name);
+        res = propertyChanges.get(name);
+      } else if (property == null) {
+        res = null;
       } else if (property.hasComplexValue()) {
         res = Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {(Class<?>) type},
-                newComplex(name, (Class<?>) type));
+                ComplexTypeInvocationHandler.getInstance(
+                client, property.getValue().asComplex(), (Class<?>) type, this));
 
-        CoreUtils.populate(
-                client.getCachedEdm(),
-                res,
-                (Class<?>) type,
-                Property.class,
-                property.getValue().asComplex().iterator());
+        addPropertyChanges(name, res);
+      } else if (property.hasCollectionValue()) {
+        final ParameterizedType collType = (ParameterizedType) type;
+        final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
+
+        final ArrayList<Object> collection = new ArrayList<Object>();
+
+        final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+        while (collPropItor.hasNext()) {
+          final ODataValue value = collPropItor.next();
+          if (value.isPrimitive()) {
+            collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+          } else if (value.isComplex()) {
+            final Object collItem = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {collItemClass},
+                    ComplexTypeInvocationHandler.getInstance(
+                    client, value.asComplex(), collItemClass, this));
+
+            collection.add(collItem);
+          }
+        }
+
+        res = collection;
+
+        addPropertyChanges(name, res);
       } else {
         res = type == null
                 ? CoreUtils.getValueFromProperty(client, property)
                 : CoreUtils.getValueFromProperty(client, property, type);
 
         if (res != null) {
-          addPropertyChanges(name, res, false);
+          addPropertyChanges(name, res);
         }
       }
 
@@ -256,11 +276,27 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      addPropertyChanges(property.name(), value, false);
+      final Object toBeAdded;
+
+      if (value == null) {
+        toBeAdded = null;
+      } else if (Collection.class.isAssignableFrom(value.getClass())) {
+        toBeAdded = new ArrayList<Object>();
+        for (Object obj : (Collection) value) {
+          ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
+        }
+      } else if (value instanceof Proxy) {
+        toBeAdded = Proxy.getInvocationHandler(value);
+      } else {
+        toBeAdded = value;
+      }
+
+      addPropertyChanges(property.name(), toBeAdded);
     }
 
     attach(AttachedEntityStatus.CHANGED);
@@ -360,22 +396,9 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   @Override
   @SuppressWarnings("unchecked")
-  protected void addPropertyChanges(final String name, final Object value, final boolean isCollection) {
+  protected void addPropertyChanges(final String name, final Object value) {
     int checkpoint = propertyChanges.hashCode();
-
-    if (isCollection) {
-      Object collItem = propertyChanges.get(name);
-
-      if (collItem == null) {
-        collItem = new ArrayList<Object>();
-        propertyChanges.put(name, collItem);
-      }
-
-      ((Collection<Object>) collItem).add(value);
-    } else {
-      propertyChanges.put(name, value);
-    }
-
+    propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
   }
 

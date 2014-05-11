@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface Asset
   extends Serializable {
 
     
-
     @Key
     @Property(name = "AssetID", 
                 type = "Edm.Int32", 
@@ -131,7 +131,6 @@ public interface Asset
     void setNumber(final Integer _number);    
     
     
-
 
 
 

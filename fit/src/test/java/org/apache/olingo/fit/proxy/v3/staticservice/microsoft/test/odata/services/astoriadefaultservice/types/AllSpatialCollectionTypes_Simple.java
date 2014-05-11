@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -61,7 +62,6 @@ public interface AllSpatialCollectionTypes_Simple
   extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AllSpatialCollectionTypes {
 
     
-
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -224,7 +224,6 @@ public interface AllSpatialCollectionTypes_Simple
     void setManyGeomPolygon(final Collection<Polygon> _manyGeomPolygon);    
     
     
-
 
 
 

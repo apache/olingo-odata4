@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -44,8 +45,8 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @ComplexType(name = "ContactDetails")
-public interface ContactDetails extends Serializable {
-
+public interface ContactDetails 
+    extends Serializable {
 
 
     @Property(name = "EmailBag", type = "Edm.String", nullable = false)
@@ -67,35 +68,47 @@ public interface ContactDetails extends Serializable {
 
     void setContactAlias(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases _contactAlias);
 
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newContactAlias();
-      
-    
+        
 
     @Property(name = "HomePhone", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = true)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getHomePhone();
 
     void setHomePhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _homePhone);
 
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newHomePhone();
-      
-    
+        
 
     @Property(name = "WorkPhone", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = true)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getWorkPhone();
 
     void setWorkPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _workPhone);
 
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newWorkPhone();
-      
-    
+        
 
     @Property(name = "MobilePhoneBag", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", nullable = false)
     Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone> getMobilePhoneBag();
 
     void setMobilePhoneBag(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone> _mobilePhoneBag);
 
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newMobilePhoneBag();
-      
-    
+        
 
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "ContactAlias",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newContactAlias();
+
+             @Property(name = "HomePhone",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newHomePhone();
+
+             @Property(name = "WorkPhone",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newWorkPhone();
+
+             @Property(name = "MobilePhoneBag",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newMobilePhoneBag();
+
+        }
 }

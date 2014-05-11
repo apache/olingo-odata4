@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface Company
   extends Serializable {
 
     
-
     @Key
     @Property(name = "CompanyID", 
                 type = "Edm.Int32", 
@@ -175,9 +175,7 @@ public interface Company
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
     void setAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
-      
-    
+        
     
 
     @NavigationProperty(name = "Employees", 
@@ -221,9 +219,9 @@ public interface Company
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
           @Operation(name = "GetEmployeesCount",
                     type = OperationType.FUNCTION,
                     isComposable = false,
@@ -241,5 +239,12 @@ public interface Company
 
         }
 
+        ComplexFactory factory();
 
+    interface ComplexFactory {
+             @Property(name = "Address",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
+
+        }
 }

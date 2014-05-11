@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface MessageAttachment
   extends Serializable {
 
     
-
     @Key
     @Property(name = "AttachmentId", 
                 type = "Edm.Guid", 
@@ -108,7 +108,6 @@ public interface MessageAttachment
     void setAttachment(final byte[] _attachment);    
     
     
-
 
 
 

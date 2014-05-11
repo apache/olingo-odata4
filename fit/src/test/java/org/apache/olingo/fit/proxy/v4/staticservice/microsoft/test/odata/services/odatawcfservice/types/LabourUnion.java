@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface LabourUnion
   extends Serializable {
 
     
-
     @Key
     @Property(name = "LabourUnionID", 
                 type = "Edm.Int32", 
@@ -108,7 +108,6 @@ public interface LabourUnion
     void setName(final String _name);    
     
     
-
 
 
 

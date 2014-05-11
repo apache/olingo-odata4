@@ -42,6 +42,8 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.ConcurrencyInfo;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.Contractor;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.ContractorCollection;
@@ -71,6 +73,8 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
         types.Person;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.PersonCollection;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Phone;
 import org.junit.Test;
 
 /**
@@ -81,7 +85,7 @@ public class EntityRetrieveTestITCase extends AbstractTest {
   protected DefaultContainer getContainer() {
     return container;
   }
-  
+
   @Test
   public void exists() {
     assertTrue(getContainer().getCar().exists(15));
@@ -109,7 +113,7 @@ public class EntityRetrieveTestITCase extends AbstractTest {
       assertNotNull(employee);
     }
 
-    final SpecialEmployeeCollection specialEmployees = 
+    final SpecialEmployeeCollection specialEmployees =
             getContainer().getPerson().getAll(SpecialEmployeeCollection.class);
     assertNotNull(specialEmployees);
     assertFalse(specialEmployees.isEmpty());
@@ -209,5 +213,35 @@ public class EntityRetrieveTestITCase extends AbstractTest {
     Product product = getContainer().getProduct().get(-10);
     assertTrue(StringUtils.isNotBlank(
             ((EntityTypeInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
+  }
+
+  @Test
+  public void collectionsAndComplexes() {
+    final Customer customer = readCustomer(getContainer(), -10);
+    boolean found = false;
+
+    assertTrue(customer.getPrimaryContactInfo().getEmailBag().contains("psgdkmxamznjulzbsohqjytbxhnojbufe"));
+    
+    final Collection<ContactDetails> backupContactInfo = customer.getBackupContactInfo();
+    assertEquals(9, backupContactInfo.size());
+    
+
+    for (ContactDetails contact : backupContactInfo) {
+      if (contact.getContactAlias() != null && contact.getContactAlias().getAlternativeNames() != null && contact.
+              getContactAlias().getAlternativeNames().contains("vxiefursgkqzptijhincpdm")) {
+        found = true;
+      }
+    }
+    assertTrue(found);
+    found = false;
+
+    for (ContactDetails contact : backupContactInfo) {
+      for (Phone phone : contact.getMobilePhoneBag()) {
+        if ("gqvuusqrrriljkospoxbdod".equals(phone.getExtension())) {
+          found = true;
+        }
+      }
+    }
+    assertTrue(found);
   }
 }

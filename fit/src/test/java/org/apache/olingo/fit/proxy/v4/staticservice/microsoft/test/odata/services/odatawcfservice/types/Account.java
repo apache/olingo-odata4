@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface Account
   extends Serializable {
 
     
-
     @Key
     @Property(name = "AccountID", 
                 type = "Edm.Int32", 
@@ -129,9 +129,7 @@ public interface Account
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo();
 
     void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);    
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
-      
-    
+        
     
 
     @NavigationProperty(name = "MyGiftCard", 
@@ -175,9 +173,9 @@ public interface Account
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
           @Operation(name = "GetDefaultPI",
                     type = OperationType.FUNCTION,
                     isComposable = false,
@@ -202,5 +200,12 @@ public interface Account
 
         }
 
+        ComplexFactory factory();
 
+    interface ComplexFactory {
+             @Property(name = "AccountInfo",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
+
+        }
 }

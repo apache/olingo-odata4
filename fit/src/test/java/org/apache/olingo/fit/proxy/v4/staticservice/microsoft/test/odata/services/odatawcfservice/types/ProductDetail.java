@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface ProductDetail
   extends Serializable {
 
         
-
     @Key
     @Property(name = "ProductID", 
                 type = "Edm.Int32", 
@@ -176,9 +176,9 @@ public interface ProductDetail
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
           @Operation(name = "GetRelatedProduct",
                     type = OperationType.FUNCTION,
                     isComposable = true,
@@ -188,6 +188,5 @@ public interface ProductDetail
 
     
         }
-
 
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface PaymentInstrument
   extends Serializable {
 
     
-
     @Key
     @Property(name = "PaymentInstrumentID", 
                 type = "Edm.Int32", 
@@ -160,7 +160,6 @@ public interface PaymentInstrument
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI getBackupStoredPI();
 
     void setBackupStoredPI(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _backupStoredPI);
-
 
 
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -44,8 +45,8 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @ComplexType(name = "ComplexToCategory")
-public interface ComplexToCategory extends Serializable {
-
+public interface ComplexToCategory 
+    extends Serializable {
 
 
     @Property(name = "Term", type = "Edm.String", nullable = true)

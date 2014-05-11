@@ -20,8 +20,10 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +32,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -45,13 +48,41 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
   private static final long serialVersionUID = 2629912294765040037L;
 
+  public static ComplexTypeInvocationHandler<?> getInstance(
+          final CommonEdmEnabledODataClient<?> client,
+          final String propertyName,
+          final Class<?> reference,
+          final EntityTypeInvocationHandler<?> handler) {
+    final Class<?> complexTypeRef;
+    if (Collection.class.isAssignableFrom(reference)) {
+      complexTypeRef = ClassUtils.extractTypeArg(reference);
+    } else {
+      complexTypeRef = reference;
+    }
+
+    final ComplexType annotation = complexTypeRef.getAnnotation(ComplexType.class);
+    if (annotation == null) {
+      throw new IllegalArgumentException("Invalid complex type " + complexTypeRef);
+    }
+
+    final FullQualifiedName typeName =
+            new FullQualifiedName(ClassUtils.getNamespace(complexTypeRef), annotation.name());
+
+    final ODataComplexValue<? extends CommonODataProperty> complex =
+            client.getObjectFactory().newComplexValue(typeName.toString());
+
+    return (ComplexTypeInvocationHandler<?>) ComplexTypeInvocationHandler.getInstance(
+            client, complex, complexTypeRef, handler);
+  }
+
   @SuppressWarnings({"unchecked", "rawtypes"})
   static ComplexTypeInvocationHandler<?> getInstance(
+          final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
           final EntityTypeInvocationHandler<?> handler) {
 
-    return new ComplexTypeInvocationHandler(handler.targetHandler.getClient(), complex, typeRef, handler);
+    return new ComplexTypeInvocationHandler(client, complex, typeRef, handler);
   }
 
   public ComplexTypeInvocationHandler(
@@ -83,19 +114,38 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
       final Object res;
 
       final CommonODataProperty property = getComplex().get(name);
-
-      if (property.hasComplexValue()) {
+      if (property == null) {
+        res = null;
+      } else if (property.hasComplexValue()) {
         res = Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {(Class<?>) type},
-                newComplex(name, (Class<?>) type));
+                ComplexTypeInvocationHandler.getInstance(
+                client, property.getValue().asComplex(), (Class<?>) type, targetHandler));
 
-        CoreUtils.populate(
-                client.getCachedEdm(),
-                res,
-                (Class<?>) type,
-                Property.class,
-                property.getValue().asComplex().iterator());
+      } else if (property.hasCollectionValue()) {
+        final ParameterizedType collType = (ParameterizedType) type;
+        final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
+
+        final ArrayList<Object> collection = new ArrayList<Object>();
+
+        final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+        while (collPropItor.hasNext()) {
+          final ODataValue value = collPropItor.next();
+          if (value.isPrimitive()) {
+            collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+          } else if (value.isComplex()) {
+            final Object collItem = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {collItemClass},
+                    ComplexTypeInvocationHandler.getInstance(
+                    client, value.asComplex(), collItemClass, targetHandler));
+
+            collection.add(collItem);
+          }
+        }
+
+        res = collection;
       } else {
         res = type == null
                 ? CoreUtils.getValueFromProperty(client, property)
@@ -131,17 +181,34 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     final FullQualifiedName fqn =
             new FullQualifiedName(ClassUtils.getNamespace(typeRef), typeRef.getAnnotation(ComplexType.class).name());
 
     final EdmElement edmProperty = client.getCachedEdm().getComplexType(fqn).getProperty(property.name());
 
+    final Object toBeAdded;
+
+    if (value == null) {
+      toBeAdded = null;
+    } else if (Collection.class.isAssignableFrom(value.getClass())) {
+      toBeAdded = new ArrayList<Object>();
+      for (Object obj : (Collection) value) {
+        ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
+      }
+    } else if (value instanceof Proxy) {
+      toBeAdded = Proxy.getInvocationHandler(value);
+    } else {
+      toBeAdded = value;
+    }
+
     final EdmTypeInfo type = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(
-                    edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
-    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, value));
+    client.getBinder().add(
+            getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
 
     if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
       entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
@@ -158,7 +225,7 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
   }
 
   @Override
-  protected void addPropertyChanges(final String name, final Object value, final boolean isCollection) {
+  protected void addPropertyChanges(final String name, final Object value) {
     // do nothing ....
   }
 

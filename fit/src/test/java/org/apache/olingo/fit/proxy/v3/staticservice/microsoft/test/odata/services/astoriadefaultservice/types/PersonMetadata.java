@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface PersonMetadata
   extends Serializable {
 
     
-
     @Key
     @Property(name = "PersonMetadataId", 
                 type = "Edm.Int32", 
@@ -163,7 +163,6 @@ public interface PersonMetadata
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person getPerson();
 
     void setPerson(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Person _person);
-
 
 
 

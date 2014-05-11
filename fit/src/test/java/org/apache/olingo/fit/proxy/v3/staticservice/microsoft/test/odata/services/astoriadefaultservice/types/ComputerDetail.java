@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface ComputerDetail
   extends Serializable {
 
     
-
     @Key
     @Property(name = "ComputerDetailId", 
                 type = "Edm.Int32", 
@@ -221,9 +221,7 @@ public interface ComputerDetail
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
     void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
-      
-    
+        
     
 
     @NavigationProperty(name = "Computer", 
@@ -237,9 +235,9 @@ public interface ComputerDetail
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
     
           @Operation(name = "ResetComputerDetailsSpecifications",
                     type = OperationType.ACTION)
@@ -250,5 +248,12 @@ public interface ComputerDetail
 
         }
 
+        ComplexFactory factory();
 
+    interface ComplexFactory {
+             @Property(name = "Dimensions",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+
+        }
 }

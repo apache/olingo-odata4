@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface OrderDetail
   extends Serializable {
 
         
-
     @Key
     @Property(name = "OrderID", 
                 type = "Edm.Int32", 
@@ -196,7 +196,6 @@ public interface OrderDetail
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order getAssociatedOrder();
 
     void setAssociatedOrder(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order _associatedOrder);
-
 
 
 

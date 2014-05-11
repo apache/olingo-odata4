@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -61,7 +62,6 @@ public interface PublicCompany
   extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company {
 
     
-
     @Key
     @Property(name = "CompanyID", 
                 type = "Edm.Int32", 
@@ -176,9 +176,7 @@ public interface PublicCompany
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
     void setAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
-      
-    
+        
     
     @Property(name = "StockExchange", 
                 type = "Edm.String", 
@@ -276,5 +274,13 @@ public interface PublicCompany
 
 
 
+        @Override
+        ComplexFactory factory();
 
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.ComplexFactory{
+             @Property(name = "Address",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
+
+        }
 }

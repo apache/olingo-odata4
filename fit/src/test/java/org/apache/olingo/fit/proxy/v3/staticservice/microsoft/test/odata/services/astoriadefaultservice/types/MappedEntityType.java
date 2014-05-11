@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -60,7 +61,6 @@ public interface MappedEntityType
   extends Serializable {
 
     
-
     @Key
     @Property(name = "Id", 
                 type = "Edm.Int32", 
@@ -474,9 +474,7 @@ public interface MappedEntityType
     Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> getBagOfComplexToCategories();
 
     void setBagOfComplexToCategories(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory> _bagOfComplexToCategories);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newBagOfComplexToCategories();
-      
-    
+        
     
     @Property(name = "ComplexPhone", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone", 
@@ -499,9 +497,7 @@ public interface MappedEntityType
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone getComplexPhone();
 
     void setComplexPhone(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone _complexPhone);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newComplexPhone();
-      
-    
+        
     
     @Property(name = "ComplexContactDetails", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
@@ -524,12 +520,25 @@ public interface MappedEntityType
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getComplexContactDetails();
 
     void setComplexContactDetails(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _complexContactDetails);    
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newComplexContactDetails();
-      
-    
+        
     
 
 
 
+        ComplexFactory factory();
 
+    interface ComplexFactory {
+             @Property(name = "BagOfComplexToCategories",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newBagOfComplexToCategories();
+
+             @Property(name = "ComplexPhone",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone newComplexPhone();
+
+             @Property(name = "ComplexContactDetails",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newComplexContactDetails();
+
+        }
 }

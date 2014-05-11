@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -203,6 +204,17 @@ public abstract class AbstractUtility {
       }
     }
 
+    return result;
+  }
+  
+  public List<EdmOperation> justInheritedOperationsBoundTo(final EdmEntityType entity){
+    final List<EdmOperation> result = new ArrayList<EdmOperation>();
+    if(entity.getBaseType()!=null){
+      result.addAll(getFunctionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(getActionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(justInheritedOperationsBoundTo(entity.getBaseType()));
+    }
+    
     return result;
   }
 

@@ -31,8 +31,6 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
-import org.apache.olingo.commons.api.domain.CommonODataProperty;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -40,18 +38,24 @@ import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
-import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractInvocationHandler<C> {
 
   private static final long serialVersionUID = 2629912294765040037L;
+
+  /**
+   * Logger.
+   */
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTypeInvocationHandler.class);
 
   protected final Class<?> typeRef;
 
@@ -104,11 +108,17 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
               OperationInvocationHandler.getInstance(targetHandler));
+    } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final Class<?> returnType = method.getReturnType();
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {returnType},
+              FactoryInvocationHandler.getInstance(targetHandler, this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
       final Object res;
-
       final Method getter = typeRef.getMethod(method.getName());
 
       final Property property = ClassUtils.getAnnotation(Property.class, getter);
@@ -152,22 +162,6 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
       }
 
       return ClassUtils.returnVoid();
-    } else if (method.getName().startsWith("new")) {
-      // get the corresponding getter method (see assumption above)
-      final String getterName = method.getName().replaceFirst("new", "get");
-      final Method getter = typeRef.getMethod(getterName);
-
-      final Property property = ClassUtils.getAnnotation(Property.class, getter);
-      if (property == null) {
-        throw new UnsupportedOperationException("Unsupported method " + method.getName());
-      }
-
-      final ComplexTypeInvocationHandler<C> complexTypeHandler = newComplex(property.name(), getter.getReturnType());
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {getter.getReturnType()},
-              complexTypeHandler);
     } else {
       throw new UnsupportedOperationException("Method not found: " + method);
     }
@@ -191,39 +185,6 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
     } else {
       entityContext.attach(targetHandler, status);
     }
-  }
-
-  @SuppressWarnings({"unchecked"})
-  protected ComplexTypeInvocationHandler<C> newComplex(final String propertyName, final Class<?> reference) {
-    final Class<?> complexTypeRef;
-    final boolean isCollection;
-    if (Collection.class.isAssignableFrom(reference)) {
-      complexTypeRef = ClassUtils.extractTypeArg(reference);
-      isCollection = true;
-    } else {
-      complexTypeRef = reference;
-      isCollection = false;
-    }
-
-    final ComplexType annotation = complexTypeRef.getAnnotation(ComplexType.class);
-    if (annotation == null) {
-      throw new IllegalArgumentException("Invalid complex type " + complexTypeRef);
-    }
-
-    final FullQualifiedName typeName =
-            new FullQualifiedName(ClassUtils.getNamespace(complexTypeRef), annotation.name());
-
-    final ODataComplexValue<? extends CommonODataProperty> complex =
-            client.getObjectFactory().newComplexValue(typeName.toString());
-
-    final ComplexTypeInvocationHandler<C> handler = (ComplexTypeInvocationHandler<C>) ComplexTypeInvocationHandler.
-            getInstance(complex, complexTypeRef, targetHandler);
-
-    attach(AttachedEntityStatus.CHANGED);
-
-    addPropertyChanges(propertyName, handler, isCollection);
-
-    return handler;
   }
 
   protected abstract Object getNavigationPropertyValue(final NavigationProperty property, final Method getter);
@@ -296,7 +257,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   public void addAdditionalProperty(final String name, final Object value) {
-    addPropertyChanges(name, value, false);
+    addPropertyChanges(name, value);
     attach(AttachedEntityStatus.CHANGED);
   }
 
@@ -338,7 +299,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
 
   protected abstract void setPropertyValue(final Property property, final Object value);
 
-  protected abstract void addPropertyChanges(final String name, final Object value, final boolean isCollection);
+  protected abstract void addPropertyChanges(final String name, final Object value);
 
   protected abstract void addLinkChanges(final NavigationProperty navProp, final Object value);
 
