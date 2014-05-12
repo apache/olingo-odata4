@@ -261,7 +261,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     createReq.setPrefer(client.newPreferences().returnContent());
 
     try {
-      final ODataEntityCreateResponse createRes = createReq.execute();
+      final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
       assertEquals(201, createRes.getStatusCode());
     } catch (Exception e) {
       fail(e.getMessage());

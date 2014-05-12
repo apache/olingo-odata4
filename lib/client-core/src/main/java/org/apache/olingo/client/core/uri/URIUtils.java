@@ -407,8 +407,20 @@ public final class URIUtils {
 
   public static HttpEntity buildInputStreamEntity(final CommonODataClient<?> client, final InputStream input) {
     HttpEntity entity;
+    
+    // --------------------------
+    // Check just required by batch requests since their ansynchronous entity specification mechanism
+    // --------------------------
+    boolean contentAvailable;
+    try {
+      contentAvailable = input.available()>0;
+    } catch (IOException ex) {
+      contentAvailable = false;
+    }
+    // --------------------------
+    
     boolean repeatableRequired = shouldUseRepeatableHttpBodyEntry(client);
-    if (!repeatableRequired) {
+    if (!contentAvailable || !repeatableRequired) {
       entity = new InputStreamEntity(input, -1);
     } else {
       byte[] bytes = new byte[0];
