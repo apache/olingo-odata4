@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,12 +24,11 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.AbstractContainer;
+import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -49,7 +49,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "DefaultContainer",
   namespace = "Microsoft.Test.OData.Services.AstoriaDefaultService",
   isDefaultEntityContainer = true)
-public interface DefaultContainer extends AbstractContainer {
+public interface DefaultContainer extends Container {
 
     Customer getCustomer();
 

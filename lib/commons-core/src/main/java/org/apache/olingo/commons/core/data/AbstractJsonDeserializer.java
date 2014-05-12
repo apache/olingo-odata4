@@ -180,21 +180,20 @@ abstract class AbstractJsonDeserializer<T> extends ODataJacksonDeserializer<ResW
       EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.String;
       if (node.isShort()) {
         kind = EdmPrimitiveTypeKind.Int16;
-      } else if (node.isIntegralNumber()) {
+      } else if (node.isInt()) {
         kind = EdmPrimitiveTypeKind.Int32;
       } else if (node.isLong()) {
         kind = EdmPrimitiveTypeKind.Int64;
-      } else if (node.isBigDecimal()) {
-        kind = EdmPrimitiveTypeKind.Decimal;
       } else if (node.isBoolean()) {
         kind = EdmPrimitiveTypeKind.Boolean;
       } else if (node.isFloat()) {
         kind = EdmPrimitiveTypeKind.Single;
       } else if (node.isDouble()) {
         kind = EdmPrimitiveTypeKind.Double;
+      } else if (node.isBigDecimal()) {
+        kind = EdmPrimitiveTypeKind.Decimal;
       }
-      typeInfo = new EdmTypeInfo.Builder().
-              setTypeExpression(kind.getFullQualifiedName().toString()).build();
+      typeInfo = new EdmTypeInfo.Builder().setTypeExpression(kind.getFullQualifiedName().toString()).build();
     } else if (node.isArray()) {
       type = ODataPropertyType.COLLECTION;
     } else if (node.isObject()) {

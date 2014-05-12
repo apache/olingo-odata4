@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -48,20 +48,12 @@ public interface ProductCollection extends AbstractEntityCollection<Product> {
 
     public interface Operations {
 
-          @Operation(name = "GetProductDetails",
-                    type = OperationType.FUNCTION,
-                    isComposable = true,
-                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection getProductDetails(
-                @Parameter(name = "count", type = "Edm.Int32", nullable = true) Integer count
-            );
-
     
-          @Operation(name = "AddAccessRight",
+          @Operation(name = "Discount",
                     type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel addAccessRight(
-                @Parameter(name = "accessRight", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = true) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessRight
+                    returnType = "Collection(Microsoft.Test.OData.Services.ODataWCFService.Product)")
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection discount(
+                @Parameter(name = "percentage", type = "Edm.Int32", nullable = false) Integer percentage
             );
 
         }

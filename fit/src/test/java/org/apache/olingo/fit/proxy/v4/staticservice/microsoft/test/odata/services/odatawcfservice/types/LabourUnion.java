@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface LabourUnion
                 fcKeepInContent = false)
     Integer getLabourUnionID();
 
-    void setLabourUnionID(final Integer _labourUnionID);
+    void setLabourUnionID(final Integer _labourUnionID);    
     
     
     @Property(name = "Name", 
@@ -105,9 +105,10 @@ public interface LabourUnion
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
+
 
 
 }

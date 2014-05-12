@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Login
                 fcKeepInContent = false)
     String getUsername();
 
-    void setUsername(final String _username);
+    void setUsername(final String _username);    
     
     
     @Property(name = "CustomerId", 
@@ -105,7 +105,7 @@ public interface Login
                 fcKeepInContent = false)
     Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);
+    void setCustomerId(final Integer _customerId);    
     
     
 
@@ -157,6 +157,7 @@ public interface Login
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection getOrders();
 
     void setOrders(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.OrderCollection _orders);
+
 
 
 

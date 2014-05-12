@@ -27,7 +27,7 @@ import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public class EntityContainerInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
+public final class EntityContainerInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractInvocationHandler<C> {
 
   private static final long serialVersionUID = 7379006755693410764L;
@@ -65,29 +65,28 @@ public class EntityContainerInvocationHandler<C extends CommonEdmEnabledODataCli
     this.namespace = ((EntityContainer) annotation).namespace();
   }
 
-  EntityContainerFactory getFactory() {
+  protected EntityContainerFactory getFactory() {
     return factory;
   }
 
-  boolean isDefaultEntityContainer() {
+  protected boolean isDefaultEntityContainer() {
     return defaultEC;
   }
 
-  String getEntityContainerName() {
+  protected String getEntityContainerName() {
     return name;
   }
 
-  String getSchemaName() {
+  protected String getSchemaName() {
     return namespace;
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if ("flush".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      new Container(client, factory).flush();
+      new ContainerImpl(client, factory).flush();
       return ClassUtils.returnVoid();
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();

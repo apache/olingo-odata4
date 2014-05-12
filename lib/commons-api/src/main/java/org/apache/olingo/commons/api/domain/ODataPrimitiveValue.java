@@ -40,7 +40,11 @@ public interface ODataPrimitiveValue extends ODataValue {
 
     ODataPrimitiveValue buildBoolean(Boolean value);
 
+    ODataPrimitiveValue buildInt16(Short value);
+
     ODataPrimitiveValue buildInt32(Integer value);
+
+    ODataPrimitiveValue buildInt64(Long value);
 
     ODataPrimitiveValue buildSingle(Float value);
 

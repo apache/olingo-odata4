@@ -53,7 +53,7 @@ import org.junit.Test;
  */
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
-  private void withInlineEntry(final ODataClient client, final ODataPubFormat format) {
+  private void withInlineEntity(final ODataClient client, final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
@@ -68,10 +68,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
     assertTrue(entity.getProperty("Home").hasPrimitiveValue());
     assertEquals("Edm.GeographyPoint", entity.getProperty("Home").getPrimitiveValue().getTypeName());
-    assertEquals(testStaticServiceRootURL + "/Customers(1)", entity.getEditLink().toASCIIString());
 
     // In JSON with minimal metadata, links are not provided
     if (format == ODataPubFormat.ATOM || format == ODataPubFormat.JSON_FULL_METADATA) {
+      assertEquals(testStaticServiceRootURL + "/Customers(1)", entity.getEditLink().toASCIIString());
       assertEquals(3, entity.getNavigationLinks().size());
 
       if (ODataPubFormat.ATOM == format) {
@@ -109,21 +109,21 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void withInlineEntryFromAtom() {
-    withInlineEntry(client, ODataPubFormat.ATOM);
+  public void withInlineEntityFromAtom() {
+    withInlineEntity(client, ODataPubFormat.ATOM);
   }
 
   @Test
-  public void withInlineEntryFromFullJSON() {
-    withInlineEntry(client, ODataPubFormat.JSON_FULL_METADATA);
+  public void withInlineEntityFromFullJSON() {
+    withInlineEntity(client, ODataPubFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  public void withInlineEntryFromJSON() {
-    withInlineEntry(edmClient, ODataPubFormat.JSON);
+  public void withInlineEntityFromJSON() {
+    withInlineEntity(edmClient, ODataPubFormat.JSON);
   }
 
-  private void withInlineFeed(final ODataClient client, final ODataPubFormat format) {
+  private void withInlineEntitySet(final ODataClient client, final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
@@ -152,18 +152,18 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void withInlineFeedFromAtom() {
-    withInlineFeed(client, ODataPubFormat.ATOM);
+  public void withInlineEntitySetFromAtom() {
+    withInlineEntitySet(client, ODataPubFormat.ATOM);
   }
 
   @Test
-  public void withInlineFeedFromFullJSON() {
-    withInlineFeed(client, ODataPubFormat.JSON_FULL_METADATA);
+  public void withInlineEntitySetFromFullJSON() {
+    withInlineEntitySet(client, ODataPubFormat.JSON_FULL_METADATA);
   }
 
   @Test
-  public void withInlineFeedFromJSON() {
-    withInlineFeed(edmClient, ODataPubFormat.JSON);
+  public void withInlineEntitySetFromJSON() {
+    withInlineEntitySet(edmClient, ODataPubFormat.JSON);
   }
 
   private void rawRequest(final ODataPubFormat format) {

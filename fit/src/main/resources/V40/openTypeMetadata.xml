@@ -21,7 +21,7 @@
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
-    <Schema Namespace="Microsoft.Test.OData.Services.ODataWCFService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <Schema Namespace="Microsoft.Test.OData.Services.OpenTypesService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EnumType Name="Color">
         <Member Name="Red" Value="1"/>
         <Member Name="Green" Value="2"/>
@@ -47,19 +47,19 @@
         </Key>
         <Property Name="Id" Type="Edm.Guid" Nullable="false"/>
       </EntityType>
-      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.ODataWCFService.Row" OpenType="true"/>
+      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.OpenTypesService.Row" OpenType="true"/>
       <EntityType Name="RowIndex" OpenType="true">
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
         <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
-        <NavigationProperty Name="Rows" Type="Microsoft.Test.OData.Services.ODataWCFService.Row" Nullable="false"/>
+        <NavigationProperty Name="Rows" Type="Microsoft.Test.OData.Services.OpenTypesService.Row" Nullable="false"/>
       </EntityType>
       <EntityContainer Name="DefaultContainer">
-        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.ODataWCFService.Row">
+        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.OpenTypesService.Row">
           <NavigationPropertyBinding Path="Rows" Target="Row"/>
         </EntitySet>
-        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.ODataWCFService.RowIndex"/>
+        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.OpenTypesService.RowIndex"/>
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Product
                 fcKeepInContent = false)
     java.io.InputStream getPicture();
 
-    void setPicture(final java.io.InputStream _picture);
+    void setPicture(final java.io.InputStream _picture);    
     
     @Key
     @Property(name = "ProductId", 
@@ -105,7 +105,7 @@ public interface Product
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     
     @Property(name = "Description", 
@@ -128,7 +128,7 @@ public interface Product
                 fcKeepInContent = false)
     String getDescription();
 
-    void setDescription(final String _description);
+    void setDescription(final String _description);    
     
     
     @Property(name = "Dimensions", 
@@ -151,9 +151,8 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions getDimensions();
 
-    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
-    
+    void setDimensions(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions _dimensions);    
+        
     
     @Property(name = "BaseConcurrency", 
                 type = "Edm.String", 
@@ -175,7 +174,7 @@ public interface Product
                 fcKeepInContent = false)
     String getBaseConcurrency();
 
-    void setBaseConcurrency(final String _baseConcurrency);
+    void setBaseConcurrency(final String _baseConcurrency);    
     
     
     @Property(name = "ComplexConcurrency", 
@@ -198,9 +197,8 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getComplexConcurrency();
 
-    void setComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newComplexConcurrency();
-    
+    void setComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _complexConcurrency);    
+        
     
     @Property(name = "NestedComplexConcurrency", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
@@ -222,9 +220,8 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getNestedComplexConcurrency();
 
-    void setNestedComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newNestedComplexConcurrency();
-    
+    void setNestedComplexConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _nestedComplexConcurrency);    
+        
     
 
     @NavigationProperty(name = "RelatedProducts", 
@@ -268,16 +265,32 @@ public interface Product
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
+    
           @Operation(name = "ChangeProductDimensions",
-                    type = OperationType.FUNCTION,
-                    isComposable = false)
+                    type = OperationType.ACTION)
       void changeProductDimensions(
                 @Parameter(name = "dimensions", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions", nullable = true) org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions dimensions
             );
 
-    
+        }
+
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "Dimensions",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+
+             @Property(name = "ComplexConcurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newComplexConcurrency();
+
+             @Property(name = "NestedComplexConcurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newNestedComplexConcurrency();
+
         }
 }

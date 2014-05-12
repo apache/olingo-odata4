@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -25,7 +26,6 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -45,7 +45,8 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.AstoriaDefaultService")
 @ComplexType(name = "ComplexToCategory")
-public interface ComplexToCategory extends Serializable {
+public interface ComplexToCategory 
+    extends Serializable {
 
 
     @Property(name = "Term", type = "Edm.String", nullable = true)
@@ -68,4 +69,5 @@ public interface ComplexToCategory extends Serializable {
     void setLabel(final String _label);
 
     
+
 }

@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -158,7 +159,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmFunction getFunctionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -173,7 +173,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmAction getActionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -188,7 +187,6 @@ public abstract class AbstractUtility {
   }
 
   public List<EdmFunction> getFunctionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmFunction> result = new ArrayList<EdmFunction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {
@@ -208,9 +206,19 @@ public abstract class AbstractUtility {
 
     return result;
   }
+  
+  public List<EdmOperation> justInheritedOperationsBoundTo(final EdmEntityType entity){
+    final List<EdmOperation> result = new ArrayList<EdmOperation>();
+    if(entity.getBaseType()!=null){
+      result.addAll(getFunctionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(getActionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(justInheritedOperationsBoundTo(entity.getBaseType()));
+    }
+    
+    return result;
+  }
 
   public List<EdmAction> getActionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmAction> result = new ArrayList<EdmAction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {

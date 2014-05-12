@@ -52,6 +52,9 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   @Override
   public Edm getCachedEdm() {
+    if (edm == null) {
+      getEdm(null);
+    }
     return this.edm;
   }
 }

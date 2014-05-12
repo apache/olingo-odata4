@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Integer getCreditRecordID();
 
-    void setCreditRecordID(final Integer _creditRecordID);
+    void setCreditRecordID(final Integer _creditRecordID);    
     
     
     @Property(name = "IsGood", 
@@ -105,7 +105,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Boolean getIsGood();
 
-    void setIsGood(final Boolean _isGood);
+    void setIsGood(final Boolean _isGood);    
     
     
     @Property(name = "Reason", 
@@ -128,7 +128,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     String getReason();
 
-    void setReason(final String _reason);
+    void setReason(final String _reason);    
     
     
     @Property(name = "CreatedDate", 
@@ -151,9 +151,10 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);
+    void setCreatedDate(final Calendar _createdDate);    
     
     
+
 
 
 }

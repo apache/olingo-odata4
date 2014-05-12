@@ -87,6 +87,7 @@ public abstract class Commons {
     SEQUENCE.put("Car", 1000);
     SEQUENCE.put("Message", 1000);
     SEQUENCE.put("Order", 1000);
+    SEQUENCE.put("Product", 1000);
     SEQUENCE.put("ComputerDetail", 1000);
     SEQUENCE.put("AllGeoTypesSet", 1000);
     SEQUENCE.put("Orders", 1000);
@@ -96,6 +97,7 @@ public abstract class Commons {
     SEQUENCE.put("Products", 1000);
     SEQUENCE.put("ProductDetails", 1000);
     SEQUENCE.put("PaymentInstrument", 10192);
+    SEQUENCE.put("People", 1000);
 
     MEDIA_CONTENT.put("CustomerInfo",
             new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerinfoId", EdmPrimitiveTypeKind.Int32));

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,31 +44,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface AccountCollection extends AbstractEntityCollection<Account> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "GetDefaultPI",
-                    type = OperationType.FUNCTION,
-                    isComposable = false,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument getDefaultPI(
-            );
-
-          @Operation(name = "GetAccountInfo",
-                    type = OperationType.FUNCTION,
-                    isComposable = true,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo(
-            );
-
-    
-          @Operation(name = "RefreshDefaultPI",
-                    type = OperationType.ACTION,
-                    returnType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
-      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument refreshDefaultPI(
-                @Parameter(name = "newDate", type = "Edm.DateTimeOffset", nullable = true) Calendar newDate
-            );
-
-        }
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -48,12 +48,12 @@ public interface EmployeeCollection extends AbstractEntityCollection<Employee> {
 
     public interface Operations {
 
-          @Operation(name = "Sack",
-                    type = OperationType.FUNCTION,
-                    isComposable = false)
-      void sack(
+    
+          @Operation(name = "IncreaseSalaries",
+                    type = OperationType.ACTION)
+      void increaseSalaries(
+                @Parameter(name = "n", type = "Edm.Int32", nullable = false) Integer n
             );
 
-    
         }
 }

@@ -56,7 +56,7 @@ import org.springframework.stereotype.Service;
 public class V3ActionOverloading extends AbstractServices {
 
   public V3ActionOverloading() throws Exception {
-    super(ODataServiceVersion.V30);
+    super(ODataServiceVersion.V30, Commons.getMetadata(ODataServiceVersion.V30));
   }
 
   private Response replaceServiceName(final Response response) {

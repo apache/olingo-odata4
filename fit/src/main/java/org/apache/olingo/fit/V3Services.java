@@ -47,6 +47,7 @@ import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.AbstractUtilities;
@@ -64,7 +65,11 @@ import org.springframework.stereotype.Service;
 public class V3Services extends AbstractServices {
 
   public V3Services() throws Exception {
-    super(ODataServiceVersion.V30);
+    super(ODataServiceVersion.V30, Commons.getMetadata(ODataServiceVersion.V30));
+  }
+
+  protected V3Services(final Metadata metadata) throws Exception {
+    super(ODataServiceVersion.V30, metadata);
   }
 
   @GET

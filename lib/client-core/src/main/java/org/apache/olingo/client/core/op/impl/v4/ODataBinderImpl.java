@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLinked;
@@ -81,6 +82,11 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   public ODataBinderImpl(final ODataClient client) {
     super(client);
+  }
+
+  @Override
+  public void add(final ODataComplexValue<CommonODataProperty> complex, final CommonODataProperty property) {
+    complex.add((ODataProperty) property);
   }
 
   @Override
@@ -272,7 +278,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     final ODataProperty property = new ODataPropertyImpl(resource.getPayload().getName(),
             getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
-                    resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
+            resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(resource.getPayload(), property);
 
     return property;
@@ -375,5 +381,4 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     return delta;
   }
-
 }

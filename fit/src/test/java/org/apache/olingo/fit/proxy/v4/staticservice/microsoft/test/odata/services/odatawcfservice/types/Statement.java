@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Statement
                 fcKeepInContent = false)
     Integer getStatementID();
 
-    void setStatementID(final Integer _statementID);
+    void setStatementID(final Integer _statementID);    
     
     
     @Property(name = "TransactionType", 
@@ -105,7 +105,7 @@ public interface Statement
                 fcKeepInContent = false)
     String getTransactionType();
 
-    void setTransactionType(final String _transactionType);
+    void setTransactionType(final String _transactionType);    
     
     
     @Property(name = "TransactionDescription", 
@@ -128,7 +128,7 @@ public interface Statement
                 fcKeepInContent = false)
     String getTransactionDescription();
 
-    void setTransactionDescription(final String _transactionDescription);
+    void setTransactionDescription(final String _transactionDescription);    
     
     
     @Property(name = "Amount", 
@@ -151,9 +151,10 @@ public interface Statement
                 fcKeepInContent = false)
     Double getAmount();
 
-    void setAmount(final Double _amount);
+    void setAmount(final Double _amount);    
     
     
+
 
 
 }

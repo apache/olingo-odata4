@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Computer
                 fcKeepInContent = false)
     Integer getComputerId();
 
-    void setComputerId(final Integer _computerId);
+    void setComputerId(final Integer _computerId);    
     
     
     @Property(name = "Name", 
@@ -105,7 +105,7 @@ public interface Computer
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
 
@@ -120,16 +120,16 @@ public interface Computer
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
+    
           @Operation(name = "GetComputer",
-                    type = OperationType.FUNCTION,
-                    isComposable = false,
+                    type = OperationType.ACTION,
                     returnType = "Microsoft.Test.OData.Services.AstoriaDefaultService.Computer")
       org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Computer getComputer(
             );
 
-    
         }
+
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -83,7 +83,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(final Integer _paymentInstrumentID);
+    void setPaymentInstrumentID(final Integer _paymentInstrumentID);    
     
     
     @Property(name = "FriendlyName", 
@@ -106,7 +106,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     String getFriendlyName();
 
-    void setFriendlyName(final String _friendlyName);
+    void setFriendlyName(final String _friendlyName);    
     
     
     @Property(name = "CreatedDate", 
@@ -129,7 +129,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);
+    void setCreatedDate(final Calendar _createdDate);    
     
     
     @Property(name = "CardNumber", 
@@ -152,7 +152,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     String getCardNumber();
 
-    void setCardNumber(final String _cardNumber);
+    void setCardNumber(final String _cardNumber);    
     
     
     @Property(name = "CVV", 
@@ -175,7 +175,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     String getCVV();
 
-    void setCVV(final String _cVV);
+    void setCVV(final String _cVV);    
     
     
     @Property(name = "HolderName", 
@@ -198,7 +198,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     String getHolderName();
 
-    void setHolderName(final String _holderName);
+    void setHolderName(final String _holderName);    
     
     
     @Property(name = "Balance", 
@@ -221,7 +221,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     Double getBalance();
 
-    void setBalance(final Double _balance);
+    void setBalance(final Double _balance);    
     
     
     @Property(name = "ExperationDate", 
@@ -244,7 +244,7 @@ public interface CreditCardPI
                 fcKeepInContent = false)
     Calendar getExperationDate();
 
-    void setExperationDate(final Calendar _experationDate);
+    void setExperationDate(final Calendar _experationDate);    
     
     
 
@@ -286,6 +286,7 @@ public interface CreditCardPI
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection getCreditRecords();
 
     void setCreditRecords(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecordCollection _creditRecords);
+
 
 
 

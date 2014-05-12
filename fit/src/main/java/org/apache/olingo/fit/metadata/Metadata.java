@@ -31,10 +31,11 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,15 +135,34 @@ public class Metadata extends AbstractMetadataElement {
     return null;
   }
 
-  public EntityType getEntityType(final String fqn) {
-    final int lastDotIndex = fqn.lastIndexOf('.');
-    final String ns = fqn.substring(0, lastDotIndex).replaceAll("^#", "");
-    final String name = fqn.substring(lastDotIndex + 1);
-    return getSchema(ns) == null ? null : getSchema(ns).getEntityType(name);
+  public EntityType getEntityOrComplexType(final String fqn) {
+    EntityType result = null;
+
+    final String ns = StringUtils.substringBeforeLast(fqn, ".");
+    if (getSchema(ns) != null) {
+      final String name = StringUtils.substringAfterLast(fqn, ".");
+      result = getSchema(ns).getEntityType(name);
+      if (result != null && result.getBaseType() != null) {
+        final String baseNS = StringUtils.substringBeforeLast(result.getBaseType(), ".");
+        if (getSchema(baseNS) != null) {
+          final String baseName = StringUtils.substringAfterLast(result.getBaseType(), ".");
+          final EntityType baseType = getSchema(baseNS).getEntityType(baseName);
+          if (baseType != null) {
+            for (Map.Entry<String, Property> entry : baseType.getPropertyMap().entrySet()) {
+              result.addProperty(entry.getKey(), entry.getValue());
+            }
+            for (Map.Entry<String, NavigationProperty> entry : baseType.getNavigationPropertyMap().entrySet()) {
+              result.addNavigationProperty(entry.getKey(), entry.getValue());
+            }
+          }
+        }
+      }
+    }
+
+    return result;
   }
 
   public Map<String, NavigationProperty> getNavigationProperties(final String entitySetName) {
-
     for (Schema schema : getSchemas()) {
       for (Container container : schema.getContainers()) {
         final EntitySet entitySet = container.getEntitySet(entitySetName);
@@ -279,6 +299,14 @@ public class Metadata extends AbstractMetadataElement {
 
   private EntityType getEntityType(final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final EntityType entityType = new EntityType(start.getAttributeByName(new QName("Name")).getValue());
+    final Attribute baseType = start.getAttributeByName(new QName("BaseType"));
+    if (baseType != null) {
+      entityType.setBaseType(baseType.getValue());
+    }
+    final Attribute openType = start.getAttributeByName(new QName("OpenType"));
+    if (openType != null) {
+      entityType.setOpenType(BooleanUtils.toBoolean(openType.getValue()));
+    }
 
     boolean completed = false;
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface ProductPhoto
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     @Key
     @Property(name = "PhotoId", 
@@ -105,7 +105,7 @@ public interface ProductPhoto
                 fcKeepInContent = false)
     Integer getPhotoId();
 
-    void setPhotoId(final Integer _photoId);
+    void setPhotoId(final Integer _photoId);    
     
     
     @Property(name = "Photo", 
@@ -128,9 +128,10 @@ public interface ProductPhoto
                 fcKeepInContent = false)
     byte[] getPhoto();
 
-    void setPhoto(final byte[] _photo);
+    void setPhoto(final byte[] _photo);    
     
     
+
 
 
 }

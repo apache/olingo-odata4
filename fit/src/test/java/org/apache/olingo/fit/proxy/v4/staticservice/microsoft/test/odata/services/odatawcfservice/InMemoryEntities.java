@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,12 +24,11 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.AbstractContainer;
+import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -49,7 +49,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "InMemoryEntities",
   namespace = "Microsoft.Test.OData.Services.ODataWCFService",
   isDefaultEntityContainer = true)
-public interface InMemoryEntities extends AbstractContainer {
+public interface InMemoryEntities extends Container {
 
     Accounts getAccounts();
 

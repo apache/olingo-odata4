@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getOrderID();
 
-    void setOrderID(final Integer _orderID);
+    void setOrderID(final Integer _orderID);    
     
     
     @Property(name = "OrderDate", 
@@ -105,7 +105,7 @@ public interface Order
                 fcKeepInContent = false)
     Calendar getOrderDate();
 
-    void setOrderDate(final Calendar _orderDate);
+    void setOrderDate(final Calendar _orderDate);    
     
     
     @Property(name = "ShelfLife", 
@@ -128,7 +128,7 @@ public interface Order
                 fcKeepInContent = false)
     BigDecimal getShelfLife();
 
-    void setShelfLife(final BigDecimal _shelfLife);
+    void setShelfLife(final BigDecimal _shelfLife);    
     
     
     @Property(name = "OrderShelfLifes", 
@@ -151,7 +151,7 @@ public interface Order
                 fcKeepInContent = false)
     Collection<BigDecimal> getOrderShelfLifes();
 
-    void setOrderShelfLifes(final Collection<BigDecimal> _orderShelfLifes);
+    void setOrderShelfLifes(final Collection<BigDecimal> _orderShelfLifes);    
     
     
 
@@ -183,6 +183,7 @@ public interface Order
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection getOrderDetails();
 
     void setOrderDetails(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection _orderDetails);
+
 
 
 

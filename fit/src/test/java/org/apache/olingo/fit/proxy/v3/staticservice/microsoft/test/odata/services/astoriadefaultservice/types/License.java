@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface License
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "LicenseNumber", 
@@ -105,7 +105,7 @@ public interface License
                 fcKeepInContent = false)
     String getLicenseNumber();
 
-    void setLicenseNumber(final String _licenseNumber);
+    void setLicenseNumber(final String _licenseNumber);    
     
     
     @Property(name = "LicenseClass", 
@@ -128,7 +128,7 @@ public interface License
                 fcKeepInContent = false)
     String getLicenseClass();
 
-    void setLicenseClass(final String _licenseClass);
+    void setLicenseClass(final String _licenseClass);    
     
     
     @Property(name = "Restrictions", 
@@ -151,7 +151,7 @@ public interface License
                 fcKeepInContent = false)
     String getRestrictions();
 
-    void setRestrictions(final String _restrictions);
+    void setRestrictions(final String _restrictions);    
     
     
     @Property(name = "ExpirationDate", 
@@ -174,7 +174,7 @@ public interface License
                 fcKeepInContent = false)
     Calendar getExpirationDate();
 
-    void setExpirationDate(final Calendar _expirationDate);
+    void setExpirationDate(final Calendar _expirationDate);    
     
     
 
@@ -186,6 +186,7 @@ public interface License
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver getDriver();
 
     void setDriver(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver _driver);
+
 
 
 

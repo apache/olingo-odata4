@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,17 +44,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface ProductCollection extends AbstractEntityCollection<Product> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "ChangeProductDimensions",
-                    type = OperationType.FUNCTION,
-                    isComposable = false)
-      void changeProductDimensions(
-                @Parameter(name = "dimensions", type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions", nullable = true) org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions dimensions
-            );
-
-    
-        }
 }

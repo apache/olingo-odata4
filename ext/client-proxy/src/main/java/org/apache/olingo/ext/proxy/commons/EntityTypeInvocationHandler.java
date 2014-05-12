@@ -21,11 +21,15 @@ package org.apache.olingo.ext.proxy.commons;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
@@ -36,13 +40,16 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
-import org.apache.olingo.ext.proxy.utils.EngineUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
         extends AbstractTypeInvocationHandler<C> {
@@ -50,6 +57,14 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   private static final long serialVersionUID = 2629912294765040037L;
 
   private CommonODataEntity entity;
+
+  protected Map<String, Object> propertyChanges = new HashMap<String, Object>();
+
+  protected Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
+
+  protected int propertiesTag = 0;
+
+  protected int linksTag = 0;
 
   private Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
 
@@ -95,7 +110,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             containerHandler.getEntityContainerName(),
             entitySetName,
             entity.getTypeName(),
-            EngineUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client, typeRef, entity));
 
     this.stream = null;
   }
@@ -108,7 +123,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             getUUID().getContainerName(),
             getUUID().getEntitySetName(),
             getUUID().getName(),
-            EngineUtils.getKey(client.getCachedEdm(), typeRef, entity));
+            CoreUtils.getKey(client, typeRef, entity));
 
     this.propertyChanges.clear();
     this.linkChanges.clear();
@@ -157,33 +172,76 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     this.entity.setETag(eTag);
   }
 
+  public Map<String, Object> getPropertyChanges() {
+    return propertyChanges;
+  }
+
+  public Map<NavigationProperty, Object> getLinkChanges() {
+    return linkChanges;
+  }
+
+  private void updatePropertiesTag(final int checkpoint) {
+    if (checkpoint == propertiesTag) {
+      propertiesTag = propertyChanges.hashCode();
+    }
+  }
+
+  private void updateLinksTag(final int checkpoint) {
+    if (checkpoint == linksTag) {
+      linksTag = linkChanges.hashCode();
+    }
+  }
+
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
-      
       final CommonODataProperty property = entity.getProperty(name);
-      
+
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
+      } else if (property == null) {
+        res = null;
       } else if (property.hasComplexValue()) {
-        res = newComplex(name, (Class<?>) type);
-        EngineUtils.populate(
-                client.getCachedEdm(), 
-                res, 
-                (Class<?>) type, 
-                Property.class, 
-                property.getValue().asComplex().iterator());
-      } else {
+        res = Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {(Class<?>) type},
+                ComplexTypeInvocationHandler.getInstance(
+                client, property.getValue().asComplex(), (Class<?>) type, this));
 
+        addPropertyChanges(name, res);
+      } else if (property.hasCollectionValue()) {
+        final ParameterizedType collType = (ParameterizedType) type;
+        final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
+
+        final ArrayList<Object> collection = new ArrayList<Object>();
+
+        final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+        while (collPropItor.hasNext()) {
+          final ODataValue value = collPropItor.next();
+          if (value.isPrimitive()) {
+            collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+          } else if (value.isComplex()) {
+            final Object collItem = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {collItemClass},
+                    ComplexTypeInvocationHandler.getInstance(
+                    client, value.asComplex(), collItemClass, this));
+
+            collection.add(collItem);
+          }
+        }
+
+        res = collection;
+
+        addPropertyChanges(name, res);
+      } else {
         res = type == null
-                ? EngineUtils.getValueFromProperty(client.getCachedEdm(), property)
-                : EngineUtils.getValueFromProperty(client.getCachedEdm(), property, type);
+                ? CoreUtils.getValueFromProperty(client, property)
+                : CoreUtils.getValueFromProperty(client, property, type);
 
         if (res != null) {
-          int checkpoint = propertyChanges.hashCode();
-          propertyChanges.put(name, res);
-          updatePropertiesTag(checkpoint);
+          addPropertyChanges(name, res);
         }
       }
 
@@ -218,11 +276,27 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
-    if (property.type().equalsIgnoreCase("Edm.Stream")) {
+    if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      propertyChanges.put(property.name(), value);
+      final Object toBeAdded;
+
+      if (value == null) {
+        toBeAdded = null;
+      } else if (Collection.class.isAssignableFrom(value.getClass())) {
+        toBeAdded = new ArrayList<Object>();
+        for (Object obj : (Collection) value) {
+          ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
+        }
+      } else if (value instanceof Proxy) {
+        toBeAdded = Proxy.getInvocationHandler(value);
+      } else {
+        toBeAdded = value;
+      }
+
+      addPropertyChanges(property.name(), toBeAdded);
     }
 
     attach(AttachedEntityStatus.CHANGED);
@@ -280,7 +354,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       if (res == null) {
         final URI link = URIUtils.getURI(
                 containerHandler.getFactory().getServiceRoot(),
-                EngineUtils.getEditMediaLink(property.name(), this.entity).toASCIIString());
+                CoreUtils.getEditMediaLink(property.name(), this.entity).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
@@ -301,6 +375,38 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
 
     streamedPropertyChanges.put(property.name(), input);
+  }
+
+  @Override
+  protected Object getNavigationPropertyValue(final NavigationProperty property, final Method getter) {
+    final Object navPropValue;
+
+    if (linkChanges.containsKey(property)) {
+      navPropValue = linkChanges.get(property);
+    } else {
+      navPropValue = retriveNavigationProperty(property, getter);
+    }
+
+    if (navPropValue != null) {
+      addLinkChanges(property, navPropValue);
+    }
+
+    return navPropValue;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void addPropertyChanges(final String name, final Object value) {
+    int checkpoint = propertyChanges.hashCode();
+    propertyChanges.put(name, value);
+    updatePropertiesTag(checkpoint);
+  }
+
+  @Override
+  protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
+    int checkpoint = linkChanges.hashCode();
+    linkChanges.put(navProp, value);
+    updateLinksTag(checkpoint);
   }
 
   @Override

@@ -73,10 +73,9 @@ public final class ClassUtils {
     return result;
   }
 
-  @SuppressWarnings("unchecked")
   public static <ANN extends Annotation> ANN getAnnotation(final Class<ANN> reference, final AccessibleObject obj) {
     final Annotation ann = obj.getAnnotation(reference);
-    return ann == null ? null : (ANN) ann;
+    return ann == null ? null : reference.cast(ann);
   }
 
   public static Class<?> getCompoundKeyRef(final Class<?> entityTypeRef) {

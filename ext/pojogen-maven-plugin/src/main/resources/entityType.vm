@@ -37,7 +37,6 @@ import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
 #end
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -70,6 +69,7 @@ public interface $utility.capitalize($entityType.Name)
     #if(!$keys.add($key.KeyPropertyName)) #stop #end
 #end
 
+#set( $complexProps = [] )
 #foreach($propertyName in $entityType.PropertyNames)
     #set($property = $entityType.getProperty($propertyName))
     #set($fcprops = $utility.getFcProperties($property) )
@@ -95,9 +95,9 @@ public interface $utility.capitalize($entityType.Name)
                 fcKeepInContent = #if($fcprops.containsKey("fcKeepInContent"))$fcprops.get("fcKeepInContent")#{else}false#end)
     $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));    
     #if($utility.isComplex($property.Type.FullQualifiedName))#*
-      *#$utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+      *##set( $adding = $complexProps.add($property) )
     #end
 
 #end
@@ -126,10 +126,15 @@ public interface $utility.capitalize($entityType.Name)
 
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
-#if( $functions.size() > 0 || $actions.size() > 0 )
+#set( $inherited = $utility.justInheritedOperationsBoundTo($entityType).size())
+#if( $inherited.size() > 0 || $functions.size() > 0 || $actions.size() > 0 )
+    #if($inherited.size() > 0)
+    @Overide
+    #end
     Operations operations();
 
-    public interface Operations {
+    interface Operations #if($inherited.size() > 0)
+           extends ${utility.getJavaType($entityType.getBaseType())}.Operations#end{
     #foreach($operation in $functions)
       @Operation(name = "$operation.Name",
                     type = OperationType.FUNCTION,
@@ -170,4 +175,21 @@ public interface $utility.capitalize($entityType.Name)
     #end
     }
 #end
+
+#if( $complexProps.size() > 0 )
+    #if( $entityType.baseType )
+    @Override
+    #end
+    ComplexFactory factory();
+
+    interface ComplexFactory #if( $entityType.baseType )
+           extends ${utility.getJavaType($entityType.getBaseType())}.ComplexFactory#end{
+    #foreach($property in $complexProps)
+         @Property(name = "$property.Name",
+                   type = "$property.Type.FullQualifiedName.toString()")
+         $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+
+    #end
+    }
+#end   
 }

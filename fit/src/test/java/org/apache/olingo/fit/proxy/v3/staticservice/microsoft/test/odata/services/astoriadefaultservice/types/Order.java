@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getOrderId();
 
-    void setOrderId(final Integer _orderId);
+    void setOrderId(final Integer _orderId);    
     
     
     @Property(name = "CustomerId", 
@@ -105,7 +105,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);
+    void setCustomerId(final Integer _customerId);    
     
     
     @Property(name = "Concurrency", 
@@ -128,9 +128,8 @@ public interface Order
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo getConcurrency();
 
-    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
-    
+    void setConcurrency(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo _concurrency);    
+        
     
 
     @NavigationProperty(name = "Login", 
@@ -154,4 +153,13 @@ public interface Order
 
 
 
+
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "Concurrency",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrency();
+
+        }
 }

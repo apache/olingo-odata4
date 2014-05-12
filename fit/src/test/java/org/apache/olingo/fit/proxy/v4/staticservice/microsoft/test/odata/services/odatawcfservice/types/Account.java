@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Account
                 fcKeepInContent = false)
     Integer getAccountID();
 
-    void setAccountID(final Integer _accountID);
+    void setAccountID(final Integer _accountID);    
     
     
     @Property(name = "Country", 
@@ -105,7 +105,7 @@ public interface Account
                 fcKeepInContent = false)
     String getCountry();
 
-    void setCountry(final String _country);
+    void setCountry(final String _country);    
     
     
     @Property(name = "AccountInfo", 
@@ -128,9 +128,8 @@ public interface Account
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo();
 
-    void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
-    
+    void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);    
+        
     
 
     @NavigationProperty(name = "MyGiftCard", 
@@ -174,9 +173,9 @@ public interface Account
 
 
 
-    Operations operations();
+        Operations operations();
 
-    public interface Operations {
+    interface Operations {
           @Operation(name = "GetDefaultPI",
                     type = OperationType.FUNCTION,
                     isComposable = false,
@@ -198,6 +197,15 @@ public interface Account
       org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument refreshDefaultPI(
                 @Parameter(name = "newDate", type = "Edm.DateTimeOffset", nullable = true) Calendar newDate
             );
+
+        }
+
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "AccountInfo",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
 
         }
 }

@@ -42,8 +42,8 @@ import org.apache.olingo.fit.metadata.NavigationProperty;
 
 public class JSONUtilities extends AbstractUtilities {
 
-  public JSONUtilities(final ODataServiceVersion version) throws Exception {
-    super(version);
+  public JSONUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+    super(version, metadata);
   }
 
   @Override
@@ -105,7 +105,6 @@ public class JSONUtilities extends AbstractUtilities {
 
     final Iterator<Map.Entry<String, JsonNode>> fieldIter = srcNode.fields();
 
-    final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     while (fieldIter.hasNext()) {

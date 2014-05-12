@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface RSAToken
                 fcKeepInContent = false)
     String getSerial();
 
-    void setSerial(final String _serial);
+    void setSerial(final String _serial);    
     
     
     @Property(name = "Issued", 
@@ -105,7 +105,7 @@ public interface RSAToken
                 fcKeepInContent = false)
     Calendar getIssued();
 
-    void setIssued(final Calendar _issued);
+    void setIssued(final Calendar _issued);    
     
     
 
@@ -117,6 +117,7 @@ public interface RSAToken
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
     void setLogin(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+
 
 
 

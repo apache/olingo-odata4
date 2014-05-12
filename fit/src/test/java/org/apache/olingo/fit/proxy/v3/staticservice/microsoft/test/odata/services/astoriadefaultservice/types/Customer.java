@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.io.InputStream getThumbnail();
 
-    void setThumbnail(final java.io.InputStream _thumbnail);
+    void setThumbnail(final java.io.InputStream _thumbnail);    
     
     
     @Property(name = "Video", 
@@ -105,7 +105,7 @@ public interface Customer
                 fcKeepInContent = false)
     java.io.InputStream getVideo();
 
-    void setVideo(final java.io.InputStream _video);
+    void setVideo(final java.io.InputStream _video);    
     
     @Key
     @Property(name = "CustomerId", 
@@ -128,7 +128,7 @@ public interface Customer
                 fcKeepInContent = false)
     Integer getCustomerId();
 
-    void setCustomerId(final Integer _customerId);
+    void setCustomerId(final Integer _customerId);    
     
     
     @Property(name = "Name", 
@@ -151,7 +151,7 @@ public interface Customer
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "PrimaryContactInfo", 
@@ -174,9 +174,8 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails getPrimaryContactInfo();
 
-    void setPrimaryContactInfo(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newPrimaryContactInfo();
-    
+    void setPrimaryContactInfo(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails _primaryContactInfo);    
+        
     
     @Property(name = "BackupContactInfo", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails", 
@@ -198,9 +197,8 @@ public interface Customer
                 fcKeepInContent = false)
     Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> getBackupContactInfo();
 
-    void setBackupContactInfo(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newBackupContactInfo();
-    
+    void setBackupContactInfo(final Collection<org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails> _backupContactInfo);    
+        
     
     @Property(name = "Auditing", 
                 type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo", 
@@ -222,9 +220,8 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo getAuditing();
 
-    void setAuditing(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);
-    org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditing();
-    
+    void setAuditing(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo _auditing);    
+        
     
 
     @NavigationProperty(name = "Orders", 
@@ -278,4 +275,21 @@ public interface Customer
 
 
 
+
+        ComplexFactory factory();
+
+    interface ComplexFactory {
+             @Property(name = "PrimaryContactInfo",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newPrimaryContactInfo();
+
+             @Property(name = "BackupContactInfo",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newBackupContactInfo();
+
+             @Property(name = "Auditing",
+                   type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
+         org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditing();
+
+        }
 }

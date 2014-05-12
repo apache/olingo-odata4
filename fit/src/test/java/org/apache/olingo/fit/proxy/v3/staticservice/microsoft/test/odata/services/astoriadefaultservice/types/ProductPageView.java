@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -83,7 +83,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     Integer getPageViewId();
 
-    void setPageViewId(final Integer _pageViewId);
+    void setPageViewId(final Integer _pageViewId);    
     
     
     @Property(name = "Username", 
@@ -106,7 +106,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     String getUsername();
 
-    void setUsername(final String _username);
+    void setUsername(final String _username);    
     
     
     @Property(name = "Viewed", 
@@ -129,7 +129,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     Calendar getViewed();
 
-    void setViewed(final Calendar _viewed);
+    void setViewed(final Calendar _viewed);    
     
     
     @Property(name = "TimeSpentOnPage", 
@@ -152,7 +152,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     Duration getTimeSpentOnPage();
 
-    void setTimeSpentOnPage(final Duration _timeSpentOnPage);
+    void setTimeSpentOnPage(final Duration _timeSpentOnPage);    
     
     
     @Property(name = "PageUrl", 
@@ -175,7 +175,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     String getPageUrl();
 
-    void setPageUrl(final String _pageUrl);
+    void setPageUrl(final String _pageUrl);    
     
     
     @Property(name = "ProductId", 
@@ -198,7 +198,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     
     @Property(name = "ConcurrencyToken", 
@@ -221,7 +221,7 @@ public interface ProductPageView
                 fcKeepInContent = false)
     String getConcurrencyToken();
 
-    void setConcurrencyToken(final String _concurrencyToken);
+    void setConcurrencyToken(final String _concurrencyToken);    
     
     
 
@@ -233,6 +233,7 @@ public interface ProductPageView
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
     void setLogin(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+
 
 
 

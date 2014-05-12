@@ -55,8 +55,11 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     final ODataEntity entity = res.getBody();
     assertNotNull(entity);
 
-    assertFalse(entity.getEditLink().toASCIIString().contains("("));
-    assertFalse(entity.getEditLink().toASCIIString().contains(")"));
+    // In JSON with minimal metadata, links are not provided
+    if (format == ODataPubFormat.ATOM || format == ODataPubFormat.JSON_FULL_METADATA) {
+      assertFalse(entity.getEditLink().toASCIIString().contains("("));
+      assertFalse(entity.getEditLink().toASCIIString().contains(")"));
+    }
   }
 
   @Test
@@ -76,7 +79,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(ODataPubFormat.JSON, 1001);
+    createAndDeleteOrder(ODataPubFormat.JSON_FULL_METADATA, 1001);
   }
 
   private void update(final ODataPubFormat format) {

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface OrderLine
                 fcKeepInContent = false)
     java.io.InputStream getOrderLineStream();
 
-    void setOrderLineStream(final java.io.InputStream _orderLineStream);
+    void setOrderLineStream(final java.io.InputStream _orderLineStream);    
     
     @Key
     @Property(name = "OrderId", 
@@ -105,7 +105,7 @@ public interface OrderLine
                 fcKeepInContent = false)
     Integer getOrderId();
 
-    void setOrderId(final Integer _orderId);
+    void setOrderId(final Integer _orderId);    
     
     @Key
     @Property(name = "ProductId", 
@@ -128,7 +128,7 @@ public interface OrderLine
                 fcKeepInContent = false)
     Integer getProductId();
 
-    void setProductId(final Integer _productId);
+    void setProductId(final Integer _productId);    
     
     
     @Property(name = "Quantity", 
@@ -151,7 +151,7 @@ public interface OrderLine
                 fcKeepInContent = false)
     Integer getQuantity();
 
-    void setQuantity(final Integer _quantity);
+    void setQuantity(final Integer _quantity);    
     
     
     @Property(name = "ConcurrencyToken", 
@@ -174,7 +174,7 @@ public interface OrderLine
                 fcKeepInContent = false)
     String getConcurrencyToken();
 
-    void setConcurrencyToken(final String _concurrencyToken);
+    void setConcurrencyToken(final String _concurrencyToken);    
     
     
 
@@ -196,6 +196,7 @@ public interface OrderLine
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product getProduct();
 
     void setProduct(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product _product);
+
 
 
 

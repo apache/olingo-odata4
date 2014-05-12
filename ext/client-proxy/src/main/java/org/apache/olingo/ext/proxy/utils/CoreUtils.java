@@ -19,9 +19,11 @@
 package org.apache.olingo.ext.proxy.utils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.sql.Timestamp;
@@ -40,7 +42,7 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -50,17 +52,19 @@ import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.commons.AbstractTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.ComplexTypeInvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class EngineUtils {
+public final class CoreUtils {
 
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(EngineUtils.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CoreUtils.class);
 
-  private EngineUtils() {
+  private CoreUtils() {
     // Empty private constructor for static utility classes
   }
 
@@ -95,22 +99,36 @@ public final class EngineUtils {
     } else if (type.isComplexType()) {
       value = client.getObjectFactory().newComplexValue(type.getFullQualifiedName().toString());
 
-      if (obj.getClass().isAnnotationPresent(ComplexType.class)) {
-        for (Method method : obj.getClass().getMethods()) {
+      final Object oo;
+      if (obj instanceof Proxy) {
+        oo = Proxy.getInvocationHandler(obj);
+      } else {
+        oo = obj;
+      }
+
+      if (oo instanceof ComplexTypeInvocationHandler<?>) {
+        final Class<?> typeRef = ((ComplexTypeInvocationHandler<?>) oo).getTypeRef();
+        final Object complex = Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {typeRef},
+                (ComplexTypeInvocationHandler<?>) oo);
+
+        for (Method method : typeRef.getMethods()) {
           final Property complexPropertyAnn = method.getAnnotation(Property.class);
           try {
             if (complexPropertyAnn != null) {
               value.asComplex().add(getODataComplexProperty(
-                      client, type.getFullQualifiedName(), complexPropertyAnn.name(), method.invoke(obj)));
+                      client, type.getFullQualifiedName(), complexPropertyAnn.name(), method.invoke(complex)));
             }
           } catch (Exception ignore) {
             // ignore value
-            LOG.warn("Error attaching complex field '{}'", complexPropertyAnn.name(), ignore);
+            LOG.warn("Error attaching complex {} for field '{}.{}'",
+                    type.getFullQualifiedName(), typeRef.getName(), complexPropertyAnn.name(), ignore);
           }
         }
       } else {
         throw new IllegalArgumentException(
-                "Object '" + obj.getClass().getSimpleName() + "' is not a complex value");
+                "Object '" + oo.getClass().getSimpleName() + "' is not a complex value");
       }
     } else if (type.isEnumType()) {
       if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
@@ -132,11 +150,9 @@ public final class EngineUtils {
           final FullQualifiedName entity,
           final String property,
           final Object obj) {
-    final EdmType edmType = client.getCachedEdm().getEntityType(entity).getProperty(property).getType();
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().
-            setEdm(client.getCachedEdm()).setTypeExpression(edmType.getFullQualifiedName().toString()).build();
 
-    return getODataProperty(client, property, type, obj);
+    final EdmElement edmProperty = client.getCachedEdm().getEntityType(entity).getProperty(property);
+    return getODataProperty(client, edmProperty, property, obj);
   }
 
   private static CommonODataProperty getODataComplexProperty(
@@ -144,16 +160,31 @@ public final class EngineUtils {
           final FullQualifiedName complex,
           final String property,
           final Object obj) {
-    final EdmType edmType = client.getCachedEdm().getComplexType(complex).getProperty(property).getType();
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().
-            setEdm(client.getCachedEdm()).setTypeExpression(edmType.getFullQualifiedName().toString()).build();
+
+    final EdmElement edmProperty = client.getCachedEdm().getComplexType(complex).getProperty(property);
+    return getODataProperty(client, edmProperty, property, obj);
+  }
+
+  private static CommonODataProperty getODataProperty(
+          final CommonEdmEnabledODataClient<?> client,
+          final EdmElement edmProperty,
+          final String property,
+          final Object obj) {
+
+    final EdmType edmType = edmProperty.getType();
+
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+            edmProperty.isCollection()
+            ? "Collection(" + edmType.getFullQualifiedName().toString() + ")"
+            : edmType.getFullQualifiedName().toString()).build();
 
     return getODataProperty(client, property, type, obj);
   }
 
-  private static CommonODataProperty getODataProperty(
+  public static CommonODataProperty getODataProperty(
           final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
-    final CommonODataProperty oprop;
+
+    CommonODataProperty oprop;
 
     try {
       if (type == null || obj == null) {
@@ -173,8 +204,8 @@ public final class EngineUtils {
         } else {
           oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
                   newEnumProperty(name,
-                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
-                          asEnum());
+                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
+                  asEnum());
         }
       } else {
         throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
@@ -204,7 +235,7 @@ public final class EngineUtils {
     }
   }
 
-  private static Object primitiveValueToObject(final ODataPrimitiveValue value) {
+  public static Object primitiveValueToObject(final ODataPrimitiveValue value) {
     Object obj;
 
     try {
@@ -219,7 +250,6 @@ public final class EngineUtils {
     return obj;
   }
 
-  @SuppressWarnings("unchecked")
   private static void setPropertyValue(final Object bean, final Method getter, final Object value)
           throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
@@ -229,7 +259,7 @@ public final class EngineUtils {
   }
 
   public static Object getKey(
-          final Edm metadata, final Class<?> entityTypeRef, final CommonODataEntity entity) {
+          final CommonEdmEnabledODataClient<?> client, final Class<?> entityTypeRef, final CommonODataEntity entity) {
 
     Object res = null;
 
@@ -243,7 +273,7 @@ public final class EngineUtils {
       } else {
         try {
           res = keyRef.newInstance();
-          populate(metadata, res, CompoundKeyElement.class, entity.getProperties().iterator());
+          populate(client, res, CompoundKeyElement.class, entity.getProperties().iterator());
         } catch (Exception e) {
           LOG.error("Error population compound key {}", keyRef.getSimpleName(), e);
           throw new IllegalArgumentException("Cannot populate compound key");
@@ -255,18 +285,30 @@ public final class EngineUtils {
   }
 
   public static void populate(
-          final Edm metadata,
+          final CommonEdmEnabledODataClient<?> client,
           final Object bean,
           final Class<? extends Annotation> getterAnn,
           final Iterator<? extends CommonODataProperty> propItor) {
+
     if (bean != null) {
-      populate(metadata, bean, bean.getClass(), getterAnn, propItor);
+      final Class<?> typeRef;
+      if (bean instanceof Proxy) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(bean);
+        if (handler instanceof AbstractTypeInvocationHandler) {
+          typeRef = ((ComplexTypeInvocationHandler<?>) handler).getTypeRef();
+        } else {
+          throw new IllegalStateException("Invalid bean " + bean);
+        }
+      } else {
+        typeRef = bean.getClass();
+      }
+      populate(client, bean, typeRef, getterAnn, propItor);
     }
   }
 
   @SuppressWarnings({"unchecked"})
   public static void populate(
-          final Edm metadata,
+          final CommonEdmEnabledODataClient<?> client,
           final Object bean,
           final Class<?> reference,
           final Class<? extends Annotation> getterAnn,
@@ -285,16 +327,18 @@ public final class EngineUtils {
           try {
             if (property.hasNullValue()) {
               setPropertyValue(bean, getter, null);
-            }
-            if (property.hasPrimitiveValue()) {
+            } else if (property.hasPrimitiveValue()) {
               setPropertyValue(bean, getter, primitiveValueToObject(property.getPrimitiveValue()));
-            }
-            if (property.hasComplexValue()) {
-              final Object complex = getter.getReturnType().newInstance();
-              populate(metadata, complex, Property.class, property.getValue().asComplex().iterator());
+            } else if (property.hasComplexValue()) {
+              final Object complex = Proxy.newProxyInstance(
+                      Thread.currentThread().getContextClassLoader(),
+                      new Class<?>[] {getter.getReturnType()},
+                      ComplexTypeInvocationHandler.getInstance(
+                      client, property.getName(), getter.getReturnType(), null));
+
+              populate(client, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
-            }
-            if (property.hasCollectionValue()) {
+            } else if (property.hasCollectionValue()) {
               final ParameterizedType collType = (ParameterizedType) getter.getGenericReturnType();
               final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
 
@@ -309,10 +353,14 @@ public final class EngineUtils {
                 final ODataValue value = collPropItor.next();
                 if (value.isPrimitive()) {
                   collection.add(primitiveValueToObject(value.asPrimitive()));
-                }
-                if (value.isComplex()) {
-                  final Object collItem = collItemClass.newInstance();
-                  populate(metadata, collItem, Property.class, value.asComplex().iterator());
+                } else if (value.isComplex()) {
+                  final Object collItem = Proxy.newProxyInstance(
+                          Thread.currentThread().getContextClassLoader(),
+                          new Class<?>[] {collItemClass},
+                          ComplexTypeInvocationHandler.getInstance(
+                          client, property.getName(), collItemClass, null));
+
+                  populate(client, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
                 }
               }
@@ -326,7 +374,8 @@ public final class EngineUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static Object getValueFromProperty(final Edm metadata, final CommonODataProperty property)
+  public static Object getValueFromProperty(
+          final CommonEdmEnabledODataClient<?> client, final CommonODataProperty property)
           throws InstantiationException, IllegalAccessException {
 
     final Object value;
@@ -344,15 +393,15 @@ public final class EngineUtils {
         }
         if (odataValue.isComplex()) {
           final Object collItem =
-                  buildComplexInstance(metadata, property.getName(), odataValue.asComplex().iterator());
+                  buildComplexInstance(client, property.getName(), odataValue.asComplex().iterator());
           ((Collection) value).add(collItem);
         }
       }
     } else if (property.hasPrimitiveValue()) {
       value = primitiveValueToObject(property.getPrimitiveValue());
     } else if (property.hasComplexValue()) {
-      value = buildComplexInstance(
-              metadata, property.getValue().asComplex().getTypeName(), property.getValue().asComplex().iterator());
+      value = buildComplexInstance(client, property.getValue().asComplex().getTypeName(),
+              property.getValue().asComplex().iterator());
     } else {
       throw new IllegalArgumentException("Invalid property " + property);
     }
@@ -362,14 +411,16 @@ public final class EngineUtils {
 
   @SuppressWarnings("unchecked")
   private static <C extends AbstractComplexType> C buildComplexInstance(
-          final Edm metadata, final String name, final Iterator<CommonODataProperty> properties) {
+          final CommonEdmEnabledODataClient<?> client,
+          final String name,
+          final Iterator<CommonODataProperty> properties) {
 
     for (C complex : (Iterable<C>) ServiceLoader.load(AbstractComplexType.class)) {
       final ComplexType ann = complex.getClass().getAnnotation(ComplexType.class);
       final String fn = ann == null ? null : ClassUtils.getNamespace(complex.getClass()) + "." + ann.name();
 
       if (name.equals(fn)) {
-        populate(metadata, complex, Property.class, properties);
+        populate(client, complex, Property.class, properties);
         return complex;
       }
     }
@@ -378,7 +429,9 @@ public final class EngineUtils {
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public static Object getValueFromProperty(final Edm metadata, final CommonODataProperty property, final Type type)
+  public static Object getValueFromProperty(
+          final CommonEdmEnabledODataClient<?> client,
+          final CommonODataProperty property, final Type type)
           throws InstantiationException, IllegalAccessException {
 
     final Object value;
@@ -398,8 +451,11 @@ public final class EngineUtils {
           ((Collection) value).add(primitiveValueToObject(odataValue.asPrimitive()));
         }
         if (odataValue.isComplex()) {
-          final Object collItem = collItemClass.newInstance();
-          populate(metadata, collItem, Property.class, odataValue.asComplex().iterator());
+          final Object collItem = Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {collItemClass},
+                  new ComplexTypeInvocationHandler(client, odataValue.asComplex(), collItemClass, null));
+          populate(client, collItem, Property.class, odataValue.asComplex().iterator());
           ((Collection) value).add(collItem);
         }
       }

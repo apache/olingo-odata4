@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -83,7 +83,7 @@ public interface Customer
                 fcKeepInContent = false)
     Integer getPersonID();
 
-    void setPersonID(final Integer _personID);
+    void setPersonID(final Integer _personID);    
     
     
     @Property(name = "FirstName", 
@@ -106,7 +106,7 @@ public interface Customer
                 fcKeepInContent = false)
     String getFirstName();
 
-    void setFirstName(final String _firstName);
+    void setFirstName(final String _firstName);    
     
     
     @Property(name = "LastName", 
@@ -129,7 +129,7 @@ public interface Customer
                 fcKeepInContent = false)
     String getLastName();
 
-    void setLastName(final String _lastName);
+    void setLastName(final String _lastName);    
     
     
     @Property(name = "MiddleName", 
@@ -152,7 +152,7 @@ public interface Customer
                 fcKeepInContent = false)
     String getMiddleName();
 
-    void setMiddleName(final String _middleName);
+    void setMiddleName(final String _middleName);    
     
     
     @Property(name = "HomeAddress", 
@@ -175,9 +175,8 @@ public interface Customer
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
-    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
-    
+    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
+        
     
     @Property(name = "Home", 
                 type = "Edm.GeographyPoint", 
@@ -199,7 +198,7 @@ public interface Customer
                 fcKeepInContent = false)
     Point getHome();
 
-    void setHome(final Point _home);
+    void setHome(final Point _home);    
     
     
     @Property(name = "Numbers", 
@@ -222,7 +221,7 @@ public interface Customer
                 fcKeepInContent = false)
     Collection<String> getNumbers();
 
-    void setNumbers(final Collection<String> _numbers);
+    void setNumbers(final Collection<String> _numbers);    
     
     
     @Property(name = "Emails", 
@@ -245,7 +244,7 @@ public interface Customer
                 fcKeepInContent = false)
     Collection<String> getEmails();
 
-    void setEmails(final Collection<String> _emails);
+    void setEmails(final Collection<String> _emails);    
     
     
     @Property(name = "City", 
@@ -268,7 +267,7 @@ public interface Customer
                 fcKeepInContent = false)
     String getCity();
 
-    void setCity(final String _city);
+    void setCity(final String _city);    
     
     
     @Property(name = "Birthday", 
@@ -291,7 +290,7 @@ public interface Customer
                 fcKeepInContent = false)
     Calendar getBirthday();
 
-    void setBirthday(final Calendar _birthday);
+    void setBirthday(final Calendar _birthday);    
     
     
     @Property(name = "TimeBetweenLastTwoOrders", 
@@ -314,7 +313,7 @@ public interface Customer
                 fcKeepInContent = false)
     BigDecimal getTimeBetweenLastTwoOrders();
 
-    void setTimeBetweenLastTwoOrders(final BigDecimal _timeBetweenLastTwoOrders);
+    void setTimeBetweenLastTwoOrders(final BigDecimal _timeBetweenLastTwoOrders);    
     
     
 
@@ -349,4 +348,14 @@ public interface Customer
 
 
 
+
+        @Override
+        ComplexFactory factory();
+
+    interface ComplexFactory            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.ComplexFactory{
+             @Property(name = "HomeAddress",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newHomeAddress();
+
+        }
 }

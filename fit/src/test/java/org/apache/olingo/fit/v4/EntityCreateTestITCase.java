@@ -130,7 +130,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
     product.getProperties().add(getClient().getObjectFactory().newCollectionProperty("CoverColors",
             getClient().getObjectFactory().
-            newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.ProductDetail)")));
+            newCollectionValue("Microsoft.Test.OData.Services.ODataWCFService.ProductDetail")));
     product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Green"));
     product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().

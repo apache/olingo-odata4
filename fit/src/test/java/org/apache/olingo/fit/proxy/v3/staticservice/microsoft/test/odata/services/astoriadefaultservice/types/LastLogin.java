@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface LastLogin
                 fcKeepInContent = false)
     String getUsername();
 
-    void setUsername(final String _username);
+    void setUsername(final String _username);    
     
     
     @Property(name = "LoggedIn", 
@@ -105,7 +105,7 @@ public interface LastLogin
                 fcKeepInContent = false)
     Calendar getLoggedIn();
 
-    void setLoggedIn(final Calendar _loggedIn);
+    void setLoggedIn(final Calendar _loggedIn);    
     
     
     @Property(name = "LoggedOut", 
@@ -128,7 +128,7 @@ public interface LastLogin
                 fcKeepInContent = false)
     Calendar getLoggedOut();
 
-    void setLoggedOut(final Calendar _loggedOut);
+    void setLoggedOut(final Calendar _loggedOut);    
     
     
     @Property(name = "Duration", 
@@ -151,7 +151,7 @@ public interface LastLogin
                 fcKeepInContent = false)
     Duration getDuration();
 
-    void setDuration(final Duration _duration);
+    void setDuration(final Duration _duration);    
     
     
 
@@ -163,6 +163,7 @@ public interface LastLogin
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login getLogin();
 
     void setLogin(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Login _login);
+
 
 
 

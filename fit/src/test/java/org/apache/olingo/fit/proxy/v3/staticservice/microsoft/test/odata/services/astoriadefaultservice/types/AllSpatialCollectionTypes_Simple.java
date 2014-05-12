@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -83,7 +83,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Integer getId();
 
-    void setId(final Integer _id);
+    void setId(final Integer _id);    
     
     
     @Property(name = "ManyGeogPoint", 
@@ -106,7 +106,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<Point> getManyGeogPoint();
 
-    void setManyGeogPoint(final Collection<Point> _manyGeogPoint);
+    void setManyGeogPoint(final Collection<Point> _manyGeogPoint);    
     
     
     @Property(name = "ManyGeogLine", 
@@ -129,7 +129,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<LineString> getManyGeogLine();
 
-    void setManyGeogLine(final Collection<LineString> _manyGeogLine);
+    void setManyGeogLine(final Collection<LineString> _manyGeogLine);    
     
     
     @Property(name = "ManyGeogPolygon", 
@@ -152,7 +152,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<Polygon> getManyGeogPolygon();
 
-    void setManyGeogPolygon(final Collection<Polygon> _manyGeogPolygon);
+    void setManyGeogPolygon(final Collection<Polygon> _manyGeogPolygon);    
     
     
     @Property(name = "ManyGeomPoint", 
@@ -175,7 +175,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<Point> getManyGeomPoint();
 
-    void setManyGeomPoint(final Collection<Point> _manyGeomPoint);
+    void setManyGeomPoint(final Collection<Point> _manyGeomPoint);    
     
     
     @Property(name = "ManyGeomLine", 
@@ -198,7 +198,7 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<LineString> getManyGeomLine();
 
-    void setManyGeomLine(final Collection<LineString> _manyGeomLine);
+    void setManyGeomLine(final Collection<LineString> _manyGeomLine);    
     
     
     @Property(name = "ManyGeomPolygon", 
@@ -221,9 +221,10 @@ public interface AllSpatialCollectionTypes_Simple
                 fcKeepInContent = false)
     Collection<Polygon> getManyGeomPolygon();
 
-    void setManyGeomPolygon(final Collection<Polygon> _manyGeomPolygon);
+    void setManyGeomPolygon(final Collection<Polygon> _manyGeomPolygon);    
     
     
+
 
 
 }

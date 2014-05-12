@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -26,7 +27,6 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -44,18 +44,4 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface ComputerDetailCollection extends AbstractEntityCollection<ComputerDetail> {
-    Operations operations();
-
-    public interface Operations {
-
-          @Operation(name = "ResetComputerDetailsSpecifications",
-                    type = OperationType.FUNCTION,
-                    isComposable = false)
-      void resetComputerDetailsSpecifications(
-                @Parameter(name = "specifications", type = "Collection(Edm.String)", nullable = false) Collection<String> specifications, 
-                @Parameter(name = "purchaseTime", type = "Edm.DateTime", nullable = false) Calendar purchaseTime
-            );
-
-    
-        }
 }

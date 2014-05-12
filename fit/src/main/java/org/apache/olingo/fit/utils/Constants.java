@@ -50,6 +50,7 @@ public class Constants {
     v4constants.put(ConstantKey.JSON_ID_NAME, "@odata.id");
     v4constants.put(ConstantKey.JSON_TYPE_NAME, "@odata.type");
     v4constants.put(ConstantKey.JSON_NAVIGATION_SUFFIX, "@odata.navigationLink");
+    v4constants.put(ConstantKey.JSON_EDITLINK_NAME, "@odata.editLink");
     v4constants.put(ConstantKey.DATASERVICES_NS, "http://docs.oasis-open.org/odata/ns/dataservices");
     v4constants.put(ConstantKey.METADATA_NS, "http://docs.oasis-open.org/odata/ns/metadata");
     v4constants.put(ConstantKey.GEORSS_NS, "http://www.georss.org/georss");

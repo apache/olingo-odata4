@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -82,7 +82,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(final Integer _paymentInstrumentID);
+    void setPaymentInstrumentID(final Integer _paymentInstrumentID);    
     
     
     @Property(name = "FriendlyName", 
@@ -105,7 +105,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     String getFriendlyName();
 
-    void setFriendlyName(final String _friendlyName);
+    void setFriendlyName(final String _friendlyName);    
     
     
     @Property(name = "CreatedDate", 
@@ -128,7 +128,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);
+    void setCreatedDate(final Calendar _createdDate);    
     
     
 
@@ -160,6 +160,7 @@ public interface PaymentInstrument
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI getBackupStoredPI();
 
     void setBackupStoredPI(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _backupStoredPI);
+
 
 
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -34,7 +35,6 @@ import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.*;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.*;
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -83,7 +83,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Integer getPersonId();
 
-    void setPersonId(final Integer _personId);
+    void setPersonId(final Integer _personId);    
     
     
     @Property(name = "Name", 
@@ -106,7 +106,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);
+    void setName(final String _name);    
     
     
     @Property(name = "ManagersPersonId", 
@@ -129,7 +129,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Integer getManagersPersonId();
 
-    void setManagersPersonId(final Integer _managersPersonId);
+    void setManagersPersonId(final Integer _managersPersonId);    
     
     
     @Property(name = "Salary", 
@@ -152,7 +152,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Integer getSalary();
 
-    void setSalary(final Integer _salary);
+    void setSalary(final Integer _salary);    
     
     
     @Property(name = "Title", 
@@ -175,7 +175,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     String getTitle();
 
-    void setTitle(final String _title);
+    void setTitle(final String _title);    
     
     
     @Property(name = "CarsVIN", 
@@ -198,7 +198,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Integer getCarsVIN();
 
-    void setCarsVIN(final Integer _carsVIN);
+    void setCarsVIN(final Integer _carsVIN);    
     
     
     @Property(name = "Bonus", 
@@ -221,7 +221,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Integer getBonus();
 
-    void setBonus(final Integer _bonus);
+    void setBonus(final Integer _bonus);    
     
     
     @Property(name = "IsFullyVested", 
@@ -244,7 +244,7 @@ public interface SpecialEmployee
                 fcKeepInContent = false)
     Boolean getIsFullyVested();
 
-    void setIsFullyVested(final Boolean _isFullyVested);
+    void setIsFullyVested(final Boolean _isFullyVested);    
     
     
 
@@ -276,6 +276,7 @@ public interface SpecialEmployee
     org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car getCar();
 
     void setCar(final org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car _car);
+
 
 
 
