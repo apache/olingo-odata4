@@ -18,31 +18,29 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
-import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
+import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+
 public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
-
-  @BeforeClass
-  public static void enableBasicAuth() {
-    containerFactory.getConfiguration().
-            setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
-  }
-
-  @AfterClass
-  public static void disableBasicAuth() {
-    containerFactory.getConfiguration().setHttpClientFactory(new DefaultHttpClientFactory());
-  }
 
   @BeforeClass
   public static void setupContaner() {
     containerFactory = EntityContainerFactory.getV3(testAuthServiceRootURL);
+    containerFactory.getConfiguration().
+            setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
+    container = containerFactory.getEntityContainer(InMemoryEntities.class);
+    assertNotNull(container);
+  }
+
+  @AfterClass
+  public static void disableBasicAuth() {
+    containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
   }
