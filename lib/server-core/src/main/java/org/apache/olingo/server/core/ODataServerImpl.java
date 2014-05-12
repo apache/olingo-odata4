@@ -19,7 +19,9 @@
 package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.core.serializer.ODataJsonSerializer;
@@ -43,5 +45,12 @@ public class ODataServerImpl extends ODataServer {
 
     return serializer;
   }
+
+  @Override
+  public ODataHandler getHandler(EdmProvider edmProvider) {
+    return new ODataHandlerImpl(this, edmProvider);
+  }
+
+
 
 }
