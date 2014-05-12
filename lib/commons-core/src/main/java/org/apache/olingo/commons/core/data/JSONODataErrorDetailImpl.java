@@ -27,36 +27,36 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(using = JSONODataErrorDetailDeserializer.class)
 public class JSONODataErrorDetailImpl implements ODataErrorDetail {
 
-	private String code;
+  private String code;
 
-	private String message;
+  private String message;
 
-	private String target;
+  private String target;
 
-	@Override
-	public String getCode() {
-		return code;
-	}
+  @Override
+  public String getCode() {
+    return code;
+  }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+  public void setCode(final String code) {
+    this.code = code;
+  }
 
-	@Override
-	public String getMessage() {
-		return message;
-	}
+  @Override
+  public String getMessage() {
+    return message;
+  }
 
-	public void setMessage(final String message) {
-		this.message = message;
-	}
+  public void setMessage(final String message) {
+    this.message = message;
+  }
 
-	@Override
-	public String getTarget() {
-		return target;
-	}
+  @Override
+  public String getTarget() {
+    return target;
+  }
 
-	public void setTarget(final String target) {
-		this.target = target;
-	}
+  public void setTarget(final String target) {
+    this.target = target;
+  }
 }

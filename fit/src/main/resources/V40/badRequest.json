@@ -1,35 +1,24 @@
 {
-
   "error": {
-
     "code": "400",
-
     "message": "Bad request.",
-
     "target": "query",
-
     "details": [
-
       {
-
-       "code": "400",
-
-       "target": "$search" ,
-
-       "message": "Microsoft.Data.OData.BadRequest"
+        "code": "400",
+        "target": "$search",
+        "message": "Microsoft.Data.OData.BadRequest"
 
       }
 
     ],
-
     "innererror": {
-
-      "trace": ["at Microsoft.Data.OData.MediaTypeUtils.GetContentTypeFromSettings....","callmethod2 etc"],
-
-      "context": {"key1":"for debug deployment only"}
+      "trace": ["at Microsoft.Data.OData.MediaTypeUtils.GetContentTypeFromSettings....", "callmethod2 etc"],
+      "context": {
+        "key1": "for debug deployment only"
+      }
 
     }
 
   }
-
 }

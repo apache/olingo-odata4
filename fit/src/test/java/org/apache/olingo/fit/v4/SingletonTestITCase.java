@@ -20,6 +20,7 @@ package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -29,6 +30,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.Singleton;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -55,18 +57,49 @@ public class SingletonTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readfromAtom() throws EdmPrimitiveTypeException {
+  public void readFromAtom() throws EdmPrimitiveTypeException {
     read(client, ODataPubFormat.ATOM);
   }
 
   @Test
-  public void readfromJSON() throws EdmPrimitiveTypeException {
+  public void readFromJSON() throws EdmPrimitiveTypeException {
     read(edmClient, ODataPubFormat.JSON);
   }
 
   @Test
   public void readfromJSONFull() throws EdmPrimitiveTypeException {
     read(client, ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  private void readWithAnnotations(final ODataClient client, final ODataPubFormat format) 
+          throws EdmPrimitiveTypeException {
+    
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");    
+    final ODataEntityRequest<Singleton> singleton =
+            client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
+    singleton.setFormat(format);
+    singleton.setPrefer(client.newPreferences().includeAnnotations("*"));
+    final Singleton boss = singleton.execute().getBody();
+    assertNotNull(boss);
+
+    assertFalse(boss.getAnnotations().isEmpty());
+    final ODataAnnotation isBoss = boss.getAnnotations().get(0);
+    assertTrue(isBoss.getPrimitiveValue().toCastValue(Boolean.class));
+  }
+
+  @Test
+  public void readWithAnnotationsFromAtom() throws EdmPrimitiveTypeException {
+    readWithAnnotations(client, ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void readWithAnnotationsFromJSON() throws EdmPrimitiveTypeException {
+    readWithAnnotations(edmClient, ODataPubFormat.JSON);
+  }
+
+  @Test
+  public void readWithAnnotationsFromJSONFull() throws EdmPrimitiveTypeException {
+    readWithAnnotations(client, ODataPubFormat.JSON_FULL_METADATA);
   }
 
   private void update(final ODataPubFormat format) throws EdmPrimitiveTypeException {

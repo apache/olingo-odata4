@@ -125,6 +125,8 @@ public class DataBinder {
       properties.add(toJSONProperty((AtomPropertyImpl) property));
     }
 
+    jsonEntity.getAnnotations().addAll(atomEntity.getAnnotations());
+    
     return jsonEntity;
   }
 

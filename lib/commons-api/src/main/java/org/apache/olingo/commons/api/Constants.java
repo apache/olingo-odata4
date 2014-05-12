@@ -246,8 +246,8 @@ public interface Constants {
   public static final String ERROR_TARGET = "target";
 
   public static final String ERROR_DETAILS = "details";
-  
-  public static final String ERROR_INNERERROR= "innererror";
+
+  public static final String ERROR_INNERERROR = "innererror";
 
   // canonical functions to be applied via dynamic annotation <tt>Apply</tt>
   public static final String CANONICAL_FUNCTION_CONCAT = "odata.concat";

@@ -19,11 +19,10 @@
 package org.apache.olingo.fit.v4;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.util.Dictionary;
-
+import java.util.Map;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.commons.api.domain.ODataError;
@@ -34,43 +33,33 @@ import org.junit.Test;
 
 public class ErrorResponseTestITCase extends AbstractTestITCase {
 
-	@Test
-	public void jsonError() {
+  @Test
+  public void jsonError() {
+    final URI readURI = getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customers").appendKeySegment(32).
+            build();
 
-		ODataPubFormat format = ODataPubFormat.JSON;
-		final URI readURI = getClient().getURIBuilder(testStaticServiceRootURL)
-				.appendEntitySetSegment("Customers").appendKeySegment(32)
-				.build();
+    final ODataEntityRequest<ODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(readURI);
+    try {
+      final ODataEntity read = read(ODataPubFormat.JSON, readURI);
 
-		final ODataEntityRequest<ODataEntity> req = getClient()
-				.getRetrieveRequestFactory().getEntityRequest(readURI);
-		try {
-			final ODataEntity read = read(format, readURI);
-		} catch (Exception ex) {
-			ODataError err = ((ODataClientErrorException) ex).getODataError();
+      fail("should have got exception");
+    } catch (Exception ex) {
+      final ODataError err = ((ODataClientErrorException) ex).getODataError();
 
-			// verify details
-			ODataErrorDetail detail = (ODataErrorDetail) err.getDetails()
-					.get(0);
-			assertEquals("Code should be correct", "301", detail.getCode());
-			assertEquals("Target should be correct", "$search",
-					detail.getTarget());
-			assertEquals("Message should be correct",
-					"$search query option not supported", detail.getMessage());
+      // verify details
+      final ODataErrorDetail detail = (ODataErrorDetail) err.getDetails().get(0);
+      assertEquals("Code should be correct", "301", detail.getCode());
+      assertEquals("Target should be correct", "$search", detail.getTarget());
+      assertEquals("Message should be correct", "$search query option not supported", detail.getMessage());
 
-			// verify inner error dictionary
-			Dictionary<String, Object> innerErr = err.getInnerError();
-			assertEquals("innerError dictionary size should be correct", 2,
-					innerErr.size());
-			assertEquals("innerError['context'] should be correct",
-					"{\"key1\":\"for debug deployment only\"}",
-					innerErr.get("context"));
-			assertEquals("innerError['trace'] should be correct",
-					"[\"callmethod1 etc\",\"callmethod2 etc\"]",
-					innerErr.get("trace"));
-			return;
-		}
-
-		assertNotNull("should have got exception", null);
-	}
+      // verify inner error dictionary
+      final Map<String, String> innerErr = err.getInnerError();
+      assertEquals("innerError dictionary size should be correct", 2, innerErr.size());
+      assertEquals("innerError['context'] should be correct",
+              "{\"key1\":\"for debug deployment only\"}", innerErr.get("context"));
+      assertEquals("innerError['trace'] should be correct",
+              "[\"callmethod1 etc\",\"callmethod2 etc\"]", innerErr.get("trace"));
+    }
+  }
 }

@@ -1,35 +1,23 @@
 {
-
   "error": {
-
     "code": "501",
-
     "message": "Unsupported functionality",
-
     "target": "query",
-
     "details": [
-
       {
-
-       "code": "301",
-
-       "target": "$search",
-
-       "message": "$search query option not supported"
+        "code": "301",
+        "target": "$search",
+        "message": "$search query option not supported"
 
       }
 
     ],
-
     "innererror": {
-
-      "trace": ["callmethod1 etc","callmethod2 etc"],
-
-      "context": {"key1":"for debug deployment only"}
+      "trace": ["callmethod1 etc", "callmethod2 etc"],
+      "context": {
+        "key1": "for debug deployment only"
+      }
 
     }
-
   }
-
 }

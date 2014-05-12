@@ -20,47 +20,37 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
-public class JSONODataErrorDetailDeserializer extends
-		AbstractJsonDeserializer<JSONODataErrorDetailImpl> {
+public class JSONODataErrorDetailDeserializer extends AbstractJsonDeserializer<JSONODataErrorDetailImpl> {
 
-	@Override
-	protected ResWrap<JSONODataErrorDetailImpl> doDeserialize(
-			final JsonParser parser, final DeserializationContext ctxt)
-			throws IOException, JsonProcessingException {
+  @Override
+  protected ResWrap<JSONODataErrorDetailImpl> doDeserialize(
+          final JsonParser parser, final DeserializationContext ctxt)
+          throws IOException, JsonProcessingException {
 
-		final JSONODataErrorDetailImpl error = new JSONODataErrorDetailImpl();
-		final JsonNode errorNode = parser.getCodec().readTree(parser);
-		if (errorNode.has(Constants.ERROR_CODE)) {
-			error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());
-		}
-		if (errorNode.has(Constants.ERROR_MESSAGE)) {
-			final JsonNode message = errorNode.get(Constants.ERROR_MESSAGE);
-			if (message.isValueNode()) {
-				error.setMessage(message.textValue());
-			} else if (message.isObject()) {
-				error.setMessage(message.get(Constants.VALUE).asText());
-			}
-		}
-		if (errorNode.has(Constants.ERROR_TARGET)) {
-			error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
-		}
+    final JSONODataErrorDetailImpl error = new JSONODataErrorDetailImpl();
+    final JsonNode errorNode = parser.getCodec().readTree(parser);
+    if (errorNode.has(Constants.ERROR_CODE)) {
+      error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());
+    }
+    if (errorNode.has(Constants.ERROR_MESSAGE)) {
+      final JsonNode message = errorNode.get(Constants.ERROR_MESSAGE);
+      if (message.isValueNode()) {
+        error.setMessage(message.textValue());
+      } else if (message.isObject()) {
+        error.setMessage(message.get(Constants.VALUE).asText());
+      }
+    }
+    if (errorNode.has(Constants.ERROR_TARGET)) {
+      error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
+    }
 
-		return new ResWrap<JSONODataErrorDetailImpl>((URI) null, null, error);
-	}
+    return new ResWrap<JSONODataErrorDetailImpl>((URI) null, null, error);
+  }
 }

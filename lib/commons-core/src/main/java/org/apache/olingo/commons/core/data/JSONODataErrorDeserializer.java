@@ -24,17 +24,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
@@ -65,29 +60,25 @@ public class JSONODataErrorDeserializer extends AbstractJsonDeserializer<JSONODa
         error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
       }
       if (errorNode.hasNonNull(Constants.ERROR_DETAILS)) {
-    	  List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>(); 
-          for (final Iterator<JsonNode> itor = errorNode.get(Constants.ERROR_DETAILS).iterator(); itor.hasNext();) {
-        	  details.add(
-                    itor.next().traverse(parser.getCodec()).<ResWrap<JSONODataErrorDetailImpl>>readValueAs(
-                            new TypeReference<JSONODataErrorDetailImpl>() {
-                            }).getPayload());
-          }
-          
-          error.setDetails(details);
+        final List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
+        for (final Iterator<JsonNode> itor = errorNode.get(Constants.ERROR_DETAILS).iterator(); itor.hasNext();) {
+          details.add(itor.next().traverse(parser.getCodec()).<ResWrap<JSONODataErrorDetailImpl>>readValueAs(
+                  new TypeReference<JSONODataErrorDetailImpl>() {
+                  }).getPayload());
+        }
+
+        error.setDetails(details);
       }
       if (errorNode.hasNonNull(Constants.ERROR_INNERERROR)) {
-    	  JsonNode innerError = errorNode.get(Constants.ERROR_INNERERROR);
-    	  Dictionary<String, Object> innerErr = new Hashtable<String, Object>(); 
-          for (final Iterator<String> itor = innerError.fieldNames(); itor.hasNext();) {
-        	String keyTmp = itor.next();
-        	String val = innerError.get(keyTmp).toString();
-        	innerErr.put(keyTmp,val);
-          }
-          
-          error.setInnerError(innerErr);
+        final JsonNode innerError = errorNode.get(Constants.ERROR_INNERERROR);
+        for (final Iterator<String> itor = innerError.fieldNames(); itor.hasNext();) {
+          final String keyTmp = itor.next();
+          final String val = innerError.get(keyTmp).toString();
+          error.getInnerError().put(keyTmp, val);
+        }
       }
     }
-    
+
     return new ResWrap<JSONODataErrorImpl>((URI) null, null, error);
   }
 }

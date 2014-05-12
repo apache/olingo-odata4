@@ -19,9 +19,9 @@
 package org.apache.olingo.commons.api.domain;
 
 /**
- * OData details， for example - { "error": {..., "details":[
+ * OData details， for example <tt>{ "error": {..., "details":[
  * {"code": "301","target": "$search" ,"message": "$search query option not supported"}
- * ],...}}
+ * ],...}}</tt>.
  */
 public interface ODataErrorDetail {
 

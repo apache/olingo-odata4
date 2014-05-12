@@ -18,30 +18,22 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import java.util.Dictionary;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
-//  {
-//	  "error": {
-//	    "code": "501",
-//	    "message": "Unsupported functionality",
-//	    "target": "query",
-//	    "details": [
-//	      {
-//	       "code": "301",
-//	       "target": "$search",
-//	       "message": "$search query option not supported"
-//	      }
-//	    ],
-//	    "innererror": {
-//	      "trace": [...],
-//	      "context": {...}
-//	    }
-//	  }
-//	}
+/**
+ * Example:
+ * <tt>
+ * {
+ * "error": { "code": "501", "message": "Unsupported functionality", "target": "query", "details": [ { "code": "301",
+ * "target": "$search", "message": "$search query option not supported" } ], "innererror": { "trace": [...], "context":
+ * {...} } } }
+ * </tt>.
+ */
 public abstract class AbstractODataError implements ODataError {
 
   private String code;
@@ -51,9 +43,9 @@ public abstract class AbstractODataError implements ODataError {
   private String target;
 
   private List<ODataErrorDetail> details;
-  
-  private Dictionary<String,Object> innerError;
-  
+
+  private Map<String, String> innerError = new LinkedHashMap<String, String>();
+
   @Override
   public String getCode() {
     return code;
@@ -91,11 +83,7 @@ public abstract class AbstractODataError implements ODataError {
   }
 
   @Override
-  public Dictionary<String,Object> getInnerError() {
+  public Map<String, String> getInnerError() {
     return innerError;
-  }
-
-  public void setInnerError(final Dictionary<String,Object> innerError) {
-    this.innerError = innerError;
   }
 }

@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:gml="http://www.opengis.net/gml" xmlns:georss="http://www.georss.org/georss">
+  <id>http://localhost:9080/stub/StaticService/V40/Static.svc/Boss</id>
+  <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#Microsoft.Test.OData.Services.ODataWCFService.Customer"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Parent" title="Parent" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref" type="application/xml"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Orders" title="Orders" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref" type="application/xml"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Company" title="Company" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref" type="application/xml"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" title="Parent" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent" type="application/atom+xml;type=entry"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" title="Orders" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders" type="application/atom+xml;type=entry"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Company" title="Company" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company" type="application/atom+xml;type=entry"/>
+  <content type="application/xml">
+    <m:properties>
+      <d:PersonID m:type="Int32">2</d:PersonID>
+      <d:FirstName>Jill</d:FirstName>
+      <d:LastName>Jones</d:LastName>
+      <d:MiddleName m:null="true"/>
+      <d:HomeAddress m:null="true"/>
+      <d:Home m:type="GeographyPoint">
+        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>161.8 15.0</gml:pos>
+        </gml:Point>
+      </d:Home>
+      <d:Numbers m:type="#Collection(String)"/>
+      <d:Emails m:type="#Collection(String)"/>
+      <d:City>Sydney</d:City>
+      <d:Birthday m:type="DateTimeOffset">1983-01-15T01:00:00+01:00</d:Birthday>
+      <d:TimeBetweenLastTwoOrders m:type="Duration">PT0.0000002S</d:TimeBetweenLastTwoOrders>
+    </m:properties>
+  </content>
+  <m:annotation term="Microsoft.Test.OData.Services.ODataWCFService.IsBoss" m:type="Boolean">true</m:annotation>
+</entry>

@@ -145,6 +145,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       final Annotation annotation = new AnnotationImpl();
 
       annotation.setTerm(odataAnnotation.getTerm());
+      annotation.setType(odataAnnotation.getValue().getTypeName());
       updateValuable(annotation, odataAnnotation, reference);
 
       annotatable.getAnnotations().add(annotation);
@@ -230,8 +231,16 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
         }
       }
 
+      if (fqn == null && annotation.getType() != null) {
+        final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(annotation.getType()).build();
+        if (typeInfo.isPrimitiveType()) {
+          fqn = typeInfo.getPrimitiveTypeKind().getFullQualifiedName();
+        }
+      }
+      
       final ODataAnnotation odataAnnotation = new ODataAnnotationImpl(annotation.getTerm(),
               (org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(fqn, annotation, null, null));
+      odataAnnotatable.getAnnotations().add(odataAnnotation);
     }
   }
 
@@ -278,7 +287,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     final ODataProperty property = new ODataPropertyImpl(resource.getPayload().getName(),
             getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
-            resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
+                    resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(resource.getPayload(), property);
 
     return property;

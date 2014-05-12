@@ -32,14 +32,16 @@ public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicAnnotationExpres
 
   private final List<EdmPropertyValue> propertyValues;
 
-  private final EdmStructuredType type;
+  private EdmStructuredType type;
 
   public EdmRecordImpl(final Edm edm, final String type, final List<EdmPropertyValue> propertyValues) {
     this.edm = edm;
     this.propertyValues = propertyValues;
 
-    final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(type).build();
-    this.type = typeInfo.getEntityType() == null ? typeInfo.getComplexType() : typeInfo.getEntityType();
+    if (type != null) {
+      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(type).build();
+      this.type = typeInfo.getEntityType() == null ? typeInfo.getComplexType() : typeInfo.getEntityType();
+    }
   }
 
   @Override

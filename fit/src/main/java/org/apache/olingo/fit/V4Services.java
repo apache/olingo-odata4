@@ -346,6 +346,17 @@ public class V4Services extends AbstractServices {
   }
 
   @GET
+  @Path("/Boss")
+  public Response getSingletonBoss(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
+
+    return getEntityInternal(
+            uriInfo.getRequestUri().toASCIIString(), accept, "Boss", StringUtils.EMPTY, format, null, null, false);
+  }
+
+  @GET
   @Path("/Company")
   public Response getSingletonCompany(
           @Context UriInfo uriInfo,

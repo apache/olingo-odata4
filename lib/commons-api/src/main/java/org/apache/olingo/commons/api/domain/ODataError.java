@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 /**
  * OData error.
@@ -46,7 +46,6 @@ public interface ODataError {
    * @return error message.
    */
   String getTarget();
-  
 
   /**
    * Gets error details.
@@ -58,7 +57,7 @@ public interface ODataError {
   /**
    * Gets server defined key-value pairs for debug environment only.
    *
-   * @return a Dictionary representing server defined object.
+   * @return a pair representing server defined object.
    */
-  Dictionary<String, Object> getInnerError();
+  Map<String, String> getInnerError();
 }
