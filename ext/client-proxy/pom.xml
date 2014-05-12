@@ -23,7 +23,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>client-proxy</artifactId>
+  <artifactId>olingo-client-proxy</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Java client API for OData services: Proxy.</description>

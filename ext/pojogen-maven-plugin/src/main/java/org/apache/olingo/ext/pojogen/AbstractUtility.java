@@ -206,15 +206,15 @@ public abstract class AbstractUtility {
 
     return result;
   }
-  
-  public List<EdmOperation> justInheritedOperationsBoundTo(final EdmEntityType entity){
+
+  public List<EdmOperation> justInheritedOperationsBoundTo(final EdmEntityType entity) {
     final List<EdmOperation> result = new ArrayList<EdmOperation>();
-    if(entity.getBaseType()!=null){
+    if (entity.getBaseType() != null) {
       result.addAll(getFunctionsBoundTo(entity.getBaseType().getName(), false));
       result.addAll(getActionsBoundTo(entity.getBaseType().getName(), false));
       result.addAll(justInheritedOperationsBoundTo(entity.getBaseType()));
     }
-    
+
     return result;
   }
 

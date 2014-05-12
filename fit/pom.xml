@@ -34,11 +34,6 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <properties>
-    <war.maven.plugin.version>2.4</war.maven.plugin.version>
-    <invoker.maven.plugin.version>1.8</invoker.maven.plugin.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
@@ -48,7 +43,7 @@
     
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>client-proxy</artifactId>
+      <artifactId>olingo-client-proxy</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -115,7 +110,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>${invoker.maven.plugin.version}</version>
         <inherited>true</inherited>
         <configuration>
           <debug>true</debug>
@@ -143,7 +137,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${war.maven.plugin.version}</version>
+        <inherited>true</inherited>
         <configuration>
           <webResources>
             <resource>

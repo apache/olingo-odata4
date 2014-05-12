@@ -23,7 +23,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>pojogen-maven-plugin-v4test</artifactId>
+  <artifactId>pojogen-maven-plugin-v3test</artifactId>
   <groupId>org.apache.olingo</groupId>
   <version>@project.version@</version>
   <name>${project.artifactId}</name>
@@ -77,13 +77,13 @@
           <execution>
             <configuration>
               <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
-              <serviceRootURL>http://localhost:9080/stub/StaticService/V40/Static.svc</serviceRootURL>
-              <basePackage>org.apache.olingo.fit.proxy.v4.staticservice</basePackage>
+              <localEdm>${project.basedir}/src/test/resources/metadata.xml</localEdm>
+              <basePackage>org.apache.olingo.fit.proxy.v3.staticservice</basePackage>
             </configuration>
-            <id>v4pojoGen</id>
+            <id>v3pojoGen</id>
             <phase>generate-sources</phase>
             <goals>
-              <goal>v4pojoGen</goal>
+              <goal>v3pojoGen</goal>
             </goals>
           </execution>
         </executions>
