@@ -18,13 +18,12 @@
  */
 package org.apache.olingo.commons.api.domain;
 
-import java.util.Dictionary;
-import java.util.List;
-
 /**
- * OData error.
+ * OData details， for example - { "error": {..., "details":[
+ * {"code": "301","target": "$search" ,"message": "$search query option not supported"}
+ * ],...}}
  */
-public interface ODataError {
+public interface ODataErrorDetail {
 
   /**
    * Gets error code.
@@ -46,19 +45,4 @@ public interface ODataError {
    * @return error message.
    */
   String getTarget();
-  
-
-  /**
-   * Gets error details.
-   *
-   * @return ODataErrorDetail list.
-   */
-  List<ODataErrorDetail> getDetails();
-
-  /**
-   * Gets server defined key-value pairs for debug environment only.
-   *
-   * @return a Dictionary representing server defined object.
-   */
-  Dictionary<String, Object> getInnerError();
 }

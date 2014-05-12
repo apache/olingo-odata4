@@ -18,9 +18,12 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.olingo.commons.api.domain.ODataError;
+import java.util.Dictionary;
+import java.util.List;
 
-// TODO p2 supports V4:
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+
 //  {
 //	  "error": {
 //	    "code": "501",
@@ -29,10 +32,10 @@ import org.apache.olingo.commons.api.domain.ODataError;
 //	    "details": [
 //	      {
 //	       "code": "301",
-//	       "target": "$search"  
-//	       "message": "$search query option not supported",
+//	       "target": "$search",
+//	       "message": "$search query option not supported"
 //	      }
-//	    ]
+//	    ],
 //	    "innererror": {
 //	      "trace": [...],
 //	      "context": {...}
@@ -47,6 +50,10 @@ public abstract class AbstractODataError implements ODataError {
 
   private String target;
 
+  private List<ODataErrorDetail> details;
+  
+  private Dictionary<String,Object> innerError;
+  
   @Override
   public String getCode() {
     return code;
@@ -74,4 +81,21 @@ public abstract class AbstractODataError implements ODataError {
     this.target = target;
   }
 
+  @Override
+  public List<ODataErrorDetail> getDetails() {
+    return details;
+  }
+
+  public void setDetails(final List<ODataErrorDetail> detail) {
+    this.details = detail;
+  }
+
+  @Override
+  public Dictionary<String,Object> getInnerError() {
+    return innerError;
+  }
+
+  public void setInnerError(final Dictionary<String,Object> innerError) {
+    this.innerError = innerError;
+  }
 }
