@@ -139,11 +139,11 @@ class ContainerImpl implements Container {
 
         if (handler != null) {
           if (res instanceof ODataEntityCreateResponse) {
-            LOG.debug("Upgrade created object '{}'", handler);
             handler.setEntity(((ODataEntityCreateResponse) res).getBody());
+            LOG.debug("Upgrade created object '{}'", handler);
           } else if (res instanceof ODataEntityUpdateResponse) {
-            LOG.debug("Upgrade updated object '{}'", handler);
             handler.setEntity(((ODataEntityUpdateResponse) res).getBody());
+            LOG.debug("Upgrade updated object '{}'", handler);
           }
         }
       }
@@ -308,8 +308,7 @@ class ContainerImpl implements Container {
     final CommonODataEntity entity = handler.getEntity();
     entity.getNavigationLinks().clear();
 
-    final AttachedEntityStatus currentStatus = EntityContainerFactory.getContext().entityContext().
-            getStatus(handler);
+    final AttachedEntityStatus currentStatus = EntityContainerFactory.getContext().entityContext().getStatus(handler);
 
     if (AttachedEntityStatus.DELETED != currentStatus) {
       entity.getProperties().clear();
@@ -335,8 +334,7 @@ class ContainerImpl implements Container {
 
         final URI editLink = target.getEntity().getEditLink();
 
-        if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED)
-                && !target.isChanged()) {
+        if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
           entity.addLink(buildNavigationLink(
                   property.getKey().name(),
                   URIUtils.getURI(serviceRoot, editLink.toASCIIString()), type));

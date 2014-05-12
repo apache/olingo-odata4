@@ -100,7 +100,7 @@ public abstract class Commons {
     SEQUENCE.put("People", 1000);
 
     MEDIA_CONTENT.put("CustomerInfo",
-            new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerinfoId", EdmPrimitiveTypeKind.Int32));
+            new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerInfoId", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car",
             new ImmutablePair<String, EdmPrimitiveTypeKind>("VIN", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car/Photo", null);

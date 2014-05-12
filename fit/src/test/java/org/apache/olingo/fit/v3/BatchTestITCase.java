@@ -56,6 +56,7 @@ import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityR
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import static org.apache.olingo.fit.v3.AbstractTestITCase.client;
 import org.junit.Test;
@@ -230,6 +231,78 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   @Test
   @SuppressWarnings("unchecked")
+  public void updateLinkWithReference() throws EdmPrimitiveTypeException {
+    // create your request
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
+    final BatchStreamManager streamManager = request.execute();
+
+    final ODataChangeset changeset = streamManager.addChangeset();
+
+    final ODataEntity info =
+            client.getObjectFactory().newEntity(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo"));
+
+    info.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Information",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("Sample information about customer 30")));
+
+    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo");
+
+    ODataEntityCreateRequest<ODataEntity> createReq =
+            client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), info);
+
+    changeset.addRequest(createReq);
+
+    // retrieve request reference
+    int createRequestRef = changeset.getLastContentId();
+
+    ODataEntity customer = getSampleCustomerProfile(30, "sample customer", false);
+    customer.getNavigationLinks().add(
+            client.getObjectFactory().newEntityNavigationLink("Info", URI.create("$" + createRequestRef)));
+
+    uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+
+    // add create request
+    createReq = client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), customer);
+
+    changeset.addRequest(createReq);
+
+    final ODataBatchResponse response = streamManager.getResponse();
+    assertEquals(202, response.getStatusCode());
+    assertEquals("Accepted", response.getStatusMessage());
+
+    // verify response payload ...
+    final Iterator<ODataBatchResponseItem> iter = response.getBody();
+
+    final ODataBatchResponseItem item = iter.next();
+    assertTrue(item instanceof ODataChangesetResponseItem);
+
+    ODataChangesetResponseItem chgitem = (ODataChangesetResponseItem) item;
+
+    ODataResponse res = chgitem.next();
+    assertEquals(201, res.getStatusCode());
+    assertTrue(res instanceof ODataEntityCreateResponse);
+
+    final ODataEntity infoEntity = ((ODataEntityCreateResponse<ODataEntity>) res).getBody();
+
+    chgitem = (ODataChangesetResponseItem) item;
+
+    res = chgitem.next();
+    assertEquals(201, res.getStatusCode());
+    assertTrue(res instanceof ODataEntityCreateResponse);
+
+    uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(30);
+
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
+            URIUtils.getURI(testStaticServiceRootURL, uriBuilder.build() + "/Info"));
+    
+    final ODataEntity navigatedInfo = req.execute().getBody();
+    
+    assertEquals(infoEntity.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class),
+            navigatedInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
   public void batchRequest() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
@@ -284,9 +357,9 @@ public class BatchTestITCase extends AbstractTestITCase {
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataPubFormat.ATOM);
     changeset.addRequest(createReq);
-    
+
     // Delete customer created above
-    targetURI = 
+    targetURI =
             client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(targetURI.build());
     changeset.addRequest(deleteReq);
@@ -350,7 +423,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     res = chgitem.next();
     assertTrue(res instanceof ODataDeleteResponse);
     assertEquals(204, res.getStatusCode());
-    
+
     // retrive the third item (ODataRetrieve)
     item = iter.next();
     assertTrue(item instanceof ODataRetrieveResponseItem);

@@ -117,6 +117,8 @@ public abstract class AbstractServices {
 
   private static final Pattern BATCH_REQUEST_REF_PATTERN = Pattern.compile("(.*) ([$].*) HTTP/.*");
 
+  private static final Pattern REF_PATTERN = Pattern.compile("([$]\\d+)");
+
   protected static final String BOUNDARY = "batch_243234_25424_ef_892u748";
 
   protected final ODataServiceVersion version;
@@ -231,41 +233,48 @@ public abstract class AbstractServices {
     }
 
     final Response res;
+    final String url;
+    final String method;
 
     if (matcher.find()) {
-      final String url = matcher.group(2);
+      url = matcher.group(2);
+      method = matcher.group(1);
+    } else if (matcherRef.find()) {
+      url = references.get(matcherRef.group(2));
+      method = matcherRef.group(1);
+    } else {
+      url = null;
+      method = null;
+    }
+
+    if (url == null) {
+      res = null;
+    } else {
       final WebClient client = WebClient.create(url);
       client.headers(headers);
 
-      final String method = matcher.group(1);
       if ("DELETE".equals(method)) {
         res = client.delete();
-      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        client.header("X-HTTP-METHOD", method);
-        res = client.invoke("POST", body.getDataHandler().getInputStream());
       } else {
-        res = client.invoke(method, body.getDataHandler().getInputStream());
+        final InputStream is = body.getDataHandler().getInputStream();
+        String content = IOUtils.toString(is);
+        IOUtils.closeQuietly(is);
+
+        final Matcher refs = REF_PATTERN.matcher(content);
+
+        while (refs.find()) {
+          content = content.replace(refs.group(1), references.get(refs.group(1)));
+        }
+
+        if ("PATCH".equals(method) || "MERGE".equals(method)) {
+          client.header("X-HTTP-METHOD", method);
+          res = client.invoke("POST", IOUtils.toInputStream(content));
+        } else {
+          res = client.invoke(method, IOUtils.toInputStream(content));
+        }
       }
 
       client.close();
-    } else if (matcherRef.find()) {
-      final String url = matcherRef.group(2);
-      final WebClient client = WebClient.create(references.get(url));
-      client.headers(headers);
-
-      String method = matcherRef.group(1);
-      if ("DELETE".equals(method)) {
-        res = client.delete();
-      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        client.header("X-HTTP-METHOD", method);
-        res = client.invoke("POST", body.getDataHandler().getInputStream());
-      } else {
-        res = client.invoke(method, body.getDataHandler().getInputStream());
-      }
-
-      client.close();
-    } else {
-      res = null;
     }
 
     return res;
@@ -621,7 +630,7 @@ public abstract class AbstractServices {
       writer.close();
 
       final InputStream serialization =
-              xml.addOrReplaceEntity(null, entitySetName, new ByteArrayInputStream(content.toByteArray()), entry);
+              xml.addOrReplaceEntity(entityKey, entitySetName, new ByteArrayInputStream(content.toByteArray()), entry);
 
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(

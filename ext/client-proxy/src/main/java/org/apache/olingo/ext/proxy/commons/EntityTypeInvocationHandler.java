@@ -56,8 +56,6 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  private CommonODataEntity entity;
-
   protected Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
   protected Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
@@ -103,8 +101,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
     super(containerHandler.getClient(), typeRef, (ODataLinked) entity, containerHandler);
 
-    this.entity = entity;
-    this.entity.setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+    this.internal = entity;
+    getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.uuid = new EntityUUID(
             containerHandler.getEntityContainerName(),
@@ -116,8 +114,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   public void setEntity(final CommonODataEntity entity) {
-    this.entity = entity;
-    this.entity.setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
+    this.internal = entity;
+    getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.uuid = new EntityUUID(
             getUUID().getContainerName(),
@@ -139,7 +137,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   @Override
   public FullQualifiedName getName() {
-    return this.entity.getTypeName();
+    return getEntity().getTypeName();
   }
 
   public String getEntityContainerName() {
@@ -150,8 +148,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     return uuid.getEntitySetName();
   }
 
-  public CommonODataEntity getEntity() {
-    return entity;
+  public final CommonODataEntity getEntity() {
+    return (CommonODataEntity) internal;
   }
 
   /**
@@ -160,7 +158,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
    * @return
    */
   public String getETag() {
-    return this.entity.getETag();
+    return getEntity().getETag();
   }
 
   /**
@@ -169,7 +167,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
    * @param eTag ETag.
    */
   public void setETag(final String eTag) {
-    this.entity.setETag(eTag);
+    getEntity().setETag(eTag);
   }
 
   public Map<String, Object> getPropertyChanges() {
@@ -196,7 +194,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   protected Object getPropertyValue(final String name, final Type type) {
     try {
       final Object res;
-      final CommonODataProperty property = entity.getProperty(name);
+      final CommonODataProperty property = getEntity().getProperty(name);
 
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
@@ -266,7 +264,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       }
     }
 
-    for (CommonODataProperty property : entity.getProperties()) {
+    for (CommonODataProperty property : getEntity().getProperties()) {
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
       }
@@ -328,14 +326,14 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   public InputStream getStream() {
 
-    final URI contentSource = entity.getMediaContentSource();
+    final URI contentSource = getEntity().getMediaContentSource();
 
     if (this.stream == null
             && typeRef.getAnnotation(EntityType.class).hasStream()
             && contentSource != null) {
 
       final String contentType =
-              StringUtils.isBlank(entity.getMediaContentType()) ? "*/*" : entity.getMediaContentType();
+              StringUtils.isBlank(getEntity().getMediaContentType()) ? "*/*" : getEntity().getMediaContentType();
 
       final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(contentSource);
       retrieveReq.setFormat(ODataMediaFormat.fromFormat(contentType));
@@ -354,7 +352,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       if (res == null) {
         final URI link = URIUtils.getURI(
                 containerHandler.getFactory().getServiceRoot(),
-                CoreUtils.getEditMediaLink(property.name(), this.entity).toASCIIString());
+                CoreUtils.getEditMediaLink(property.name(), getEntity()).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();

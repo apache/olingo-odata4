@@ -80,6 +80,7 @@ public class FSManager {
   }
 
   public FileObject putInMemory(final InputStream is, final String path) throws IOException {
+    LOG.info("Write in memory {}", path);
     final FileObject memObject = fsManager.resolveFile(MEM_PREFIX + path);
 
     if (memObject.exists()) {

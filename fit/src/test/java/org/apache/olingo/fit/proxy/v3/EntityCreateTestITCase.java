@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
+import java.lang.reflect.Proxy;
+import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 import static org.apache.olingo.fit.proxy.v3.AbstractTest.container;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.Customer;
@@ -129,7 +131,6 @@ public class EntityCreateTestITCase extends AbstractTest {
   }
 
   @Test
-  @Ignore
   public void createWithBackNavigation() {
     final String sampleName = "sample customer from proxy with back navigation";
     final Integer id = 102;
