@@ -28,7 +28,6 @@ import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
 #end
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -42,12 +41,12 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface $utility.capitalize($entityType.Name)Collection extends AbstractEntityCollection<$utility.capitalize($entityType.Name)> {
-#set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )
-#set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
+#set( $functions = $utility.getFunctionsBoundTo($entityType.Name, true) )
+#set( $actions = $utility.getActionsBoundTo($entityType.Name, true) )
 #if( $functions.size() > 0 || $actions.size() > 0 )
     Operations operations();
 

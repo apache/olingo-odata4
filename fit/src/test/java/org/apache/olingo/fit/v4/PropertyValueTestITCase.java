@@ -29,6 +29,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataValueReq
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -130,7 +131,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
             getPropertyRequest(uriBuilder.build());
     req.setFormat(ODataFormat.XML);
     final ODataProperty property = req.execute().getBody();
-    assertTrue(property.getValue().isCollection());
+    // cast to workaround JDK 6 bug, fixed in JDK 7
+    assertTrue(((ODataValuable)property).getValue().isCollection());
     assertEquals("555-555-5555", property.getCollectionValue().iterator().next().asPrimitive().toString());
   }
 

@@ -56,13 +56,8 @@ public class V4OpenType {
   public V4OpenType() throws Exception {
     this.openMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).
             readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
-            Accept.XML), ODataServiceVersion.V40);
-    this.services = new V4Services() {
-      @Override
-      protected Metadata getMetadataObj() {
-        return openMetadata;
-      }
-    };
+                    Accept.XML), ODataServiceVersion.V40);
+    this.services = new V4Services(openMetadata);
   }
 
   private Response replaceServiceName(final Response response) {

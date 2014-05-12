@@ -30,10 +30,12 @@ import org.apache.olingo.commons.api.data.v3.LinkCollection;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
+import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.op.ResourceFactory;
 
 public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder {
@@ -42,6 +44,11 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   public ODataBinderImpl(final ODataClientImpl client) {
     super(client);
+  }
+
+  @Override
+  public void add(final ODataComplexValue<CommonODataProperty> complex, final CommonODataProperty property) {
+    complex.add((ODataProperty) property);
   }
 
   @Override
@@ -83,7 +90,12 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
   @Override
   public ODataProperty getODataProperty(final ResWrap<Property> property) {
-    return new ODataPropertyImpl(property.getPayload().getName(), getODataValue(property));
+    final EdmTypeInfo typeInfo = buildTypeInfo(property.getContextURL(), property.getMetadataETag(),
+            property.getPayload().getName(), property.getPayload().getType());
+
+    return new ODataPropertyImpl(property.getPayload().getName(),
+            getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            property.getPayload(), property.getContextURL(), property.getMetadataETag()));
   }
 
   @Override
@@ -92,5 +104,4 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     collection.setLinks(linkCollection.getLinks());
     return collection;
   }
-
 }

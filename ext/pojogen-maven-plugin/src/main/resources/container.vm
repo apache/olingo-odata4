@@ -24,14 +24,13 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.AbstractContainer;
+import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 #foreach($ns in $namespaces)
 import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
 #end
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -45,13 +44,14 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 @Namespace("$namespace")
 @EntityContainer(name = "$container.Name",
+  namespace = "$namespace",
   isDefaultEntityContainer = $container.Default)
-public interface $utility.capitalize($container.Name) extends AbstractContainer {
+public interface $utility.capitalize($container.Name) extends Container {
 
 #foreach($entitySet in $container.EntitySets)
     $utility.capitalize($entitySet.Name) get$utility.capitalize($entitySet.Name)();

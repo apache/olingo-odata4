@@ -36,11 +36,13 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchRespon
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
 import org.apache.olingo.client.api.communication.request.batch.v3.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -55,6 +57,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
+import static org.apache.olingo.fit.v3.AbstractTestITCase.client;
 import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
@@ -281,6 +284,12 @@ public class BatchTestITCase extends AbstractTestITCase {
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataPubFormat.ATOM);
     changeset.addRequest(createReq);
+    
+    // Delete customer created above
+    targetURI = 
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
+    final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(targetURI.build());
+    changeset.addRequest(deleteReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -338,6 +347,10 @@ public class BatchTestITCase extends AbstractTestITCase {
     entity = createres.getBody();
     assertEquals(new Integer(1000), entity.getProperty("CustomerId").getPrimitiveValue().toCastValue(Integer.class));
 
+    res = chgitem.next();
+    assertTrue(res instanceof ODataDeleteResponse);
+    assertEquals(204, res.getStatusCode());
+    
     // retrive the third item (ODataRetrieve)
     item = iter.next();
     assertTrue(item instanceof ODataRetrieveResponseItem);

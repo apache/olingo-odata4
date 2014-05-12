@@ -20,11 +20,13 @@ package org.apache.olingo.commons.core.data;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.olingo.commons.core.data.v4.AtomDeltaImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.v4.ODataDeletedEntityImpl;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -34,10 +36,13 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.CollectionValue;
-import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
+import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
 import org.apache.olingo.commons.api.data.EntitySet;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.Value;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.domain.ODataPropertyType;
@@ -244,6 +249,14 @@ public class AtomDeserializer extends AbstractAtomDealer {
       property.setName(start.getName().getLocalPart());
     }
 
+    valuable(property, reader, start);
+
+    return property;
+  }
+
+  private void valuable(final Valuable valuable, final XMLEventReader reader, final StartElement start)
+          throws XMLStreamException {
+
     final Attribute nullAttr = start.getAttributeByName(this.nullQName);
 
     Value value;
@@ -256,7 +269,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
               : new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
 
       if (typeInfo != null) {
-        property.setType(typeInfo.internal());
+        valuable.setType(typeInfo.internal());
       }
 
       final ODataPropertyType propType = typeInfo == null
@@ -279,7 +292,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         case PRIMITIVE:
           // No type specified? Defaults to Edm.String          
           if (typeInfo == null) {
-            property.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
+            valuable.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString());
           }
           value = fromPrimitive(reader, start, typeInfo);
           break;
@@ -292,9 +305,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
       value = new NullValueImpl();
     }
 
-    property.setValue(value);
-
-    return property;
+    valuable.setValue(value);
   }
 
   private ResWrap<AtomPropertyImpl> property(final InputStream input) throws XMLStreamException {
@@ -346,23 +357,27 @@ public class AtomDeserializer extends AbstractAtomDealer {
     while (reader.hasNext() && !foundEndElement) {
       final XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement() && inlineQName.equals(event.asStartElement().getName())) {
-        StartElement inline = null;
-        while (reader.hasNext() && inline == null) {
-          final XMLEvent innerEvent = reader.peek();
-          if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
-            reader.nextEvent();
-          } else if (innerEvent.isStartElement()) {
-            inline = innerEvent.asStartElement();
+      if (event.isStartElement()) {
+        if (inlineQName.equals(event.asStartElement().getName())) {
+          StartElement inline = null;
+          while (reader.hasNext() && inline == null) {
+            final XMLEvent innerEvent = reader.peek();
+            if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
+              reader.nextEvent();
+            } else if (innerEvent.isStartElement()) {
+              inline = innerEvent.asStartElement();
+            }
           }
-        }
-        if (inline != null) {
-          if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
-            link.setInlineEntity(entity(reader, inline));
+          if (inline != null) {
+            if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(inline.getName())) {
+              link.setInlineEntity(entity(reader, inline));
+            }
+            if (Constants.QNAME_ATOM_ELEM_FEED.equals(inline.getName())) {
+              link.setInlineEntitySet(entitySet(reader, inline));
+            }
           }
-          if (Constants.QNAME_ATOM_ELEM_FEED.equals(inline.getName())) {
-            link.setInlineEntitySet(entitySet(reader, inline));
-          }
+        } else if (annotationQName.equals(event.asStartElement().getName())) {
+          link.getAnnotations().add(annotation(reader, event.asStartElement()));
         }
       }
 
@@ -421,7 +436,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(event.asStartElement().getName())) {
           delta.getEntities().add(entity(reader, event.asStartElement()));
         } else if (deletedEntryQName.equals(event.asStartElement().getName())) {
-          final ODataDeletedEntityImpl deletedEntity = new ODataDeletedEntityImpl();
+          final DeletedEntityImpl deletedEntity = new DeletedEntityImpl();
 
           final Attribute ref = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_REF));
           if (ref != null) {
@@ -436,7 +451,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
         } else if (linkQName.equals(event.asStartElement().getName())
                 || deletedLinkQName.equals(event.asStartElement().getName())) {
 
-          final ODataDeltaLinkImpl link = new ODataDeltaLinkImpl();
+          final DeltaLinkImpl link = new DeltaLinkImpl();
 
           final Attribute source = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_SOURCE));
           if (source != null) {
@@ -504,18 +519,47 @@ public class AtomDeserializer extends AbstractAtomDealer {
 
   private void properties(final XMLEventReader reader, final StartElement start, final AtomEntityImpl entity)
           throws XMLStreamException {
+
+    final Map<String, List<Annotation>> annotations = new HashMap<String, List<Annotation>>();
+
     boolean foundEndProperties = false;
     while (reader.hasNext() && !foundEndProperties) {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
-        entity.getProperties().add(property(reader, event.asStartElement()));
+        if (annotationQName.equals(event.asStartElement().getName())) {
+          final String target = event.asStartElement().
+                  getAttributeByName(QName.valueOf(Constants.ATTR_TARGET)).getValue();
+          if (!annotations.containsKey(target)) {
+            annotations.put(target, new ArrayList<Annotation>());
+          }
+          annotations.get(target).add(annotation(reader, event.asStartElement()));
+        } else {
+          entity.getProperties().add(property(reader, event.asStartElement()));
+        }
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
         foundEndProperties = true;
       }
     }
+
+    for (Property property : entity.getProperties()) {
+      if (annotations.containsKey(property.getName())) {
+        property.getAnnotations().addAll(annotations.get(property.getName()));
+      }
+    }
+  }
+
+  private Annotation annotation(final XMLEventReader reader, final StartElement start)
+          throws XMLStreamException {
+
+    final Annotation annotation = new AnnotationImpl();
+
+    annotation.setTerm(start.getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM)).getValue());
+    valuable(annotation, reader, start);
+
+    return annotation;
   }
 
   private AtomEntityImpl entityRef(final StartElement start) throws XMLStreamException {
@@ -633,11 +677,13 @@ public class AtomDeserializer extends AbstractAtomDealer {
               entity.setMediaContentType(type.getValue());
               final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
               if (src != null) {
-                entity.setMediaContentSource(src.getValue());
+                entity.setMediaContentSource(URI.create(src.getValue()));
               }
             }
           } else if (propertiesQName.equals(event.asStartElement().getName())) {
             properties(reader, event.asStartElement(), entity);
+          } else if (annotationQName.equals(event.asStartElement().getName())) {
+            entity.getAnnotations().add(annotation(reader, event.asStartElement()));
           }
         }
 
@@ -645,8 +691,6 @@ public class AtomDeserializer extends AbstractAtomDealer {
           foundEndEntry = true;
         }
       }
-
-      return entity;
     } else {
       entity = null;
     }
@@ -721,6 +765,8 @@ public class AtomDeserializer extends AbstractAtomDealer {
           entitySet.getEntities().add(entity(reader, event.asStartElement()));
         } else if (entryRefQName.equals(event.asStartElement().getName())) {
           entitySet.getEntities().add(entityRef(event.asStartElement()));
+        } else if (annotationQName.equals(event.asStartElement().getName())) {
+          entitySet.getAnnotations().add(annotation(reader, event.asStartElement()));
         }
       }
 

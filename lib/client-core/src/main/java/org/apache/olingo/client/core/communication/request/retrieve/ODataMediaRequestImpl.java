@@ -42,7 +42,7 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataMediaRequestImpl(final CommonODataClient odataClient, final URI query) {
+  ODataMediaRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataMediaFormat.class, query);
 
     setAccept(ODataMediaFormat.APPLICATION_OCTET_STREAM.toString());
@@ -75,6 +75,7 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
      * Just to create response templates to be initialized from batch.
      */
     private ODataMediaResponseImpl() {
+      super();
     }
 
     /**

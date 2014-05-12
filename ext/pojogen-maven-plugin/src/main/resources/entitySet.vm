@@ -27,7 +27,6 @@ import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
 #end
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -41,7 +40,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 #set( $keys = $utility.getEntityKeyType($entitySet) )
@@ -54,7 +53,8 @@ import javax.xml.datatype.Duration;
 #end
 
 #parse( "${odataVersion}/entitySet.vm" )
-public interface $utility.capitalize($entitySet.Name) extends AbstractEntitySet<$utility.getJavaType($entitySet.EntityType), $type, $utility.getJavaType($entitySet.EntityType)Collection> {
+public interface $utility.capitalize($entitySet.Name) 
+  extends AbstractEntitySet<$utility.getJavaType($entitySet.EntityType), $type, $utility.getJavaType($entitySet.EntityType)Collection> {
 
 #foreach( $dos in $utility.getDescendantsOrSelf($utility.getEdmType($entitySet)) )
     #set( $djt = $utility.getJavaType($dos) )

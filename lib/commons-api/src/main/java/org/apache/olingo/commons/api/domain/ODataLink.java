@@ -30,15 +30,13 @@ public class ODataLink extends ODataItem {
 
   public static class Builder {
 
-    private ODataServiceVersion version;
+    protected ODataServiceVersion version;
 
-    private URI uri;
+    protected URI uri;
 
-    private ODataLinkType type;
+    protected ODataLinkType type;
 
-    private String title;
-
-    private String mediaETag;
+    protected String title;
 
     public Builder setVersion(final ODataServiceVersion version) {
       this.version = version;
@@ -65,14 +63,8 @@ public class ODataLink extends ODataItem {
       return this;
     }
 
-    public void setMediaETag(final String mediaETag) {
-      this.mediaETag = mediaETag;
-    }
-
     public ODataLink build() {
-      final ODataLink instance = new ODataLink(version, uri, type, title);
-      instance.mediaETag = this.mediaETag;
-      return instance;
+      return new ODataLink(version, uri, type, title);
     }
   }
 
@@ -111,7 +103,7 @@ public class ODataLink extends ODataItem {
   /**
    * ETag for media edit links.
    */
-  private String mediaETag;
+  protected String mediaETag;
 
   /**
    * Constructor.

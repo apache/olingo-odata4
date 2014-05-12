@@ -34,7 +34,7 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
 
   public EdmEnabledODataClientImpl(final String serviceRoot) {
     super();
-    
+
     this.serviceRoot = serviceRoot;
     this.metadataETag = StringUtils.EMPTY;
   }
@@ -53,6 +53,14 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
         this.metadataETag = metadataRes.getETag();
         this.edm = metadataRes.getBody();
       }
+    }
+    return this.edm;
+  }
+
+  @Override
+  public Edm getCachedEdm() {
+    if (edm == null) {
+      getEdm(null);
     }
     return this.edm;
   }

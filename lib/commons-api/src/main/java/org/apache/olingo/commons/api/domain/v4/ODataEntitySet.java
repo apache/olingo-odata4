@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 
-public interface ODataEntitySet extends CommonODataEntitySet {
+public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatatable {
 
   @Override
   List<ODataEntity> getEntities();

@@ -18,14 +18,12 @@
  */
 package org.apache.olingo.commons.core.data;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Value;
 
-public abstract class AbstractProperty implements Property {
+public abstract class AbstractProperty extends AbstractAnnotatedObject implements Property {
+
+  private static final long serialVersionUID = -7175704800169997060L;
 
   private String name;
 
@@ -61,20 +59,5 @@ public abstract class AbstractProperty implements Property {
   @Override
   public void setValue(final Value value) {
     this.value = value;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 }

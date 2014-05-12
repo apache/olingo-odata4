@@ -73,6 +73,11 @@ class AtomGeoValueDeserializer {
       }
     }
 
+    // handles bad input, e.g. things like <gml:pos/>
+    if (result.isEmpty()) {
+      result.add(new Point(GeoUtils.getDimension(type), srid));
+    }
+    
     return result;
   }
 

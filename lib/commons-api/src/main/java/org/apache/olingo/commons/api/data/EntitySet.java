@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.data;
 import java.net.URI;
 import java.util.List;
 
-public interface EntitySet {
+public interface EntitySet extends Annotatable {
 
   /**
    * Gets base URI.

@@ -18,11 +18,15 @@
  */
 package org.apache.olingo.commons.core.domain.v4;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.olingo.commons.api.domain.ODataCollectionValue;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.core.domain.AbstractODataProperty;
 
@@ -30,42 +34,47 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
 
   private static final long serialVersionUID = 4851331227420757747L;
 
+  private final ODataValuable valuable;
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+
   public ODataPropertyImpl(final String name, final org.apache.olingo.commons.api.domain.ODataValue value) {
     super(name, value);
+    this.valuable = new ODataValuableImpl((ODataValue) value);
+  }
+
+  @Override
+  public ODataValue getValue() {
+    return valuable.getValue();
   }
 
   @Override
   public boolean hasEnumValue() {
-    return !hasNullValue() && getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-            && ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).isEnum();
+    return valuable.hasEnumValue();
   }
 
   @Override
   public ODataEnumValue getEnumValue() {
-    return hasEnumValue()
-            ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asEnum()
-            : null;
+    return valuable.getEnumValue();
   }
 
   @Override
   public ODataComplexValue<ODataProperty> getComplexValue() {
-    return hasComplexValue()
-            ? getValue().<ODataProperty>asComplex()
-            : null;
+    return valuable.getComplexValue();
   }
 
   @Override
   public ODataLinkedComplexValue getLinkedComplexValue() {
-    return hasComplexValue() && getValue() instanceof org.apache.olingo.commons.api.domain.v4.ODataValue
-            ? ((org.apache.olingo.commons.api.domain.v4.ODataValue) getValue()).asLinkedComplex()
-            : null;
+    return valuable.getLinkedComplexValue();
   }
 
   @Override
   public ODataCollectionValue<ODataValue> getCollectionValue() {
-    return hasCollectionValue()
-            ? getValue().<ODataValue>asCollection()
-            : null;
+    return valuable.getCollectionValue();
   }
 
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
+  }
 }

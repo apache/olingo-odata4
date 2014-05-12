@@ -63,6 +63,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -120,6 +121,8 @@ public abstract class AbstractServices {
 
   protected final ODataServiceVersion version;
 
+  protected final Metadata metadata;
+
   protected final FITAtomDeserializer atomDeserializer;
 
   protected final AtomSerializer atomSerializer;
@@ -132,24 +135,16 @@ public abstract class AbstractServices {
 
   protected final JSONUtilities json;
 
-  protected Metadata metadata;
-
-  public AbstractServices(final ODataServiceVersion version) throws Exception {
+  public AbstractServices(final ODataServiceVersion version, final Metadata metadata) throws Exception {
     this.version = version;
+    this.metadata = metadata;
     this.atomDeserializer = Commons.getAtomDeserializer(version);
     this.atomSerializer = Commons.getAtomSerializer(version);
     this.mapper = Commons.getJSONMapper(version);
-    this.dataBinder = new DataBinder(version);
+    this.dataBinder = new DataBinder(version, metadata);
 
-    this.xml = new XMLUtilities(version);
-    this.json = new JSONUtilities(version);
-  }
-
-  protected Metadata getMetadataObj() {
-    if (metadata == null) {
-      metadata = Commons.getMetadata(version);
-    }
-    return metadata;
+    this.xml = new XMLUtilities(version, metadata);
+    this.json = new JSONUtilities(version, metadata);
   }
 
   /**
@@ -238,31 +233,36 @@ public abstract class AbstractServices {
     final Response res;
 
     if (matcher.find()) {
-      String method = matcher.group(1);
-      if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        headers.putSingle("X-HTTP-METHOD", method);
-        method = "POST";
-      }
-
       final String url = matcher.group(2);
-
       final WebClient client = WebClient.create(url);
       client.headers(headers);
-      res = client.invoke(method, body.getDataHandler().getInputStream());
-      client.close();
-    } else if (matcherRef.find()) {
-      String method = matcherRef.group(1);
-      if ("PATCH".equals(method) || "MERGE".equals(method)) {
-        headers.putSingle("X-HTTP-METHOD", method);
-        method = "POST";
+
+      final String method = matcher.group(1);
+      if ("DELETE".equals(method)) {
+        res = client.delete();
+      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        client.header("X-HTTP-METHOD", method);
+        res = client.invoke("POST", body.getDataHandler().getInputStream());
+      } else {
+        res = client.invoke(method, body.getDataHandler().getInputStream());
       }
 
+      client.close();
+    } else if (matcherRef.find()) {
       final String url = matcherRef.group(2);
-
       final WebClient client = WebClient.create(references.get(url));
       client.headers(headers);
 
-      res = client.invoke(method, body.getDataHandler().getInputStream());
+      String method = matcherRef.group(1);
+      if ("DELETE".equals(method)) {
+        res = client.delete();
+      } else if ("PATCH".equals(method) || "MERGE".equals(method)) {
+        client.header("X-HTTP-METHOD", method);
+        res = client.invoke("POST", body.getDataHandler().getInputStream());
+      } else {
+        res = client.invoke(method, body.getDataHandler().getInputStream());
+      }
+
       client.close();
     } else {
       res = null;
@@ -419,7 +419,12 @@ public abstract class AbstractServices {
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entityInfo.getValue(), AtomEntityImpl.class);
 
       for (Property property : entryChanges.getProperties()) {
-        container.getPayload().getProperty(property.getName()).setValue(property.getValue());
+        final Property _property = container.getPayload().getProperty(property.getName());
+        if (_property == null) {
+          container.getPayload().getProperties().add(property);
+        } else {
+          _property.setValue(property.getValue());
+        }
       }
 
       for (Link link : entryChanges.getNavigationLinks()) {
@@ -441,7 +446,7 @@ public abstract class AbstractServices {
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -504,7 +509,7 @@ public abstract class AbstractServices {
 
       final String path = Commons.getEntityBasePath(entitySetName, entityId);
       FSManager.instance(version).putInMemory(
-              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+              cres, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
 
       final Response response;
       if ("return-content".equalsIgnoreCase(prefer)) {
@@ -554,7 +559,7 @@ public abstract class AbstractServices {
 
       final ResWrap<AtomEntityImpl> container;
 
-      final org.apache.olingo.fit.metadata.EntitySet entitySet = getMetadataObj().getEntitySet(entitySetName);
+      final org.apache.olingo.fit.metadata.EntitySet entitySet = metadata.getEntitySet(entitySetName);
 
       final AtomEntityImpl entry;
       final String entityKey;
@@ -567,11 +572,11 @@ public abstract class AbstractServices {
 
         xml.addMediaEntityValue(entitySetName, entityKey, IOUtils.toInputStream(entity, Constants.ENCODING));
 
-        final String id = Commons.getMediaContent().get(entitySetName);
-        if (StringUtils.isNotBlank(id)) {
+        final Pair<String, EdmPrimitiveTypeKind> id = Commons.getMediaContent().get(entitySetName);
+        if (id != null) {
           final AtomPropertyImpl prop = new AtomPropertyImpl();
-          prop.setName(id);
-          prop.setType(EdmPrimitiveTypeKind.Int32.toString());
+          prop.setName(id.getKey());
+          prop.setType(id.getValue().toString());
           prop.setValue(new PrimitiveValueImpl(entityKey));
           entry.getProperties().add(prop);
         }
@@ -582,7 +587,7 @@ public abstract class AbstractServices {
         editLink.setTitle(entitySetName);
         entry.setEditLink(editLink);
 
-        entry.setMediaContentSource(editLink.getHref() + "/$value");
+        entry.setMediaContentSource(URI.create(editLink.getHref() + "/$value"));
 
         container = new ResWrap<AtomEntityImpl>((URI) null, null, entry);
       } else {
@@ -626,7 +631,7 @@ public abstract class AbstractServices {
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
       FSManager.instance(version).putInMemory(
-              result, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY));
+              result, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
 
       final String location = uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")";
 
@@ -723,7 +728,7 @@ public abstract class AbstractServices {
               append(File.separatorChar).append(type).
               append(File.separatorChar);
 
-      path.append(getMetadataObj().getEntitySet(name).isSingleton()
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -782,7 +787,7 @@ public abstract class AbstractServices {
               append(File.separatorChar).append(type).
               append(File.separatorChar);
 
-      path.append(getMetadataObj().getEntitySet(name).isSingleton()
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -855,7 +860,7 @@ public abstract class AbstractServices {
           builder.append(Constants.get(version, ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
                   append(skiptoken);
         } else {
-          builder.append(getMetadataObj().getEntitySet(name).isSingleton()
+          builder.append(metadata.getEntitySet(name).isSingleton()
                   ? Constants.get(version, ConstantKey.ENTITY)
                   : Constants.get(version, ConstantKey.FEED));
         }
@@ -984,7 +989,7 @@ public abstract class AbstractServices {
           final String entitySetName,
           final String entityId,
           final String format,
-          final String expand,
+          String expand,
           final String select,
           final boolean keyAsSegment) {
 
@@ -1041,6 +1046,7 @@ public abstract class AbstractServices {
       }
 
       if (StringUtils.isNotBlank(expand)) {
+        expand = StringUtils.substringBefore(expand, "(");
         final List<String> links = Arrays.asList(expand.split(","));
 
         final Map<Link, Link> replace = new HashMap<Link, Link>();
@@ -1570,7 +1576,7 @@ public abstract class AbstractServices {
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
                       container.getMetadataETag(),
-                      dataBinder.toJSONEntityType((AtomEntityImpl) container.getPayload())));
+                      dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1715,8 +1721,8 @@ public abstract class AbstractServices {
   }
 
   protected void normalizeAtomEntry(final AtomEntityImpl entry, final String entitySetName, final String entityKey) {
-    final org.apache.olingo.fit.metadata.EntitySet entitySet = getMetadataObj().getEntitySet(entitySetName);
-    final EntityType entityType = getMetadataObj().getEntityType(entitySet.getType());
+    final org.apache.olingo.fit.metadata.EntitySet entitySet = metadata.getEntitySet(entitySetName);
+    final EntityType entityType = metadata.getEntityOrComplexType(entitySet.getType());
     for (Map.Entry<String, org.apache.olingo.fit.metadata.Property> property
             : entityType.getPropertyMap().entrySet()) {
       if (entry.getProperty(property.getKey()) == null && property.getValue().isNullable()) {

@@ -21,6 +21,7 @@ package org.apache.olingo.fit.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import static org.apache.olingo.fit.v4.AbstractTestITCase.client;
+import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
@@ -50,7 +51,19 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON_FULL_METADATA);
+
+    final ODataEntity customer = req.execute().getBody();
+    assertTrue(customer.getNavigationLink("Orders") instanceof ODataInlineEntitySet);
+  }
+
+  @Test
+  public void expandWithFilter() {
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Customers").appendKeySegment(1).
+            expandWithOptions("Orders", Collections.<QueryOption, Object>singletonMap(
+                            QueryOption.FILTER, getClient().getFilterFactory().gt("OrderID", 7).build()));
+
+    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
     final ODataEntity customer = req.execute().getBody();
     assertTrue(customer.getNavigationLink("Orders") instanceof ODataInlineEntitySet);
@@ -59,7 +72,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
   /**
    * Test <tt>$filter</tt> and <tt>$orderby</tt>.
    *
-   * @see org.apache.olingo.client.core.v3.FilterFactoryTest for more tests.
+   * @see org.apache.olingo.fit.v4.FilterFactoryTestITCase for more tests.
    */
   @Test
   public void filterOrderby() throws EdmPrimitiveTypeException {
@@ -69,7 +82,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     // 1. check that filtered entity set looks as expected
     ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON);
 
     ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
@@ -85,7 +97,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     // 3. add orderby clause to filter above
     req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.orderBy("PersonID desc").build());
-    req.setFormat(ODataPubFormat.JSON);
+
     feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(2, feed.getEntities().size());
@@ -127,9 +139,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
-    ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.skip(2).build());
-    ODataEntitySet feed = req.execute().getBody();
+
+    final ODataEntitySet feed = req.execute().getBody();
     assertEquals(3, feed.getEntities().size());
   }
 
@@ -140,9 +153,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
-    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.top(2).build());
-    ODataEntitySet feed = req.execute().getBody();
+
+    final ODataEntitySet feed = req.execute().getBody();
     assertEquals(2, feed.getEntities().size());
   }
 
@@ -156,7 +170,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON);
 
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
@@ -171,13 +184,13 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    * Test <tt>$inlinecount</tt>.
    */
   @Test
-  public void inlinecount() {
+  public void count() {
     final URIBuilder uriBuilder =
             client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").count(true);
 
     final ODataEntitySetRequest<ODataEntitySet> req =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON);
+
     final ODataEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(feed.getEntities().size(), feed.getCount());
@@ -192,7 +205,6 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customers").appendKeySegment(1).select("PersonID,Orders").expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON_FULL_METADATA);
 
     final ODataEntity customer = req.execute().getBody();
     assertEquals(1, customer.getProperties().size());
@@ -207,9 +219,22 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
             expandWithSelect("Orders", "OrderID", "OrderDetails");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataPubFormat.JSON_FULL_METADATA);
 
     final ODataRetrieveResponse<ODataEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
+  }
+
+  @Test
+  public void search() {
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("People").search(client.getSearchFactory().
+                    or(client.getSearchFactory().literal("Bob"), client.getSearchFactory().literal("Jill")));
+
+    final ODataEntitySetRequest<ODataEntitySet> req =
+            client.getRetrieveRequestFactory().getEntitySetRequest(builder.build());
+
+    final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
+    assertEquals(200, res.getStatusCode());
+    assertFalse(res.getBody().getEntities().isEmpty());
   }
 }

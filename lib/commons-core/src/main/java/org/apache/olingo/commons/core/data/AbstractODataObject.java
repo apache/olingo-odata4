@@ -23,7 +23,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 
-abstract class AbstractODataObject extends AbstractPayloadObject {
+abstract class AbstractODataObject extends AbstractAnnotatedObject {
 
   private static final long serialVersionUID = -4391162864875546927L;
 

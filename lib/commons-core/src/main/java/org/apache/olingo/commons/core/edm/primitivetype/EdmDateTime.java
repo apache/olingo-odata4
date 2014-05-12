@@ -64,31 +64,39 @@ public final class EdmDateTime extends SingletonPrimitiveType {
     }
 
     TimeZone timezone = null;
-    Integer fractionalSecs = null;
+    String decimals = null;
     if (dateParts.length > 1) {
       int idx = dateParts[1].indexOf('+');
       if (idx == -1) {
         idx = dateParts[1].indexOf('-');
       }
       if (idx == -1) {
-        fractionalSecs = Integer.parseInt(dateParts[1]);
+        decimals = dateParts[1];
       } else {
         timezone = TimeZone.getTimeZone(dateParts[1].substring(idx));
-        fractionalSecs = Integer.parseInt(dateParts[1].substring(0, idx));
+        decimals = dateParts[1].substring(0, idx);
       }
-    }
-
-    if (fractionalSecs != null && String.valueOf(fractionalSecs).length() > (precision == null ? 0 : precision)) {
-      throw new EdmPrimitiveTypeException(
-              "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
     }
 
     final Calendar calendar = timezone == null ? Calendar.getInstance() : Calendar.getInstance(timezone);
     calendar.setTime(date);
     final Timestamp timestamp = new Timestamp(date.getTime());
-    if (fractionalSecs != null) {
-      calendar.set(Calendar.MILLISECOND, fractionalSecs);
-      timestamp.setNanos(fractionalSecs);
+
+    if (decimals != null) {
+      if (decimals.length() > (precision == null ? 0 : precision)) {
+        throw new EdmPrimitiveTypeException(
+                "EdmPrimitiveTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets)");
+      }
+      final String milliSeconds = decimals.length() > 3
+              ? decimals.substring(0, 3)
+              : decimals + "000".substring(decimals.length());
+      calendar.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+
+      if (!decimals.isEmpty()) {
+        final int fractionalSecs = calendar.get(Calendar.MILLISECOND);
+        // if fractional are just milliseconds, convert to nanoseconds
+        timestamp.setNanos(fractionalSecs < 1000 ? fractionalSecs * 1000000 : fractionalSecs);
+      }
     }
 
     if (returnType.isAssignableFrom(Calendar.class)) {

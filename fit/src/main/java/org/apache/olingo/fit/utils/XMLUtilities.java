@@ -63,8 +63,8 @@ public class XMLUtilities extends AbstractUtilities {
 
   protected static XMLOutputFactory ofactory = null;
 
-  public XMLUtilities(final ODataServiceVersion version) throws Exception {
-    super(version);
+  public XMLUtilities(final ODataServiceVersion version, final Metadata metadata) throws Exception {
+    super(version, metadata);
   }
 
   @Override
@@ -148,7 +148,6 @@ public class XMLUtilities extends AbstractUtilities {
 
     writer.add(entry.getValue().getStart());
 
-    final Metadata metadata = Commons.getMetadata(version);
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
     // add for links
@@ -500,7 +499,7 @@ public class XMLUtilities extends AbstractUtilities {
     return IOUtils.toInputStream(newContent, "UTF-8");
   }
 
-  public InputStream addAtomContent(
+  private InputStream addAtomContent(
           final InputStream content, final String title, final String href)
           throws Exception {
 

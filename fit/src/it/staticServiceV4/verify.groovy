@@ -16,5 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File basepkg = new File( basedir, "target/generated-sources/ojc-plugin/org/apache/olingo/proxy" );
+File basepkg = new File( basedir, "target/generated-sources/ojc-plugin/org/apache/olingo/fit/proxy/v4" );
 assert basepkg.isDirectory() && basepkg.listFiles().length>0;

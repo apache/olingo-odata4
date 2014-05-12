@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.LinkedComplexValue;
 
@@ -29,9 +30,28 @@ public class LinkedComplexValueImpl extends ComplexValueImpl implements LinkedCo
 
   private final List<Link> navigationLinks = new ArrayList<Link>();
 
+  private final List<Annotation> annotations = new ArrayList<Annotation>();
+
   @Override
   public boolean isLinkedComplex() {
     return true;
+  }
+
+  private Link getOneByTitle(final String name, final List<Link> links) {
+    Link result = null;
+
+    for (Link link : links) {
+      if (name.equals(link.getTitle())) {
+        result = link;
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public Link getAssociationLink(final String name) {
+    return getOneByTitle(name, associationLinks);
   }
 
   @Override
@@ -40,8 +60,17 @@ public class LinkedComplexValueImpl extends ComplexValueImpl implements LinkedCo
   }
 
   @Override
+  public Link getNavigationLink(final String name) {
+    return getOneByTitle(name, navigationLinks);
+  }
+
+  @Override
   public List<Link> getNavigationLinks() {
     return navigationLinks;
   }
 
+  @Override
+  public List<Annotation> getAnnotations() {
+    return annotations;
+  }
 }

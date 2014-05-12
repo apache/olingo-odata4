@@ -19,12 +19,11 @@
 package org.apache.olingo.ext.pojogen;
 
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -98,6 +98,10 @@ public abstract class AbstractUtility {
     return getEdmTypeInfo(singleton.getEntityType().getFullQualifiedName().toString());
   }
 
+  public boolean isComplex(final FullQualifiedName fqn) {
+    return metadata.getComplexType(fqn) != null;
+  }
+
   public Map<String, String> getEntityKeyType(final EdmSingleton singleton) {
     return getEntityKeyType(singleton.getEntityType());
   }
@@ -155,7 +159,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmFunction getFunctionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -170,7 +173,6 @@ public abstract class AbstractUtility {
   }
 
   public EdmAction getActionByName(final FullQualifiedName name) {
-
     final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
@@ -185,7 +187,6 @@ public abstract class AbstractUtility {
   }
 
   public List<EdmFunction> getFunctionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmFunction> result = new ArrayList<EdmFunction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {
@@ -205,9 +206,19 @@ public abstract class AbstractUtility {
 
     return result;
   }
+  
+  public List<EdmOperation> justInheritedOperationsBoundTo(final EdmEntityType entity){
+    final List<EdmOperation> result = new ArrayList<EdmOperation>();
+    if(entity.getBaseType()!=null){
+      result.addAll(getFunctionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(getActionsBoundTo(entity.getBaseType().getName(), false));
+      result.addAll(justInheritedOperationsBoundTo(entity.getBaseType()));
+    }
+    
+    return result;
+  }
 
   public List<EdmAction> getActionsBoundTo(final String typeExpression, final boolean collection) {
-
     final List<EdmAction> result = new ArrayList<EdmAction>();
 
     for (EdmSchema sch : getMetadata().getSchemas()) {
@@ -270,7 +281,7 @@ public abstract class AbstractUtility {
       res.append(InputStream.class.getName());
     } else if (edmType.isPrimitiveType()) {
       final Class<?> clazz = EdmPrimitiveTypeFactory.getInstance(edmType.getPrimitiveTypeKind()).getDefaultType();
-      res.append((clazz.isAssignableFrom(Calendar.class) ? Timestamp.class : clazz).getSimpleName());
+      res.append(clazz.getSimpleName());
     } else if (edmType.isComplexType()) {
       res.append(basePackage).append('.').
               append(edmType.getFullQualifiedName().getNamespace().toLowerCase()). // namespace
@@ -315,7 +326,7 @@ public abstract class AbstractUtility {
       baseType = getEdmTypeInfo(baseType.getBaseType().getFullQualifiedName().toString()).getEntityType();
     }
 
-    final Map<String, String> res = new HashMap<String, String>();
+    final Map<String, String> res = new LinkedHashMap<String, String>();
     for (EdmKeyPropertyRef pref : baseType.getKeyPropertyRefs()) {
       res.put(pref.getKeyPropertyName(),
               getJavaType(pref.getProperty().getType().getFullQualifiedName().toString()));
@@ -387,6 +398,10 @@ public abstract class AbstractUtility {
 
   public String uncapitalize(final String str) {
     return StringUtils.uncapitalize(str);
+  }
+
+  public String join(final Object[] array, String sep) {
+    return StringUtils.join(array, sep);
   }
 
   public Map<String, String> getFcProperties(final EdmProperty property) {

@@ -114,7 +114,7 @@ public class PrimitiveValueTest extends AbstractTest {
 
     // Timestamp
     final Timestamp timestamp = value.asPrimitive().toCastValue(Timestamp.class);
-    assertEquals(expected.get(Calendar.MILLISECOND), timestamp.getNanos());
+    assertEquals(expected.get(Calendar.MILLISECOND), timestamp.getNanos() / 1000000);
 
     assertEquals("2013-01-10T02:27:47.673", value.asPrimitive().toString());
   }

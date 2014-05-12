@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.uri.QueryOption;
 
 public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
 
@@ -102,6 +103,15 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
   /**
    * Appends search query option.
    *
+   * @param search search expression
+   * @return current URIBuilder instance
+   * @see org.apache.olingo.client.api.uri.QueryOption#SEARCH
+   */
+  URIBuilder search(URISearch search);
+  
+  /**
+   * Appends search query option.
+   *
    * @param expression search expression
    * @return current URIBuilder instance
    * @see org.apache.olingo.client.api.uri.QueryOption#SEARCH
@@ -118,7 +128,7 @@ public interface URIBuilder extends CommonURIBuilder<URIBuilder> {
    * @return current URIBuilder instance.
    * @see org.apache.olingo.client.api.uri.QueryOption#EXPAND
    */
-  URIBuilder expandWithOptions(String expandItem, Map<String, Object> options);
+  URIBuilder expandWithOptions(String expandItem, Map<QueryOption, Object> options);
   
   /**
    * Properties of related entities can be specified by including the $select query option within the $expand.

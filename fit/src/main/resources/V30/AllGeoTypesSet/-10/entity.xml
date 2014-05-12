@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/AllGeoTypesSet(-10)</id>
+  <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.AllSpatialTypes" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" title="AllSpatialTypes" href="AllGeoTypesSet(-10)" />
+  <title />
+  <updated>2014-05-08T12:27:58Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:Id m:type="Edm.Int32">-10</d:Id>
+      <d:Geog m:type="Edm.GeographyPoint">
+        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>51.65 178.7</gml:pos>
+        </gml:Point>
+      </d:Geog>
+      <d:GeogPoint m:type="Edm.GeographyPoint">
+        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>52.8606 173.334</gml:pos>
+        </gml:Point>
+      </d:GeogPoint>
+      <d:GeogLine m:type="Edm.GeographyLineString">
+        <gml:LineString gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>40.5 40.5</gml:pos>
+          <gml:pos>30.5 30.5</gml:pos>
+          <gml:pos>20.5 40.5</gml:pos>
+          <gml:pos>10.5 30.5</gml:pos>
+        </gml:LineString>
+      </d:GeogLine>
+      <d:GeogPolygon m:type="Edm.GeographyPolygon">
+        <gml:Polygon gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:exterior>
+            <gml:LinearRing>
+              <gml:pos>5 15</gml:pos>
+              <gml:pos>10 40</gml:pos>
+              <gml:pos>20 10</gml:pos>
+              <gml:pos>10 5</gml:pos>
+              <gml:pos>5 15</gml:pos>
+            </gml:LinearRing>
+          </gml:exterior>
+        </gml:Polygon>
+      </d:GeogPolygon>
+      <d:GeogCollection m:null="true" />
+      <d:GeogMultiPoint m:null="true" />
+      <d:GeogMultiLine m:type="Edm.GeographyMultiLineString">
+        <gml:MultiCurve gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:curveMembers>
+            <gml:LineString>
+              <gml:pos>10 10</gml:pos>
+              <gml:pos>20 20</gml:pos>
+              <gml:pos>40 10</gml:pos>
+            </gml:LineString>
+            <gml:LineString>
+              <gml:pos>40 40</gml:pos>
+              <gml:pos>30 30</gml:pos>
+              <gml:pos>20 40</gml:pos>
+              <gml:pos>10 30</gml:pos>
+            </gml:LineString>
+          </gml:curveMembers>
+        </gml:MultiCurve>
+      </d:GeogMultiLine>
+      <d:GeogMultiPolygon m:null="true" />
+      <d:Geom m:type="Edm.GeometryLineString">
+        <gml:LineString gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0">
+          <gml:pos>1 1</gml:pos>
+          <gml:pos>3 3</gml:pos>
+          <gml:pos>2 4</gml:pos>
+          <gml:pos>2 0</gml:pos>
+        </gml:LineString>
+      </d:Geom>
+      <d:GeomPoint m:type="Edm.GeometryPoint">
+        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0">
+          <gml:pos />
+        </gml:Point>
+      </d:GeomPoint>
+      <d:GeomLine m:null="true" />
+      <d:GeomPolygon m:null="true" />
+      <d:GeomCollection m:type="Edm.GeometryCollection">
+        <gml:MultiGeometry gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0" />
+      </d:GeomCollection>
+      <d:GeomMultiPoint m:type="Edm.GeometryMultiPoint">
+        <gml:MultiPoint gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0" />
+      </d:GeomMultiPoint>
+      <d:GeomMultiLine m:type="Edm.GeometryMultiLineString">
+        <gml:MultiCurve gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0">
+          <gml:curveMembers>
+            <gml:LineString>
+              <gml:pos>10 10</gml:pos>
+              <gml:pos>20 20</gml:pos>
+              <gml:pos>10 40</gml:pos>
+            </gml:LineString>
+            <gml:LineString>
+              <gml:pos>40 40</gml:pos>
+              <gml:pos>30 30</gml:pos>
+              <gml:pos>40 20</gml:pos>
+              <gml:pos>30 10</gml:pos>
+            </gml:LineString>
+          </gml:curveMembers>
+        </gml:MultiCurve>
+      </d:GeomMultiLine>
+      <d:GeomMultiPolygon m:type="Edm.GeometryMultiPolygon">
+        <gml:MultiSurface gml:srsName="http://www.opengis.net/def/crs/EPSG/0/0">
+          <gml:surfaceMembers>
+            <gml:Polygon>
+              <gml:exterior>
+                <gml:LinearRing>
+                  <gml:pos>40 40</gml:pos>
+                  <gml:pos>20 45</gml:pos>
+                  <gml:pos>45 30</gml:pos>
+                  <gml:pos>40 40</gml:pos>
+                </gml:LinearRing>
+              </gml:exterior>
+            </gml:Polygon>
+            <gml:Polygon>
+              <gml:exterior>
+                <gml:LinearRing>
+                  <gml:pos>20 35</gml:pos>
+                  <gml:pos>45 20</gml:pos>
+                  <gml:pos>30 5</gml:pos>
+                  <gml:pos>10 10</gml:pos>
+                  <gml:pos>10 30</gml:pos>
+                  <gml:pos>20 35</gml:pos>
+                </gml:LinearRing>
+              </gml:exterior>
+              <gml:interior>
+                <gml:LinearRing>
+                  <gml:pos>30 20</gml:pos>
+                  <gml:pos>20 25</gml:pos>
+                  <gml:pos>20 15</gml:pos>
+                  <gml:pos>30 20</gml:pos>
+                </gml:LinearRing>
+              </gml:interior>
+            </gml:Polygon>
+          </gml:surfaceMembers>
+        </gml:MultiSurface>
+      </d:GeomMultiPolygon>
+    </m:properties>
+  </content>
+</entry>

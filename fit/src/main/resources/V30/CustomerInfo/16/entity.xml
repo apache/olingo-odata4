@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://localhost:8080/DefaultService.svc/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>http://localhost:8080/DefaultService.svc/CustomerInfo(16)</id>
+  <category term="Microsoft.Test.OData.Services.AstoriaDefaultService.CustomerInfo" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" title="CustomerInfo" href="CustomerInfo(16)" />
+  <title />
+  <updated>2014-05-11T15:46:20Z</updated>
+  <author>
+    <name />
+  </author>
+  <link rel="edit-media" title="CustomerInfo" href="CustomerInfo(16)/$value" />
+  <content type="*/*" src="CustomerInfo(16)/$value" />
+  <m:properties>
+    <d:CustomerInfoId m:type="Edm.Int32">16</d:CustomerInfoId>
+    <d:Information>uuvoqobtxfgtnzugqjsocbhjkynsjafonxuxmcrnyldkxvpnuezalvpyhjpsmkgxacuruxtjruusxylndzxgefpscvk</d:Information>
+  </m:properties>
+</entry>

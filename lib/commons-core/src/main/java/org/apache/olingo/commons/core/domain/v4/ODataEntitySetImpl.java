@@ -21,6 +21,7 @@ package org.apache.olingo.commons.core.domain.v4;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.core.domain.AbstractODataEntitySet;
@@ -29,11 +30,14 @@ public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataE
 
   private static final long serialVersionUID = -8127933181196033586L;
 
-  private final List<ODataEntity> entities = new ArrayList<ODataEntity>();
-
   private URI deltaLink;
 
+  private final List<ODataEntity> entities = new ArrayList<ODataEntity>();
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+
   public ODataEntitySetImpl() {
+    super();
   }
 
   public ODataEntitySetImpl(final URI next) {
@@ -59,4 +63,10 @@ public class ODataEntitySetImpl extends AbstractODataEntitySet implements ODataE
   public void setDeltaLink(final URI deltaLink) {
     this.deltaLink = deltaLink;
   }
+
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
+  }
+
 }

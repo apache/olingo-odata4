@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.client.core.uri.v4;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-
+import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
-
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class URIBuilderTest extends AbstractTest {
@@ -41,18 +41,28 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void expandWithOptions() throws URISyntaxException {
-    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
-            expandWithOptions("ProductDetails", new LinkedHashMap<String, Object>() {
+    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+            expandWithOptions("ProductDetails", new LinkedHashMap<QueryOption, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
 
               {
-                put("$expand", "ProductInfo");
-                put("$select", "Price");
+                put(QueryOption.EXPAND, "ProductInfo");
+                put(QueryOption.SELECT, "Price");
               }
             }).expand("Orders", "Customers").build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
             addParameter("$expand", "ProductDetails($expand=ProductInfo,$select=Price),Orders,Customers").build(), uri);
+  }
+
+  @Test
+  public void expandWithLevels() throws URISyntaxException {
+    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(1).
+            expandWithOptions("Customer", Collections.<QueryOption, Object>singletonMap(QueryOption.LEVELS, 4)).
+            build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(1)").
+            addParameter("$expand", "Customer($levels=4)").build(), uri);
   }
 
   @Test
@@ -117,8 +127,7 @@ public class URIBuilderTest extends AbstractTest {
   @Test
   public void derived() throws URISyntaxException {
     final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
-            appendEntitySetSegment("Customers").appendNavigationSegment("Model").
-            appendDerivedEntityTypeSegment("VipCustomer").appendKeySegment(1);
+            appendEntitySetSegment("Customers").appendDerivedEntityTypeSegment("Model.VipCustomer").appendKeySegment(1);
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/Customers/Model.VipCustomer(1)").build(), uriBuilder.build());

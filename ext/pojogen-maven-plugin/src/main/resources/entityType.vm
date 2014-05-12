@@ -37,7 +37,6 @@ import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
 #end
 
-// EdmSimpleType property imports
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
@@ -51,7 +50,7 @@ import java.net.URI;
 import java.util.UUID;
 import java.io.Serializable;
 import java.util.Collection;
-import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 #if( $keyRef )@KeyRef(${keyRef}.class)#end
@@ -62,13 +61,15 @@ import javax.xml.datatype.Duration;
         hasStream = $entityType.hasStream(),
         isAbstract = $entityType.Abstract#if($entityType.getBaseType()),
         baseType = "$entityType.getBaseType().getFullQualifiedName().toString()"#end)
-public interface $utility.capitalize($entityType.Name) extends #if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}Serializable#end {
+public interface $utility.capitalize($entityType.Name) 
+  extends #if( $entityType.getBaseType() )$utility.getJavaType($entityType.getBaseType())#{elseif}( $entityType.isOpenType() )AbstractOpenType#{else}Serializable#end {
 
 #set( $keys = [] )
 #foreach($key in $entityType.KeyPropertyRefs)
     #if(!$keys.add($key.KeyPropertyName)) #stop #end
 #end
 
+#set( $complexProps = [] )
 #foreach($propertyName in $entityType.PropertyNames)
     #set($property = $entityType.getProperty($propertyName))
     #set($fcprops = $utility.getFcProperties($property) )
@@ -92,9 +93,12 @@ public interface $utility.capitalize($entityType.Name) extends #if( $entityType.
                 fcNSPrefix = "#if($fcprops.containsKey("fcNSPrefix"))$fcprops.get("fcNSPrefix")#end",
                 fcNSURI = "#if($fcprops.containsKey("fcNSURI"))$fcprops.get("fcNSURI")#end",
                 fcKeepInContent = #if($fcprops.containsKey("fcKeepInContent"))$fcprops.get("fcKeepInContent")#{else}false#end)
-    $utility.getJavaType($property.Type) get$utility.capitalize($property.Name)();
+    $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));    
+    #if($utility.isComplex($property.Type.FullQualifiedName))#*
+      *##set( $adding = $complexProps.add($property) )
+    #end
 
 #end
     
@@ -122,10 +126,15 @@ public interface $utility.capitalize($entityType.Name) extends #if( $entityType.
 
 #set( $functions = $utility.getFunctionsBoundTo($entityType.Name, false) )
 #set( $actions = $utility.getActionsBoundTo($entityType.Name, false) )
-#if( $functions.size() > 0 || $actions.size() > 0 )
+#set( $inherited = $utility.justInheritedOperationsBoundTo($entityType).size())
+#if( $inherited.size() > 0 || $functions.size() > 0 || $actions.size() > 0 )
+    #if($inherited.size() > 0)
+    @Overide
+    #end
     Operations operations();
 
-    public interface Operations {
+    interface Operations #if($inherited.size() > 0)
+           extends ${utility.getJavaType($entityType.getBaseType())}.Operations#end{
     #foreach($operation in $functions)
       @Operation(name = "$operation.Name",
                     type = OperationType.FUNCTION,
@@ -166,4 +175,21 @@ public interface $utility.capitalize($entityType.Name) extends #if( $entityType.
     #end
     }
 #end
+
+#if( $complexProps.size() > 0 )
+    #if( $entityType.baseType )
+    @Override
+    #end
+    ComplexFactory factory();
+
+    interface ComplexFactory #if( $entityType.baseType )
+           extends ${utility.getJavaType($entityType.getBaseType())}.ComplexFactory#end{
+    #foreach($property in $complexProps)
+         @Property(name = "$property.Name",
+                   type = "$property.Type.FullQualifiedName.toString()")
+         $utility.getJavaType($property.Type) new$utility.capitalize($property.Name)();
+
+    #end
+    }
+#end   
 }

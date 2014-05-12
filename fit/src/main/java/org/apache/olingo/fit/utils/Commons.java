@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.op.InjectableSerializerProvider;
@@ -75,7 +78,8 @@ public abstract class Commons {
 
   protected static final Map<String, Integer> SEQUENCE = new HashMap<String, Integer>();
 
-  protected static final Map<String, String> MEDIA_CONTENT = new HashMap<String, String>();
+  protected static final Map<String, Pair<String, EdmPrimitiveTypeKind>> MEDIA_CONTENT =
+          new HashMap<String, Pair<String, EdmPrimitiveTypeKind>>();
 
   static {
     SEQUENCE.put("Customer", 1000);
@@ -83,6 +87,7 @@ public abstract class Commons {
     SEQUENCE.put("Car", 1000);
     SEQUENCE.put("Message", 1000);
     SEQUENCE.put("Order", 1000);
+    SEQUENCE.put("Product", 1000);
     SEQUENCE.put("ComputerDetail", 1000);
     SEQUENCE.put("AllGeoTypesSet", 1000);
     SEQUENCE.put("Orders", 1000);
@@ -92,10 +97,15 @@ public abstract class Commons {
     SEQUENCE.put("Products", 1000);
     SEQUENCE.put("ProductDetails", 1000);
     SEQUENCE.put("PaymentInstrument", 10192);
+    SEQUENCE.put("People", 1000);
 
-    MEDIA_CONTENT.put("CustomerInfo", "CustomerinfoId");
-    MEDIA_CONTENT.put("Car", "VIN");
+    MEDIA_CONTENT.put("CustomerInfo",
+            new ImmutablePair<String, EdmPrimitiveTypeKind>("CustomerinfoId", EdmPrimitiveTypeKind.Int32));
+    MEDIA_CONTENT.put("Car",
+            new ImmutablePair<String, EdmPrimitiveTypeKind>("VIN", EdmPrimitiveTypeKind.Int32));
     MEDIA_CONTENT.put("Car/Photo", null);
+    MEDIA_CONTENT.put("Advertisements",
+            new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
   }
 
   public static FITAtomDeserializer getAtomDeserializer(final ODataServiceVersion version) {
@@ -143,7 +153,7 @@ public abstract class Commons {
     return METADATA.get(version);
   }
 
-  public static Map<String, String> getMediaContent() {
+  public static Map<String, Pair<String, EdmPrimitiveTypeKind>> getMediaContent() {
     return MEDIA_CONTENT;
   }
 
@@ -182,7 +192,7 @@ public abstract class Commons {
     try {
       return FSManager.instance(version)
               .getAbsolutePath(basePath + Constants.get(version, ConstantKey.LINKS_FILE_PATH)
-              + File.separatorChar + linkName, accept);
+                      + File.separatorChar + linkName, accept);
     } catch (Exception e) {
       throw new IOException(e);
     }

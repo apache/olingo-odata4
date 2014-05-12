@@ -94,6 +94,10 @@ public interface CommonODataObjectFactory {
    */
   ODataLink newEntityNavigationLink(String name, URI link);
 
+  ODataLink newAssociationLink(String name, URI link);
+
+  ODataLink newMediaEditLink(String name, URI link);
+
   ODataPrimitiveValue.Builder newPrimitiveValueBuilder();
 
   ODataComplexValue<? extends CommonODataProperty> newComplexValue(String typeName);

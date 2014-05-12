@@ -105,7 +105,6 @@ public abstract class AbstractMetadataMojo extends AbstractMojo {
     }
 
     protected VelocityContext newContext() {
-
         final VelocityContext ctx = new VelocityContext();
 
         ctx.put("utility", getUtility());

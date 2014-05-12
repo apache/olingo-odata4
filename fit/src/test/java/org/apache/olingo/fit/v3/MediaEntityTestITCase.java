@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.fit.v3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
@@ -38,11 +41,6 @@ import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
@@ -84,6 +82,28 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     retrieveReq.execute();
   }
 
+  private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
+
+    final String TO_BE_UPDATED = "new buffered stream sample";
+    final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
+
+    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq =
+            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
+    updateReq.setFormat(format);
+
+    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
+    final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
+    assertEquals(204, updateRes.getStatusCode());
+
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+
+    final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
+    assertEquals(200, retrieveRes.getStatusCode());
+    assertEquals(TO_BE_UPDATED, IOUtils.toString(retrieveRes.getBody()));
+  }
+
   @Test
   public void updateMediaEntityAsAtom() throws Exception {
     updateMediaEntity(ODataPubFormat.ATOM, 14);
@@ -92,6 +112,38 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   @Test
   public void updateMediaEntityAsJson() throws Exception {
     updateMediaEntity(ODataPubFormat.JSON, 15);
+  }
+
+  private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
+    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
+
+    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
+            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
+    createReq.setFormat(format);
+
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
+    assertEquals(201, createRes.getStatusCode());
+
+    final ODataEntity created = createRes.getBody();
+    assertNotNull(created);
+    assertEquals(2, created.getProperties().size());
+
+    Integer id = null;
+    for (ODataProperty prop : created.getProperties()) {
+      if ("VIN".equals(prop.getName())) {
+        id = prop.getPrimitiveValue().toCastValue(Integer.class);
+      }
+    }
+    assertNotNull(id);
+
+    builder.appendKeySegment(id).appendValueSegment();
+
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+
+    final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
+    assertEquals(200, retrieveRes.getStatusCode());
+    assertNotNull(retrieveRes.getBody());
   }
 
   @Test
@@ -130,60 +182,5 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
     assertEquals(TO_BE_UPDATED, IOUtils.toString(retrieveRes.getBody()));
-  }
-
-  private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
-    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
-
-    final String TO_BE_UPDATED = "new buffered stream sample";
-    final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
-
-    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq =
-            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
-    updateReq.setFormat(format);
-
-    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
-    final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
-    assertEquals(204, updateRes.getStatusCode());
-
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
-
-    final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
-    assertEquals(200, retrieveRes.getStatusCode());
-    assertEquals(TO_BE_UPDATED, IOUtils.toString(retrieveRes.getBody()));
-  }
-
-  private void createMediaEntity(final ODataPubFormat format, final InputStream input) throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car");
-
-    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
-    createReq.setFormat(format);
-
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
-    final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
-    assertEquals(201, createRes.getStatusCode());
-
-    final ODataEntity created = createRes.getBody();
-    assertNotNull(created);
-    assertEquals(2, created.getProperties().size());
-
-    Integer id = null;
-    for (ODataProperty prop : created.getProperties()) {
-      if ("VIN".equals(prop.getName())) {
-        id = prop.getPrimitiveValue().toCastValue(Integer.class);
-      }
-    }
-    assertNotNull(id);
-
-    builder.appendKeySegment(id).appendValueSegment();
-
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
-
-    final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
-    assertEquals(200, retrieveRes.getStatusCode());
-    assertNotNull(retrieveRes.getBody());
   }
 }

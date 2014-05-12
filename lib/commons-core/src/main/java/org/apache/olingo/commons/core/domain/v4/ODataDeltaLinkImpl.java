@@ -19,10 +19,13 @@
 package org.apache.olingo.commons.core.domain.v4;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.olingo.commons.api.domain.ODataItem;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataDeltaLink;
-import org.apache.olingo.commons.core.data.AbstractPayloadObject;
 
-public class ODataDeltaLinkImpl extends AbstractPayloadObject implements ODataDeltaLink {
+public class ODataDeltaLinkImpl extends ODataItem implements ODataDeltaLink {
 
   private static final long serialVersionUID = -6686550836508873044L;
 
@@ -31,6 +34,12 @@ public class ODataDeltaLinkImpl extends AbstractPayloadObject implements ODataDe
   private String relationship;
 
   private URI target;
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+
+  public ODataDeltaLinkImpl() {
+    super(null);
+  }
 
   @Override
   public URI getSource() {
@@ -48,7 +57,7 @@ public class ODataDeltaLinkImpl extends AbstractPayloadObject implements ODataDe
   }
 
   @Override
-  public void setRelationship(String relationship) {
+  public void setRelationship(final String relationship) {
     this.relationship = relationship;
   }
 
@@ -58,8 +67,13 @@ public class ODataDeltaLinkImpl extends AbstractPayloadObject implements ODataDe
   }
 
   @Override
-  public void setTarget(URI target) {
+  public void setTarget(final URI target) {
     this.target = target;
+  }
+
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
   }
 
 }

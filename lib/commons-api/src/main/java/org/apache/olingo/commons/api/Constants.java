@@ -152,6 +152,8 @@ public interface Constants {
 
   public static final String ATTR_RELATIONSHIP = "relationship";
 
+  public static final String ANNOTATION = "annotation";
+
   // JSON stuff
   public final static String JSON_METADATA = "odata.metadata";
 

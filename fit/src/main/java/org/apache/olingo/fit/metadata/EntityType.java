@@ -27,18 +27,38 @@ public class EntityType extends AbstractMetadataElement {
 
   private final String name;
 
+  private String baseType;
+
+  private boolean openType = false;
+
   private final Map<String, Property> properties;
 
   private final Map<String, NavigationProperty> navigationProperties;
 
   public EntityType(final String name) {
     this.name = name;
-    properties = new HashMap<String, Property>();
-    navigationProperties = new HashMap<String, NavigationProperty>();
+    this.properties = new HashMap<String, Property>();
+    this.navigationProperties = new HashMap<String, NavigationProperty>();
   }
 
   public String getName() {
     return name;
+  }
+
+  public String getBaseType() {
+    return baseType;
+  }
+
+  public void setBaseType(final String baseType) {
+    this.baseType = baseType;
+  }
+
+  public boolean isOpenType() {
+    return openType;
+  }
+
+  public void setOpenType(final boolean openType) {
+    this.openType = openType;
   }
 
   public Collection<NavigationProperty> getNavigationProperties() {

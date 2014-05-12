@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
+import org.apache.olingo.client.api.uri.v4.URISearch;
 import org.apache.olingo.client.api.v4.Configuration;
 import org.apache.olingo.client.core.uri.AbstractURIBuilder;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -74,11 +75,6 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
-  protected char getDerivedEntityTypeSeparator() {
-    return '.';
-  }
-
-  @Override
   protected String getOperationInvokeMarker() {
     return "()";
   }
@@ -121,6 +117,11 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
+  public URIBuilder search(final URISearch search) {
+    return search(search.build());
+  }
+
+  @Override
   public URIBuilder search(final String expression) {
     return addQueryOption(QueryOption.SEARCH, expression);
   }
@@ -131,8 +132,12 @@ public class URIBuilderImpl extends AbstractURIBuilder<URIBuilder> implements UR
   }
 
   @Override
-  public URIBuilder expandWithOptions(final String expandItem, final Map<String, Object> options) {
-    return expand(expandItem + buildMultiKeySegment(options, false));
+  public URIBuilder expandWithOptions(final String expandItem, final Map<QueryOption, Object> options) {
+    final Map<String, Object> _options = new LinkedHashMap<String, Object>();
+    for (Map.Entry<QueryOption, Object> entry : options.entrySet()) {
+      _options.put("$" + entry.getKey().toString(), entry.getValue());
+    }
+    return expand(expandItem + buildMultiKeySegment(_options, false));
   }
 
   @Override

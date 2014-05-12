@@ -21,11 +21,15 @@ package org.apache.olingo.commons.core.data;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -68,14 +72,29 @@ public class JSONPropertyDeserializer extends AbstractJsonDeserializer<JSONPrope
 
     if (tree.has(jsonType)) {
       property.setType(new EdmTypeInfo.Builder().setTypeExpression(tree.get(jsonType).textValue()).build().internal());
+      tree.remove(jsonType);
     }
 
     if (tree.has(Constants.JSON_NULL) && tree.get(Constants.JSON_NULL).asBoolean()) {
       property.setValue(new NullValueImpl());
+      tree.remove(Constants.JSON_NULL);
     }
 
     if (property.getValue() == null) {
       value(property, tree.has(Constants.VALUE) ? tree.get(Constants.VALUE) : tree, parser.getCodec());
+      tree.remove(Constants.VALUE);
+    }
+
+    // any remaining entry is supposed to be an annotation or is ignored
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
+      if (field.getKey().charAt(0) == '@') {
+        final Annotation annotation = new AnnotationImpl();
+        annotation.setTerm(field.getKey().substring(1));
+
+        value(annotation, field.getValue(), parser.getCodec());
+        property.getAnnotations().add(annotation);
+      }
     }
 
     return new ResWrap<JSONPropertyImpl>(contextURL, metadataETag, property);

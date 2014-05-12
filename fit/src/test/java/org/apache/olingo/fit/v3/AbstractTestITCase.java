@@ -375,7 +375,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
     // check defined links
     checkLinks(original.getAssociationLinks(), actual.getAssociationLinks());
-    checkLinks(original.getEditMediaLinks(), actual.getEditMediaLinks());
+    checkLinks(original.getMediaEditLinks(), actual.getMediaEditLinks());
     checkLinks(original.getNavigationLinks(), actual.getNavigationLinks());
 
     // check defined properties equality

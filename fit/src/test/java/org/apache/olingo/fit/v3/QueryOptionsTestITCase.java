@@ -56,7 +56,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
   /**
    * Test <tt>$filter</tt> and <tt>orderby</tt>.
    *
-   * @see org.apache.olingo.client.core.v3.FilterFactoryTest for more tests.
+   * @see org.apache.olingo.fit.v3.FilterFactoryTestITCase for more tests.
    */
   @Test
   public void filterOrderby() throws EdmPrimitiveTypeException {

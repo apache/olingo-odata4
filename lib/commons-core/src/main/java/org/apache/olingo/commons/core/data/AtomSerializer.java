@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.CollectionValue;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
@@ -124,6 +125,10 @@ public class AtomSerializer extends AbstractAtomDealer {
     }
 
     writer.writeEndElement();
+
+    for (Annotation annotation : property.getAnnotations()) {
+      annotation(writer, annotation, property.getName());
+    }
   }
 
   private void property(final XMLStreamWriter writer, final Property property) throws XMLStreamException {
@@ -185,6 +190,10 @@ public class AtomSerializer extends AbstractAtomDealer {
         writer.writeEndElement();
       }
 
+      for (Annotation annotation : link.getAnnotations()) {
+        annotation(writer, annotation, null);
+      }
+
       writer.writeEndElement();
     }
   }
@@ -209,6 +218,36 @@ public class AtomSerializer extends AbstractAtomDealer {
     for (Property property : properties) {
       property(writer, property, false);
     }
+  }
+
+  private void annotation(final XMLStreamWriter writer, final Annotation annotation, final String target)
+          throws XMLStreamException {
+
+    writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ANNOTATION,
+            version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA));
+
+    writer.writeAttribute(Constants.ATOM_ATTR_TERM, annotation.getTerm());
+
+    if (target != null) {
+      writer.writeAttribute(Constants.ATTR_TARGET, target);
+    }
+
+    if (StringUtils.isNotBlank(annotation.getType())) {
+      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(annotation.getType()).build();
+      if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
+        writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+                Constants.ATTR_TYPE, typeInfo.external(version));
+      }
+    }
+
+    if (annotation.getValue().isNull()) {
+      writer.writeAttribute(Constants.PREFIX_METADATA, version.getNamespaceMap().get(ODataServiceVersion.NS_METADATA),
+              Constants.ATTR_NULL, Boolean.TRUE.toString());
+    } else {
+      value(writer, annotation.getValue());
+    }
+
+    writer.writeEndElement();
   }
 
   private void entity(final XMLStreamWriter writer, final Entity entity) throws XMLStreamException {
@@ -270,8 +309,8 @@ public class AtomSerializer extends AbstractAtomDealer {
       if (StringUtils.isNotBlank(entity.getMediaContentType())) {
         writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
       }
-      if (StringUtils.isNotBlank(entity.getMediaContentSource())) {
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource());
+      if (entity.getMediaContentSource() != null) {
+        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toASCIIString());
       }
       writer.writeEndElement();
 
@@ -284,6 +323,10 @@ public class AtomSerializer extends AbstractAtomDealer {
       writer.writeEndElement();
     }
     writer.writeEndElement();
+
+    for (Annotation annotation : entity.getAnnotations()) {
+      annotation(writer, annotation, null);
+    }
   }
 
   private void entityRef(final XMLStreamWriter writer, final Entity entity) throws XMLStreamException {

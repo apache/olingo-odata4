@@ -113,6 +113,35 @@ public class MetadataTest extends AbstractTest {
     assertTrue(sack.isBound());
     assertEquals(1, sack.getParameterNames().size());
 
+    final EdmAction sack2 = edm.getBoundAction(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Sack"),
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Employee"),
+            true);
+    assertNull(sack2);
+
+    final EdmFunction sack3 = edm.getBoundFunction(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Sack"),
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Employee"),
+            false,
+            null);
+    assertNull(sack3);
+
+    boolean found = false;
+    for (EdmAction action : edm.getSchemas().get(0).getActions()) {
+      if ("Sack".equals(action.getName()) && action.isBound()) {
+        found = true;
+      }
+    }
+    assertTrue(found);
+
+    final EdmAction increaseSalaries = edm.getBoundAction(
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "IncreaseSalaries"),
+            new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "Employee"),
+            true);
+    assertNotNull(increaseSalaries);
+    assertTrue(increaseSalaries.isBound());
+    assertEquals(2, increaseSalaries.getParameterNames().size());
+
     // 4. EntityContainer
     final EdmEntityContainer container = edm.getEntityContainer(
             new FullQualifiedName("Microsoft.Test.OData.Services.AstoriaDefaultService", "DefaultContainer"));
@@ -273,10 +302,10 @@ public class MetadataTest extends AbstractTest {
     final EdmEntityType computer = metadata.getEntityType(new FullQualifiedName(container.getNamespace(), "Computer"));
     assertNotNull(computer);
 
-    final EdmFunction getComputer = metadata.getBoundFunction(
+    final EdmAction getComputer = metadata.getBoundAction(
             new FullQualifiedName(container.getNamespace(), "GetComputer"),
             new FullQualifiedName(container.getNamespace(), computer.getName()),
-            Boolean.FALSE, Arrays.asList("computer"));
+            false);
     assertNotNull(getComputer);
     assertEquals(computer, getComputer.getParameter("computer").getType());
     assertEquals(computer, getComputer.getReturnType().getType());

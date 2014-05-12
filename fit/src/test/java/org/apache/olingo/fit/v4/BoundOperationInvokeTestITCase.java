@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.Singleton;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -64,16 +65,16 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
     // GetEmployeesCount
     URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
-    ODataEntityRequest<ODataEntity> entityReq =
-            getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
-    entityReq.setFormat(format);
-    ODataEntity entity = entityReq.execute().getBody();
-    assertNotNull(entity);
+    final ODataEntityRequest<Singleton> singletonReq =
+            getClient().getRetrieveRequestFactory().getSingletonRequest(builder.build());
+    singletonReq.setFormat(format);
+    final Singleton company = singletonReq.execute().getBody();
+    assertNotNull(company);
 
-    ODataOperation boundOp = entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount");
+    ODataOperation boundOp = company.getOperation("Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount");
     assertNotNull(boundOp);
 
-    EdmFunction func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(),
+    EdmFunction func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()), company.getTypeName(),
             false, null);
     assertNotNull(func);
 
@@ -87,9 +88,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     // GetProductDetails
     builder = getClient().getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    ODataEntityRequest<ODataEntity> entityReq = getClient().getRetrieveRequestFactory().
+            getEntityRequest(builder.build());
     entityReq.setFormat(format);
-    entity = entityReq.execute().getBody();
+    ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
 
     boundOp = entity.getOperation("Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails");

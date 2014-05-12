@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
@@ -42,6 +43,8 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
    * Association links.
    */
   private final List<ODataLink> associationLinks = new ArrayList<ODataLink>();
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
 
   public ODataComplexValueImpl(final String typeName) {
     super(typeName);
@@ -151,4 +154,10 @@ public class ODataComplexValueImpl extends AbstractODataComplexValue<ODataProper
 
     return result;
   }
+
+  @Override
+  public List<ODataAnnotation> getAnnotations() {
+    return annotations;
+  }
+
 }

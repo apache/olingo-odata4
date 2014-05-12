@@ -1,0 +1,171 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.olingo.fit;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.apache.olingo.fit.utils.FSManager;
+import org.springframework.stereotype.Service;
+
+@Service
+@Path("/V40/Demo.svc")
+public class V4Demo {
+
+  private final Metadata demoMetadata;
+
+  private final V4Services services;
+
+  public V4Demo() throws Exception {
+    this.demoMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).
+            readFile("demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
+                    Accept.XML), ODataServiceVersion.V40);
+    this.services = new V4Services(this.demoMetadata);
+  }
+
+  private Response replaceServiceName(final Response response) {
+    try {
+      final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
+              replaceAll("Static\\.svc", "Demo.svc");
+
+      final Response.ResponseBuilder builder = Response.status(response.getStatus());
+      for (String headerName : response.getHeaders().keySet()) {
+        for (Object headerValue : response.getHeaders().get(headerName)) {
+          builder.header(headerName, headerValue);
+        }
+      }
+
+      final InputStream toBeStreamedBack = IOUtils.toInputStream(content, Constants.ENCODING);
+      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      IOUtils.copy(toBeStreamedBack, baos);
+      IOUtils.closeQuietly(toBeStreamedBack);
+
+      builder.header("Content-Length", baos.size());
+      builder.entity(new ByteArrayInputStream(baos.toByteArray()));
+
+      return builder.build();
+    } catch (Exception e) {
+      return response;
+    }
+  }
+
+  @GET
+  @Path("/$metadata")
+  @Produces(MediaType.APPLICATION_XML)
+  public Response getMetadata() {
+    return services.getMetadata(
+            "demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)));
+  }
+
+  @GET
+  @Path("/{entitySetName}({entityId})")
+  public Response getEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
+
+    return replaceServiceName(services.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, entitySetName, entityId, format, expand, select, false));
+  }
+
+  @GET
+  @Path("/{entitySetName}({entityId})/$value")
+  public Response getMediaEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId) {
+
+    return services.getMediaEntity(uriInfo, accept, entitySetName, entityId);
+  }
+
+  @POST
+  @Path("/{entitySetName}")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  public Response postNewEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          final String entity) {
+
+    return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+  }
+
+  @PATCH
+  @Path("/{entitySetName}({entityId})")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response patchEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          final String changes) {
+
+    return replaceServiceName(
+            services.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
+  }
+
+  @PUT
+  @Produces({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.WILDCARD, MediaType.APPLICATION_OCTET_STREAM})
+  @Path("/{entitySetName}({entityId})/$value")
+  public Response replaceMediaEntity(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @PathParam("entitySetName") String entitySetName,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          String value) {
+
+    return services.replaceMediaEntity(uriInfo, prefer, entitySetName, entityId, format, value);
+  }
+}

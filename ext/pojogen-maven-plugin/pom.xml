@@ -85,7 +85,7 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <inherited>true</inherited>
         <configuration>
-          <goalPrefix>odatajclient</goalPrefix>
+          <goalPrefix>pojogen</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
         </configuration>
         <executions>

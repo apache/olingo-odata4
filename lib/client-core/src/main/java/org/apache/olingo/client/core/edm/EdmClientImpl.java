@@ -393,12 +393,12 @@ public class EdmClientImpl extends AbstractEdm {
     } else {
       for (EntityContainer entityContainer : schema.getEntityContainers()) {
         @SuppressWarnings("unchecked")
-        final List<FunctionImport> functionImports = (List<FunctionImport>) entityContainer.
-                getFunctionImports(functionName.getName());
+        final List<FunctionImport> functionImports =
+                (List<FunctionImport>) entityContainer.getFunctionImports(functionName.getName());
         boolean found = false;
         for (final Iterator<FunctionImport> itor = functionImports.iterator(); itor.hasNext() && !found;) {
           final FunctionImport functionImport = itor.next();
-          if (!FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
+          if (FunctionImportUtils.canProxyFunction(functionImport) && functionImport.isBindable()) {
             final EdmTypeInfo boundParam = new EdmTypeInfo.Builder().setEdm(this).
                     setTypeExpression(functionImport.getParameters().get(0).getType()).build();
             if (bindingParameterTypeName.equals(boundParam.getFullQualifiedName())

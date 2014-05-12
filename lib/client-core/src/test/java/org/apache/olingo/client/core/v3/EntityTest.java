@@ -55,7 +55,7 @@ public class EntityTest extends AbstractTest {
     assertEquals("Microsoft.Test.OData.Services.AstoriaDefaultService.Customer", entity.getTypeName().toString());
     assertTrue(entity.getEditLink().toASCIIString().endsWith("/Customer(-10)"));
     assertEquals(5, entity.getNavigationLinks().size());
-    assertEquals(2, entity.getEditMediaLinks().size());
+    assertEquals(2, entity.getMediaEditLinks().size());
 
     boolean check = false;
 

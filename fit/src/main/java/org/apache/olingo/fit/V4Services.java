@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -42,8 +44,10 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -70,9 +74,11 @@ import org.apache.olingo.commons.core.data.JSONEntityImpl;
 import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.Commons;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.apache.olingo.fit.utils.FSManager;
@@ -99,7 +105,11 @@ public class V4Services extends AbstractServices {
   private Map<String, String> providedAsync = new HashMap<String, String>();
 
   public V4Services() throws Exception {
-    super(ODataServiceVersion.V40);
+    super(ODataServiceVersion.V40, Commons.getMetadata(ODataServiceVersion.V40));
+  }
+
+  protected V4Services(final Metadata metadata) throws Exception {
+    super(ODataServiceVersion.V40, metadata);
   }
 
   @GET
@@ -220,7 +230,7 @@ public class V4Services extends AbstractServices {
       final String basePath = name + File.separatorChar;
       final StringBuilder path = new StringBuilder(basePath);
 
-      path.append(getMetadataObj().getEntitySet(name).isSingleton()
+      path.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(version, ConstantKey.ENTITY)
               : Constants.get(version, ConstantKey.FEED));
 
@@ -344,6 +354,21 @@ public class V4Services extends AbstractServices {
 
     return getEntityInternal(
             uriInfo.getRequestUri().toASCIIString(), accept, "Company", StringUtils.EMPTY, format, null, null, false);
+  }
+
+  @PATCH
+  @Path("/Company")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  public Response patchSingletonCompany(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) String ifMatch,
+          final String changes) {
+
+    return super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, "Company", StringUtils.EMPTY, changes);
   }
 
   @GET
@@ -802,7 +827,7 @@ public class V4Services extends AbstractServices {
                 entry);
       }
 
-      final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(getMetadataObj().
+      final EdmTypeInfo contained = new EdmTypeInfo.Builder().setTypeExpression(metadata.
               getNavigationProperties("Accounts").get(containedEntitySetName).getType()).build();
       final String entityKey = getUtilities(contentTypeValue).
               getDefaultEntryKey(contained.getFullQualifiedName().getName(), entry);
@@ -883,8 +908,8 @@ public class V4Services extends AbstractServices {
         container = atomDeserializer.read(IOUtils.toInputStream(changes, Constants.ENCODING), AtomEntityImpl.class);
         entryChanges = container.getPayload();
       } else {
-        final String entityType = getMetadataObj().getEntitySet(entitySetName).getType();
-        final String containedType = getMetadataObj().getEntityType(entityType).
+        final String entityType = metadata.getEntitySet(entitySetName).getType();
+        final String containedType = metadata.getEntityOrComplexType(entityType).
                 getNavigationProperty(containedEntitySetName).getType();
         final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(containedType).build();
 
@@ -904,7 +929,8 @@ public class V4Services extends AbstractServices {
       }
 
       FSManager.instance(version).putInMemory(new ResWrap<AtomEntityImpl>((URI) null, null, original),
-              xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")");
+              xml.getLinksBasePath(entitySetName, entityId) + containedEntitySetName + "(" + containedEntityId + ")",
+              dataBinder);
 
       return xml.createResponse(null, null, acceptType, Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -976,10 +1002,27 @@ public class V4Services extends AbstractServices {
         throw new UnsupportedMediaTypeException("Unsupported media type");
       }
 
+      String derivedType = null;
+      if (containedEntitySetName.contains("/")) {
+        final String[] parts = containedEntitySetName.split("/");
+        containedEntitySetName = parts[0];
+        derivedType = parts[1];
+      }
+
       final InputStream feed = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).toString(), Accept.ATOM);
 
       final ResWrap<AtomEntitySetImpl> container = atomDeserializer.read(feed, AtomEntitySetImpl.class);
+
+      if (derivedType != null) {
+        final List<Entity> nonMatching = new ArrayList<Entity>();
+        for (Entity entity : container.getPayload().getEntities()) {
+          if (!derivedType.equals(entity.getType())) {
+            nonMatching.add(entity);
+          }
+        }
+        container.getPayload().getEntities().removeAll(nonMatching);
+      }
 
       return xml.createResponse(
               null,

@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
@@ -36,10 +37,15 @@ import org.springframework.stereotype.Service;
 @Path("/V40/Vocabularies.svc")
 public class V4Vocabularies {
 
+  private final Metadata metadata;
+
   private final XMLUtilities xml;
 
   public V4Vocabularies() throws Exception {
-    this.xml = new XMLUtilities(ODataServiceVersion.V40);
+    this.metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readFile(
+            "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
+            ODataServiceVersion.V40);
+    this.xml = new XMLUtilities(ODataServiceVersion.V40, metadata);
   }
 
   @GET

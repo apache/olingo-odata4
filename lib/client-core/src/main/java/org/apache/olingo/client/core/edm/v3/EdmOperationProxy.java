@@ -68,14 +68,16 @@ public class EdmOperationProxy extends AbstractEdmOperation {
 
   @Override
   public FullQualifiedName getBindingParameterTypeFqn() {
-    //Not relevant for V3
-    return null;
+    return getParameterNames().isEmpty()
+            ? null
+            : getParameter(getParameterNames().get(0)).getType().getFullQualifiedName();
   }
 
   @Override
   public Boolean isBindingParameterTypeCollection() {
-    //Not relevant for V3
-    return null;
+    return getParameterNames().isEmpty()
+            ? false
+            : getParameter(getParameterNames().get(0)).isCollection();
   }
 
   @Override

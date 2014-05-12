@@ -25,10 +25,11 @@ import java.io.IOException;
 import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -78,8 +79,12 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
       jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_ID), entity.getId());
     }
 
+    for (Annotation annotation : entity.getAnnotations()) {
+      valuable(jgen, annotation, "@" + annotation.getTerm());
+    }
+
     for (Property property : entity.getProperties()) {
-      property(jgen, property, property.getName());
+      valuable(jgen, property, property.getName());
     }
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
@@ -87,7 +92,13 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
       final String editLink = link.isAbsolute() ? link.toASCIIString()
               : URI.create(entity.getBaseURI() + "/" + link.toASCIIString()).normalize().toASCIIString();
 
-      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK), editLink);
+      jgen.writeStringField(
+              version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK), editLink);
+
+      if (entity.isMediaEntity()) {
+        jgen.writeStringField(
+                version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK), editLink + "/$value");
+      }
     }
 
     links(entity, jgen);

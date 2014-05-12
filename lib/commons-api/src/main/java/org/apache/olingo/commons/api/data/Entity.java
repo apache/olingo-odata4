@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.domain.ODataOperation;
 import java.net.URI;
 import java.util.List;
 
-public interface Entity extends Linked {
+public interface Entity extends Linked, Annotatable {
 
   /**
    * Gets ETag.
@@ -135,14 +135,14 @@ public interface Entity extends Linked {
    *
    * @return media content resource.
    */
-  String getMediaContentSource();
+  URI getMediaContentSource();
 
   /**
    * Set media content source.
    *
    * @param mediaContentSource media content source.
    */
-  void setMediaContentSource(String mediaContentSource);
+  void setMediaContentSource(URI mediaContentSource);
 
   /**
    * Set media content type.

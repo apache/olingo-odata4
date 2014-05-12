@@ -27,8 +27,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ResWrap;
 
 /**
@@ -74,12 +76,15 @@ public class JSONEntitySetDeserializer extends AbstractJsonDeserializer<JSONEnti
 
     if (tree.hasNonNull(jsonCount)) {
       entitySet.setCount(tree.get(jsonCount).asInt());
+      tree.remove(jsonCount);
     }
     if (tree.hasNonNull(jsonNextLink)) {
       entitySet.setNext(URI.create(tree.get(jsonNextLink).textValue()));
+      tree.remove(jsonNextLink);
     }
     if (tree.hasNonNull(jsonDeltaLink)) {
       entitySet.setDeltaLink(URI.create(tree.get(jsonDeltaLink).textValue()));
+      tree.remove(jsonDeltaLink);
     }
 
     if (tree.hasNonNull(Constants.VALUE)) {
@@ -88,6 +93,19 @@ public class JSONEntitySetDeserializer extends AbstractJsonDeserializer<JSONEnti
                 itor.next().traverse(parser.getCodec()).<ResWrap<JSONEntityImpl>>readValueAs(
                         new TypeReference<JSONEntityImpl>() {
                         }).getPayload());
+      }
+      tree.remove(Constants.VALUE);
+    }
+
+    // any remaining entry is supposed to be an annotation or is ignored
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
+      if (field.getKey().charAt(0) == '@') {
+        final Annotation annotation = new AnnotationImpl();
+        annotation.setTerm(field.getKey().substring(1));
+
+        value(annotation, field.getValue(), parser.getCodec());
+        entitySet.getAnnotations().add(annotation);
       }
     }
 

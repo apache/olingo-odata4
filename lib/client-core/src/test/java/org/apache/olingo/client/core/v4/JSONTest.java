@@ -166,6 +166,7 @@ public class JSONTest extends AbstractTest {
     entity("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", getODataPubFormat());
     entity("entityReference", getODataPubFormat());
     entity("entity.withcomplexnavigation", getODataPubFormat());
+    entity("annotated", getODataPubFormat());
   }
 
   protected void property(final String filename, final ODataFormat format) throws Exception {

@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.domain.v4;
 import java.util.List;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 
-public interface ODataEntity extends CommonODataEntity {
+public interface ODataEntity extends CommonODataEntity, ODataAnnotatatable {
 
   @Override
   ODataProperty getProperty(String name);

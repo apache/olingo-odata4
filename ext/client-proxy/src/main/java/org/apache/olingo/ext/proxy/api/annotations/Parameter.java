@@ -22,13 +22,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apache.olingo.client.api.edm.xml.v3.FunctionImport;
-import org.apache.olingo.client.api.edm.xml.v3.ParameterMode;
 
 /**
  * Function import parameter information.
  *
- * @see FunctionImport
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
@@ -39,8 +36,6 @@ public @interface Parameter {
   String type();
 
   boolean nullable() default true;
-
-  ParameterMode mode() default ParameterMode.In;
 
   int maxLenght() default Integer.MAX_VALUE;
 

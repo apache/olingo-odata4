@@ -49,6 +49,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testDemoServiceRootURL;
+
   protected static String testVocabulariesServiceRootURL;
 
   protected static String testNorthwindRootURL;
@@ -64,6 +66,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
+    testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";
     testVocabulariesServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Vocabularies.svc";
     testNorthwindRootURL = "http://localhost:9080/stub/StaticService/V40/NorthWind.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V40/KeyAsSegment.svc";
@@ -131,7 +134,11 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     assertNotNull(created);
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
 
-    final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(created.getEditLink());
+    final URI deleteURI = created.getEditLink() == null
+            ? getClient().getURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Orders").appendKeySegment(id).build()
+            : created.getEditLink();
+    final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
     final ODataDeleteResponse deleteRes = deleteReq.execute();
     assertEquals(204, deleteRes.getStatusCode());
   }
