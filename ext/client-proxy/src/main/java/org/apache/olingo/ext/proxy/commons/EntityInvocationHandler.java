@@ -21,15 +21,11 @@ package org.apache.olingo.ext.proxy.commons;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +36,6 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
@@ -194,45 +189,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       Object res;
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
-      } else if (property == null) {
-        res = null;
-      } else if (property.hasComplexValue()) {
-        res = Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {(Class<?>) type},
-                ComplexTypeInvocationHandler.getInstance(
-                        client, property.getValue().asComplex(), (Class<?>) type, this));
-
-        addPropertyChanges(name, res);
-      } else if (property.hasCollectionValue()) {
-        final ParameterizedType collType = (ParameterizedType) type;
-        final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
-
-        final ArrayList<Object> collection = new ArrayList<Object>();
-
-        final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
-        while (collPropItor.hasNext()) {
-          final ODataValue value = collPropItor.next();
-          if (value.isPrimitive()) {
-            collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
-          } else if (value.isComplex()) {
-            final Object collItem = Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] {collItemClass},
-                    ComplexTypeInvocationHandler.getInstance(
-                            client, value.asComplex(), collItemClass, this));
-
-            collection.add(collItem);
-          }
-        }
-
-        res = collection;
-
-        addPropertyChanges(name, res);
       } else {
-        res = type == null
-                ? CoreUtils.getValueFromProperty(client, property)
-                : CoreUtils.getValueFromProperty(client, property, type);
+        res = CoreUtils.getValueFromProperty(client, property, type, this);
 
         if (res != null) {
           addPropertyChanges(name, res);

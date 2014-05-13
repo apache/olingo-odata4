@@ -55,6 +55,8 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testPrimitiveKeysServiceRootURL;
+
   protected static String testKeyAsSegmentServiceRootURL;
 
   protected static String testActionOverloadingServiceRootURL;
@@ -74,6 +76,7 @@ public abstract class AbstractTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc";
+    testPrimitiveKeysServiceRootURL = "http://localhost:9080/stub/StaticService/V30/PrimitiveKeys.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V30/KeyAsSegment.svc";
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V30/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";

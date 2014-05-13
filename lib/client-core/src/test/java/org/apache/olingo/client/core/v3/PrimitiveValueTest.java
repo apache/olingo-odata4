@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
+import javax.xml.datatype.Duration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -122,14 +122,12 @@ public class PrimitiveValueTest extends AbstractTest {
   @Test
   public void time() throws EdmPrimitiveTypeException {
     final String primitive = "-P9DT51M10.5063807S";
-    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Time).setText(primitive).build();
+    final ODataValue value =
+            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Time).
+            setText(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Time, value.asPrimitive().getTypeKind());
-    assertEquals(BigDecimal.valueOf(-780670.5063807), value.asPrimitive().toCastValue(BigDecimal.class));
-
-    final ODataPrimitiveValue write = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Time).setValue(BigDecimal.valueOf(-780670.5063807)).build();
-    assertEquals(primitive, write.toString());
+    // performed cast to improve the check
+    assertEquals("-780670.5063807", value.asPrimitive().toCastValue(BigDecimal.class).toString());
   }
 
   @Test

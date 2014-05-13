@@ -27,7 +27,7 @@
   <groupId>org.apache.olingo</groupId>
   <version>@project.version@</version>
   <name>${project.artifactId}</name>
-  <description>A simple IT verifying the basic use case of pojogen-maven-plugin.</description>
+  <description>A simple IT verifying the basic use case of pojogen-man-plugin.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

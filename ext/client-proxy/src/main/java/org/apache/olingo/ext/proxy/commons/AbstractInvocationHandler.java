@@ -26,6 +26,7 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +50,22 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-abstract class AbstractInvocationHandler implements InvocationHandler {
+abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?>> implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected final CommonEdmEnabledODataClient<?> client;
+  protected final C client;
 
-  protected EntityContainerInvocationHandler containerHandler;
+  protected EntityContainerInvocationHandler<C> containerHandler;
 
   protected AbstractInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client, final EntityContainerInvocationHandler containerHandler) {
+          final C client, final EntityContainerInvocationHandler<C> containerHandler) {
 
     this.client = client;
     this.containerHandler = containerHandler;
   }
 
-  protected CommonEdmEnabledODataClient<?> getClient() {
+  protected C getClient() {
     return client;
   }
 
@@ -87,7 +88,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  protected Object getEntityCollectionProxy(
+  protected Object getEntityCollection(
           final Class<?> typeRef,
           final Class<?> typeCollectionRef,
           final String entityContainerName,
@@ -99,47 +100,36 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
       items.add(getEntityProxy(
-              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
+              entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(containerHandler, items, typeRef, uri));
+            new EntityCollectionInvocationHandler(containerHandler, items, typeRef, entityContainerName, uri));
   }
 
-  protected Object getEntitySetProxy(
-          final Class<?> typeRef,
-          final URI uri) {
-
-    return Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {typeRef},
-            EntitySetInvocationHandler.getInstance(typeRef, containerHandler, uri));
-  }
-
-  protected Object getEntityProxy(
-          final URI entityURI,
+  protected <T> T getEntityProxy(
           final CommonODataEntity entity,
           final String entityContainerName,
-          final URI entitySetURI,
+          final String entitySetName,
           final Class<?> type,
           final boolean checkInTheContext) {
 
-    return getEntityProxy(entityURI, entity, entityContainerName, entitySetURI, type, null, checkInTheContext);
+    return getEntityProxy(entity, entityContainerName, entitySetName, type, null, checkInTheContext);
   }
 
-  protected Object getEntityProxy(
-          final URI entityURI,
+  @SuppressWarnings({"unchecked"})
+  protected <T> T getEntityProxy(
           final CommonODataEntity entity,
           final String entityContainerName,
-          final URI entitySetURI,
+          final String entitySetName,
           final Class<?> type,
           final String eTag,
           final boolean checkInTheContext) {
 
-    EntityInvocationHandler handler =
-            EntityInvocationHandler.getInstance(entityURI, entity, entitySetURI, type, containerHandler);
+    EntityTypeInvocationHandler<C> handler = (EntityTypeInvocationHandler<C>) EntityTypeInvocationHandler.getInstance(
+            entity, entitySetName, type, containerHandler);
 
     if (StringUtils.isNotBlank(eTag)) {
       // override ETag into the wrapped object.
@@ -147,10 +137,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     }
 
     if (checkInTheContext && EntityContainerFactory.getContext().entityContext().isAttached(handler)) {
-      handler = EntityContainerFactory.getContext().entityContext().getEntity(handler.getUUID());
+      handler = (EntityTypeInvocationHandler<C>) EntityContainerFactory.getContext().entityContext().
+              getEntity(handler.getUUID());
     }
 
-    return Proxy.newProxyInstance(
+    return (T) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {type},
             handler);
@@ -166,7 +157,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           IllegalArgumentException, InvocationTargetException {
 
     // 1. invoke params (if present)
-    final Map<String, ODataValue> parameterValues = new LinkedHashMap<String, ODataValue>();
+    final Map<String, ODataValue> parameterValues = new HashMap<String, ODataValue>();
     if (!parameters.isEmpty()) {
       for (Map.Entry<Parameter, Object> parameter : parameters.entrySet()) {
 
@@ -202,12 +193,12 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(annotation.returnType()).build();
-
+    
     if (edmType.isEntityType()) {
       if (edmType.isCollection()) {
         final ParameterizedType collType = (ParameterizedType) method.getReturnType().getGenericInterfaces()[0];
         final Class<?> collItemType = (Class<?>) collType.getActualTypeArguments()[0];
-        return getEntityCollectionProxy(
+        return getEntityCollection(
                 collItemType,
                 method.getReturnType(),
                 null,
@@ -216,14 +207,13 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 false);
       } else {
         return getEntityProxy(
-                ((CommonODataEntity) result).getEditLink(),
                 (CommonODataEntity) result,
                 null,
                 null,
                 method.getReturnType(),
                 false);
       }
-    } else {
+    }else{
       return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType(), null);
     }
   }
