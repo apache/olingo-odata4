@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -119,16 +118,6 @@ public interface CompanyAddress
     void setCompanyName(final String _companyName);
 
     
-
-
-    @NavigationProperty(name = "Contact", 
-                type = "Microsoft.Test.OData.Services.ODataWCFService.Person", 
-                targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
-                targetContainer = "InMemoryEntities", 
-                targetEntitySet = "People")
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getContact();
-
-    void setContact(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person _contact);
 
 
 }

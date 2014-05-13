@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -54,7 +53,7 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.ODataWCFService")
 @EntityType(name = "PublicCompany",
-        openType = false,
+        openType = true,
         hasStream = false,
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Company")
@@ -273,6 +272,12 @@ public interface PublicCompany
 
 
 
+        @Override
+        Operations operations();
+
+    interface Operations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.Operations{
+    
+        }
 
         @Override
         ComplexFactory factory();

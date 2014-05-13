@@ -89,8 +89,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
           final Class<?> typeRef,
           final EntityContainerInvocationHandler<?> containerHandler) {
 
-    return new EntityTypeInvocationHandler(
-            entity, entitySetName, typeRef, containerHandler);
+    return new EntityTypeInvocationHandler(entity, entitySetName, typeRef, containerHandler);
   }
 
   private EntityTypeInvocationHandler(
@@ -107,10 +106,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     this.uuid = new EntityUUID(
             containerHandler.getEntityContainerName(),
             entitySetName,
-            entity.getTypeName(),
+            typeRef,
             CoreUtils.getKey(client, typeRef, entity));
-
-    this.stream = null;
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -120,7 +117,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     this.uuid = new EntityUUID(
             getUUID().getContainerName(),
             getUUID().getEntitySetName(),
-            getUUID().getName(),
+            getUUID().getType(),
             CoreUtils.getKey(client, typeRef, entity));
 
     this.propertyChanges.clear();
@@ -128,7 +125,6 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     this.streamedPropertyChanges.clear();
     this.propertiesTag = 0;
     this.linksTag = 0;
-    this.stream = null;
   }
 
   public EntityUUID getUUID() {
@@ -193,9 +189,9 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      final Object res;
       final CommonODataProperty property = getEntity().getProperty(name);
 
+      Object res;
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
       } else if (property == null) {
@@ -205,7 +201,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {(Class<?>) type},
                 ComplexTypeInvocationHandler.getInstance(
-                client, property.getValue().asComplex(), (Class<?>) type, this));
+                        client, property.getValue().asComplex(), (Class<?>) type, this));
 
         addPropertyChanges(name, res);
       } else if (property.hasCollectionValue()) {
@@ -224,7 +220,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
                     Thread.currentThread().getContextClassLoader(),
                     new Class<?>[] {collItemClass},
                     ComplexTypeInvocationHandler.getInstance(
-                    client, value.asComplex(), collItemClass, this));
+                            client, value.asComplex(), collItemClass, this));
 
             collection.add(collItem);
           }
@@ -279,8 +275,8 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
     if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      final Object toBeAdded;
-
+      
+      Object toBeAdded;
       if (value == null) {
         toBeAdded = null;
       } else if (Collection.class.isAssignableFrom(value.getClass())) {

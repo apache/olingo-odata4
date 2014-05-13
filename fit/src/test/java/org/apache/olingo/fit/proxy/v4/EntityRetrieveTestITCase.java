@@ -52,7 +52,7 @@ import org.junit.Test;
 /**
  * This is the unit test class to check entity retrieve operations.
  */
-public class EntityRetrieveTestITCase extends AbstractTest {
+public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   protected InMemoryEntities getContainer() {
     return container;

@@ -420,7 +420,7 @@ public abstract class AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
                 new TypeReference<JSONEntityImpl>() {
-        });
+                });
 
         entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
       }
@@ -607,8 +607,8 @@ public abstract class AbstractServices {
         } else {
           final ResWrap<JSONEntityImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                  new TypeReference<JSONEntityImpl>() {
-          });
+                          new TypeReference<JSONEntityImpl>() {
+                          });
 
           entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -635,7 +635,7 @@ public abstract class AbstractServices {
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -686,25 +686,19 @@ public abstract class AbstractServices {
       throw new UnsupportedMediaTypeException("Unsupported media type");
     }
 
-    final Map.Entry<String, InputStream> entityInfo = utils.getValue().readEntity("Person", entityId, utils.getKey());
-
-    InputStream entity = entityInfo.getValue();
     try {
-      final ByteArrayOutputStream copy = new ByteArrayOutputStream();
-      IOUtils.copy(entity, copy);
-      IOUtils.closeQuietly(entity);
+      final Map.Entry<String, InputStream> entityInfo = xml.readEntity("Person", entityId, Accept.ATOM);
 
-      final String newContent = new String(copy.toByteArray(), "UTF-8").
-              replaceAll("\"Salary\":[0-9]*,", "\"Salary\":0,").
-              replaceAll("\"Title\":\".*\"", "\"Title\":\"[Sacked]\"").
-              replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>.*\\</d:Salary\\>",
-              "<d:Salary m:type=\"Edm.Int32\">0</d:Salary>").
-              replaceAll("\\<d:Title\\>.*\\</d:Title\\>", "<d:Title>[Sacked]</d:Title>");
+      final InputStream entity = entityInfo.getValue();
+      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+
+      container.getPayload().getProperty("Salary").setValue(new PrimitiveValueImpl("0"));
+      container.getPayload().getProperty("Title").setValue(new PrimitiveValueImpl("[Sacked]"));
 
       final FSManager fsManager = FSManager.instance(version);
-      fsManager.putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
+      fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-              ConstantKey.ENTITY), utils.getKey()));
+                              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -756,15 +750,86 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                "\"Salary\":" + newSalary + ",").
+                        "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
               FSManager.instance(version).getAbsolutePath(path.toString(), acceptType));
 
       return xml.createResponse(null, null, null, acceptType, Response.Status.NO_CONTENT);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+
+  @POST
+  @Path("/Product({entityId})/ChangeProductDimensions")
+  public Response actionChangeProductDimensions(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String argument) {
+
+    final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+    if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
+      throw new UnsupportedMediaTypeException("Unsupported media type");
+    }
+
+    try {
+      final Map.Entry<String, InputStream> entityInfo = xml.readEntity("Product", entityId, Accept.ATOM);
+
+      final InputStream entity = entityInfo.getValue();
+      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+
+      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));      
+      
+      container.getPayload().getProperty("Dimensions").setValue(param.getProperty("dimensions").getValue());
+
+      final FSManager fsManager = FSManager.instance(version);
+      fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
+              fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(version,
+                              ConstantKey.ENTITY), Accept.ATOM));
+
+      return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
+    } catch (Exception e) {
+      return xml.createFaultResponse(accept, e);
+    }
+  }
+  
+  @POST
+  @Path("/ComputerDetail({entityId})/ResetComputerDetailsSpecifications")
+  public Response actionResetComputerDetailsSpecifications(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+          final String argument) {
+
+    final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+    if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
+      throw new UnsupportedMediaTypeException("Unsupported media type");
+    }
+
+    try {
+      final Map.Entry<String, InputStream> entityInfo = xml.readEntity("ComputerDetail", entityId, Accept.ATOM);
+
+      final InputStream entity = entityInfo.getValue();
+      final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
+
+      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));      
+      
+      container.getPayload().getProperty("SpecificationsBag").setValue(param.getProperty("specifications").getValue());
+      container.getPayload().getProperty("PurchaseDate").setValue(param.getProperty("purchaseTime").getValue());
+
+      final FSManager fsManager = FSManager.instance(version);
+      fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
+              fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(version,
+                              ConstantKey.ENTITY), Accept.ATOM));
+
+      return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
@@ -907,7 +972,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                  dataBinder.toJSONEntitySet(container.getPayload())));
+                          dataBinder.toJSONEntitySet(container.getPayload())));
         }
 
         return xml.createResponse(
@@ -923,17 +988,9 @@ public abstract class AbstractServices {
 
   protected abstract void setInlineCount(final EntitySet feed, final String count);
 
-  /**
-   * Retrieve entity with key as segment.
-   *
-   * @param accept Accept header.
-   * @param entityId entity id.
-   * @param format format query option.
-   * @return entity.
-   */
   @GET
   @Path("/Person({entityId})")
-  public Response getEntity(
+  public Response getPerson(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
           @PathParam("entityId") final String entityId,
@@ -941,28 +998,98 @@ public abstract class AbstractServices {
 
     final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
 
-    if (utils.getKey() == Accept.XML || utils.getKey() == Accept.TEXT) {
-      throw new UnsupportedMediaTypeException("Unsupported media type");
-    }
+    final Response internal = getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, "Person", entityId, format, null, null, false);
+    if (internal.getStatus() == 200) {
+      InputStream entity = (InputStream) internal.getEntity();
+      try {
+        if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
+          entity = utils.getValue().addOperation(entity, "Sack", "#DefaultContainer.Sack",
+                  uriInfo.getAbsolutePath().toASCIIString()
+                  + "/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack");
+        }
 
-    final Map.Entry<String, InputStream> entityInfo = utils.getValue().readEntity("Person", entityId, utils.getKey());
-
-    InputStream entity = entityInfo.getValue();
-    try {
-      if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
-        entity = utils.getValue().addOperation(entity, "Sack", "#DefaultContainer.Sack",
-                uriInfo.getAbsolutePath().toASCIIString()
-                + "/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack");
+        return utils.getValue().createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
+                entity,
+                internal.getHeaderString("ETag"),
+                utils.getKey());
+      } catch (Exception e) {
+        LOG.error("Error retrieving entity", e);
+        return xml.createFaultResponse(accept, e);
       }
+    } else {
+      return internal;
+    }
+  }
 
-      return utils.getValue().createResponse(
-              uriInfo.getRequestUri().toASCIIString(),
-              entity,
-              Commons.getETag(entityInfo.getKey(), version),
-              utils.getKey());
-    } catch (Exception e) {
-      LOG.error("Error retrieving entity", e);
-      return xml.createFaultResponse(accept, e);
+  @GET
+  @Path("/Product({entityId})")
+  public Response getProduct(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+
+    final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+    final Response internal = getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, "Product", entityId, format, null, null, false);
+    if (internal.getStatus() == 200) {
+      InputStream entity = (InputStream) internal.getEntity();
+      try {
+        if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
+          entity = utils.getValue().addOperation(entity,
+                  "ChangeProductDimensions", "#DefaultContainer.ChangeProductDimensions",
+                  uriInfo.getAbsolutePath().toASCIIString() + "/ChangeProductDimensions");
+        }
+
+        return utils.getValue().createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
+                entity,
+                internal.getHeaderString("ETag"),
+                utils.getKey());
+      } catch (Exception e) {
+        LOG.error("Error retrieving entity", e);
+        return xml.createFaultResponse(accept, e);
+      }
+    } else {
+      return internal;
+    }
+  }
+
+  @GET
+  @Path("/ComputerDetail({entityId})")
+  public Response getComputerDetail(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+          @PathParam("entityId") final String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
+
+    final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
+
+    final Response internal = getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, "ComputerDetail", entityId, format, null, null, false);
+    if (internal.getStatus() == 200) {
+      InputStream entity = (InputStream) internal.getEntity();
+      try {
+        if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
+          entity = utils.getValue().addOperation(entity,
+                  "ResetComputerDetailsSpecifications", "#DefaultContainer.ResetComputerDetailsSpecifications",
+                  uriInfo.getAbsolutePath().toASCIIString() + "/ResetComputerDetailsSpecifications");
+        }
+
+        return utils.getValue().createResponse(
+                uriInfo.getRequestUri().toASCIIString(),
+                entity,
+                internal.getHeaderString("ETag"),
+                utils.getKey());
+      } catch (Exception e) {
+        LOG.error("Error retrieving entity", e);
+        return xml.createFaultResponse(accept, e);
+      }
+    } else {
+      return internal;
     }
   }
 
@@ -1570,8 +1697,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONFeedContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+                              container.getMetadataETag(),
+                              dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
             }
           } else {
             final ResWrap<Entity> container =
@@ -1584,8 +1711,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
-                      container.getMetadataETag(),
-                      dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
+                              container.getMetadataETag(),
+                              dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1655,9 +1782,9 @@ public abstract class AbstractServices {
 
     final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-            + (version.compareTo(ODataServiceVersion.V40) >= 0
-            ? entitySetName + "(" + entityId + ")/" + path
-            : property.getType())),
+                    + (version.compareTo(ODataServiceVersion.V40) >= 0
+                    ? entitySetName + "(" + entityId + ")/" + path
+                    : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
@@ -1665,9 +1792,9 @@ public abstract class AbstractServices {
             null,
             searchForValue
             ? IOUtils.toInputStream(
-            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-            ? StringUtils.EMPTY
-            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
+                    container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
+                    ? StringUtils.EMPTY
+                    : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
             : utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);

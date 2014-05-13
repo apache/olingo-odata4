@@ -19,42 +19,45 @@
 package org.apache.olingo.ext.proxy.context;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class EntityUUID implements Serializable {
 
   private static final long serialVersionUID = 4855025769803086495L;
 
-  // needed by equals and hashcode
-  private final int tempKey;
-
   private final String containerName;
 
   private final String entitySetName;
 
-  private final FullQualifiedName name;
-
   private final Object key;
 
-  public EntityUUID(
-          final String containerName,
-          final String entitySetName,
-          final FullQualifiedName name) {
-    this(containerName, entitySetName, name, null);
+  private Class<?> type;
+
+  public EntityUUID(final String containerName, final String entitySetName, final Class<?> type) {
+    this(containerName, entitySetName, type, null);
   }
 
-  public EntityUUID(
-          final String containerName,
-          final String entitySetName,
-          final FullQualifiedName name,
-          final Object key) {
+  public EntityUUID(final String containerName, final String entitySetName, final Class<?> type, final Object key) {
     this.containerName = containerName;
     this.entitySetName = entitySetName;
-    this.name = name;
     this.key = key;
-    this.tempKey = (int) (Math.random() * 1000000);
+
+    if (type == null || !Serializable.class.isAssignableFrom(type)) {
+      throw new IllegalArgumentException("Invalid Entity type class: " + type);
+    }
+    for (Class<?> clazz : ClassUtils.hierarchy(type, ClassUtils.Interfaces.INCLUDE)) {
+      if (this.type == null
+              && (clazz.getInterfaces().length == 0
+              || ArrayUtils.contains(clazz.getInterfaces(), Serializable.class))) {
+
+        this.type = clazz;
+      }
+    }
   }
 
   public String getContainerName() {
@@ -65,38 +68,26 @@ public class EntityUUID implements Serializable {
     return entitySetName;
   }
 
-  public FullQualifiedName getName() {
-    return name;
-  }
-
   public Object getKey() {
     return key;
   }
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
-  public boolean equals(Object obj) {
-    return key == null
-            ? EqualsBuilder.reflectionEquals(this, obj)
-            : EqualsBuilder.reflectionEquals(this, obj, "tempKey");
+  public Class<?> getType() {
+    return type;
   }
 
-  /**
-   * {@inheritDoc }
-   */
+  @Override
+  public boolean equals(final Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
+
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this, "tempKey");
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public String toString() {
-    return name.getNamespace() + ":" + containerName + ":" + entitySetName + ":" + name.getName()
-            + "(" + (key == null ? null : key.toString()) + ")";
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
   }
 }

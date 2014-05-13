@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -54,11 +53,11 @@ import javax.xml.datatype.Duration;
 
 @Namespace("Microsoft.Test.OData.Services.ODataWCFService")
 @EntityType(name = "Company",
-        openType = false,
+        openType = true,
         hasStream = false,
         isAbstract = false)
 public interface Company 
-  extends Serializable {
+  extends AbstractOpenType {
 
     
     @Key

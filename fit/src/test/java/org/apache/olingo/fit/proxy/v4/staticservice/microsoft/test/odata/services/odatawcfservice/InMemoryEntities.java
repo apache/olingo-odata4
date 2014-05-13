@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -49,7 +48,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "InMemoryEntities",
   namespace = "Microsoft.Test.OData.Services.ODataWCFService",
   isDefaultEntityContainer = true)
-public interface InMemoryEntities extends Container {
+public interface InMemoryEntities extends EntityContainer {
 
     Accounts getAccounts();
 
@@ -130,7 +129,7 @@ public interface InMemoryEntities extends Container {
                     isComposable = false,
                     returnType = "Collection(Edm.String)")
   Collection<String> getProductsByAccessLevel(
-        @Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = true) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
+        @Parameter(name = "accessLevel", type = "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel accessLevel
     );
 
           @Operation(name = "GetAllProducts",
@@ -146,6 +145,11 @@ public interface InMemoryEntities extends Container {
                     returnType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
   org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address resetBossAddress(
         @Parameter(name = "address", type = "Microsoft.Test.OData.Services.ODataWCFService.Address", nullable = false) org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address address
+    );
+  
+          @Operation(name = "ResetDataSource",
+                    type = OperationType.ACTION)
+  void resetDataSource(
     );
   
           @Operation(name = "Discount",

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -106,6 +105,29 @@ public interface Department
     String getName();
 
     void setName(final String _name);    
+    
+    
+    @Property(name = "DepartmentNO", 
+                type = "Edm.String", 
+                nullable = true,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    String getDepartmentNO();
+
+    void setDepartmentNO(final String _departmentNO);    
     
     
 

@@ -30,12 +30,12 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTest {
+public abstract class AbstractTestITCase {
 
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTestITCase.class);
 
   protected static final String TEST_PRODUCT_TYPE = "Microsoft.Test.OData.Services.AstoriaDefaultService.Product";
 

@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
-import java.lang.reflect.Proxy;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
-import static org.apache.olingo.fit.proxy.v3.AbstractTest.container;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.Customer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
@@ -33,18 +35,12 @@ import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.service
         types.Order;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.OrderCollection;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
-
 import org.junit.Test;
 
 /**
  * This is the unit test class to check entity create operations.
  */
-public class EntityCreateTestITCase extends AbstractTest {
+public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void create() {
@@ -78,7 +74,6 @@ public class EntityCreateTestITCase extends AbstractTest {
   }
 
   @Test
-  @Ignore
   public void createEmployee() {
     final Integer id = 101;
 

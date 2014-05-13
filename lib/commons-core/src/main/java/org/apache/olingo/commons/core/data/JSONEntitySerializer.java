@@ -88,16 +88,12 @@ public class JSONEntitySerializer extends AbstractJsonSerializer<JSONEntityImpl>
     }
 
     if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
-      final URI link = URI.create(entity.getEditLink().getHref());
-      final String editLink = link.isAbsolute() ? link.toASCIIString()
-              : URI.create(entity.getBaseURI() + "/" + link.toASCIIString()).normalize().toASCIIString();
-
-      jgen.writeStringField(
-              version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK), editLink);
+      jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_EDIT_LINK),
+              entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
-        jgen.writeStringField(
-                version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK), editLink + "/$value");
+        jgen.writeStringField(version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAREAD_LINK),
+                entity.getEditLink().getHref() + "/$value");
       }
     }
 

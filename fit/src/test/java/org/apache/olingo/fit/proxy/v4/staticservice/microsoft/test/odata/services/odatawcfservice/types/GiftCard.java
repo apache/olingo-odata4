@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -152,6 +151,29 @@ public interface GiftCard
     Calendar getExperationDate();
 
     void setExperationDate(final Calendar _experationDate);    
+    
+    
+    @Property(name = "OwnerName", 
+                type = "Edm.String", 
+                nullable = true,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "",
+                concurrencyMode = ConcurrencyMode.None,
+                fcSourcePath = "",
+                fcTargetPath = "",
+                fcContentKind = EdmContentKind.text,
+                fcNSPrefix = "",
+                fcNSURI = "",
+                fcKeepInContent = false)
+    String getOwnerName();
+
+    void setOwnerName(final String _ownerName);    
     
     
 

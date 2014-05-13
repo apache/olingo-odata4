@@ -172,7 +172,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {reference},
             new EntityCollectionInvocationHandler<T, C>(
-            containerHandler, new ArrayList<T>(), typeRef, containerHandler.getEntityContainerName()));
+                    containerHandler, new ArrayList<T>(), typeRef, containerHandler.getEntityContainerName()));
   }
 
   @Override
@@ -232,12 +232,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
       throw new IllegalArgumentException("Null key");
     }
 
-    final EntityUUID uuid = new EntityUUID(
-            containerHandler.getEntityContainerName(),
-            entitySetName,
-            new FullQualifiedName(ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)),
-            key);
-
+    final EntityUUID uuid = new EntityUUID(containerHandler.getEntityContainerName(), entitySetName, typeRef, key);
     LOG.debug("Ask for '{}({})'", typeRef.getSimpleName(), key);
 
     EntityTypeInvocationHandler<?> handler =
@@ -319,7 +314,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {collTypeRef},
             new EntityCollectionInvocationHandler<S, C>(
-            containerHandler, items, typeRef, containerHandler.getEntityContainerName(), entitySetURI));
+                    containerHandler, items, typeRef, containerHandler.getEntityContainerName(), entitySetURI));
   }
 
   @Override
@@ -365,7 +360,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
     EntityTypeInvocationHandler<?> entity = entityContext.getEntity(new EntityUUID(
             containerHandler.getEntityContainerName(),
             entitySetName,
-            new FullQualifiedName(ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)),
+            typeRef,
             key));
 
     if (entity == null) {

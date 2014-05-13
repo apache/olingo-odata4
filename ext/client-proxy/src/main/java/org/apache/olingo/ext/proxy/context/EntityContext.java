@@ -33,7 +33,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * Attached entities with not null key.
-   * <p>
+   * <br/>
    * This map have to be used to search for entities by key.
    */
   private final Map<EntityUUID, EntityTypeInvocationHandler<?>> searchableEntities =
@@ -41,7 +41,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * All attached entities (new entities included).
-   * <p>
+   * <br/>
    * Attachment order will be maintained.
    */
   private final Map<EntityTypeInvocationHandler<?>, AttachedEntityStatus> allAttachedEntities =
@@ -49,7 +49,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * Attaches an entity with status <tt>NEW</tt>.
-   * <p>
+   * <br/>
    * Use this method to attach a new created entity.
    *
    * @see AttachedEntityStatus
@@ -64,7 +64,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * Attaches an existing entity with status <tt>ATTACHED</tt>.
-   * <p>
+   * <br/>
    * Use this method to attach an existing entity.
    *
    * @see AttachedEntityStatus
@@ -76,7 +76,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * Attaches an entity with specified status.
-   * <p>
+   * <br/>
    * Use this method to attach an existing entity.
    *
    * @see AttachedEntityStatus
@@ -109,7 +109,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
 
   /**
    * Detaches all attached entities.
-   * <p>
+   * <br/>
    * Use this method to clears the entity context.
    */
   public void detachAll() {

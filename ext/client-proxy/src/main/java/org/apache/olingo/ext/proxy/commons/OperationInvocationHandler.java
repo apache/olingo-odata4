@@ -136,7 +136,8 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
             }
 
             if (parameters.size() <= i) {
-              throw new IllegalArgumentException("Paramter " + i + " is not annotated as @Parameter");
+              throw new IllegalArgumentException(
+                      "Paramter " + i + " is not annotated as @" + Parameter.class.getSimpleName());
             }
           }
         }
@@ -176,21 +177,20 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(uriBuilder.build(), edmOperation);
   }
 
-  private Map.Entry<URI, EdmOperation> getBoundOperation(
-          final Operation operation, final List<String> parameterNames) {
+  private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
     final CommonODataEntity entity = ((EntityTypeInvocationHandler<?>) target).getEntity();
 
-    final ODataOperation boundOp =
-            entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
+    final ODataOperation boundOp = entity.getOperation(operation.name());
 
-    final EdmOperation edmOperation;
-
+    EdmOperation edmOperation;
     if (operation.type() == OperationType.FUNCTION) {
       edmOperation = client.getCachedEdm().getBoundFunction(
-              new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false, parameterNames);
+              new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle()),
+              entity.getTypeName(), false, parameterNames);
     } else {
       edmOperation = client.getCachedEdm().getBoundAction(
-              new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false);
+              new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle()),
+              entity.getTypeName(), false);
     }
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(boundOp.getTarget(), edmOperation);
@@ -213,6 +213,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
     }
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(
-            ((EntityCollectionInvocationHandler<?, C>) target).getURI(), edmOperation);
+            URI.create(((EntityCollectionInvocationHandler<?, C>) target).getURI().toASCIIString()
+                    + "/" + edmOperation.getName()), edmOperation);
   }
 }

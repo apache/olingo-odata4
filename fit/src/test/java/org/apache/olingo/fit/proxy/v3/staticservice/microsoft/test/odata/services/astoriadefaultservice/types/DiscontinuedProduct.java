@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -358,6 +357,12 @@ public interface DiscontinuedProduct
 
 
 
+        @Override
+        Operations operations();
+
+    interface Operations            extends org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Product.Operations{
+    
+        }
 
         @Override
         ComplexFactory factory();
