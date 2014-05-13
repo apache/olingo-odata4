@@ -48,7 +48,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "InMemoryEntities",
   namespace = "Microsoft.Test.OData.Services.ODataWCFService",
   isDefaultEntityContainer = true)
-public interface InMemoryEntities extends EntityContainer {
+public interface InMemoryEntities extends Container {
 
     Accounts getAccounts();
 

@@ -32,12 +32,15 @@ import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 
 public abstract class AbstractConfiguration implements CommonConfiguration {
 
   private static final String DEFAULT_PUB_FORMAT = "pubFormat";
 
   private static final String DEFAULT_VALUE_FORMAT = "valueFormat";
+  
+  private static final String DEFAULT_BATCH_ACCEPT_FORMAT = "batchAcceptFormat";
 
   private static final String DEFAULT_MEDIA_FORMAT = "valueFormat";
 
@@ -81,6 +84,16 @@ public abstract class AbstractConfiguration implements CommonConfiguration {
     return CONF.put(key, value);
   }
 
+  @Override
+  public String getDefaultBatchAcceptFormat() {
+    return getProperty(DEFAULT_BATCH_ACCEPT_FORMAT, ContentType.MULTIPART_MIXED).toString();
+  }
+  
+  @Override
+  public void setDefaultBatchAcceptFormat(final String contentType) {
+    setProperty(DEFAULT_BATCH_ACCEPT_FORMAT, contentType);
+  }
+  
   @Override
   public ODataPubFormat getDefaultPubFormat() {
     return ODataPubFormat.valueOf(

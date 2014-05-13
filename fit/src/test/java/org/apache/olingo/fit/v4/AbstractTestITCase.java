@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.domain.v4.ODataEntityImpl;
 import static org.junit.Assert.assertEquals;
@@ -75,6 +76,9 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     edmClient = ODataClientFactory.getEdmEnabledV4(testStaticServiceRootURL);
+    
+    edmClient.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
   }
 
   @Override

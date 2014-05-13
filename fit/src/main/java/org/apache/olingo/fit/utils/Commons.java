@@ -86,6 +86,7 @@ public abstract class Commons {
     SEQUENCE.put("CustomerInfo", 1000);
     SEQUENCE.put("Car", 1000);
     SEQUENCE.put("Message", 1000);
+    SEQUENCE.put("OrderDetails", 1000);
     SEQUENCE.put("Order", 1000);
     SEQUENCE.put("Product", 1000);
     SEQUENCE.put("ComputerDetail", 1000);

@@ -46,6 +46,7 @@ public class ODataBatchRequestImpl
 
   public ODataBatchRequestImpl(final ODataClient odataClient, final URI uri) {
     super(odataClient, uri);
+    setAccept(odataClient.getConfiguration().getDefaultBatchAcceptFormat());
   }
 
   @Override

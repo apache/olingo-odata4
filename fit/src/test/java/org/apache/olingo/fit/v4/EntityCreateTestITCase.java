@@ -74,6 +74,8 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // 3. create it as contained entity
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
             getEntityCreateRequest(uri, instrument);
+    req.setFormat(format);
+    
     final ODataEntityCreateResponse<ODataEntity> res = req.execute();
     assertEquals(201, res.getStatusCode());
 

@@ -34,6 +34,18 @@ import org.apache.olingo.commons.api.format.ODataValueFormat;
 public interface CommonConfiguration extends Serializable {
 
   /**
+   * Gets the configured default <tt>Accept</tt> header value format for a batch request.
+   * @return configured default <tt>Accept</tt> header value for a batch request.
+   */
+  String getDefaultBatchAcceptFormat();
+  
+  /**
+   * Set the default <tt>Accept</tt> header value format for a batch request.
+   * @param contentType default <tt>Accept</tt> header value.
+   */
+  void setDefaultBatchAcceptFormat(String contentType);
+  
+  /**
    * Gets the configured OData format for AtomPub exchanges. If this configuration parameter doesn't exist the
    * JSON_FULL_METADATA format will be used as default.
    *

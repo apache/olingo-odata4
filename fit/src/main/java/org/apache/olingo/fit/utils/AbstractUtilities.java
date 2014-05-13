@@ -686,7 +686,22 @@ public abstract class AbstractUtilities {
     try {
       String res;
 
-      if ("Message".equals(entitySetName)) {
+      if ("OrderDetails".equals(entitySetName)) {
+        int productID;
+        if (entity.getProperty("OrderID") == null || entity.getProperty("ProductID") == null) {
+          if (Commons.SEQUENCE.containsKey(entitySetName)) {
+            productID = Commons.SEQUENCE.get(entitySetName) + 1;
+            res = "OrderID=1" + ",ProductID=" + String.valueOf(productID);
+          } else {
+            throw new Exception(String.format("Unable to retrieve entity key value for %s", entitySetName));
+          }
+        } else {
+          productID = Integer.valueOf(entity.getProperty("OrderID").getValue().asPrimitive().get());
+          res = "OrderID=" + entity.getProperty("OrderID").getValue().asPrimitive().get()
+                  + ",ProductID=" + entity.getProperty("ProductID").getValue().asPrimitive().get();
+        }
+        Commons.SEQUENCE.put(entitySetName, productID);
+      }else if ("Message".equals(entitySetName)) {
         int messageId;
         if (entity.getProperty("MessageId") == null || entity.getProperty("FromUsername") == null) {
           if (Commons.SEQUENCE.containsKey(entitySetName)) {
@@ -709,6 +724,8 @@ public abstract class AbstractUtilities {
         res = getDefaultEntryKey(entitySetName, entity, "OrderID");
       } else if ("Customer".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "CustomerId");
+      } else if ("Customers".equals(entitySetName)) {
+        res = getDefaultEntryKey(entitySetName, entity, "PersonID");
       } else if ("Person".equals(entitySetName)) {
         res = getDefaultEntryKey(entitySetName, entity, "PersonId");
       } else if ("ComputerDetail".equals(entitySetName)) {

@@ -32,6 +32,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
+import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
@@ -87,6 +88,7 @@ class ContainerImpl implements Container {
   @Override
   public void flush() {
     final CommonODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(client.getServiceRoot());
+    ((ODataRequest)request).setAccept(client.getConfiguration().getDefaultBatchAcceptFormat());
 
     final BatchStreamManager streamManager = (BatchStreamManager) ((ODataStreamedRequest) request).execute();
 
@@ -111,7 +113,8 @@ class ContainerImpl implements Container {
 
     final ODataBatchResponse response = streamManager.getResponse();
 
-    if (response.getStatusCode() != 202) {
+    if ((client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0 && response.getStatusCode() != 202)
+            || (client.getServiceVersion().compareTo(ODataServiceVersion.V30) > 0 && response.getStatusCode() != 200)) {
       throw new IllegalStateException("Operation failed");
     }
 
@@ -263,10 +266,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(
-                    uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(
-                    uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -393,7 +396,7 @@ class ContainerImpl implements Container {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos + "/$value")
                 : URIUtils.getURI(
-                        factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
         batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -406,8 +409,8 @@ class ContainerImpl implements Container {
     for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
       final URI targetURI = currentStatus == AttachedEntityStatus.NEW
               ? URI.create("$" + startingPos) : URIUtils.getURI(
-                      factory.getServiceRoot(),
-                      CoreUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
+              factory.getServiceRoot(),
+              CoreUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
 
       batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 

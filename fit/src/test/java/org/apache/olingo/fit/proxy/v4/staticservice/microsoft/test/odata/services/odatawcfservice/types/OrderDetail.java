@@ -59,8 +59,6 @@ import javax.xml.datatype.Duration;
 public interface OrderDetail 
   extends Serializable {
 
-        
-    @Key
     @Property(name = "OrderID", 
                 type = "Edm.Int32", 
                 nullable = false,

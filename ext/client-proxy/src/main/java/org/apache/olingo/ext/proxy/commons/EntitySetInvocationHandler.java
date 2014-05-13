@@ -37,6 +37,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -49,6 +50,7 @@ import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
@@ -76,6 +78,8 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
 
   private final URI uri;
 
+  private boolean isSingleton = false;
+
   @SuppressWarnings({"rawtypes", "unchecked"})
   static EntitySetInvocationHandler getInstance(
           final Class<?> ref, final EntityContainerInvocationHandler containerHandler) {
@@ -90,13 +94,20 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
 
     super(containerHandler.getClient(), containerHandler);
 
-    final Annotation annotation = ref.getAnnotation(EntitySet.class);
-    if (!(annotation instanceof EntitySet)) {
-      throw new IllegalArgumentException("Return type " + ref.getName()
-              + " is not annotated as @" + EntitySet.class.getSimpleName());
-    }
+    Annotation annotation = ref.getAnnotation(EntitySet.class);
+    if (annotation == null) {
+      annotation = ref.getAnnotation(Singleton.class);
 
-    this.entitySetName = ((EntitySet) annotation).name();
+      if (annotation == null) {
+        throw new IllegalArgumentException("Return type " + ref.getName()
+                + " is not annotated as @" + EntitySet.class.getSimpleName());
+      }
+
+      this.entitySetName = ((Singleton) annotation).name();
+      isSingleton = true;
+    } else {
+      this.entitySetName = ((EntitySet) annotation).name();
+    }
 
     final Type[] abstractEntitySetParams =
             ((ParameterizedType) ref.getGenericInterfaces()[0]).getActualTypeArguments();
@@ -172,15 +183,26 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {reference},
             new EntityCollectionInvocationHandler<T, C>(
-                    containerHandler, new ArrayList<T>(), typeRef, containerHandler.getEntityContainerName()));
+            containerHandler, new ArrayList<T>(), typeRef, containerHandler.getEntityContainerName()));
   }
 
   @Override
   public Long count() {
-    final ODataValueRequest req = client.getRetrieveRequestFactory().
-            getValueRequest(client.getURIBuilder(this.uri.toASCIIString()).count().build());
-    req.setFormat(ODataValueFormat.TEXT);
-    return Long.valueOf(req.execute().getBody().asPrimitive().toString());
+    if (isSingleton) {
+      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.Singleton> res =
+              ((ODataClient) client).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
+
+      if (res.getBody() == null) {
+        return 0l;
+      } else {
+        return 1l;
+      }
+    } else {
+      final ODataValueRequest req = client.getRetrieveRequestFactory().
+              getValueRequest(client.getURIBuilder(this.uri.toASCIIString()).count().build());
+      req.setFormat(ODataValueFormat.TEXT);
+      return Long.valueOf(req.execute().getBody().asPrimitive().toString());
+    }
   }
 
   @Override
@@ -276,13 +298,27 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
 
   @SuppressWarnings("unchecked")
   public <S extends T> Map.Entry<List<S>, URI> fetchPartialEntitySet(final URI uri, final Class<S> typeRef) {
-    final ODataRetrieveResponse<CommonODataEntitySet> res =
-            client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+    final List<CommonODataEntity> entities = new ArrayList<CommonODataEntity>();
+    final URI next;
 
-    final CommonODataEntitySet entitySet = res.getBody();
+    if (isSingleton) {
+      final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.Singleton> res =
+              ((ODataClient) client).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
-    final List<S> items = new ArrayList<S>(entitySet.getEntities().size());
-    for (CommonODataEntity entity : entitySet.getEntities()) {
+      entities.add(res.getBody());
+      next = null;
+    } else {
+      final ODataRetrieveResponse<CommonODataEntitySet> res =
+              client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+
+      final CommonODataEntitySet entitySet = res.getBody();
+      entities.addAll(entitySet.getEntities());
+      next = entitySet.getNext();
+    }
+
+    final List<S> items = new ArrayList<S>(entities.size());
+
+    for (CommonODataEntity entity : entities) {
       final EntityTypeInvocationHandler<?> handler = EntityTypeInvocationHandler.getInstance(entity, this, typeRef);
 
       final EntityTypeInvocationHandler<?> handlerInTheContext =
@@ -294,7 +330,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
               handlerInTheContext == null ? handler : handlerInTheContext));
     }
 
-    return new AbstractMap.SimpleEntry<List<S>, URI>(items, entitySet.getNext());
+    return new AbstractMap.SimpleEntry<List<S>, URI>(items, next);
   }
 
   @SuppressWarnings("unchecked")
@@ -314,7 +350,7 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {collTypeRef},
             new EntityCollectionInvocationHandler<S, C>(
-                    containerHandler, items, typeRef, containerHandler.getEntityContainerName(), entitySetURI));
+            containerHandler, items, typeRef, containerHandler.getEntityContainerName(), entitySetURI));
   }
 
   @Override

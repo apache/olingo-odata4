@@ -63,6 +63,7 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.BeforeClass;
 
@@ -93,6 +94,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc/large";
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
+    
+    client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
   }
 
   @BeforeClass

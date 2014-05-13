@@ -65,6 +65,7 @@ public final class EntityContainerFactory {
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
     }
     client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
+    
     return FACTORY_PER_SERVICEROOT.get(serviceRoot);
   }
 
