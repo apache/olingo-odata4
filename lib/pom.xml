@@ -42,6 +42,6 @@
     <module>client-core</module>
     <module>server-api</module>
     <module>server-core</module>
-    <module>server-ref</module>
+    <module>server-tecsvc</module>
   </modules>
 </project>

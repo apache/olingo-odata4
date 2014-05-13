@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-ref</artifactId>
+      <artifactId>olingo-server-tecsvc</artifactId>
       <version>${project.version}</version>
       <type>war</type>
       <scope>test</scope>
@@ -206,10 +206,10 @@
           <deployables>
             <deployable>
               <groupId>org.apache.olingo</groupId>
-              <artifactId>olingo-server-ref</artifactId>
+              <artifactId>olingo-server-tecsvc</artifactId>
               <type>war</type>
               <properties>
-                <context>ref</context>
+                <context>tecsvc</context>
               </properties>
             </deployable>
             <deployable>
