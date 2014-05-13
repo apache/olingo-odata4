@@ -55,6 +55,7 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -276,11 +277,29 @@ class EntitySetInvocationHandler<C extends CommonEdmEnabledODataClient<?>, T ext
 
         LOG.debug("Execute query '{}'", uriBuilder.toString());
 
-        final ODataRetrieveResponse<CommonODataEntity> res =
-                client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
+        final CommonODataEntity entity;
+        final String etag;
 
-        handler = EntityTypeInvocationHandler.getInstance(res.getBody(), this, typeRef);
-        handler.setETag(res.getETag());
+        if (isSingleton) {
+          final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.Singleton> res =
+                  ((ODataClient) client).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
+
+          entity = res.getBody();
+          etag = res.getETag();
+        } else {
+          final ODataRetrieveResponse<CommonODataEntity> res =
+                  client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
+
+          etag = res.getETag();
+          entity = res.getBody();
+
+          if (entity == null || !key.equals(CoreUtils.getKey(client, typeRef, entity))) {
+            throw new IllegalArgumentException("Invalid singleton " + typeRef.getSimpleName() + "(" + key + ")");
+          }
+        }
+
+        handler = EntityTypeInvocationHandler.getInstance(entity, this, typeRef);
+        handler.setETag(etag);
       } catch (Exception e) {
         LOG.info("Entity '" + uuid + "' not found", e);
       }
