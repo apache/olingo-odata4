@@ -20,6 +20,7 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -41,16 +43,17 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
+public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
+        extends AbstractTypeInvocationHandler<C> {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  public static ComplexInvocationHandler getInstance(
+  public static ComplexTypeInvocationHandler<?> getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final String propertyName,
           final Class<?> reference,
-          final EntityInvocationHandler handler) {
-
+          final EntityTypeInvocationHandler<?> handler) {
+    
     final Class<?> complexTypeRef;
     if (Collection.class.isAssignableFrom(reference)) {
       complexTypeRef = ClassUtils.extractTypeArg(reference);
@@ -69,26 +72,36 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     final ODataComplexValue<? extends CommonODataProperty> complex =
             client.getObjectFactory().newComplexValue(typeName.toString());
 
-    return (ComplexInvocationHandler) ComplexInvocationHandler.getInstance(
+    return (ComplexTypeInvocationHandler<?>) ComplexTypeInvocationHandler.getInstance(
             client, complex, complexTypeRef, handler);
   }
 
-  public static ComplexInvocationHandler getInstance(
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  static ComplexTypeInvocationHandler<?> getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityInvocationHandler handler) {
+          final EntityTypeInvocationHandler<?> handler) {
 
-    return new ComplexInvocationHandler(client, complex, typeRef, handler);
+    return new ComplexTypeInvocationHandler(client, complex, typeRef, handler);
   }
 
-  public ComplexInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
+  public ComplexTypeInvocationHandler(
+          final C client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityInvocationHandler handler) {
+          final EntityTypeInvocationHandler<C> handler) {
 
     super(client, typeRef, complex, handler);
+  }
+
+  public void setComplex(final ODataComplexValue<?> complex) {
+    this.internal = complex;
+  }
+
+  @Override
+  public FullQualifiedName getName() {
+    return new FullQualifiedName(((ODataComplexValue<?>) this.internal).getTypeName());
   }
 
   @SuppressWarnings("unchecked")
@@ -99,7 +112,48 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      return CoreUtils.getValueFromProperty(client, getComplex().get(name), type, getEntityHandler());
+      final Object res;
+
+      final CommonODataProperty property = getComplex().get(name);
+      if (property == null) {
+        res = null;
+      } else if (property.hasComplexValue()) {
+        res = Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {(Class<?>) type},
+                ComplexTypeInvocationHandler.getInstance(
+                client, property.getValue().asComplex(), (Class<?>) type, targetHandler));
+
+      } else if (property.hasCollectionValue()) {
+        final ParameterizedType collType = (ParameterizedType) type;
+        final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
+
+        final ArrayList<Object> collection = new ArrayList<Object>();
+
+        final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+        while (collPropItor.hasNext()) {
+          final ODataValue value = collPropItor.next();
+          if (value.isPrimitive()) {
+            collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+          } else if (value.isComplex()) {
+            final Object collItem = Proxy.newProxyInstance(
+                    Thread.currentThread().getContextClassLoader(),
+                    new Class<?>[] {collItemClass},
+                    ComplexTypeInvocationHandler.getInstance(
+                    client, value.asComplex(), collItemClass, targetHandler));
+
+            collection.add(collItem);
+          }
+        }
+
+        res = collection;
+      } else {
+        res = type == null
+                ? CoreUtils.getValueFromProperty(client, property)
+                : CoreUtils.getValueFromProperty(client, property, type);
+      }
+
+      return res;
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
@@ -117,7 +171,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       }
     }
 
-    for (final Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
+    for (Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
       final CommonODataProperty property = itor.next();
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
@@ -150,13 +204,15 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       toBeAdded = value;
     }
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().
+            setEdm(client.getCachedEdm()).setTypeExpression(
             edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
-    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
+    client.getBinder().add(
+            getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
 
-    if (getEntityHandler() != null && !entityContext.isAttached(getEntityHandler())) {
-      entityContext.attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
+    if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
+      entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
     }
   }
 
@@ -166,7 +222,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       throw new UnsupportedOperationException("Internal object is not navigable");
     }
 
-    return retrieveNavigationProperty(property, getter, containerHandler.getFactory().getServiceRoot());
+    return retriveNavigationProperty(property, getter);
   }
 
   @Override
@@ -181,6 +237,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   @Override
   public boolean isChanged() {
-    return getEntityHandler() == null ? false : getEntityHandler().isChanged();
+    return targetHandler == null ? false : targetHandler.isChanged();
   }
 }
