@@ -20,9 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -35,14 +33,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import static javax.ws.rs.core.Response.status;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.olingo.commons.api.data.EntitySet;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import static org.apache.olingo.fit.AbstractServices.LOG;
+import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.AbstractUtilities;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.Commons;
@@ -53,10 +48,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V30/ActionOverloading.svc")
-public class V3ActionOverloading extends AbstractServices {
+public class V3ActionOverloading extends V3Services {
 
   public V3ActionOverloading() throws Exception {
-    super(ODataServiceVersion.V30, Commons.getMetadata(ODataServiceVersion.V30));
+    super(new Metadata(FSManager.instance(ODataServiceVersion.V30).readFile(
+            "actionOverloading" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
+            Accept.XML), ODataServiceVersion.V30));
   }
 
   private Response replaceServiceName(final Response response) {
@@ -64,7 +61,7 @@ public class V3ActionOverloading extends AbstractServices {
       final String content = IOUtils.toString((InputStream) response.getEntity(), Constants.ENCODING).
               replaceAll("Static\\.svc", "ActionOverloading.svc");
 
-      final Response.ResponseBuilder builder = status(response.getStatus());
+      final Response.ResponseBuilder builder = Response.status(response.getStatus());
       for (String headerName : response.getHeaders().keySet()) {
         for (Object headerValue : response.getHeaders().get(headerName)) {
           builder.header(headerName, headerValue);
@@ -88,7 +85,8 @@ public class V3ActionOverloading extends AbstractServices {
   @GET
   @Path("/$metadata")
   @Produces(MediaType.APPLICATION_XML)
-  public Response getLargeMetadata() {
+  @Override
+  public Response getMetadata() {
     return super.getMetadata("actionOverloading"
             + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
   }
@@ -121,6 +119,7 @@ public class V3ActionOverloading extends AbstractServices {
 
   @GET
   @Path("/Product({entityId})")
+  @Override
   public Response getProduct(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
@@ -205,15 +204,4 @@ public class V3ActionOverloading extends AbstractServices {
     return unboundRetrieveProduct(accept, format, contentType);
   }
 
-  @Override
-  protected void setInlineCount(EntitySet feed, String count) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  protected InputStream exploreMultipart(
-          final List<Attachment> attachments, final String boundary, final boolean continueOnError) 
-          throws IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 }
