@@ -19,27 +19,22 @@
 package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory;
 import org.junit.Test;
 
+/**
+ * This is the unit test class to check entity create operations.
+ */
 public class SingletonTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    final Company company = container.getCompany().get();
-    assertEquals(0, company.getCompanyID(), 0);
-    assertEquals(CompanyCategory.IT, company.getCompanyCategory());
-  }
-
-  @Test
-  public void update() {
-    final Company company = container.getCompany().get();
-    company.setRevenue(132520L);
-
-    container.flush();
-
-    assertEquals(132520L, container.getCompany().get().getRevenue(), 0);
+    assertNotNull(container.getCompany().get(0));
+    entityContext.detachAll();
+    assertNotNull(container.getCompany().iterator().next());
+    entityContext.detachAll();
+    assertEquals(1, container.getCompany().count(), 0);
+    entityContext.detachAll();
   }
 }
