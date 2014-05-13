@@ -112,7 +112,7 @@ public class V4Services extends AbstractServices {
   protected V4Services(final Metadata metadata) throws Exception {
     super(ODataServiceVersion.V40, metadata);
   }
-
+  
   @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(

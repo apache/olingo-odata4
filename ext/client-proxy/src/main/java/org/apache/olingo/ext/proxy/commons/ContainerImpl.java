@@ -46,6 +46,7 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -74,9 +75,9 @@ class ContainerImpl implements Container {
 
   private final CommonEdmEnabledODataClient<?> client;
 
-  private final EntityContainerFactory<?> factory;
+  private final EntityContainerFactory factory;
 
-  ContainerImpl(final CommonEdmEnabledODataClient<?> client, final EntityContainerFactory<?> factory) {
+  ContainerImpl(final CommonEdmEnabledODataClient<?> client, final EntityContainerFactory factory) {
     this.client = client;
     this.factory = factory;
   }
@@ -87,7 +88,7 @@ class ContainerImpl implements Container {
   @Override
   public void flush() {
     final CommonODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(client.getServiceRoot());
-    ((ODataRequest) request).setAccept(client.getConfiguration().getDefaultBatchAcceptFormat());
+    ((ODataRequest)request).setAccept(client.getConfiguration().getDefaultBatchAcceptFormat());
 
     final BatchStreamManager streamManager = (BatchStreamManager) ((ODataStreamedRequest) request).execute();
 
@@ -137,13 +138,13 @@ class ContainerImpl implements Container {
           throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
         }
 
-        final EntityInvocationHandler handler = items.get(changesetItemId);
+        final EntityTypeInvocationHandler<?> handler = items.get(changesetItemId);
 
         if (handler != null) {
-          if (res instanceof ODataEntityCreateResponse && res.getStatusCode() == 201) {
+          if (res instanceof ODataEntityCreateResponse) {
             handler.setEntity(((ODataEntityCreateResponse) res).getBody());
             LOG.debug("Upgrade created object '{}'", handler);
-          } else if (res instanceof ODataEntityUpdateResponse && res.getStatusCode() == 200) {
+          } else if (res instanceof ODataEntityUpdateResponse) {
             handler.setEntity(((ODataEntityUpdateResponse) res).getBody());
             LOG.debug("Upgrade updated object '{}'", handler);
           }
@@ -154,44 +155,45 @@ class ContainerImpl implements Container {
     EntityContainerFactory.getContext().detachAll();
   }
 
-  private AttachedEntityStatus batch(
-          final EntityInvocationHandler handler,
+  private void batch(
+          final EntityTypeInvocationHandler<?> handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
     switch (EntityContainerFactory.getContext().entityContext().getStatus(handler)) {
       case NEW:
         batchCreate(handler, entity, changeset);
-        return AttachedEntityStatus.NEW;
+        break;
 
       case CHANGED:
         batchUpdate(handler, entity, changeset);
-        return AttachedEntityStatus.CHANGED;
+        break;
 
       case DELETED:
         batchDelete(handler, entity, changeset);
-        return AttachedEntityStatus.DELETED;
+        break;
 
       default:
         if (handler.isChanged()) {
           batchUpdate(handler, entity, changeset);
         }
-        return AttachedEntityStatus.CHANGED;
     }
   }
 
   private void batchCreate(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
     LOG.debug("Create '{}'", handler);
 
-    changeset.addRequest(client.getCUDRequestFactory().getEntityCreateRequest(handler.getEntitySetURI(), entity));
+    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(factory.getServiceRoot()).
+            appendEntitySetSegment(handler.getEntitySetName());
+    changeset.addRequest(client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), entity));
   }
 
   private void batchUpdateMediaEntity(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -213,7 +215,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdateMediaResource(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -230,20 +232,18 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
 
-    LOG.debug("Update '{}'", handler.getEntityURI());
+    LOG.debug("Update '{}'", changes.getEditLink());
 
     final ODataEntityUpdateRequest<CommonODataEntity> req =
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
-            getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            getEntityUpdateRequest(org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
-            getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            getEntityUpdateRequest(org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -255,7 +255,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final URI uri,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
@@ -265,11 +265,11 @@ class ContainerImpl implements Container {
     final ODataEntityUpdateRequest<CommonODataEntity> req =
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
-            getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            getEntityUpdateRequest(
+            uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
-            getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            getEntityUpdateRequest(
+            uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -281,14 +281,14 @@ class ContainerImpl implements Container {
   }
 
   private void batchDelete(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
-    final URI deleteURI = handler.getEntityURI() == null ? entity.getEditLink() : handler.getEntityURI();
-    LOG.debug("Delete '{}'", deleteURI);
+    LOG.debug("Delete '{}'", entity.getEditLink());
 
-    final ODataDeleteRequest req = client.getCUDRequestFactory().getDeleteRequest(deleteURI);
+    final ODataDeleteRequest req = client.getCUDRequestFactory().getDeleteRequest(URIUtils.getURI(
+            factory.getServiceRoot(), entity.getEditLink().toASCIIString()));
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -298,7 +298,7 @@ class ContainerImpl implements Container {
   }
 
   private int processEntityContext(
-          final EntityInvocationHandler handler,
+          final EntityTypeInvocationHandler<?> handler,
           int pos,
           final TransactionItems items,
           final List<EntityLinkDesc> delayedUpdates,
@@ -323,14 +323,14 @@ class ContainerImpl implements Container {
               ? ODataLinkType.ENTITY_SET_NAVIGATION
               : ODataLinkType.ENTITY_NAVIGATION;
 
-      final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
+      final Set<EntityTypeInvocationHandler<?>> toBeLinked = new HashSet<EntityTypeInvocationHandler<?>>();
       final String serviceRoot = factory.getServiceRoot();
 
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
 
-        final EntityInvocationHandler target =
-                (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
+        final EntityTypeInvocationHandler<?> target =
+                (EntityTypeInvocationHandler) Proxy.getInvocationHandler(proxy);
 
         final AttachedEntityStatus status =
                 EntityContainerFactory.getContext().entityContext().getStatus(target);
@@ -360,7 +360,8 @@ class ContainerImpl implements Container {
             // create the link for the current object
             LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
 
-            entity.addLink(buildNavigationLink(property.getKey().name(), URI.create("$" + targetPos), type));
+            entity.addLink(
+                    buildNavigationLink(property.getKey().name(), URI.create("$" + targetPos), type));
           }
         }
       }
@@ -372,51 +373,50 @@ class ContainerImpl implements Container {
 
     // insert into the batch
     LOG.debug("{}: Insert '{}' into the batch", pos, handler);
-    final AttachedEntityStatus processedStatus = batch(handler, entity, changeset);
+    batch(handler, entity, changeset);
 
     items.put(handler, pos);
 
-    if (processedStatus != AttachedEntityStatus.DELETED) {
-      int startingPos = pos;
+    int startingPos = pos;
 
-      if (handler.getEntity().isMediaEntity() && handler.isChanged()) {
-        // update media properties
-        if (!handler.getPropertyChanges().isEmpty()) {
-          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                  ? URI.create("$" + startingPos)
-                  : URIUtils.getURI(factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
-          batchUpdate(handler, targetURI, entity, changeset);
-          pos++;
-          items.put(handler, pos);
-        }
+    if (handler.getEntity().isMediaEntity()) {
 
-        // update media content
-        if (handler.getStreamChanges() != null) {
-          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                  ? URI.create("$" + startingPos + "/$value")
-                  : URIUtils.getURI(
-                  factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
-
-          batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
-
-          // update media info (use null key)
-          pos++;
-          items.put(null, pos);
-        }
-      }
-
-      for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
+      // update media properties
+      if (!handler.getPropertyChanges().isEmpty()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                ? URI.create("$" + startingPos) : URIUtils.getURI(
-                factory.getServiceRoot(),
-                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
-
-        batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
-
-        // update media info (use null key)
+                ? URI.create("$" + startingPos)
+                : URIUtils.getURI(factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+        batchUpdate(handler, targetURI, entity, changeset);
         pos++;
         items.put(handler, pos);
       }
+
+      // update media content
+      if (handler.getStreamChanges() != null) {
+        final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                ? URI.create("$" + startingPos + "/$value")
+                : URIUtils.getURI(
+                factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+
+        batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
+
+        // update media info (use null key)
+        pos++;
+        items.put(null, pos);
+      }
+    }
+
+    for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
+      final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+              ? URI.create("$" + startingPos) : URIUtils.getURI(
+              factory.getServiceRoot(),
+              CoreUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
+
+      batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
+
+      // update media info (use null key)
+      pos++;
+      items.put(handler, pos);
     }
 
     return pos;
@@ -467,7 +467,7 @@ class ContainerImpl implements Container {
         sourceURI = URI.create("$" + sourcePos);
       }
 
-      for (EntityInvocationHandler target : delayedUpdate.getTargets()) {
+      for (EntityTypeInvocationHandler<?> target : delayedUpdate.getTargets()) {
         status = EntityContainerFactory.getContext().entityContext().getStatus(target);
 
         final URI targetURI;
@@ -492,11 +492,11 @@ class ContainerImpl implements Container {
 
   private class TransactionItems {
 
-    private final List<EntityInvocationHandler> keys = new ArrayList<EntityInvocationHandler>();
+    private final List<EntityTypeInvocationHandler<?>> keys = new ArrayList<EntityTypeInvocationHandler<?>>();
 
     private final List<Integer> values = new ArrayList<Integer>();
 
-    public EntityInvocationHandler get(final Integer value) {
+    public EntityTypeInvocationHandler<?> get(final Integer value) {
       if (value != null && values.contains(value)) {
         return keys.get(values.indexOf(value));
       } else {
@@ -504,7 +504,7 @@ class ContainerImpl implements Container {
       }
     }
 
-    public Integer get(final EntityInvocationHandler key) {
+    public Integer get(final EntityTypeInvocationHandler<?> key) {
       if (key != null && keys.contains(key)) {
         return values.get(keys.indexOf(key));
       } else {
@@ -512,14 +512,14 @@ class ContainerImpl implements Container {
       }
     }
 
-    public void remove(final EntityInvocationHandler key) {
+    public void remove(final EntityTypeInvocationHandler<?> key) {
       if (keys.contains(key)) {
         values.remove(keys.indexOf(key));
         keys.remove(key);
       }
     }
 
-    public void put(final EntityInvocationHandler key, final Integer value) {
+    public void put(final EntityTypeInvocationHandler<?> key, final Integer value) {
       // replace just in case of null current value; otherwise add the new entry
       if (key != null && keys.contains(key) && values.get(keys.indexOf(key)) == null) {
         remove(key);
@@ -534,7 +534,7 @@ class ContainerImpl implements Container {
       return sortedValues;
     }
 
-    public boolean contains(final EntityInvocationHandler key) {
+    public boolean contains(final EntityTypeInvocationHandler<?> key) {
       return keys.contains(key);
     }
 

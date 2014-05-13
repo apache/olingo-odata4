@@ -18,22 +18,15 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.TimeZone;
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +42,6 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
-  protected static String testDemoServiceRootURL;
-
   protected static String testKeyAsSegmentServiceRootURL;
 
   protected static String testActionOverloadingServiceRootURL;
@@ -63,14 +54,13 @@ public abstract class AbstractTestITCase {
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
+  protected static EntityContainerFactory containerFactory;
 
   protected static InMemoryEntities container;
 
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
-    testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V40/KeyAsSegment.svc";
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V40/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OpenType.svc";
@@ -78,10 +68,9 @@ public abstract class AbstractTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
-    EntityContainerFactory.getContext().detachAll();
   }
 
   protected Customer readCustomer(final InMemoryEntities container, int id) {
@@ -90,44 +79,5 @@ public abstract class AbstractTestITCase {
     assertEquals(id, customer.getPersonID(), 0);
 
     return customer;
-  }
-
-  protected void createAndDeleteOrder(final InMemoryEntities container) {
-    final Order order = container.getOrders().newOrder();
-    order.setOrderID(105);
-
-    final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-    orderDate.clear();
-    orderDate.set(2011, 3, 4, 16, 3, 57);
-    order.setOrderDate(orderDate);
-
-    order.setShelfLife(BigDecimal.TEN);
-    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
-
-    container.flush();
-
-    Order actual = container.getOrders().get(105);
-    assertEquals(105, actual.getOrderID(), 0);
-    assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
-    assertEquals(BigDecimal.TEN, actual.getShelfLife());
-    assertEquals(2, actual.getOrderShelfLifes().size());
-
-    container.getOrders().delete(105);
-    actual = container.getOrders().get(105);
-    assertNull(actual);
-
-    entityContext.detachAll();
-    actual = container.getOrders().get(105);
-    assertNotNull(actual);
-
-    container.getOrders().delete(105);
-    actual = container.getOrders().get(105);
-    assertNull(actual);
-
-    container.flush();
-
-    entityContext.detachAll();
-    actual = container.getOrders().get(105);
-    assertNull(actual);
   }
 }

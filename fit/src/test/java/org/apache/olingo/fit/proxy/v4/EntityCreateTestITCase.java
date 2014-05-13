@@ -18,34 +18,25 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        PaymentInstrument;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        PaymentInstrumentCollection;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
-        ProductDetailCollection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -54,8 +45,43 @@ import org.junit.Test;
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
-  public void createAndDelete() {
-    createAndDeleteOrder(container);
+  public void create() {
+    final Order order = container.getOrders().newOrder();
+    order.setOrderID(105);
+
+    final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    orderDate.clear();
+    orderDate.set(2011, 3, 4, 16, 3, 57);
+    order.setOrderDate(orderDate);
+
+    order.setShelfLife(BigDecimal.TEN);
+    order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
+
+    container.flush();
+
+    Order actual = container.getOrders().get(105);
+    assertEquals(105, actual.getOrderID(), 0);
+    assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
+    assertEquals(BigDecimal.TEN, actual.getShelfLife());
+    assertEquals(2, actual.getOrderShelfLifes().size());
+
+    container.getOrders().delete(105);
+    actual = container.getOrders().get(105);
+    assertNull(actual);
+
+    entityContext.detachAll();
+    actual = container.getOrders().get(105);
+    assertNotNull(actual);
+
+    container.getOrders().delete(105);
+    actual = container.getOrders().get(105);
+    assertNull(actual);
+
+    container.flush();
+
+    entityContext.detachAll();
+    actual = container.getOrders().get(105);
+    assertNull(actual);
   }
 
   @Test
@@ -157,6 +183,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.setOrderShelfLifes(Arrays.asList(new BigDecimal[] {BigDecimal.TEN.negate(), BigDecimal.TEN}));
     // -------------------------------
 
+
     // -------------------------------
     // Create a new customer
     // -------------------------------
@@ -240,64 +267,5 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     assertNull(container.getOrderDetails().get(key));
-  }
-
-  @Test
-  public void deepInsert() {
-    Product product = container.getProducts().newProduct();
-    product.setProductID(12);
-    product.setName("Latte");
-    product.setQuantityPerUnit("100g Bag");
-    product.setUnitPrice(3.24f);
-    product.setQuantityInStock(100);
-    product.setDiscontinued(false);
-    product.setUserAccess(AccessLevel.Execute);
-    product.setSkinColor(Color.Blue);
-    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
-
-    final ProductDetail detail = container.getProductDetails().newProductDetail();
-    detail.setProductID(product.getProductID());
-    detail.setProductDetailID(12);
-    detail.setProductName("LatteHQ");
-    detail.setDescription("High-Quality Milk");
-
-    final ProductDetailCollection detailCollection = container.getProductDetails().newProductDetailCollection();
-    detailCollection.add(detail);
-
-    product.setDetails(detailCollection);
-
-    container.flush();
-
-    product = container.getProducts().get(12);
-    assertEquals("Latte", product.getName());
-    assertEquals(12, product.getDetails().iterator().next().getProductDetailID(), 0);
-  }
-
-  @Test
-  public void contained() {
-    PaymentInstrumentCollection instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
-    final int sizeBefore = instruments.size();
-
-    final PaymentInstrument instrument = container.getAccounts().get(101).
-            getMyPaymentInstruments().newPaymentInstrument();
-
-    final int id = RandomUtils.nextInt(101999, 105000);
-    instrument.setPaymentInstrumentID(id);
-    instrument.setFriendlyName("New one");
-    instrument.setCreatedDate(Calendar.getInstance());
-
-    container.flush();
-
-    instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
-    final int sizeAfter = instruments.size();
-    assertEquals(sizeBefore + 1, sizeAfter);
-
-    container.getAccounts().get(101).getMyPaymentInstruments().delete(id);
-
-    container.flush();
-
-    instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
-    final int sizeEnd = instruments.size();
-    assertEquals(sizeBefore, sizeEnd);
   }
 }

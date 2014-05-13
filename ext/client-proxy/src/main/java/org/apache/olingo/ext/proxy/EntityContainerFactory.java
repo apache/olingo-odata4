@@ -22,6 +22,7 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.CommonConfiguration;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -29,18 +30,16 @@ import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;
 import org.apache.olingo.ext.proxy.context.Context;
 
 /**
- * Entry point for proxy mode, gives access to entity container instances.
- *
- * @param <C> actual client class
+ * Entry point for ODataJClient proxy mode, gives access to entity container instances.
  */
-public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<?>> {
+public final class EntityContainerFactory {
 
   private static final Object MONITOR = new Object();
 
   private static Context context = null;
 
-  private static final Map<String, EntityContainerFactory<?>> FACTORY_PER_SERVICEROOT =
-          new ConcurrentHashMap<String, EntityContainerFactory<?>>();
+  private static final Map<String, EntityContainerFactory> FACTORY_PER_SERVICEROOT =
+          new ConcurrentHashMap<String, EntityContainerFactory>();
 
   private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
@@ -58,28 +57,23 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
     return context;
   }
 
-  @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(
+  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory getInstance(
           final C client, final String serviceRoot) {
 
     if (!FACTORY_PER_SERVICEROOT.containsKey(serviceRoot)) {
-      final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client, serviceRoot);
+      final EntityContainerFactory instance = new EntityContainerFactory(client, serviceRoot);
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
     }
     client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
-
-    return (EntityContainerFactory<C>) FACTORY_PER_SERVICEROOT.get(serviceRoot);
+    
+    return FACTORY_PER_SERVICEROOT.get(serviceRoot);
   }
 
-  public static EntityContainerFactory<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
-          final String serviceRoot) {
-
+  public static EntityContainerFactory getV3(final String serviceRoot) {
     return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), serviceRoot);
   }
 
-  public static EntityContainerFactory<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
-          final String serviceRoot) {
-
+  public static EntityContainerFactory getV4(final String serviceRoot) {
     return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), serviceRoot);
   }
 
@@ -88,9 +82,8 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
     this.serviceRoot = serviceRoot;
   }
 
-  @SuppressWarnings("unchecked")
-  public C getClient() {
-    return (C) client;
+  public CommonConfiguration getConfiguration() {
+    return client.getConfiguration();
   }
 
   public String getServiceRoot() {

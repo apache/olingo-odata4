@@ -26,17 +26,19 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.
-        ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Customer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Aliases;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
+        types.Phone;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -53,8 +55,6 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
-  protected static String testPrimitiveKeysServiceRootURL;
-
   protected static String testKeyAsSegmentServiceRootURL;
 
   protected static String testActionOverloadingServiceRootURL;
@@ -67,14 +67,13 @@ public abstract class AbstractTestITCase {
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
+  protected static EntityContainerFactory containerFactory;
 
   protected static DefaultContainer container;
 
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V30/Static.svc";
-    testPrimitiveKeysServiceRootURL = "http://localhost:9080/stub/StaticService/V30/PrimitiveKeys.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V30/KeyAsSegment.svc";
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V30/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V30/OpenType.svc";
@@ -82,10 +81,9 @@ public abstract class AbstractTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
-    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);
-    EntityContainerFactory.getContext().detachAll();
   }
 
   protected Customer getSampleCustomerProfile(
