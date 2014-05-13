@@ -639,8 +639,7 @@ public abstract class AbstractServices {
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
-      FSManager.instance(version).putInMemory(
-              result, path + File.separatorChar + Constants.get(version, ConstantKey.ENTITY), dataBinder);
+      FSManager.instance(version).putInMemory(result, path + Constants.get(version, ConstantKey.ENTITY), dataBinder);
 
       final String location = uriInfo.getRequestUri().toASCIIString() + "(" + entityKey + ")";
 
@@ -784,8 +783,8 @@ public abstract class AbstractServices {
       final InputStream entity = entityInfo.getValue();
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
 
-      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));      
-      
+      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
+
       container.getPayload().getProperty("Dimensions").setValue(param.getProperty("dimensions").getValue());
 
       final FSManager fsManager = FSManager.instance(version);
@@ -798,7 +797,7 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-  
+
   @POST
   @Path("/ComputerDetail({entityId})/ResetComputerDetailsSpecifications")
   public Response actionResetComputerDetailsSpecifications(
@@ -819,8 +818,8 @@ public abstract class AbstractServices {
       final InputStream entity = entityInfo.getValue();
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entity, AtomEntityImpl.class);
 
-      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));      
-      
+      final Entity param = xml.readEntity(utils.getKey(), IOUtils.toInputStream(argument, Constants.ENCODING));
+
       container.getPayload().getProperty("SpecificationsBag").setValue(param.getProperty("specifications").getValue());
       container.getPayload().getProperty("PurchaseDate").setValue(param.getProperty("purchaseTime").getValue());
 

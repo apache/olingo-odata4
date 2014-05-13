@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.UUID;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -39,8 +41,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.InInterceptors;
@@ -204,6 +208,38 @@ public class V3Services extends AbstractServices {
     bos.write(("--" + boundary + "--").getBytes());
 
     return new ByteArrayInputStream(bos.toByteArray());
+  }
+
+  @GET
+  @Path("/Login({entityId})")
+  public Response getLogin(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
+          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
+
+    return super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(), accept,
+            "Login", StringUtils.remove(entityId, "'"), format, expand, select, false);
+  }
+
+  @POST
+  @Path("/Login")
+  @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  public Response postLogin(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
+          final String entity) {
+
+    if ("{\"odata.type\":\"Microsoft.Test.OData.Services.AstoriaDefaultService.Login\"}".equals(entity)) {
+      return xml.createFaultResponse(accept, new BadRequestException());
+    }
+
+    return super.postNewEntity(uriInfo, accept, contentType, prefer, "Login", entity);
   }
 
   /**

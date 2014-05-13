@@ -53,6 +53,7 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
           final String propertyName,
           final Class<?> reference,
           final EntityTypeInvocationHandler<?> handler) {
+    
     final Class<?> complexTypeRef;
     if (Collection.class.isAssignableFrom(reference)) {
       complexTypeRef = ClassUtils.extractTypeArg(reference);

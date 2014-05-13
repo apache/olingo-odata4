@@ -270,29 +270,12 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      
-      Object toBeAdded;
-      if (value == null) {
-        toBeAdded = null;
-      } else if (Collection.class.isAssignableFrom(value.getClass())) {
-        toBeAdded = new ArrayList<Object>();
-        for (Object obj : (Collection) value) {
-          ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
-        }
-      } else if (value instanceof Proxy) {
-        toBeAdded = Proxy.getInvocationHandler(value);
-      } else {
-        toBeAdded = value;
-      }
-
-      addPropertyChanges(property.name(), toBeAdded);
+      addPropertyChanges(property.name(), value);
     }
-
     attach(AttachedEntityStatus.CHANGED);
   }
 
@@ -389,16 +372,15 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void addPropertyChanges(final String name, final Object value) {
-    int checkpoint = propertyChanges.hashCode();
+    final int checkpoint = propertyChanges.hashCode();
     propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
   }
 
   @Override
   protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
-    int checkpoint = linkChanges.hashCode();
+    final int checkpoint = linkChanges.hashCode();
     linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
   }

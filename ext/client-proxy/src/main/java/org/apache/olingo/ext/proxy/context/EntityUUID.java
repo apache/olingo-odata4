@@ -36,6 +36,11 @@ public class EntityUUID implements Serializable {
 
   private final Object key;
 
+  /**
+   * Needed when representing a new entity, where key is potentially null.
+   */
+  private final int tempKey;
+
   private Class<?> type;
 
   public EntityUUID(final String containerName, final String entitySetName, final Class<?> type) {
@@ -46,6 +51,7 @@ public class EntityUUID implements Serializable {
     this.containerName = containerName;
     this.entitySetName = entitySetName;
     this.key = key;
+    this.tempKey = (int) (Math.random() * 1000000);
 
     if (type == null || !Serializable.class.isAssignableFrom(type)) {
       throw new IllegalArgumentException("Invalid Entity type class: " + type);
@@ -78,12 +84,14 @@ public class EntityUUID implements Serializable {
 
   @Override
   public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+    return key == null
+            ? EqualsBuilder.reflectionEquals(this, obj)
+            : EqualsBuilder.reflectionEquals(this, obj, "tempKey");
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    return HashCodeBuilder.reflectionHashCode(this, "tempKey");
   }
 
   @Override
