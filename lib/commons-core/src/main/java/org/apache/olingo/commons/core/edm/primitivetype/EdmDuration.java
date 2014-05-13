@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
-public final class EdmDuration extends SingletonPrimitiveType {
+public class EdmDuration extends SingletonPrimitiveType {
 
   private static final Pattern PATTERN = Pattern.compile(
           "[-+]?P(?:(\\p{Digit}+)D)?(?:T(?:(\\p{Digit}+)H)?(?:(\\p{Digit}+)M)?"
@@ -81,6 +81,7 @@ public final class EdmDuration extends SingletonPrimitiveType {
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e");
     } catch (final ClassCastException e) {
+      e.printStackTrace();
       throw new EdmPrimitiveTypeException(
               "EdmPrimitiveTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType), e");
     }

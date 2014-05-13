@@ -193,14 +193,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
     final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(annotation.returnType()).build();
-
-    if (edmType.isEnumType()) {
-      throw new UnsupportedOperationException("Usupported enum type " + edmType.getFullQualifiedName());
-    }
-
-    if (edmType.isPrimitiveType() || edmType.isComplexType()) {
-      return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType());
-    }
+    
     if (edmType.isEntityType()) {
       if (edmType.isCollection()) {
         final ParameterizedType collType = (ParameterizedType) method.getReturnType().getGenericInterfaces()[0];
@@ -220,9 +213,9 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
                 method.getReturnType(),
                 false);
       }
+    }else{
+      return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType(), null);
     }
-
-    throw new IllegalArgumentException("Could not process the functionImport information");
   }
 
   @Override

@@ -33,10 +33,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
-import org.apache.olingo.client.core.edm.xml.AbstractComplexType;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
@@ -48,12 +46,12 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.commons.AbstractTypeInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.ComplexTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -375,97 +373,59 @@ public final class CoreUtils {
 
   @SuppressWarnings("unchecked")
   public static Object getValueFromProperty(
-          final CommonEdmEnabledODataClient<?> client, final CommonODataProperty property)
+          final CommonEdmEnabledODataClient<?> client,
+          final CommonODataProperty property,
+          final Type typeRef,
+          final EntityTypeInvocationHandler<?> entityHandler)
           throws InstantiationException, IllegalAccessException {
 
-    final Object value;
+    final Object res;
 
-    if (property == null || property.hasNullValue()) {
-      value = null;
-    } else if (property.hasCollectionValue()) {
-      value = new ArrayList<Object>();
-
-      final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
-      while (collPropItor.hasNext()) {
-        final ODataValue odataValue = collPropItor.next();
-        if (odataValue.isPrimitive()) {
-          ((Collection) value).add(primitiveValueToObject(odataValue.asPrimitive()));
-        }
-        if (odataValue.isComplex()) {
-          final Object collItem =
-                  buildComplexInstance(client, property.getName(), odataValue.asComplex().iterator());
-          ((Collection) value).add(collItem);
-        }
-      }
-    } else if (property.hasPrimitiveValue()) {
-      value = primitiveValueToObject(property.getPrimitiveValue());
-    } else if (property.hasComplexValue()) {
-      value = buildComplexInstance(client, property.getValue().asComplex().getTypeName(),
-              property.getValue().asComplex().iterator());
+    Class<?> internalRef;
+    if (typeRef == null) {
+      internalRef = null;
     } else {
-      throw new IllegalArgumentException("Invalid property " + property);
-    }
-
-    return value;
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <C extends AbstractComplexType> C buildComplexInstance(
-          final CommonEdmEnabledODataClient<?> client,
-          final String name,
-          final Iterator<CommonODataProperty> properties) {
-
-    for (C complex : (Iterable<C>) ServiceLoader.load(AbstractComplexType.class)) {
-      final ComplexType ann = complex.getClass().getAnnotation(ComplexType.class);
-      final String fn = ann == null ? null : ClassUtils.getNamespace(complex.getClass()) + "." + ann.name();
-
-      if (name.equals(fn)) {
-        populate(client, complex, Property.class, properties);
-        return complex;
+      try {
+        internalRef = (Class<?>) ((ParameterizedType) typeRef).getActualTypeArguments()[0];
+      } catch (ClassCastException e) {
+        internalRef = (Class<?>) typeRef;
       }
     }
 
-    return null;
-  }
-
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public static Object getValueFromProperty(
-          final CommonEdmEnabledODataClient<?> client,
-          final CommonODataProperty property, final Type type)
-          throws InstantiationException, IllegalAccessException {
-
-    final Object value;
-
     if (property == null || property.hasNullValue()) {
-      value = null;
-    } else if (property.hasCollectionValue()) {
-      value = new ArrayList();
+      res = null;
+    } else if (property.hasComplexValue()) {
+      res = Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {internalRef},
+              ComplexTypeInvocationHandler.getInstance(
+              client, property.getValue().asComplex(), internalRef, entityHandler));
 
-      final ParameterizedType collType = (ParameterizedType) type;
-      final Class<?> collItemClass = (Class<?>) collType.getActualTypeArguments()[0];
+    } else if (property.hasCollectionValue()) {
+      final ArrayList<Object> collection = new ArrayList<Object>();
 
       final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
       while (collPropItor.hasNext()) {
-        final ODataValue odataValue = collPropItor.next();
-        if (odataValue.isPrimitive()) {
-          ((Collection) value).add(primitiveValueToObject(odataValue.asPrimitive()));
-        }
-        if (odataValue.isComplex()) {
+        final ODataValue value = collPropItor.next();
+        if (value.isPrimitive()) {
+          collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+        } else if (value.isComplex()) {
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
-                  new Class<?>[] {collItemClass},
-                  new ComplexTypeInvocationHandler(client, odataValue.asComplex(), collItemClass, null));
-          populate(client, collItem, Property.class, odataValue.asComplex().iterator());
-          ((Collection) value).add(collItem);
+                  new Class<?>[] {internalRef},
+                  ComplexTypeInvocationHandler.getInstance(
+                  client, value.asComplex(), internalRef, entityHandler));
+
+          collection.add(collItem);
         }
       }
-    } else if (property.hasPrimitiveValue()) {
-      value = primitiveValueToObject(property.getPrimitiveValue());
+
+      res = collection;
     } else {
-      throw new IllegalArgumentException("Invalid property " + property);
+      res = CoreUtils.primitiveValueToObject(property.getPrimitiveValue());
     }
 
-    return value;
+    return res;
   }
 
   private static String firstValidEntityKey(final Class<?> entityTypeRef) {

@@ -1,4 +1,4 @@
-/* 
+/**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,21 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm.primitivetype;
-
-/**
- * Implementation of the EDM primitive type Time.
- */
-public final class EdmTime extends EdmDuration {
-
-  private static final EdmTime INSTANCE = new EdmTime();
-
-  public static EdmTime getInstance() {
-    return INSTANCE;
-  }
-
-  {
-    uriPrefix = "time'";
-    uriSuffix = "'";
-  }
-}
+File basepkg = new File( basedir, "target/generated-sources/ojc-plugin/org/apache/olingo/fit/proxy/v3" );
+assert basepkg.isDirectory() && basepkg.listFiles().length>0;

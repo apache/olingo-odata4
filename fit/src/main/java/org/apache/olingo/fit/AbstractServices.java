@@ -83,6 +83,7 @@ import org.apache.olingo.commons.core.data.AtomEntityImpl;
 import org.apache.olingo.commons.core.data.AtomPropertyImpl;
 import org.apache.olingo.commons.core.data.AtomSerializer;
 import org.apache.olingo.commons.core.data.JSONEntityImpl;
+import org.apache.olingo.commons.core.data.JSONPropertyImpl;
 import org.apache.olingo.commons.core.data.NullValueImpl;
 import org.apache.olingo.commons.core.data.PrimitiveValueImpl;
 import org.apache.olingo.fit.metadata.EntityType;
@@ -208,6 +209,50 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }
   }
+
+  // ----------------------------------------------
+  // just for non nullable property test into PropertyTestITCase
+  // ----------------------------------------------
+  @PATCH
+  @Path("/Driver('2')")
+  public Response patchDriver() {
+    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
+  }
+
+  @GET
+  @Path("/StoredPIs(1000)")
+  public Response getStoredPI(@Context UriInfo uriInfo) {
+    final JSONEntityImpl entity = new JSONEntityImpl();
+    entity.setType("Microsoft.Test.OData.Services.ODataWCFService.StoredPI");
+    final Property id = new JSONPropertyImpl();
+    id.setType("Edm.Int32");
+    id.setName("StoredPIID");
+    id.setValue(new PrimitiveValueImpl("1000"));
+    entity.getProperties().add(id);
+    final Link edit = new LinkImpl();
+    edit.setHref(uriInfo.getRequestUri().toASCIIString());
+    edit.setRel("edit");
+    edit.setTitle("StoredPI");
+    entity.setEditLink(edit);
+
+    final ByteArrayOutputStream content = new ByteArrayOutputStream();
+    final OutputStreamWriter writer = new OutputStreamWriter(content, Constants.ENCODING);
+    try {
+      mapper.writeValue(writer, new JSONEntryContainer(null, null, entity));
+      return xml.createResponse(new ByteArrayInputStream(content.toByteArray()), null, Accept.JSON_FULLMETA);
+    } catch (Exception e) {
+      LOG.error("While creating StoredPI", e);
+      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version),e);
+    }
+  }
+
+  @PATCH
+  @Path("/StoredPIs(1000)")
+  public Response patchStoredPI() {
+    // just for non nullable property test into PropertyTestITCase
+    return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), new Exception("Non nullable properties"));
+  }
+  // ----------------------------------------------
 
   protected Response bodyPartRequest(final MimeBodyPart body) throws Exception {
     return bodyPartRequest(body, Collections.<String, String>emptyMap());
@@ -420,7 +465,7 @@ public abstract class AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcont = mapper.readValue(IOUtils.toInputStream(changes, Constants.ENCODING),
                 new TypeReference<JSONEntityImpl>() {
-                });
+        });
 
         entryChanges = dataBinder.toAtomEntity(jcont.getPayload());
       }
@@ -607,8 +652,8 @@ public abstract class AbstractServices {
         } else {
           final ResWrap<JSONEntityImpl> jcontainer =
                   mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                          new TypeReference<JSONEntityImpl>() {
-                          });
+                  new TypeReference<JSONEntityImpl>() {
+          });
 
           entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -635,7 +680,7 @@ public abstract class AbstractServices {
       ResWrap<AtomEntityImpl> result = atomDeserializer.read(serialization, AtomEntityImpl.class);
       result = new ResWrap<AtomEntityImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
+              + entitySetName + Constants.get(version, ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
               null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
@@ -697,7 +742,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Person", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -749,9 +794,9 @@ public abstract class AbstractServices {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
                 replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
-                        "\"Salary\":" + newSalary + ",").
+                "\"Salary\":" + newSalary + ",").
                 replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                        "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
@@ -790,7 +835,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("Product", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -826,7 +871,7 @@ public abstract class AbstractServices {
       final FSManager fsManager = FSManager.instance(version);
       fsManager.putInMemory(xml.writeEntity(Accept.ATOM, container),
               fsManager.getAbsolutePath(Commons.getEntityBasePath("ComputerDetail", entityId) + Constants.get(version,
-                              ConstantKey.ENTITY), Accept.ATOM));
+              ConstantKey.ENTITY), Accept.ATOM));
 
       return utils.getValue().createResponse(null, null, null, utils.getKey(), Response.Status.NO_CONTENT);
     } catch (Exception e) {
@@ -971,7 +1016,7 @@ public abstract class AbstractServices {
         } else {
           mapper.writeValue(
                   writer, new JSONFeedContainer(container.getContextURL(), container.getMetadataETag(),
-                          dataBinder.toJSONEntitySet(container.getPayload())));
+                  dataBinder.toJSONEntitySet(container.getPayload())));
         }
 
         return xml.createResponse(
@@ -1696,8 +1741,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONFeedContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntitySet((AtomEntitySetImpl) container.getPayload())));
             }
           } else {
             final ResWrap<Entity> container =
@@ -1710,8 +1755,8 @@ public abstract class AbstractServices {
               mapper.writeValue(
                       writer,
                       new JSONEntryContainer(container.getContextURL(),
-                              container.getMetadataETag(),
-                              dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntity((AtomEntityImpl) container.getPayload())));
             }
           }
 
@@ -1781,9 +1826,9 @@ public abstract class AbstractServices {
 
     final ResWrap<AtomPropertyImpl> container = new ResWrap<AtomPropertyImpl>(
             URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                    + (version.compareTo(ODataServiceVersion.V40) >= 0
-                    ? entitySetName + "(" + entityId + ")/" + path
-                    : property.getType())),
+            + (version.compareTo(ODataServiceVersion.V40) >= 0
+            ? entitySetName + "(" + entityId + ")/" + path
+            : property.getType())),
             entryContainer.getMetadataETag(),
             property);
 
@@ -1791,9 +1836,9 @@ public abstract class AbstractServices {
             null,
             searchForValue
             ? IOUtils.toInputStream(
-                    container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
-                    ? StringUtils.EMPTY
-                    : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
+            container.getPayload().getValue() == null || container.getPayload().getValue().isNull()
+            ? StringUtils.EMPTY
+            : container.getPayload().getValue().asPrimitive().get(), Constants.ENCODING)
             : utils.writeProperty(acceptType, container),
             Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId), version),
             acceptType);

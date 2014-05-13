@@ -127,7 +127,7 @@ public class PrimitiveValueTest extends AbstractTest {
             setText(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Time, value.asPrimitive().getTypeKind());
     // performed cast to improve the check
-    assertEquals(primitive, value.asPrimitive().toCastValue(Duration.class).toString());
+    assertEquals("-780670.5063807", value.asPrimitive().toCastValue(BigDecimal.class).toString());
   }
 
   @Test
