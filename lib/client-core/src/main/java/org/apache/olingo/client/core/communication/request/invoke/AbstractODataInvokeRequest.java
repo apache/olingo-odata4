@@ -98,9 +98,6 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
             : format.toString(odataClient.getServiceVersion());
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public void setFormat(final ODataPubFormat format) {
     final String _format = getActualFormat(format);

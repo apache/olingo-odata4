@@ -168,7 +168,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   protected void attach() {
-    if (!entityContext.isAttached(targetHandler)) {
+    if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
       entityContext.attach(targetHandler, AttachedEntityStatus.ATTACHED);
     }
   }

@@ -191,6 +191,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     resetBossAddressReq.setFormat(format);
     final ODataProperty resetBossAddress = resetBossAddressReq.execute().getBody();
     assertNotNull(resetBossAddress);
+    assertEquals(address, resetBossAddress.getComplexValue());
   }
 
   @Test

@@ -49,7 +49,7 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
 
   @Override
   protected ODataPubFormat getPOSTParameterFormat() {
-    return format;
+    return format == null ? getDefaultFormat() : format;
   }
 
   @Override

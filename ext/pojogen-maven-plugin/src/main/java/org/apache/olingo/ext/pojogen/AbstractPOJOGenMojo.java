@@ -227,8 +227,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         namespaces.add(schema.getNamespace().toLowerCase());
       }
 
-      final Set<String> complexTypeNames = new HashSet<String>();
-      final File services = mkdir("META-INF/services");
+      final StringBuilder enumTypeNames = new StringBuilder();
 
       for (EdmSchema schema : edm.getSchemas()) {
         createUtility(edm, schema, basePackage);
@@ -249,6 +248,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         // write types into types package
         for (EdmEnumType enumType : schema.getEnumTypes()) {
           final String className = utility.capitalize(enumType.getName());
+          enumTypeNames.append(typesPkg).append('.').append(className).append('\n');
           objs.clear();
           objs.put("enumType", enumType);
           parseObj(typesBaseDir, typesPkg, "enumType", className + ".java", objs);
@@ -256,7 +256,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
         for (EdmComplexType complex : schema.getComplexTypes()) {
           final String className = utility.capitalize(complex.getName());
-          complexTypeNames.add(typesPkg + "." + className);
           objs.clear();
           objs.put("complexType", complex);
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
@@ -324,10 +323,10 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
             }
           }
         }
-
-        parseObj(services, true, null, "services", "org.apache.olingo.ext.proxy.api.AbstractComplexType",
-                Collections.singletonMap("services", (Object) complexTypeNames));
       }
+
+      final File metaInf = mkdir("META-INF");
+      FileUtils.fileWrite(metaInf.getPath() + File.separator + "enumTypes", enumTypeNames.toString());
     } catch (Exception t) {
       getLog().error(t);
 

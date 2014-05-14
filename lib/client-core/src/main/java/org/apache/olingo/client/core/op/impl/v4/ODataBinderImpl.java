@@ -313,7 +313,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
       final ODataLinkedComplexValue lcValue =
               ((ODataClient) client).getObjectFactory().newLinkedComplexValue(type == null ? null : type.toString());
 
-      for (Property property : valuable.getValue().asComplex().get()) {
+      for (Property property : valuable.getValue().asLinkedComplex().get()) {
         lcValue.add(getODataProperty(new ResWrap<Property>(contextURL, metadataETag, property)));
       }
 

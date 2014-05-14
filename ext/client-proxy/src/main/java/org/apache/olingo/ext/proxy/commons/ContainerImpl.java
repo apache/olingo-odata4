@@ -410,7 +410,7 @@ class ContainerImpl implements Container {
       final URI targetURI = currentStatus == AttachedEntityStatus.NEW
               ? URI.create("$" + startingPos) : URIUtils.getURI(
               factory.getServiceRoot(),
-              CoreUtils.getEditMediaLink(streamedChanges.getKey(), entity).toASCIIString());
+              CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
       batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 

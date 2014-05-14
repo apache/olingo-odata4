@@ -111,7 +111,7 @@ public class V4Services extends AbstractServices {
   protected V4Services(final Metadata metadata) throws Exception {
     super(ODataServiceVersion.V40, metadata);
   }
-  
+
   @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(
@@ -1239,26 +1239,15 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept, version);
       }
 
-      final Accept contentTypeValue = Accept.parse(contentType, version);
-      Property property;
-      if (contentTypeValue == Accept.XML) {
-        final ResWrap<AtomPropertyImpl> paramContainer = atomDeserializer.read(
-                IOUtils.toInputStream(param, Constants.ENCODING), AtomPropertyImpl.class);
-        property = paramContainer.getPayload();
-      } else {
-        final ResWrap<JSONPropertyImpl> paramContainer =
-                mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
-        property = paramContainer.getPayload();
-      }
+      final Accept contentTypeValue = Accept.parse(contentType, version);      
+      final AtomEntityImpl entity = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
-      assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(property.getType());
-      assert property.getValue().isComplex();
+      assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());
+      assert entity.getProperty("address").getValue().isComplex();
 
       return xml.createResponse(
               null,
-              IOUtils.toInputStream(param, Constants.ENCODING),
+              xml.writeProperty(acceptType, entity.getProperty("address")),
               null,
               acceptType);
     } catch (Exception e) {

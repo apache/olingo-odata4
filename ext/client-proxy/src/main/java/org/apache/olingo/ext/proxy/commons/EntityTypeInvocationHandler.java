@@ -289,7 +289,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
       if (res == null) {
         final URI link = URIUtils.getURI(
                 containerHandler.getFactory().getServiceRoot(),
-                CoreUtils.getEditMediaLink(property.name(), getEntity()).toASCIIString());
+                CoreUtils.getMediaEditLink(property.name(), getEntity()).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
