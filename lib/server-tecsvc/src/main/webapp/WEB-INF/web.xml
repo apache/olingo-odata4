@@ -25,7 +25,7 @@
 	<display-name>Apache Olingo OData 4.0 Technical Service</display-name>
 
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	
 	<servlet>
