@@ -21,7 +21,6 @@ package org.apache.olingo.fit.proxy.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
@@ -31,10 +30,9 @@ import org.junit.Test;
 public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   private InMemoryEntities getContainer() {
-    final EntityContainerFactory<EdmEnabledODataClient> ecf = 
-            EntityContainerFactory.getV4(testKeyAsSegmentServiceRootURL);
-    ecf.getClient().getConfiguration().setKeyAsSegment(true);
-    ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final EntityContainerFactory ecf = EntityContainerFactory.getV3(testKeyAsSegmentServiceRootURL);
+    ecf.getConfiguration().setKeyAsSegment(true);
+    ecf.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     return ecf.getEntityContainer(InMemoryEntities.class);
   }
 

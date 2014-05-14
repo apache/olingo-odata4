@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.fit.proxy.v4;
 
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI;
 import org.junit.Test;
 
 /**
@@ -33,7 +33,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void nullNullableProperty() {
-    Customer customer = container.getCustomers().get(1);
+    final Customer customer = container.getCustomers().get(1);
     customer.setFirstName(null);
     container.flush();
 
