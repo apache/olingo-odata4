@@ -18,9 +18,13 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.util.List;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -28,9 +32,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.request.v4.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
-import static org.apache.olingo.fit.v4.AbstractTestITCase.client;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInlineEntity;
@@ -38,17 +40,13 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataEntitySet;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
-  public void asyncRequestV3Style() throws InterruptedException, ExecutionException {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+  public void clientAsync() throws InterruptedException, ExecutionException {
+    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
@@ -120,7 +118,18 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertTrue(found);
   }
 
-  private void asynOrders(final ODataPubFormat format) {
+  @Test
+  public void withInlineEntryAsAtom() {
+    withInlineEntry(ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void withInlineEntryAsJSON() {
+    // this needs to be full, otherwise there is no mean to recognize links
+    withInlineEntry(ODataPubFormat.JSON_FULL_METADATA);
+  }
+
+  private void asyncOrders(final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
@@ -144,23 +153,12 @@ public class AsyncTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void withInlineEntryAsAtom() {
-    withInlineEntry(ODataPubFormat.ATOM);
+  public void asyncOrdersAsAtom() {
+    asyncOrders(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void withInlineEntryAsJSON() {
-    // this needs to be full, otherwise there is no mean to recognize links
-    withInlineEntry(ODataPubFormat.JSON_FULL_METADATA);
-  }
-
-  @Test
-  public void asynOrdersAsAtom() {
-    asynOrders(ODataPubFormat.ATOM);
-  }
-
-  @Test
-  public void asynOrdersAsJSON() {
-    asynOrders(ODataPubFormat.JSON);
+  public void asyncOrdersAsJSON() {
+    asyncOrders(ODataPubFormat.JSON);
   }
 }
