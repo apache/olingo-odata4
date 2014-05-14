@@ -125,10 +125,10 @@ public class PrimitiveValueTest extends AbstractTest {
     final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Time).setText(primitive).build();
     assertEquals(EdmPrimitiveTypeKind.Time, value.asPrimitive().getTypeKind());
-    assertEquals(-780670.5063807, value.asPrimitive().toCastValue(BigDecimal.class));
+    assertEquals(BigDecimal.valueOf(-780670.5063807), value.asPrimitive().toCastValue(BigDecimal.class));
 
     final ODataPrimitiveValue write = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Time).setValue(-780670.5063807).build();
+            setType(EdmPrimitiveTypeKind.Time).setValue(BigDecimal.valueOf(-780670.5063807)).build();
     assertEquals(primitive, write.toString());
   }
 
