@@ -20,10 +20,13 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -225,12 +228,33 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
       addPropertyChanges(property.name(), value);
+
+      if (value != null) {
+        final Collection<?> coll;
+        if (Collection.class.isAssignableFrom(value.getClass())) {
+          coll = Collection.class.cast(value);
+        } else {
+          coll = Collections.singleton(value);
+        }
+
+        for (Object item : coll) {
+          if (item instanceof Proxy) {
+            final InvocationHandler handler = Proxy.getInvocationHandler(item);
+            if ((handler instanceof ComplexTypeInvocationHandler)
+                    && ((ComplexTypeInvocationHandler) handler).getEntityHandler() == null) {
+              ((ComplexTypeInvocationHandler) handler).setEntityHandler(this);
+            }
+          }
+        }
+      }
     }
+
     attach(AttachedEntityStatus.CHANGED);
   }
 

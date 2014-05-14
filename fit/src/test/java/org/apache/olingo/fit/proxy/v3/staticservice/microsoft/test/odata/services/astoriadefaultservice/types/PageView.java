@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -148,9 +149,9 @@ public interface PageView
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Duration getTimeSpentOnPage();
+    BigDecimal getTimeSpentOnPage();
 
-    void setTimeSpentOnPage(final Duration _timeSpentOnPage);    
+    void setTimeSpentOnPage(final BigDecimal _timeSpentOnPage);    
     
     
     @Property(name = "PageUrl", 

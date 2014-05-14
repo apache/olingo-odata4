@@ -23,9 +23,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
@@ -248,7 +250,10 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           parseObj(typesBaseDir, typesPkg, "enumType", className + ".java", objs);
         }
 
+        final List<EdmComplexType> complexes = new ArrayList<EdmComplexType>();
+        
         for (EdmComplexType complex : schema.getComplexTypes()) {
+          complexes.add(complex);
           final String className = utility.capitalize(complex.getName());
           objs.clear();
           objs.put("complexType", complex);
@@ -297,6 +302,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.clear();
           objs.put("container", container);
           objs.put("namespace", schema.getNamespace());
+          objs.put("complexes", complexes);
 
           parseObj(base, pkg, "container",
                   utility.capitalize(container.getName()) + ".java", objs);

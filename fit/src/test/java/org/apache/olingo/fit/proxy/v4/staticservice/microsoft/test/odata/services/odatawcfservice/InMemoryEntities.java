@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
@@ -166,4 +168,25 @@ public interface InMemoryEntities extends Container {
     );
   
       }
-}
+
+      ComplexFactory complexFactory();
+
+    interface ComplexFactory {
+          @Property(name = "Address",
+                type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
+
+          @Property(name = "HomeAddress",
+                type = "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress")
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress newHomeAddress();
+
+          @Property(name = "CompanyAddress",
+                type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress")
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress newCompanyAddress();
+
+          @Property(name = "AccountInfo",
+                type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
+      org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
+
+        }
+  }

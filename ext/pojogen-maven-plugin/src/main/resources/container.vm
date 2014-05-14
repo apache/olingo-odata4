@@ -24,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 #foreach($ns in $namespaces)
@@ -104,4 +105,18 @@ public interface $utility.capitalize($container.Name) extends Container {
   #end
   #end
   }
+
+  #if( $complexes.size() > 0 )
+    ComplexFactory complexFactory();
+
+    interface ComplexFactory {
+    #foreach($complex in $complexes)
+      #set( $type = "${namespace}.${complex.Name}" )
+      @Property(name = "$complex.Name",
+                type = "$type")
+      $utility.getJavaType($type) new$utility.capitalize($complex.Name)();
+
+    #end
+    }
+  #end   
 }

@@ -49,19 +49,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V30/OpenType.svc")
-public class V3OpenType {
+public class V3OpenType extends V3Services {
 
   private static final Pattern GUID = Pattern.compile("guid'(.*)'");
 
-  private final V3Services services;
-
-  private final Metadata openMetadata;
-
   public V3OpenType() throws Exception {
-    this.openMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V30).
+    super(new Metadata(FSManager.instance(ODataServiceVersion.V30).
             readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
-            Accept.XML), ODataServiceVersion.V30);
-    this.services = new V3Services(this.openMetadata);
+            Accept.XML), ODataServiceVersion.V30));
   }
 
   private Response replaceServiceName(final Response response) {
@@ -98,13 +93,15 @@ public class V3OpenType {
   @GET
   @Path("/$metadata")
   @Produces(MediaType.APPLICATION_XML)
+  @Override
   public Response getMetadata() {
-    return services.getMetadata("openType" + StringUtils.capitalize(
+    return super.getMetadata("openType" + StringUtils.capitalize(
             Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)));
   }
 
   @GET
   @Path("/{entitySetName}({entityId})")
+  @Override
   public Response getEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -115,7 +112,7 @@ public class V3OpenType {
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
     final Matcher matcher = GUID.matcher(entityId);
-    return replaceServiceName(services.getEntityInternal(
+    return replaceServiceName(super.getEntityInternal(
             uriInfo.getRequestUri().toASCIIString(), accept, entitySetName,
             matcher.matches() ? matcher.group(1) : entityId, format, expand, select, false));
   }
@@ -124,6 +121,7 @@ public class V3OpenType {
   @Path("/{entitySetName}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  @Override
   public Response postNewEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -132,17 +130,18 @@ public class V3OpenType {
           @PathParam("entitySetName") final String entitySetName,
           final String entity) {
 
-    return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+    return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
 
   @DELETE
   @Path("/{entitySetName}({entityId})")
+  @Override
   public Response removeEntity(
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId) {
 
     final Matcher matcher = GUID.matcher(entityId);
-    return replaceServiceName(services.removeEntity(entitySetName,
+    return replaceServiceName(super.removeEntity(entitySetName,
             matcher.matches() ? matcher.group(1) : entityId));
   }
 }

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -148,9 +149,9 @@ public interface LastLogin
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    Duration getDuration();
+    BigDecimal getDuration();
 
-    void setDuration(final Duration _duration);    
+    void setDuration(final BigDecimal _duration);    
     
     
 

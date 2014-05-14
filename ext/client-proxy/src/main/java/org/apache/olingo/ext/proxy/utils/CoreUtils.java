@@ -45,10 +45,13 @@ import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -174,12 +177,18 @@ public final class CoreUtils {
           final String property,
           final Object obj) {
 
-    final EdmType edmType = edmProperty.getType();
+    final EdmTypeInfo type;
+    if (edmProperty == null) {
+      // maybe opentype ...
+      type = null;
+    } else {
+      final EdmType edmType = edmProperty.getType();
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
-            edmProperty.isCollection()
-            ? "Collection(" + edmType.getFullQualifiedName().toString() + ")"
-            : edmType.getFullQualifiedName().toString()).build();
+      type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+              edmProperty.isCollection()
+              ? "Collection(" + edmType.getFullQualifiedName().toString() + ")"
+              : edmType.getFullQualifiedName().toString()).build();
+    }
 
     return getODataProperty(client, property, type, obj);
   }
@@ -190,33 +199,87 @@ public final class CoreUtils {
     CommonODataProperty oprop;
 
     try {
-      if (type == null || obj == null) {
+      if (obj == null) {
         oprop = client.getObjectFactory().newPrimitiveProperty(name, null);
-      } else if (type.isCollection()) {
-        // create collection property
-        oprop = client.getObjectFactory().newCollectionProperty(name, getODataValue(client, type, obj).asCollection());
-      } else if (type.isPrimitiveType()) {
-        // create a primitive property
-        oprop = client.getObjectFactory().newPrimitiveProperty(name, getODataValue(client, type, obj).asPrimitive());
-      } else if (type.isComplexType()) {
-        // create a complex property
-        oprop = client.getObjectFactory().newComplexProperty(name, getODataValue(client, type, obj).asComplex());
-      } else if (type.isEnumType()) {
-        if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
-          throw new UnsupportedInV3Exception();
-        } else {
-          oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
-                  newEnumProperty(name,
-                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
-                          asEnum());
-        }
       } else {
-        throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
+        final EdmTypeInfo valueType;
+        if (type == null) {
+          valueType = guessTypeFromObject(client, obj);
+        } else {
+          valueType = type;
+        }
+
+        if (valueType.isCollection()) {
+          // create collection property
+          oprop = client.getObjectFactory().newCollectionProperty(name, getODataValue(client, valueType, obj).
+                  asCollection());
+        } else if (valueType.isPrimitiveType()) {
+          // create a primitive property
+          oprop = client.getObjectFactory().newPrimitiveProperty(name, getODataValue(client, valueType, obj).
+                  asPrimitive());
+        } else if (valueType.isComplexType()) {
+          // create a complex property
+          oprop = client.getObjectFactory().newComplexProperty(name, getODataValue(client, valueType, obj).
+                  asComplex());
+        } else if (valueType.isEnumType()) {
+          if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+            throw new UnsupportedInV3Exception();
+          } else {
+            oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
+                    newEnumProperty(name,
+                    ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, valueType, obj)).
+                    asEnum());
+          }
+        } else {
+          throw new UnsupportedOperationException("Usupported object type " + valueType.getFullQualifiedName());
+        }
       }
 
       return oprop;
     } catch (Exception e) {
       throw new IllegalStateException(e);
+    }
+  }
+
+  private static EdmTypeInfo guessTypeFromObject(
+          final CommonEdmEnabledODataClient<?> client, final Object obj) {
+
+    final EdmTypeInfo.Builder edmTypeInfo = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm());
+
+    if (Collection.class.isAssignableFrom(obj.getClass())) {
+      final EdmTypeInfo type = guessPrimitiveType(client, ClassUtils.extractTypeArg(obj.getClass()));
+      return edmTypeInfo.setTypeExpression(
+              "Collection(" + type.getFullQualifiedName() + ")").build();
+    } else if (obj instanceof Proxy) {
+      final Class<?> typeRef = obj.getClass().getInterfaces()[0];
+      final String ns = typeRef.getAnnotation(Namespace.class).value();
+      final String name = typeRef.getAnnotation(ComplexType.class).name();
+      return edmTypeInfo.setTypeExpression(new FullQualifiedName(ns, name).toString()).build();
+    } else {
+      return guessPrimitiveType(client, obj.getClass());
+    }
+  }
+
+  private static EdmTypeInfo guessPrimitiveType(
+          final CommonEdmEnabledODataClient<?> client, final Class<?> clazz) {
+    EdmPrimitiveTypeKind bckCandidate = null;
+
+    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+      if (kind.getSupportedVersions().contains(client.getServiceVersion())) {
+        final Class<?> target = EdmPrimitiveTypeFactory.getInstance(kind).getDefaultType();
+
+        if (clazz.equals(target)) {
+          return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(kind.toString()).build();
+        } else if (target.isAssignableFrom(clazz)) {
+          bckCandidate = kind;
+        }
+      }
+    }
+
+    if (bckCandidate == null) {
+      throw new IllegalArgumentException(clazz.getSimpleName() + " is not a simple type");
+    } else {
+      return new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(bckCandidate.toString()).build();
     }
   }
 
@@ -365,7 +428,7 @@ public final class CoreUtils {
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexTypeInvocationHandler.getInstance(
-                              client, property.getName(), getter.getReturnType(), null));
+                      client, property.getName(), getter.getReturnType(), null));
 
               populate(client, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -390,7 +453,7 @@ public final class CoreUtils {
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexTypeInvocationHandler.getInstance(
-                                  client, property.getName(), collItemClass, null));
+                          client, property.getName(), collItemClass, null));
 
                   populate(client, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -429,11 +492,12 @@ public final class CoreUtils {
     if (property == null || property.hasNullValue()) {
       res = null;
     } else if (property.hasComplexValue()) {
+
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexTypeInvocationHandler.getInstance(
-                      client, property.getValue().asComplex(), internalRef, entityHandler));
+              client, property.getValue().asComplex(), internalRef, entityHandler));
     } else if (property.hasCollectionValue()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -447,7 +511,7 @@ public final class CoreUtils {
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexTypeInvocationHandler.getInstance(
-                          client, value.asComplex(), internalRef, entityHandler));
+                  client, value.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
