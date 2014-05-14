@@ -19,6 +19,7 @@
 package org.apache.olingo.ext.proxy.utils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -239,15 +240,17 @@ public final class CoreUtils {
     }
   }
 
-  public static Object primitiveValueToObject(final ODataPrimitiveValue value) {
+  private static Object primitiveValueToObject(final ODataPrimitiveValue value, final Class<?> reference) {
     Object obj;
 
     try {
       obj = value.toValue() instanceof Timestamp
               ? value.toCastValue(Calendar.class)
-              : value.toValue();
+              : reference == null
+              ? value.toValue()
+              : value.toCastValue(reference);
     } catch (EdmPrimitiveTypeException e) {
-      LOG.warn("Could not read temporal value as Calendar, reverting to Timestamp", e);
+      LOG.warn("While casting primitive value {} to {}", value, reference, e);
       obj = value.toValue();
     }
 
@@ -262,6 +265,19 @@ public final class CoreUtils {
     bean.getClass().getMethod(setterName, getter.getReturnType()).invoke(bean, value);
   }
 
+  private static Class<?> getPropertyClass(final Class<?> entityClass, final String propertyName) {
+    Class<?> propertyClass = null;
+    try {
+      final Field field = entityClass.getField(propertyName);
+      if (field != null) {
+        propertyClass = field.getType();
+      }
+    } catch (Exception e) {
+      LOG.error("Could not determine the Java type of {}", propertyName, e);
+    }
+    return propertyClass;
+  }
+
   public static Object getKey(
           final CommonEdmEnabledODataClient<?> client, final Class<?> entityTypeRef, final CommonODataEntity entity) {
 
@@ -272,7 +288,8 @@ public final class CoreUtils {
       if (keyRef == null) {
         final CommonODataProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
         if (property != null && property.hasPrimitiveValue()) {
-          res = primitiveValueToObject(property.getPrimitiveValue());
+          res = primitiveValueToObject(
+                  property.getPrimitiveValue(), getPropertyClass(entityTypeRef, property.getName()));
         }
       } else {
         try {
@@ -332,7 +349,8 @@ public final class CoreUtils {
             if (property.hasNullValue()) {
               setPropertyValue(bean, getter, null);
             } else if (property.hasPrimitiveValue()) {
-              setPropertyValue(bean, getter, primitiveValueToObject(property.getPrimitiveValue()));
+              setPropertyValue(bean, getter, primitiveValueToObject(
+                      property.getPrimitiveValue(), getPropertyClass(reference, property.getName())));
             } else if (property.hasComplexValue()) {
               final Object complex = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
@@ -356,7 +374,8 @@ public final class CoreUtils {
               while (collPropItor.hasNext()) {
                 final ODataValue value = collPropItor.next();
                 if (value.isPrimitive()) {
-                  collection.add(primitiveValueToObject(value.asPrimitive()));
+                  collection.add(primitiveValueToObject(
+                          value.asPrimitive(), getPropertyClass(reference, property.getName())));
                 } else if (value.isComplex()) {
                   final Object collItem = Proxy.newProxyInstance(
                           Thread.currentThread().getContextClassLoader(),
@@ -436,7 +455,7 @@ public final class CoreUtils {
       while (collPropItor.hasNext()) {
         final ODataValue value = collPropItor.next();
         if (value.isPrimitive()) {
-          collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive()));
+          collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive(), internalRef));
         } else if (value.isComplex()) {
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
@@ -452,7 +471,7 @@ public final class CoreUtils {
     } else if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue()) {
       res = buildEnumInstance(((ODataProperty) property).getEnumValue());
     } else {
-      res = primitiveValueToObject(property.getPrimitiveValue());
+      res = primitiveValueToObject(property.getPrimitiveValue(), internalRef);
     }
 
     return res;
