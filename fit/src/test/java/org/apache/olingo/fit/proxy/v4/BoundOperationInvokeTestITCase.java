@@ -41,7 +41,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void getEmployeesCount() {
-    assertNotNull(container.getCompany().get(0).operations().getEmployeesCount());
+    assertNotNull(container.getCompany().get().operations().getEmployeesCount());
   }
 
   @Test
@@ -80,7 +80,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void increaseRevenue() {
-    final Long result = container.getCompany().get(0).operations().increaseRevenue(12L);
+    final Long result = container.getCompany().get().operations().increaseRevenue(12L);
     assertNotNull(result);
   }
 
@@ -103,7 +103,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
             resetAddress(Collections.singletonList(address), 0);
     assertEquals(2, person.getPersonID(), 0);
   }
-  
+
   @Test
   public void refreshDefaultPI() {
     final PaymentInstrument pi = container.getAccounts().get(101).operations().refreshDefaultPI(Calendar.getInstance());

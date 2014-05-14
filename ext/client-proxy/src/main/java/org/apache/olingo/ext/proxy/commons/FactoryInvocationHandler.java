@@ -20,45 +20,35 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-class FactoryInvocationHandler<C extends CommonEdmEnabledODataClient<?>> extends AbstractInvocationHandler<C>
-        implements OperationExecutor {
+class FactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
-  /**
-   * Logger.
-   */
-  private static final Logger LOG = LoggerFactory.getLogger(FactoryInvocationHandler.class);
+  private final EntityTypeInvocationHandler entityHandler;
 
-  private final EntityTypeInvocationHandler<C> entityHandler;
+  private final AbstractTypeInvocationHandler invokerHandler;
 
-  private final AbstractTypeInvocationHandler<C> invokerHandler;
+  static FactoryInvocationHandler getInstance(
+          final EntityTypeInvocationHandler entityHandler,
+          final AbstractTypeInvocationHandler targetHandler) {
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static FactoryInvocationHandler<?> getInstance(
-          final EntityTypeInvocationHandler<?> entityHandler,
-          final AbstractTypeInvocationHandler<?> targetHandler) {
     return new FactoryInvocationHandler(entityHandler, targetHandler);
   }
 
-  @SuppressWarnings("unchecked")
   private FactoryInvocationHandler(
-          final EntityTypeInvocationHandler<C> entityHandler,
-          final AbstractTypeInvocationHandler<C> targetHandler) {
+          final EntityTypeInvocationHandler entityHandler,
+          final AbstractTypeInvocationHandler targetHandler) {
+
     super(targetHandler.containerHandler.getClient(), targetHandler.containerHandler);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
@@ -70,15 +60,12 @@ class FactoryInvocationHandler<C extends CommonEdmEnabledODataClient<?>> extends
         throw new UnsupportedOperationException("Unsupported method " + method.getName());
       }
 
-      final ComplexTypeInvocationHandler<?> complexTypeHandler =
-              ComplexTypeInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler);
-
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              complexTypeHandler);
+              ComplexTypeInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
     } else {
-      throw new UnsupportedOperationException("Method not found: " + method);
+      throw new NoSuchMethodException(method.getName());
     }
   }
 }

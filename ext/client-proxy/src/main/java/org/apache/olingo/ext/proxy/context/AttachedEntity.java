@@ -22,16 +22,16 @@ import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 
 public class AttachedEntity {
 
-  private final EntityTypeInvocationHandler<?> entity;
+  private final EntityTypeInvocationHandler entity;
 
   private final AttachedEntityStatus status;
 
-  public AttachedEntity(final EntityTypeInvocationHandler<?> entity, final AttachedEntityStatus status) {
+  public AttachedEntity(final EntityTypeInvocationHandler entity, final AttachedEntityStatus status) {
     this.entity = entity;
     this.status = status;
   }
 
-  public EntityTypeInvocationHandler<?> getEntity() {
+  public EntityTypeInvocationHandler getEntity() {
     return entity;
   }
 

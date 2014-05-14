@@ -27,12 +27,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmOperation;
@@ -42,11 +40,8 @@ import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> extends AbstractInvocationHandler<C>
-        implements OperationExecutor {
+class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
@@ -56,29 +51,19 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
 
   private final String serviceRoot;
 
-  /**
-   * Logger.
-   */
-  private static final Logger LOG = LoggerFactory.getLogger(OperationInvocationHandler.class);
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static OperationInvocationHandler<?> getInstance(final EntityContainerInvocationHandler<?> containerHandler) {
+  static OperationInvocationHandler getInstance(final EntityContainerInvocationHandler containerHandler) {
     return new OperationInvocationHandler(containerHandler);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static OperationInvocationHandler<?> getInstance(final EntityTypeInvocationHandler<?> entityHandler) {
+  static OperationInvocationHandler getInstance(final EntityTypeInvocationHandler entityHandler) {
     return new OperationInvocationHandler(entityHandler);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static OperationInvocationHandler<?> getInstance(final EntityCollectionInvocationHandler<?, ?> collectionHandler) {
+  static OperationInvocationHandler getInstance(final EntityCollectionInvocationHandler<?> collectionHandler) {
     return new OperationInvocationHandler(collectionHandler);
   }
 
-  @SuppressWarnings("unchecked")
-  private OperationInvocationHandler(final EntityContainerInvocationHandler<C> containerHandler) {
-
+  private OperationInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
     super(containerHandler.getClient(), containerHandler);
 
     this.target = containerHandler;
@@ -89,8 +74,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
     this.serviceRoot = containerHandler.getFactory().getServiceRoot();
   }
 
-  @SuppressWarnings("unchecked")
-  private OperationInvocationHandler(final EntityTypeInvocationHandler<C> entityHandler) {
+  private OperationInvocationHandler(final EntityTypeInvocationHandler entityHandler) {
     super(entityHandler.getClient(), entityHandler.containerHandler);
 
     this.target = entityHandler;
@@ -98,8 +82,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
     this.serviceRoot = containerHandler.getFactory().getServiceRoot();
   }
 
-  @SuppressWarnings("unchecked")
-  private OperationInvocationHandler(final EntityCollectionInvocationHandler<?, C> collectionHandler) {
+  private OperationInvocationHandler(final EntityCollectionInvocationHandler<?> collectionHandler) {
     super(collectionHandler.getClient(), collectionHandler.containerHandler);
 
     this.target = collectionHandler;
@@ -112,7 +95,6 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
@@ -156,7 +138,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
 
         return invokeOperation(operation, method, parameters, edmOperation.getKey(), edmOperation.getValue());
       } else {
-        throw new UnsupportedOperationException("Method not found: " + method);
+        throw new NoSuchMethodException(method.getName());
       }
     }
   }
@@ -179,7 +161,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
   }
 
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
-    final CommonODataEntity entity = ((EntityTypeInvocationHandler<?>) target).getEntity();
+    final CommonODataEntity entity = ((EntityTypeInvocationHandler) target).getEntity();
 
     ODataOperation boundOp = entity.getOperation(operation.name());
     if (boundOp == null) {
@@ -228,7 +210,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
     }
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(
-            URI.create(((EntityCollectionInvocationHandler<?, C>) target).getURI().toASCIIString()
+            URI.create(((EntityCollectionInvocationHandler<?>) target).getURI().toASCIIString()
                     + "/" + edmOperation.getName()), edmOperation);
   }
 }

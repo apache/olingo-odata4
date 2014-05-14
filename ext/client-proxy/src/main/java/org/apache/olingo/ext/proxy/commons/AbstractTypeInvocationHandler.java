@@ -47,8 +47,7 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
-        extends AbstractInvocationHandler<C> {
+public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
@@ -61,16 +60,15 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected final EntityTypeInvocationHandler<C> targetHandler;
+  protected final EntityTypeInvocationHandler targetHandler;
 
   protected Object internal;
 
-  @SuppressWarnings("unchecked")
   protected AbstractTypeInvocationHandler(
-          final C client,
+          final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityContainerInvocationHandler<C> containerHandler) {
+          final EntityContainerInvocationHandler containerHandler) {
 
     super(client, containerHandler);
     this.internal = internal;
@@ -79,10 +77,10 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   protected AbstractTypeInvocationHandler(
-          final C client,
+          final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityTypeInvocationHandler<C> targetHandler) {
+          final EntityTypeInvocationHandler targetHandler) {
 
     super(client, targetHandler == null ? null : targetHandler.containerHandler);
     this.internal = internal;
@@ -97,7 +95,6 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
@@ -163,7 +160,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
 
       return ClassUtils.returnVoid();
     } else {
-      throw new UnsupportedOperationException("Method not found: " + method);
+      throw new NoSuchMethodException(method.getName());
     }
   }
 
@@ -282,8 +279,7 @@ public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledOD
         throw new IllegalArgumentException("Invalid argument type");
       }
 
-      @SuppressWarnings("unchecked")
-      final EntityTypeInvocationHandler<C> linkedHandler = (EntityTypeInvocationHandler<C>) etih;
+      final EntityTypeInvocationHandler linkedHandler = (EntityTypeInvocationHandler) etih;
       if (!linkedHandler.getTypeRef().isAnnotationPresent(EntityType.class)) {
         throw new IllegalArgumentException("Invalid argument type " + linkedHandler.getTypeRef().getSimpleName());
       }

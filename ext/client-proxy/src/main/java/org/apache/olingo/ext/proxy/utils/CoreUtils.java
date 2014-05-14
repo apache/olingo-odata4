@@ -109,12 +109,12 @@ public final class CoreUtils {
         oo = obj;
       }
 
-      if (oo instanceof ComplexTypeInvocationHandler<?>) {
-        final Class<?> typeRef = ((ComplexTypeInvocationHandler<?>) oo).getTypeRef();
+      if (oo instanceof ComplexTypeInvocationHandler) {
+        final Class<?> typeRef = ((ComplexTypeInvocationHandler) oo).getTypeRef();
         final Object complex = Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {typeRef},
-                (ComplexTypeInvocationHandler<?>) oo);
+                (ComplexTypeInvocationHandler) oo);
 
         for (Method method : typeRef.getMethods()) {
           final Property complexPropertyAnn = method.getAnnotation(Property.class);
@@ -325,7 +325,7 @@ public final class CoreUtils {
       if (bean instanceof Proxy) {
         final InvocationHandler handler = Proxy.getInvocationHandler(bean);
         if (handler instanceof AbstractTypeInvocationHandler) {
-          typeRef = ((ComplexTypeInvocationHandler<?>) handler).getTypeRef();
+          typeRef = ((ComplexTypeInvocationHandler) handler).getTypeRef();
         } else {
           throw new IllegalStateException("Invalid bean " + bean);
         }
@@ -410,7 +410,7 @@ public final class CoreUtils {
           final CommonEdmEnabledODataClient<?> client,
           final CommonODataProperty property,
           final Type typeRef,
-          final EntityTypeInvocationHandler<?> entityHandler)
+          final EntityTypeInvocationHandler entityHandler)
           throws InstantiationException, IllegalAccessException {
 
     Class<?> internalRef;

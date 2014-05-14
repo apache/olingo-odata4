@@ -41,17 +41,16 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
-        extends AbstractTypeInvocationHandler<C> {
+public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  public static ComplexTypeInvocationHandler<?> getInstance(
+  public static ComplexTypeInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final String propertyName,
           final Class<?> reference,
-          final EntityTypeInvocationHandler<?> handler) {
-    
+          final EntityTypeInvocationHandler handler) {
+
     final Class<?> complexTypeRef;
     if (Collection.class.isAssignableFrom(reference)) {
       complexTypeRef = ClassUtils.extractTypeArg(reference);
@@ -70,25 +69,24 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
     final ODataComplexValue<? extends CommonODataProperty> complex =
             client.getObjectFactory().newComplexValue(typeName.toString());
 
-    return (ComplexTypeInvocationHandler<?>) ComplexTypeInvocationHandler.getInstance(
+    return (ComplexTypeInvocationHandler) ComplexTypeInvocationHandler.getInstance(
             client, complex, complexTypeRef, handler);
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public static ComplexTypeInvocationHandler<?> getInstance(
+  public static ComplexTypeInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityTypeInvocationHandler<?> handler) {
+          final EntityTypeInvocationHandler handler) {
 
     return new ComplexTypeInvocationHandler(client, complex, typeRef, handler);
   }
 
   public ComplexTypeInvocationHandler(
-          final C client,
+          final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityTypeInvocationHandler<C> handler) {
+          final EntityTypeInvocationHandler handler) {
 
     super(client, typeRef, complex, handler);
   }
@@ -163,7 +161,7 @@ public class ComplexTypeInvocationHandler<C extends CommonEdmEnabledODataClient<
 
     final EdmTypeInfo type = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(
-            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+                    edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
     client.getBinder().add(
             getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));

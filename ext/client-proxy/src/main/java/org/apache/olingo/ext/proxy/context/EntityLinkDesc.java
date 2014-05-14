@@ -34,16 +34,16 @@ public class EntityLinkDesc implements Serializable {
 
   private final String sourceName;
 
-  private final EntityTypeInvocationHandler<?> source;
+  private final EntityTypeInvocationHandler source;
 
-  private final Collection<EntityTypeInvocationHandler<?>> targets;
+  private final Collection<EntityTypeInvocationHandler> targets;
 
   private final ODataLinkType type;
 
   public EntityLinkDesc(
           final String sourceName,
-          final EntityTypeInvocationHandler<?> source,
-          final Collection<EntityTypeInvocationHandler<?>> target,
+          final EntityTypeInvocationHandler source,
+          final Collection<EntityTypeInvocationHandler> target,
           final ODataLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
@@ -53,12 +53,12 @@ public class EntityLinkDesc implements Serializable {
 
   public EntityLinkDesc(
           final String sourceName,
-          final EntityTypeInvocationHandler<?> source,
-          final EntityTypeInvocationHandler<?> target,
+          final EntityTypeInvocationHandler source,
+          final EntityTypeInvocationHandler target,
           final ODataLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
-    this.targets = Collections.<EntityTypeInvocationHandler<?>>singleton(target);
+    this.targets = Collections.<EntityTypeInvocationHandler>singleton(target);
     this.type = type;
   }
 
@@ -66,11 +66,11 @@ public class EntityLinkDesc implements Serializable {
     return sourceName;
   }
 
-  public EntityTypeInvocationHandler<?> getSource() {
+  public EntityTypeInvocationHandler getSource() {
     return source;
   }
 
-  public Collection<EntityTypeInvocationHandler<?>> getTargets() {
+  public Collection<EntityTypeInvocationHandler> getTargets() {
     return targets;
   }
 

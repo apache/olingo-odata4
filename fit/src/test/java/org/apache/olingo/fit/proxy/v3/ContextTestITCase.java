@@ -218,16 +218,14 @@ public class ContextTestITCase extends AbstractTestITCase {
     assertNotNull(customer.getOrders());
     assertEquals(3, customer.getOrders().size());
 
-    final EntityTypeInvocationHandler<?> source =
-            (EntityTypeInvocationHandler<?>) Proxy.getInvocationHandler(customer);
+    final EntityTypeInvocationHandler source = (EntityTypeInvocationHandler) Proxy.getInvocationHandler(customer);
 
     assertTrue(entityContext.isAttached(source));
     assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(source));
     assertEquals(3, ((Collection) (source.getLinkChanges().entrySet().iterator().next().getValue())).size());
 
     for (Order order : toBeLinked) {
-      final EntityTypeInvocationHandler<?> target =
-              (EntityTypeInvocationHandler<?>) Proxy.getInvocationHandler(order);
+      final EntityTypeInvocationHandler target = (EntityTypeInvocationHandler) Proxy.getInvocationHandler(order);
 
       assertTrue(entityContext.isAttached(target));
       assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(target));
@@ -423,7 +421,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   private void checkUnlink(
           final String sourceName,
-          final EntityTypeInvocationHandler<?> source) {
+          final EntityTypeInvocationHandler source) {
 
     boolean found = false;
     for (Map.Entry<NavigationProperty, Object> property : source.getLinkChanges().entrySet()) {
@@ -436,8 +434,8 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   private void checkLink(
           final String sourceName,
-          final EntityTypeInvocationHandler<?> source,
-          final EntityTypeInvocationHandler<?> target,
+          final EntityTypeInvocationHandler source,
+          final EntityTypeInvocationHandler target,
           final boolean isCollection) {
 
     boolean found = false;
@@ -461,9 +459,9 @@ public class ContextTestITCase extends AbstractTestITCase {
 
   private void checkUnidirectional(
           final String sourceName,
-          final EntityTypeInvocationHandler<?> source,
+          final EntityTypeInvocationHandler source,
           final String targetName,
-          final EntityTypeInvocationHandler<?> target,
+          final EntityTypeInvocationHandler target,
           final boolean isCollection) {
 
     checkLink(sourceName, source, target, isCollection);

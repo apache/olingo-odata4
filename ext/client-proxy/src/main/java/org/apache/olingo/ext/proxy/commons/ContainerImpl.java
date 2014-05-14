@@ -138,7 +138,7 @@ class ContainerImpl implements Container {
           throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
         }
 
-        final EntityTypeInvocationHandler<?> handler = items.get(changesetItemId);
+        final EntityTypeInvocationHandler handler = items.get(changesetItemId);
 
         if (handler != null) {
           if (res instanceof ODataEntityCreateResponse) {
@@ -156,7 +156,7 @@ class ContainerImpl implements Container {
   }
 
   private void batch(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
@@ -181,7 +181,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchCreate(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
@@ -193,7 +193,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdateMediaEntity(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -215,7 +215,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdateMediaResource(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -232,7 +232,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
 
@@ -255,7 +255,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final URI uri,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
@@ -281,7 +281,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchDelete(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
@@ -298,7 +298,7 @@ class ContainerImpl implements Container {
   }
 
   private int processEntityContext(
-          final EntityTypeInvocationHandler<?> handler,
+          final EntityTypeInvocationHandler handler,
           int pos,
           final TransactionItems items,
           final List<EntityLinkDesc> delayedUpdates,
@@ -323,13 +323,13 @@ class ContainerImpl implements Container {
               ? ODataLinkType.ENTITY_SET_NAVIGATION
               : ODataLinkType.ENTITY_NAVIGATION;
 
-      final Set<EntityTypeInvocationHandler<?>> toBeLinked = new HashSet<EntityTypeInvocationHandler<?>>();
+      final Set<EntityTypeInvocationHandler> toBeLinked = new HashSet<EntityTypeInvocationHandler>();
       final String serviceRoot = factory.getServiceRoot();
 
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
 
-        final EntityTypeInvocationHandler<?> target =
+        final EntityTypeInvocationHandler target =
                 (EntityTypeInvocationHandler) Proxy.getInvocationHandler(proxy);
 
         final AttachedEntityStatus status =
@@ -467,7 +467,7 @@ class ContainerImpl implements Container {
         sourceURI = URI.create("$" + sourcePos);
       }
 
-      for (EntityTypeInvocationHandler<?> target : delayedUpdate.getTargets()) {
+      for (EntityTypeInvocationHandler target : delayedUpdate.getTargets()) {
         status = EntityContainerFactory.getContext().entityContext().getStatus(target);
 
         final URI targetURI;
@@ -492,11 +492,11 @@ class ContainerImpl implements Container {
 
   private class TransactionItems {
 
-    private final List<EntityTypeInvocationHandler<?>> keys = new ArrayList<EntityTypeInvocationHandler<?>>();
+    private final List<EntityTypeInvocationHandler> keys = new ArrayList<EntityTypeInvocationHandler>();
 
     private final List<Integer> values = new ArrayList<Integer>();
 
-    public EntityTypeInvocationHandler<?> get(final Integer value) {
+    public EntityTypeInvocationHandler get(final Integer value) {
       if (value != null && values.contains(value)) {
         return keys.get(values.indexOf(value));
       } else {
@@ -504,7 +504,7 @@ class ContainerImpl implements Container {
       }
     }
 
-    public Integer get(final EntityTypeInvocationHandler<?> key) {
+    public Integer get(final EntityTypeInvocationHandler key) {
       if (key != null && keys.contains(key)) {
         return values.get(keys.indexOf(key));
       } else {
@@ -512,14 +512,14 @@ class ContainerImpl implements Container {
       }
     }
 
-    public void remove(final EntityTypeInvocationHandler<?> key) {
+    public void remove(final EntityTypeInvocationHandler key) {
       if (keys.contains(key)) {
         values.remove(keys.indexOf(key));
         keys.remove(key);
       }
     }
 
-    public void put(final EntityTypeInvocationHandler<?> key, final Integer value) {
+    public void put(final EntityTypeInvocationHandler key, final Integer value) {
       // replace just in case of null current value; otherwise add the new entry
       if (key != null && keys.contains(key) && values.get(keys.indexOf(key)) == null) {
         remove(key);
@@ -534,7 +534,7 @@ class ContainerImpl implements Container {
       return sortedValues;
     }
 
-    public boolean contains(final EntityTypeInvocationHandler<?> key) {
+    public boolean contains(final EntityTypeInvocationHandler key) {
       return keys.contains(key);
     }
 

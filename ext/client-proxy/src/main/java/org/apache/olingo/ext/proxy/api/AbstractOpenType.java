@@ -21,7 +21,7 @@ package org.apache.olingo.ext.proxy.api;
 import java.io.Serializable;
 import java.util.Collection;
 
-public abstract interface AbstractOpenType extends Serializable {
+public interface AbstractOpenType extends Serializable {
 
   void addAdditionalProperty(String name, Object value);
 

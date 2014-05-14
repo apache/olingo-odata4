@@ -26,7 +26,6 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,22 +49,22 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?>> implements InvocationHandler {
+abstract class AbstractInvocationHandler implements InvocationHandler {
 
   private static final long serialVersionUID = 358520026931462958L;
 
-  protected final C client;
+  protected final CommonEdmEnabledODataClient<?> client;
 
-  protected EntityContainerInvocationHandler<C> containerHandler;
+  protected EntityContainerInvocationHandler containerHandler;
 
   protected AbstractInvocationHandler(
-          final C client, final EntityContainerInvocationHandler<C> containerHandler) {
+          final CommonEdmEnabledODataClient<?> client, final EntityContainerInvocationHandler containerHandler) {
 
     this.client = client;
     this.containerHandler = containerHandler;
   }
 
-  protected C getClient() {
+  protected CommonEdmEnabledODataClient<?> getClient() {
     return client;
   }
 
@@ -106,7 +105,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(containerHandler, items, typeRef, entityContainerName, uri));
+            new EntityCollectionInvocationHandler(containerHandler, items, typeRef, uri));
   }
 
   protected <T> T getEntityProxy(
@@ -128,8 +127,8 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
           final String eTag,
           final boolean checkInTheContext) {
 
-    EntityTypeInvocationHandler<C> handler = (EntityTypeInvocationHandler<C>) EntityTypeInvocationHandler.getInstance(
-            entity, entitySetName, type, containerHandler);
+    EntityTypeInvocationHandler handler =
+            EntityTypeInvocationHandler.getInstance(entity, entitySetName, type, containerHandler);
 
     if (StringUtils.isNotBlank(eTag)) {
       // override ETag into the wrapped object.
@@ -137,8 +136,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
     }
 
     if (checkInTheContext && EntityContainerFactory.getContext().entityContext().isAttached(handler)) {
-      handler = (EntityTypeInvocationHandler<C>) EntityContainerFactory.getContext().entityContext().
-              getEntity(handler.getUUID());
+      handler = EntityContainerFactory.getContext().entityContext().getEntity(handler.getUUID());
     }
 
     return (T) Proxy.newProxyInstance(
@@ -157,7 +155,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
           IllegalArgumentException, InvocationTargetException {
 
     // 1. invoke params (if present)
-    final Map<String, ODataValue> parameterValues = new HashMap<String, ODataValue>();
+    final Map<String, ODataValue> parameterValues = new LinkedHashMap<String, ODataValue>();
     if (!parameters.isEmpty()) {
       for (Map.Entry<Parameter, Object> parameter : parameters.entrySet()) {
 

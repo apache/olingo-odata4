@@ -25,10 +25,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
+import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
+import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public final class EntityContainerInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
-        extends AbstractInvocationHandler<C> {
+public final class EntityContainerInvocationHandler extends AbstractInvocationHandler {
 
   private static final long serialVersionUID = 7379006755693410764L;
 
@@ -40,16 +41,16 @@ public final class EntityContainerInvocationHandler<C extends CommonEdmEnabledOD
 
   private final boolean defaultEC;
 
-  public static <C extends CommonEdmEnabledODataClient<?>> EntityContainerInvocationHandler<C> getInstance(
-          final C client, final Class<?> ref, final EntityContainerFactory factory) {
+  public static EntityContainerInvocationHandler getInstance(
+          final CommonEdmEnabledODataClient<?> client, final Class<?> ref, final EntityContainerFactory factory) {
 
-    final EntityContainerInvocationHandler<C> instance = new EntityContainerInvocationHandler<C>(client, ref, factory);
+    final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(client, ref, factory);
     instance.containerHandler = instance;
     return instance;
   }
 
   private EntityContainerInvocationHandler(
-          final C client, final Class<?> ref, final EntityContainerFactory factory) {
+          final CommonEdmEnabledODataClient<?> client, final Class<?> ref, final EntityContainerFactory factory) {
 
     super(client, null);
 
@@ -98,11 +99,23 @@ public final class EntityContainerInvocationHandler<C extends CommonEdmEnabledOD
     } else {
       final Class<?> returnType = method.getReturnType();
 
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              EntitySetInvocationHandler.getInstance(returnType, this));
+      final EntitySet entitySet = returnType.getAnnotation(EntitySet.class);
+      if (entitySet == null) {
+        final Singleton singleton = returnType.getAnnotation(Singleton.class);
+        if (singleton != null) {
+          return Proxy.newProxyInstance(
+                  Thread.currentThread().getContextClassLoader(),
+                  new Class<?>[] {returnType},
+                  SingletonInvocationHandler.getInstance(returnType, this));
+        }
+      } else {
+        return Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[] {returnType},
+                EntitySetInvocationHandler.getInstance(returnType, this));
+      }
 
+      throw new NoSuchMethodException(method.getName());
     }
   }
 }

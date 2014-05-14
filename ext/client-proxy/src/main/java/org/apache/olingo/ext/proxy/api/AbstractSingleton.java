@@ -1,4 +1,4 @@
-#*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,16 +15,19 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *#
-#set( $keys = $utility.getEntityKeyType($singleton) )
-#if( $keys.size() > 1 )
-  #set( $type = $utility.getEdmType($singleton).EntityType.Name + "Key" )
-#elseif( $keys.size() == 1 )
-  #set( $type = $keys.values().iterator().next() )
-#else
-  #set( $type = "" )
-#end
+ */
+package org.apache.olingo.ext.proxy.api;
 
-@Singleton(name = "$singleton.Name")
-public interface $utility.capitalize($singleton.Name) extends AbstractSingleton<$utility.getJavaType($singleton.EntityType), $type, $utility.getJavaType($singleton.EntityType)Collection> {
+import java.io.Serializable;
+
+public interface AbstractSingleton<
+        T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
+        extends Serializable {
+
+  /**
+   * Retrieves a singleton.
+   *
+   * @return the singleton
+   */
+  T get();
 }

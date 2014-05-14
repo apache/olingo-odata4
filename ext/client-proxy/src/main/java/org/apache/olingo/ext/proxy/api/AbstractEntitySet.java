@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * Interface for synchronous CRUD operations on an EntitySet.
  */
-public abstract interface AbstractEntitySet<
+public interface AbstractEntitySet<
         T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
         extends Iterable<T>, Serializable {
 

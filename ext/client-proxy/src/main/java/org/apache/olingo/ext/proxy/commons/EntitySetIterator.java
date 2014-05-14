@@ -30,13 +30,13 @@ import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
         implements Iterator<T> {
 
-  private final EntitySetInvocationHandler<?, T, KEY, EC> esi;
+  private final EntitySetInvocationHandler<T, KEY, EC> esi;
 
   private URI next;
 
   private Iterator<T> current;
 
-  EntitySetIterator(final URI uri, EntitySetInvocationHandler<?, T, KEY, EC> esi) {
+  EntitySetIterator(final URI uri, EntitySetInvocationHandler<T, KEY, EC> esi) {
     this.esi = esi;
     this.next = uri;
     this.current = Collections.<T>emptyList().iterator();
