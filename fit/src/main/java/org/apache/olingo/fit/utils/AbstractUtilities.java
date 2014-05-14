@@ -41,7 +41,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.olingo.commons.api.data.Entity;

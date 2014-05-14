@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -40,6 +42,8 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -47,7 +51,9 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
+import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.commons.AbstractTypeInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.ComplexTypeInvocationHandler;
@@ -202,8 +208,8 @@ public final class CoreUtils {
         } else {
           oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
                   newEnumProperty(name,
-                  ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
-                  asEnum());
+                          ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, type, obj)).
+                          asEnum());
         }
       } else {
         throw new UnsupportedOperationException("Usupported object type " + type.getFullQualifiedName());
@@ -332,7 +338,7 @@ public final class CoreUtils {
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexTypeInvocationHandler.getInstance(
-                      client, property.getName(), getter.getReturnType(), null));
+                              client, property.getName(), getter.getReturnType(), null));
 
               populate(client, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -356,7 +362,7 @@ public final class CoreUtils {
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexTypeInvocationHandler.getInstance(
-                          client, property.getName(), collItemClass, null));
+                                  client, property.getName(), collItemClass, null));
 
                   populate(client, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -371,6 +377,29 @@ public final class CoreUtils {
     }
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private static Enum<?> buildEnumInstance(final ODataEnumValue value) {
+    try {
+      for (String enumTypeName
+              : StringUtils.split(IOUtils.toString(CoreUtils.class.getResourceAsStream("/META-INF/enumTypes")), '\n')) {
+
+        final Class<Enum> enumClass =
+                (Class<Enum>) Thread.currentThread().getContextClassLoader().loadClass(enumTypeName);
+        if (enumClass != null) {
+          final Namespace namespace = enumClass.getAnnotation(Namespace.class);
+          final EnumType enumType = enumClass.getAnnotation(EnumType.class);
+          if (value.getTypeName().equals(namespace.value() + "." + enumType.name())) {
+            return Enum.valueOf(enumClass, value.getValue());
+          }
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("While trying to load enum for {}", value, e);
+    }
+
+    return null;
+  }
+
   @SuppressWarnings("unchecked")
   public static Object getValueFromProperty(
           final CommonEdmEnabledODataClient<?> client,
@@ -378,8 +407,6 @@ public final class CoreUtils {
           final Type typeRef,
           final EntityTypeInvocationHandler<?> entityHandler)
           throws InstantiationException, IllegalAccessException {
-
-    final Object res;
 
     Class<?> internalRef;
     if (typeRef == null) {
@@ -392,6 +419,8 @@ public final class CoreUtils {
       }
     }
 
+    final Object res;
+
     if (property == null || property.hasNullValue()) {
       res = null;
     } else if (property.hasComplexValue()) {
@@ -399,8 +428,7 @@ public final class CoreUtils {
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexTypeInvocationHandler.getInstance(
-              client, property.getValue().asComplex(), internalRef, entityHandler));
-
+                      client, property.getValue().asComplex(), internalRef, entityHandler));
     } else if (property.hasCollectionValue()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -414,15 +442,17 @@ public final class CoreUtils {
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexTypeInvocationHandler.getInstance(
-                  client, value.asComplex(), internalRef, entityHandler));
+                          client, value.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
       }
 
       res = collection;
+    } else if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue()) {
+      res = buildEnumInstance(((ODataProperty) property).getEnumValue());
     } else {
-      res = CoreUtils.primitiveValueToObject(property.getPrimitiveValue());
+      res = primitiveValueToObject(property.getPrimitiveValue());
     }
 
     return res;
@@ -440,10 +470,10 @@ public final class CoreUtils {
     return null;
   }
 
-  public static URI getEditMediaLink(final String name, final CommonODataEntity entity) {
-    for (ODataLink editMediaLink : entity.getMediaEditLinks()) {
-      if (name.equalsIgnoreCase(editMediaLink.getName())) {
-        return editMediaLink.getLink();
+  public static URI getMediaEditLink(final String name, final CommonODataEntity entity) {
+    for (ODataLink link : entity.getMediaEditLinks()) {
+      if (name.equalsIgnoreCase(link.getName())) {
+        return link.getLink();
       }
     }
 

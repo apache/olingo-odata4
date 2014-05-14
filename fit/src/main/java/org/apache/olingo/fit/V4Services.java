@@ -54,7 +54,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -103,7 +102,7 @@ public class V4Services extends AbstractServices {
   protected static final Pattern CROSSJOIN_PATTERN = Pattern.compile(
           "^\\$crossjoin\\(.*\\)\\?\\$filter=\\([a-zA-Z/]+ eq [a-zA-Z/]+\\)$");
 
-  private final Map<String, String> providedAsync = new HashMap<String, String>();
+  private Map<String, String> providedAsync = new HashMap<String, String>();
 
   public V4Services() throws Exception {
     super(ODataServiceVersion.V40, Commons.getMetadata(ODataServiceVersion.V40));
@@ -112,7 +111,7 @@ public class V4Services extends AbstractServices {
   protected V4Services(final Metadata metadata) throws Exception {
     super(ODataServiceVersion.V40, metadata);
   }
-  
+
   @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(
@@ -293,7 +292,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res==null || res.getStatus() >= 400) {
+              if (res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -344,29 +343,6 @@ public class V4Services extends AbstractServices {
     bos.write(("--" + boundary + "--").getBytes());
 
     return new ByteArrayInputStream(bos.toByteArray());
-  }
-
-  @GET
-  @Path("/People/{type:.*}")
-  public Response getPeople(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("type") final String type,
-          @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
-          @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String count,
-          @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
-          @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) String search,
-          @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
-          @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
-
-    return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
-            ? NumberUtils.isNumber(type)
-            ? super.getEntityInternal(
-                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
-            : super.getEntitySet(accept, "People", type)
-            : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
 
   @GET
@@ -1263,21 +1239,15 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept, version);
       }
 
-      final Accept contentTypeValue = Accept.parse(contentType, version);
+      final Accept contentTypeValue = Accept.parse(contentType, version);      
       final AtomEntityImpl entity = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());
       assert entity.getProperty("address").getValue().isComplex();
 
-      final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
-              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
-              null,
-              (AtomPropertyImpl) entity.getProperty("address"));
-
       return xml.createResponse(
               null,
-              xml.writeProperty(acceptType, result),
+              xml.writeProperty(acceptType, entity.getProperty("address")),
               null,
               acceptType);
     } catch (Exception e) {

@@ -430,7 +430,7 @@
             </goals>
             <configuration>
               <excludes>
-                <exclude>**/META-INF/services/*</exclude>
+                <exclude>**/META-INF/**</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.ini</exclude>
                 <exclude>**/*.bin</exclude>

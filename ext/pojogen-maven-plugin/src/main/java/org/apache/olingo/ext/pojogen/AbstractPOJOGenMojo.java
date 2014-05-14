@@ -23,11 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
@@ -37,14 +35,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -231,7 +227,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         namespaces.add(schema.getNamespace().toLowerCase());
       }
 
-      final StringBuilder complexTypeNames = new StringBuilder();
       final StringBuilder enumTypeNames = new StringBuilder();
 
       for (EdmSchema schema : edm.getSchemas()) {
@@ -259,29 +254,11 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           parseObj(typesBaseDir, typesPkg, "enumType", className + ".java", objs);
         }
 
-        final List<EdmComplexType> complexes = new ArrayList<EdmComplexType>();
-
         for (EdmComplexType complex : schema.getComplexTypes()) {
-          complexes.add(complex);
           final String className = utility.capitalize(complex.getName());
-          complexTypeNames.append(typesPkg).append('.').append(className).append('\n');
           objs.clear();
           objs.put("complexType", complex);
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
-
-          for (String navPropName : complex.getNavigationPropertyNames()) {
-            final EdmNavigationProperty navProp = complex.getNavigationProperty(navPropName);
-            if ((complex.getBaseType() == null
-                    || edm.getEntityType(complex.getBaseType().getFullQualifiedName()).
-                    getNavigationProperty(navPropName) == null)
-                    && navProp.containsTarget()) {
-              
-              objs.clear();
-              objs.put("navProp", navProp);
-              parseObj(base, pkg, "containedEntitySet",
-                      utility.capitalize(navProp.getName()) + ".java", objs);
-            }
-          }
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {
@@ -319,20 +296,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
                   utility.capitalize(entity.getName()) + ".java", objs);
           parseObj(typesBaseDir, typesPkg, "entityCollection",
                   utility.capitalize(entity.getName()) + "Collection.java", objs);
-
-          for (String navPropName : entity.getNavigationPropertyNames()) {
-            final EdmNavigationProperty navProp = entity.getNavigationProperty(navPropName);
-            if ((entity.getBaseType() == null
-                    || edm.getEntityType(entity.getBaseType().getFullQualifiedName()).
-                    getNavigationProperty(navPropName) == null)
-                    && navProp.containsTarget()) {
-
-              objs.clear();
-              objs.put("navProp", navProp);
-              parseObj(base, pkg, "containedEntitySet",
-                      utility.capitalize(navProp.getName()) + ".java", objs);
-            }
-          }
         }
 
         // write container and top entity sets into the base package
@@ -340,7 +303,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.clear();
           objs.put("container", container);
           objs.put("namespace", schema.getNamespace());
-          objs.put("complexes", complexes);
 
           parseObj(base, pkg, "container",
                   utility.capitalize(container.getName()) + ".java", objs);
@@ -364,10 +326,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
       }
 
       final File metaInf = mkdir("META-INF");
-      FileUtils.fileWrite(
-              metaInf.getPath() + File.separator + Constants.PROXY_ENUM_CLASS_LIST, enumTypeNames.toString());
-      FileUtils.fileWrite(
-              metaInf.getPath() + File.separator + Constants.PROXY_COMPLEX_CLASS_LIST, complexTypeNames.toString());
+      FileUtils.fileWrite(metaInf.getPath() + File.separator + "enumTypes", enumTypeNames.toString());
     } catch (Exception t) {
       getLog().error(t);
 
@@ -376,4 +335,5 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
               : new MojoExecutionException("While executin mojo", t);
     }
   }
+
 }

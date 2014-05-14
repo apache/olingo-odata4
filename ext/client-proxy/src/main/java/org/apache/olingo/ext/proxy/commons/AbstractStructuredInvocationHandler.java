@@ -35,9 +35,9 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -47,66 +47,57 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
+public abstract class AbstractTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
+        extends AbstractInvocationHandler<C> {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractStructuredInvocationHandler.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTypeInvocationHandler.class);
 
   protected final Class<?> typeRef;
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected EntityInvocationHandler entityHandler;
+  protected final EntityTypeInvocationHandler<C> targetHandler;
 
   protected Object internal;
 
-  protected AbstractStructuredInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
+  @SuppressWarnings("unchecked")
+  protected AbstractTypeInvocationHandler(
+          final C client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityContainerInvocationHandler containerHandler) {
+          final EntityContainerInvocationHandler<C> containerHandler) {
 
     super(client, containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = null;
+    this.targetHandler = EntityTypeInvocationHandler.class.cast(this);
   }
 
-  protected AbstractStructuredInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
+  protected AbstractTypeInvocationHandler(
+          final C client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityInvocationHandler entityHandler) {
+          final EntityTypeInvocationHandler<C> targetHandler) {
 
-    super(client, entityHandler == null ? null : entityHandler.containerHandler);
+    super(client, targetHandler == null ? null : targetHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    // prevent memory leak
-    this.entityHandler = entityHandler == this ? null : entityHandler;
+    this.targetHandler = targetHandler;
   }
 
-  public EntityInvocationHandler getEntityHandler() {
-    return entityHandler == null
-            ? this instanceof EntityInvocationHandler
-            ? EntityInvocationHandler.class.cast(this)
-            : null
-            : entityHandler;
-  }
-
-  public void setEntityHandler(EntityInvocationHandler entityHandler) {
-    // prevent memory leak
-    this.entityHandler = entityHandler == this ? null : entityHandler;
-  }
+  public abstract FullQualifiedName getName();
 
   public Class<?> getTypeRef() {
     return typeRef;
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
@@ -116,14 +107,14 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(getEntityHandler()));
+              OperationInvocationHandler.getInstance(targetHandler));
     } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(getEntityHandler(), this));
+              FactoryInvocationHandler.getInstance(targetHandler, this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
@@ -172,13 +163,13 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
       return ClassUtils.returnVoid();
     } else {
-      throw new NoSuchMethodException(method.getName());
+      throw new UnsupportedOperationException("Method not found: " + method);
     }
   }
 
   protected void attach() {
-    if (getEntityHandler() != null && !entityContext.isAttached(getEntityHandler())) {
-      entityContext.attach(getEntityHandler(), AttachedEntityStatus.ATTACHED);
+    if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
+      entityContext.attach(targetHandler, AttachedEntityStatus.ATTACHED);
     }
   }
 
@@ -187,20 +178,18 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach(final AttachedEntityStatus status, final boolean override) {
-    if (entityContext.isAttached(getEntityHandler())) {
+    if (entityContext.isAttached(targetHandler)) {
       if (override) {
-        entityContext.setStatus(getEntityHandler(), status);
+        entityContext.setStatus(targetHandler, status);
       }
     } else {
-      entityContext.attach(getEntityHandler(), status);
+      entityContext.attach(targetHandler, status);
     }
   }
 
   protected abstract Object getNavigationPropertyValue(final NavigationProperty property, final Method getter);
 
-  protected Object retrieveNavigationProperty(
-          final NavigationProperty property, final Method getter, final String serviceRoot) {
-
+  protected Object retriveNavigationProperty(final NavigationProperty property, final Method getter) {
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (AbstractEntityCollection.class.isAssignableFrom(type)) {
@@ -217,15 +206,14 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     if (link instanceof ODataInlineEntity) {
       // return entity
       navPropValue = getEntityProxy(
-              null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
-              client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+              property.targetEntitySet(),
               type,
               false);
     } else if (link instanceof ODataInlineEntitySet) {
       // return entity set
-      navPropValue = getEntityCollectionProxy(
+      navPropValue = getEntityCollection(
               collItemType,
               type,
               property.targetContainer(),
@@ -234,26 +222,25 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
+      final URI uri = URIUtils.getURI(
+              containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
+
       if (AbstractEntityCollection.class.isAssignableFrom(type)) {
-        navPropValue = getEntityCollectionProxy(
+        navPropValue = getEntityCollection(
                 collItemType,
                 type,
                 property.targetContainer(),
                 client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
                 uri,
                 true);
-      } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
-        navPropValue = getEntitySetProxy(type, uri);
       } else {
         final ODataRetrieveResponse<CommonODataEntity> res =
                 client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
 
         navPropValue = getEntityProxy(
-                uri,
                 res.getBody(),
                 property.targetContainer(),
-                client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+                property.targetEntitySet(),
                 type,
                 res.getETag(),
                 true);
@@ -282,8 +269,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
     // 1) attach source entity
-    if (!entityContext.isAttached(getEntityHandler())) {
-      entityContext.attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
+    if (!entityContext.isAttached(targetHandler)) {
+      entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
     }
 
     // 2) attach the target entity handlers
@@ -291,11 +278,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
             ? (AbstractEntityCollection) value : Collections.singleton(value)) {
 
       final InvocationHandler etih = Proxy.getInvocationHandler(link);
-      if (!(etih instanceof EntityInvocationHandler)) {
+      if (!(etih instanceof EntityTypeInvocationHandler)) {
         throw new IllegalArgumentException("Invalid argument type");
       }
 
-      final EntityInvocationHandler linkedHandler = (EntityInvocationHandler) etih;
+      @SuppressWarnings("unchecked")
+      final EntityTypeInvocationHandler<C> linkedHandler = (EntityTypeInvocationHandler<C>) etih;
       if (!linkedHandler.getTypeRef().isAnnotationPresent(EntityType.class)) {
         throw new IllegalArgumentException("Invalid argument type " + linkedHandler.getTypeRef().getSimpleName());
       }

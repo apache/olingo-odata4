@@ -193,7 +193,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
     final EdmTypeInfo edmType = new EdmTypeInfo.Builder().
             setEdm(client.getCachedEdm()).setTypeExpression(annotation.returnType()).build();
-    
+
     if (edmType.isEntityType()) {
       if (edmType.isCollection()) {
         final ParameterizedType collType = (ParameterizedType) method.getReturnType().getGenericInterfaces()[0];
@@ -213,7 +213,7 @@ abstract class AbstractInvocationHandler<C extends CommonEdmEnabledODataClient<?
                 method.getReturnType(),
                 false);
       }
-    }else{
+    } else {
       return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType(), null);
     }
   }
