@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -23,6 +24,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.*;
@@ -118,4 +120,37 @@ public interface DefaultContainer extends Container {
     );
   
       }
-}
+
+      ComplexFactory complexFactory();
+
+    interface ComplexFactory {
+          @Property(name = "ContactDetails",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ContactDetails")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ContactDetails newContactDetails();
+
+          @Property(name = "Aliases",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Aliases")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Aliases newAliases();
+
+          @Property(name = "Phone",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Phone")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Phone newPhone();
+
+          @Property(name = "AuditInfo",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.AuditInfo")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.AuditInfo newAuditInfo();
+
+          @Property(name = "ConcurrencyInfo",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ConcurrencyInfo")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ConcurrencyInfo newConcurrencyInfo();
+
+          @Property(name = "Dimensions",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.Dimensions")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.Dimensions newDimensions();
+
+          @Property(name = "ComplexToCategory",
+                type = "Microsoft.Test.OData.Services.AstoriaDefaultService.ComplexToCategory")
+      org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.types.ComplexToCategory newComplexToCategory();
+
+        }
+  }

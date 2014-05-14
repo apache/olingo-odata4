@@ -60,7 +60,7 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected final EntityTypeInvocationHandler targetHandler;
+  protected EntityTypeInvocationHandler entityHandler;
 
   protected Object internal;
 
@@ -73,19 +73,27 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     super(client, containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.targetHandler = EntityTypeInvocationHandler.class.cast(this);
+    this.entityHandler = EntityTypeInvocationHandler.class.cast(this);
   }
 
   protected AbstractTypeInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityTypeInvocationHandler targetHandler) {
+          final EntityTypeInvocationHandler entityHandler) {
 
-    super(client, targetHandler == null ? null : targetHandler.containerHandler);
+    super(client, entityHandler == null ? null : entityHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.targetHandler = targetHandler;
+    this.entityHandler = entityHandler;
+  }
+
+  public EntityTypeInvocationHandler getEntityHandler() {
+    return entityHandler;
+  }
+
+  public void setEntityHandler(EntityTypeInvocationHandler entityHandler) {
+    this.entityHandler = entityHandler;
   }
 
   public abstract FullQualifiedName getName();
@@ -104,14 +112,14 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(targetHandler));
+              OperationInvocationHandler.getInstance(entityHandler));
     } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              FactoryInvocationHandler.getInstance(targetHandler, this));
+              FactoryInvocationHandler.getInstance(entityHandler, this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
@@ -165,8 +173,8 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
   }
 
   protected void attach() {
-    if (targetHandler != null && !entityContext.isAttached(targetHandler)) {
-      entityContext.attach(targetHandler, AttachedEntityStatus.ATTACHED);
+    if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
+      entityContext.attach(entityHandler, AttachedEntityStatus.ATTACHED);
     }
   }
 
@@ -175,12 +183,12 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
   }
 
   protected void attach(final AttachedEntityStatus status, final boolean override) {
-    if (entityContext.isAttached(targetHandler)) {
+    if (entityContext.isAttached(entityHandler)) {
       if (override) {
-        entityContext.setStatus(targetHandler, status);
+        entityContext.setStatus(entityHandler, status);
       }
     } else {
-      entityContext.attach(targetHandler, status);
+      entityContext.attach(entityHandler, status);
     }
   }
 
@@ -266,8 +274,8 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
 
   private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
     // 1) attach source entity
-    if (!entityContext.isAttached(targetHandler)) {
-      entityContext.attach(targetHandler, AttachedEntityStatus.CHANGED);
+    if (!entityContext.isAttached(entityHandler)) {
+      entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);
     }
 
     // 2) attach the target entity handlers

@@ -87,6 +87,7 @@ public abstract class AbstractTestITCase {
     containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);
+    EntityContainerFactory.getContext().detachAll();
   }
 
   protected Customer getSampleCustomerProfile(

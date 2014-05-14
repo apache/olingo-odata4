@@ -20,6 +20,7 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
@@ -32,18 +33,33 @@ class FactoryInvocationHandler extends AbstractInvocationHandler implements Oper
 
   private final AbstractTypeInvocationHandler invokerHandler;
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  static FactoryInvocationHandler getInstance(
+          final CommonEdmEnabledODataClient<?> client,
+          final EntityContainerInvocationHandler containerHandler,
+          final EntityTypeInvocationHandler entityHandler,
+          final AbstractTypeInvocationHandler targetHandler) {
+    return new FactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
   static FactoryInvocationHandler getInstance(
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
-
-    return new FactoryInvocationHandler(entityHandler, targetHandler);
+    return new FactoryInvocationHandler(
+            entityHandler == null ? null : entityHandler.containerHandler.client,
+            targetHandler == null
+            ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
+            entityHandler,
+            targetHandler);
   }
 
   private FactoryInvocationHandler(
+          final CommonEdmEnabledODataClient<?> client,
+          final EntityContainerInvocationHandler containerHandler,
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
-
-    super(targetHandler.containerHandler.getClient(), targetHandler.containerHandler);
+    super(client, containerHandler);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -53,8 +69,7 @@ class FactoryInvocationHandler extends AbstractInvocationHandler implements Oper
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if (method.getName().startsWith("new")) {
-      final String getterName = method.getName().replaceFirst("new", "get");
-      final Method getter = invokerHandler.getTypeRef().getMethod(getterName);
+      final Method getter = proxy.getClass().getInterfaces()[0].getMethod(method.getName());
       final Property property = ClassUtils.getAnnotation(Property.class, getter);
       if (property == null) {
         throw new UnsupportedOperationException("Unsupported method " + method.getName());

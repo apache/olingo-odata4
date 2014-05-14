@@ -45,9 +45,9 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   @Test
   public void readPrimitiveKeys() {
-    containerFactory = EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
-    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    final TestContext testContainer = containerFactory.getEntityContainer(TestContext.class);
+    final EntityContainerFactory testContainerFactory = EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
+    testContainerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final TestContext testContainer = testContainerFactory.getEntityContainer(TestContext.class);
     assertNotNull(testContainer);
 
     final EdmBoolean edmBooleanSet = testContainer.getEdmBooleanSet().get(Boolean.TRUE);
