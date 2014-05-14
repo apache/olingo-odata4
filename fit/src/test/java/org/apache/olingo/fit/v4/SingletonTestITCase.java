@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.Singleton;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
@@ -106,8 +105,7 @@ public class SingletonTestITCase extends AbstractTestITCase {
     final Singleton changes = getClient().getObjectFactory().newSingleton(
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Company"));
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Revenue",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int64).setText("132520").build()));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt64(132520L)));
 
     final URI uri = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company").build();
     final ODataEntityUpdateRequest<Singleton> req = getClient().getCUDRequestFactory().

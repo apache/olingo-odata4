@@ -51,8 +51,7 @@ import org.junit.Test;
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
   private Edm getEdm() {
-    final Edm edm = getClient().getRetrieveRequestFactory().
-            getMetadataRequest(testStaticServiceRootURL).execute().getBody();
+    final Edm edm = client.getRetrieveRequestFactory().getMetadataRequest(testStaticServiceRootURL).execute().getBody();
     assertNotNull(edm);
 
     return edm;
@@ -64,9 +63,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(container);
 
     // GetEmployeesCount
-    URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
+    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<Singleton> singletonReq =
-            getClient().getRetrieveRequestFactory().getSingletonRequest(builder.build());
+            client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singletonReq.setFormat(format);
     final Singleton company = singletonReq.execute().getBody();
     assertNotNull(company);
@@ -79,16 +78,16 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataProperty> getEmployeesCountReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
     getEmployeesCountReq.setFormat(format);
     final ODataProperty getEmployeesCountRes = getEmployeesCountReq.execute().getBody();
     assertNotNull(getEmployeesCountRes);
     assertTrue(getEmployeesCountRes.hasPrimitiveValue());
 
     // GetProductDetails
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5);
-    ODataEntityRequest<ODataEntity> entityReq = getClient().getRetrieveRequestFactory().
+    ODataEntityRequest<ODataEntity> entityReq = client.getRetrieveRequestFactory().
             getEntityRequest(builder.build());
     entityReq.setFormat(format);
     ODataEntity entity = entityReq.execute().getBody();
@@ -100,9 +99,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false, null);
     assertNotNull(func);
 
-    final ODataPrimitiveValue count = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1);
+    final ODataPrimitiveValue count = client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(1);
     final ODataInvokeRequest<ODataEntitySet> getProductDetailsReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func,
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func,
                     Collections.<String, ODataValue>singletonMap("count", count));
     getProductDetailsReq.setFormat(format);
     final ODataEntitySet getProductDetailsRes = getProductDetailsReq.execute().getBody();
@@ -113,9 +112,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final Map<String, Object> keyMap = new LinkedHashMap<String, Object>();
     keyMap.put("ProductID", 6);
     keyMap.put("ProductDetailID", 1);
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("ProductDetails").appendKeySegment(keyMap);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -127,7 +126,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataEntity> getRelatedProductReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
     getRelatedProductReq.setFormat(format);
     final ODataEntity getRelatedProductRes = getRelatedProductReq.execute().getBody();
     assertNotNull(getRelatedProductRes);
@@ -136,9 +135,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(6, getRelatedProductRes.getProperty("ProductID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetDefaultPI
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -150,7 +149,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataEntity> getDefaultPIReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
     getDefaultPIReq.setFormat(format);
     final ODataEntity getDefaultPIRes = getDefaultPIReq.execute().getBody();
     assertNotNull(getDefaultPIRes);
@@ -167,7 +166,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(func);
 
     final ODataInvokeRequest<ODataProperty> getAccountInfoReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func);
     getAccountInfoReq.setFormat(format);
     final ODataProperty getAccountInfoRes = getAccountInfoReq.execute().getBody();
     assertNotNull(getAccountInfoRes);
@@ -176,7 +175,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
             getAccountInfoRes.getComplexValue().getTypeName());
 
     // GetActualAmount
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(
             entity.getNavigationLink("MyGiftCard").getLink());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
@@ -189,9 +188,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     func = edm.getBoundFunction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false, null);
     assertNotNull(func);
 
-    final ODataPrimitiveValue bonusRate = getClient().getObjectFactory().newPrimitiveValueBuilder().buildDouble(1.1);
+    final ODataPrimitiveValue bonusRate = client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(1.1);
     final ODataInvokeRequest<ODataProperty> getActualAmountReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func,
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), func,
                     Collections.<String, ODataValue>singletonMap("bonusRate", bonusRate));
     getActualAmountReq.setFormat(format);
     final ODataProperty getActualAmountRes = getActualAmountReq.execute().getBody();
@@ -215,9 +214,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(container);
 
     // IncreaseRevenue
-    URIBuilder builder = getClient().getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
+    URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ODataEntity> entityReq =
-            getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+            client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -228,10 +227,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     EdmAction act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false);
     assertNotNull(act);
 
-    final ODataPrimitiveValue increaseValue = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Int64).setValue(12).build();
+    final ODataPrimitiveValue increaseValue =
+            client.getObjectFactory().newPrimitiveValueBuilder().buildInt64(12L);
     final ODataInvokeRequest<ODataProperty> increaseRevenueReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
                     Collections.<String, ODataValue>singletonMap("IncreaseValue", increaseValue));
     increaseRevenueReq.setFormat(format);
     final ODataProperty increaseRevenueRes = increaseRevenueReq.execute().getBody();
@@ -239,9 +238,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(increaseRevenueRes.hasPrimitiveValue());
 
     // AddAccessRight
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -252,10 +251,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false);
     assertNotNull(act);
 
-    final ODataEnumValue accessRight = getClient().getObjectFactory().
+    final ODataEnumValue accessRight = client.getObjectFactory().
             newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "Execute");
     final ODataInvokeRequest<ODataProperty> getProductDetailsReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
                     Collections.<String, ODataValue>singletonMap("accessRight", accessRight));
     getProductDetailsReq.setFormat(format);
     final ODataProperty getProductDetailsRes = getProductDetailsReq.execute().getBody();
@@ -263,9 +262,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertTrue(getProductDetailsRes.hasEnumValue());
 
     // ResetAddress
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(2);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -278,9 +277,9 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertNotNull(act);
 
     final ODataCollectionValue<org.apache.olingo.commons.api.domain.v4.ODataValue> addresses =
-            getClient().getObjectFactory().
+            client.getObjectFactory().
             newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
-    final ODataComplexValue<ODataProperty> address = getClient().getObjectFactory().
+    final ODataComplexValue<ODataProperty> address = client.getObjectFactory().
             newLinkedComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("Piazza La Bomba E Scappa")));
@@ -289,21 +288,21 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("66010")));
     addresses.add(address);
-    final ODataPrimitiveValue index = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(0);
+    final ODataPrimitiveValue index = client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(0);
     final Map<String, ODataValue> params = new LinkedHashMap<String, ODataValue>(2);
     params.put("addresses", addresses);
     params.put("index", index);
     final ODataInvokeRequest<ODataEntity> resetAddressReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act, params);
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act, params);
     resetAddressReq.setFormat(format);
     final ODataEntity resetAddressRes = resetAddressReq.execute().getBody();
     assertNotNull(resetAddressRes);
     assertEquals(2, resetAddressRes.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // RefreshDefaultPI
-    builder = getClient().getURIBuilder(testStaticServiceRootURL).
+    builder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101);
-    entityReq = getClient().getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq = client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
     entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -314,10 +313,10 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     act = edm.getBoundAction(new FullQualifiedName(boundOp.getTitle()), entity.getTypeName(), false);
     assertNotNull(act);
 
-    final ODataPrimitiveValue newDate = getClient().getObjectFactory().newPrimitiveValueBuilder().
+    final ODataPrimitiveValue newDate = client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("2014-04-09T00:00:00Z").build();
     final ODataInvokeRequest<ODataEntity> getDefaultPIReq =
-            getClient().getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
+            client.getInvokeRequestFactory().getInvokeRequest(boundOp.getTarget(), act,
                     Collections.<String, ODataValue>singletonMap("newDate", newDate));
     getDefaultPIReq.setFormat(format);
     final ODataEntity getDefaultPIRes = getDefaultPIReq.execute().getBody();

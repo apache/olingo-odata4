@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
@@ -180,17 +181,34 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
     final CommonODataEntity entity = ((EntityTypeInvocationHandler<?>) target).getEntity();
 
-    final ODataOperation boundOp = entity.getOperation(operation.name());
+    ODataOperation boundOp = entity.getOperation(operation.name());
+    if (boundOp == null) {
+      boundOp = entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
+    }
+    if (boundOp == null) {
+      throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
+              operation.name(), entity.getTypeName()));
+    }
 
-    EdmOperation edmOperation;
-    if (operation.type() == OperationType.FUNCTION) {
-      edmOperation = client.getCachedEdm().getBoundFunction(
-              new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle()),
-              entity.getTypeName(), false, parameterNames);
-    } else {
-      edmOperation = client.getCachedEdm().getBoundAction(
-              new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle()),
-              entity.getTypeName(), false);
+    final FullQualifiedName operationFQN = boundOp.getTitle().indexOf('.') == -1
+            ? new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle())
+            : new FullQualifiedName(boundOp.getTitle());
+
+    EdmEntityType entityType = client.getCachedEdm().getEntityType(entity.getTypeName());
+    EdmOperation edmOperation = null;
+    while (edmOperation == null && entityType != null) {
+      edmOperation = operation.type() == OperationType.FUNCTION
+              ? client.getCachedEdm().getBoundFunction(
+                      operationFQN, entityType.getFullQualifiedName(), false, parameterNames)
+              : client.getCachedEdm().getBoundAction(
+                      operationFQN, entityType.getFullQualifiedName(), false);
+      if (entityType.getBaseType() != null) {
+        entityType = entityType.getBaseType();
+      }
+    }
+    if (edmOperation == null) {
+      throw new IllegalArgumentException(String.format("Could not find any matching operation '%s' bound to %s",
+              operation.name(), entity.getTypeName()));
     }
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(boundOp.getTarget(), edmOperation);
@@ -200,10 +218,7 @@ class OperationInvocationHandler<C extends CommonEdmEnabledODataClient<?>> exten
   private Map.Entry<URI, EdmOperation> getCollectionBoundOperation(
           final Operation operation, final List<String> parameterNames) {
 
-    final Edm edm = client.getCachedEdm();
-
-    final EdmOperation edmOperation;
-
+    EdmOperation edmOperation;
     if (operation.type() == OperationType.FUNCTION) {
       edmOperation = client.getCachedEdm().getBoundFunction(
               new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, true, parameterNames);
