@@ -34,8 +34,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -240,6 +238,17 @@ public final class CoreUtils {
     }
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private static Enum<?> enumValueToObject(final ODataEnumValue value, final Class<?> reference) {
+    final Namespace namespace = reference.getAnnotation(Namespace.class);
+    final EnumType enumType = reference.getAnnotation(EnumType.class);
+    if (value.getTypeName().equals(namespace.value() + "." + enumType.name())) {
+      return Enum.valueOf((Class<Enum>) reference, value.getValue());
+    }
+
+    return null;
+  }
+
   private static Object primitiveValueToObject(final ODataPrimitiveValue value, final Class<?> reference) {
     Object obj;
 
@@ -396,29 +405,6 @@ public final class CoreUtils {
     }
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  private static Enum<?> buildEnumInstance(final ODataEnumValue value) {
-    try {
-      for (String enumTypeName
-              : StringUtils.split(IOUtils.toString(CoreUtils.class.getResourceAsStream("/META-INF/enumTypes")), '\n')) {
-
-        final Class<Enum> enumClass =
-                (Class<Enum>) Thread.currentThread().getContextClassLoader().loadClass(enumTypeName);
-        if (enumClass != null) {
-          final Namespace namespace = enumClass.getAnnotation(Namespace.class);
-          final EnumType enumType = enumClass.getAnnotation(EnumType.class);
-          if (value.getTypeName().equals(namespace.value() + "." + enumType.name())) {
-            return Enum.valueOf(enumClass, value.getValue());
-          }
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("While trying to load enum for {}", value, e);
-    }
-
-    return null;
-  }
-
   @SuppressWarnings("unchecked")
   public static Object getValueFromProperty(
           final CommonEdmEnabledODataClient<?> client,
@@ -469,7 +455,7 @@ public final class CoreUtils {
 
       res = collection;
     } else if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue()) {
-      res = buildEnumInstance(((ODataProperty) property).getEnumValue());
+      res = enumValueToObject(((ODataProperty) property).getEnumValue(), internalRef);
     } else {
       res = primitiveValueToObject(property.getPrimitiveValue(), internalRef);
     }

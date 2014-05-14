@@ -84,8 +84,9 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
   protected abstract String getVersion();
 
-  protected File mkdir(final String path) {
-    final File dir = new File(outputDirectory + File.separator + TOOL_DIR + File.separator + path);
+  protected File mkPkgDir(final String path) {
+    final File dir = new File(outputDirectory + File.separator + TOOL_DIR + File.separator
+            + basePackage.replace('.', File.separatorChar) + File.separator + path);
 
     if (dir.exists()) {
       if (!dir.isDirectory()) {
@@ -96,10 +97,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
     }
 
     return dir;
-  }
-
-  protected File mkPkgDir(final String path) {
-    return mkdir(basePackage.replace('.', File.separatorChar) + File.separator + path);
   }
 
   protected void writeFile(final String name, final File path, final VelocityContext ctx, final Template template,
@@ -227,8 +224,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         namespaces.add(schema.getNamespace().toLowerCase());
       }
 
-      final StringBuilder enumTypeNames = new StringBuilder();
-
       for (EdmSchema schema : edm.getSchemas()) {
         createUtility(edm, schema, basePackage);
 
@@ -248,7 +243,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         // write types into types package
         for (EdmEnumType enumType : schema.getEnumTypes()) {
           final String className = utility.capitalize(enumType.getName());
-          enumTypeNames.append(typesPkg).append('.').append(className).append('\n');
           objs.clear();
           objs.put("enumType", enumType);
           parseObj(typesBaseDir, typesPkg, "enumType", className + ".java", objs);
@@ -324,9 +318,6 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           }
         }
       }
-
-      final File metaInf = mkdir("META-INF");
-      FileUtils.fileWrite(metaInf.getPath() + File.separator + "enumTypes", enumTypeNames.toString());
     } catch (Exception t) {
       getLog().error(t);
 
@@ -335,5 +326,4 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
               : new MojoExecutionException("While executin mojo", t);
     }
   }
-
 }
