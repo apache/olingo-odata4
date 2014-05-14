@@ -448,8 +448,8 @@
                 <exclude>**/nb-configuration.xml</exclude>
                 <exclude>**/.externalToolBuilders/**</exclude>
                 <exclude>**/maven-eclipse.xml</exclude>
-                <exclude>**/checkstyle-*</exclude>
-                <exclude>**/.plxarc</exclude>
+                <exclude>**/ref/**</exclude>
+                <exclude>**/server-ref/**</exclude>
               </excludes>
             </configuration>
           </execution>
