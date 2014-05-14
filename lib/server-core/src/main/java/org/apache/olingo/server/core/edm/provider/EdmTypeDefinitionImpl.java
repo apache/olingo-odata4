@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmException;
@@ -39,7 +40,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
   private EdmPrimitiveType edmPrimitiveTypeInstance;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
-          final TypeDefinition typeDefinition) {
+      final TypeDefinition typeDefinition) {
 
     super(edm, typeDefinitionName);
     this.typeDefinition = typeDefinition;
@@ -50,7 +51,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     if (edmPrimitiveTypeInstance == null) {
       try {
         edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
-                EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
+            EdmPrimitiveTypeKind.valueOf(typeDefinition.getUnderlyingType().getName()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
       }
@@ -75,7 +76,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation  
+    return null; // TODO: provide implementation
   }
 
   @Override
@@ -88,7 +89,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmTypeDefinition implements 
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

@@ -46,13 +46,13 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   private Edm edm;
   private ODataServer server;
 
-  public ODataHttpHandlerImpl(ODataServer server, Edm edm) {
+  public ODataHttpHandlerImpl(final ODataServer server, final Edm edm) {
     this.edm = edm;
     this.server = server;
   }
 
   @Override
-  public void process(HttpServletRequest request, HttpServletResponse response) {
+  public void process(final HttpServletRequest request, final HttpServletResponse response) {
     ODataRequest odRequest = createODataRequest(request);
 
     ODataHandler handler = new ODataHandler(server, edm);
@@ -60,7 +60,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     convertToHttp(response, odResponse);
   }
 
-  private void convertToHttp(HttpServletResponse response, ODataResponse odResponse) {
+  private void convertToHttp(final HttpServletResponse response, final ODataResponse odResponse) {
     response.setStatus(odResponse.getStatusCode());
 
     for (Entry<String, String> entry : odResponse.getHeaders().entrySet()) {
@@ -68,13 +68,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
 
     InputStream in = odResponse.getContent();
-    try
-    {
+    try {
       byte[] buffer = new byte[1024];
       int bytesRead = 0;
 
-      do
-      {
+      do {
         bytesRead = in.read(buffer, 0, buffer.length);
         response.getOutputStream().write(buffer, 0, bytesRead);
       } while (bytesRead == buffer.length);
@@ -94,7 +92,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest createODataRequest(HttpServletRequest request) {
+  private ODataRequest createODataRequest(final HttpServletRequest request) {
     try {
       ODataRequest odRequest = new ODataRequest();
 

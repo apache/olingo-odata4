@@ -36,7 +36,7 @@ public class ODataRequest {
     return method;
   }
 
-  public void setMethod(HttpMethod method) {
+  public void setMethod(final HttpMethod method) {
     this.method = method;
   }
 
@@ -44,7 +44,7 @@ public class ODataRequest {
     return headers;
   }
 
-  public void setHeaders(Map<String, List<String>> headers) {
+  public void setHeaders(final Map<String, List<String>> headers) {
     this.headers = headers;
   }
 
@@ -52,7 +52,7 @@ public class ODataRequest {
     return body;
   }
 
-  public void setBody(InputStream body) {
+  public void setBody(final InputStream body) {
     this.body = body;
   }
 
@@ -60,7 +60,7 @@ public class ODataRequest {
     return queryParameters;
   }
 
-  public void setQueryParameters(Map<String, String> queryParameters) {
+  public void setQueryParameters(final Map<String, String> queryParameters) {
     this.queryParameters = queryParameters;
   }
 
@@ -68,7 +68,7 @@ public class ODataRequest {
     return contentType;
   }
 
-  public void setContentType(String contentType) {
+  public void setContentType(final String contentType) {
     this.contentType = contentType;
   }
 }

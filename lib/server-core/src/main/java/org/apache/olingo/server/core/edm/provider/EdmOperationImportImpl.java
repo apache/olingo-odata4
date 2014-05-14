@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -29,7 +30,7 @@ import org.apache.olingo.server.api.edm.provider.OperationImport;
 public abstract class EdmOperationImportImpl extends AbstractEdmOperationImport {
 
   public EdmOperationImportImpl(final Edm edm, final EdmEntityContainer container,
-          final OperationImport operationImport) {
+      final OperationImport operationImport) {
     super(edm, container, operationImport.getName(), operationImport.getEntitySet());
   }
 

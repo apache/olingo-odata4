@@ -49,12 +49,12 @@ public class ODataServerImpl extends ODataServer {
   }
 
   @Override
-  public ODataHttpHandler createHandler(Edm edm) {
+  public ODataHttpHandler createHandler(final Edm edm) {
     return new ODataHttpHandlerImpl(this, edm);
   }
 
   @Override
-  public Edm createEdm(EdmProvider edmProvider) {
+  public Edm createEdm(final EdmProvider edmProvider) {
     return new EdmProviderImpl(edmProvider);
   }
 

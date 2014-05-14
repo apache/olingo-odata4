@@ -29,15 +29,15 @@ public class ODataResponse {
   private Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 
-  public void setStatusCode(int statusCode) {
+  public void setStatusCode(final int statusCode) {
     this.statusCode = statusCode;
   }
 
-  public void setHeader(String name, String value) {
+  public void setHeader(final String name, final String value) {
     headers.put(name, value);
   }
 
-  public void setContent(InputStream content) {
+  public void setContent(final InputStream content) {
     this.content = content;
   }
 

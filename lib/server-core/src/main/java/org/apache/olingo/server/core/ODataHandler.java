@@ -30,23 +30,22 @@ public class ODataHandler {
   private ODataServer server;
   private Edm edm;
 
-  public ODataHandler(ODataServer server, Edm edm) {
+  public ODataHandler(final ODataServer server, final Edm edm) {
     this.server = server;
     this.edm = edm;
   }
 
-  public ODataResponse process(ODataRequest odRequest) {
+  public ODataResponse process(final ODataRequest odRequest) {
     ODataResponse response = new ODataResponse();
 
     ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
     InputStream responseEntity = serializer.serviceDocument(edm, "http//:root");
-  
+
     response.setStatusCode(200);
     response.setHeader("Content-Type", "application/json");
     response.setContent(responseEntity);
-    
+
     return response;
   }
 
 }
-
