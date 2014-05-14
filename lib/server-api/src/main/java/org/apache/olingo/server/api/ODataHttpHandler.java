@@ -21,7 +21,7 @@ package org.apache.olingo.server.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface ODataHandler {
+public interface ODataHttpHandler {
 
   void process(HttpServletRequest request, HttpServletResponse response);
 

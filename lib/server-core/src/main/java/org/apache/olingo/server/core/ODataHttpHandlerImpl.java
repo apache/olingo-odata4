@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,25 +26,27 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.ODataHandler;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataServer;
-import org.apache.olingo.server.api.serializer.ODataFormat;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ODataHandlerImpl implements ODataHandler {
+public class ODataHttpHandlerImpl implements ODataHttpHandler {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
   private Edm edm;
   private ODataServer server;
 
-  public ODataHandlerImpl(ODataServer server, Edm edm) {
+  public ODataHttpHandlerImpl(ODataServer server, Edm edm) {
     this.edm = edm;
     this.server = server;
   }
@@ -51,10 +54,44 @@ public class ODataHandlerImpl implements ODataHandler {
   @Override
   public void process(HttpServletRequest request, HttpServletResponse response) {
     ODataRequest odRequest = createODataRequest(request);
-    ODataResponse odResponse;
-   
-    //        odResponse = process(odRequest);
-//    convertToHttp(response, odResponse);
+
+    ODataHandler handler = new ODataHandler(server, edm);
+    ODataResponse odResponse = handler.process(odRequest);
+    convertToHttp(response, odResponse);
+  }
+
+  private void convertToHttp(HttpServletResponse response, ODataResponse odResponse) {
+    response.setStatus(odResponse.getStatusCode());
+
+    for (Entry<String, String> entry : odResponse.getHeaders().entrySet()) {
+      response.setHeader(entry.getKey(), entry.getValue());
+    }
+
+    InputStream in = odResponse.getContent();
+    try
+    {
+      byte[] buffer = new byte[1024];
+      int bytesRead = 0;
+
+      do
+      {
+        bytesRead = in.read(buffer, 0, buffer.length);
+        response.getOutputStream().write(buffer, 0, bytesRead);
+      } while (bytesRead == buffer.length);
+
+      response.getOutputStream().flush();
+    } catch (IOException e) {
+      LOG.error(e.getMessage(), e);
+      throw new ODataRuntimeException(e);
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          throw new ODataRuntimeException(e);
+        }
+      }
+    }
   }
 
   private ODataRequest createODataRequest(HttpServletRequest request) {
@@ -72,43 +109,9 @@ public class ODataHandlerImpl implements ODataHandler {
     }
   }
 
-  public void processx(HttpServletRequest request, HttpServletResponse response) {
-    try {
-      InputStream responseEntity = null;
-      if (request.getPathInfo().contains("$metadata")) {
-        ODataSerializer serializer = server.createSerializer(ODataFormat.XML);
-        responseEntity = serializer.metadataDocument(edm);
-      } else {
-        ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
-        responseEntity = serializer.serviceDocument(edm, "http//:root");
-      }
-
-      response.setStatus(200);
-      response.setContentType("application/json");
-
-      if (responseEntity != null) {
-        ServletOutputStream out = response.getOutputStream();
-        int curByte = -1;
-        if (responseEntity instanceof InputStream) {
-          while ((curByte = ((InputStream) responseEntity).read()) != -1) {
-            out.write((char) curByte);
-          }
-          ((InputStream) responseEntity).close();
-        }
-
-        out.flush();
-        out.close();
-      }
-
-    } catch (Exception e) {
-      throw new ODataRuntimeException(e);
-    }
-  }
-
   private Map<String, String> extractQueryParameters(final String queryString) {
     Map<String, String> queryParametersMap = new HashMap<String, String>();
     if (queryString != null) {
-      // At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
       for (String param : queryParameters) {
         int indexOfEqualSign = param.indexOf("=");
@@ -124,11 +127,12 @@ public class ODataHandlerImpl implements ODataHandler {
 
   private Map<String, List<String>> extractHeaders(final HttpServletRequest req) {
     Map<String, List<String>> requestHeaders = new HashMap<String, List<String>>();
-    for (Enumeration<String> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
-      String headerName = headerNames.nextElement();
+
+    for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
+      String headerName = (String) headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();
-      for (Enumeration<String> headers = req.getHeaders(headerName); headers.hasMoreElements();) {
-        String value = headers.nextElement();
+      for (Enumeration<?> headers = req.getHeaders(headerName); headers.hasMoreElements();) {
+        String value = (String) headers.nextElement();
         headerValues.add(value);
       }
       if (requestHeaders.containsKey(headerName)) {

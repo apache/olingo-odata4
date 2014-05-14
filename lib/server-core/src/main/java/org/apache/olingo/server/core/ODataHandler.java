@@ -19,38 +19,34 @@
 package org.apache.olingo.server.core;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-public class ODataResponse {
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.serializer.ODataFormat;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 
-  private int statusCode;
-  private Map<String, String> headers = new HashMap<String, String>();
-  private InputStream content;
+public class ODataHandler {
 
-  public void setStatusCode(int statusCode) {
-    this.statusCode = statusCode;
+  private ODataServer server;
+  private Edm edm;
+
+  public ODataHandler(ODataServer server, Edm edm) {
+    this.server = server;
+    this.edm = edm;
   }
 
-  public void setHeader(String name, String value) {
-    headers.put(name, value);
-  }
+  public ODataResponse process(ODataRequest odRequest) {
+    ODataResponse response = new ODataResponse();
 
-  public void setContent(InputStream content) {
-    this.content = content;
-  }
-
-  public int getStatusCode() {
-    return statusCode;
-  }
-
-  public Map<String, String> getHeaders() {
-    return Collections.unmodifiableMap(headers);
-  }
-
-  public InputStream getContent() {
-    return content;
+    ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
+    InputStream responseEntity = serializer.serviceDocument(edm, "http//:root");
+  
+    response.setStatusCode(200);
+    response.setHeader("Content-Type", "application/json");
+    response.setContent(responseEntity);
+    
+    return response;
   }
 
 }
+

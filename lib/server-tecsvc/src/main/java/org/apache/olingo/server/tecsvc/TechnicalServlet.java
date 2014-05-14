@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataHandler;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataServer;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class TechnicalServlet extends HttpServlet {
     ODataServer server = ODataServer.newInstance();
     Edm edm = server.createEdm(new EdmTechProvider());
 
-    ODataHandler handler = server.createHandler(edm);
+    ODataHttpHandler handler = server.createHandler(edm);
     handler.process(req, resp);
   }
 }

@@ -48,7 +48,7 @@ public abstract class ODataServer {
 
   public abstract ODataSerializer createSerializer(ODataFormat format);
 
-  public abstract ODataHandler createHandler(Edm edm);
+  public abstract ODataHttpHandler createHandler(Edm edm);
 
   public abstract Edm createEdm(EdmProvider edmProvider);
 

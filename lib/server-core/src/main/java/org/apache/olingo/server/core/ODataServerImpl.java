@@ -20,7 +20,7 @@ package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataHandler;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataServer;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataFormat;
@@ -49,8 +49,8 @@ public class ODataServerImpl extends ODataServer {
   }
 
   @Override
-  public ODataHandler createHandler(Edm edm) {
-    return new ODataHandlerImpl(this, edm);
+  public ODataHttpHandler createHandler(Edm edm) {
+    return new ODataHttpHandlerImpl(this, edm);
   }
 
   @Override
