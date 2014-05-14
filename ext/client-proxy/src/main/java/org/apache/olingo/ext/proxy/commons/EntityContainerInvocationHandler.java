@@ -96,13 +96,6 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
               OperationInvocationHandler.getInstance(this));
-    } else if ("complexFactory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      final Class<?> returnType = method.getReturnType();
-
-      return Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(getClient(), this, null, null));
     } else {
       final Class<?> returnType = method.getReturnType();
 
@@ -113,13 +106,13 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
           return Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {returnType},
-                  SingletonInvocationHandler.getInstance(returnType, this, singleton.name()));
+                  SingletonInvocationHandler.getInstance(returnType, this));
         }
       } else {
         return Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {returnType},
-                EntitySetInvocationHandler.getInstance(returnType, this, entitySet.name()));
+                EntitySetInvocationHandler.getInstance(returnType, this));
       }
 
       throw new NoSuchMethodException(method.getName());

@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -46,8 +45,7 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?>>
-        extends AbstractTypeInvocationHandler<C> {
+public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
@@ -65,9 +63,9 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   private EntityUUID uuid;
 
-  static EntityTypeInvocationHandler<?> getInstance(
+  static EntityTypeInvocationHandler getInstance(
           final CommonODataEntity entity,
-          final EntitySetInvocationHandler<?, ?, ?, ?> entitySet,
+          final EntitySetInvocationHandler<?, ?, ?> entitySet,
           final Class<?> typeRef) {
 
     return getInstance(
@@ -77,12 +75,11 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
             entitySet.containerHandler);
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  static EntityTypeInvocationHandler<?> getInstance(
+  static EntityTypeInvocationHandler getInstance(
           final CommonODataEntity entity,
           final String entitySetName,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler<?> containerHandler) {
+          final EntityContainerInvocationHandler containerHandler) {
 
     return new EntityTypeInvocationHandler(entity, entitySetName, typeRef, containerHandler);
   }
@@ -91,7 +88,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
           final CommonODataEntity entity,
           final String entitySetName,
           final Class<?> typeRef,
-          final EntityContainerInvocationHandler<C> containerHandler) {
+          final EntityContainerInvocationHandler containerHandler) {
 
     super(containerHandler.getClient(), typeRef, (ODataLinked) entity, containerHandler);
 
@@ -305,7 +302,7 @@ public class EntityTypeInvocationHandler<C extends CommonEdmEnabledODataClient<?
 
   private void setStreamedProperty(final Property property, final InputStream input) {
     final Object obj = propertyChanges.get(property.name());
-    if (obj != null && obj instanceof InputStream) {
+    if (obj instanceof InputStream) {
       IOUtils.closeQuietly((InputStream) obj);
     }
 

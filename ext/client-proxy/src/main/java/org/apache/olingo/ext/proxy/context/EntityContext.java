@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
 
 /**
  * Entity context.
@@ -36,16 +36,16 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * <br/>
    * This map have to be used to search for entities by key.
    */
-  private final Map<EntityUUID, EntityInvocationHandler> searchableEntities =
-          new HashMap<EntityUUID, EntityInvocationHandler>();
+  private final Map<EntityUUID, EntityTypeInvocationHandler> searchableEntities =
+          new HashMap<EntityUUID, EntityTypeInvocationHandler>();
 
   /**
    * All attached entities (new entities included).
    * <br/>
    * Attachment order will be maintained.
    */
-  private final Map<EntityInvocationHandler, AttachedEntityStatus> allAttachedEntities =
-          new LinkedHashMap<EntityInvocationHandler, AttachedEntityStatus>();
+  private final Map<EntityTypeInvocationHandler, AttachedEntityStatus> allAttachedEntities =
+          new LinkedHashMap<EntityTypeInvocationHandler, AttachedEntityStatus>();
 
   /**
    * Attaches an entity with status <tt>NEW</tt>.
@@ -55,7 +55,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @see AttachedEntityStatus
    * @param entity entity to be attached.
    */
-  public void attachNew(final EntityInvocationHandler entity) {
+  public void attachNew(final EntityTypeInvocationHandler entity) {
     if (allAttachedEntities.containsKey(entity)) {
       throw new IllegalStateException("An entity with the same key has already been attached");
     }
@@ -70,7 +70,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @see AttachedEntityStatus
    * @param entity entity to be attached.
    */
-  public void attach(final EntityInvocationHandler entity) {
+  public void attach(final EntityTypeInvocationHandler entity) {
     attach(entity, AttachedEntityStatus.ATTACHED);
   }
 
@@ -83,7 +83,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity entity to be attached.
    * @param status status.
    */
-  public void attach(final EntityInvocationHandler entity, final AttachedEntityStatus status) {
+  public void attach(final EntityTypeInvocationHandler entity, final AttachedEntityStatus status) {
     if (isAttached(entity)) {
       throw new IllegalStateException("An entity with the same profile has already been attached");
     }
@@ -100,7 +100,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    *
    * @param entity entity to be detached.
    */
-  public void detach(final EntityInvocationHandler entity) {
+  public void detach(final EntityTypeInvocationHandler entity) {
     if (searchableEntities.containsKey(entity.getUUID())) {
       searchableEntities.remove(entity.getUUID());
     }
@@ -123,7 +123,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param uuid entity key.
    * @return retrieved entity.
    */
-  public EntityInvocationHandler getEntity(final EntityUUID uuid) {
+  public EntityTypeInvocationHandler getEntity(final EntityUUID uuid) {
     return searchableEntities.get(uuid);
   }
 
@@ -133,7 +133,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity entity to be retrieved.
    * @return attached entity status.
    */
-  public AttachedEntityStatus getStatus(final EntityInvocationHandler entity) {
+  public AttachedEntityStatus getStatus(final EntityTypeInvocationHandler entity) {
     if (!isAttached(entity)) {
       throw new IllegalStateException("Entity is not in the context");
     }
@@ -147,7 +147,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity attached entity to be modified.
    * @param status new status.
    */
-  public void setStatus(final EntityInvocationHandler entity, final AttachedEntityStatus status) {
+  public void setStatus(final EntityTypeInvocationHandler entity, final AttachedEntityStatus status) {
     if (!isAttached(entity)) {
       throw new IllegalStateException("Entity is not in the context");
     }
@@ -177,7 +177,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity entity.
    * @return <tt>true</tt> if is attached; <tt>false</tt> otherwise.
    */
-  public boolean isAttached(final EntityInvocationHandler entity) {
+  public boolean isAttached(final EntityTypeInvocationHandler entity) {
     return allAttachedEntities.containsKey(entity)
             || (entity.getUUID().getKey() != null && searchableEntities.containsKey(entity.getUUID()));
   }
@@ -190,7 +190,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
   @Override
   public Iterator<AttachedEntity> iterator() {
     final List<AttachedEntity> res = new ArrayList<AttachedEntity>();
-    for (Map.Entry<EntityInvocationHandler, AttachedEntityStatus> attachedEntity : allAttachedEntities.
+    for (Map.Entry<EntityTypeInvocationHandler, AttachedEntityStatus> attachedEntity : allAttachedEntities.
             entrySet()) {
       res.add(new AttachedEntity(attachedEntity.getKey(), attachedEntity.getValue()));
     }

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
+import org.apache.olingo.ext.proxy.api.annotations.Singleton;
 
 public class SingletonInvocationHandler<
         T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
@@ -32,19 +33,18 @@ public class SingletonInvocationHandler<
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   static SingletonInvocationHandler getInstance(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String singletonName) {
+          final Class<?> ref, final EntityContainerInvocationHandler containerHandler) {
 
-    return new SingletonInvocationHandler(ref, containerHandler, singletonName);
+    return new SingletonInvocationHandler(ref, containerHandler);
   }
 
   private final EntitySetInvocationHandler<?, ?, ?> entitySetHandler;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private SingletonInvocationHandler(
-          final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String singletonName) {
-
+  private SingletonInvocationHandler(final Class<?> ref, final EntityContainerInvocationHandler containerHandler) {
     super(containerHandler.getClient(), containerHandler);
-    this.entitySetHandler = EntitySetInvocationHandler.getInstance(ref, containerHandler, singletonName);
+    this.entitySetHandler =
+            new EntitySetInvocationHandler(ref, containerHandler, (ref.getAnnotation(Singleton.class)).name());
   }
 
   @Override

@@ -20,46 +20,30 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
+class FactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
-  private final EntityInvocationHandler entityHandler;
+  private final EntityTypeInvocationHandler entityHandler;
 
-  private final AbstractStructuredInvocationHandler invokerHandler;
+  private final AbstractTypeInvocationHandler invokerHandler;
 
-  static ComplexFactoryInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
-          final EntityContainerInvocationHandler containerHandler,
-          final EntityInvocationHandler entityHandler,
-          final AbstractStructuredInvocationHandler targetHandler) {
+  static FactoryInvocationHandler getInstance(
+          final EntityTypeInvocationHandler entityHandler,
+          final AbstractTypeInvocationHandler targetHandler) {
 
-    return new ComplexFactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
+    return new FactoryInvocationHandler(entityHandler, targetHandler);
   }
 
-  static ComplexFactoryInvocationHandler getInstance(
-          final EntityInvocationHandler entityHandler,
-          final AbstractStructuredInvocationHandler targetHandler) {
-    return new ComplexFactoryInvocationHandler(
-            entityHandler == null ? null : entityHandler.containerHandler.client,
-            targetHandler == null
-            ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
-            entityHandler,
-            targetHandler);
-  }
+  private FactoryInvocationHandler(
+          final EntityTypeInvocationHandler entityHandler,
+          final AbstractTypeInvocationHandler targetHandler) {
 
-  private ComplexFactoryInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
-          final EntityContainerInvocationHandler containerHandler,
-          final EntityInvocationHandler entityHandler,
-          final AbstractStructuredInvocationHandler targetHandler) {
-
-    super(client, containerHandler);
+    super(targetHandler.containerHandler.getClient(), targetHandler.containerHandler);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -69,7 +53,8 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if (method.getName().startsWith("new")) {
-      final Method getter = proxy.getClass().getInterfaces()[0].getMethod(method.getName());
+      final String getterName = method.getName().replaceFirst("new", "get");
+      final Method getter = invokerHandler.getTypeRef().getMethod(getterName);
       final Property property = ClassUtils.getAnnotation(Property.class, getter);
       if (property == null) {
         throw new UnsupportedOperationException("Unsupported method " + method.getName());
@@ -78,7 +63,7 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              ComplexInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
+              ComplexTypeInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }
