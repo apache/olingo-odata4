@@ -37,7 +37,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveEntitySet() throws InterruptedException, ExecutionException {
     final Future<CustomerCollection> futureCustomers =
-            new AsyncCall<CustomerCollection>(containerFactory.getClient().getConfiguration()) {
+            new AsyncCall<CustomerCollection>(containerFactory.getConfiguration()) {
 
               @Override
               public CustomerCollection call() {
@@ -60,12 +60,12 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateEntity() throws InterruptedException {
-    final String randomFirstName = RandomStringUtils.random(10, "abcedfghijklmnopqrstuvwxyz");
+    final String randomFirstName = RandomStringUtils.random(10);
 
     Person person = container.getPeople().get(1);
     person.setFirstName(randomFirstName);
 
-    final Future<Void> futureFlush = new AsyncCall<Void>(containerFactory.getClient().getConfiguration()) {
+    final Future<Void> futureFlush = new AsyncCall<Void>(containerFactory.getConfiguration()) {
 
       @Override
       public Void call() {
@@ -79,7 +79,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final Future<Person> futureProd = new AsyncCall<Person>(containerFactory.getClient().getConfiguration()) {
+    final Future<Person> futureProd = new AsyncCall<Person>(containerFactory.getConfiguration()) {
 
       @Override
       public Person call() {
