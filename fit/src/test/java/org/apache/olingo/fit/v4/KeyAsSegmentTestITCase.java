@@ -44,6 +44,11 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     client.getConfiguration().setKeyAsSegment(true);
   }
 
+  @AfterClass
+  public static void disableKeyAsSegment() {
+    client.getConfiguration().setKeyAsSegment(false);
+  }
+
   private void read(final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101);
@@ -116,10 +121,5 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void jsonUpdate() {
     update(ODataPubFormat.JSON);
-  }
-
-  @AfterClass
-  public static void disableKeyAsSegment() {
-    client.getConfiguration().setKeyAsSegment(false);
   }
 }

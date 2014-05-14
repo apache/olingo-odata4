@@ -24,14 +24,12 @@ import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,12 +42,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V40/KeyAsSegment.svc")
-public class V4KeyAsSegment {
+public class V4KeyAsSegment extends V4Services {
 
-  private final V4Services services;
+  @Context
+  private UriInfo uriInfo;
 
   public V4KeyAsSegment() throws Exception {
-    this.services = new V4Services();
+    super();
   }
 
   private Response replaceServiceName(final Response response) {
@@ -78,34 +77,27 @@ public class V4KeyAsSegment {
     }
   }
 
-  @GET
-  @Path("/{entitySetName}/{entityId}")
-  public Response getEntity(
-          @Context UriInfo uriInfo,
-          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("entitySetName") String entitySetName,
-          @PathParam("entityId") String entityId,
-          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
-          @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
-          @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
-
-    return replaceServiceName(services.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-            accept, entitySetName, entityId, format, expand, select, true));
+  @Override
+  public Response getEntitySet(final String accept, final String name, final String type) {
+    return replaceServiceName(super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+            accept, name, type, null, null, null, true));
   }
 
   @DELETE
   @Path("/{entitySetName}/{entityId}")
+  @Override
   public Response removeEntity(
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId) {
 
-    return replaceServiceName(services.removeEntity(entitySetName, entityId));
+    return replaceServiceName(super.removeEntity(entitySetName, entityId));
   }
 
   @PATCH
   @Path("/{entitySetName}/{entityId}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Override
   public Response patchEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -117,7 +109,7 @@ public class V4KeyAsSegment {
           final String changes) {
 
     return replaceServiceName(
-            services.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
+            super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PUT
@@ -134,13 +126,14 @@ public class V4KeyAsSegment {
           final String entity) {
 
     return replaceServiceName(
-            services.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity));
+            super.replaceEntity(uriInfo, accept, contentType, prefer, entitySetName, entityId, entity));
   }
 
   @POST
   @Path("/{entitySetName}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  @Override
   public Response postNewEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -149,6 +142,6 @@ public class V4KeyAsSegment {
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
 
-    return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+    return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
 }
