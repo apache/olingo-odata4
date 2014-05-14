@@ -65,20 +65,20 @@ public class MetadataDocumentTest {
 
   @Test(expected = ODataRuntimeException.class)
   public void metadataOnJsonResultsInException() {
-    ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.JSON);
+    ODataSerializer serializer = ODataServer.newInstance().createSerializer(ODataFormat.JSON);
     serializer.metadataDocument(mock(Edm.class));
   }
 
   @Test
   public void writeMetadataWithEmptyMockedEdm() {
-    ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
+    ODataSerializer serializer = ODataServer.newInstance().createSerializer(ODataFormat.XML);
     Edm edm = mock(Edm.class);
     serializer.metadataDocument(edm);
   }
 
   @Test
   public void writeMetadataWithLocalTestEdm() throws Exception {
-    ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
+    ODataSerializer serializer = ODataServer.newInstance().createSerializer(ODataFormat.XML);
     Edm edm = new EdmProviderImpl(new TestMetadataProvider());
     InputStream metadata = serializer.metadataDocument(edm);
     assertNotNull(metadata);
@@ -147,7 +147,7 @@ public class MetadataDocumentTest {
 
   @Test
   public void writeMetadataWithTechnicalScenario() {
-    ODataSerializer serializer = ODataServer.newInstance().getSerializer(ODataFormat.XML);
+    ODataSerializer serializer = ODataServer.newInstance().createSerializer(ODataFormat.XML);
     EdmProviderImpl edm = new EdmProviderImpl(new EdmTechProvider());
     InputStream metadata = serializer.metadataDocument(edm);
     assertNotNull(metadata);
