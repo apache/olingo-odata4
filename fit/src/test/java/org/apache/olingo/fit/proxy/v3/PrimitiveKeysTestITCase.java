@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.TestContext;
@@ -46,11 +45,9 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   @Test
   public void readPrimitiveKeys() {
-    final EntityContainerFactory<EdmEnabledODataClient> testContainerFactory = 
-            EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
-    testContainerFactory.getClient().getConfiguration().
-            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
-    final TestContext testContainer = testContainerFactory.getEntityContainer(TestContext.class);
+    containerFactory = EntityContainerFactory.getV3(testPrimitiveKeysServiceRootURL);
+    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final TestContext testContainer = containerFactory.getEntityContainer(TestContext.class);
     assertNotNull(testContainer);
 
     final EdmBoolean edmBooleanSet = testContainer.getEdmBooleanSet().get(Boolean.TRUE);
