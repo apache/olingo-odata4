@@ -1,0 +1,4 @@
+org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel
+org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color
+org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory
+org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types.Color

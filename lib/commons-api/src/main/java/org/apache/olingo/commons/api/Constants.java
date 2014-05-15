@@ -35,6 +35,10 @@ public interface Constants {
 
   public final static Integer DEFAULT_SCALE = 25;
 
+  public final static String PROXY_ENUM_CLASS_LIST = "org.apache.olingo.ext.proxy.enum";
+
+  public final static String PROXY_COMPLEX_CLASS_LIST = "org.apache.olingo.ext.proxy.complex";
+
   // XML namespaces and prefixes
   public final static String NS_ATOM = "http://www.w3.org/2005/Atom";
 
