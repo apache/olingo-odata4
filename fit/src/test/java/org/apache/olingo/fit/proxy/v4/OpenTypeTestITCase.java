@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.v3;
+package org.apache.olingo.fit.proxy.v4;
+
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -32,10 +33,11 @@ import java.util.UUID;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.ContactDetails;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowIndex;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.DefaultContainer;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex;
 import org.junit.BeforeClass;
 
 import org.junit.Test;
@@ -49,7 +51,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @BeforeClass
   public static void initContainer() {
-    final EntityContainerFactory otcontainerFactory = EntityContainerFactory.getV3(testOpenTypeServiceRootURL);
+    final EntityContainerFactory otcontainerFactory = EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
     otcontainerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(otcontainer);
@@ -96,14 +98,14 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse("2001-04-05T05:05:05.001+00:01"));
 
     contact.setLastContacted(cal);
-
+    
     cal = Calendar.getInstance();
     cal.clear();
     cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse("2001-04-05T05:05:04.001"));
     contact.setContacted(cal);
 
     contact.setGUID(UUID.randomUUID());
-    contact.setPreferedContactTime(BigDecimal.ONE);
+    contact.setPreferedContactTime(cal);
     contact.setByte(Short.valueOf("24"));
     contact.setSignedByte(Byte.MAX_VALUE);
     contact.setDouble(Double.valueOf(Double.MAX_VALUE));
@@ -111,7 +113,8 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     contact.setShort(Short.MAX_VALUE);
     contact.setInt(Integer.MAX_VALUE);
     rowIndex.addAdditionalProperty("aContact", contact);
-
+    rowIndex.addAdditionalProperty("aColor", Color.Green);
+    
     otcontainer.flush();
 
     rowIndex = otcontainer.getRowIndex().get(id);
@@ -122,12 +125,14 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(Byte.MAX_VALUE, rowIndex.getAdditionalProperty("aByte"));
     assertTrue(Calendar.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
     assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
+    assertEquals(Color.class, rowIndex.getAdditionalProperty("aColor").getClass());
+    assertEquals(Color.Green, rowIndex.getAdditionalProperty("aColor"));
 
     entityContext.detachAll();
-
+    
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();
-
+    
     assertNull(otcontainer.getRowIndex().get(id));
   }
 }

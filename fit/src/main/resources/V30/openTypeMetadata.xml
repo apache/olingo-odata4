@@ -21,7 +21,7 @@
 -->
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
   <edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-    <Schema Namespace="Microsoft.Test.OData.Services.OpenTypesService" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+    <Schema Namespace="Microsoft.Test.OData.Services.OpenTypesServiceV3" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
       <ComplexType Name="ContactDetails">
         <Property Name="FirstContacted" Type="Edm.Binary"/>
         <Property Name="LastContacted" Type="Edm.DateTimeOffset" Nullable="false"/>
@@ -42,22 +42,22 @@
         </Key>
         <Property Name="Id" Type="Edm.Guid" Nullable="false"/>
       </EntityType>
-      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.OpenTypesService.Row" OpenType="true"/>
+      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.OpenTypesServiceV3.Row" OpenType="true"/>
       <EntityType Name="RowIndex" OpenType="true">
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
         <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
-        <NavigationProperty Name="Rows" Relationship="Microsoft.Test.OData.Services.OpenTypesService.RowIndex_Rows" ToRole="Rows" FromRole="RowIndex"/>
+        <NavigationProperty Name="Rows" Relationship="Microsoft.Test.OData.Services.OpenTypesServiceV3.RowIndex_Rows" ToRole="Rows" FromRole="RowIndex"/>
       </EntityType>
       <Association Name="RowIndex_Rows">
-        <End Type="Microsoft.Test.OData.Services.OpenTypesService.RowIndex" Role="RowIndex" Multiplicity="*"/>
-        <End Type="Microsoft.Test.OData.Services.OpenTypesService.IndexedRow" Role="Rows" Multiplicity="*"/>
+        <End Type="Microsoft.Test.OData.Services.OpenTypesServiceV3.RowIndex" Role="RowIndex" Multiplicity="*"/>
+        <End Type="Microsoft.Test.OData.Services.OpenTypesServiceV3.IndexedRow" Role="Rows" Multiplicity="*"/>
       </Association>
       <EntityContainer Name="DefaultContainer" m:IsDefaultEntityContainer="true">
-        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.OpenTypesService.Row"/>
-        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.OpenTypesService.RowIndex"/>
-        <AssociationSet Name="Index_Rows" Association="Microsoft.Test.OData.Services.OpenTypesService.RowIndex_Rows">
+        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.OpenTypesServiceV3.Row"/>
+        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.OpenTypesServiceV3.RowIndex"/>
+        <AssociationSet Name="Index_Rows" Association="Microsoft.Test.OData.Services.OpenTypesServiceV3.RowIndex_Rows">
           <End Role="RowIndex" EntitySet="RowIndex"/>
           <End Role="Rows" EntitySet="Row"/>
         </AssociationSet>

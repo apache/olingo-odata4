@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -32,8 +32,8 @@ import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -52,18 +52,18 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesService")
-@EntityType(name = "Row",
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
+@EntityType(name = "RowIndex",
         openType = true,
         hasStream = false,
         isAbstract = false)
-public interface Row 
+public interface RowIndex 
   extends AbstractOpenType {
 
     
     @Key
     @Property(name = "Id", 
-                type = "Edm.Guid", 
+                type = "Edm.Int32", 
                 nullable = false,
                 defaultValue = "",
                 maxLenght = Integer.MAX_VALUE,
@@ -80,11 +80,21 @@ public interface Row
                 fcNSPrefix = "",
                 fcNSURI = "",
                 fcKeepInContent = false)
-    UUID getId();
+    Integer getId();
 
-    void setId(final UUID _id);    
+    void setId(final Integer _id);    
     
     
+
+    @NavigationProperty(name = "Rows", 
+                type = "Microsoft.Test.OData.Services.OpenTypesServiceV3.IndexedRow", 
+                targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV3", 
+                targetContainer = "DefaultContainer", 
+                targetEntitySet = "Row")
+    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.IndexedRowCollection getRows();
+
+    void setRows(final org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.IndexedRowCollection _rows);
+
 
 
 

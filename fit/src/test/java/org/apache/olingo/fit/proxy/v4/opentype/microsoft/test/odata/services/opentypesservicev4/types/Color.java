@@ -17,5 +17,29 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
+
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@EnumType(name = "Color",
+          underlyingType = EdmPrimitiveTypeKind.Int32,
+          isFlags = false)
+public enum Color {
+    Red(1),
+    Green(2),
+    Blue(4);
+
+    private Integer value;
+    
+    public Integer getValue(){
+      return this.value;
+    }
+
+    private Color(final Integer value){
+      this.value=value;
+    }
+}

@@ -21,7 +21,7 @@
 -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
   <edmx:DataServices>
-    <Schema Namespace="Microsoft.Test.OData.Services.OpenTypesService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <Schema Namespace="Microsoft.Test.OData.Services.OpenTypesServiceV4" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EnumType Name="Color">
         <Member Name="Red" Value="1"/>
         <Member Name="Green" Value="2"/>
@@ -30,9 +30,9 @@
       <ComplexType Name="ContactDetails">
         <Property Name="FirstContacted" Type="Edm.Binary"/>
         <Property Name="LastContacted" Type="Edm.DateTimeOffset" Nullable="false"/>
-        <Property Name="Contacted" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="Contacted" Type="Edm.Date" Nullable="false"/>
         <Property Name="GUID" Type="Edm.Guid" Nullable="false"/>
-        <Property Name="PreferedContactTime" Type="Edm.Time" Nullable="false"/>
+        <Property Name="PreferedContactTime" Type="Edm.TimeOfDay" Nullable="false"/>
         <Property Name="Byte" Type="Edm.Byte" Nullable="false"/>
         <Property Name="SignedByte" Type="Edm.SByte" Nullable="false"/>
         <Property Name="Double" Type="Edm.Double" Nullable="false"/>
@@ -47,19 +47,19 @@
         </Key>
         <Property Name="Id" Type="Edm.Guid" Nullable="false"/>
       </EntityType>
-      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.OpenTypesService.Row" OpenType="true"/>
+      <EntityType Name="IndexedRow" BaseType="Microsoft.Test.OData.Services.OpenTypesServiceV4.Row" OpenType="true"/>
       <EntityType Name="RowIndex" OpenType="true">
         <Key>
           <PropertyRef Name="Id"/>
         </Key>
         <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
-        <NavigationProperty Name="Rows" Type="Microsoft.Test.OData.Services.OpenTypesService.Row" Nullable="false"/>
+        <NavigationProperty Name="Rows" Type="Microsoft.Test.OData.Services.OpenTypesServiceV4.Row" Nullable="false"/>
       </EntityType>
       <EntityContainer Name="DefaultContainer">
-        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.OpenTypesService.Row">
+        <EntitySet Name="Row" EntityType="Microsoft.Test.OData.Services.OpenTypesServiceV4.Row">
           <NavigationPropertyBinding Path="Rows" Target="Row"/>
         </EntitySet>
-        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.OpenTypesService.RowIndex"/>
+        <EntitySet Name="RowIndex" EntityType="Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"/>
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

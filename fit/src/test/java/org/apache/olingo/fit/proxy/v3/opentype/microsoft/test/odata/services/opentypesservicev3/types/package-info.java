@@ -17,5 +17,5 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 

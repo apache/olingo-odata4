@@ -81,7 +81,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     final Integer id = 1426;
 
     ODataEntity rowIndex = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesService.RowIndex"));
+            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex"));
     getClient().getBinder().add(rowIndex,
             getClient().getObjectFactory().newPrimitiveProperty("Id",
                     getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
@@ -114,7 +114,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
                     newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
 
     final ODataComplexValue<ODataProperty> contactDetails = getClient().getObjectFactory().newComplexValue(
-            "Microsoft.Test.OData.Services.OpenTypesService.ContactDetails");
+            "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails");
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("FirstContacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("LastContacted",

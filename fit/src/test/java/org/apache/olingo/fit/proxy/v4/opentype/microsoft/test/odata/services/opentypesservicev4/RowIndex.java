@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4;
 
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -44,12 +44,10 @@ import javax.xml.datatype.Duration;
 
 
 
-@EntitySet(name = "Row")
-public interface Row 
-  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.Row, UUID, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowCollection> {
+@EntitySet(name = "RowIndex", includeInServiceDocument = true)
+public interface RowIndex 
+  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex, Integer, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection> {
 
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.Row newRow();
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowCollection newRowCollection();
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.IndexedRow newIndexedRow();
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.IndexedRowCollection newIndexedRowCollection();
+    org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex newRowIndex();
+    org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection newRowIndexCollection();
 }

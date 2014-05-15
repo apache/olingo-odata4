@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4;
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -27,8 +27,8 @@ import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.Container;
 import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -46,16 +46,15 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesService")
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
 @EntityContainer(name = "DefaultContainer",
-  namespace = "Microsoft.Test.OData.Services.OpenTypesService",
+  namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV4",
   isDefaultEntityContainer = true)
 public interface DefaultContainer extends Container {
 
     Row getRow();
 
     RowIndex getRowIndex();
-
 
 
 
@@ -70,8 +69,8 @@ public interface DefaultContainer extends Container {
 
     interface ComplexFactory {
           @Property(name = "ContactDetails",
-                type = "Microsoft.Test.OData.Services.OpenTypesService.ContactDetails")
-      org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.ContactDetails newContactDetails();
+                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails")
+      org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails newContactDetails();
 
         }
   }

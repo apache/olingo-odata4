@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -32,8 +32,8 @@ import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -52,7 +52,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesService")
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
 @EntityType(name = "RowIndex",
         openType = true,
         hasStream = false,
@@ -87,13 +87,13 @@ public interface RowIndex
     
 
     @NavigationProperty(name = "Rows", 
-                type = "Microsoft.Test.OData.Services.OpenTypesService.Row", 
-                targetSchema = "Microsoft.Test.OData.Services.OpenTypesService", 
+                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row", 
+                targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV4", 
                 targetContainer = "DefaultContainer", 
                 targetEntitySet = "Row")
-    org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types.Row getRows();
+    org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row getRows();
 
-    void setRows(final org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types.Row _rows);
+    void setRows(final org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row _rows);
 
 
 

@@ -17,14 +17,15 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
-import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.annotations.Operation;
+import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -42,12 +43,5 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-
-
-@EntitySet(name = "RowIndex")
-public interface RowIndex 
-  extends AbstractEntitySet<org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex, Integer, org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndexCollection> {
-
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex newRowIndex();
-    org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndexCollection newRowIndexCollection();
+public interface RowIndexCollection extends AbstractEntityCollection<RowIndex> {
 }

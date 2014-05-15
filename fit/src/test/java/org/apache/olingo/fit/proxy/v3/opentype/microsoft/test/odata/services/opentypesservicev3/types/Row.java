@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -32,8 +32,8 @@ import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
 import org.apache.olingo.client.api.edm.ConcurrencyMode;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -52,14 +52,13 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesService")
-@EntityType(name = "IndexedRow",
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
+@EntityType(name = "Row",
         openType = true,
         hasStream = false,
-        isAbstract = false,
-        baseType = "Microsoft.Test.OData.Services.OpenTypesService.Row")
-public interface IndexedRow 
-  extends org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.Row {
+        isAbstract = false)
+public interface Row 
+  extends AbstractOpenType {
 
     
     @Key

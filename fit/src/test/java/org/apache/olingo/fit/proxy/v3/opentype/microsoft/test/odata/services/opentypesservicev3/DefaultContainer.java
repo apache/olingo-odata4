@@ -17,15 +17,18 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3;
 
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
-import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -43,5 +46,32 @@ import java.util.Collection;
 import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
-public interface RowIndexCollection extends AbstractEntityCollection<RowIndex> {
-}
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV3")
+@EntityContainer(name = "DefaultContainer",
+  namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV3",
+  isDefaultEntityContainer = true)
+public interface DefaultContainer extends Container {
+
+    Row getRow();
+
+    RowIndex getRowIndex();
+
+
+
+
+
+  Operations operations();
+
+  public interface Operations {
+  
+    }
+
+      ComplexFactory complexFactory();
+
+    interface ComplexFactory {
+          @Property(name = "ContactDetails",
+                type = "Microsoft.Test.OData.Services.OpenTypesServiceV3.ContactDetails")
+      org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.ContactDetails newContactDetails();
+
+        }
+  }

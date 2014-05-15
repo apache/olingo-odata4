@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.*;
-import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservice.types.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
+import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
@@ -43,7 +43,7 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 
-@Namespace("Microsoft.Test.OData.Services.OpenTypesService")
+@Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
 @ComplexType(name = "ContactDetails",
         isOpenType = false,
         isAbstract = false)
@@ -86,7 +86,7 @@ public interface ContactDetails
     
 
     @Property(name = "Contacted", 
-                type = "Edm.DateTime", 
+                type = "Edm.Date", 
                 nullable = false,
                 defaultValue = "",
                 maxLenght = Integer.MAX_VALUE,
@@ -120,7 +120,7 @@ public interface ContactDetails
     
 
     @Property(name = "PreferedContactTime", 
-                type = "Edm.Time", 
+                type = "Edm.TimeOfDay", 
                 nullable = false,
                 defaultValue = "",
                 maxLenght = Integer.MAX_VALUE,
@@ -130,9 +130,9 @@ public interface ContactDetails
                 unicode = true,
                 collation = "",
                 srid = "")
-    BigDecimal getPreferedContactTime();
+    Calendar getPreferedContactTime();
 
-    void setPreferedContactTime(final BigDecimal _preferedContactTime);
+    void setPreferedContactTime(final Calendar _preferedContactTime);
 
     
 
