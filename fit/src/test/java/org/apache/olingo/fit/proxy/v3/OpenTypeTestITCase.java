@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,10 +32,10 @@ import java.util.UUID;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.ContactDetails;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.Row;
-import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.DefaultContainer;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.ContactDetails;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row;
+import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowIndex;
 import org.junit.BeforeClass;
 
 import org.junit.Test;
@@ -97,7 +96,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse("2001-04-05T05:05:05.001+00:01"));
 
     contact.setLastContacted(cal);
-    
+
     cal = Calendar.getInstance();
     cal.clear();
     cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse("2001-04-05T05:05:04.001"));
@@ -112,7 +111,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     contact.setShort(Short.MAX_VALUE);
     contact.setInt(Integer.MAX_VALUE);
     rowIndex.addAdditionalProperty("aContact", contact);
-    
+
     otcontainer.flush();
 
     rowIndex = otcontainer.getRowIndex().get(id);
@@ -122,13 +121,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(Byte.class, rowIndex.getAdditionalProperty("aByte").getClass());
     assertEquals(Byte.MAX_VALUE, rowIndex.getAdditionalProperty("aByte"));
     assertTrue(Calendar.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
-//    assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
+    assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
 
     entityContext.detachAll();
-    
+
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();
-    
+
     assertNull(otcontainer.getRowIndex().get(id));
   }
 }

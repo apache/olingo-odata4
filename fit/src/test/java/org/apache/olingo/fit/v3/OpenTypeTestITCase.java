@@ -81,7 +81,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     final Integer id = 1426;
 
     ODataEntity rowIndex = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesService.RowIndex"));
+            new FullQualifiedName("Microsoft.Test.OData.Services.OpenTypesServiceV3.RowIndex"));
     getClient().getBinder().add(rowIndex,
             getClient().getObjectFactory().newPrimitiveProperty("Id",
                     getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
@@ -106,7 +106,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
                     build()));
 
     final ODataComplexValue<ODataProperty> contactDetails = getClient().getObjectFactory().newComplexValue(
-            "Microsoft.Test.OData.Services.OpenTypesService.ContactDetails");
+            "Microsoft.Test.OData.Services.OpenTypesServiceV3.ContactDetails");
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("FirstContacted",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildBinary("text".getBytes())));
     contactDetails.add(getClient().getObjectFactory().newPrimitiveProperty("LastContacted",
@@ -161,7 +161,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(rowIndex.getProperty("aDate").hasPrimitiveValue());
     assertEquals(EdmPrimitiveTypeKind.DateTime, rowIndex.getProperty("aDate").getPrimitiveValue().getTypeKind());
     assertTrue(rowIndex.getProperty("aContact").hasComplexValue());
-    assertEquals("Microsoft.Test.OData.Services.OpenTypesService.ContactDetails", 
+    assertEquals("Microsoft.Test.OData.Services.OpenTypesServiceV3.ContactDetails", 
             rowIndex.getProperty("aContact").getValue().getTypeName());
     assertTrue(rowIndex.getProperty("aContact").getComplexValue().get("SignedByte").hasPrimitiveValue());
 
