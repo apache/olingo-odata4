@@ -28,21 +28,21 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.NoResultException;
 import org.apache.olingo.ext.proxy.api.NonUniqueResultException;
-import org.apache.olingo.ext.proxy.api.Query;
+import org.apache.olingo.ext.proxy.api.Filter;
 import org.apache.olingo.ext.proxy.api.Sort;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollection<T>> implements Query<T, EC> {
+public class FilterImpl<T extends Serializable, EC extends AbstractEntityCollection<T>> implements Filter<T, EC> {
 
   private static final long serialVersionUID = -300830736753191114L;
 
-  private final CommonODataClient client;
+  private final CommonODataClient<?> client;
 
   private final Class<T> typeRef;
 
   private final Class<EC> collTypeRef;
 
-  private final EntitySetInvocationHandler handler;
+  private final EntitySetInvocationHandler<T, ?, EC> handler;
 
   private final URI baseURI;
 
@@ -55,8 +55,8 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   private Integer firstResult;
 
   @SuppressWarnings("unchecked")
-  QueryImpl(final CommonODataClient client,
-          final Class<EC> collTypeRef, final URI baseURI, final EntitySetInvocationHandler handler) {
+  FilterImpl(final CommonODataClient<?> client,
+          final Class<EC> collTypeRef, final URI baseURI, final EntitySetInvocationHandler<T, ?, EC> handler) {
 
     this.client = client;
     this.typeRef = (Class<T>) ClassUtils.extractTypeArg(collTypeRef);
@@ -66,13 +66,13 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  public Query<T, EC> setFilter(final String filter) {
+  public Filter<T, EC> setFilter(final String filter) {
     this.filter = filter;
     return this;
   }
 
   @Override
-  public Query<T, EC> setFilter(final URIFilter filter) {
+  public Filter<T, EC> setFilter(final URIFilter filter) {
     this.filter = filter.build();
     return this;
   }
@@ -83,7 +83,7 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  public Query<T, EC> setOrderBy(final Sort... sort) {
+  public Filter<T, EC> setOrderBy(final Sort... sort) {
     final StringBuilder builder = new StringBuilder();
     for (Sort sortClause : sort) {
       builder.append(sortClause.getKey()).append(' ').append(sortClause.getValue()).append(',');
@@ -95,7 +95,7 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  public Query<T, EC> setOrderBy(final String orderBy) {
+  public Filter<T, EC> setOrderBy(final String orderBy) {
     this.orderBy = orderBy;
     return this;
   }
@@ -106,7 +106,7 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  public Query<T, EC> setMaxResults(final int maxResults) throws IllegalArgumentException {
+  public Filter<T, EC> setMaxResults(final int maxResults) throws IllegalArgumentException {
     if (maxResults <= 0) {
       throw new IllegalArgumentException("maxResults must be positive");
     }
@@ -121,7 +121,7 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  public Query<T, EC> setFirstResult(final int firstResult) throws IllegalArgumentException {
+  public Filter<T, EC> setFirstResult(final int firstResult) throws IllegalArgumentException {
     if (firstResult <= 0) {
       throw new IllegalArgumentException("firstResult must be positive");
     }
@@ -149,11 +149,10 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public EC getResult() {
     final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.baseURI.toASCIIString()).
-            appendNavigationSegment(new FullQualifiedName(
-            ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
+            appendDerivedEntityTypeSegment(new FullQualifiedName(
+                            ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
 
     if (StringUtils.isNotBlank(filter)) {
       uriBuilder.filter(filter);
@@ -168,6 +167,6 @@ public class QueryImpl<T extends Serializable, EC extends AbstractEntityCollecti
       uriBuilder.skip(firstResult);
     }
 
-    return (EC) handler.fetchWholeEntitySet(uriBuilder.build(), typeRef, collTypeRef);
+    return handler.fetchWholeEntitySet(uriBuilder.build(), typeRef, collTypeRef);
   }
 }

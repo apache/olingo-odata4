@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company;
@@ -53,10 +54,14 @@ import org.junit.Test;
  */
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
+  protected InMemoryEntities getContainer() {
+    return container;
+  }
+
   @Test
   public void exists() {
-    assertTrue(container.getCustomers().exists(1));
-    assertFalse(container.getOrders().exists(1));
+    assertTrue(getContainer().getCustomers().exists(1));
+    assertFalse(getContainer().getOrders().exists(1));
   }
 
   @Test
@@ -66,21 +71,21 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void getAll() {
-    final PersonCollection all = container.getPeople().getAll();
+    final PersonCollection all = getContainer().getPeople().getAll();
     assertNotNull(all);
     assertFalse(all.isEmpty());
     for (Person person : all) {
       assertNotNull(person);
     }
 
-    final EmployeeCollection employees = container.getPeople().getAll(EmployeeCollection.class);
+    final EmployeeCollection employees = getContainer().getPeople().getAll(EmployeeCollection.class);
     assertNotNull(employees);
     assertFalse(employees.isEmpty());
     for (Employee employee : employees) {
       assertNotNull(employee);
     }
 
-    final CustomerCollection customers = container.getPeople().getAll(CustomerCollection.class);
+    final CustomerCollection customers = getContainer().getPeople().getAll(CustomerCollection.class);
     assertNotNull(customers);
     assertFalse(customers.isEmpty());
     for (Customer customer : customers) {
@@ -92,7 +97,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigate() {
-    final Order order = container.getOrders().get(8);
+    final Order order = getContainer().getOrders().get(8);
     assertNotNull(order);
     assertEquals(8, order.getOrderID(), 0);
 
@@ -103,7 +108,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     actual.set(2011, 2, 4, 16, 3, 57);
     assertEquals(actual.getTimeInMillis(), date.getTimeInMillis());
 
-    final Customer customer = container.getCustomers().get(1);
+    final Customer customer = getContainer().getCustomers().get(1);
     assertNotNull(customer);
     assertEquals(1, customer.getPersonID(), 0);
     final Address address = customer.getHomeAddress();
@@ -128,7 +133,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withActions() {
-    final Product product = container.getProducts().get(5);
+    final Product product = getContainer().getProducts().get(5);
     assertEquals(5, product.getProductID(), 0);
 
     try {
@@ -144,7 +149,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     orderDetailKey.setOrderID(7);
     orderDetailKey.setProductID(5);
 
-    final OrderDetail orderDetail = container.getOrderDetails().get(orderDetailKey);
+    final OrderDetail orderDetail = getContainer().getOrderDetails().get(orderDetailKey);
     assertNotNull(orderDetail);
     assertEquals(7, orderDetail.getOrderID(), 0);
     assertEquals(5, orderDetail.getProductID(), 0);
@@ -152,7 +157,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkForETag() {
-    final Order order = container.getOrders().get(8);
+    final Order order = getContainer().getOrders().get(8);
     assertTrue(StringUtils.isNotBlank(((EntityTypeInvocationHandler) Proxy.getInvocationHandler(order)).getETag()));
   }
 }

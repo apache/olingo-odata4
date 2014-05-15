@@ -26,19 +26,17 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         DefaultContainer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        types.ContactDetails;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        types.Customer;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        types.Aliases;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        types.Phone;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.
+        ContactDetails;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Customer;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Aliases;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Phone;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -69,7 +67,7 @@ public abstract class AbstractTestITCase {
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected static EntityContainerFactory containerFactory;
+  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
 
   protected static DefaultContainer container;
 
@@ -84,7 +82,7 @@ public abstract class AbstractTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
-    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);
     EntityContainerFactory.getContext().detachAll();

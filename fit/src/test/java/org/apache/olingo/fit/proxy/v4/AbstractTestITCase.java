@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.context.EntityContext;
@@ -60,7 +61,7 @@ public abstract class AbstractTestITCase {
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected static EntityContainerFactory containerFactory;
+  protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
 
   protected static InMemoryEntities container;
 
@@ -74,7 +75,7 @@ public abstract class AbstractTestITCase {
     testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
 
     containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
-    containerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
     EntityContainerFactory.getContext().detachAll();

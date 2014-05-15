@@ -33,7 +33,7 @@ public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
   @BeforeClass
   public static void setupContaner() {
     containerFactory = EntityContainerFactory.getV3(testAuthServiceRootURL);
-    containerFactory.getConfiguration().
+    containerFactory.getClient().getConfiguration().
             setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
     container = containerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);

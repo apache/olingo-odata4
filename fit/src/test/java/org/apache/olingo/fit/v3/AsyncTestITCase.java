@@ -91,9 +91,6 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertEquals(204, res.getStatusCode());
   }
 
-  /**
-   * @see MediaEntityTest#createMediaEntity(com.msopentech.odatajclient.engine.format.ODataPubFormat)
-   */
   @Test
   public void createMediaEntity() throws Exception {
     URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");

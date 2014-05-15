@@ -28,7 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
-
+import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -37,7 +37,6 @@ import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.ope
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.Row;
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.RowIndex;
 import org.junit.BeforeClass;
-
 import org.junit.Test;
 
 /**
@@ -49,8 +48,10 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @BeforeClass
   public static void initContainer() {
-    final EntityContainerFactory otcontainerFactory = EntityContainerFactory.getV3(testOpenTypeServiceRootURL);
-    otcontainerFactory.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final EntityContainerFactory<EdmEnabledODataClient> otcontainerFactory = 
+            EntityContainerFactory.getV3(testOpenTypeServiceRootURL);
+    otcontainerFactory.getClient().getConfiguration().
+            setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(otcontainer);
   }
@@ -93,7 +94,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
     Calendar cal = Calendar.getInstance();
     cal.clear();
-    cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse("2001-04-05T05:05:05.001+00:01"));
+    cal.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse("2001-04-05T05:05:05.001"));
 
     contact.setLastContacted(cal);
 

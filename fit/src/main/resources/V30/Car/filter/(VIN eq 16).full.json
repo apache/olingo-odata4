@@ -1,0 +1,15 @@
+{
+  "odata.metadata": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/$metadata#Car",
+  "value": [{
+      "odata.type": "Microsoft.Test.OData.Services.AstoriaDefaultService.Car",
+      "odata.id": "http://localhost:${cargo.servlet.port}/stub/StaticService/V30/Static.svc/Car(16)",
+      "odata.editLink": "Car(16)",
+      "odata.mediaEditLink": "Car(16)/$value",
+      "odata.mediaReadLink": "Car(16)/$value",
+      "odata.mediaContentType": "application/octet-stream",
+      "Photo@odata.mediaEditLink": "Car(16)/Photo",
+      "Video@odata.mediaEditLink": "Car(16)/Video",
+      "VIN": 16,
+      "Description": "kphszztczthjacvjnttrarxru"
+    }]
+}

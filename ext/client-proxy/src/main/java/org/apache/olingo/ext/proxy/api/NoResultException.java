@@ -19,11 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 /**
- * Thrown when <tt>Query.getSingleResult()</tt> or <tt>EntityQuery.getSingleResult()</tt> is executed on a query and
- * there is no result to return.
- *
- * @see Query#getSingleResult()
- * @see EntityQuery#getSingleResult()
+ * Thrown when {@link Filter#getSingleResult()} is executed and there is no result to return.
  */
 public class NoResultException extends RuntimeException {
 

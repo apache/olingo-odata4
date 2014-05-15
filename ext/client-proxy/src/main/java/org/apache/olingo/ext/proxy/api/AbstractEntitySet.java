@@ -48,6 +48,7 @@ public interface AbstractEntitySet<
   /**
    * Retrieves an entity by its key, considering polymorphism.
    *
+   * @param <S>
    * @param key must not be null
    * @param reference entity class to be returned
    * @return the entity with the given id or null if none found
@@ -72,6 +73,8 @@ public interface AbstractEntitySet<
   /**
    * Returns all instances of the given subtype.
    *
+   * @param <S>
+   * @param <SEC>
    * @param reference entity collection class to be returned
    * @return all entities of the given subtype
    */
@@ -88,21 +91,42 @@ public interface AbstractEntitySet<
   /**
    * Deletes the given entities in a batch.
    *
+   * @param <S>
    * @param entities to be deleted
    */
   <S extends T> void delete(Iterable<S> entities);
 
   /**
-   * Create an instance of <tt>Query</tt>.
+   * Create an instance of <tt>Filter</tt>.
    *
-   * @return the new query instance
+   * @return the new filter instance
    */
-  Query<T, EC> createQuery();
+  Filter<T, EC> createFilter();
 
   /**
-   * Create an instance of <tt>Query</tt>.
+   * Create an instance of <tt>Filter</tt>.
    *
-   * @return the new query instance
+   * @param <S>
+   * @param <SEC>
+   * @param reference
+   * @return the new filter instance
    */
-  <S extends T, SEC extends AbstractEntityCollection<S>> Query<S, SEC> createQuery(Class<SEC> reference);
+  <S extends T, SEC extends AbstractEntityCollection<S>> Filter<S, SEC> createFilter(Class<SEC> reference);
+
+  /**
+   * Create an instance of <tt>Search</tt>.
+   *
+   * @return the new search instance
+   */
+  Search<T, EC> createSearch();
+
+  /**
+   * Create an instance of <tt>Search</tt>.
+   *
+   * @param <S>
+   * @param <SEC>
+   * @param reference
+   * @return the new search instance
+   */
+  <S extends T, SEC extends AbstractEntityCollection<S>> Search<S, SEC> createSearch(Class<SEC> reference);
 }
