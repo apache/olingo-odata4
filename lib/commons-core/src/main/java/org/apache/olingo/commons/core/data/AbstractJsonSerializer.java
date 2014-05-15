@@ -209,7 +209,7 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   }
 
   protected void valuable(final JsonGenerator jgen, final Valuable valuable, final String name) throws IOException {
-    if (serverMode && !Constants.VALUE.equals(name) && !(valuable instanceof Annotation)) {
+    if (!Constants.VALUE.equals(name) && !(valuable instanceof Annotation) && !valuable.getValue().isComplex()) {
       String type = valuable.getType();
       if (StringUtils.isBlank(type) && valuable.getValue().isPrimitive() || valuable.getValue().isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();

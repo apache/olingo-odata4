@@ -47,7 +47,7 @@ public abstract class AbstractODataCollectionValue<OV extends ODataValue>
    * @param typeName type name.
    */
   public AbstractODataCollectionValue(final String typeName) {
-    super(typeName);
+    super(typeName == null || typeName.startsWith("Collection(") ? typeName : "Collection(" + typeName + ")");
   }
   
   protected abstract ODataCollectionValue<OV> getThis();

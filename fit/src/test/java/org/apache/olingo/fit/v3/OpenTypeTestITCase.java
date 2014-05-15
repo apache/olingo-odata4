@@ -157,8 +157,12 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             rowIndex.getProperty("aBoolean").getPrimitiveValue().getTypeKind());
     assertTrue(rowIndex.getProperty("aDouble").hasPrimitiveValue());
     assertTrue(rowIndex.getProperty("aByte").hasPrimitiveValue());
+    assertEquals(EdmPrimitiveTypeKind.SByte, rowIndex.getProperty("aByte").getPrimitiveValue().getTypeKind());
     assertTrue(rowIndex.getProperty("aDate").hasPrimitiveValue());
+    assertEquals(EdmPrimitiveTypeKind.DateTime, rowIndex.getProperty("aDate").getPrimitiveValue().getTypeKind());
     assertTrue(rowIndex.getProperty("aContact").hasComplexValue());
+    assertEquals("Microsoft.Test.OData.Services.OpenTypesService.ContactDetails", 
+            rowIndex.getProperty("aContact").getValue().getTypeName());
     assertTrue(rowIndex.getProperty("aContact").getComplexValue().get("SignedByte").hasPrimitiveValue());
 
     final ODataDeleteResponse deleteRes = getClient().getCUDRequestFactory().

@@ -119,9 +119,9 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(String.class, rowIndex.getAdditionalProperty("aString").getClass());
     assertEquals(Boolean.class, rowIndex.getAdditionalProperty("aBoolean").getClass());
     assertEquals(Double.class, rowIndex.getAdditionalProperty("aDouble").getClass());
-//    assertEquals(Short.class, rowIndex.getAdditionalProperty("aByte").getClass()); // trova integer
-//    assertEquals(Byte.MAX_VALUE, rowIndex.getAdditionalProperty("aByte"));
-//    assertEquals(Calendar.class, rowIndex.getAdditionalProperty("aDate").getClass()); // trova stringa
+    assertEquals(Byte.class, rowIndex.getAdditionalProperty("aByte").getClass());
+    assertEquals(Byte.MAX_VALUE, rowIndex.getAdditionalProperty("aByte"));
+    assertTrue(Calendar.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
 //    assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
 
     entityContext.detachAll();

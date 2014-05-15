@@ -153,5 +153,4 @@ public class ODataObjectFactoryImpl extends AbstractODataObjectFactory implement
   public ODataDelta newDelta(final URI next) {
     return new ODataDeltaImpl(next);
   }
-
 }
