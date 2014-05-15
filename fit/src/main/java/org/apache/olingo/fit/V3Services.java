@@ -211,6 +211,22 @@ public class V3Services extends AbstractServices {
   }
 
   @GET
+  @Path("/Car/{type:.*}")
+  public Response filterCar(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
+          @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String count,
+          @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
+          @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
+          @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
+    
+    return super.getEntitySet(uriInfo, accept, "Car", top, skip, format, count, filter, orderby, skiptoken);
+  }  
+  
+  @GET
   @Path("/Login({entityId})")
   public Response getLogin(
           @Context UriInfo uriInfo,

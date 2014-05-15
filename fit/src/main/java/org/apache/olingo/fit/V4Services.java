@@ -54,6 +54,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -102,7 +103,7 @@ public class V4Services extends AbstractServices {
   protected static final Pattern CROSSJOIN_PATTERN = Pattern.compile(
           "^\\$crossjoin\\(.*\\)\\?\\$filter=\\([a-zA-Z/]+ eq [a-zA-Z/]+\\)$");
 
-  private Map<String, String> providedAsync = new HashMap<String, String>();
+  private final Map<String, String> providedAsync = new HashMap<String, String>();
 
   public V4Services() throws Exception {
     super(ODataServiceVersion.V40, Commons.getMetadata(ODataServiceVersion.V40));
@@ -343,6 +344,29 @@ public class V4Services extends AbstractServices {
     bos.write(("--" + boundary + "--").getBytes());
 
     return new ByteArrayInputStream(bos.toByteArray());
+  }
+
+  @GET
+  @Path("/People/{type:.*}")
+  public Response getPeople(
+          @Context UriInfo uriInfo,
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("type") final String type, 
+          @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
+          @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) String count,
+          @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) String filter,
+          @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) String search,
+          @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) String orderby,
+          @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) String skiptoken) {
+
+    return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
+            ? NumberUtils.isNumber(type)
+            ? super.getEntityInternal(
+                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
+            : super.getEntitySet(accept, "People", type)
+            : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
 
   @GET
@@ -1239,7 +1263,7 @@ public class V4Services extends AbstractServices {
         acceptType = Accept.parse(accept, version);
       }
 
-      final Accept contentTypeValue = Accept.parse(contentType, version);      
+      final Accept contentTypeValue = Accept.parse(contentType, version);
       final AtomEntityImpl entity = xml.readEntity(contentTypeValue, IOUtils.toInputStream(param, Constants.ENCODING));
 
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());

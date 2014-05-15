@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.fit.proxy.v3.actionoverloading.microsoft.test.odata.services.astoriadefaultservice.
@@ -44,8 +45,9 @@ import org.junit.Test;
 public class ActionOverloadingTestITCase extends AbstractTestITCase {
 
   private DefaultContainer getContainer() {
-    final EntityContainerFactory ecf = EntityContainerFactory.getV3(testActionOverloadingServiceRootURL);
-    ecf.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
+    final EntityContainerFactory<EdmEnabledODataClient> ecf = 
+            EntityContainerFactory.getV3(testActionOverloadingServiceRootURL);
+    ecf.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     return ecf.getEntityContainer(DefaultContainer.class);
   }
 

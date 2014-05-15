@@ -36,16 +36,20 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
+import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
-import org.apache.olingo.ext.proxy.api.Query;
+import org.apache.olingo.ext.proxy.api.Filter;
+import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKey;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
@@ -93,7 +97,7 @@ class EntitySetInvocationHandler<
           final String entitySetName) {
 
     super(containerHandler.getClient(), containerHandler);
-    
+
     this.entitySetName = entitySetName;
     this.isSingleton = AbstractSingleton.class.isAssignableFrom(ref);
 
@@ -245,7 +249,7 @@ class EntitySetInvocationHandler<
           uriBuilder.appendKeySegment(getCompoundKey(key));
         }
 
-        LOG.debug("Execute query '{}'", uriBuilder.toString());
+        LOG.debug("GET {}", uriBuilder.toString());
 
         final ODataRetrieveResponse<CommonODataEntity> res =
                 client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
@@ -355,15 +359,37 @@ class EntitySetInvocationHandler<
   }
 
   @Override
-  public Query<T, EC> createQuery() {
-    return new QueryImpl<T, EC>(this.client, this.collTypeRef, this.uri, this);
+  public Filter<T, EC> createFilter() {
+    return new FilterImpl<T, EC>(this.client, this.collTypeRef, this.uri, this);
   }
 
   @Override
-  public <S extends T, SEC extends AbstractEntityCollection<S>> Query<S, SEC> createQuery(
+  @SuppressWarnings("unchecked")
+  public <S extends T, SEC extends AbstractEntityCollection<S>> Filter<S, SEC> createFilter(
           final Class<SEC> reference) {
 
-    return new QueryImpl<S, SEC>(this.client, reference, this.uri, this);
+    return new FilterImpl<S, SEC>(
+            this.client, reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
+  }
+
+  @Override
+  public Search<T, EC> createSearch() {
+    if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+      throw new UnsupportedInV3Exception();
+    }
+    return new SearchImpl<T, EC>((EdmEnabledODataClient) this.client, this.collTypeRef, this.uri, this);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <S extends T, SEC extends AbstractEntityCollection<S>> Search<S, SEC> createSearch(
+          final Class<SEC> reference) {
+
+    if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+      throw new UnsupportedInV3Exception();
+    }
+    return new SearchImpl<S, SEC>(
+            (EdmEnabledODataClient) this.client, reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
   }
 
   @Override
