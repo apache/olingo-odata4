@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ public class ODataRequest {
   private Map<String, List<String>> headers = new HashMap<String, List<String>>();
   private InputStream body;
   private Map<String, String> queryParameters;
-  private String contentType;
 
   public HttpMethod getMethod() {
     return method;
@@ -41,7 +41,7 @@ public class ODataRequest {
   }
 
   public Map<String, List<String>> getHeaders() {
-    return headers;
+    return Collections.unmodifiableMap(headers);
   }
 
   public void setHeaders(final Map<String, List<String>> headers) {
@@ -62,13 +62,5 @@ public class ODataRequest {
 
   public void setQueryParameters(final Map<String, String> queryParameters) {
     this.queryParameters = queryParameters;
-  }
-
-  public String getContentType() {
-    return contentType;
-  }
-
-  public void setContentType(final String contentType) {
-    this.contentType = contentType;
   }
 }
