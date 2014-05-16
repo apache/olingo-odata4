@@ -64,7 +64,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
   }
 
   @Test
@@ -124,7 +124,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(Calendar.class.isAssignableFrom(rowIndex.getAdditionalProperty("aDate").getClass()));
     assertEquals(ContactDetails.class, rowIndex.getAdditionalProperty("aContact").getClass().getInterfaces()[0]);
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
 
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();

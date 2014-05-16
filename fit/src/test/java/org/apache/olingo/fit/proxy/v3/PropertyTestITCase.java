@@ -18,12 +18,11 @@
  */
 package org.apache.olingo.fit.proxy.v3;
 
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Driver;
+import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Order;
 import org.junit.Test;
 
 /**
@@ -50,7 +49,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
             fail();
         } catch (IllegalStateException e) {
             // ignore and detach all
-            EntityContainerFactory.getContext().detachAll();
+            containerFactory.getContext().detachAll();
         }
     }
 }

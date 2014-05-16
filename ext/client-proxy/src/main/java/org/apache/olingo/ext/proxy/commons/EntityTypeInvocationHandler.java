@@ -19,7 +19,6 @@
 package org.apache.olingo.ext.proxy.commons;
 
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -28,9 +27,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
@@ -92,7 +89,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
-    super(containerHandler.getClient(), typeRef, (ODataLinked) entity, containerHandler);
+    super(typeRef, (ODataLinked) entity, containerHandler);
 
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
@@ -101,7 +98,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
             containerHandler.getEntityContainerName(),
             entitySetName,
             typeRef,
-            CoreUtils.getKey(client, typeRef, entity));
+            CoreUtils.getKey(getClient(), this, typeRef, entity));
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -112,7 +109,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
             getUUID().getContainerName(),
             getUUID().getEntitySetName(),
             getUUID().getType(),
-            CoreUtils.getKey(client, typeRef, entity));
+            CoreUtils.getKey(getClient(), this, typeRef, entity));
 
     this.propertyChanges.clear();
     this.linkChanges.clear();
@@ -184,8 +181,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
       if (propertyChanges.containsKey(name)) {
         res = propertyChanges.get(name);
       } else {
-        res = CoreUtils.getValueFromProperty(client, property, type, this);
-
+        res = CoreUtils.getValueFromProperty(getClient(), property, type, this);
         if (res != null) {
           addPropertyChanges(name, res);
         }
@@ -198,30 +194,6 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
   }
 
   @Override
-  public Collection<String> getAdditionalPropertyNames() {
-    final Set<String> res = new HashSet<String>(propertyChanges.keySet());
-    final Set<String> propertyNames = new HashSet<String>();
-    for (Method method : typeRef.getMethods()) {
-      final Annotation ann = method.getAnnotation(Property.class);
-      if (ann != null) {
-        final String property = ((Property) ann).name();
-        propertyNames.add(property);
-
-        // maybe someone could add a normal attribute to the additional set
-        res.remove(property);
-      }
-    }
-
-    for (CommonODataProperty property : getEntity().getProperties()) {
-      if (!propertyNames.contains(property.getName())) {
-        res.add(property.getName());
-      }
-    }
-
-    return res;
-  }
-
-  @Override
   @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
@@ -230,7 +202,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
       addPropertyChanges(property.name(), value);
 
       if (value != null) {
-        final Collection<?> coll;
+        Collection<?> coll;
         if (Collection.class.isAssignableFrom(value.getClass())) {
           coll = Collection.class.cast(value);
         } else {
@@ -287,7 +259,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
       final String contentType =
               StringUtils.isBlank(getEntity().getMediaContentType()) ? "*/*" : getEntity().getMediaContentType();
 
-      final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(contentSource);
+      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory().getMediaRequest(contentSource);
       retrieveReq.setFormat(ODataMediaFormat.fromFormat(contentType));
 
       this.stream = retrieveReq.execute().getBody();
@@ -303,10 +275,10 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
     try {
       if (res == null) {
         final URI link = URIUtils.getURI(
-                containerHandler.getFactory().getServiceRoot(),
+                getClient().getServiceRoot(),
                 CoreUtils.getMediaEditLink(property.name(), getEntity()).toASCIIString());
 
-        final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
+        final ODataMediaRequest req = getClient().getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
 
       }

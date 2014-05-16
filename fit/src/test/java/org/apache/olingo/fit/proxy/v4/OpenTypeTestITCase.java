@@ -65,7 +65,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
   }
 
   @Test
@@ -128,7 +128,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals(Color.class, rowIndex.getAdditionalProperty("aColor").getClass());
     assertEquals(Color.Green, rowIndex.getAdditionalProperty("aColor"));
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
 
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();

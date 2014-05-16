@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.EntitySet;
@@ -33,7 +32,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
 
   private static final long serialVersionUID = 7379006755693410764L;
 
-  private final EntityContainerFactory factory;
+  private final EntityContainerFactory<?> factory;
 
   protected final String namespace;
 
@@ -42,17 +41,15 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   private final boolean defaultEC;
 
   public static EntityContainerInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client, final Class<?> ref, final EntityContainerFactory factory) {
+          final Class<?> ref, final EntityContainerFactory<?> factory) {
 
-    final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(client, ref, factory);
+    final EntityContainerInvocationHandler instance = new EntityContainerInvocationHandler(ref, factory);
     instance.containerHandler = instance;
     return instance;
   }
 
-  private EntityContainerInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client, final Class<?> ref, final EntityContainerFactory factory) {
-
-    super(client, null);
+  private EntityContainerInvocationHandler(final Class<?> ref, final EntityContainerFactory<?> factory) {
+    super(factory);
 
     final Annotation annotation = ref.getAnnotation(EntityContainer.class);
     if (!(annotation instanceof EntityContainer)) {
@@ -66,7 +63,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     this.namespace = ((EntityContainer) annotation).namespace();
   }
 
-  protected EntityContainerFactory getFactory() {
+  protected EntityContainerFactory<?> getFactory() {
     return factory;
   }
 
@@ -87,7 +84,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
     } else if ("flush".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
-      new ContainerImpl(client, factory).flush();
+      new ContainerImpl(factory).flush();
       return ClassUtils.returnVoid();
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
@@ -102,7 +99,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(getClient(), this, null, null));
+              ComplexFactoryInvocationHandler.getInstance(this, null, null));
     } else {
       final Class<?> returnType = method.getReturnType();
 

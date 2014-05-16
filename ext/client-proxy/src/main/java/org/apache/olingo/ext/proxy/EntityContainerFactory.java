@@ -21,7 +21,6 @@ package org.apache.olingo.ext.proxy;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -35,35 +34,17 @@ import org.apache.olingo.ext.proxy.context.Context;
  */
 public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<?>> {
 
-  private static final Object MONITOR = new Object();
-
-  private static Context context = null;
-
   private static final Map<String, EntityContainerFactory<?>> FACTORY_PER_SERVICEROOT =
           new ConcurrentHashMap<String, EntityContainerFactory<?>>();
 
   private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
-
-  private final CommonEdmEnabledODataClient<?> client;
-
-  private final String serviceRoot;
-
-  public static Context getContext() {
-    synchronized (MONITOR) {
-      if (context == null) {
-        context = new Context();
-      }
-    }
-
-    return context;
-  }
 
   @SuppressWarnings("unchecked")
   private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(
           final C client, final String serviceRoot) {
 
     if (!FACTORY_PER_SERVICEROOT.containsKey(serviceRoot)) {
-      final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client, serviceRoot);
+      final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client);
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
     }
     client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
@@ -83,9 +64,13 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
     return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), serviceRoot);
   }
 
-  private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client, final String serviceRoot) {
+  private final CommonEdmEnabledODataClient<?> client;
+
+  private final Context context;
+
+  private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client) {
     this.client = client;
-    this.serviceRoot = serviceRoot;
+    this.context = new Context();
   }
 
   @SuppressWarnings("unchecked")
@@ -93,8 +78,8 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
     return (C) client;
   }
 
-  public String getServiceRoot() {
-    return serviceRoot;
+  public Context getContext() {
+    return context;
   }
 
   /**
@@ -107,15 +92,11 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
    * @throws IllegalArgumentException if the passed reference is not an interface annotated as EntityContainer
    */
   public <T> T getEntityContainer(final Class<T> reference) throws IllegalStateException, IllegalArgumentException {
-    if (StringUtils.isBlank(serviceRoot)) {
-      throw new IllegalStateException("serviceRoot was not set");
-    }
-
     if (!ENTITY_CONTAINERS.containsKey(reference)) {
       final Object entityContainer = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {reference},
-              EntityContainerInvocationHandler.getInstance(client, reference, this));
+              EntityContainerInvocationHandler.getInstance(reference, this));
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
     return reference.cast(ENTITY_CONTAINERS.get(reference));

@@ -18,15 +18,11 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -69,8 +65,7 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
     final ODataComplexValue<? extends CommonODataProperty> complex =
             client.getObjectFactory().newComplexValue(typeName.toString());
 
-    return (ComplexTypeInvocationHandler) ComplexTypeInvocationHandler.getInstance(
-            client, complex, complexTypeRef, handler);
+    return new ComplexTypeInvocationHandler(client, complex, complexTypeRef, handler);
   }
 
   public static ComplexTypeInvocationHandler getInstance(
@@ -82,13 +77,16 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
     return new ComplexTypeInvocationHandler(client, complex, typeRef, handler);
   }
 
-  public ComplexTypeInvocationHandler(
+  private final CommonEdmEnabledODataClient<?> client;
+
+  private ComplexTypeInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
           final EntityTypeInvocationHandler handler) {
 
-    super(client, typeRef, complex, handler);
+    super(typeRef, complex, handler);
+    this.client = client;
   }
 
   @SuppressWarnings("unchecked")
@@ -103,28 +101,6 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
-  }
-
-  @Override
-  public Collection<String> getAdditionalPropertyNames() {
-    final Set<String> res = new HashSet<String>();
-    final Set<String> propertyNames = new HashSet<String>();
-    for (Method method : typeRef.getMethods()) {
-      final Annotation ann = method.getAnnotation(Property.class);
-      if (ann != null) {
-        final String property = ((Property) ann).name();
-        propertyNames.add(property);
-      }
-    }
-
-    for (final Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
-      final CommonODataProperty property = itor.next();
-      if (!propertyNames.contains(property.getName())) {
-        res.add(property.getName());
-      }
-    }
-
-    return res;
   }
 
   @Override
@@ -155,8 +131,8 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
 
     client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
 
-    if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (entityHandler != null && !getContext().entityContext().isAttached(entityHandler)) {
+      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.CHANGED);
     }
   }
 

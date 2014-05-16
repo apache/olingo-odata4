@@ -42,7 +42,7 @@ public class SingletonInvocationHandler<
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private SingletonInvocationHandler(final Class<?> ref, final EntityContainerInvocationHandler containerHandler) {
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
     this.entitySetHandler =
             new EntitySetInvocationHandler(ref, containerHandler, (ref.getAnnotation(Singleton.class)).name());
   }

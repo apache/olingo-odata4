@@ -24,10 +24,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -35,13 +33,11 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
-import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,31 +53,27 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
 
   protected final Class<?> typeRef;
 
-  protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
-
   protected EntityTypeInvocationHandler entityHandler;
 
   protected Object internal;
 
   protected AbstractTypeInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
           final EntityContainerInvocationHandler containerHandler) {
 
-    super(client, containerHandler);
+    super(containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
     this.entityHandler = EntityTypeInvocationHandler.class.cast(this);
   }
 
   protected AbstractTypeInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
           final EntityTypeInvocationHandler entityHandler) {
 
-    super(client, entityHandler == null ? null : entityHandler.containerHandler);
+    super(entityHandler == null ? null : entityHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
     this.entityHandler = entityHandler;
@@ -91,7 +83,7 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     return entityHandler;
   }
 
-  public void setEntityHandler(EntityTypeInvocationHandler entityHandler) {
+  public void setEntityHandler(final EntityTypeInvocationHandler entityHandler) {
     this.entityHandler = entityHandler;
   }
 
@@ -170,8 +162,8 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
   }
 
   protected void attach() {
-    if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.ATTACHED);
+    if (entityHandler != null && !getContext().entityContext().isAttached(entityHandler)) {
+      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.ATTACHED);
     }
   }
 
@@ -180,12 +172,12 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
   }
 
   protected void attach(final AttachedEntityStatus status, final boolean override) {
-    if (entityContext.isAttached(entityHandler)) {
+    if (getContext().entityContext().isAttached(entityHandler)) {
       if (override) {
-        entityContext.setStatus(entityHandler, status);
+        getContext().entityContext().setStatus(entityHandler, status);
       }
     } else {
-      entityContext.attach(entityHandler, status);
+      getContext().entityContext().attach(entityHandler, status);
     }
   }
 
@@ -224,20 +216,19 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(
-              containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
+      final URI uri = URIUtils.getURI(getClient().getServiceRoot(), link.getLink().toASCIIString());
 
       if (AbstractEntityCollection.class.isAssignableFrom(type)) {
         navPropValue = getEntityCollection(
                 collItemType,
                 type,
                 property.targetContainer(),
-                client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
+                getClient().getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
                 uri,
                 true);
       } else {
         final ODataRetrieveResponse<CommonODataEntity> res =
-                client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
+                getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute();
 
         navPropValue = getEntityProxy(
                 res.getBody(),
@@ -267,12 +258,10 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     return getPropertyValue(name, null);
   }
 
-  public abstract Collection<String> getAdditionalPropertyNames();
-
   private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
     // 1) attach source entity
-    if (!entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (!getContext().entityContext().isAttached(entityHandler)) {
+      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.CHANGED);
     }
 
     // 2) attach the target entity handlers
@@ -289,8 +278,8 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
         throw new IllegalArgumentException("Invalid argument type " + linkedHandler.getTypeRef().getSimpleName());
       }
 
-      if (!entityContext.isAttached(linkedHandler)) {
-        entityContext.attach(linkedHandler, AttachedEntityStatus.LINKED);
+      if (!getContext().entityContext().isAttached(linkedHandler)) {
+        getContext().entityContext().attach(linkedHandler, AttachedEntityStatus.LINKED);
       }
     }
 

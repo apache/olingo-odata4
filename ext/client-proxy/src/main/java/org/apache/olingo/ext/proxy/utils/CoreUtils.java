@@ -349,7 +349,10 @@ public final class CoreUtils {
   }
 
   public static Object getKey(
-          final CommonEdmEnabledODataClient<?> client, final Class<?> entityTypeRef, final CommonODataEntity entity) {
+          final CommonEdmEnabledODataClient<?> client,
+          final EntityTypeInvocationHandler typeHandler,
+          final Class<?> entityTypeRef,
+          final CommonODataEntity entity) {
 
     Object res = null;
 
@@ -364,7 +367,7 @@ public final class CoreUtils {
       } else {
         try {
           res = keyRef.newInstance();
-          populate(client, res, CompoundKeyElement.class, entity.getProperties().iterator());
+          populate(client, typeHandler, res, CompoundKeyElement.class, entity.getProperties().iterator());
         } catch (Exception e) {
           LOG.error("Error population compound key {}", keyRef.getSimpleName(), e);
           throw new IllegalArgumentException("Cannot populate compound key");
@@ -375,8 +378,9 @@ public final class CoreUtils {
     return res;
   }
 
-  public static void populate(
+  private static void populate(
           final CommonEdmEnabledODataClient<?> client,
+          final EntityTypeInvocationHandler typeHandler,
           final Object bean,
           final Class<? extends Annotation> getterAnn,
           final Iterator<? extends CommonODataProperty> propItor) {
@@ -393,15 +397,16 @@ public final class CoreUtils {
       } else {
         typeRef = bean.getClass();
       }
-      populate(client, bean, typeRef, getterAnn, propItor);
+      populate(client, typeHandler, bean, typeRef, getterAnn, propItor);
     }
   }
 
   @SuppressWarnings({"unchecked"})
-  public static void populate(
+  private static void populate(
           final CommonEdmEnabledODataClient<?> client,
+          final EntityTypeInvocationHandler typeHandler,
           final Object bean,
-          final Class<?> reference,
+          final Class<?> typeRef,
           final Class<? extends Annotation> getterAnn,
           final Iterator<? extends CommonODataProperty> propItor) {
 
@@ -409,7 +414,7 @@ public final class CoreUtils {
       while (propItor.hasNext()) {
         final CommonODataProperty property = propItor.next();
 
-        final Method getter = ClassUtils.findGetterByAnnotatedName(reference, getterAnn, property.getName());
+        final Method getter = ClassUtils.findGetterByAnnotatedName(typeRef, getterAnn, property.getName());
 
         if (getter == null) {
           LOG.warn("Could not find any property annotated as {} in {}",
@@ -420,15 +425,15 @@ public final class CoreUtils {
               setPropertyValue(bean, getter, null);
             } else if (property.hasPrimitiveValue()) {
               setPropertyValue(bean, getter, primitiveValueToObject(
-                      property.getPrimitiveValue(), getPropertyClass(reference, property.getName())));
+                      property.getPrimitiveValue(), getPropertyClass(typeRef, property.getName())));
             } else if (property.hasComplexValue()) {
               final Object complex = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexTypeInvocationHandler.getInstance(
-                              client, property.getName(), getter.getReturnType(), null));
+                              client, property.getName(), getter.getReturnType(), typeHandler));
 
-              populate(client, complex, Property.class, property.getValue().asComplex().iterator());
+              populate(client, typeHandler, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
             } else if (property.hasCollectionValue()) {
               final ParameterizedType collType = (ParameterizedType) getter.getGenericReturnType();
@@ -445,15 +450,15 @@ public final class CoreUtils {
                 final ODataValue value = collPropItor.next();
                 if (value.isPrimitive()) {
                   collection.add(primitiveValueToObject(
-                          value.asPrimitive(), getPropertyClass(reference, property.getName())));
+                          value.asPrimitive(), getPropertyClass(typeRef, property.getName())));
                 } else if (value.isComplex()) {
                   final Object collItem = Proxy.newProxyInstance(
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexTypeInvocationHandler.getInstance(
-                                  client, property.getName(), collItemClass, null));
+                                  client, property.getName(), collItemClass, typeHandler));
 
-                  populate(client, collItem, Property.class, value.asComplex().iterator());
+                  populate(client, typeHandler, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
                 }
               }

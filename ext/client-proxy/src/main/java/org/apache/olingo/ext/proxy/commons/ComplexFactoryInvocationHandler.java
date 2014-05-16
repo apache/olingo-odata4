@@ -20,7 +20,6 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
@@ -34,32 +33,33 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
   private final AbstractTypeInvocationHandler invokerHandler;
 
   static ComplexFactoryInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
 
-    return new ComplexFactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
+    return new ComplexFactoryInvocationHandler(containerHandler, entityHandler, targetHandler);
   }
 
   static ComplexFactoryInvocationHandler getInstance(
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
+
     return new ComplexFactoryInvocationHandler(
-            entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null
-            ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
+            ? entityHandler == null
+            ? null
+            : entityHandler.containerHandler
+            : targetHandler.containerHandler,
             entityHandler,
             targetHandler);
   }
 
   private ComplexFactoryInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
 
-    super(client, containerHandler);
+    super(containerHandler);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -78,7 +78,8 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              ComplexTypeInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
+              ComplexTypeInvocationHandler.getInstance(
+                      getClient(), property.name(), method.getReturnType(), entityHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

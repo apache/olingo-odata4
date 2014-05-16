@@ -47,7 +47,7 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
   public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
           final Collection<T> items, final Class<?> itemRef, final URI uri) {
 
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
 
     this.items = items;
     this.itemRef = itemRef;

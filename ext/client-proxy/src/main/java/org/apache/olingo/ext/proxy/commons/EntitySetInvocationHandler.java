@@ -44,7 +44,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -96,7 +95,7 @@ class EntitySetInvocationHandler<
           final EntityContainerInvocationHandler containerHandler,
           final String entitySetName) {
 
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
 
     this.entitySetName = entitySetName;
     this.isSingleton = AbstractSingleton.class.isAssignableFrom(ref);
@@ -106,7 +105,7 @@ class EntitySetInvocationHandler<
     this.typeRef = (Class<T>) entitySetParams[0];
     this.collTypeRef = (Class<EC>) entitySetParams[2];
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(containerHandler.getFactory().getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(getClient().getServiceRoot());
 
     final StringBuilder entitySetSegment = new StringBuilder();
     if (!containerHandler.isDefaultEntityContainer()) {
@@ -152,12 +151,12 @@ class EntitySetInvocationHandler<
 
   @SuppressWarnings("unchecked")
   private <NE> NE newEntity(final Class<NE> reference) {
-    final CommonODataEntity entity = client.getObjectFactory().newEntity(
+    final CommonODataEntity entity = getClient().getObjectFactory().newEntity(
             new FullQualifiedName(containerHandler.getSchemaName(), ClassUtils.getEntityTypeName(reference)));
 
     final EntityTypeInvocationHandler handler =
             EntityTypeInvocationHandler.getInstance(entity, entitySetName, reference, containerHandler);
-    EntityContainerFactory.getContext().entityContext().attachNew(handler);
+    getContext().entityContext().attachNew(handler);
 
     return (NE) Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
@@ -175,8 +174,8 @@ class EntitySetInvocationHandler<
 
   @Override
   public Long count() {
-    final ODataValueRequest req = client.getRetrieveRequestFactory().
-            getValueRequest(client.getURIBuilder(this.uri.toASCIIString()).count().build());
+    final ODataValueRequest req = getClient().getRetrieveRequestFactory().
+            getValueRequest(getClient().getURIBuilder(this.uri.toASCIIString()).count().build());
     req.setFormat(ODataValueFormat.TEXT);
     return Long.valueOf(req.execute().getBody().asPrimitive().toString());
   }
@@ -233,13 +232,13 @@ class EntitySetInvocationHandler<
     final EntityUUID uuid = new EntityUUID(containerHandler.getEntityContainerName(), entitySetName, typeRef, key);
     LOG.debug("Ask for '{}({})'", typeRef.getSimpleName(), key);
 
-    EntityTypeInvocationHandler handler = EntityContainerFactory.getContext().entityContext().getEntity(uuid);
+    EntityTypeInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
     if (handler == null) {
       // not yet attached: search against the service
       try {
         LOG.debug("Search for '{}({})' into the service", typeRef.getSimpleName(), key);
-        final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
+        final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(this.uri.toASCIIString());
 
         if (key.getClass().getAnnotation(CompoundKey.class) == null) {
           LOG.debug("Append key segment '{}'", key);
@@ -252,17 +251,20 @@ class EntitySetInvocationHandler<
         LOG.debug("GET {}", uriBuilder.toString());
 
         final ODataRetrieveResponse<CommonODataEntity> res =
-                client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
+                getClient().getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
 
         final String etag = res.getETag();
         final CommonODataEntity entity = res.getBody();
-
-        if (entity == null || !key.equals(CoreUtils.getKey(client, typeRef, entity))) {
+        if (entity == null) {
           throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
         }
 
         handler = EntityTypeInvocationHandler.getInstance(entity, this, typeRef);
         handler.setETag(etag);
+
+        if (!key.equals(CoreUtils.getKey(getClient(), handler, typeRef, entity))) {
+          throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
+        }
       } catch (Exception e) {
         LOG.info("Entity '" + uuid + "' not found", e);
       }
@@ -285,13 +287,13 @@ class EntitySetInvocationHandler<
 
     if (isSingleton) {
       final ODataRetrieveResponse<org.apache.olingo.commons.api.domain.v4.Singleton> res =
-              ((ODataClient) client).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
+              ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
       entities.add(res.getBody());
       next = null;
     } else {
       final ODataRetrieveResponse<CommonODataEntitySet> res =
-              client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+              getClient().getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
 
       final CommonODataEntitySet entitySet = res.getBody();
       entities.addAll(entitySet.getEntities());
@@ -303,8 +305,7 @@ class EntitySetInvocationHandler<
     for (CommonODataEntity entity : entities) {
       final EntityTypeInvocationHandler handler = EntityTypeInvocationHandler.getInstance(entity, this, typeRef);
 
-      final EntityTypeInvocationHandler handlerInTheContext =
-              EntityContainerFactory.getContext().entityContext().getEntity(handler.getUUID());
+      final EntityTypeInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
 
       items.add((S) Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
@@ -345,7 +346,7 @@ class EntitySetInvocationHandler<
     final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collTypeRef);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
+    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(this.uri.toASCIIString());
 
     final URI entitySetURI;
     if (oref.equals(ref)) {
@@ -360,7 +361,7 @@ class EntitySetInvocationHandler<
 
   @Override
   public Filter<T, EC> createFilter() {
-    return new FilterImpl<T, EC>(this.client, this.collTypeRef, this.uri, this);
+    return new FilterImpl<T, EC>(getClient(), this.collTypeRef, this.uri, this);
   }
 
   @Override
@@ -368,16 +369,15 @@ class EntitySetInvocationHandler<
   public <S extends T, SEC extends AbstractEntityCollection<S>> Filter<S, SEC> createFilter(
           final Class<SEC> reference) {
 
-    return new FilterImpl<S, SEC>(
-            this.client, reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
+    return new FilterImpl<S, SEC>(getClient(), reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
   }
 
   @Override
   public Search<T, EC> createSearch() {
-    if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new UnsupportedInV3Exception();
     }
-    return new SearchImpl<T, EC>((EdmEnabledODataClient) this.client, this.collTypeRef, this.uri, this);
+    return new SearchImpl<T, EC>((EdmEnabledODataClient) getClient(), this.collTypeRef, this.uri, this);
   }
 
   @Override
@@ -385,16 +385,16 @@ class EntitySetInvocationHandler<
   public <S extends T, SEC extends AbstractEntityCollection<S>> Search<S, SEC> createSearch(
           final Class<SEC> reference) {
 
-    if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
+    if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
       throw new UnsupportedInV3Exception();
     }
     return new SearchImpl<S, SEC>(
-            (EdmEnabledODataClient) this.client, reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
+            (EdmEnabledODataClient) getClient(), reference, this.uri, (EntitySetInvocationHandler<S, ?, SEC>) this);
   }
 
   @Override
   public void delete(final KEY key) throws IllegalArgumentException {
-    final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
+    final EntityContext entityContext = getContext().entityContext();
 
     EntityTypeInvocationHandler entity = entityContext.getEntity(new EntityUUID(
             containerHandler.getEntityContainerName(),
@@ -414,7 +414,7 @@ class EntitySetInvocationHandler<
 
   @Override
   public <S extends T> void delete(final Iterable<S> entities) {
-    final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
+    final EntityContext entityContext = getContext().entityContext();
 
     for (T en : entities) {
       final EntityTypeInvocationHandler entity = (EntityTypeInvocationHandler) Proxy.getInvocationHandler(en);
@@ -427,11 +427,11 @@ class EntitySetInvocationHandler<
   }
 
   private boolean isDeleted(final EntityTypeInvocationHandler handler) {
-    return EntityContainerFactory.getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED;
+    return getContext().entityContext().getStatus(handler) == AttachedEntityStatus.DELETED;
   }
 
   @Override
   public EntitySetIterator<T, KEY, EC> iterator() {
-    return new EntitySetIterator<T, KEY, EC>(client.getURIBuilder(this.uri.toASCIIString()).build(), this);
+    return new EntitySetIterator<T, KEY, EC>(getClient().getURIBuilder(this.uri.toASCIIString()).build(), this);
   }
 }

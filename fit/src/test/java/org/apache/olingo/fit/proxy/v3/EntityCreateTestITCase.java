@@ -58,7 +58,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     actual = container.getCustomer().get(id);
     assertNull(actual);
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getCustomer().get(id);
     assertNotNull(actual);
 
@@ -68,7 +68,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     actual = container.getCustomer().get(id);
     assertNull(actual);
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getCustomer().get(id);
     assertNull(actual);
   }
@@ -90,7 +90,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertNotNull(actual);
     assertEquals(id, actual.getPersonId());
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getPerson().get(id, Employee.class);
     assertNotNull(actual);
 
@@ -100,7 +100,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     actual = container.getPerson().get(id, Employee.class);
     assertNull(actual);
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     actual = container.getPerson().get(id, Employee.class);
     assertNull(actual);
   }
