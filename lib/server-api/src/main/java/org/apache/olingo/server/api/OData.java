@@ -24,13 +24,13 @@ import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 
-public abstract class ODataServer {
+public abstract class OData {
 
-  private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataServerImpl";
+  private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataImpl";
 
-  public static ODataServer newInstance() {
+  public static OData newInstance() {
     try {
-      final Class<?> clazz = Class.forName(ODataServer.IMPLEMENTATION);
+      final Class<?> clazz = Class.forName(OData.IMPLEMENTATION);
 
       /*
        * We explicitly do not use the singleton pattern to keep the server state free
@@ -38,7 +38,7 @@ public abstract class ODataServer {
        */
       final Object object = clazz.newInstance();
 
-      return (ODataServer) object;
+      return (OData) object;
 
     } catch (final Exception e) {
       // TODO: Change to ODataRuntimeExcfeption

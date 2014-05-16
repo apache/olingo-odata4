@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,28 +42,23 @@ public class TechnicalServlet extends HttpServlet {
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     LOG.debug("ReferenceServlet:service() called");
 
-    ODataServer server = ODataServer.newInstance();
-    Edm edm = server.createEdm(new EdmTechProvider());
+    OData odata = OData.newInstance();
+    Edm edm = odata.createEdm(new EdmTechProvider());
 
-    ODataHttpHandler handler = server.createHandler(edm);
+    ODataHttpHandler handler = odata.createHandler(edm);
     handler.process(req, resp);
   }
 
-//  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
+  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
 //    ODataServer s = ODataServer.newInstance();
 //
 //    ODataRequest r = s.createRequest(hr);
 //
 //    Edm edm = server.createEdm(new EdmTechProvider());
-//    ODataUriParser p = s.createUriParser(edm);
-// 
-//    ODataUriInfo i = p.parse(r);
-//
-//    ODataDispatcher d = s.createDispatcher(proc);
 //    
-//    ODataResponse res = d.dispatch();
+//    ODataResponse res = r.dispatch();
 //    
 //    s.sendResponse(res, hres);
-//  }
+  }
 
 }

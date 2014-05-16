@@ -20,32 +20,60 @@ package org.apache.olingo.server.core;
 
 import java.io.InputStream;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.core.uri.parser.Parser;
 
 public class ODataHandler {
 
-  private final ODataServer server;
+  private final OData server;
   private final Edm edm;
 
-  public ODataHandler(final ODataServer server, final Edm edm) {
+  public ODataHandler(final OData server, final Edm edm) {
     this.server = server;
     this.edm = edm;
   }
 
   public ODataResponse process(final ODataRequest odRequest) {
-    ODataResponse response = new ODataResponse();
+    try {
+      ODataResponse response = new ODataResponse();
 
-    ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
-    InputStream responseEntity = serializer.serviceDocument(edm, "http://root");
+      Parser parser = new Parser();
+      String odUri =
+          odRequest.getRawODataPath() + (odRequest.getRawQueryPath() == null ? "" : "?" + odRequest.getRawQueryPath());
+      UriInfo uriInfo = parser.parseUri(odUri, edm);
 
-    response.setStatusCode(200);
-    response.setHeader("Content-Type", "application/json");
-    response.setContent(responseEntity);
+      ODataSerializer serializer;
+      InputStream responseEntity;
+      switch (uriInfo.getKind()) {
+      case metadata:
+        serializer = server.createSerializer(ODataFormat.XML);
+        responseEntity = serializer.metadataDocument(edm);
+        
+        response.setStatusCode(200);
+        response.setHeader("Content-Type", "application/xml");
+        response.setContent(responseEntity);
+        break;
+      case service:
+        serializer = server.createSerializer(ODataFormat.JSON);
+        responseEntity = serializer.serviceDocument(edm, odRequest.getRawBaseUri());
+        
+        response.setStatusCode(200);
+        response.setHeader("Content-Type", "application/json");
+        response.setContent(responseEntity);
+        break;
+      default:
+        throw new ODataRuntimeException("not implemented");
+      }
 
-    return response;
+      return response;
+    } catch (Exception e) {
+      // TODO OData error message handling
+      throw new RuntimeException(e);
+    }
   }
-
 }

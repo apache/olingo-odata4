@@ -34,6 +34,7 @@ public class ODataRequest {
   private String rawRequestUri;
   private String rawODataPath;
   private String rawBaseUri;
+  private String rawServiceResolutionUri;
 
   public HttpMethod getMethod() {
     return method;
@@ -90,5 +91,13 @@ public class ODataRequest {
 
   public void setRawBaseUri(String rawBaseUri) {
     this.rawBaseUri = rawBaseUri;
+  }
+
+  public String getRawServiceResolutionUri() {
+    return rawServiceResolutionUri;
+  }
+
+  public void setRawServiceResolutionUri(String rawServiceResolutionUri) {
+    this.rawServiceResolutionUri = rawServiceResolutionUri;
   }
 }

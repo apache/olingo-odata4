@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class ODataHandlerTest {
 
   @Before
   public void before() {
-    ODataServer server = ODataServer.newInstance();
+    OData server = OData.newInstance();
     Edm edm = server.createEdm(new EdmTechProvider());
 
     handler = new ODataHandler(server, edm);
@@ -47,7 +47,9 @@ public class ODataHandlerTest {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
-
+    request.setRawBaseUri("http://localhost/odata/");
+    request.setRawODataPath("");
+    
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
@@ -57,7 +59,7 @@ public class ODataHandlerTest {
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
 
-    assertTrue(doc.contains("\"@odata.context\" : \"http://root/$metadata\""));
+    assertTrue(doc.contains("\"@odata.context\" : \"http://localhost/odata/$metadata\""));
     assertTrue(doc.contains("\"value\" :"));
   }
 
@@ -66,7 +68,7 @@ public class ODataHandlerTest {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
-//    request.setUrl("http://localhost/odata/$metadata");
+    request.setRawODataPath("$metadata");
 
     ODataResponse response = handler.process(request);
 
@@ -76,10 +78,11 @@ public class ODataHandlerTest {
 
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
+
+    System.out.println(doc);
     
-    assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\">"));
+    assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\""));
 
   }
 
-  
 }

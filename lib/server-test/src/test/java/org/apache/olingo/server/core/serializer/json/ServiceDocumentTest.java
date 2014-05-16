@@ -34,7 +34,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.junit.Before;
@@ -108,7 +108,7 @@ public class ServiceDocumentTest {
   public void writeServiceDocumentJson() throws Exception {
     String serviceRoot = "http://localhost:8080/odata.svc";
 
-    ODataServer server = ODataServer.newInstance();
+    OData server = OData.newInstance();
     assertNotNull(server);
 
     ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);

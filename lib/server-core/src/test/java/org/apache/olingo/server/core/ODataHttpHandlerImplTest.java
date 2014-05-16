@@ -19,11 +19,14 @@
 package org.apache.olingo.server.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,34 +36,103 @@ public class ODataHttpHandlerImplTest {
   private final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImplTest.class);
 
   @Test
-  public void fillRequestGeneric() {
+  public void extractMethod() {
+    String[][] mm = {
+        { "GET", null, null, "GET" },
+        { "GET", "xxx", "yyy", "GET" },
+        { "PUT", "xxx", "yyy", "PUT" },
+        { "MERGE", "xxx", "yyy", "MERGE" },
+        { "DELETE", "xxx", "yyy", "DELETE" },
+        { "PATCH", "xxx", "yyy", "PATCH" },
+
+        { "POST", null, null, "POST" },
+        { "POST", null, "GET", "GET" },
+        { "POST", null, "PATCH", "PATCH" },
+
+        { "POST", "GET", null, "GET" },
+        { "POST", "MERGE", null, "MERGE" },
+
+        { "POST", "GET", "GET", "GET" },
+    };
+
+    for (String[] m : mm) {
+
+      HttpServletRequest hr = mock(HttpServletRequest.class);
+
+      when(hr.getMethod()).thenReturn(m[0]);
+      when(hr.getHeader("X-HTTP-Method")).thenReturn(m[1]);
+      when(hr.getHeader("X-HTTP-Method-Override")).thenReturn(m[2]);
+
+      ODataRequest odr = new ODataRequest();
+      ODataHttpHandlerImpl.extractMethod(odr, hr);
+
+      assertEquals(HttpMethod.valueOf(m[3]), odr.getMethod());
+    }
+  }
+
+  @Test
+  public void extractMethodFail() {
+    String[][] mm = {
+        { "POST", "bla", null },
+        { "POST", "MERGE", "PATCH" },
+        { "OPTIONS", null, null },
+        { "HEAD", null, null },
+    };
+
+    for (String[] m : mm) {
+
+      HttpServletRequest hr = mock(HttpServletRequest.class);
+
+      when(hr.getMethod()).thenReturn(m[0]);
+      when(hr.getHeader("X-HTTP-Method")).thenReturn(m[1]);
+      when(hr.getHeader("X-HTTP-Method-Override")).thenReturn(m[2]);
+
+      ODataRequest odr = new ODataRequest();
+      try {
+        ODataHttpHandlerImpl.extractMethod(odr, hr);
+        fail();
+      } catch (ODataRuntimeException e) {}
+    }
+  }
+
+  @Test
+  public void extractUri() {
 
     //@formatter:off (Eclipse formatter)
     //CHECKSTYLE:OFF (Maven checkstyle)
     String [][] uris = {
         /* 0: host                    1: cp         2: sp       3: sr          4: od       5: qp        6: spl  */
+        {  "http://localhost",          "",           "",         "",          "",          "",         "0"},  
         {  "http://localhost",          "",           "",         "",          "/",         "",         "0"},  
         {  "http://localhost",          "",           "",         "",          "/od",       "",         "0"},  
         {  "http://localhost",          "",           "",         "",          "/od/",      "",         "0"},  
 
+        {  "http://localhost",          "/cp",        "",         "",          "",          "",         "0"},  
         {  "http://localhost",          "/cp",        "",         "",          "/",         "",         "0"},  
         {  "http://localhost",          "/cp",        "",         "",          "/od",       "",         "0"},  
+        {  "http://localhost",          "",           "/sp",      "",          "",          "",         "0"},  
         {  "http://localhost",          "",           "/sp",      "",          "/",         "",         "0"},  
         {  "http://localhost",          "",           "/sp",      "",          "/od",       "",         "0"},  
+        {  "http://localhost",          "",           "",         "/sr",       "",          "",         "1"},  
         {  "http://localhost",          "",           "",         "/sr",       "/",         "",         "1"},  
         {  "http://localhost",          "",           "",         "/sr",       "/od",       "",         "1"},  
+        {  "http://localhost",          "",           "",         "/sr/sr",    "",          "",         "2"},  
         {  "http://localhost",          "",           "",         "/sr/sr",    "/",         "",         "2"},  
         {  "http://localhost",          "",           "",         "/sr/sr",    "/od",       "",         "2"},  
 
+        {  "http://localhost",          "/cp",        "/sp",      "",          "",          "",         "0"},  
         {  "http://localhost",          "/cp",        "/sp",      "",          "/",         "",         "0"},  
         {  "http://localhost",          "/cp",        "/sp",      "",          "/od",       "",         "0"},  
         {  "http://localhost",          "/cp",        "",         "/sr",       "/",         "",         "1"},  
         {  "http://localhost",          "/cp",        "",         "/sr",       "/od",       "",         "1"},  
+        {  "http://localhost",          "",           "/sp",      "/sr",       "",          "",         "1"},  
         {  "http://localhost",          "",           "/sp",      "/sr",       "/",         "",         "1"},  
         {  "http://localhost",          "",           "/sp",      "/sr",       "/od",       "",         "1"},  
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "",          "",         "1"},  
         {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/",         "",         "1"},  
         {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "",         "1"},  
         
+        {  "http://localhost",          "",           "",         "",          "",          "qp",       "0"},  
         {  "http://localhost",          "",           "",         "",          "/",         "qp",       "0"},  
         {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "qp",       "1"},  
         
@@ -85,17 +157,19 @@ public class ODataHttpHandlerImplTest {
       when(hr.getServletPath()).thenReturn(p[2]);
 
       ODataRequest odr = new ODataRequest();
-      ODataHttpHandlerImpl.fillRequestUri(odr, hr, Integer.parseInt(p[6]));
+      ODataHttpHandlerImpl.extractUri(odr, hr, Integer.parseInt(p[6]));
 
       String rawBaseUri = p[0] + p[1] + p[2] + p[3];
       String rawODataPath = p[4];
       String rawQueryPath = "".equals(p[5]) ? null : p[5];
       String rawRequestUri = requestUrl + (queryString == null ? "" : "?" + queryString);
+      String rawServiceResolutionUri = "".equals(p[3]) ? null : p[3];
 
       assertEquals(rawBaseUri, odr.getRawBaseUri());
       assertEquals(rawODataPath, odr.getRawODataPath());
       assertEquals(rawQueryPath, odr.getRawQueryPath());
       assertEquals(rawRequestUri, odr.getRawRequestUri());
+      assertEquals(rawServiceResolutionUri, odr.getRawServiceResolutionUri());
     }
   }
 }
