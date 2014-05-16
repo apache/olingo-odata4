@@ -79,8 +79,6 @@ public class ODataHandlerTest {
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
 
-    System.out.println(doc);
-    
     assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\""));
 
   }
