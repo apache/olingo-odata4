@@ -28,13 +28,19 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
+        ProductDetailCollection;
 import org.junit.Test;
 
 /**
@@ -229,5 +235,36 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.flush();
 
     assertNull(container.getOrderDetails().get(key));
+  }
+
+  @Test
+  public void deepInsert() {
+    Product product = container.getProducts().newProduct();
+    product.setProductID(12);
+    product.setName("Latte");
+    product.setQuantityPerUnit("100g Bag");
+    product.setUnitPrice(3.24f);
+    product.setQuantityInStock(100);
+    product.setDiscontinued(false);
+    product.setUserAccess(AccessLevel.Execute);
+    product.setSkinColor(Color.Blue);
+    product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
+
+    final ProductDetail detail = container.getProductDetails().newProductDetail();
+    detail.setProductID(product.getProductID());
+    detail.setProductDetailID(12);
+    detail.setProductName("LatteHQ");
+    detail.setDescription("High-Quality Milk");
+
+    final ProductDetailCollection detailCollection = container.getProductDetails().newProductDetailCollection();
+    detailCollection.add(detail);
+
+    product.setDetails(detailCollection);
+
+    container.flush();
+
+    product = container.getProducts().get(12);
+    assertEquals("Latte", product.getName());
+    assertEquals(12, product.getDetails().iterator().next().getProductDetailID(), 0);
   }
 }

@@ -259,7 +259,6 @@ public abstract class AbstractServices {
   }
 
   protected Response bodyPartRequest(final MimeBodyPart body, final Map<String, String> references) throws Exception {
-
     @SuppressWarnings("unchecked")
     final Enumeration<Header> en = (Enumeration<Header>) body.getAllHeaders();
 
