@@ -45,23 +45,41 @@ public class ODataHandlerTest {
   @Test
   public void testServiceDocumentDefault() throws Exception {
     ODataRequest request = new ODataRequest();
-    
+
     request.setMethod(HttpMethod.GET);
-    
+
     ODataResponse response = handler.process(request);
-    
+
     assertNotNull(response);
     assertEquals(200, response.getStatusCode());
     assertEquals("application/json", response.getHeaders().get("Content-Type"));
-    
-    
+
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
-   
+
     assertTrue(doc.contains("\"@odata.context\" : \"http://root/$metadata\""));
     assertTrue(doc.contains("\"value\" :"));
-    
-    // TODO
   }
 
+  @Test
+  public void testMetadataDefault() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+//    request.setUrl("http://localhost/odata/$metadata");
+
+    ODataResponse response = handler.process(request);
+
+    assertNotNull(response);
+    assertEquals(200, response.getStatusCode());
+    assertEquals("application/xml", response.getHeaders().get("Content-Type"));
+
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    
+    assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\">"));
+
+  }
+
+  
 }

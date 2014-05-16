@@ -92,14 +92,16 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest createODataRequest(final HttpServletRequest request) {
+  private ODataRequest createODataRequest(final HttpServletRequest httpRequest) {
     try {
       ODataRequest odRequest = new ODataRequest();
 
-      odRequest.setBody(request.getInputStream());
-      odRequest.setHeaders(extractHeaders(request));
-      odRequest.setQueryParameters(extractQueryParameters(request.getQueryString()));
-      odRequest.setMethod(HttpMethod.valueOf(request.getMethod()));
+      odRequest.setBody(httpRequest.getInputStream());
+      odRequest.setHeaders(extractHeaders(httpRequest));
+      odRequest.setMethod(HttpMethod.valueOf(httpRequest.getMethod()));
+
+      // request uri string
+      fillRequestUri(odRequest, httpRequest, 0);
 
       return odRequest;
     } catch (Exception e) {
@@ -107,20 +109,37 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private Map<String, String> extractQueryParameters(final String queryString) {
-    Map<String, String> queryParametersMap = new HashMap<String, String>();
-    if (queryString != null) {
-      List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
-      for (String param : queryParameters) {
-        int indexOfEqualSign = param.indexOf("=");
-        if (indexOfEqualSign < 0) {
-          queryParametersMap.put(param, "");
-        } else {
-          queryParametersMap.put(param.substring(0, indexOfEqualSign), param.substring(indexOfEqualSign + 1));
-        }
-      }
+  static void fillRequestUri(ODataRequest odRequest, final HttpServletRequest httpRequest, int split) {
+
+    String rawRequestUri = httpRequest.getRequestURL().toString();
+
+    String rawODataPath;
+    if (!"".equals(httpRequest.getServletPath())) {
+      int beginIndex;
+      beginIndex = rawRequestUri.indexOf(httpRequest.getServletPath());
+      beginIndex += httpRequest.getServletPath().length();
+      rawODataPath = rawRequestUri.substring(beginIndex);
+    } else if (!"".equals(httpRequest.getContextPath())) {
+      int beginIndex;
+      beginIndex = rawRequestUri.indexOf(httpRequest.getContextPath());
+      beginIndex += httpRequest.getContextPath().length();
+      rawODataPath = rawRequestUri.substring(beginIndex);
+    } else {
+      rawODataPath = httpRequest.getRequestURI();
     }
-    return queryParametersMap;
+
+    for (int i = 0; i < split; i++) {
+      int e = rawODataPath.indexOf("/", 1);
+      rawODataPath = rawODataPath.substring(e);
+    }
+
+    String rawBaseUri = rawRequestUri.substring(0, rawRequestUri.length() - rawODataPath.length());
+
+    odRequest.setRawQueryPath(httpRequest.getQueryString());
+    odRequest.setRawRequestUri(rawRequestUri
+        + (httpRequest.getQueryString() == null ? "" : "?" + httpRequest.getQueryString()));
+    odRequest.setRawODataPath(rawODataPath);
+    odRequest.setRawBaseUri(rawBaseUri);
   }
 
   private Map<String, List<String>> extractHeaders(final HttpServletRequest req) {

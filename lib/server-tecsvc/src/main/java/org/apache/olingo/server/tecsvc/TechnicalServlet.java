@@ -48,4 +48,22 @@ public class TechnicalServlet extends HttpServlet {
     ODataHttpHandler handler = server.createHandler(edm);
     handler.process(req, resp);
   }
+
+//  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
+//    ODataServer s = ODataServer.newInstance();
+//
+//    ODataRequest r = s.createRequest(hr);
+//
+//    Edm edm = server.createEdm(new EdmTechProvider());
+//    ODataUriParser p = s.createUriParser(edm);
+// 
+//    ODataUriInfo i = p.parse(r);
+//
+//    ODataDispatcher d = s.createDispatcher(proc);
+//    
+//    ODataResponse res = d.dispatch();
+//    
+//    s.sendResponse(res, hres);
+//  }
+
 }

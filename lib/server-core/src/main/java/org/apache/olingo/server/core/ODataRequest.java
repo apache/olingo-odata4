@@ -30,7 +30,10 @@ public class ODataRequest {
   private HttpMethod method;
   private Map<String, List<String>> headers = new HashMap<String, List<String>>();
   private InputStream body;
-  private Map<String, String> queryParameters;
+  private String rawQueryPath;
+  private String rawRequestUri;
+  private String rawODataPath;
+  private String rawBaseUri;
 
   public HttpMethod getMethod() {
     return method;
@@ -56,11 +59,36 @@ public class ODataRequest {
     this.body = body;
   }
 
-  public Map<String, String> getQueryParameters() {
-    return queryParameters;
+  public String getRawQueryPath() {
+    return rawQueryPath;
   }
 
-  public void setQueryParameters(final Map<String, String> queryParameters) {
-    this.queryParameters = queryParameters;
+  public void setRawQueryPath(String rawQueryPath) {
+    this.rawQueryPath = rawQueryPath;
+  }
+
+  public String getRawBaseUri() {
+    return rawBaseUri;
+  }
+
+  public String getRawRequestUri() {
+    return rawRequestUri;
+  }
+
+  public String getRawODataPath() {
+    return rawODataPath;
+  }
+
+  public void setRawRequestUri(String rawRequestUri) {
+    this.rawRequestUri = rawRequestUri;
+  }
+
+  public void setRawODataPath(String rawODataPath) {
+    this.rawODataPath = rawODataPath;
+    
+  }
+
+  public void setRawBaseUri(String rawBaseUri) {
+    this.rawBaseUri = rawBaseUri;
   }
 }
