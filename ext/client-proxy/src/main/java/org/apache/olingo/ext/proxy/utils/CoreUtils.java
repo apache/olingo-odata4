@@ -19,7 +19,6 @@
 package org.apache.olingo.ext.proxy.utils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.v3.UnsupportedInV3Exception;
 import org.apache.olingo.commons.api.Constants;
@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
+import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -101,42 +102,35 @@ public final class CoreUtils {
           }
 
         } else {
-          throw new UnsupportedOperationException("Usupported object type " + intType.getFullQualifiedName());
+          throw new UnsupportedOperationException("Unsupported object type " + intType.getFullQualifiedName());
         }
       }
     } else if (type.isComplexType()) {
-      value = client.getObjectFactory().newComplexValue(type.getFullQualifiedName().toString());
-
-      final Object oo;
+      Object objHandler;
       if (obj instanceof Proxy) {
-        oo = Proxy.getInvocationHandler(obj);
+        objHandler = Proxy.getInvocationHandler(obj);
       } else {
-        oo = obj;
+        objHandler = obj;
       }
+      if (objHandler instanceof ComplexTypeInvocationHandler) {
+        value = ((ComplexTypeInvocationHandler) objHandler).getComplex();
 
-      if (oo instanceof ComplexTypeInvocationHandler) {
-        final Class<?> typeRef = ((ComplexTypeInvocationHandler) oo).getTypeRef();
-        final Object complex = Proxy.newProxyInstance(
-                Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {typeRef},
-                (ComplexTypeInvocationHandler) oo);
-
+        final Class<?> typeRef = ((ComplexTypeInvocationHandler) objHandler).getTypeRef();
         for (Method method : typeRef.getMethods()) {
-          final Property complexPropertyAnn = method.getAnnotation(Property.class);
-          try {
-            if (complexPropertyAnn != null) {
+          final Property propAnn = method.getAnnotation(Property.class);
+          if (propAnn != null) {
+            try {
               value.asComplex().add(getODataComplexProperty(
-                      client, type.getFullQualifiedName(), complexPropertyAnn.name(), method.invoke(complex)));
+                      client, type.getFullQualifiedName(), propAnn.name(), method.invoke(objHandler)));
+            } catch (Exception ignore) {
+              // ignore value
+              LOG.warn("Error attaching complex {} for field '{}.{}'",
+                      type.getFullQualifiedName(), typeRef.getName(), propAnn.name(), ignore);
             }
-          } catch (Exception ignore) {
-            // ignore value
-            LOG.warn("Error attaching complex {} for field '{}.{}'",
-                    type.getFullQualifiedName(), typeRef.getName(), complexPropertyAnn.name(), ignore);
           }
         }
       } else {
-        throw new IllegalArgumentException(
-                "Object '" + oo.getClass().getSimpleName() + "' is not a complex value");
+        throw new IllegalArgumentException(objHandler.getClass().getName() + "' is not a complex value");
       }
     } else if (type.isEnumType()) {
       if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
@@ -227,8 +221,7 @@ public final class CoreUtils {
           if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
             throw new UnsupportedInV3Exception();
           } else {
-            oprop = ((org.apache.olingo.commons.api.domain.v4.ODataObjectFactory) client.getObjectFactory()).
-                    newEnumProperty(name,
+            oprop = ((ODataObjectFactory) client.getObjectFactory()).newEnumProperty(name,
                     ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, valueType, obj)).
                     asEnum());
           }
@@ -256,18 +249,17 @@ public final class CoreUtils {
       final String ns = typeRef.getAnnotation(Namespace.class).value();
       final String name = typeRef.getAnnotation(ComplexType.class).name();
       return edmTypeInfo.setTypeExpression(new FullQualifiedName(ns, name).toString()).build();
-    } else if(obj.getClass().getAnnotation(EnumType.class)!=null){
+    } else if (obj.getClass().getAnnotation(EnumType.class) != null) {
       final Class<?> typeRef = obj.getClass();
       final String ns = typeRef.getAnnotation(Namespace.class).value();
       final String name = typeRef.getAnnotation(EnumType.class).name();
       return edmTypeInfo.setTypeExpression(new FullQualifiedName(ns, name).toString()).build();
-    }else{
+    } else {
       return guessPrimitiveType(client, obj.getClass());
     }
   }
 
-  private static EdmTypeInfo guessPrimitiveType(
-          final CommonEdmEnabledODataClient<?> client, final Class<?> clazz) {
+  private static EdmTypeInfo guessPrimitiveType(final CommonEdmEnabledODataClient<?> client, final Class<?> clazz) {
     EdmPrimitiveTypeKind bckCandidate = null;
 
     for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
@@ -346,9 +338,9 @@ public final class CoreUtils {
   private static Class<?> getPropertyClass(final Class<?> entityClass, final String propertyName) {
     Class<?> propertyClass = null;
     try {
-      final Field field = entityClass.getField(propertyName);
-      if (field != null) {
-        propertyClass = field.getType();
+      final Method getter = entityClass.getMethod("get" + StringUtils.capitalize(propertyName));
+      if (getter != null) {
+        propertyClass = getter.getReturnType();
       }
     } catch (Exception e) {
       LOG.error("Could not determine the Java type of {}", propertyName, e);
@@ -434,7 +426,7 @@ public final class CoreUtils {
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexTypeInvocationHandler.getInstance(
-                      client, property.getName(), getter.getReturnType(), null));
+                              client, property.getName(), getter.getReturnType(), null));
 
               populate(client, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -459,7 +451,7 @@ public final class CoreUtils {
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexTypeInvocationHandler.getInstance(
-                          client, property.getName(), collItemClass, null));
+                                  client, property.getName(), collItemClass, null));
 
                   populate(client, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -498,17 +490,13 @@ public final class CoreUtils {
     if (property == null || property.hasNullValue()) {
       res = null;
     } else if (property.hasComplexValue()) {
-
-      if (typeRef == null) {
-        internalRef = getComplexTypeRef(property);
-      }
-
+      // complex types supports inheritance in V4, best to re-read actual type
+      internalRef = getComplexTypeRef(property);
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexTypeInvocationHandler.getInstance(
-              client, property.getValue().asComplex(), internalRef, entityHandler));
-
+                      client, property.getValue().asComplex(), internalRef, entityHandler));
     } else if (property.hasCollectionValue()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -518,11 +506,12 @@ public final class CoreUtils {
         if (value.isPrimitive()) {
           collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive(), internalRef));
         } else if (value.isComplex()) {
+          internalRef = getComplexTypeRef(property);
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexTypeInvocationHandler.getInstance(
-                  client, value.asComplex(), internalRef, entityHandler));
+                          client, value.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
@@ -553,6 +542,7 @@ public final class CoreUtils {
           final CommonODataProperty property,
           final String proxyClassListFile,
           final Class<? extends Annotation> annType) {
+
     if (!annType.isAssignableFrom(EnumType.class) && !annType.isAssignableFrom(ComplexType.class)) {
       throw new IllegalArgumentException("Invalid annotation type " + annType);
     }
@@ -568,10 +558,10 @@ public final class CoreUtils {
         final Namespace ns = clazz.getAnnotation(Namespace.class);
 
         if (ns != null && ann != null) {
-          if (property.getValue().getTypeName().equals(
+          if (property.getValue().getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").equals(
                   new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
-                  ? EnumType.class.cast(ann).name()
-                  : ComplexType.class.cast(ann).name()).toString())) {
+                          ? EnumType.class.cast(ann).name()
+                          : ComplexType.class.cast(ann).name()).toString())) {
             return clazz;
           }
         }

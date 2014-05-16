@@ -36,7 +36,6 @@ import org.apache.olingo.client.core.communication.request.batch.AbstractBatchSt
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
-import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements a batch request.

@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.Entity;
@@ -37,7 +38,9 @@ import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
+import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.domain.v4.ODataValue;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -50,6 +53,27 @@ public class EntityTest extends AbstractTest {
   @Override
   protected ODataClient getClient() {
     return v4Client;
+  }
+
+  private EdmEnabledODataClient getEdmEnabledClient() {
+    return new EdmEnabledODataClientImpl(null) {
+
+      private Edm edm;
+
+      @Override
+      public Edm getEdm(final String metadataETag) {
+        return getCachedEdm();
+      }
+
+      @Override
+      public Edm getCachedEdm() {
+        if (edm == null) {
+          edm = getReader().readMetadata(getClass().getResourceAsStream("staticservice-metadata.xml"));
+        }
+        return edm;
+      }
+
+    };
   }
 
   private void singleton(final ODataPubFormat format) {
@@ -334,4 +358,28 @@ public class EntityTest extends AbstractTest {
     complexNavigationProperties(ODataPubFormat.JSON);
   }
 
+  private void derived(final ODataClient client, final ODataPubFormat format) {
+    final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
+    final ODataEntity entity = client.getBinder().getODataEntity(client.getDeserializer().toEntity(input, format));
+    assertNotNull(entity);
+
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
+            ((ODataValuable) entity.getProperty("HomeAddress")).getValue().getTypeName());
+  }
+
+  @Test
+  public void derivedFromAtom() {
+    derived(getClient(), ODataPubFormat.ATOM);
+  }
+
+  @Test
+  public void derivedFromJSON() {
+    derived(getEdmEnabledClient(), ODataPubFormat.JSON);
+  }
+
+  @Test
+  public void derivedFromFullJSON() {
+    derived(getClient(), ODataPubFormat.JSON_FULL_METADATA);
+  }
 }

@@ -77,4 +77,14 @@ public class ODataPropertyImpl extends AbstractODataProperty implements ODataPro
   public List<ODataAnnotation> getAnnotations() {
     return annotations;
   }
+
+  @Override
+  public String toString() {
+    return "ODataPropertyImpl{"
+            + "name=" + getName()
+            + ",valuable=" + valuable
+            + ", annotations=" + annotations
+            + '}';
+  }
+
 }

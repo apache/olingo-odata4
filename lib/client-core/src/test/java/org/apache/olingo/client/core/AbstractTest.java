@@ -30,7 +30,7 @@ public abstract class AbstractTest {
 
   protected static org.apache.olingo.client.api.v4.ODataClient v4Client;
 
-  protected abstract CommonODataClient getClient();
+  protected abstract CommonODataClient<?> getClient();
 
   @BeforeClass
   public static void setUp() {

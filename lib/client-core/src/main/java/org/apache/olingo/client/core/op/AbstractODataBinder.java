@@ -459,7 +459,11 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();
       }
     } else {
-      typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
+      if (propertyType == null || propertyType.equals(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString())) {
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
+      } else {
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();
+      }
     }
     return typeInfo;
   }

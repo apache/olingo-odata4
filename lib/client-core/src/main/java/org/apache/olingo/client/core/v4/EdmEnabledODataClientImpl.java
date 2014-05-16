@@ -45,7 +45,7 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
   }
 
   @Override
-  public final Edm getEdm(final String metadataETag) {
+  public Edm getEdm(final String metadataETag) {
     synchronized (this) {
       if (this.metadataETag != null && !this.metadataETag.equals(metadataETag)) {
         final EdmMetadataRequest metadataReq = getRetrieveRequestFactory().getMetadataRequest(serviceRoot);

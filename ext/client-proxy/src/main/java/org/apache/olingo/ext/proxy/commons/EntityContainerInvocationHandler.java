@@ -102,7 +102,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              FactoryInvocationHandler.getInstance(getClient(), this, null, null));
+              ComplexFactoryInvocationHandler.getInstance(getClient(), this, null, null));
     } else {
       final Class<?> returnType = method.getReturnType();
 

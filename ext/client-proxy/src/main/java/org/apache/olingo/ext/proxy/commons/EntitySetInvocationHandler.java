@@ -258,7 +258,7 @@ class EntitySetInvocationHandler<
         final CommonODataEntity entity = res.getBody();
 
         if (entity == null || !key.equals(CoreUtils.getKey(client, typeRef, entity))) {
-          throw new IllegalArgumentException("Invalid singleton " + typeRef.getSimpleName() + "(" + key + ")");
+          throw new IllegalArgumentException("Invalid " + typeRef.getSimpleName() + "(" + key + ")");
         }
 
         handler = EntityTypeInvocationHandler.getInstance(entity, this, typeRef);
@@ -268,7 +268,7 @@ class EntitySetInvocationHandler<
       }
     } else if (isDeleted(handler)) {
       // object deleted
-      LOG.debug("Object '{}({})' has been delete", typeRef.getSimpleName(), uuid);
+      LOG.debug("Object '{}({})' has been deleted", typeRef.getSimpleName(), uuid);
       handler = null;
     }
 

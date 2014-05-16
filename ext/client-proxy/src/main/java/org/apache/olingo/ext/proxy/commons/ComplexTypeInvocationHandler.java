@@ -91,15 +91,6 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
     super(client, typeRef, complex, handler);
   }
 
-  public void setComplex(final ODataComplexValue<?> complex) {
-    this.internal = complex;
-  }
-
-  @Override
-  public FullQualifiedName getName() {
-    return new FullQualifiedName(((ODataComplexValue<?>) this.internal).getTypeName());
-  }
-
   @SuppressWarnings("unchecked")
   public ODataComplexValue<CommonODataProperty> getComplex() {
     return (ODataComplexValue<CommonODataProperty>) this.internal;
@@ -126,7 +117,7 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
       }
     }
 
-    for (Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
+    for (final Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
       final CommonODataProperty property = itor.next();
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
@@ -159,12 +150,10 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
       toBeAdded = value;
     }
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().
-            setEdm(client.getCachedEdm()).setTypeExpression(
-                    edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
 
-    client.getBinder().add(
-            getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
+    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
 
     if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
       entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);

@@ -105,10 +105,10 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("Pescara")));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Birthday",
             client.getObjectFactory().newPrimitiveValueBuilder().
-                    setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("1977-09-08T00:00:00Z").build()));
+            setType(EdmPrimitiveTypeKind.DateTimeOffset).setText("1977-09-08T00:00:00Z").build()));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("TimeBetweenLastTwoOrders",
             client.getObjectFactory().newPrimitiveValueBuilder().
-                    setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
+            setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(
@@ -120,14 +120,15 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     assertEquals(201, createRes.getStatusCode());
 
     final ODataEntityRequest<ODataEntity> fetchReq = client.getRetrieveRequestFactory().
-            getEntityRequest(createRes.getBody().getEditLink());
+            getEntityRequest(client.getURIBuilder(testStaticServiceRootURL).
+                    appendEntitySetSegment("People").appendKeySegment(976).build());
     fetchReq.setFormat(format);
 
     final ODataEntity actual = fetchReq.execute().getBody();
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", actual.getTypeName().toString());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-            ((ODataValuable)actual.getProperty("HomeAddress")).getValue().getTypeName());
-    
+            ((ODataValuable) actual.getProperty("HomeAddress")).getValue().getTypeName());
+
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(actual.getEditLink());
     assertEquals(204, deleteReq.execute().getStatusCode());
   }
@@ -141,5 +142,4 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
   public void createDeleteAsJSON() {
     createDelete(ODataPubFormat.JSON_FULL_METADATA);
   }
-
 }

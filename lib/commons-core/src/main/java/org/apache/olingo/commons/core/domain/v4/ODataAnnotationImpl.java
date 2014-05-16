@@ -99,4 +99,11 @@ public class ODataAnnotationImpl implements ODataAnnotation {
     return valuable.getEnumValue();
   }
 
+  @Override
+  public String toString() {
+    return "ODataPropertyImpl{"
+            + "term=" + term
+            + ",valuable=" + valuable
+            + '}';
+  }
 }

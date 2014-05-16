@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:gml="http://www.opengis.net/gml" xmlns:georss="http://www.georss.org/georss" m:context="http://localhost:9080/stub/StaticService/V40/Static.svc/$metadata#People/$entity" xml:base="http://localhost:9080/stub/StaticService/V40/Static.svc/">
+  <category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#Microsoft.Test.OData.Services.ODataWCFService.Customer"/>
+  <link rel="edit" title="People" href="http://localhost:9080/stub/StaticService/V40/Static.svc/People(976)"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" title="Parent" href="People(976)/Parent" type="application/atom+xml;type=entry"/>
+  <content type="application/xml">
+    <m:properties>
+      <d:PersonID m:type="Int32">976</d:PersonID>
+      <d:FirstName>Test</d:FirstName>
+      <d:LastName>Test</d:LastName>
+      <d:HomeAddress m:type="#Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress">
+        <d:Street>V.le Gabriele D'Annunzio</d:Street>
+        <d:City>Pescara</d:City>
+        <d:PostalCode>65127</d:PostalCode>
+        <d:CompanyName>Tirasa</d:CompanyName>
+      </d:HomeAddress>
+      <d:Numbers m:type="#Collection(String)"/>
+      <d:Emails m:type="#Collection(String)"/>
+      <d:City>Pescara</d:City>
+      <d:Birthday m:type="DateTimeOffset">1977-09-08T02:00:00+02:00</d:Birthday>
+      <d:TimeBetweenLastTwoOrders m:type="Duration">PT0.0000002S</d:TimeBetweenLastTwoOrders>
+      <d:MiddleName m:null="true"/>
+      <d:Home m:null="true"/>
+    </m:properties>
+  </content>
+</entry>

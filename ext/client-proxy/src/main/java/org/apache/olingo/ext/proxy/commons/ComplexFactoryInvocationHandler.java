@@ -25,7 +25,7 @@ import org.apache.olingo.ext.proxy.api.OperationExecutor;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class FactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
+class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
@@ -33,20 +33,19 @@ class FactoryInvocationHandler extends AbstractInvocationHandler implements Oper
 
   private final AbstractTypeInvocationHandler invokerHandler;
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static FactoryInvocationHandler getInstance(
+  static ComplexFactoryInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
-    return new FactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
+
+    return new ComplexFactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  static FactoryInvocationHandler getInstance(
+  static ComplexFactoryInvocationHandler getInstance(
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
-    return new FactoryInvocationHandler(
+    return new ComplexFactoryInvocationHandler(
             entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null
             ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
@@ -54,11 +53,12 @@ class FactoryInvocationHandler extends AbstractInvocationHandler implements Oper
             targetHandler);
   }
 
-  private FactoryInvocationHandler(
+  private ComplexFactoryInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityTypeInvocationHandler entityHandler,
           final AbstractTypeInvocationHandler targetHandler) {
+
     super(client, containerHandler);
     this.invokerHandler = targetHandler;
     this.entityHandler = entityHandler;

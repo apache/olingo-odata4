@@ -39,7 +39,6 @@ import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -124,11 +123,6 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
   public EntityUUID getUUID() {
     return uuid;
-  }
-
-  @Override
-  public FullQualifiedName getName() {
-    return getEntity().getTypeName();
   }
 
   public String getEntityContainerName() {

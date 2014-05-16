@@ -35,7 +35,6 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -96,8 +95,6 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     this.entityHandler = entityHandler;
   }
 
-  public abstract FullQualifiedName getName();
-
   public Class<?> getTypeRef() {
     return typeRef;
   }
@@ -119,7 +116,7 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              FactoryInvocationHandler.getInstance(entityHandler, this));
+              ComplexFactoryInvocationHandler.getInstance(entityHandler, this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
