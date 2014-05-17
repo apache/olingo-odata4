@@ -60,7 +60,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateEntity() throws InterruptedException {
-    final String randomFirstName = RandomStringUtils.random(10);
+    final String randomFirstName = RandomStringUtils.random(10, "abcedfghijklmnopqrstuvwxyz");
 
     Person person = container.getPeople().get(1);
     person.setFirstName(randomFirstName);
