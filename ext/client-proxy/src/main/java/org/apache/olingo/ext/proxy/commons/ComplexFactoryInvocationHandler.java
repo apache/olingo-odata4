@@ -29,22 +29,22 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
 
   private static final long serialVersionUID = 2629912294765040027L;
 
-  private final EntityTypeInvocationHandler entityHandler;
+  private final EntityInvocationHandler entityHandler;
 
-  private final AbstractTypeInvocationHandler invokerHandler;
+  private final AbstractStructuredInvocationHandler invokerHandler;
 
   static ComplexFactoryInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
-          final EntityTypeInvocationHandler entityHandler,
-          final AbstractTypeInvocationHandler targetHandler) {
+          final EntityInvocationHandler entityHandler,
+          final AbstractStructuredInvocationHandler targetHandler) {
 
     return new ComplexFactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
   }
 
   static ComplexFactoryInvocationHandler getInstance(
-          final EntityTypeInvocationHandler entityHandler,
-          final AbstractTypeInvocationHandler targetHandler) {
+          final EntityInvocationHandler entityHandler,
+          final AbstractStructuredInvocationHandler targetHandler) {
     return new ComplexFactoryInvocationHandler(
             entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null
@@ -56,8 +56,8 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
   private ComplexFactoryInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
-          final EntityTypeInvocationHandler entityHandler,
-          final AbstractTypeInvocationHandler targetHandler) {
+          final EntityInvocationHandler entityHandler,
+          final AbstractStructuredInvocationHandler targetHandler) {
 
     super(client, containerHandler);
     this.invokerHandler = targetHandler;
@@ -78,7 +78,7 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              ComplexTypeInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
+              ComplexInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

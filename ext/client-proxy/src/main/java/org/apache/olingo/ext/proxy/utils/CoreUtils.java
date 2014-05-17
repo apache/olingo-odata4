@@ -60,9 +60,9 @@ import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.commons.AbstractTypeInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.ComplexTypeInvocationHandler;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.AbstractStructuredInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,10 +112,10 @@ public final class CoreUtils {
       } else {
         objHandler = obj;
       }
-      if (objHandler instanceof ComplexTypeInvocationHandler) {
-        value = ((ComplexTypeInvocationHandler) objHandler).getComplex();
+      if (objHandler instanceof ComplexInvocationHandler) {
+        value = ((ComplexInvocationHandler) objHandler).getComplex();
 
-        final Class<?> typeRef = ((ComplexTypeInvocationHandler) objHandler).getTypeRef();
+        final Class<?> typeRef = ((ComplexInvocationHandler) objHandler).getTypeRef();
         for (Method method : typeRef.getMethods()) {
           final Property propAnn = method.getAnnotation(Property.class);
           if (propAnn != null) {
@@ -385,8 +385,8 @@ public final class CoreUtils {
       final Class<?> typeRef;
       if (bean instanceof Proxy) {
         final InvocationHandler handler = Proxy.getInvocationHandler(bean);
-        if (handler instanceof AbstractTypeInvocationHandler) {
-          typeRef = ((ComplexTypeInvocationHandler) handler).getTypeRef();
+        if (handler instanceof AbstractStructuredInvocationHandler) {
+          typeRef = ((ComplexInvocationHandler) handler).getTypeRef();
         } else {
           throw new IllegalStateException("Invalid bean " + bean);
         }
@@ -425,7 +425,7 @@ public final class CoreUtils {
               final Object complex = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
-                      ComplexTypeInvocationHandler.getInstance(
+                      ComplexInvocationHandler.getInstance(
                               client, property.getName(), getter.getReturnType(), null));
 
               populate(client, complex, Property.class, property.getValue().asComplex().iterator());
@@ -450,7 +450,7 @@ public final class CoreUtils {
                   final Object collItem = Proxy.newProxyInstance(
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
-                          ComplexTypeInvocationHandler.getInstance(
+                          ComplexInvocationHandler.getInstance(
                                   client, property.getName(), collItemClass, null));
 
                   populate(client, collItem, Property.class, value.asComplex().iterator());
@@ -471,7 +471,7 @@ public final class CoreUtils {
           final CommonEdmEnabledODataClient<?> client,
           final CommonODataProperty property,
           final Type typeRef,
-          final EntityTypeInvocationHandler entityHandler)
+          final EntityInvocationHandler entityHandler)
           throws InstantiationException, IllegalAccessException {
 
     Class<?> internalRef;
@@ -495,7 +495,7 @@ public final class CoreUtils {
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
-              ComplexTypeInvocationHandler.getInstance(
+              ComplexInvocationHandler.getInstance(
                       client, property.getValue().asComplex(), internalRef, entityHandler));
     } else if (property.hasCollectionValue()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
@@ -510,7 +510,7 @@ public final class CoreUtils {
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
-                  ComplexTypeInvocationHandler.getInstance(
+                  ComplexInvocationHandler.getInstance(
                           client, value.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);

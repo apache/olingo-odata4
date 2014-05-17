@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -267,6 +268,20 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
           objs.clear();
           objs.put("complexType", complex);
           parseObj(typesBaseDir, typesPkg, "complexType", className + ".java", objs);
+
+          for (String navPropName : complex.getNavigationPropertyNames()) {
+            final EdmNavigationProperty navProp = complex.getNavigationProperty(navPropName);
+            if ((complex.getBaseType() == null
+                    || edm.getEntityType(complex.getBaseType().getFullQualifiedName()).
+                    getNavigationProperty(navPropName) == null)
+                    && navProp.containsTarget()) {
+              
+              objs.clear();
+              objs.put("navProp", navProp);
+              parseObj(base, pkg, "containedEntitySet",
+                      utility.capitalize(navProp.getName()) + ".java", objs);
+            }
+          }
         }
 
         for (EdmEntityType entity : schema.getEntityTypes()) {
@@ -304,6 +319,20 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
                   utility.capitalize(entity.getName()) + ".java", objs);
           parseObj(typesBaseDir, typesPkg, "entityCollection",
                   utility.capitalize(entity.getName()) + "Collection.java", objs);
+
+          for (String navPropName : entity.getNavigationPropertyNames()) {
+            final EdmNavigationProperty navProp = entity.getNavigationProperty(navPropName);
+            if ((entity.getBaseType() == null
+                    || edm.getEntityType(entity.getBaseType().getFullQualifiedName()).
+                    getNavigationProperty(navPropName) == null)
+                    && navProp.containsTarget()) {
+
+              objs.clear();
+              objs.put("navProp", navProp);
+              parseObj(base, pkg, "containedEntitySet",
+                      utility.capitalize(navProp.getName()) + ".java", objs);
+            }
+          }
         }
 
         // write container and top entity sets into the base package

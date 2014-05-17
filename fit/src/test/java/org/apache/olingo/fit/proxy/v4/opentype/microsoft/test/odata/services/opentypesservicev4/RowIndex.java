@@ -44,7 +44,7 @@ import javax.xml.datatype.Duration;
 
 
 
-@EntitySet(name = "RowIndex", includeInServiceDocument = true)
+@EntitySet(name = "RowIndex")
 public interface RowIndex 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex, Integer, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndexCollection> {
 

@@ -113,13 +113,13 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
           return Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {returnType},
-                  SingletonInvocationHandler.getInstance(returnType, this));
+                  SingletonInvocationHandler.getInstance(returnType, this, singleton.name()));
         }
       } else {
         return Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[] {returnType},
-                EntitySetInvocationHandler.getInstance(returnType, this));
+                EntitySetInvocationHandler.getInstance(returnType, this, entitySet.name()));
       }
 
       throw new NoSuchMethodException(method.getName());

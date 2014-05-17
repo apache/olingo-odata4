@@ -24,14 +24,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
+        PaymentInstrument;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
 
@@ -106,7 +109,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void concurrentModification() {
     Order order = container.getOrders().get(8);
-    final String etag = ((EntityTypeInvocationHandler) Proxy.getInvocationHandler(order)).getETag();
+    final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(order)).getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
     order.setShelfLife(BigDecimal.TEN);
@@ -115,5 +118,18 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     order = container.getOrders().get(8);
     assertEquals(BigDecimal.TEN, order.getShelfLife());
+  }
+
+  @Test
+  public void contained() {
+    PaymentInstrument instrument = container.getAccounts().get(101).getMyPaymentInstruments().get(101901);
+
+    final String newName = UUID.randomUUID().toString();
+    instrument.setFriendlyName(newName);
+
+    container.flush();
+
+    instrument = container.getAccounts().get(101).getMyPaymentInstruments().get(101901);
+    assertEquals(newName, instrument.getFriendlyName());
   }
 }
