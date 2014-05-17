@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Product
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);    
+    void setProductID(Integer _productID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +104,7 @@ public interface Product
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);    
+    void setName(String _name);    
     
     
     @Property(name = "QuantityPerUnit", 
@@ -128,7 +127,7 @@ public interface Product
                 fcKeepInContent = false)
     String getQuantityPerUnit();
 
-    void setQuantityPerUnit(final String _quantityPerUnit);    
+    void setQuantityPerUnit(String _quantityPerUnit);    
     
     
     @Property(name = "UnitPrice", 
@@ -151,7 +150,7 @@ public interface Product
                 fcKeepInContent = false)
     Float getUnitPrice();
 
-    void setUnitPrice(final Float _unitPrice);    
+    void setUnitPrice(Float _unitPrice);    
     
     
     @Property(name = "QuantityInStock", 
@@ -174,7 +173,7 @@ public interface Product
                 fcKeepInContent = false)
     Integer getQuantityInStock();
 
-    void setQuantityInStock(final Integer _quantityInStock);    
+    void setQuantityInStock(Integer _quantityInStock);    
     
     
     @Property(name = "Discontinued", 
@@ -197,7 +196,7 @@ public interface Product
                 fcKeepInContent = false)
     Boolean getDiscontinued();
 
-    void setDiscontinued(final Boolean _discontinued);    
+    void setDiscontinued(Boolean _discontinued);    
     
     
     @Property(name = "UserAccess", 
@@ -220,7 +219,7 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel getUserAccess();
 
-    void setUserAccess(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel _userAccess);    
+    void setUserAccess(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel _userAccess);    
     
     
     @Property(name = "SkinColor", 
@@ -243,7 +242,7 @@ public interface Product
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color getSkinColor();
 
-    void setSkinColor(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color _skinColor);    
+    void setSkinColor(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color _skinColor);    
     
     
     @Property(name = "CoverColors", 
@@ -266,7 +265,7 @@ public interface Product
                 fcKeepInContent = false)
     Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> getCoverColors();
 
-    void setCoverColors(final Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);    
+    void setCoverColors(Collection<org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color> _coverColors);    
     
     
 
@@ -274,12 +273,12 @@ public interface Product
                 type = "Microsoft.Test.OData.Services.ODataWCFService.ProductDetail", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "ProductDetails")
+                targetEntitySet = "ProductDetails",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection getDetails();
 
-    void setDetails(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection _details);
-
-
+    void setDetails(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection _details);
+    
 
         Operations operations();
 

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);    
+    void setProductID(Integer _productID);    
     
     @Key
     @Property(name = "ProductDetailID", 
@@ -105,7 +104,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     Integer getProductDetailID();
 
-    void setProductDetailID(final Integer _productDetailID);    
+    void setProductDetailID(Integer _productDetailID);    
     
     
     @Property(name = "ProductName", 
@@ -128,7 +127,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     String getProductName();
 
-    void setProductName(final String _productName);    
+    void setProductName(String _productName);    
     
     
     @Property(name = "Description", 
@@ -151,7 +150,7 @@ public interface ProductDetail
                 fcKeepInContent = false)
     String getDescription();
 
-    void setDescription(final String _description);    
+    void setDescription(String _description);    
     
     
 
@@ -159,22 +158,22 @@ public interface ProductDetail
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Product", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Products")
+                targetEntitySet = "Products",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product getRelatedProduct();
 
-    void setRelatedProduct(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product _relatedProduct);
-
-
+    void setRelatedProduct(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product _relatedProduct);
+    
     @NavigationProperty(name = "Reviews", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.ProductReview", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "ProductReviews")
+                targetEntitySet = "ProductReviews",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReviewCollection getReviews();
 
-    void setReviews(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReviewCollection _reviews);
-
-
+    void setReviews(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReviewCollection _reviews);
+    
 
         Operations operations();
 

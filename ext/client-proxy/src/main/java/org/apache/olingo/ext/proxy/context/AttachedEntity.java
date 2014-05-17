@@ -18,20 +18,20 @@
  */
 package org.apache.olingo.ext.proxy.context;
 
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 
 public class AttachedEntity {
 
-  private final EntityTypeInvocationHandler entity;
+  private final EntityInvocationHandler entity;
 
   private final AttachedEntityStatus status;
 
-  public AttachedEntity(final EntityTypeInvocationHandler entity, final AttachedEntityStatus status) {
+  public AttachedEntity(final EntityInvocationHandler entity, final AttachedEntityStatus status) {
     this.entity = entity;
     this.status = status;
   }
 
-  public EntityTypeInvocationHandler getEntity() {
+  public EntityInvocationHandler getEntity() {
     return entity;
   }
 

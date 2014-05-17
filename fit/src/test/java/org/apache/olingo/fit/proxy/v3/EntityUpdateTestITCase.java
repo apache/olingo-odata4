@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Proxy;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         types.ConcurrencyInfo;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
@@ -113,7 +113,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     @Test
     public void concurrentModification() {
         Product product = container.getProduct().get(-10);
-        final String etag = ((EntityTypeInvocationHandler) Proxy.getInvocationHandler(product)).getETag();
+        final String etag = ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag();
         assertTrue(StringUtils.isNotBlank(etag));
 
         final String baseConcurrency = String.valueOf(System.currentTimeMillis());

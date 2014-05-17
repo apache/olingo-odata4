@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Order
                 fcKeepInContent = false)
     Integer getOrderID();
 
-    void setOrderID(final Integer _orderID);    
+    void setOrderID(Integer _orderID);    
     
     
     @Property(name = "OrderDate", 
@@ -105,7 +104,7 @@ public interface Order
                 fcKeepInContent = false)
     Calendar getOrderDate();
 
-    void setOrderDate(final Calendar _orderDate);    
+    void setOrderDate(Calendar _orderDate);    
     
     
     @Property(name = "ShelfLife", 
@@ -128,7 +127,7 @@ public interface Order
                 fcKeepInContent = false)
     BigDecimal getShelfLife();
 
-    void setShelfLife(final BigDecimal _shelfLife);    
+    void setShelfLife(BigDecimal _shelfLife);    
     
     
     @Property(name = "OrderShelfLifes", 
@@ -151,7 +150,7 @@ public interface Order
                 fcKeepInContent = false)
     Collection<BigDecimal> getOrderShelfLifes();
 
-    void setOrderShelfLifes(final Collection<BigDecimal> _orderShelfLifes);    
+    void setOrderShelfLifes(Collection<BigDecimal> _orderShelfLifes);    
     
     
 
@@ -159,32 +158,32 @@ public interface Order
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Employee", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Employees")
+                targetEntitySet = "Employees",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee getLoggedInEmployee();
 
-    void setLoggedInEmployee(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee _loggedInEmployee);
-
-
+    void setLoggedInEmployee(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee _loggedInEmployee);
+    
     @NavigationProperty(name = "CustomerForOrder", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Customers")
+                targetEntitySet = "Customers",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer getCustomerForOrder();
 
-    void setCustomerForOrder(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _customerForOrder);
-
-
+    void setCustomerForOrder(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _customerForOrder);
+    
     @NavigationProperty(name = "OrderDetails", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.OrderDetail", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "OrderDetails")
+                targetEntitySet = "OrderDetails",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection getOrderDetails();
 
-    void setOrderDetails(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection _orderDetails);
-
-
+    void setOrderDetails(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailCollection _orderDetails);
+    
 
 
 }

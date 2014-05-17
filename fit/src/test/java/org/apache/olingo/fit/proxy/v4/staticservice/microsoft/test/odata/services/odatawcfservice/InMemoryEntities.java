@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -53,29 +52,17 @@ import javax.xml.datatype.Duration;
 public interface InMemoryEntities extends Container {
 
     Accounts getAccounts();
-
     StoredPIs getStoredPIs();
-
     Customers getCustomers();
-
     Products getProducts();
-
     OrderDetails getOrderDetails();
-
     Departments getDepartments();
-
     Employees getEmployees();
-
     Orders getOrders();
-
     People getPeople();
-
     SubscriptionTemplates getSubscriptionTemplates();
-
     ProductReviews getProductReviews();
-
     ProductDetails getProductDetails();
-
 
 
     PublicCompany getPublicCompany();

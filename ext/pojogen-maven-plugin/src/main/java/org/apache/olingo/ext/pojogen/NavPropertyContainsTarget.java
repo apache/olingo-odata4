@@ -23,12 +23,12 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 
 public class NavPropertyContainsTarget extends NavPropertyBindingDetails {
 
-    public NavPropertyContainsTarget(final Edm edm, final EdmEntityType type) {
-        super();
-        this.edm = edm;
-        this.entitySet = null;
-        this.container = null;
-        this.type = type;
-        schema = edm.getSchema(type.getNamespace());
-    }
+  public NavPropertyContainsTarget(final Edm edm, final EdmEntityType type) {
+    super();
+    this.edm = edm;
+    this.entitySet = null;
+    this.container = null;
+    this.type = type;
+    schema = edm.getSchema(type.getNamespace());
+  }
 }

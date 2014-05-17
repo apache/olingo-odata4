@@ -41,7 +41,7 @@ public interface $utility.capitalize($complexType.Name)
                 srid = "#if($property.getSRID())$property.getSRID()#end")
     $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)($utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));
 
     #if($utility.isComplex($property.Type.FullQualifiedName))#*
       *##set( $adding = $complexProps.add($property) )
@@ -61,7 +61,7 @@ public interface $utility.capitalize($complexType.Name)
                 targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end")
     $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)($utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
 
 #end
 

@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Type;
 import org.apache.olingo.commons.api.edm.geo.MultiLineString;
 import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
@@ -212,7 +212,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   public void checkForETag() {
     Product product = getContainer().getProduct().get(-10);
     assertTrue(StringUtils.isNotBlank(
-            ((EntityTypeInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
+            ((EntityInvocationHandler) Proxy.getInvocationHandler(product)).getETag()));
   }
 
   @Test

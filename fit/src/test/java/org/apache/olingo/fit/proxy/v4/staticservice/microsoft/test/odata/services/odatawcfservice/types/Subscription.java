@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Subscription
                 fcKeepInContent = false)
     Integer getSubscriptionID();
 
-    void setSubscriptionID(final Integer _subscriptionID);    
+    void setSubscriptionID(Integer _subscriptionID);    
     
     
     @Property(name = "TemplateGuid", 
@@ -105,7 +104,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getTemplateGuid();
 
-    void setTemplateGuid(final String _templateGuid);    
+    void setTemplateGuid(String _templateGuid);    
     
     
     @Property(name = "Title", 
@@ -128,7 +127,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getTitle();
 
-    void setTitle(final String _title);    
+    void setTitle(String _title);    
     
     
     @Property(name = "Category", 
@@ -151,7 +150,7 @@ public interface Subscription
                 fcKeepInContent = false)
     String getCategory();
 
-    void setCategory(final String _category);    
+    void setCategory(String _category);    
     
     
     @Property(name = "CreatedDate", 
@@ -174,7 +173,7 @@ public interface Subscription
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);    
+    void setCreatedDate(Calendar _createdDate);    
     
     
 

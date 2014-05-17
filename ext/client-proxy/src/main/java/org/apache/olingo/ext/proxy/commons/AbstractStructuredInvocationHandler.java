@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
@@ -46,24 +47,24 @@ import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHandler {
+public abstract class AbstractStructuredInvocationHandler extends AbstractInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
   /**
    * Logger.
    */
-  protected static final Logger LOG = LoggerFactory.getLogger(AbstractTypeInvocationHandler.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(AbstractStructuredInvocationHandler.class);
 
   protected final Class<?> typeRef;
 
   protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
 
-  protected EntityTypeInvocationHandler entityHandler;
+  protected EntityInvocationHandler entityHandler;
 
   protected Object internal;
 
-  protected AbstractTypeInvocationHandler(
+  protected AbstractStructuredInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
@@ -72,14 +73,14 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     super(client, containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = EntityTypeInvocationHandler.class.cast(this);
+    this.entityHandler = EntityInvocationHandler.class.cast(this);
   }
 
-  protected AbstractTypeInvocationHandler(
+  protected AbstractStructuredInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
           final Object internal,
-          final EntityTypeInvocationHandler entityHandler) {
+          final EntityInvocationHandler entityHandler) {
 
     super(client, entityHandler == null ? null : entityHandler.containerHandler);
     this.internal = internal;
@@ -87,11 +88,11 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     this.entityHandler = entityHandler;
   }
 
-  public EntityTypeInvocationHandler getEntityHandler() {
+  public EntityInvocationHandler getEntityHandler() {
     return entityHandler;
   }
 
-  public void setEntityHandler(EntityTypeInvocationHandler entityHandler) {
+  public void setEntityHandler(EntityInvocationHandler entityHandler) {
     this.entityHandler = entityHandler;
   }
 
@@ -191,7 +192,9 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
 
   protected abstract Object getNavigationPropertyValue(final NavigationProperty property, final Method getter);
 
-  protected Object retriveNavigationProperty(final NavigationProperty property, final Method getter) {
+  protected Object retrieveNavigationProperty(
+          final NavigationProperty property, final Method getter, final String serviceRoot) {
+
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (AbstractEntityCollection.class.isAssignableFrom(type)) {
@@ -208,14 +211,15 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
     if (link instanceof ODataInlineEntity) {
       // return entity
       navPropValue = getEntityProxy(
+              null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
-              property.targetEntitySet(),
+              client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
               type,
               false);
     } else if (link instanceof ODataInlineEntitySet) {
       // return entity set
-      navPropValue = getEntityCollection(
+      navPropValue = getEntityCollectionProxy(
               collItemType,
               type,
               property.targetContainer(),
@@ -224,25 +228,26 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(
-              containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
-
+      final URI uri = URIUtils.getURI(containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
       if (AbstractEntityCollection.class.isAssignableFrom(type)) {
-        navPropValue = getEntityCollection(
+        navPropValue = getEntityCollectionProxy(
                 collItemType,
                 type,
                 property.targetContainer(),
                 client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute().getBody(),
                 uri,
                 true);
+      } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
+        navPropValue = getEntitySetProxy(type, uri);
       } else {
         final ODataRetrieveResponse<CommonODataEntity> res =
                 client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
 
         navPropValue = getEntityProxy(
+                uri,
                 res.getBody(),
                 property.targetContainer(),
-                property.targetEntitySet(),
+                client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
                 type,
                 res.getETag(),
                 true);
@@ -280,11 +285,11 @@ public abstract class AbstractTypeInvocationHandler extends AbstractInvocationHa
             ? (AbstractEntityCollection) value : Collections.singleton(value)) {
 
       final InvocationHandler etih = Proxy.getInvocationHandler(link);
-      if (!(etih instanceof EntityTypeInvocationHandler)) {
+      if (!(etih instanceof EntityInvocationHandler)) {
         throw new IllegalArgumentException("Invalid argument type");
       }
 
-      final EntityTypeInvocationHandler linkedHandler = (EntityTypeInvocationHandler) etih;
+      final EntityInvocationHandler linkedHandler = (EntityInvocationHandler) etih;
       if (!linkedHandler.getTypeRef().isAnnotationPresent(EntityType.class)) {
         throw new IllegalArgumentException("Invalid argument type " + linkedHandler.getTypeRef().getSimpleName());
       }

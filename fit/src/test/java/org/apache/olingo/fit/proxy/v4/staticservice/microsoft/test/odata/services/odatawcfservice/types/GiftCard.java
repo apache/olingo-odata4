@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Integer getGiftCardID();
 
-    void setGiftCardID(final Integer _giftCardID);    
+    void setGiftCardID(Integer _giftCardID);    
     
     
     @Property(name = "GiftCardNO", 
@@ -105,7 +104,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     String getGiftCardNO();
 
-    void setGiftCardNO(final String _giftCardNO);    
+    void setGiftCardNO(String _giftCardNO);    
     
     
     @Property(name = "Amount", 
@@ -128,7 +127,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Double getAmount();
 
-    void setAmount(final Double _amount);    
+    void setAmount(Double _amount);    
     
     
     @Property(name = "ExperationDate", 
@@ -151,7 +150,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     Calendar getExperationDate();
 
-    void setExperationDate(final Calendar _experationDate);    
+    void setExperationDate(Calendar _experationDate);    
     
     
     @Property(name = "OwnerName", 
@@ -174,7 +173,7 @@ public interface GiftCard
                 fcKeepInContent = false)
     String getOwnerName();
 
-    void setOwnerName(final String _ownerName);    
+    void setOwnerName(String _ownerName);    
     
     
 

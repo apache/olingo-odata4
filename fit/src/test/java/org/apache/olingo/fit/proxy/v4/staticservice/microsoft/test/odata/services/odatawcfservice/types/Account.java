@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Account
                 fcKeepInContent = false)
     Integer getAccountID();
 
-    void setAccountID(final Integer _accountID);    
+    void setAccountID(Integer _accountID);    
     
     
     @Property(name = "Country", 
@@ -105,7 +104,7 @@ public interface Account
                 fcKeepInContent = false)
     String getCountry();
 
-    void setCountry(final String _country);    
+    void setCountry(String _country);    
     
     
     @Property(name = "AccountInfo", 
@@ -128,7 +127,7 @@ public interface Account
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo getAccountInfo();
 
-    void setAccountInfo(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);    
+    void setAccountInfo(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo _accountInfo);    
         
     
 
@@ -136,42 +135,42 @@ public interface Account
                 type = "Microsoft.Test.OData.Services.ODataWCFService.GiftCard", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
+                targetEntitySet = "",
+                containsTarget = true)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard getMyGiftCard();
 
-    void setMyGiftCard(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard _myGiftCard);
-
-
+    void setMyGiftCard(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard _myGiftCard);
+    
     @NavigationProperty(name = "MyPaymentInstruments", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection getMyPaymentInstruments();
+                targetEntitySet = "",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.MyPaymentInstruments getMyPaymentInstruments();
 
-    void setMyPaymentInstruments(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection _myPaymentInstruments);
-
-
+    void setMyPaymentInstruments(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.MyPaymentInstruments _myPaymentInstruments);
+    
     @NavigationProperty(name = "ActiveSubscriptions", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection getActiveSubscriptions();
+                targetEntitySet = "",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.ActiveSubscriptions getActiveSubscriptions();
 
-    void setActiveSubscriptions(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection _activeSubscriptions);
-
-
+    void setActiveSubscriptions(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.ActiveSubscriptions _activeSubscriptions);
+    
     @NavigationProperty(name = "AvailableSubscriptionTemplatess", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "SubscriptionTemplates")
+                targetEntitySet = "SubscriptionTemplates",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection getAvailableSubscriptionTemplatess();
 
-    void setAvailableSubscriptionTemplatess(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection _availableSubscriptionTemplatess);
-
-
+    void setAvailableSubscriptionTemplatess(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.SubscriptionCollection _availableSubscriptionTemplatess);
+    
 
         Operations operations();
 

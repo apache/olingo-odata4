@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     Integer getPaymentInstrumentID();
 
-    void setPaymentInstrumentID(final Integer _paymentInstrumentID);    
+    void setPaymentInstrumentID(Integer _paymentInstrumentID);    
     
     
     @Property(name = "FriendlyName", 
@@ -105,7 +104,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     String getFriendlyName();
 
-    void setFriendlyName(final String _friendlyName);    
+    void setFriendlyName(String _friendlyName);    
     
     
     @Property(name = "CreatedDate", 
@@ -128,7 +127,7 @@ public interface PaymentInstrument
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);    
+    void setCreatedDate(Calendar _createdDate);    
     
     
 
@@ -136,32 +135,32 @@ public interface PaymentInstrument
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "StoredPIs")
+                targetEntitySet = "StoredPIs",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI getTheStoredPI();
 
-    void setTheStoredPI(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _theStoredPI);
-
-
+    void setTheStoredPI(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _theStoredPI);
+    
     @NavigationProperty(name = "BillingStatements", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Statement", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection getBillingStatements();
+                targetEntitySet = "",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements getBillingStatements();
 
-    void setBillingStatements(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StatementCollection _billingStatements);
-
-
+    void setBillingStatements(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.BillingStatements _billingStatements);
+    
     @NavigationProperty(name = "BackupStoredPI", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "StoredPIs")
+                targetEntitySet = "StoredPIs",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI getBackupStoredPI();
 
-    void setBackupStoredPI(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _backupStoredPI);
-
-
+    void setBackupStoredPI(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI _backupStoredPI);
+    
 
 
 }
