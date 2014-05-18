@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Statement
                 fcKeepInContent = false)
     Integer getStatementID();
 
-    void setStatementID(final Integer _statementID);    
+    void setStatementID(Integer _statementID);    
     
     
     @Property(name = "TransactionType", 
@@ -105,7 +104,7 @@ public interface Statement
                 fcKeepInContent = false)
     String getTransactionType();
 
-    void setTransactionType(final String _transactionType);    
+    void setTransactionType(String _transactionType);    
     
     
     @Property(name = "TransactionDescription", 
@@ -128,7 +127,7 @@ public interface Statement
                 fcKeepInContent = false)
     String getTransactionDescription();
 
-    void setTransactionDescription(final String _transactionDescription);    
+    void setTransactionDescription(String _transactionDescription);    
     
     
     @Property(name = "Amount", 
@@ -151,7 +150,7 @@ public interface Statement
                 fcKeepInContent = false)
     Double getAmount();
 
-    void setAmount(final Double _amount);    
+    void setAmount(Double _amount);    
     
     
 

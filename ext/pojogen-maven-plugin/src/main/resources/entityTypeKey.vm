@@ -60,7 +60,7 @@ public class $keyRef extends AbstractEntityKey {
         return _$utility.uncapitalize($entry.getKey());
     }
 
-    public void set$utility.capitalize($entry.getKey())(final $entry.getValue() _$utility.uncapitalize($entry.getKey())) {
+    public void set$utility.capitalize($entry.getKey())($entry.getValue() _$utility.uncapitalize($entry.getKey())) {
         this._$utility.uncapitalize($entry.getKey()) = _$utility.uncapitalize($entry.getKey());
     }#*
     *##set ( $count = $count + 1 )

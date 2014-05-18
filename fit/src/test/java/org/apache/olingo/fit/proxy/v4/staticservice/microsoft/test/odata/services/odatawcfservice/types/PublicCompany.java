@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -83,7 +82,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     Integer getCompanyID();
 
-    void setCompanyID(final Integer _companyID);    
+    void setCompanyID(Integer _companyID);    
     
     
     @Property(name = "CompanyCategory", 
@@ -106,7 +105,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory getCompanyCategory();
 
-    void setCompanyCategory(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);    
+    void setCompanyCategory(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory _companyCategory);    
     
     
     @Property(name = "Revenue", 
@@ -129,7 +128,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     Long getRevenue();
 
-    void setRevenue(final Long _revenue);    
+    void setRevenue(Long _revenue);    
     
     
     @Property(name = "Name", 
@@ -152,7 +151,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);    
+    void setName(String _name);    
     
     
     @Property(name = "Address", 
@@ -175,7 +174,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getAddress();
 
-    void setAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
+    void setAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _address);    
         
     
     @Property(name = "StockExchange", 
@@ -198,7 +197,7 @@ public interface PublicCompany
                 fcKeepInContent = false)
     String getStockExchange();
 
-    void setStockExchange(final String _stockExchange);    
+    void setStockExchange(String _stockExchange);    
     
     
 
@@ -206,72 +205,72 @@ public interface PublicCompany
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Employee", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Employees")
+                targetEntitySet = "Employees",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection getEmployees();
 
-    void setEmployees(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection _employees);
-
-
+    void setEmployees(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection _employees);
+    
     @NavigationProperty(name = "VipCustomer", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Customer", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "VipCustomer")
+                targetEntitySet = "VipCustomer",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer getVipCustomer();
 
-    void setVipCustomer(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _vipCustomer);
-
-
+    void setVipCustomer(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer _vipCustomer);
+    
     @NavigationProperty(name = "Departments", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Department", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Departments")
+                targetEntitySet = "Departments",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.DepartmentCollection getDepartments();
 
-    void setDepartments(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.DepartmentCollection _departments);
-
-
+    void setDepartments(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.DepartmentCollection _departments);
+    
     @NavigationProperty(name = "CoreDepartment", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Department", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Departments")
+                targetEntitySet = "Departments",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department getCoreDepartment();
 
-    void setCoreDepartment(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department _coreDepartment);
-
-
+    void setCoreDepartment(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department _coreDepartment);
+    
     @NavigationProperty(name = "Assets", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Asset", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
-    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection getAssets();
+                targetEntitySet = "",
+                containsTarget = true)
+    org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.Assets getAssets();
 
-    void setAssets(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AssetCollection _assets);
-
-
+    void setAssets(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.Assets _assets);
+    
     @NavigationProperty(name = "Club", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Club", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "", 
-                targetEntitySet = "")
+                targetEntitySet = "",
+                containsTarget = true)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Club getClub();
 
-    void setClub(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Club _club);
-
-
+    void setClub(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Club _club);
+    
     @NavigationProperty(name = "LabourUnion", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "LabourUnion")
+                targetEntitySet = "LabourUnion",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion getLabourUnion();
 
-    void setLabourUnion(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion _labourUnion);
-
-
+    void setLabourUnion(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion _labourUnion);
+    
 
         @Override
         Operations operations();

@@ -52,7 +52,7 @@ import javax.xml.datatype.Duration;
   #set( $type = "" )
 #end
 
-#parse( "${odataVersion}/entitySet.vm" )
+@EntitySet(name = "$entitySet.Name")
 public interface $utility.capitalize($entitySet.Name) 
   extends AbstractEntitySet<$utility.getJavaType($entitySet.EntityType), $type, $utility.getJavaType($entitySet.EntityType)Collection> {
 

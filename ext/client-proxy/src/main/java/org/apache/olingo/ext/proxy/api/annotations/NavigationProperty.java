@@ -39,4 +39,6 @@ public @interface NavigationProperty {
   String targetContainer();
 
   String targetEntitySet();
+
+  boolean containsTarget() default false;
 }

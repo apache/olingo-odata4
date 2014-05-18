@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -83,7 +82,7 @@ public interface Employee
                 fcKeepInContent = false)
     Integer getPersonID();
 
-    void setPersonID(final Integer _personID);    
+    void setPersonID(Integer _personID);    
     
     
     @Property(name = "FirstName", 
@@ -106,7 +105,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getFirstName();
 
-    void setFirstName(final String _firstName);    
+    void setFirstName(String _firstName);    
     
     
     @Property(name = "LastName", 
@@ -129,7 +128,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getLastName();
 
-    void setLastName(final String _lastName);    
+    void setLastName(String _lastName);    
     
     
     @Property(name = "MiddleName", 
@@ -152,7 +151,7 @@ public interface Employee
                 fcKeepInContent = false)
     String getMiddleName();
 
-    void setMiddleName(final String _middleName);    
+    void setMiddleName(String _middleName);    
     
     
     @Property(name = "HomeAddress", 
@@ -175,7 +174,7 @@ public interface Employee
                 fcKeepInContent = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address getHomeAddress();
 
-    void setHomeAddress(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
+    void setHomeAddress(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address _homeAddress);    
         
     
     @Property(name = "Home", 
@@ -198,7 +197,7 @@ public interface Employee
                 fcKeepInContent = false)
     Point getHome();
 
-    void setHome(final Point _home);    
+    void setHome(Point _home);    
     
     
     @Property(name = "Numbers", 
@@ -221,7 +220,7 @@ public interface Employee
                 fcKeepInContent = false)
     Collection<String> getNumbers();
 
-    void setNumbers(final Collection<String> _numbers);    
+    void setNumbers(Collection<String> _numbers);    
     
     
     @Property(name = "Emails", 
@@ -244,7 +243,7 @@ public interface Employee
                 fcKeepInContent = false)
     Collection<String> getEmails();
 
-    void setEmails(final Collection<String> _emails);    
+    void setEmails(Collection<String> _emails);    
     
     
     @Property(name = "DateHired", 
@@ -267,7 +266,7 @@ public interface Employee
                 fcKeepInContent = false)
     Calendar getDateHired();
 
-    void setDateHired(final Calendar _dateHired);    
+    void setDateHired(Calendar _dateHired);    
     
     
     @Property(name = "Office", 
@@ -290,7 +289,7 @@ public interface Employee
                 fcKeepInContent = false)
     Point getOffice();
 
-    void setOffice(final Point _office);    
+    void setOffice(Point _office);    
     
     
 
@@ -298,22 +297,22 @@ public interface Employee
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Person", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "People")
+                targetEntitySet = "People",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person getParent();
 
-    void setParent(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person _parent);
-
-
+    void setParent(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person _parent);
+    
     @NavigationProperty(name = "Company", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Company", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Company")
+                targetEntitySet = "Company",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getCompany();
 
-    void setCompany(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
-
-
+    void setCompany(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
+    
 
         @Override
         Operations operations();

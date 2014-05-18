@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -64,7 +63,7 @@ public interface AccountInfo
                 srid = "")
     String getFirstName();
 
-    void setFirstName(final String _firstName);
+    void setFirstName(String _firstName);
 
     
 
@@ -81,7 +80,7 @@ public interface AccountInfo
                 srid = "")
     String getLastName();
 
-    void setLastName(final String _lastName);
+    void setLastName(String _lastName);
 
     
 

@@ -93,7 +93,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  protected Object getEntityCollection(
+  protected Object getEntityCollectionProxy(
           final Class<?> typeRef,
           final Class<?> typeCollectionRef,
           final String entityContainerName,
@@ -104,7 +104,8 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     final List<Object> items = new ArrayList<Object>();
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
-      items.add(getEntityProxy(entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
+      items.add(getEntityProxy(
+              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
@@ -113,27 +114,38 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
             new EntityCollectionInvocationHandler(containerHandler, items, typeRef, uri));
   }
 
-  protected <T> T getEntityProxy(
+  protected Object getEntitySetProxy(
+          final Class<?> typeRef,
+          final URI uri) {
+
+    return Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {typeRef},
+            EntitySetInvocationHandler.getInstance(typeRef, containerHandler, uri));
+  }
+
+  protected Object getEntityProxy(
+          final URI entityURI,
           final CommonODataEntity entity,
           final String entityContainerName,
-          final String entitySetName,
+          final URI entitySetURI,
           final Class<?> type,
           final boolean checkInTheContext) {
 
-    return getEntityProxy(entity, entityContainerName, entitySetName, type, null, checkInTheContext);
+    return getEntityProxy(entityURI, entity, entityContainerName, entitySetURI, type, null, checkInTheContext);
   }
 
-  @SuppressWarnings({"unchecked"})
-  protected <T> T getEntityProxy(
+  protected Object getEntityProxy(
+          final URI entityURI,
           final CommonODataEntity entity,
           final String entityContainerName,
-          final String entitySetName,
+          final URI entitySetURI,
           final Class<?> type,
           final String eTag,
           final boolean checkInTheContext) {
 
-    EntityTypeInvocationHandler handler =
-            EntityTypeInvocationHandler.getInstance(entity, entitySetName, type, containerHandler);
+    EntityInvocationHandler handler =
+            EntityInvocationHandler.getInstance(entityURI, entity, entitySetURI, type, containerHandler);
 
     if (StringUtils.isNotBlank(eTag)) {
       // override ETag into the wrapped object.
@@ -144,7 +156,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       handler = getContext().entityContext().getEntity(handler.getUUID());
     }
 
-    return (T) Proxy.newProxyInstance(
+    return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {type},
             handler);
@@ -201,7 +213,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       if (edmType.isCollection()) {
         final ParameterizedType collType = (ParameterizedType) method.getReturnType().getGenericInterfaces()[0];
         final Class<?> collItemType = (Class<?>) collType.getActualTypeArguments()[0];
-        return getEntityCollection(
+        return getEntityCollectionProxy(
                 collItemType,
                 method.getReturnType(),
                 null,
@@ -210,6 +222,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 false);
       } else {
         return getEntityProxy(
+                ((CommonODataEntity) result).getEditLink(),
                 (CommonODataEntity) result,
                 null,
                 null,

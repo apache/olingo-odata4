@@ -69,7 +69,7 @@ public abstract class AbstractUtility {
 
   protected final String namespace;
 
-  private final Edm metadata;
+  private final Edm edm;
 
   private final EdmSchema schema;
 
@@ -79,35 +79,43 @@ public abstract class AbstractUtility {
     this.basePackage = basePackage;
     this.schemaName = schema.getAlias();
     this.namespace = schema.getNamespace();
-    this.metadata = metadata;
+    this.edm = metadata;
     this.schema = schema;
 
     collectEntityTypes();
   }
 
   public EdmTypeInfo getEdmTypeInfo(final EdmType type) {
-    return new EdmTypeInfo.Builder().setEdm(metadata).
+    return new EdmTypeInfo.Builder().setEdm(edm).
             setTypeExpression(type.getFullQualifiedName().toString()).build();
   }
 
   public EdmTypeInfo getEdmTypeInfo(final String expression) {
-    return new EdmTypeInfo.Builder().setEdm(metadata).setTypeExpression(expression).build();
+    return new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(expression).build();
   }
 
   public EdmTypeInfo getEdmType(final EdmSingleton singleton) {
     return getEdmTypeInfo(singleton.getEntityType().getFullQualifiedName().toString());
   }
 
+  public EdmTypeInfo getEdmType(final EdmNavigationProperty navProp) {
+    return getEdmTypeInfo(navProp.getType().getFullQualifiedName().toString());
+  }
+
   public boolean isComplex(final FullQualifiedName fqn) {
-    return metadata.getComplexType(fqn) != null;
+    return edm.getComplexType(fqn) != null;
   }
 
   public Map<String, String> getEntityKeyType(final EdmSingleton singleton) {
     return getEntityKeyType(singleton.getEntityType());
   }
 
+  public Map<String, String> getEntityKeyType(final EdmNavigationProperty navProp) {
+    return getEntityKeyType(navProp.getType());
+  }
+
   protected Edm getMetadata() {
-    return metadata;
+    return edm;
   }
 
   protected EdmSchema getSchema() {
@@ -120,8 +128,9 @@ public abstract class AbstractUtility {
 
   public NavPropertyBindingDetails getNavigationBindingDetails(
           final EdmStructuredType sourceEntityType, final EdmNavigationProperty property) {
+
     if (property.containsTarget()) {
-      return new NavPropertyContainsTarget(metadata, property.getType());
+      return new NavPropertyContainsTarget(edm, property.getType());
     }
 
     try {
@@ -138,7 +147,7 @@ public abstract class AbstractUtility {
     }
 
     try {
-      return new NavPropertyBindingDetails(metadata, type);
+      return new NavPropertyBindingDetails(edm, type);
     } catch (IllegalStateException ignore) {
       return getNavigationBindings(type.getBaseType());
     }
@@ -152,14 +161,20 @@ public abstract class AbstractUtility {
     }
 
     try {
-      return new NavPropertyBindingDetails(metadata, sourceEntityType, property);
+      return new NavPropertyBindingDetails(edm, sourceEntityType, property);
     } catch (IllegalStateException ignore) {
       return getNavigationBindingDetails(sourceEntityType.getBaseType(), property);
     }
   }
 
+  public String getContainedEntitySet(final EdmNavigationProperty navProp) {
+    return new StringBuilder().append(basePackage).append('.').
+            append(navProp.getType().getFullQualifiedName().getNamespace().toLowerCase()). // namespace
+            append('.').append(capitalize(navProp.getName())).toString();
+  }
+
   public EdmFunction getFunctionByName(final FullQualifiedName name) {
-    final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
+    final EdmSchema targetSchema = edm.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
       for (EdmFunction function : targetSchema.getFunctions()) {
@@ -173,7 +188,7 @@ public abstract class AbstractUtility {
   }
 
   public EdmAction getActionByName(final FullQualifiedName name) {
-    final EdmSchema targetSchema = metadata.getSchema(name.getNamespace());
+    final EdmSchema targetSchema = edm.getSchema(name.getNamespace());
 
     if (targetSchema != null) {
       for (EdmAction action : targetSchema.getActions()) {
@@ -305,7 +320,7 @@ public abstract class AbstractUtility {
       if (edmType.isEntityType()) {
         res.append("Collection");
       } else {
-        res.append(">");
+        res.append('>');
       }
     }
 

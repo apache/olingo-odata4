@@ -28,7 +28,7 @@ import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
@@ -43,6 +43,8 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetailKey;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
+        PaymentInstrument;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
         PersonCollection;
@@ -158,6 +160,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   @Test
   public void checkForETag() {
     final Order order = getContainer().getOrders().get(8);
-    assertTrue(StringUtils.isNotBlank(((EntityTypeInvocationHandler) Proxy.getInvocationHandler(order)).getETag()));
+    assertTrue(StringUtils.isNotBlank(((EntityInvocationHandler) Proxy.getInvocationHandler(order)).getETag()));
+  }
+
+  @Test
+  public void contained() {
+    final PaymentInstrument instrument = container.getAccounts().get(101).getMyPaymentInstruments().get(101901);
+    assertNotNull(instrument);
+    assertEquals(101901, instrument.getPaymentInstrumentID(), 0);
+    assertNotNull(instrument.getCreatedDate());
   }
 }

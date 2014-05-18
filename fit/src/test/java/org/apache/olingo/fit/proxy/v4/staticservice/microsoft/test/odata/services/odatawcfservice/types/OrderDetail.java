@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getOrderID();
 
-    void setOrderID(final Integer _orderID);    
+    void setOrderID(Integer _orderID);    
     
     @Key
     @Property(name = "ProductID", 
@@ -105,7 +104,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getProductID();
 
-    void setProductID(final Integer _productID);    
+    void setProductID(Integer _productID);    
     
     
     @Property(name = "OrderPlaced", 
@@ -128,7 +127,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Calendar getOrderPlaced();
 
-    void setOrderPlaced(final Calendar _orderPlaced);    
+    void setOrderPlaced(Calendar _orderPlaced);    
     
     
     @Property(name = "Quantity", 
@@ -151,7 +150,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Integer getQuantity();
 
-    void setQuantity(final Integer _quantity);    
+    void setQuantity(Integer _quantity);    
     
     
     @Property(name = "UnitPrice", 
@@ -174,7 +173,7 @@ public interface OrderDetail
                 fcKeepInContent = false)
     Float getUnitPrice();
 
-    void setUnitPrice(final Float _unitPrice);    
+    void setUnitPrice(Float _unitPrice);    
     
     
 
@@ -182,22 +181,22 @@ public interface OrderDetail
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Product", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Products")
+                targetEntitySet = "Products",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection getProductOrdered();
 
-    void setProductOrdered(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection _productOrdered);
-
-
+    void setProductOrdered(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection _productOrdered);
+    
     @NavigationProperty(name = "AssociatedOrder", 
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Order", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Orders")
+                targetEntitySet = "Orders",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order getAssociatedOrder();
 
-    void setAssociatedOrder(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order _associatedOrder);
-
-
+    void setAssociatedOrder(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order _associatedOrder);
+    
 
 
 }

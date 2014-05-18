@@ -53,7 +53,7 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
     return new OperationInvocationHandler(containerHandler);
   }
 
-  static OperationInvocationHandler getInstance(final EntityTypeInvocationHandler entityHandler) {
+  static OperationInvocationHandler getInstance(final EntityInvocationHandler entityHandler) {
     return new OperationInvocationHandler(entityHandler);
   }
 
@@ -68,7 +68,7 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
     this.targetFQN = new FullQualifiedName(containerHandler.getSchemaName(), containerHandler.getEntityContainerName());
   }
 
-  private OperationInvocationHandler(final EntityTypeInvocationHandler entityHandler) {
+  private OperationInvocationHandler(final EntityInvocationHandler entityHandler) {
     super(entityHandler.containerHandler);
 
     this.target = entityHandler;
@@ -120,7 +120,7 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
         final Map.Entry<URI, EdmOperation> edmOperation;
         if (target instanceof EntityContainerInvocationHandler) {
           edmOperation = getUnboundOperation(operation, parameterNames);
-        } else if (target instanceof EntityTypeInvocationHandler) {
+        } else if (target instanceof EntityInvocationHandler) {
           edmOperation = getBoundOperation(operation, parameterNames);
         } else if (target instanceof EntityCollectionInvocationHandler) {
           edmOperation = getCollectionBoundOperation(operation, parameterNames);
@@ -153,7 +153,7 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
   }
 
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
-    final CommonODataEntity entity = ((EntityTypeInvocationHandler) target).getEntity();
+    final CommonODataEntity entity = ((EntityInvocationHandler) target).getEntity();
 
     ODataOperation boundOp = entity.getOperation(operation.name());
     if (boundOp == null) {

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -57,7 +56,7 @@ public class ProductDetailKey extends AbstractEntityKey {
         return _productID;
     }
 
-    public void setProductID(final Integer _productID) {
+    public void setProductID(Integer _productID) {
         this._productID = _productID;
     }
 
@@ -68,7 +67,7 @@ public class ProductDetailKey extends AbstractEntityKey {
         return _productDetailID;
     }
 
-    public void setProductDetailID(final Integer _productDetailID) {
+    public void setProductDetailID(Integer _productDetailID) {
         this._productDetailID = _productDetailID;
     }
 }

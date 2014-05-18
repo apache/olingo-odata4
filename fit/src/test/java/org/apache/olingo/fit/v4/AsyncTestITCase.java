@@ -81,7 +81,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
-    assertEquals(testStaticServiceRootURL + "/Customers(PersonID=1)", entity.getEditLink().toASCIIString());
+    assertEquals(testStaticServiceRootURL + "/Customers(1)", entity.getEditLink().toASCIIString());
 
     assertEquals(3, entity.getNavigationLinks().size());
 

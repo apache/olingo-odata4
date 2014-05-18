@@ -95,7 +95,7 @@ public interface $utility.capitalize($entityType.Name)
                 fcKeepInContent = #if($fcprops.containsKey("fcKeepInContent"))$fcprops.get("fcKeepInContent")#{else}false#end)
     $utility.getJavaType($property.Type, $property.Collection) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));    
+    void set$utility.capitalize($property.Name)($utility.getJavaType($property.Type, $property.Collection) _$utility.uncapitalize($property.Name));    
     #if($utility.isComplex($property.Type.FullQualifiedName))#*
       *##set( $adding = $complexProps.add($property) )
     #end
@@ -104,18 +104,24 @@ public interface $utility.capitalize($entityType.Name)
     
 #foreach($propertyName in $entityType.NavigationPropertyNames)
     #set($property = $entityType.getNavigationProperty($propertyName))
-    #set( $type = $utility.getNavigationType($property) )
-    #set( $binding = $utility.getNavigationBindingDetails($entityType, $property) )
+    #set($type = $utility.getNavigationType($property))
+    #set($binding = $utility.getNavigationBindingDetails($entityType, $property))
 
     @NavigationProperty(name = "$property.Name", 
                 type = "$type", 
                 targetSchema = "$binding.Schema.Namespace", 
                 targetContainer = "#if($binding.Container)$binding.Container.Name#end", 
-                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end")
-    $utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
+                targetEntitySet = "#if($binding.EntitySet)$binding.EntitySet.Name#end",
+                containsTarget = $property.containsTarget())
+    #if($property.containsTarget() && $property.Collection)#*
+      *#$utility.getContainedEntitySet($property) get$utility.capitalize($property.Name)();
 
-    void set$utility.capitalize($property.Name)(final $utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
+    void set$utility.capitalize($property.Name)($utility.getContainedEntitySet($property) _$utility.uncapitalize($property.Name));
+    #else#*
+      *#$utility.getJavaType($type, $property.Collection) get$utility.capitalize($property.Name)();
 
+    void set$utility.capitalize($property.Name)($utility.getJavaType($type, $property.Collection) _$utility.uncapitalize($property.Name));
+    #end
 #end
 
 #if($entityType.hasStream())

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Asset
                 fcKeepInContent = false)
     Integer getAssetID();
 
-    void setAssetID(final Integer _assetID);    
+    void setAssetID(Integer _assetID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +104,7 @@ public interface Asset
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);    
+    void setName(String _name);    
     
     
     @Property(name = "Number", 
@@ -128,7 +127,7 @@ public interface Asset
                 fcKeepInContent = false)
     Integer getNumber();
 
-    void setNumber(final Integer _number);    
+    void setNumber(Integer _number);    
     
     
 

@@ -25,8 +25,7 @@ import java.lang.annotation.Target;
 
 /**
  * Give entity set a name. If interface extending EntitySet is not annotated with this, the effective name will be
- * class'
- * <tt>getSimpleName()</tt>.
+ * class'<tt>getSimpleName()</tt>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -34,5 +33,5 @@ public @interface EntitySet {
 
   String name();
 
-  boolean includeInServiceDocument() default true;
+  boolean contained() default false;
 }

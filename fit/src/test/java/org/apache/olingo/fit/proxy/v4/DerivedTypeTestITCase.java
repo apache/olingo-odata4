@@ -26,6 +26,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
+        CreditCardPI;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
+        CreditCardPICollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.
         CustomerCollection;
@@ -36,11 +40,18 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void read() {
-    CustomerCollection customers = container.getPeople().getAll(CustomerCollection.class);
+    final CustomerCollection customers = container.getPeople().getAll(CustomerCollection.class);
     assertNotNull(customers);
 
     for (Customer customer : customers) {
       assertTrue(customer instanceof Customer);
+    }
+
+    final CreditCardPICollection creditCards = container.getAccounts().get(101).
+            getMyPaymentInstruments().getAll(CreditCardPICollection.class);
+    assertNotNull(creditCards);
+    for (CreditCardPI creditCard : creditCards) {
+      assertTrue(creditCard instanceof CreditCardPI);
     }
   }
 

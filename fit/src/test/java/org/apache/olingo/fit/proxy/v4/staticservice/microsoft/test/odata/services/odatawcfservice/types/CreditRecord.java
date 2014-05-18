@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Integer getCreditRecordID();
 
-    void setCreditRecordID(final Integer _creditRecordID);    
+    void setCreditRecordID(Integer _creditRecordID);    
     
     
     @Property(name = "IsGood", 
@@ -105,7 +104,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Boolean getIsGood();
 
-    void setIsGood(final Boolean _isGood);    
+    void setIsGood(Boolean _isGood);    
     
     
     @Property(name = "Reason", 
@@ -128,7 +127,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     String getReason();
 
-    void setReason(final String _reason);    
+    void setReason(String _reason);    
     
     
     @Property(name = "CreatedDate", 
@@ -151,7 +150,7 @@ public interface CreditRecord
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);    
+    void setCreatedDate(Calendar _createdDate);    
     
     
 

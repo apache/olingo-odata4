@@ -45,7 +45,6 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -138,13 +137,13 @@ class ContainerImpl implements Container {
           throw new IllegalStateException("Transaction failed: " + res.getStatusMessage());
         }
 
-        final EntityTypeInvocationHandler handler = items.get(changesetItemId);
+        final EntityInvocationHandler handler = items.get(changesetItemId);
 
         if (handler != null) {
-          if (res instanceof ODataEntityCreateResponse) {
+          if (res instanceof ODataEntityCreateResponse && res.getStatusCode() == 201) {
             handler.setEntity(((ODataEntityCreateResponse) res).getBody());
             LOG.debug("Upgrade created object '{}'", handler);
-          } else if (res instanceof ODataEntityUpdateResponse) {
+          } else if (res instanceof ODataEntityUpdateResponse && res.getStatusCode() == 200) {
             handler.setEntity(((ODataEntityUpdateResponse) res).getBody());
             LOG.debug("Upgrade updated object '{}'", handler);
           }
@@ -156,7 +155,7 @@ class ContainerImpl implements Container {
   }
 
   private void batch(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
@@ -181,19 +180,18 @@ class ContainerImpl implements Container {
   }
 
   private void batchCreate(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
     LOG.debug("Create '{}'", handler);
 
-    final CommonURIBuilder<?> uriBuilder = factory.getClient().getURIBuilder(factory.getClient().getServiceRoot()).
-            appendEntitySetSegment(handler.getEntitySetName());
-    changeset.addRequest(factory.getClient().getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), entity));
+    changeset.addRequest(
+            factory.getClient().getCUDRequestFactory().getEntityCreateRequest(handler.getEntitySetURI(), entity));
   }
 
   private void batchUpdateMediaEntity(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -215,7 +213,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdateMediaResource(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final URI uri,
           final InputStream input,
           final ODataChangeset changeset) {
@@ -233,18 +231,20 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
 
-    LOG.debug("Update '{}'", changes.getEditLink());
+    LOG.debug("Update '{}'", handler.getEntityURI());
 
     final ODataEntityUpdateRequest<CommonODataEntity> req =
             factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
-            getEntityUpdateRequest(org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            getEntityUpdateRequest(handler.getEntityURI(),
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
-            getEntityUpdateRequest(org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            getEntityUpdateRequest(handler.getEntityURI(),
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(factory.getClient().getServiceVersion()).returnContent());
 
@@ -256,7 +256,7 @@ class ContainerImpl implements Container {
   }
 
   private void batchUpdate(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final URI uri,
           final CommonODataEntity changes,
           final ODataChangeset changeset) {
@@ -266,11 +266,11 @@ class ContainerImpl implements Container {
     final ODataEntityUpdateRequest<CommonODataEntity> req =
             factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
-            getEntityUpdateRequest(
-                    uri, org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            getEntityUpdateRequest(uri,
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) factory.getClient()).getCUDRequestFactory().
-            getEntityUpdateRequest(
-                    uri, org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            getEntityUpdateRequest(uri,
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(factory.getClient().getServiceVersion()).returnContent());
 
@@ -282,14 +282,14 @@ class ContainerImpl implements Container {
   }
 
   private void batchDelete(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
 
-    LOG.debug("Delete '{}'", entity.getEditLink());
+    final URI deleteURI = handler.getEntityURI() == null ? entity.getEditLink() : handler.getEntityURI();
+    LOG.debug("Delete '{}'", deleteURI);
 
-    final ODataDeleteRequest req = factory.getClient().getCUDRequestFactory().getDeleteRequest(
-            URIUtils.getURI(factory.getClient().getServiceRoot(), entity.getEditLink().toASCIIString()));
+    final ODataDeleteRequest req = factory.getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -299,7 +299,7 @@ class ContainerImpl implements Container {
   }
 
   private int processEntityContext(
-          final EntityTypeInvocationHandler handler,
+          final EntityInvocationHandler handler,
           int pos,
           final TransactionItems items,
           final List<EntityLinkDesc> delayedUpdates,
@@ -324,14 +324,13 @@ class ContainerImpl implements Container {
               ? ODataLinkType.ENTITY_SET_NAVIGATION
               : ODataLinkType.ENTITY_NAVIGATION;
 
-      final Set<EntityTypeInvocationHandler> toBeLinked = new HashSet<EntityTypeInvocationHandler>();
+      final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
       final String serviceRoot = factory.getClient().getServiceRoot();
 
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
 
-        final EntityTypeInvocationHandler target =
-                (EntityTypeInvocationHandler) Proxy.getInvocationHandler(proxy);
+        final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
 
         final AttachedEntityStatus status = factory.getContext().entityContext().getStatus(target);
 
@@ -360,8 +359,7 @@ class ContainerImpl implements Container {
             // create the link for the current object
             LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
 
-            entity.addLink(
-                    buildNavigationLink(property.getKey().name(), URI.create("$" + targetPos), type));
+            entity.addLink(buildNavigationLink(property.getKey().name(), URI.create("$" + targetPos), type));
           }
         }
       }
@@ -411,8 +409,7 @@ class ContainerImpl implements Container {
 
     for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
       final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-              ? URI.create("$" + startingPos)
-              : URIUtils.getURI(
+              ? URI.create("$" + startingPos) : URIUtils.getURI(
                       factory.getClient().getServiceRoot(),
                       CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
@@ -470,7 +467,7 @@ class ContainerImpl implements Container {
         sourceURI = URI.create("$" + sourcePos);
       }
 
-      for (EntityTypeInvocationHandler target : delayedUpdate.getTargets()) {
+      for (EntityInvocationHandler target : delayedUpdate.getTargets()) {
         status = factory.getContext().entityContext().getStatus(target);
 
         final URI targetURI;
@@ -497,11 +494,11 @@ class ContainerImpl implements Container {
 
   private class TransactionItems {
 
-    private final List<EntityTypeInvocationHandler> keys = new ArrayList<EntityTypeInvocationHandler>();
+    private final List<EntityInvocationHandler> keys = new ArrayList<EntityInvocationHandler>();
 
     private final List<Integer> values = new ArrayList<Integer>();
 
-    public EntityTypeInvocationHandler get(final Integer value) {
+    public EntityInvocationHandler get(final Integer value) {
       if (value != null && values.contains(value)) {
         return keys.get(values.indexOf(value));
       } else {
@@ -509,7 +506,7 @@ class ContainerImpl implements Container {
       }
     }
 
-    public Integer get(final EntityTypeInvocationHandler key) {
+    public Integer get(final EntityInvocationHandler key) {
       if (key != null && keys.contains(key)) {
         return values.get(keys.indexOf(key));
       } else {
@@ -517,14 +514,14 @@ class ContainerImpl implements Container {
       }
     }
 
-    public void remove(final EntityTypeInvocationHandler key) {
+    public void remove(final EntityInvocationHandler key) {
       if (keys.contains(key)) {
         values.remove(keys.indexOf(key));
         keys.remove(key);
       }
     }
 
-    public void put(final EntityTypeInvocationHandler key, final Integer value) {
+    public void put(final EntityInvocationHandler key, final Integer value) {
       // replace just in case of null current value; otherwise add the new entry
       if (key != null && keys.contains(key) && values.get(keys.indexOf(key)) == null) {
         remove(key);
@@ -539,7 +536,7 @@ class ContainerImpl implements Container {
       return sortedValues;
     }
 
-    public boolean contains(final EntityTypeInvocationHandler key) {
+    public boolean contains(final EntityInvocationHandler key) {
       return keys.contains(key);
     }
 

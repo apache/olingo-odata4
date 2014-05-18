@@ -44,9 +44,11 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
+public class EntityInvocationHandler extends AbstractStructuredInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
+
+  private final URI entityURI;
 
   protected Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
@@ -62,41 +64,46 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
   private EntityUUID uuid;
 
-  static EntityTypeInvocationHandler getInstance(
+  static EntityInvocationHandler getInstance(
+          final URI entityURI,
           final CommonODataEntity entity,
           final EntitySetInvocationHandler<?, ?, ?> entitySet,
           final Class<?> typeRef) {
 
     return getInstance(
+            entityURI,
             entity,
-            entitySet.getEntitySetName(),
+            entitySet.getEntitySetURI(),
             typeRef,
             entitySet.containerHandler);
   }
 
-  static EntityTypeInvocationHandler getInstance(
+  static EntityInvocationHandler getInstance(
+          final URI entityURI,
           final CommonODataEntity entity,
-          final String entitySetName,
+          final URI entitySetURI,
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
-    return new EntityTypeInvocationHandler(entity, entitySetName, typeRef, containerHandler);
+    return new EntityInvocationHandler(entityURI, entity, entitySetURI, typeRef, containerHandler);
   }
 
-  private EntityTypeInvocationHandler(
+  private EntityInvocationHandler(
+          final URI entityURI,
           final CommonODataEntity entity,
-          final String entitySetName,
+          final URI entitySetURI,
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
     super(typeRef, (ODataLinked) entity, containerHandler);
 
+    this.entityURI = entityURI;
     this.internal = entity;
     getEntity().setMediaEntity(typeRef.getAnnotation(EntityType.class).hasStream());
 
     this.uuid = new EntityUUID(
             containerHandler.getEntityContainerName(),
-            entitySetName,
+            entitySetURI,
             typeRef,
             CoreUtils.getKey(getClient(), this, typeRef, entity));
   }
@@ -107,7 +114,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
     this.uuid = new EntityUUID(
             getUUID().getContainerName(),
-            getUUID().getEntitySetName(),
+            getUUID().getEntitySetURI(),
             getUUID().getType(),
             CoreUtils.getKey(getClient(), this, typeRef, entity));
 
@@ -126,12 +133,16 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
     return uuid.getContainerName();
   }
 
-  public String getEntitySetName() {
-    return uuid.getEntitySetName();
+  public URI getEntitySetURI() {
+    return uuid.getEntitySetURI();
   }
 
   public final CommonODataEntity getEntity() {
     return (CommonODataEntity) internal;
+  }
+
+  public URI getEntityURI() {
+    return entityURI;
   }
 
   /**
@@ -212,9 +223,9 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
         for (Object item : coll) {
           if (item instanceof Proxy) {
             final InvocationHandler handler = Proxy.getInvocationHandler(item);
-            if ((handler instanceof ComplexTypeInvocationHandler)
-                    && ((ComplexTypeInvocationHandler) handler).getEntityHandler() == null) {
-              ((ComplexTypeInvocationHandler) handler).setEntityHandler(this);
+            if ((handler instanceof ComplexInvocationHandler)
+                    && ((ComplexInvocationHandler) handler).getEntityHandler() == null) {
+              ((ComplexInvocationHandler) handler).setEntityHandler(this);
             }
           }
         }
@@ -249,7 +260,6 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
   }
 
   public InputStream getStream() {
-
     final URI contentSource = getEntity().getMediaContentSource();
 
     if (this.stream == null
@@ -269,7 +279,6 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
   }
 
   public Object getStreamedProperty(final Property property) {
-
     InputStream res = streamedPropertyChanges.get(property.name());
 
     try {
@@ -306,7 +315,8 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
     } else {
-      navPropValue = retriveNavigationProperty(property, getter);
+      navPropValue = retrieveNavigationProperty(
+              property, getter, containerHandler.getFactory().getClient().getServiceRoot());
     }
 
     if (navPropValue != null) {
@@ -342,7 +352,7 @@ public class EntityTypeInvocationHandler extends AbstractTypeInvocationHandler {
 
   @Override
   public boolean equals(final Object obj) {
-    return obj instanceof EntityTypeInvocationHandler
-            && ((EntityTypeInvocationHandler) obj).getUUID().equals(uuid);
+    return obj instanceof EntityInvocationHandler
+            && ((EntityInvocationHandler) obj).getUUID().equals(uuid);
   }
 }

@@ -19,6 +19,7 @@
 package org.apache.olingo.ext.proxy.context;
 
 import java.io.Serializable;
+import java.net.URI;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -32,7 +33,7 @@ public class EntityUUID implements Serializable {
 
   private final String containerName;
 
-  private final String entitySetName;
+  private final URI entitySetURI;
 
   private final Object key;
 
@@ -43,13 +44,13 @@ public class EntityUUID implements Serializable {
 
   private Class<?> type;
 
-  public EntityUUID(final String containerName, final String entitySetName, final Class<?> type) {
-    this(containerName, entitySetName, type, null);
+  public EntityUUID(final String containerName, final URI entitySetURI, final Class<?> type) {
+    this(containerName, entitySetURI, type, null);
   }
 
-  public EntityUUID(final String containerName, final String entitySetName, final Class<?> type, final Object key) {
+  public EntityUUID(final String containerName, final URI entitySetURI, final Class<?> type, final Object key) {
     this.containerName = containerName;
-    this.entitySetName = entitySetName;
+    this.entitySetURI = entitySetURI;
     this.key = key;
     this.tempKey = (int) (Math.random() * 1000000);
 
@@ -70,8 +71,8 @@ public class EntityUUID implements Serializable {
     return containerName;
   }
 
-  public String getEntitySetName() {
-    return entitySetName;
+  public URI getEntitySetURI() {
+    return entitySetURI;
   }
 
   public Object getKey() {

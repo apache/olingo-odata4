@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Department
                 fcKeepInContent = false)
     Integer getDepartmentID();
 
-    void setDepartmentID(final Integer _departmentID);    
+    void setDepartmentID(Integer _departmentID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +104,7 @@ public interface Department
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);    
+    void setName(String _name);    
     
     
     @Property(name = "DepartmentNO", 
@@ -128,7 +127,7 @@ public interface Department
                 fcKeepInContent = false)
     String getDepartmentNO();
 
-    void setDepartmentNO(final String _departmentNO);    
+    void setDepartmentNO(String _departmentNO);    
     
     
 
@@ -136,12 +135,12 @@ public interface Department
                 type = "Microsoft.Test.OData.Services.ODataWCFService.Company", 
                 targetSchema = "Microsoft.Test.OData.Services.ODataWCFService", 
                 targetContainer = "InMemoryEntities", 
-                targetEntitySet = "Company")
+                targetEntitySet = "Company",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company getCompany();
 
-    void setCompany(final org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
-
-
+    void setCompany(org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company _company);
+    
 
 
 }

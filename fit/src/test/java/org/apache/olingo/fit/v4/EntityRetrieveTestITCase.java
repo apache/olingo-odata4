@@ -310,14 +310,14 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   private void contained(final ODataClient client, final ODataPubFormat format) throws EdmPrimitiveTypeException {
     final URI uri = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101).
-            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101901).build();
+            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101902).build();
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
     req.setFormat(format);
 
     final ODataEntity contained = req.execute().getBody();
     assertNotNull(contained);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", contained.getTypeName().toString());
-    assertEquals(101901,
+    assertEquals(101902,
             contained.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
     assertEquals("Edm.DateTimeOffset", contained.getProperty("CreatedDate").getPrimitiveValue().getTypeName());
   }

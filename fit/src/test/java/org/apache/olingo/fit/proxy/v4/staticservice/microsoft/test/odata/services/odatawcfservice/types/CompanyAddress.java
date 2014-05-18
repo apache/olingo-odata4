@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
@@ -65,7 +64,7 @@ public interface CompanyAddress
                 srid = "")
     String getStreet();
 
-    void setStreet(final String _street);
+    void setStreet(String _street);
 
     
 
@@ -82,7 +81,7 @@ public interface CompanyAddress
                 srid = "")
     String getCity();
 
-    void setCity(final String _city);
+    void setCity(String _city);
 
     
 
@@ -99,7 +98,7 @@ public interface CompanyAddress
                 srid = "")
     String getPostalCode();
 
-    void setPostalCode(final String _postalCode);
+    void setPostalCode(String _postalCode);
 
     
 
@@ -116,7 +115,7 @@ public interface CompanyAddress
                 srid = "")
     String getCompanyName();
 
-    void setCompanyName(final String _companyName);
+    void setCompanyName(String _companyName);
 
     
 

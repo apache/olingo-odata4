@@ -44,7 +44,7 @@ import javax.xml.datatype.Duration;
 
 
 
-@EntitySet(name = "Row", includeInServiceDocument = true)
+@EntitySet(name = "Row")
 public interface Row 
   extends AbstractEntitySet<org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row, UUID, org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowCollection> {
 

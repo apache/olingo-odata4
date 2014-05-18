@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     Integer getStoredPIID();
 
-    void setStoredPIID(final Integer _storedPIID);    
+    void setStoredPIID(Integer _storedPIID);    
     
     
     @Property(name = "PIName", 
@@ -105,7 +104,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     String getPIName();
 
-    void setPIName(final String _pIName);    
+    void setPIName(String _pIName);    
     
     
     @Property(name = "PIType", 
@@ -128,7 +127,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     String getPIType();
 
-    void setPIType(final String _pIType);    
+    void setPIType(String _pIType);    
     
     
     @Property(name = "CreatedDate", 
@@ -151,7 +150,7 @@ public interface StoredPI
                 fcKeepInContent = false)
     Calendar getCreatedDate();
 
-    void setCreatedDate(final Calendar _createdDate);    
+    void setCreatedDate(Calendar _createdDate);    
     
     
 

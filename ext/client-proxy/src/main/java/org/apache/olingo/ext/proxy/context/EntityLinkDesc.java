@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.ext.proxy.commons.EntityTypeInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 
 public class EntityLinkDesc implements Serializable {
 
@@ -34,16 +34,16 @@ public class EntityLinkDesc implements Serializable {
 
   private final String sourceName;
 
-  private final EntityTypeInvocationHandler source;
+  private final EntityInvocationHandler source;
 
-  private final Collection<EntityTypeInvocationHandler> targets;
+  private final Collection<EntityInvocationHandler> targets;
 
   private final ODataLinkType type;
 
   public EntityLinkDesc(
           final String sourceName,
-          final EntityTypeInvocationHandler source,
-          final Collection<EntityTypeInvocationHandler> target,
+          final EntityInvocationHandler source,
+          final Collection<EntityInvocationHandler> target,
           final ODataLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
@@ -53,12 +53,12 @@ public class EntityLinkDesc implements Serializable {
 
   public EntityLinkDesc(
           final String sourceName,
-          final EntityTypeInvocationHandler source,
-          final EntityTypeInvocationHandler target,
+          final EntityInvocationHandler source,
+          final EntityInvocationHandler target,
           final ODataLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
-    this.targets = Collections.<EntityTypeInvocationHandler>singleton(target);
+    this.targets = Collections.<EntityInvocationHandler>singleton(target);
     this.type = type;
   }
 
@@ -66,11 +66,11 @@ public class EntityLinkDesc implements Serializable {
     return sourceName;
   }
 
-  public EntityTypeInvocationHandler getSource() {
+  public EntityInvocationHandler getSource() {
     return source;
   }
 
-  public Collection<EntityTypeInvocationHandler> getTargets() {
+  public Collection<EntityInvocationHandler> getTargets() {
     return targets;
   }
 

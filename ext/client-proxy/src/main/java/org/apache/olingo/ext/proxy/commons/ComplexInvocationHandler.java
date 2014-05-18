@@ -37,15 +37,15 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler {
+public class ComplexInvocationHandler extends AbstractStructuredInvocationHandler {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  public static ComplexTypeInvocationHandler getInstance(
+  public static ComplexInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final String propertyName,
           final Class<?> reference,
-          final EntityTypeInvocationHandler handler) {
+          final EntityInvocationHandler handler) {
 
     final Class<?> complexTypeRef;
     if (Collection.class.isAssignableFrom(reference)) {
@@ -65,25 +65,25 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
     final ODataComplexValue<? extends CommonODataProperty> complex =
             client.getObjectFactory().newComplexValue(typeName.toString());
 
-    return new ComplexTypeInvocationHandler(client, complex, complexTypeRef, handler);
+    return new ComplexInvocationHandler(client, complex, complexTypeRef, handler);
   }
 
-  public static ComplexTypeInvocationHandler getInstance(
+  public static ComplexInvocationHandler getInstance(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityTypeInvocationHandler handler) {
+          final EntityInvocationHandler handler) {
 
-    return new ComplexTypeInvocationHandler(client, complex, typeRef, handler);
+    return new ComplexInvocationHandler(client, complex, typeRef, handler);
   }
-
+  
   private final CommonEdmEnabledODataClient<?> client;
 
-  private ComplexTypeInvocationHandler(
+  public ComplexInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
-          final EntityTypeInvocationHandler handler) {
+          final EntityInvocationHandler handler) {
 
     super(typeRef, complex, handler);
     this.client = client;
@@ -142,7 +142,7 @@ public class ComplexTypeInvocationHandler extends AbstractTypeInvocationHandler 
       throw new UnsupportedOperationException("Internal object is not navigable");
     }
 
-    return retriveNavigationProperty(property, getter);
+    return retrieveNavigationProperty(property, getter, containerHandler.getFactory().getClient().getServiceRoot());
   }
 
   @Override

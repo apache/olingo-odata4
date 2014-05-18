@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
@@ -82,7 +81,7 @@ public interface Club
                 fcKeepInContent = false)
     Integer getClubID();
 
-    void setClubID(final Integer _clubID);    
+    void setClubID(Integer _clubID);    
     
     
     @Property(name = "Name", 
@@ -105,7 +104,7 @@ public interface Club
                 fcKeepInContent = false)
     String getName();
 
-    void setName(final String _name);    
+    void setName(String _name);    
     
     
 
