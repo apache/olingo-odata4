@@ -142,12 +142,13 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     readODataEntitySetIterator(ODataPubFormat.JSON_NO_METADATA);
   }
 
-  private void readEntitySetWithNextLink(final ODataPubFormat format) {
+  private void readWithNext(final ODataPubFormat format) {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
+    req.setPrefer(client.newPreferences().maxPageSize(5));
 
     final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
     final ODataEntitySet feed = res.getBody();
@@ -164,13 +165,13 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readODataEntitySetWithNextFromAtom() {
-    readEntitySetWithNextLink(ODataPubFormat.ATOM);
+  public void readWithNextFromAtom() {
+    readWithNext(ODataPubFormat.ATOM);
   }
 
   @Test
-  public void readODataEntitySetWithNextFromJSON() {
-    readEntitySetWithNextLink(ODataPubFormat.JSON_FULL_METADATA);
+  public void readWithNextFromJSON() {
+    readWithNext(ODataPubFormat.JSON_FULL_METADATA);
   }
 
 }
