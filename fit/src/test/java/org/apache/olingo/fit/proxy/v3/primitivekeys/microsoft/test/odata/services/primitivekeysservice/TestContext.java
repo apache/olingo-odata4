@@ -25,7 +25,7 @@ import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.*;
 import org.apache.olingo.fit.proxy.v3.primitivekeys.microsoft.test.odata.services.primitivekeysservice.types.*;
@@ -50,7 +50,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "TestContext",
   namespace = "Microsoft.Test.OData.Services.PrimitiveKeysService",
   isDefaultEntityContainer = true)
-public interface TestContext extends Container {
+public interface TestContext extends PersistenceManager {
 
     EdmTimeSet getEdmTimeSet();
 

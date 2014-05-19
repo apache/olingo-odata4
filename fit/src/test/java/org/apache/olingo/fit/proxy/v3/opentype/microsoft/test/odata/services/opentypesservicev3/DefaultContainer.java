@@ -25,7 +25,7 @@ import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.*;
 import org.apache.olingo.fit.proxy.v3.opentype.microsoft.test.odata.services.opentypesservicev3.types.*;
@@ -50,7 +50,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "DefaultContainer",
   namespace = "Microsoft.Test.OData.Services.OpenTypesServiceV3",
   isDefaultEntityContainer = true)
-public interface DefaultContainer extends Container {
+public interface DefaultContainer extends PersistenceManager {
 
     Row getRow();
 

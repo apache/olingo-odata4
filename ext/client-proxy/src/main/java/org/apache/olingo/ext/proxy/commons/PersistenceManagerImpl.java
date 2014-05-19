@@ -53,7 +53,7 @@ import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.context.AttachedEntity;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
@@ -62,18 +62,18 @@ import org.apache.olingo.ext.proxy.utils.CoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ContainerImpl implements Container {
+class PersistenceManagerImpl implements PersistenceManager {
 
   private static final long serialVersionUID = -3320312269235907501L;
 
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(ContainerImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PersistenceManagerImpl.class);
 
   private final EntityContainerFactory<?> factory;
 
-  ContainerImpl(final EntityContainerFactory<?> factory) {
+  PersistenceManagerImpl(final EntityContainerFactory<?> factory) {
     this.factory = factory;
   }
 
