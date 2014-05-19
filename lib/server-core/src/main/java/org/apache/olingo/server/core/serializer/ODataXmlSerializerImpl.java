@@ -52,6 +52,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
       xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
       MetadataDocumentXmlSerializer serializer = new MetadataDocumentXmlSerializer(edm);
       serializer.writeMetadataDocument(xmlStreamWriter);
+      xmlStreamWriter.flush();
       xmlStreamWriter.close();
 
       return buffer.getInputStream();

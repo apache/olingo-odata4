@@ -53,7 +53,6 @@ public class ODataHandler {
       case metadata:
         serializer = server.createSerializer(ODataFormat.XML);
         responseEntity = serializer.metadataDocument(edm);
-        
         response.setStatusCode(200);
         response.setHeader("Content-Type", "application/xml");
         response.setContent(responseEntity);
@@ -61,7 +60,7 @@ public class ODataHandler {
       case service:
         serializer = server.createSerializer(ODataFormat.JSON);
         responseEntity = serializer.serviceDocument(edm, odRequest.getRawBaseUri());
-        
+
         response.setStatusCode(200);
         response.setHeader("Content-Type", "application/json");
         response.setContent(responseEntity);

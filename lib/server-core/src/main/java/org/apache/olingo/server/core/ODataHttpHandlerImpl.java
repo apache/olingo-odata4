@@ -20,6 +20,7 @@ package org.apache.olingo.server.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -33,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,24 +68,22 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       response.setHeader(entry.getKey(), entry.getValue());
     }
 
-    InputStream in = odResponse.getContent();
+    InputStream input = odResponse.getContent();
+    OutputStream output;
     try {
+      output = response.getOutputStream();
       byte[] buffer = new byte[1024];
-      int bytesRead = 0;
-
-      do {
-        bytesRead = in.read(buffer, 0, buffer.length);
-        response.getOutputStream().write(buffer, 0, bytesRead);
-      } while (bytesRead == buffer.length);
-
-      response.getOutputStream().flush();
+      int n = 0;
+      while (-1 != (n = input.read(buffer))) {
+        output.write(buffer, 0, n);
+      }
     } catch (IOException e) {
       LOG.error(e.getMessage(), e);
       throw new ODataRuntimeException(e);
     } finally {
-      if (in != null) {
+      if (input != null) {
         try {
-          in.close();
+          input.close();
         } catch (IOException e) {
           throw new ODataRuntimeException(e);
         }
