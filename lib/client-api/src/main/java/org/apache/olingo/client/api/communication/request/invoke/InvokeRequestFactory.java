@@ -36,7 +36,7 @@ public interface InvokeRequestFactory extends Serializable {
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
    * @param operation operation to be invoked
-   * @return new ODataInvokeRequest instance.
+   * @return new {@link ODataInvokeRequest} instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(URI uri, EdmOperation operation);
 
@@ -46,8 +46,8 @@ public interface InvokeRequestFactory extends Serializable {
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param uri URI that identifies the function import
    * @param operation operation to be invoked
-   * @param parameters parameters to pass to function import invocation
-   * @return new ODataInvokeRequest instance.
+   * @param parameters parameters to pass to operation invocation
+   * @return new {@link ODataInvokeRequest} instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
           URI uri, EdmOperation operation, Map<String, ODataValue> parameters);

@@ -53,9 +53,11 @@ import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -285,7 +287,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return entitySet;
   }
 
-  protected void odataNavigationLinks(final EdmStructuredType edmType,
+  protected void odataNavigationLinks(final EdmType edmType,
           final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
 
     for (Link link : linked.getNavigationLinks()) {
@@ -294,8 +296,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
 
       if (inlineEntity == null && inlineEntitySet == null) {
         ODataLinkType linkType = null;
-        if (edmType != null) {
-          final EdmNavigationProperty navProp = edmType.getNavigationProperty(link.getTitle());
+        if (edmType instanceof EdmStructuredType) {
+          final EdmNavigationProperty navProp = ((EdmStructuredType) edmType).getNavigationProperty(link.getTitle());
           if (navProp != null) {
             linkType = navProp.isCollection()
                     ? ODataLinkType.ENTITY_SET_NAVIGATION
@@ -338,8 +340,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
    * @param metadataETag metadata ETag
    * @return Edm type information
    */
-  private EdmEntityType findEntityType(final ContextURL contextURL, final String metadataETag) {
-    EdmEntityType entityType = null;
+  private EdmType findType(final ContextURL contextURL, final String metadataETag) {
+    EdmType type = null;
 
     if (client instanceof EdmEnabledODataClient && contextURL != null) {
       final Edm edm = ((EdmEnabledODataClient) client).getEdm(metadataETag);
@@ -348,30 +350,33 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
         for (EdmSchema schema : edm.getSchemas()) {
           final EdmEntityContainer container = schema.getEntityContainer();
 
-          EdmBindingTarget bindingTarget =
-                  container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
+          EdmBindingTarget bindingTarget = container.getEntitySet(contextURL.getEntitySetOrSingletonOrType());
           if (bindingTarget == null) {
             bindingTarget = container.getSingleton(contextURL.getEntitySetOrSingletonOrType());
           }
           if (bindingTarget != null) {
             if (contextURL.getNavOrPropertyPath() == null) {
-              entityType = bindingTarget.getEntityType();
+              type = bindingTarget.getEntityType();
             } else {
               final EdmNavigationProperty navProp = bindingTarget.getEntityType().
                       getNavigationProperty(contextURL.getNavOrPropertyPath());
 
-              entityType = navProp == null
+              type = navProp == null
                       ? bindingTarget.getEntityType()
                       : navProp.getType();
             }
           }
         }
+        if (type == null) {
+          type = new EdmTypeInfo.Builder().setEdm(edm).
+                  setTypeExpression(contextURL.getEntitySetOrSingletonOrType()).build().getType();
+        }
       } else {
-        entityType = edm.getEntityType(new FullQualifiedName(contextURL.getDerivedEntity()));
+        type = edm.getEntityType(new FullQualifiedName(contextURL.getDerivedEntity()));
       }
     }
 
-    return entityType;
+    return type;
   }
 
   @Override
@@ -386,7 +391,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     final URI base = resource.getContextURL() == null
             ? resource.getPayload().getBaseURI() : resource.getContextURL().getServiceRoot();
 
-    final EdmEntityType edmType = findEntityType(resource.getContextURL(), resource.getMetadataETag());
+    final EdmType edmType = findType(resource.getContextURL(), resource.getMetadataETag());
     FullQualifiedName typeName = null;
     if (resource.getPayload().getType() == null) {
       if (edmType != null) {
@@ -434,8 +439,14 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     }
 
     for (Property property : resource.getPayload().getProperties()) {
-      add(entity, getODataProperty(
-              new ResWrap<Property>(resource.getContextURL(), resource.getMetadataETag(), property)));
+      EdmType propertyType = null;
+      if (edmType instanceof EdmEntityType) {
+        final EdmElement edmProperty = ((EdmEntityType) edmType).getProperty(property.getName());
+        if (edmProperty != null) {
+          propertyType = edmProperty.getType();
+        }
+      }
+      add(entity, getODataProperty(propertyType, property));
     }
 
     return entity;
@@ -445,14 +456,21 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
           final String propertyName, final String propertyType) {
 
     FullQualifiedName typeName = null;
-    final EdmType entityType = findEntityType(contextURL, metadataETag);
-    if (entityType instanceof EdmStructuredType) {
-      final EdmProperty edmProperty = ((EdmStructuredType) entityType).getStructuralProperty(propertyName);
+    final EdmType type = findType(contextURL, metadataETag);
+    if (type instanceof EdmStructuredType) {
+      final EdmProperty edmProperty = ((EdmStructuredType) type).getStructuralProperty(propertyName);
       if (edmProperty != null) {
         typeName = edmProperty.getType().getFullQualifiedName();
       }
     }
+    if (typeName == null && type != null) {
+      typeName = type.getFullQualifiedName();
+    }
 
+    return buildTypeInfo(typeName, propertyType);
+  }
+
+  protected EdmTypeInfo buildTypeInfo(final FullQualifiedName typeName, final String propertyType) {
     EdmTypeInfo typeInfo = null;
     if (typeName == null) {
       if (propertyType != null) {
@@ -468,6 +486,8 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     return typeInfo;
   }
 
+  protected abstract CommonODataProperty getODataProperty(EdmType type, Property resource);
+
   protected ODataValue getODataValue(final FullQualifiedName type,
           final Valuable valuable, final ContextURL contextURL, final String metadataETag) {
 
@@ -475,7 +495,7 @@ public abstract class AbstractODataBinder implements CommonODataBinder {
     if (valuable.getValue().isPrimitive()) {
       value = client.getObjectFactory().newPrimitiveValueBuilder().
               setText(valuable.getValue().asPrimitive().get()).
-              setType(type == null
+              setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
                       ? null
                       : EdmPrimitiveTypeKind.valueOfFQN(client.getServiceVersion(), type.toString())).build();
     } else if (valuable.getValue().isGeospatial()) {

@@ -359,7 +359,7 @@ public class EntityTest extends AbstractTest {
   }
 
   private void derived(final ODataClient client, final ODataPubFormat format) {
-    final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
+    final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));    
     final ODataEntity entity = client.getBinder().getODataEntity(client.getDeserializer().toEntity(input, format));
     assertNotNull(entity);
 

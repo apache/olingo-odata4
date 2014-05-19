@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.v3.ODataProperty;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.core.domain.v3.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.op.ResourceFactory;
@@ -95,7 +96,18 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
 
     return new ODataPropertyImpl(property.getPayload().getName(),
             getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
-            property.getPayload(), property.getContextURL(), property.getMetadataETag()));
+                    property.getPayload(), property.getContextURL(), property.getMetadataETag()));
+  }
+
+  @Override
+  protected ODataProperty getODataProperty(final EdmType type, final Property resource) {
+    final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
+
+    return new ODataPropertyImpl(resource.getName(),
+            getODataValue(typeInfo == null
+                    ? null
+                    : typeInfo.getFullQualifiedName(),
+                    resource, null, null));
   }
 
   @Override

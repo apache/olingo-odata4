@@ -20,7 +20,15 @@ package org.apache.olingo.client.api.v3;
 
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
+import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 
 public interface EdmEnabledODataClient extends CommonEdmEnabledODataClient<UpdateType>, ODataClient {
+
+  @Override
+  URIBuilder getURIBuilder();
+
+  @Override
+  EdmEnabledInvokeRequestFactory getInvokeRequestFactory();
 
 }

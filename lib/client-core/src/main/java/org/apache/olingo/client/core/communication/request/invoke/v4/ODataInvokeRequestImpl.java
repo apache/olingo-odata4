@@ -86,5 +86,4 @@ public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends Abstrac
       throw new IllegalArgumentException("While adding GET parameters", e);
     }
   }
-
 }

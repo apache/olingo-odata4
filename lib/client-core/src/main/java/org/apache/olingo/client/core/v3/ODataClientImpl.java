@@ -55,7 +55,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   private static final long serialVersionUID = -1655712193243609209L;
 
-  private final Configuration configuration = new ConfigurationImpl();
+  protected final Configuration configuration = new ConfigurationImpl();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
