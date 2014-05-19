@@ -116,6 +116,17 @@ abstract class AbstractJsonSerializer<T> extends ODataJacksonSerializer<T> {
   }
 
   protected void serverLinks(final Linked linked, final JsonGenerator jgen) throws IOException {
+    if (linked instanceof JSONEntityImpl) {
+      for (Link link : ((JSONEntityImpl) linked).getMediaEditLinks()) {
+        if (StringUtils.isNotBlank(link.getHref())) {
+          jgen.writeStringField(
+                  link.getTitle() + StringUtils.prependIfMissing(
+                  version.getJSONMap().get(ODataServiceVersion.JSON_MEDIAEDIT_LINK), "@"),
+                  link.getHref());
+        }
+      }
+    }
+
     for (Link link : linked.getAssociationLinks()) {
       if (StringUtils.isNotBlank(link.getHref())) {
         jgen.writeStringField(

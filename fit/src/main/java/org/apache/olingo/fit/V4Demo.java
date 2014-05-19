@@ -48,17 +48,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V40/Demo.svc")
-public class V4Demo {
-
-  private final Metadata demoMetadata;
-
-  private final V4Services services;
+public class V4Demo extends V4Services {
 
   public V4Demo() throws Exception {
-    this.demoMetadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).
+    super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
             readFile("demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)),
-                    Accept.XML), ODataServiceVersion.V40);
-    this.services = new V4Services(this.demoMetadata);
+            Accept.XML), ODataServiceVersion.V40));
   }
 
   private Response replaceServiceName(final Response response) {
@@ -90,13 +85,15 @@ public class V4Demo {
   @GET
   @Path("/$metadata")
   @Produces(MediaType.APPLICATION_XML)
+  @Override
   public Response getMetadata() {
-    return services.getMetadata(
+    return super.getMetadata(
             "demo" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA)));
   }
 
   @GET
   @Path("/{entitySetName}({entityId})")
+  @Override
   public Response getEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -106,25 +103,27 @@ public class V4Demo {
           @QueryParam("$expand") @DefaultValue(StringUtils.EMPTY) String expand,
           @QueryParam("$select") @DefaultValue(StringUtils.EMPTY) String select) {
 
-    return replaceServiceName(services.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
+    return replaceServiceName(super.getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
             accept, entitySetName, entityId, format, expand, select, false));
   }
 
   @GET
   @Path("/{entitySetName}({entityId})/$value")
+  @Override
   public Response getMediaEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("entitySetName") String entitySetName,
           @PathParam("entityId") String entityId) {
 
-    return services.getMediaEntity(uriInfo, accept, entitySetName, entityId);
+    return super.getMediaEntity(uriInfo, accept, entitySetName, entityId);
   }
 
   @POST
   @Path("/{entitySetName}")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+  @Override
   public Response postNewEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -133,13 +132,14 @@ public class V4Demo {
           @PathParam("entitySetName") String entitySetName,
           final String entity) {
 
-    return replaceServiceName(services.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
+    return replaceServiceName(super.postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, entity));
   }
 
   @PATCH
   @Path("/{entitySetName}({entityId})")
   @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
+  @Override
   public Response patchEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -151,13 +151,14 @@ public class V4Demo {
           final String changes) {
 
     return replaceServiceName(
-            services.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
+            super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes));
   }
 
   @PUT
   @Produces({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
   @Consumes({MediaType.WILDCARD, MediaType.APPLICATION_OCTET_STREAM})
   @Path("/{entitySetName}({entityId})/$value")
+  @Override
   public Response replaceMediaEntity(
           @Context UriInfo uriInfo,
           @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) String prefer,
@@ -166,6 +167,6 @@ public class V4Demo {
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
           String value) {
 
-    return services.replaceMediaEntity(uriInfo, prefer, entitySetName, entityId, format, value);
+    return super.replaceMediaEntity(uriInfo, prefer, entitySetName, entityId, format, value);
   }
 }

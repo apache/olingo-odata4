@@ -99,7 +99,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      return CoreUtils.getValueFromProperty(client, getComplex().get(name), type, entityHandler);
+      return CoreUtils.getValueFromProperty(client, getComplex().get(name), type, getEntityHandler());
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
@@ -155,8 +155,8 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
     client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
 
-    if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (getEntityHandler() != null && !entityContext.isAttached(getEntityHandler())) {
+      entityContext.attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
     }
   }
 
@@ -181,6 +181,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   @Override
   public boolean isChanged() {
-    return entityHandler == null ? false : entityHandler.isChanged();
+    return getEntityHandler() == null ? false : getEntityHandler().isChanged();
   }
 }

@@ -98,6 +98,28 @@ public class DataBinder {
     jsonEntity.setBaseURI(atomEntity.getBaseURI() == null ? null : atomEntity.getBaseURI().toASCIIString());
     jsonEntity.getOperations().addAll(atomEntity.getOperations());
 
+    for (Link link : atomEntity.getMediaEditLinks()) {
+      final Link jlink = new LinkImpl();
+      jlink.setHref(link.getHref());
+      jlink.setTitle(link.getTitle());
+      jlink.setType(link.getType());
+      jlink.setRel(link.getRel());
+
+      if (link.getInlineEntity() instanceof AtomEntityImpl) {
+        final Entity inlineEntity = link.getInlineEntity();
+        if (inlineEntity instanceof AtomEntityImpl) {
+          jlink.setInlineEntity(toJSONEntity((AtomEntityImpl) link.getInlineEntity()));
+        }
+      } else if (link.getInlineEntitySet() instanceof AtomEntitySetImpl) {
+        final EntitySet inlineEntitySet = link.getInlineEntitySet();
+        if (inlineEntitySet instanceof AtomEntitySetImpl) {
+          jlink.setInlineEntitySet(toJSONEntitySet((AtomEntitySetImpl) link.getInlineEntitySet()));
+        }
+      }
+
+      jsonEntity.getMediaEditLinks().add(jlink);
+    }
+
     for (Link link : atomEntity.getNavigationLinks()) {
       final Link jlink = new LinkImpl();
       jlink.setHref(link.getHref());
@@ -126,7 +148,7 @@ public class DataBinder {
     }
 
     jsonEntity.getAnnotations().addAll(atomEntity.getAnnotations());
-    
+
     return jsonEntity;
   }
 
@@ -135,6 +157,28 @@ public class DataBinder {
 
     BeanUtils.copyProperties(jsonEntity, atomEntity, "baseURI", "properties", "links");
     atomEntity.setBaseURI(jsonEntity.getBaseURI() == null ? null : jsonEntity.getBaseURI().toASCIIString());
+
+    for (Link link : jsonEntity.getMediaEditLinks()) {
+      final Link alink = new LinkImpl();
+      alink.setHref(link.getHref());
+      alink.setTitle(link.getTitle());
+      alink.setRel(link.getRel());
+      alink.setType(link.getType());
+
+      if (link.getInlineEntity() instanceof JSONEntityImpl) {
+        final Entity inlineEntity = link.getInlineEntity();
+        if (inlineEntity instanceof JSONEntityImpl) {
+          alink.setInlineEntity(toAtomEntity((JSONEntityImpl) link.getInlineEntity()));
+        }
+      } else if (link.getInlineEntitySet() instanceof JSONEntitySetImpl) {
+        final EntitySet inlineEntitySet = link.getInlineEntitySet();
+        if (inlineEntitySet instanceof JSONEntitySetImpl) {
+          alink.setInlineEntitySet(toAtomEntitySet((JSONEntitySetImpl) link.getInlineEntitySet()));
+        }
+      }
+
+      atomEntity.getMediaEditLinks().add(alink);
+    }
 
     for (Link link : jsonEntity.getNavigationLinks()) {
       final Link alink = new LinkImpl();

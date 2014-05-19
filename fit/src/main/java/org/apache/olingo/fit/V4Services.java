@@ -293,7 +293,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res.getStatus() >= 400) {
+              if (res==null || res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
