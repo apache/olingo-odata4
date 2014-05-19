@@ -20,7 +20,7 @@
          under the License.
 -->
 
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 <header>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -33,22 +33,23 @@
 <body>
  <div>
   <h1>
-   Olingo OData 4.0
+   &nbsp;Olingo OData 4.0
    <div class="logo">
-    <img height="100" align="right" src="img/OlingoOrangeTM.png" />
+    <img height="40" src="img/OlingoOrangeTM.png" />
    </div>
   </h1>
+  <hr>
  </div>
- <hr>
  <h2>Technical Service</h2>
  <lu>
  <li><a href="odata.svc/">Service Document</a></li>
  <li><a href="odata.svc/$metadata">Metadata</a></li>
  </lu>
 
+ <p>
  <hr>
-
-<div class="version">
+ <p>
+ <div class="version">
   <%
     String version = "gen/version.html";
 
