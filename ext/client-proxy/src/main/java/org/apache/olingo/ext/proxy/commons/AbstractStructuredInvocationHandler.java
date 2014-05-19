@@ -73,7 +73,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     super(client, containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = EntityInvocationHandler.class.cast(this);
+    this.entityHandler = null;
   }
 
   protected AbstractStructuredInvocationHandler(
@@ -85,15 +85,21 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     super(client, entityHandler == null ? null : entityHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = entityHandler;
+    // prevent memory leak
+    this.entityHandler = entityHandler == this ? null : entityHandler;
   }
 
   public EntityInvocationHandler getEntityHandler() {
-    return entityHandler;
+    return entityHandler == null
+            ? this instanceof EntityInvocationHandler
+            ? EntityInvocationHandler.class.cast(this)
+            : null
+            : entityHandler;
   }
 
   public void setEntityHandler(EntityInvocationHandler entityHandler) {
-    this.entityHandler = entityHandler;
+    // prevent memory leak
+    this.entityHandler = entityHandler == this ? null : entityHandler;
   }
 
   public Class<?> getTypeRef() {
@@ -110,14 +116,14 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(entityHandler));
+              OperationInvocationHandler.getInstance(getEntityHandler()));
     } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(entityHandler, this));
+              ComplexFactoryInvocationHandler.getInstance(getEntityHandler(), this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
@@ -171,8 +177,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach() {
-    if (entityHandler != null && !entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.ATTACHED);
+    if (getEntityHandler() != null && !entityContext.isAttached(getEntityHandler())) {
+      entityContext.attach(getEntityHandler(), AttachedEntityStatus.ATTACHED);
     }
   }
 
@@ -181,12 +187,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach(final AttachedEntityStatus status, final boolean override) {
-    if (entityContext.isAttached(entityHandler)) {
+    if (entityContext.isAttached(getEntityHandler())) {
       if (override) {
-        entityContext.setStatus(entityHandler, status);
+        entityContext.setStatus(getEntityHandler(), status);
       }
     } else {
-      entityContext.attach(entityHandler, status);
+      entityContext.attach(getEntityHandler(), status);
     }
   }
 
@@ -276,8 +282,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
     // 1) attach source entity
-    if (!entityContext.isAttached(entityHandler)) {
-      entityContext.attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (!entityContext.isAttached(getEntityHandler())) {
+      entityContext.attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
     }
 
     // 2) attach the target entity handlers

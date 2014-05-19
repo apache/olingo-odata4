@@ -116,7 +116,7 @@ public abstract class AbstractServices {
 
   private static final Pattern REQUEST_PATTERN = Pattern.compile("(.*) (http://.*) HTTP/.*");
 
-  private static final Pattern BATCH_REQUEST_REF_PATTERN = Pattern.compile("(.*) ([$].*) HTTP/.*");
+  private static final Pattern BATCH_REQUEST_REF_PATTERN = Pattern.compile("(.*) ([$]\\d+)(.*) HTTP/.*");
 
   private static final Pattern REF_PATTERN = Pattern.compile("([$]\\d+)");
 
@@ -242,7 +242,7 @@ public abstract class AbstractServices {
       return xml.createResponse(new ByteArrayInputStream(content.toByteArray()), null, Accept.JSON_FULLMETA);
     } catch (Exception e) {
       LOG.error("While creating StoredPI", e);
-      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version),e);
+      return xml.createFaultResponse(Accept.JSON_FULLMETA.toString(version), e);
     }
   }
 
@@ -284,7 +284,7 @@ public abstract class AbstractServices {
       url = matcher.group(2);
       method = matcher.group(1);
     } else if (matcherRef.find()) {
-      url = references.get(matcherRef.group(2));
+      url = references.get(matcherRef.group(2)) + matcherRef.group(3);
       method = matcherRef.group(1);
     } else {
       url = null;

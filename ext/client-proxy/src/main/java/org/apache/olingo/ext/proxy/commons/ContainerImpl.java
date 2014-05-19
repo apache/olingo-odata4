@@ -154,7 +154,7 @@ class ContainerImpl implements Container {
     EntityContainerFactory.getContext().detachAll();
   }
 
-  private void batch(
+  private AttachedEntityStatus batch(
           final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
@@ -162,20 +162,21 @@ class ContainerImpl implements Container {
     switch (EntityContainerFactory.getContext().entityContext().getStatus(handler)) {
       case NEW:
         batchCreate(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.NEW;
 
       case CHANGED:
         batchUpdate(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.CHANGED;
 
       case DELETED:
         batchDelete(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.DELETED;
 
       default:
         if (handler.isChanged()) {
           batchUpdate(handler, entity, changeset);
         }
+        return AttachedEntityStatus.CHANGED;
     }
   }
 
@@ -239,10 +240,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -265,10 +266,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -371,50 +372,51 @@ class ContainerImpl implements Container {
 
     // insert into the batch
     LOG.debug("{}: Insert '{}' into the batch", pos, handler);
-    batch(handler, entity, changeset);
+    final AttachedEntityStatus processedStatus = batch(handler, entity, changeset);
 
     items.put(handler, pos);
 
-    int startingPos = pos;
+    if (processedStatus != AttachedEntityStatus.DELETED) {
+      int startingPos = pos;
 
-    if (handler.getEntity().isMediaEntity()) {
+      if (handler.getEntity().isMediaEntity() && handler.isChanged()) {
+        // update media properties
+        if (!handler.getPropertyChanges().isEmpty()) {
+          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                  ? URI.create("$" + startingPos)
+                  : URIUtils.getURI(factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+          batchUpdate(handler, targetURI, entity, changeset);
+          pos++;
+          items.put(handler, pos);
+        }
 
-      // update media properties
-      if (!handler.getPropertyChanges().isEmpty()) {
-        final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                ? URI.create("$" + startingPos)
-                : URIUtils.getURI(factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
-        batchUpdate(handler, targetURI, entity, changeset);
-        pos++;
-        items.put(handler, pos);
+        // update media content
+        if (handler.getStreamChanges() != null) {
+          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                  ? URI.create("$" + startingPos + "/$value")
+                  : URIUtils.getURI(
+                  factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+
+          batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
+
+          // update media info (use null key)
+          pos++;
+          items.put(null, pos);
+        }
       }
 
-      // update media content
-      if (handler.getStreamChanges() != null) {
+      for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                ? URI.create("$" + startingPos + "/$value")
-                : URIUtils.getURI(
-                        factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                ? URI.create("$" + startingPos) : URIUtils.getURI(
+                factory.getServiceRoot(),
+                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
-        batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
+        batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 
         // update media info (use null key)
         pos++;
-        items.put(null, pos);
+        items.put(handler, pos);
       }
-    }
-
-    for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
-      final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-              ? URI.create("$" + startingPos) : URIUtils.getURI(
-                      factory.getServiceRoot(),
-                      CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
-
-      batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
-
-      // update media info (use null key)
-      pos++;
-      items.put(handler, pos);
     }
 
     return pos;

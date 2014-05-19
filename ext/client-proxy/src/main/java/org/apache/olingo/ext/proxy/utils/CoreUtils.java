@@ -426,7 +426,7 @@ public final class CoreUtils {
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] {getter.getReturnType()},
                       ComplexInvocationHandler.getInstance(
-                              client, property.getName(), getter.getReturnType(), null));
+                      client, property.getName(), getter.getReturnType(), null));
 
               populate(client, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -451,7 +451,7 @@ public final class CoreUtils {
                           Thread.currentThread().getContextClassLoader(),
                           new Class<?>[] {collItemClass},
                           ComplexInvocationHandler.getInstance(
-                                  client, property.getName(), collItemClass, null));
+                          client, property.getName(), collItemClass, null));
 
                   populate(client, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);
@@ -496,7 +496,7 @@ public final class CoreUtils {
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexInvocationHandler.getInstance(
-                      client, property.getValue().asComplex(), internalRef, entityHandler));
+              client, property.getValue().asComplex(), internalRef, entityHandler));
     } else if (property.hasCollectionValue()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
@@ -511,7 +511,7 @@ public final class CoreUtils {
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexInvocationHandler.getInstance(
-                          client, value.asComplex(), internalRef, entityHandler));
+                  client, value.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
@@ -560,8 +560,8 @@ public final class CoreUtils {
         if (ns != null && ann != null) {
           if (property.getValue().getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").equals(
                   new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
-                          ? EnumType.class.cast(ann).name()
-                          : ComplexType.class.cast(ann).name()).toString())) {
+                  ? EnumType.class.cast(ann).name()
+                  : ComplexType.class.cast(ann).name()).toString())) {
             return clazz;
           }
         }

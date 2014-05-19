@@ -293,7 +293,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res.getStatus() >= 400) {
+              if (res==null || res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -351,7 +351,7 @@ public class V4Services extends AbstractServices {
   public Response getPeople(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("type") final String type, 
+          @PathParam("type") final String type,
           @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
           @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
@@ -1269,9 +1269,15 @@ public class V4Services extends AbstractServices {
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());
       assert entity.getProperty("address").getValue().isComplex();
 
+      final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
+                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+              null,
+              (AtomPropertyImpl) entity.getProperty("address"));
+
       return xml.createResponse(
               null,
-              xml.writeProperty(acceptType, entity.getProperty("address")),
+              xml.writeProperty(acceptType, result),
               null,
               acceptType);
     } catch (Exception e) {

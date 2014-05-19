@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -121,9 +122,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             getUUID().getType(),
             CoreUtils.getKey(client, typeRef, entity));
 
+    this.streamedPropertyChanges.clear();
     this.propertyChanges.clear();
     this.linkChanges.clear();
-    this.streamedPropertyChanges.clear();
     this.propertiesTag = 0;
     this.linksTag = 0;
   }
@@ -189,20 +190,24 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      final CommonODataProperty property = getEntity().getProperty(name);
-
-      Object res;
-      if (propertyChanges.containsKey(name)) {
-        res = propertyChanges.get(name);
+      if (!(type instanceof ParameterizedType) && (Class<?>) type == InputStream.class) {
+        return getStreamedProperty(name);
       } else {
-        res = CoreUtils.getValueFromProperty(client, property, type, this);
+        final CommonODataProperty property = getEntity().getProperty(name);
 
-        if (res != null) {
-          addPropertyChanges(name, res);
+        Object res;
+        if (propertyChanges.containsKey(name)) {
+          res = propertyChanges.get(name);
+        } else {
+          res = CoreUtils.getValueFromProperty(client, property, type, this);
+
+          if (res != null) {
+            chacheProperty(name, res);
+          }
         }
-      }
 
-      return res;
+        return res;
+      }
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
@@ -235,7 +240,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   @Override
   @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
-    if (property.type().equalsIgnoreCase(EdmPrimitiveTypeKind.Stream.toString())) {
+    if (property.type().equalsIgnoreCase("Edm." + EdmPrimitiveTypeKind.Stream.toString())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
       addPropertyChanges(property.name(), value);
@@ -306,14 +311,15 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return this.stream;
   }
 
-  public Object getStreamedProperty(final Property property) {
-    InputStream res = streamedPropertyChanges.get(property.name());
+  public Object getStreamedProperty(final String name) {
+
+    InputStream res = streamedPropertyChanges.get(name);
 
     try {
       if (res == null) {
         final URI link = URIUtils.getURI(
                 containerHandler.getFactory().getServiceRoot(),
-                CoreUtils.getMediaEditLink(property.name(), getEntity()).toASCIIString());
+                CoreUtils.getMediaEditLink(name, getEntity()).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
@@ -328,7 +334,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   private void setStreamedProperty(final Property property, final InputStream input) {
-    final Object obj = propertyChanges.get(property.name());
+    final Object obj = streamedPropertyChanges.get(property.name());
     if (obj instanceof InputStream) {
       IOUtils.closeQuietly((InputStream) obj);
     }
@@ -347,7 +353,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     }
 
     if (navPropValue != null) {
-      addLinkChanges(property, navPropValue);
+      cacheLink(property, navPropValue);
     }
 
     return navPropValue;
@@ -355,6 +361,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   protected void addPropertyChanges(final String name, final Object value) {
+    propertyChanges.put(name, value);
+  }
+
+  protected void chacheProperty(final String name, final Object value) {
     final int checkpoint = propertyChanges.hashCode();
     propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
@@ -362,6 +372,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   @Override
   protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
+    linkChanges.put(navProp, value);
+  }
+
+  protected void cacheLink(final NavigationProperty navProp, final Object value) {
     final int checkpoint = linkChanges.hashCode();
     linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
