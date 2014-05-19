@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
   Licensed to the Apache Software Foundation (ASF) under one
          or more contributor license agreements.  See the NOTICE file
          distributed with this work for additional information
@@ -16,27 +15,75 @@
          KIND, either express or implied.  See the License for the
          specific language governing permissions and limitations
          under the License.
--->
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	id="WebApp_ID" version="2.5">
+*/
+body {
+	font-family: Arial, sans-serif;
+	font-size: 13px;
+	line-height: 18px;
+	color: #8904B1;
+	background-color: #ffffff;
+}
 
-	<display-name>Apache Olingo OData 4.0 Technical Service</display-name>
+a {
+	color: #8904B1;
+}
 
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-	
-	<servlet>
-		<servlet-name>ODataServlet</servlet-name>
-		<servlet-class>org.apache.olingo.server.tecsvc.TechnicalServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-   
-	<servlet-mapping>
-		<servlet-name>ODataServlet</servlet-name>
-		<url-pattern>/odata.svc/*</url-pattern>
-	</servlet-mapping>
+a:VISITED {
+	color: #D358F7;
+}
 
-</web-app>
+td { 
+	padding:5px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: inherit;
+	font-weight: bold;
+	line-height: 1;
+	color: #8904B1;
+}
+
+h1 {
+	font-size: 36px;
+	line-height: 40px;
+}
+
+h2 {
+	font-size: 30px;
+	line-height: 40px;
+}
+
+h3 {
+	font-size: 24px;
+	line-height: 40px;
+}
+
+h4 {
+	font-size: 18px;
+	line-height: 20px;
+}
+
+h5 {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+h6 {
+	font-size: 12px;
+	line-height: 20px;
+}
+
+.logo {
+	float: left;
+}
+
+hr {
+	margin: 9px 0;
+	border-top: 1px solid #8904B1;
+	border-bottom: 1px solid #8904B1;
+}
+
+.version {
+	font-family: "Courier New", monospace;
+	font-size: 9px;
+}

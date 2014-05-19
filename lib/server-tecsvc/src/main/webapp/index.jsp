@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<%@ page language="java" contentType="text/html; UTF-8"
+ pageEncoding="UTF-8"%>
+
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
          or more contributor license agreements.  See the NOTICE file
@@ -17,26 +19,53 @@
          specific language governing permissions and limitations
          under the License.
 -->
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	id="WebApp_ID" version="2.5">
 
-	<display-name>Apache Olingo OData 4.0 Technical Service</display-name>
+<!DOCTYPE html>
+<html>
+<header>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <title>Apache Olingo - OData 4.0</title>
 
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-	
-	<servlet>
-		<servlet-name>ODataServlet</servlet-name>
-		<servlet-class>org.apache.olingo.server.tecsvc.TechnicalServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-   
-	<servlet-mapping>
-		<servlet-name>ODataServlet</servlet-name>
-		<url-pattern>/odata.svc/*</url-pattern>
-	</servlet-mapping>
+ <link type="text/css" rel="stylesheet" href="css/olingo.css">
 
-</web-app>
+</header>
+
+<body>
+ <div>
+  <h1>
+   &nbsp;Olingo OData 4.0
+   <div class="logo">
+    <img height="40" src="img/OlingoOrangeTM.png" />
+   </div>
+  </h1>
+  <hr>
+ </div>
+ <h2>Technical Service</h2>
+ <lu>
+ <li><a href="odata.svc/">Service Document</a></li>
+ <li><a href="odata.svc/$metadata">Metadata</a></li>
+ </lu>
+
+ <p>
+ <hr>
+ <p>
+ <div class="version">
+  <%
+    String version = "gen/version.html";
+
+    try {
+  %>
+  <jsp:include page='<%=version%>' />
+  <%
+    } catch (Exception e) {
+  %>
+  <p>IDE Build</p>
+  <%
+    }
+  %>
+ </div>
+
+
+</body>
+
+</html>

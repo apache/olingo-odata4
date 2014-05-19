@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
@@ -68,7 +69,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation  
+    return null; // TODO: provide implementation
   }
 
   @Override
@@ -76,7 +77,7 @@ public class EdmParameterImpl extends AbstractEdmParameter {
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

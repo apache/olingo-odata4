@@ -59,6 +59,6 @@ public class EdmReturnTypeImpl extends AbstractEdmReturnType {
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation  
+    return null; // TODO: provide implementation
   }
 }

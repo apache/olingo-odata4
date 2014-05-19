@@ -99,7 +99,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerEntityTypes != null) {
       for (EntityType entityType : providerEntityTypes) {
         entityTypes.add(EdmEntityTypeImpl.getInstance(edm, new FullQualifiedName(namespace, entityType.getName()),
-                entityType));
+            entityType));
       }
     }
     return entityTypes;
@@ -112,7 +112,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     if (providerComplexTypes != null) {
       for (ComplexType complexType : providerComplexTypes) {
         complexTypes.add(EdmComplexTypeImpl.getInstance(edm, new FullQualifiedName(namespace, complexType.getName()),
-                complexType));
+            complexType));
       }
     }
     return complexTypes;
@@ -165,7 +165,7 @@ public class EdmSchemaImpl extends AbstractEdmSchema {
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

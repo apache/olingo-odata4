@@ -43,7 +43,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
   private Map<String, EdmNavigationProperty> navigationProperties;
 
   public EdmStructuredTypeHelperImpl(
-          final Edm edm, final FullQualifiedName structuredTypeName, final StructuredType structuredType) {
+      final Edm edm, final FullQualifiedName structuredTypeName, final StructuredType structuredType) {
 
     this.edm = edm;
     this.structuredTypeName = structuredTypeName;
@@ -70,7 +70,7 @@ public class EdmStructuredTypeHelperImpl implements EdmStructuredTypeHelper {
       if (structuredType.getNavigationProperties() != null) {
         for (NavigationProperty navigationProperty : structuredType.getNavigationProperties()) {
           navigationProperties.put(navigationProperty.getName(),
-                  new EdmNavigationPropertyImpl(edm, structuredTypeName, navigationProperty));
+              new EdmNavigationPropertyImpl(edm, structuredTypeName, navigationProperty));
         }
       }
     }

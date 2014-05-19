@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmMapping;
@@ -43,7 +44,7 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
 
     this.structuredTypeName = structuredTypeName;
     this.property = property;
-    this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
+    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
   }
 
   @Override
@@ -88,7 +89,7 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
 
   @Override
   public SRID getSrid() {
-    return null; // TODO: provide implementation  
+    return null; // TODO: provide implementation
   }
 
   @Override
@@ -111,7 +112,7 @@ public class EdmPropertyImpl extends AbstractEdmProperty implements EdmProperty 
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

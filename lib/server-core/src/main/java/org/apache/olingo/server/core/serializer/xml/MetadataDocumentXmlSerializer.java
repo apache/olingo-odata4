@@ -118,7 +118,6 @@ public class MetadataDocumentXmlSerializer {
     appendDataServices(writer);
 
     writer.writeEndDocument();
-
   }
 
   private void appendDataServices(final XMLStreamWriter writer) throws XMLStreamException {

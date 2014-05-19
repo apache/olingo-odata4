@@ -19,18 +19,20 @@
 package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.ODataHandler;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.serializer.ODataFormat;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.core.edm.provider.EdmProviderImpl;
 import org.apache.olingo.server.core.serializer.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.ODataXmlSerializerImpl;
 
-public class ODataServerImpl extends ODataServer {
+public class ODataImpl extends OData {
 
   @Override
-  public ODataSerializer getSerializer(final ODataFormat format) {
+  public ODataSerializer createSerializer(final ODataFormat format) {
     ODataSerializer serializer;
     switch (format) {
     case JSON:
@@ -47,10 +49,13 @@ public class ODataServerImpl extends ODataServer {
   }
 
   @Override
-  public ODataHandler getHandler(EdmProvider edmProvider) {
-    return new ODataHandlerImpl(this, edmProvider);
+  public ODataHttpHandler createHandler(final Edm edm) {
+    return new ODataHttpHandlerImpl(this, edm);
   }
 
-
+  @Override
+  public Edm createEdm(final EdmProvider edmProvider) {
+    return new EdmProviderImpl(edmProvider);
+  }
 
 }

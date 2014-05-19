@@ -46,13 +46,13 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
   private EntityContainer container;
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
-          final EntityContainerInfo entityContainerInfo) {
+      final EntityContainerInfo entityContainerInfo) {
     super(edm, entityContainerInfo.getContainerName(), entityContainerInfo.getExtendsContainer());
     this.provider = provider;
   }
 
   public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
-          final EntityContainer entityContainer) {
+      final EntityContainer entityContainer) {
     super(edm, containerFQN, entityContainer.getExtendsContainer());
     this.provider = provider;
     container = entityContainer;
@@ -195,13 +195,13 @@ public class EdmEntityContainerImpl extends AbstractEdmEntityContainer {
       }
     }
   }
-  
+
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term) {
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

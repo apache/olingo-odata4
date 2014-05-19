@@ -47,7 +47,7 @@ public class EdmEnumTypeImpl extends AbstractEdmEnumType implements EdmEnumType 
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(
-              EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
+          EdmPrimitiveTypeKind.valueOf(enumType.getUnderlyingType().getName()));
       // TODO: Should we validate that the underlying type is of byte, sbyte, in16, int32 or int64?
     }
 

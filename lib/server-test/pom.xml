@@ -23,7 +23,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>olingo-server-core</artifactId>
+  <artifactId>olingo-server-test</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
@@ -37,25 +37,16 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-server-api</artifactId>
+      <artifactId>olingo-server-core</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-commons-core</artifactId>
+      <artifactId>olingo-server-tecsvc</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-
 
     <dependency>
       <groupId>junit</groupId>
@@ -68,32 +59,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-maven-plugin</artifactId>
-        <version>${antlr.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>antlr4</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!--<arguments><argument>-atn</argument></arguments> -->
-          <listener>true</listener>
-          <visitor>true</visitor>
-          <!--maven antlr plugin has trouble with grammer import if the grammerfiles
-            are not directly inside src/main/antlr4, hence we have to set the libDirectory -->
-          <libDirectory>src/main/antlr4/org/apache/olingo/server/core/uri/antlr</libDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
