@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -35,6 +36,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
@@ -141,7 +143,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         }
       } else {
         // if the getter refers to a property .... get property from wrapped entity
-        res = getPropertyValue(property, getter.getGenericReturnType());
+        res = getPropertyValue(property.name(), getter.getGenericReturnType());
       }
 
       // attach the current handler
@@ -246,8 +248,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
         navPropValue = getEntitySetProxy(type, uri);
       } else {
-        final ODataRetrieveResponse<CommonODataEntity> res =
-                client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
+        final ODataEntityRequest<CommonODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
+        if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
+          req.setPrefer(client.newPreferences().includeAnnotations("*"));
+        }
+
+        final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
 
         navPropValue = getEntityProxy(
                 uri,
@@ -265,12 +271,13 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected abstract Object getPropertyValue(final String name, final Type type);
 
-  private Object getPropertyValue(final Property property, final Type type) {
-    return getPropertyValue(property.name(), type);
-  }
-
   public void addAdditionalProperty(final String name, final Object value) {
     addPropertyChanges(name, value);
+    attach(AttachedEntityStatus.CHANGED);
+  }
+
+  public void removeAdditionalProperty(final String name) {
+    removePropertyChanges(name);
     attach(AttachedEntityStatus.CHANGED);
   }
 
@@ -312,6 +319,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   protected abstract void setPropertyValue(final Property property, final Object value);
 
   protected abstract void addPropertyChanges(final String name, final Object value);
+
+  protected abstract void removePropertyChanges(final String name);
 
   protected abstract void addLinkChanges(final NavigationProperty navProp, final Object value);
 

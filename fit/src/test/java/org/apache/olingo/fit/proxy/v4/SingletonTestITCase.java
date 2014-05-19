@@ -20,8 +20,12 @@ package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertEquals;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.IsBoss;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.junit.Test;
 
 public class SingletonTestITCase extends AbstractTestITCase {
@@ -41,5 +45,19 @@ public class SingletonTestITCase extends AbstractTestITCase {
     container.flush();
 
     assertEquals(132520L, container.getCompany().get().getRevenue(), 0);
+  }
+
+  @Test
+  public void readWithAnnotations() {
+    final Company company = container.getCompany().get();
+    assertTrue(company.getAnnotationTerms().isEmpty());
+    
+    final Person boss = container.getBoss().get();
+    assertEquals(2, boss.getPersonID(), 0);
+
+    assertEquals(1, boss.getAnnotationTerms().size());
+    final Object isBoss = boss.getAnnotation(IsBoss.class);
+    assertTrue(isBoss instanceof Boolean);
+    assertTrue((Boolean) isBoss);
   }
 }

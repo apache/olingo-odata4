@@ -63,10 +63,10 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
           final C client, final String serviceRoot) {
 
     if (!FACTORY_PER_SERVICEROOT.containsKey(serviceRoot)) {
+      client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
       final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client, serviceRoot);
       FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
     }
-    client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
 
     return (EntityContainerFactory<C>) FACTORY_PER_SERVICEROOT.get(serviceRoot);
   }

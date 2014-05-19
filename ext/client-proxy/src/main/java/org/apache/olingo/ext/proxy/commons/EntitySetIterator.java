@@ -23,8 +23,9 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 
 class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC extends AbstractEntityCollection<T>>
@@ -50,7 +51,7 @@ class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC ext
     } else if (this.next == null) {
       res = false;
     } else {
-      goon();
+      goOn();
       res = current.hasNext();
     }
     return res;
@@ -65,7 +66,7 @@ class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC ext
       if (this.next == null) {
         throw e;
       }
-      goon();
+      goOn();
       res = next();
     }
 
@@ -77,9 +78,10 @@ class EntitySetIterator<T extends Serializable, KEY extends Serializable, EC ext
     this.current.remove();
   }
 
-  private void goon() {
-    final Map.Entry<List<T>, URI> entitySet = esi.fetchPartialEntitySet(this.next, this.esi.getTypeRef());
-    this.next = entitySet.getValue();
-    this.current = entitySet.getKey().iterator();
+  private void goOn() {
+    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet =
+            esi.fetchPartialEntitySet(this.next, this.esi.getTypeRef());
+    this.current = entitySet.getLeft().iterator();
+    this.next = entitySet.getMiddle();
   }
 }

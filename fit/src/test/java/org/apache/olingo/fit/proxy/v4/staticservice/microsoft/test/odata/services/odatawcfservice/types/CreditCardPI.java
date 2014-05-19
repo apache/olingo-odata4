@@ -27,6 +27,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.AbstractAnnotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -58,7 +59,7 @@ import javax.xml.datatype.Duration;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
 public interface CreditCardPI 
-  extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument {
+  extends AbstractAnnotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument {
 
     
     @Key

@@ -20,6 +20,7 @@ package ${package};
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -92,4 +93,8 @@ public interface $utility.capitalize($entityType.Name)Collection extends Abstrac
     #end
     }
 #end
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

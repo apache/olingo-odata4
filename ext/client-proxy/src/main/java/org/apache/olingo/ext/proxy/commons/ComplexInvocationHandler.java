@@ -99,7 +99,10 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      return CoreUtils.getValueFromProperty(client, getComplex().get(name), type, getEntityHandler());
+      final CommonODataProperty property = getComplex().get(name);
+      return property == null || property.hasNullValue()
+              ? null
+              : CoreUtils.getObjectFromODataValue(client, property.getValue(), type, getEntityHandler());
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
@@ -171,6 +174,11 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   @Override
   protected void addPropertyChanges(final String name, final Object value) {
+    // do nothing ....
+  }
+
+  @Override
+  protected void removePropertyChanges(final String name) {
     // do nothing ....
   }
 

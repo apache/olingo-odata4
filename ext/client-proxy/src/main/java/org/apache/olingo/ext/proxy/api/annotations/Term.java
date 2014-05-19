@@ -16,18 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.ext.proxy.api;
+package org.apache.olingo.ext.proxy.api.annotations;
 
-import java.io.Serializable;
-import java.util.Collection;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface AbstractOpenType extends Serializable {
+/**
+ * Mark POJO as term.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface Term {
 
-  void addAdditionalProperty(String name, Object value);
+  String name();
 
-  void removeAdditionalProperty(String name);
+  String type();
 
-  Object getAdditionalProperty(String name);
-
-  Collection<String> getAdditionalPropertyNames();
+  String baseTerm() default "";
 }

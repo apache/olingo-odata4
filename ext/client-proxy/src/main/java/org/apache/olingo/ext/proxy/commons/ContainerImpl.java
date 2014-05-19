@@ -51,6 +51,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
@@ -240,10 +241,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -266,10 +267,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -316,6 +317,11 @@ class ContainerImpl implements Container {
     if (AttachedEntityStatus.DELETED != currentStatus) {
       entity.getProperties().clear();
       CoreUtils.addProperties(client, handler.getPropertyChanges(), entity);
+
+      if (entity instanceof ODataEntity) {
+        ((ODataEntity) entity).getAnnotations().clear();
+        CoreUtils.addAnnotations(client, handler.getAnnotations(), (ODataEntity) entity);
+      }
     }
 
     for (Map.Entry<NavigationProperty, Object> property : handler.getLinkChanges().entrySet()) {
@@ -395,7 +401,7 @@ class ContainerImpl implements Container {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos + "/$value")
                   : URIUtils.getURI(
-                  factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                          factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
           batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -408,8 +414,8 @@ class ContainerImpl implements Container {
       for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
-                factory.getServiceRoot(),
-                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+                        factory.getServiceRoot(),
+                        CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
         batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 

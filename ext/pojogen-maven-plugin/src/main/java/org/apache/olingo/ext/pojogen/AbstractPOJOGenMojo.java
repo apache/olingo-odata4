@@ -47,6 +47,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -231,6 +232,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
         namespaces.add(schema.getNamespace().toLowerCase());
       }
 
+      final StringBuilder termNames = new StringBuilder();
       final StringBuilder complexTypeNames = new StringBuilder();
       final StringBuilder enumTypeNames = new StringBuilder();
 
@@ -250,7 +252,14 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
         final Map<String, Object> objs = new HashMap<String, Object>();
 
-        // write types into types package
+        for (EdmTerm term : schema.getTerms()) {
+          final String className = utility.capitalize(term.getName());
+          termNames.append(typesPkg).append('.').append(className).append('\n');
+          objs.clear();
+          objs.put("term", term);
+          parseObj(typesBaseDir, typesPkg, "term", className + ".java", objs);
+        }
+
         for (EdmEnumType enumType : schema.getEnumTypes()) {
           final String className = utility.capitalize(enumType.getName());
           enumTypeNames.append(typesPkg).append('.').append(className).append('\n');
@@ -275,7 +284,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
                     || edm.getEntityType(complex.getBaseType().getFullQualifiedName()).
                     getNavigationProperty(navPropName) == null)
                     && navProp.containsTarget()) {
-              
+
               objs.clear();
               objs.put("navProp", navProp);
               parseObj(base, pkg, "containedEntitySet",
@@ -364,6 +373,8 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
       }
 
       final File metaInf = mkdir("META-INF");
+      FileUtils.fileWrite(
+              metaInf.getPath() + File.separator + Constants.PROXY_TERM_CLASS_LIST, termNames.toString());
       FileUtils.fileWrite(
               metaInf.getPath() + File.separator + Constants.PROXY_ENUM_CLASS_LIST, enumTypeNames.toString());
       FileUtils.fileWrite(

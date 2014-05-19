@@ -224,7 +224,10 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 false);
       }
     } else {
-      return CoreUtils.getValueFromProperty(client, (CommonODataProperty) result, method.getGenericReturnType(), null);
+      final CommonODataProperty property = (CommonODataProperty) result;
+      return property == null || property.hasNullValue()
+              ? null
+              : CoreUtils.getObjectFromODataValue(client, property.getValue(), method.getGenericReturnType(), null);
     }
   }
 

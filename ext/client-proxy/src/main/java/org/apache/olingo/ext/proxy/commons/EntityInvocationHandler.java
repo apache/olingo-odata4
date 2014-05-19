@@ -39,11 +39,16 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
@@ -54,15 +59,18 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
 
   private final URI entityURI;
 
-  protected Map<String, Object> propertyChanges = new HashMap<String, Object>();
+  protected final Map<String, Object> propertyChanges = new HashMap<String, Object>();
 
-  protected Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
+  protected final Map<NavigationProperty, Object> linkChanges = new HashMap<NavigationProperty, Object>();
 
   protected int propertiesTag = 0;
 
   protected int linksTag = 0;
 
-  private Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
+  private final Map<String, InputStream> streamedPropertyChanges = new HashMap<String, InputStream>();
+
+  private final Map<Class<? extends AbstractTerm>, Object> annotations =
+          new HashMap<Class<? extends AbstractTerm>, Object>();
 
   private InputStream stream;
 
@@ -127,6 +135,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.linkChanges.clear();
     this.propertiesTag = 0;
     this.linksTag = 0;
+    this.annotations.clear();
   }
 
   public EntityUUID getUUID() {
@@ -175,6 +184,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return linkChanges;
   }
 
+  public Map<Class<? extends AbstractTerm>, Object> getAnnotations() {
+    return annotations;
+  }
+
   private void updatePropertiesTag(final int checkpoint) {
     if (checkpoint == propertiesTag) {
       propertiesTag = propertyChanges.hashCode();
@@ -199,10 +212,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         if (propertyChanges.containsKey(name)) {
           res = propertyChanges.get(name);
         } else {
-          res = CoreUtils.getValueFromProperty(client, property, type, this);
+          res = property == null || property.hasNullValue()
+                  ? null
+                  : CoreUtils.getObjectFromODataValue(client, property.getValue(), type, this);
 
           if (res != null) {
-            chacheProperty(name, res);
+            cacheProperty(name, res);
           }
         }
 
@@ -238,15 +253,14 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
-    if (property.type().equalsIgnoreCase("Edm." + EdmPrimitiveTypeKind.Stream.toString())) {
+    if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
       addPropertyChanges(property.name(), value);
 
       if (value != null) {
-        final Collection<?> coll;
+        Collection<?> coll;
         if (Collection.class.isAssignableFrom(value.getClass())) {
           coll = Collection.class.cast(value);
         } else {
@@ -364,7 +378,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     propertyChanges.put(name, value);
   }
 
-  protected void chacheProperty(final String name, final Object value) {
+  @Override
+  protected void removePropertyChanges(final String name) {
+    propertyChanges.remove(name);
+  }
+
+  protected void cacheProperty(final String name, final Object value) {
     final int checkpoint = propertyChanges.hashCode();
     propertyChanges.put(name, value);
     updatePropertiesTag(checkpoint);
@@ -379,6 +398,70 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     final int checkpoint = linkChanges.hashCode();
     linkChanges.put(navProp, value);
     updateLinksTag(checkpoint);
+  }
+
+  public void addAnnotation(final Class<? extends AbstractTerm> term, final Object value) {
+    this.annotations.put(term, value);
+
+    if (value != null) {
+      Collection<?> coll;
+      if (Collection.class.isAssignableFrom(value.getClass())) {
+        coll = Collection.class.cast(value);
+      } else {
+        coll = Collections.singleton(value);
+      }
+
+      for (Object item : coll) {
+        if (item instanceof Proxy) {
+          final InvocationHandler handler = Proxy.getInvocationHandler(item);
+          if ((handler instanceof ComplexInvocationHandler)
+                  && ((ComplexInvocationHandler) handler).getEntityHandler() == null) {
+            ((ComplexInvocationHandler) handler).setEntityHandler(this);
+          }
+        }
+      }
+    }
+
+    attach(AttachedEntityStatus.CHANGED);
+  }
+
+  public void removeAnnotation(final Class<? extends AbstractTerm> term) {
+    this.annotations.remove(term);
+  }
+
+  public Object getAnnotation(final Class<? extends AbstractTerm> term) {
+    Object res = null;
+
+    if (annotations.containsKey(term)) {
+      res = annotations.get(term);
+    } else if (getEntity() instanceof ODataEntity) {
+      try {
+        final Term termAnn = term.getAnnotation(Term.class);
+        final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
+        ODataAnnotation annotation = null;
+        for (ODataAnnotation _annotation : ((ODataEntity) getEntity()).getAnnotations()) {
+          if ((namespaceAnn.value() + "." + termAnn.name()).equals(_annotation.getTerm())) {
+            annotation = _annotation;
+          }
+        }
+        res = annotation == null || annotation.hasNullValue()
+                ? null
+                : CoreUtils.getObjectFromODataValue(client, annotation.getValue(), null, this);
+        if (res != null) {
+          annotations.put(term, res);
+        }
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error getting annotation for term '" + term.getName() + "'", e);
+      }
+    }
+
+    return res;
+  }
+
+  public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
+    return getEntity() instanceof ODataEntity
+            ? CoreUtils.getAnnotationTerms(((ODataEntity) getEntity()).getAnnotations())
+            : Collections.<Class<? extends AbstractTerm>>emptyList();
   }
 
   @Override

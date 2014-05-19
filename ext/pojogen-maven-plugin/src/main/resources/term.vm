@@ -1,4 +1,4 @@
-/*
+#*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,19 +15,20 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-package org.apache.olingo.ext.proxy.api;
+ *#
+package ${package};
 
-import java.io.Serializable;
-import java.util.Collection;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+#foreach($ns in $namespaces)
+import ${basePackage}.${ns}.*;
+import ${basePackage}.${ns}.types.*;
+#end
 
-public interface AbstractOpenType extends Serializable {
-
-  void addAdditionalProperty(String name, Object value);
-
-  void removeAdditionalProperty(String name);
-
-  Object getAdditionalProperty(String name);
-
-  Collection<String> getAdditionalPropertyNames();
+@Namespace("$namespace")
+@Term(name = "$term.Name",
+      type="$term.Type"#if($term.getBaseTerm()),
+      baseTerm = "$term.getBaseTerm().getFullQualifiedName().toString()"#end)
+public interface $utility.capitalize($term.Name) extends AbstractTerm {
 }
