@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class EntitySet extends BindingTarget {
 
-  private boolean includeInServiceDocument;
+  private boolean includeInServiceDocument = true;
 
   @Override
   public EntitySet setName(final String name) {

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +81,7 @@ public class MetadataDocumentTest {
     Edm edm = new EdmProviderImpl(new TestMetadataProvider());
     InputStream metadata = serializer.metadataDocument(edm);
     assertNotNull(metadata);
-    
+
     String metadataString = IOUtils.toString(metadata);
     assertTrue(metadataString
         .contains("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
