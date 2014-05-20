@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.domain.ODataValue;
 public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
 
   /**
-   * Gets an invoke request instance for the first function import with the given name (no overloading supported).
+   * Gets an invoke request instance for the function import with the given name and no parameters.
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param functionImportName operation to be invoked
@@ -35,7 +35,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
           String functionImportName);
 
   /**
-   * Gets an invoke request instance for the first function import with the given name (no overloading supported).
+   * Gets an invoke request instance for the function import with the given name and matching parameter names.
    *
    * @param <RES> OData domain object result, derived from return type defined in the function import
    * @param functionImportName operation to be invoked

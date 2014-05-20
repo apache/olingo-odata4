@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v4;
 
+import java.util.ArrayList;
 import java.util.Map;
 import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -26,6 +27,7 @@ import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 
@@ -63,9 +65,16 @@ public class EdmEnabledInvokeRequestFactoryImpl
       throw new IllegalArgumentException("Could not find FunctionImport for name " + functionImportName);
     }
 
+    final EdmFunction function = edmClient.getCachedEdm().
+            getUnboundFunction(efi.getFunctionFqn(),
+                    parameters == null ? null : new ArrayList<String>(parameters.keySet()));
+    if (function == null) {
+      throw new IllegalArgumentException("Could not find Function " + efi.getFunctionFqn());
+    }
+
     return getInvokeRequest(
             edmClient.getURIBuilder().appendOperationCallSegment(functionImportName).build(),
-            efi.getUnboundFunctions().get(0),
+            function,
             parameters);
   }
 
