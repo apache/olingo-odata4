@@ -269,18 +269,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     return navPropValue;
   }
 
-  protected abstract Object getPropertyValue(final String name, final Type type);
-
-  public void addAdditionalProperty(final String name, final Object value) {
-    addPropertyChanges(name, value);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
-  public void removeAdditionalProperty(final String name) {
-    removePropertyChanges(name);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
   public Object getAdditionalProperty(final String name) {
     return getPropertyValue(name, null);
   }
@@ -318,11 +306,13 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected abstract void setPropertyValue(final Property property, final Object value);
 
-  protected abstract void addPropertyChanges(final String name, final Object value);
-
-  protected abstract void removePropertyChanges(final String name);
-
   protected abstract void addLinkChanges(final NavigationProperty navProp, final Object value);
+
+  protected abstract Object getPropertyValue(final String name, final Type type);
+
+  public abstract void addAdditionalProperty(final String name, final Object value);
+
+  public abstract void removeAdditionalProperty(final String name);
 
   public abstract boolean isChanged();
 }

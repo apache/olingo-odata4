@@ -180,6 +180,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return propertyChanges;
   }
 
+  @Override
+  public void addAdditionalProperty(final String name, final Object value) {
+    propertyChanges.put(name, value);
+    attach(AttachedEntityStatus.CHANGED);
+  }
+
   public Map<NavigationProperty, Object> getLinkChanges() {
     return linkChanges;
   }
@@ -257,7 +263,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (EdmPrimitiveTypeKind.Stream.getFullQualifiedName().toString().equalsIgnoreCase(property.type())) {
       setStreamedProperty(property, (InputStream) value);
     } else {
-      addPropertyChanges(property.name(), value);
+      propertyChanges.put(property.name(), value);
 
       if (value != null) {
         Collection<?> coll;
@@ -374,13 +380,9 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   @Override
-  protected void addPropertyChanges(final String name, final Object value) {
-    propertyChanges.put(name, value);
-  }
-
-  @Override
-  protected void removePropertyChanges(final String name) {
+  public void removeAdditionalProperty(final String name) {
     propertyChanges.remove(name);
+    attach(AttachedEntityStatus.CHANGED);
   }
 
   protected void cacheProperty(final String name, final Object value) {

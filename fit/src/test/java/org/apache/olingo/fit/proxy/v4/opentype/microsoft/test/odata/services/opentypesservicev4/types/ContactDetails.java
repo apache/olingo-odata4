@@ -23,6 +23,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
@@ -64,7 +65,7 @@ public interface ContactDetails
                 srid = "")
     byte[] getFirstContacted();
 
-    void setFirstContacted(final byte[] _firstContacted);
+    void setFirstContacted(byte[] _firstContacted);
 
     
 
@@ -81,7 +82,7 @@ public interface ContactDetails
                 srid = "")
     Calendar getLastContacted();
 
-    void setLastContacted(final Calendar _lastContacted);
+    void setLastContacted(Calendar _lastContacted);
 
     
 
@@ -98,7 +99,7 @@ public interface ContactDetails
                 srid = "")
     Calendar getContacted();
 
-    void setContacted(final Calendar _contacted);
+    void setContacted(Calendar _contacted);
 
     
 
@@ -115,7 +116,7 @@ public interface ContactDetails
                 srid = "")
     UUID getGUID();
 
-    void setGUID(final UUID _gUID);
+    void setGUID(UUID _gUID);
 
     
 
@@ -132,7 +133,7 @@ public interface ContactDetails
                 srid = "")
     Calendar getPreferedContactTime();
 
-    void setPreferedContactTime(final Calendar _preferedContactTime);
+    void setPreferedContactTime(Calendar _preferedContactTime);
 
     
 
@@ -149,7 +150,7 @@ public interface ContactDetails
                 srid = "")
     Short getByte();
 
-    void setByte(final Short _byte);
+    void setByte(Short _byte);
 
     
 
@@ -166,7 +167,7 @@ public interface ContactDetails
                 srid = "")
     Byte getSignedByte();
 
-    void setSignedByte(final Byte _signedByte);
+    void setSignedByte(Byte _signedByte);
 
     
 
@@ -183,7 +184,7 @@ public interface ContactDetails
                 srid = "")
     Double getDouble();
 
-    void setDouble(final Double _double);
+    void setDouble(Double _double);
 
     
 
@@ -200,7 +201,7 @@ public interface ContactDetails
                 srid = "")
     Float getSingle();
 
-    void setSingle(final Float _single);
+    void setSingle(Float _single);
 
     
 
@@ -217,7 +218,7 @@ public interface ContactDetails
                 srid = "")
     Short getShort();
 
-    void setShort(final Short _short);
+    void setShort(Short _short);
 
     
 
@@ -234,7 +235,7 @@ public interface ContactDetails
                 srid = "")
     Integer getInt();
 
-    void setInt(final Integer _int);
+    void setInt(Integer _int);
 
     
 
@@ -251,7 +252,7 @@ public interface ContactDetails
                 srid = "")
     Long getLong();
 
-    void setLong(final Long _long);
+    void setLong(Long _long);
 
     
 

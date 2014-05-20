@@ -19,20 +19,11 @@
 
 package org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types;
 
-import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
-import org.apache.olingo.ext.proxy.api.annotations.EntityType;
-import org.apache.olingo.ext.proxy.api.annotations.Key;
-import org.apache.olingo.ext.proxy.api.annotations.KeyRef;
-import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.annotations.Operation;
-import org.apache.olingo.ext.proxy.api.annotations.Parameter;
-import org.apache.olingo.ext.proxy.api.AbstractAnnotatable;
+import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-import org.apache.olingo.ext.proxy.api.OperationType;
-import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
-import org.apache.olingo.client.api.edm.ConcurrencyMode;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.*;
 import org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.*;
 
@@ -54,17 +45,15 @@ import javax.xml.datatype.Duration;
 
 
 @Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@EntityType(name = "RowIndex",
-        openType = true,
-        hasStream = false,
+@ComplexType(name = "AccountInfo",
+        isOpenType = true,
         isAbstract = false)
-public interface RowIndex 
-  extends AbstractAnnotatable,AbstractOpenType {
+public interface AccountInfo 
+    extends AbstractOpenType,Serializable {
 
-    
-    @Key
-    @Property(name = "Id", 
-                type = "Edm.Int32", 
+
+    @Property(name = "FirstName", 
+                type = "Edm.String", 
                 nullable = false,
                 defaultValue = "",
                 maxLenght = Integer.MAX_VALUE,
@@ -73,29 +62,28 @@ public interface RowIndex
                 scale = 0,
                 unicode = true,
                 collation = "",
-                srid = "",
-                concurrencyMode = ConcurrencyMode.None,
-                fcSourcePath = "",
-                fcTargetPath = "",
-                fcContentKind = EdmContentKind.text,
-                fcNSPrefix = "",
-                fcNSURI = "",
-                fcKeepInContent = false)
-    Integer getId();
+                srid = "")
+    String getFirstName();
 
-    void setId(Integer _id);    
-    
+    void setFirstName(String _firstName);
+
     
 
-    @NavigationProperty(name = "Rows", 
-                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row", 
-                targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV4", 
-                targetContainer = "DefaultContainer", 
-                targetEntitySet = "Row",
-                containsTarget = false)
-    org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row getRows();
+    @Property(name = "LastName", 
+                type = "Edm.String", 
+                nullable = false,
+                defaultValue = "",
+                maxLenght = Integer.MAX_VALUE,
+                fixedLenght = false,
+                precision = 0,
+                scale = 0,
+                unicode = true,
+                collation = "",
+                srid = "")
+    String getLastName();
 
-    void setRows(org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row _rows);
+    void setLastName(String _lastName);
+
     
 
 

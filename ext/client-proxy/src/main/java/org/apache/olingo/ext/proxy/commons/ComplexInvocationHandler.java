@@ -131,12 +131,20 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void setPropertyValue(final Property property, final Object value) {
     final FullQualifiedName fqn =
             new FullQualifiedName(ClassUtils.getNamespace(typeRef), typeRef.getAnnotation(ComplexType.class).name());
 
     final EdmElement edmProperty = client.getCachedEdm().getComplexType(fqn).getProperty(property.name());
+
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+
+    setPropertyValue(property.name(), type, value);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void setPropertyValue(final String name, final EdmTypeInfo type, final Object value) {
 
     final Object toBeAdded;
 
@@ -145,7 +153,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     } else if (Collection.class.isAssignableFrom(value.getClass())) {
       toBeAdded = new ArrayList<Object>();
       for (Object obj : (Collection) value) {
-        ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
+        Collection.class.cast(toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
       }
     } else if (value instanceof Proxy) {
       toBeAdded = Proxy.getInvocationHandler(value);
@@ -153,10 +161,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       toBeAdded = value;
     }
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
-            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
-
-    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
+    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, name, type, toBeAdded));
 
     if (getEntityHandler() != null && !entityContext.isAttached(getEntityHandler())) {
       entityContext.attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
@@ -173,13 +178,18 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   @Override
-  protected void addPropertyChanges(final String name, final Object value) {
-    // do nothing ....
+  public void addAdditionalProperty(final String name, final Object value) {
+    setPropertyValue(name, null, value);
+    attach(AttachedEntityStatus.CHANGED);
   }
 
   @Override
-  protected void removePropertyChanges(final String name) {
-    // do nothing ....
+  public void removeAdditionalProperty(final String name) {
+    final CommonODataProperty property = getComplex().get(name);
+    if(property !=null && !property.hasNullValue()){
+      setPropertyValue(name, null, null);
+      attach(AttachedEntityStatus.CHANGED);
+    }
   }
 
   @Override

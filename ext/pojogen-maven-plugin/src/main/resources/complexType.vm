@@ -22,6 +22,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 #foreach($ns in $namespaces)
 import ${basePackage}.${ns}.*;
 import ${basePackage}.${ns}.types.*;
