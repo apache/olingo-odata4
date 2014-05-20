@@ -293,7 +293,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res==null || res.getStatus() >= 400) {
+              if (res == null || res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -1316,5 +1316,27 @@ public class V4Services extends AbstractServices {
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
+  }
+
+  @POST
+  @Path("/Products({productId})/Categories/$ref")
+  public Response createLinked(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String entity) {
+
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
+  }
+
+  @DELETE
+  @Path("/Products({productId})/Categories({categoryId})/$ref")
+  public Response deleteLinked(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String entity) {
+
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }
 }
