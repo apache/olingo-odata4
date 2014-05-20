@@ -66,7 +66,7 @@
                 <include>org.apache.commons:commons-lang3</include>
                 <include>org.slf4j:slf4j-api</include>
                 <include>commons-io:commons-io</include>
-                <include>commons-beanutils:commons-beanutils-core</include>
+                <include>commons-beanutils:commons-beanutils</include>
                 <include>org.apache.httpcomponents:httpclient</include>
                 <include>org.apache.httpcomponents:httpcore</include>
                 <include>commons-logging:commons-logging</include>
