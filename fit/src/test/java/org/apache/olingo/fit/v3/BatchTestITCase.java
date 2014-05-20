@@ -49,7 +49,7 @@ import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.client.core.communication.request.batch.ODataRetrieveResponseItem;
+import org.apache.olingo.client.core.communication.request.batch.ODataSingleResponseItem;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl.ODataEntityResponseImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -320,7 +320,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.ATOM);
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -373,7 +373,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -383,9 +383,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrive the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
     ODataResponse res = retitem.next();
     assertTrue(res instanceof ODataEntityResponseImpl);
     assertEquals(200, res.getStatusCode());
@@ -422,9 +422,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrive the third item (ODataRetrieve)
     item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    retitem = (ODataRetrieveResponseItem) item;
+    retitem = (ODataSingleResponseItem) item;
     res = retitem.next();
     assertTrue(res instanceof ODataEntityResponseImpl);
     assertEquals(200, res.getStatusCode());

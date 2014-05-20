@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
+import org.apache.olingo.client.api.communication.request.batch.ODataSingleRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
@@ -80,18 +80,20 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
    *
    * @param request retrieve request to batch.
    */
-  public void addRetrieve(final ODataBatchableRequest request) {
+  public void addRequest(final ODataBatchableRequest request) {
+    validateSingleRequest(request);
+    
     closeCurrentItem();
 
     // stream dash boundary
     streamDashBoundary();
 
-    final ODataRetrieveResponseItem expectedResItem = new ODataRetrieveResponseItem();
-    currentItem = new ODataRetrieveImpl(req, expectedResItem);
+    final ODataSingleResponseItem expectedResItem = new ODataSingleResponseItem();
+    currentItem = new ODataSingleRequestImpl(req, expectedResItem);
 
     ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
-    ((ODataRetrieve) currentItem).setRequest(request);
+    ((ODataSingleRequest) currentItem).setRequest(request);
   }
 
   /**
@@ -136,4 +138,6 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     newLine();
     stream(("--" + ((AbstractODataBatchRequest) req).boundary + "--").getBytes());
   }
+
+  protected abstract void validateSingleRequest(final ODataBatchableRequest request);
 }

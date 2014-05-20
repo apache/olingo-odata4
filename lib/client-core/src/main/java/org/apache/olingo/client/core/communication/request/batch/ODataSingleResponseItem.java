@@ -16,27 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.communication.request.batch.v4;
+package org.apache.olingo.client.core.communication.request.batch;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem;
-import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
+import static org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchResponseItem.LOG;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchErrorResponse;
+import org.apache.olingo.client.core.communication.response.v4.AsyncResponseImpl;
 
 /**
  * Retrieve response wrapper for the corresponding batch item.
  */
-public class ODataOutsideUpdateResponseItem extends AbstractODataBatchResponseItem {
+public class ODataSingleResponseItem extends AbstractODataBatchResponseItem {
 
-  public static final String OUTSIDE_CONTENT_ID = "__OUTSIDEUPDATE__";
+  public static final String SINGLE_CONTENT_ID = "__SINGLE__";
 
   /**
    * Constructor.
    */
-  public ODataOutsideUpdateResponseItem() {
+  public ODataSingleResponseItem() {
     super(false);
   }
 
@@ -49,25 +49,32 @@ public class ODataOutsideUpdateResponseItem extends AbstractODataBatchResponseIt
       throw new IllegalStateException("Invalid request - the item has been closed");
     }
 
+    if (!hasNext()) {
+      throw new NoSuchElementException("No item found");
+    }
+
     final Map.Entry<Integer, String> responseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
     LOG.debug("Retrieved item response {}", responseLine);
 
     final Map<String, Collection<String>> headers = ODataBatchUtilities.readHeaders(batchLineIterator);
     LOG.debug("Retrieved item headers {}", headers);
 
-    final ODataResponse res;
-
-    if (responseLine.getKey() >= 400) {
+    if (responseLine.getKey() == 202) {
+      // generate async response
+      current = new AsyncResponseImpl(responseLine, headers, batchLineIterator, boundary);
+      breakingitem = true;
+    } else if (responseLine.getKey() >= 400) {
       // generate error response
-      res = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      current = new ODataBatchErrorResponse(responseLine, headers, batchLineIterator, boundary);
+      breakingitem = true;
     } else {
       if (!hasNext()) {
         throw new NoSuchElementException("No item found");
       }
-      res = expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
+      current = expectedItemsIterator.next().initFromBatch(responseLine, headers, batchLineIterator, boundary);
     }
 
-    return res;
+    return current;
   }
 
   /**

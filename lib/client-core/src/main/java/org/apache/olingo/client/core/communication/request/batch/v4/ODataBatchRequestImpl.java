@@ -27,10 +27,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
-import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
 import org.apache.olingo.client.core.communication.request.batch.AbstractBatchManager;
@@ -100,18 +99,7 @@ public class ODataBatchRequestImpl
     }
 
     @Override
-    public void addOutsideUpdate(final ODataBatchableRequest request) {
-      closeCurrentItem();
-
-      // stream dash boundary
-      streamDashBoundary();
-
-      final ODataOutsideUpdateResponseItem expectedResItem = new ODataOutsideUpdateResponseItem();
-      currentItem = new ODataOutsideUpdateImpl(req, expectedResItem);
-
-      ((ODataBatchRequestImpl) req).expectedResItems.add(expectedResItem);
-
-      ((ODataOutsideUpdate) currentItem).setRequest(request);
+    protected void validateSingleRequest(final ODataBatchableRequest request) {
     }
   }
 

@@ -24,8 +24,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.v4.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
@@ -56,7 +56,7 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
    */
   @Override
   public void addRetrieve(final ODataBatchableRequest request) {
-    batchManager.addRetrieve(request);
+    batchManager.addRequest(request);
   }
 
   /**
@@ -64,7 +64,7 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
    */
   @Override
   public void addOutsideUpdate(final ODataBatchableRequest request) {
-    batchManager.addOutsideUpdate(request);
+    batchManager.addRequest(request);
   }
 
   @Override

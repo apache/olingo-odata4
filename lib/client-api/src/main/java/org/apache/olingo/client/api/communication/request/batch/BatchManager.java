@@ -39,5 +39,5 @@ public interface BatchManager extends ODataPayloadManager<ODataBatchResponse> {
    *
    * @param request retrieve request to batch.
    */
-  void addRetrieve(final ODataBatchableRequest request);
+  void addRequest(final ODataBatchableRequest request);
 }

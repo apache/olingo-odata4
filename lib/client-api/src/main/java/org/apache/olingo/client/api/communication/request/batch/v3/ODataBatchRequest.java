@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.communication.request.batch.v3;
 
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 

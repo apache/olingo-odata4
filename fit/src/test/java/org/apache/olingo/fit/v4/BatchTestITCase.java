@@ -35,9 +35,9 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -55,8 +55,7 @@ import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.client.core.communication.request.batch.ODataRetrieveResponseItem;
-import org.apache.olingo.client.core.communication.request.batch.v4.ODataOutsideUpdateResponseItem;
+import org.apache.olingo.client.core.communication.request.batch.ODataSingleResponseItem;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl.ODataEntityResponseImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -192,7 +191,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -204,7 +203,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -214,18 +213,18 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrieve the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
     ODataResponse res = retitem.next();
     assertEquals(404, res.getStatusCode());
     assertEquals("Not Found", res.getStatusMessage());
 
     if (continueOnError) {
       item = iter.next();
-      assertTrue(item instanceof ODataRetrieveResponseItem);
+      assertTrue(item instanceof ODataSingleResponseItem);
 
-      retitem = (ODataRetrieveResponseItem) item;
+      retitem = (ODataSingleResponseItem) item;
       res = retitem.next();
       assertTrue(res instanceof ODataEntityResponseImpl);
       assertEquals(200, res.getStatusCode());
@@ -261,13 +260,13 @@ public class BatchTestITCase extends AbstractTestITCase {
             "OrderDetails",
             client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
             appendKeySegment(new HashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
+      private static final long serialVersionUID = 3109256773218160485L;
 
-              {
-                put("OrderID", 7);
-                put("ProductID", 5);
-              }
-            }).build()));
+      {
+        put("OrderID", 7);
+        put("ProductID", 5);
+      }
+    }).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
             URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
@@ -337,7 +336,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -349,7 +348,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataPubFormat.JSON);
-    streamManager.addOutsideUpdate(createReq);
+    streamManager.addRequest(createReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -359,9 +358,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrieve the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
     ODataResponse res = retitem.next();
     assertTrue(res instanceof ODataEntityResponseImpl);
     assertEquals(200, res.getStatusCode());
@@ -369,9 +368,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrieve the second item (ODataChangeset)
     item = iter.next();
-    assertTrue(item instanceof ODataOutsideUpdateResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    final ODataOutsideUpdateResponseItem outitem = (ODataOutsideUpdateResponseItem) item;
+    final ODataSingleResponseItem outitem = (ODataSingleResponseItem) item;
     res = outitem.next();
     assertTrue(res instanceof ODataEntityCreateResponse);
     assertEquals(201, res.getStatusCode());
@@ -404,7 +403,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -448,7 +447,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    streamManager.addRetrieve(queryReq);
+    streamManager.addRequest(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -458,9 +457,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrieve the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
     ODataResponse res = retitem.next();
     assertTrue(res instanceof ODataEntityResponseImpl);
     assertEquals(200, res.getStatusCode());
@@ -493,9 +492,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrive the third item (ODataRetrieve)
     item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
-    retitem = (ODataRetrieveResponseItem) item;
+    retitem = (ODataSingleResponseItem) item;
     res = retitem.next();
     assertTrue(res instanceof ODataEntityResponseImpl);
     assertEquals(200, res.getStatusCode());
@@ -556,10 +555,10 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // retrieve the first item (ODataRetrieve)
     ODataBatchResponseItem item = iter.next();
-    assertTrue(item instanceof ODataRetrieveResponseItem);
+    assertTrue(item instanceof ODataSingleResponseItem);
 
     // The service return interim results to an asynchronously executing batch.
-    ODataRetrieveResponseItem retitem = (ODataRetrieveResponseItem) item;
+    ODataSingleResponseItem retitem = (ODataSingleResponseItem) item;
     ODataResponse res = retitem.next();
     assertTrue(res instanceof AsyncResponse);
     assertEquals(202, res.getStatusCode());
@@ -677,8 +676,8 @@ public class BatchTestITCase extends AbstractTestITCase {
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
     order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
             getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
-                    getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
-                    setText("PT0.0000002S").build())));
+            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
+            setText("PT0.0000002S").build())));
 
     return order;
   }
