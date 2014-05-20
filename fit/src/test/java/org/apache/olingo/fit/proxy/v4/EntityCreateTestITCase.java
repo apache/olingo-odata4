@@ -71,7 +71,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     date.clear();
     date.set(2011, 3, 4, 9, 0, 0);
     employee.setDateHired(date);
-    Address homeAddress = employee.factory().newHomeAddress();
+    final Address homeAddress = employee.factory().newHomeAddress();
     homeAddress.setCity("Pescara");
     homeAddress.setPostalCode("65100");
     homeAddress.setStreet("viale Gabriele D'Annunzio 256");

@@ -113,8 +113,9 @@ class ContainerImpl implements Container {
 
     final ODataBatchResponse response = streamManager.getResponse();
 
-    if ((client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0 && response.getStatusCode() != 202)
-            || (client.getServiceVersion().compareTo(ODataServiceVersion.V30) > 0 && response.getStatusCode() != 200)) {
+    // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
+    // many service implementations are not fully compliant with this respect.
+    if (response.getStatusCode() != 202 && response.getStatusCode() != 200) {
       throw new IllegalStateException("Operation failed");
     }
 

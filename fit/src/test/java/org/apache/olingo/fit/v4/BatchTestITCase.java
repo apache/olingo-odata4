@@ -79,13 +79,6 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   private static final int MAX = 10000;
 
-  // ------------------------
-  // Uncomment to check externally ...
-  // ------------------------
-  // private final static String testStaticServiceRootURL= 
-  //                  "http://odatae2etest.azurewebsites.net/javatest/DefaultService/";
-  // private final static String ACCEPT = ContentType.MULTIPART_MIXED;
-  // ------------------------
   private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM;
 
   @Test
@@ -274,13 +267,13 @@ public class BatchTestITCase extends AbstractTestITCase {
             "OrderDetails",
             client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
             appendKeySegment(new HashMap<String, Object>() {
-      private static final long serialVersionUID = 3109256773218160485L;
+              private static final long serialVersionUID = 3109256773218160485L;
 
-      {
-        put("OrderID", 7);
-        put("ProductID", 5);
-      }
-    }).build()));
+              {
+                put("OrderID", 7);
+                put("ProductID", 5);
+              }
+            }).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
             URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
@@ -702,8 +695,8 @@ public class BatchTestITCase extends AbstractTestITCase {
             setType(EdmPrimitiveTypeKind.Duration).setText("PT0.0000002S").build()));
     order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
             getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
-            getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
-            setText("PT0.0000002S").build())));
+                    getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
+                    setText("PT0.0000002S").build())));
 
     return order;
   }
