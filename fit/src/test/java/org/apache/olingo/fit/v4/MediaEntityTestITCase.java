@@ -62,6 +62,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
     final ODataEntityRequest<ODataEntity> entityReq =
             client.getRetrieveRequestFactory().getEntityRequest(builder.build());
+    entityReq.setFormat(format);
 
     final ODataEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -124,7 +125,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
-            getMediaRequest(client.getURIBuilder(createdLocation.toASCIIString()).appendValueSegment().build());
+            getMediaEntityRequest(client.getURIBuilder(createdLocation.toASCIIString()).build());
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
@@ -146,7 +147,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   private void update(final ODataPubFormat format) throws IOException, EdmPrimitiveTypeException {
     final URI uri = client.getURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
-            appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).appendValueSegment().build();
+            appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
 
     final String random = RandomStringUtils.random(124);
 
@@ -160,7 +161,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     assertEquals(204, createRes.getStatusCode());
 
     // 2. check that media content was effectively uploaded
-    final ODataMediaRequest streamReq = client.getRetrieveRequestFactory().getMediaRequest(uri);
+    final ODataMediaRequest streamReq = client.getRetrieveRequestFactory().getMediaEntityRequest(uri);
     final ODataRetrieveResponse<InputStream> streamRes = streamReq.execute();
     assertEquals(200, streamRes.getStatusCode());
 

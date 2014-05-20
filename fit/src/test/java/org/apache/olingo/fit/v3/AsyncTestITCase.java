@@ -119,10 +119,9 @@ public class AsyncTestITCase extends AbstractTestITCase {
             ? created.getProperties().get(0).getPrimitiveValue().toCastValue(Integer.class)
             : created.getProperties().get(1).getPrimitiveValue().toCastValue(Integer.class);
 
-    builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
+    builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(id);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());

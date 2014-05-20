@@ -166,10 +166,9 @@ public class PropertyTestITCase extends AbstractTestITCase {
             appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").
-            appendPropertySegment("PhoneNumber").
-            appendValueSegment();
+            appendPropertySegment("PhoneNumber");
 
-    ODataValueRequest retrieveReq = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+    ODataValueRequest retrieveReq = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     ODataRetrieveResponse<ODataPrimitiveValue> retrieveRes = retrieveReq.execute();
@@ -192,7 +191,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataValueUpdateResponse updateRes = updateReq.execute();
     assertEquals(204, updateRes.getStatusCode());
 
-    retrieveReq = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+    retrieveReq = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
     retrieveRes = retrieveReq.execute();

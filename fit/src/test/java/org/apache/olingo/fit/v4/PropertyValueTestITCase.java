@@ -42,9 +42,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PersonID").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PersonID");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     assertEquals("5", req.execute().getBody().toString());
   }
@@ -52,9 +51,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveBooleanPropertyValueTest() throws EdmPrimitiveTypeException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("IsRegistered").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("IsRegistered");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     assertEquals("true", req.execute().getBody().toString());
   }
@@ -62,9 +60,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveStringPropertyValueTest() throws EdmPrimitiveTypeException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("FirstName").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("FirstName");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     assertEquals("Peter", req.execute().getBody().toString());
   }
@@ -72,9 +69,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveDatePropertyValueTest() {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Orders").appendKeySegment(8).appendPropertySegment("OrderDate").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("Orders").appendKeySegment(8).appendPropertySegment("OrderDate");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("2011-03-04T16:03:57Z", property.toString());
@@ -83,9 +79,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveDecimalPropertyValueTest() throws EdmPrimitiveTypeException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Height").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Height");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("179", property.toString());
@@ -94,9 +89,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveBinaryPropertyValueTest() throws IOException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertEquals("fi653p3+MklA/LdoBlhWgnMTUUEo8tEgtbMXnF0a3CUNL9BZxXpSRiD9ebTnmNR0zWPjJ"
@@ -106,9 +100,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test(expected = ODataClientErrorException.class)
   public void retrieveBinaryPropertyValueTestWithAtom() throws IOException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setAccept(ODataPubFormat.ATOM.toString(ODataServiceVersion.V40));
     req.execute().getBody();
   }
@@ -116,9 +109,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test(expected = ODataClientErrorException.class)
   public void retrieveBinaryPropertyValueTestWithXML() throws IOException {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("PDC");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setAccept(ODataFormat.XML.toString(client.getServiceVersion()));
     req.execute().getBody();
   }
@@ -132,16 +124,15 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
     req.setFormat(ODataFormat.XML);
     final ODataProperty property = req.execute().getBody();
     // cast to workaround JDK 6 bug, fixed in JDK 7
-    assertTrue(((ODataValuable)property).getValue().isCollection());
+    assertTrue(((ODataValuable) property).getValue().isCollection());
     assertEquals("555-555-5555", property.getCollectionValue().iterator().next().asPrimitive().toString());
   }
 
   @Test
   public void retrieveNullPropertyValueTest() {
     final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("HomeAddress").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("HomeAddress");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataPrimitiveValue property = req.execute().getBody();
     assertTrue(StringUtils.isBlank(property.toString()));

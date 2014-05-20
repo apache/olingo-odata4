@@ -35,9 +35,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveIntPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
@@ -47,9 +46,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveBooleanPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
@@ -59,9 +57,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveStringPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Description").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Description");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
@@ -72,8 +69,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   public void retrieveDatePropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
-                    "NestedComplexConcurrency/ModifiedDate").appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+                    "NestedComplexConcurrency/ModifiedDate");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
@@ -83,9 +80,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   @Test
   public void retrieveDecimalPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Dimensions/Height").
-            appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+            appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Dimensions/Height");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     assertNotNull(value);
@@ -141,8 +137,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   public void retrieveCollectionPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
-                    "ComplexConcurrency/QueriedDateTime").appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+                    "ComplexConcurrency/QueriedDateTime");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
     final ODataValue value = req.execute().getBody();
     if (value.isPrimitive()) {
@@ -155,8 +151,8 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
   public void retrieveNullPropertyValueTest() {
     CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment(
-                    "ComplexConcurrency/Token").appendValueSegment();
-    final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
+                    "ComplexConcurrency/Token");
+    final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     try {
       req.execute().getBody();
     } catch (ODataClientErrorException e) {

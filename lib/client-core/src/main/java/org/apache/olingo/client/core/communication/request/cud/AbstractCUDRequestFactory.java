@@ -35,6 +35,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequestImpl;
 import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
 import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -99,10 +100,10 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
     final ODataValueUpdateRequest req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataValueUpdateRequestImpl(client, HttpMethod.POST, targetURI, value);
+      req = new ODataValueUpdateRequestImpl(client, HttpMethod.POST, URIUtils.addValueSegment(targetURI), value);
       req.setXHTTPMethod(type.getMethod().name());
     } else {
-      req = new ODataValueUpdateRequestImpl(client, type.getMethod(), targetURI, value);
+      req = new ODataValueUpdateRequestImpl(client, type.getMethod(), URIUtils.addValueSegment(targetURI), value);
     }
 
     return req;
@@ -210,10 +211,10 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
     final ODataMediaEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.POST, editURI, media);
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.POST, URIUtils.addValueSegment(editURI), media);
       req.setXHTTPMethod(HttpMethod.PUT.name());
     } else {
-      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.PUT, editURI, media);
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.PUT, URIUtils.addValueSegment(editURI), media);
     }
 
     return req;

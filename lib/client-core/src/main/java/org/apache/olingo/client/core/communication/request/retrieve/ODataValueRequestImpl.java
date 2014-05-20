@@ -42,7 +42,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
    * @param odataClient client instance getting this request
    * @param query query to be executed.
    */
-  ODataValueRequestImpl(final CommonODataClient odataClient, final URI query) {
+  ODataValueRequestImpl(final CommonODataClient<?> odataClient, final URI query) {
     super(odataClient, ODataValueFormat.class, query);
   }
 

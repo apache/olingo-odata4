@@ -48,9 +48,9 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   @Test
   public void read() throws Exception {
     final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+            appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.WILDCARD);
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
@@ -62,10 +62,10 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithXmlError() throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+    final URIBuilder builder =
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.APPLICATION_XML);
 
     retrieveReq.execute();
@@ -73,18 +73,18 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void readWithJsonError() throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(12).appendValueSegment();
+    final URIBuilder builder =
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(12);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
     retrieveReq.setFormat(ODataMediaFormat.APPLICATION_JSON);
 
     retrieveReq.execute();
   }
 
   private void updateMediaEntity(final ODataPubFormat format, final int id) throws Exception {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Car").appendKeySegment(id).appendValueSegment();
+    final URIBuilder builder =
+            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").appendKeySegment(id);
 
     final String TO_BE_UPDATED = "new buffered stream sample";
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
@@ -97,7 +97,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
     assertEquals(204, updateRes.getStatusCode());
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -137,9 +137,9 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     }
     assertNotNull(id);
 
-    builder.appendKeySegment(id).appendValueSegment();
+    builder.appendKeySegment(id);
 
-    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaRequest(builder.build());
+    final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(builder.build());
 
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
