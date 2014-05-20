@@ -34,13 +34,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.header.HeaderName;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
-import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
@@ -103,7 +101,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
 
-    final BatchStreamManager payload = request.execute();
+    final BatchManager payload = request.payloadManager();
     final ODataBatchResponse response = payload.getResponse();
 
     assertEquals(200, response.getStatusCode());
@@ -119,7 +117,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
 
-    final BatchStreamManager payload = request.execute();
+    final BatchManager payload = request.payloadManager();
     final ODataChangeset changeset = payload.addChangeset();
 
     URIBuilder targetURI;
@@ -181,13 +179,11 @@ public class BatchTestITCase extends AbstractTestITCase {
     request.setAccept(ACCEPT);
     request.continueOnError();
 
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    ODataRetrieve retrieve = streamManager.addRetrieve();
-
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("UnexistinfEntitySet").appendKeySegment(1);
@@ -196,21 +192,19 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    retrieve = streamManager.addRetrieve();
-
     // prepare URI
     targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -245,7 +239,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity order = newOrder(20);
@@ -329,13 +323,11 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    ODataRetrieve retrieve = streamManager.addRetrieve();
-
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1).
@@ -345,21 +337,19 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
     // Add new order with outside item
     // -------------------------------------------
-    final ODataOutsideUpdate outside = streamManager.addOutsideUpdate();
-
     // prepare URI
     targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     final ODataEntity original = newOrder(2000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
     createReq.setFormat(ODataPubFormat.JSON);
-    outside.setRequest(createReq);
+    streamManager.addOutsideUpdate(createReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -401,13 +391,11 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
 
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    ODataRetrieve retrieve = streamManager.addRetrieve();
-
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1);
@@ -416,7 +404,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -454,15 +442,13 @@ public class BatchTestITCase extends AbstractTestITCase {
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    retrieve = streamManager.addRetrieve();
-
     // prepare URI
     targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -534,8 +520,6 @@ public class BatchTestITCase extends AbstractTestITCase {
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    ODataRetrieve retrieve = async.addRetrieve();
-
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("People").appendKeySegment(5);
@@ -544,21 +528,19 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.JSON);
 
-    retrieve.setRequest(queryReq);
+    async.addRetrieve(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    retrieve = async.addRetrieve();
-
     // prepare URI
     targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    retrieve.setRequest(queryReq);
+    async.addRetrieve(queryReq);
     // -------------------------------------------
 
     final AsyncResponseWrapper<ODataBatchResponse> responseWrapper = async.execute();
@@ -599,7 +581,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       super(new Wrapper<Future<HttpResponse>>());
     }
 
-    public ODataStreamManager<ODataBatchResponse> addObject(final byte[] src) {
+    public ODataPayloadManager<ODataBatchResponse> addObject(final byte[] src) {
       stream(src);
       return this;
     }
@@ -651,9 +633,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   private static class BatchStreamingThread extends Thread {
 
-    private final BatchStreamManager streaming;
+    private final BatchManager streaming;
 
-    public BatchStreamingThread(final BatchStreamManager streaming) {
+    public BatchStreamingThread(final BatchManager streaming) {
       super();
       this.streaming = streaming;
     }

@@ -101,7 +101,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final URI uri = client.getURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
             client.getStreamedRequestFactory().getMediaEntityCreateRequest(uri, input);
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
 
     final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
@@ -155,7 +155,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
     updateReq.setFormat(format);
 
-    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
+    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ODataEntity> createRes = streamManager.getResponse();
     assertEquals(204, createRes.getStatusCode());
 

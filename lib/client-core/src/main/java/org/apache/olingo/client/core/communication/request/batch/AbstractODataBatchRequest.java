@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 /**
  * This class implements a batch request.
  */
-public abstract class AbstractODataBatchRequest<V extends ODataResponse, T extends ODataStreamManager<V>>
+public abstract class AbstractODataBatchRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
         extends AbstractODataStreamedRequest<V, T> {
 
   /**
@@ -73,7 +73,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
    * {@inheritDoc }
    */
   public PipedOutputStream getOutputStream() {
-    return getStreamManager().getBodyStreamWriter();
+    return getPayloadManager().getBodyStreamWriter();
   }
 
   /**

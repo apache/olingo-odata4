@@ -30,11 +30,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
-import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
 import org.apache.olingo.client.api.communication.request.batch.v3.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -90,7 +89,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
 
-    final BatchStreamManager payload = request.execute();
+    final BatchManager payload = request.payloadManager();
     final ODataBatchResponse response = payload.getResponse();
 
     assertEquals(202, response.getStatusCode());
@@ -105,7 +104,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
 
-    final BatchStreamManager payload = request.execute();
+    final BatchManager payload = request.payloadManager();
     final ODataChangeset changeset = payload.addChangeset();
 
     URIBuilder targetURI;
@@ -158,7 +157,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   public void changesetWithReference() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity customer = getSampleCustomerProfile(20, "sample customer", false);
@@ -234,7 +233,7 @@ public class BatchTestITCase extends AbstractTestITCase {
   public void updateLinkWithReference() throws EdmPrimitiveTypeException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
 
@@ -294,9 +293,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
             URIUtils.getURI(testStaticServiceRootURL, uriBuilder.build() + "/Info"));
-    
+
     final ODataEntity navigatedInfo = req.execute().getBody();
-    
+
     assertEquals(infoEntity.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class),
             navigatedInfo.getProperty("CustomerInfoId").getPrimitiveValue().toCastValue(Integer.class));
   }
@@ -307,13 +306,11 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
 
-    final BatchStreamManager streamManager = request.execute();
+    final BatchManager streamManager = request.payloadManager();
 
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    ODataRetrieve retrieve = streamManager.addRetrieve();
-
     // prepare URI
     URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customer").appendKeySegment(-10).
@@ -323,7 +320,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     ODataEntityRequest<ODataEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
     queryReq.setFormat(ODataPubFormat.ATOM);
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     // -------------------------------------------
@@ -368,7 +365,6 @@ public class BatchTestITCase extends AbstractTestITCase {
     // -------------------------------------------
     // Add retrieve item
     // -------------------------------------------
-    retrieve = streamManager.addRetrieve();
 
     // prepare URI
     targetURI = client.getURIBuilder(testStaticServiceRootURL).
@@ -377,7 +373,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
 
-    retrieve.setRequest(queryReq);
+    streamManager.addRetrieve(queryReq);
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
@@ -448,7 +444,7 @@ public class BatchTestITCase extends AbstractTestITCase {
       super(new Wrapper<Future<HttpResponse>>());
     }
 
-    public ODataStreamManager<ODataBatchResponse> addObject(byte[] src) {
+    public ODataPayloadManager<ODataBatchResponse> addObject(byte[] src) {
       stream(src);
       return this;
     }
@@ -499,9 +495,9 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   private static class BatchStreamingThread extends Thread {
 
-    private final BatchStreamManager streaming;
+    private final BatchManager streaming;
 
-    public BatchStreamingThread(final BatchStreamManager streaming) {
+    public BatchStreamingThread(final BatchManager streaming) {
       this.streaming = streaming;
     }
 

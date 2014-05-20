@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.streamed;
 
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.response.ODataStreamUpdateResponse;
 
 /**
  * Streamed entity payload object.
  */
-public interface StreamUpdateStreamManager extends ODataStreamManager<ODataStreamUpdateResponse> {
+public interface StreamUpdateStreamManager extends ODataPayloadManager<ODataStreamUpdateResponse> {
 }

@@ -34,7 +34,7 @@ import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
-import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -90,7 +90,7 @@ class ContainerImpl implements Container {
     final CommonODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(client.getServiceRoot());
     ((ODataRequest) request).setAccept(client.getConfiguration().getDefaultBatchAcceptFormat());
 
-    final BatchStreamManager streamManager = (BatchStreamManager) ((ODataStreamedRequest) request).execute();
+    final BatchManager streamManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
 

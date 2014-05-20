@@ -16,11 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.api.communication.request.batch.v3;
+package org.apache.olingo.client.api.communication.request.batch.v4;
+
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 
 /**
  * Batch request payload management.
  */
-public interface BatchStreamManager
-        extends org.apache.olingo.client.api.communication.request.batch.BatchStreamManager {
+public interface BatchManager extends org.apache.olingo.client.api.communication.request.batch.BatchManager {
+
+  /**
+   * Adds an outside update batch item instance. An outside update item can be submitted embedded into a batch request
+   * only.
+   *
+   * @param request update request to batch.
+   */
+  void addOutsideUpdate(final ODataBatchableRequest request);
 }

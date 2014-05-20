@@ -61,11 +61,11 @@ public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
   }
 
   @Override
-  protected MediaEntityUpdateStreamManager<E> getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new MediaEntityUpdateStreamManagerImpl(media);
+  protected MediaEntityUpdateStreamManager<E> getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new MediaEntityUpdateStreamManagerImpl(media);
     }
-    return (MediaEntityUpdateStreamManager<E>) streamManager;
+    return (MediaEntityUpdateStreamManager<E>) payloadManager;
   }
 
   /**

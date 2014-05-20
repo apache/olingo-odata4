@@ -29,7 +29,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
@@ -47,13 +47,13 @@ import org.apache.commons.io.IOUtils;
  * @param <V> OData response type corresponding to the request implementation.
  * @param <T> OData request payload type corresponding to the request implementation.
  */
-public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T extends ODataStreamManager<V>>
+public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
         extends AbstractODataRequest<ODataMediaFormat> implements ODataStreamedRequest<V, T> {
 
   /**
    * OData payload stream manager.
    */
-  protected ODataStreamManager<V> streamManager;
+  protected ODataPayloadManager<V> payloadManager;
 
   /**
    * Wrapper for actual streamed request's future. This holds information about the HTTP request / response currently
@@ -81,18 +81,18 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    *
    * @return OData request payload management object.
    */
-  protected abstract T getStreamManager();
+  protected abstract T getPayloadManager();
 
   /**
    * {@inheritDoc }
    */
   @Override
   @SuppressWarnings("unchecked")
-  public T execute() {
-    streamManager = getStreamManager();
+  public T payloadManager() {
+    payloadManager = getPayloadManager();
 
     ((HttpEntityEnclosingRequestBase) request).setEntity(
-            URIUtils.buildInputStreamEntity(odataClient, streamManager.getBody()));
+            URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
 
     futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
       @Override
@@ -102,7 +102,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
     }));
 
     // returns the stream manager object
-    return (T) streamManager;
+    return (T) payloadManager;
   }
 
   /**
@@ -125,11 +125,11 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * @param contentId ContentId header value to be added to the serialization. Use this in case of changeset items.
    */
   public void batch(final CommonODataBatchRequest req, final String contentId) {
-    final InputStream input = getStreamManager().getBody();
+    final InputStream input = getPayloadManager().getBody();
 
     try {
       // finalize the body
-      getStreamManager().finalizeBody();
+      getPayloadManager().finalizeBody();
 
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {

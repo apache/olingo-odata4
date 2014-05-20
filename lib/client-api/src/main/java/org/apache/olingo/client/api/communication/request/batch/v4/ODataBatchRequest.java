@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
  * This class implements a batch request.
  */
 public interface ODataBatchRequest
-        extends CommonODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
+        extends CommonODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchManager> {
 
   ODataBatchRequest continueOnError();
 }

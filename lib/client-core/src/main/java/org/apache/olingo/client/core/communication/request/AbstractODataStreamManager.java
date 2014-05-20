@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 
@@ -38,7 +38,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
  * @param <T> OData response type corresponding to the request implementation.
  */
 public abstract class AbstractODataStreamManager<T extends ODataResponse> extends AbstractODataStreamer
-        implements ODataStreamManager<T> {
+        implements ODataPayloadManager<T> {
 
   /**
    * Body input stream.

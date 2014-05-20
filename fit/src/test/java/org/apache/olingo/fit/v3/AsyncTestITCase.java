@@ -101,7 +101,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
             client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
 
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
     final Future<ODataMediaEntityCreateResponse<ODataEntity>> futureCreateRes = streamManager.getAsyncResponse();
 
     while (!futureCreateRes.isDone()) {

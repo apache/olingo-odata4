@@ -59,12 +59,12 @@ public class ODataStreamUpdateRequestImpl
    * {@inheritDoc }
    */
   @Override
-  protected StreamUpdateStreamManager getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new StreamUpdateStreamManagerImpl(this.stream);
+  protected StreamUpdateStreamManager getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new StreamUpdateStreamManagerImpl(this.stream);
     }
 
-    return (StreamUpdateStreamManager) streamManager;
+    return (StreamUpdateStreamManager) payloadManager;
   }
 
   public class StreamUpdateStreamManagerImpl extends AbstractODataStreamManager<ODataStreamUpdateResponse>

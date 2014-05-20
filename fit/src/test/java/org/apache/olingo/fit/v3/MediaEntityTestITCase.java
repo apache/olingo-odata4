@@ -93,7 +93,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
     updateReq.setFormat(format);
 
-    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.execute();
+    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ODataEntity> updateRes = streamManager.getResponse();
     assertEquals(204, updateRes.getStatusCode());
 
@@ -121,7 +121,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
             client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
     createReq.setFormat(format);
 
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.execute();
+    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
     final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
@@ -172,7 +172,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataStreamUpdateRequest updateReq =
             client.getStreamedRequestFactory().getStreamUpdateRequest(builder.build(), input);
 
-    final StreamUpdateStreamManager streamManager = updateReq.execute();
+    final StreamUpdateStreamManager streamManager = updateReq.payloadManager();
     final ODataStreamUpdateResponse updateRes = streamManager.getResponse();
     updateRes.close();
     assertEquals(204, updateRes.getStatusCode());

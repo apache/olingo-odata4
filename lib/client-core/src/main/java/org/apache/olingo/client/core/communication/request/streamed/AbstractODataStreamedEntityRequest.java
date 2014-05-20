@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.communication.request.streamed;
 
 import java.net.URI;
 import org.apache.olingo.client.api.CommonODataClient;
-import org.apache.olingo.client.api.communication.request.ODataStreamManager;
+import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamedEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.http.HttpMethod;
  * @param <V> OData response type corresponding to the request implementation.
  * @param <T> OData request payload type corresponding to the request implementation.
  */
-public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse, T extends ODataStreamManager<V>>
+public abstract class AbstractODataStreamedEntityRequest<V extends ODataResponse, T extends ODataPayloadManager<V>>
         extends AbstractODataStreamedRequest<V, T>
         implements ODataStreamedEntityRequest<V, T> {
 

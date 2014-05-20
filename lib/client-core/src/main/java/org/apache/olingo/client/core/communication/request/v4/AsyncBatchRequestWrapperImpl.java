@@ -23,11 +23,10 @@ import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
-import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.request.v4.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.v4.AsyncResponseWrapper;
@@ -37,11 +36,11 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataBatchResponse>
         implements AsyncBatchRequestWrapper {
 
-  private BatchStreamManager batchStreamManager;
+  private BatchManager batchManager;
 
   protected AsyncBatchRequestWrapperImpl(final ODataClient odataClient, final ODataBatchRequest odataRequest) {
     super(odataClient, odataRequest);
-    batchStreamManager = odataRequest.execute();
+    batchManager = odataRequest.payloadManager();
   }
 
   /**
@@ -49,28 +48,28 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
    */
   @Override
   public ODataChangeset addChangeset() {
-    return batchStreamManager.addChangeset();
+    return batchManager.addChangeset();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public ODataRetrieve addRetrieve() {
-    return batchStreamManager.addRetrieve();
+  public void addRetrieve(final ODataBatchableRequest request) {
+    batchManager.addRetrieve(request);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public ODataOutsideUpdate addOutsideUpdate() {
-    return batchStreamManager.addOutsideUpdate();
+  public void addOutsideUpdate(final ODataBatchableRequest request) {
+    batchManager.addOutsideUpdate(request);
   }
 
   @Override
   public AsyncResponseWrapper<ODataBatchResponse> execute() {
-    return new AsyncResponseWrapperImpl(batchStreamManager.getResponse());
+    return new AsyncResponseWrapperImpl(batchManager.getResponse());
   }
 
   public class AsyncResponseWrapperImpl

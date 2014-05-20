@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request.batch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -32,7 +33,7 @@ import org.apache.olingo.client.core.communication.request.Wrapper;
 /**
  * Batch request payload management.
  */
-public abstract class AbstractBatchStreamManager extends AbstractODataStreamManager<ODataBatchResponse> {
+public abstract class AbstractBatchManager extends AbstractODataStreamManager<ODataBatchResponse> {
 
   /**
    * Batch request current item.
@@ -49,7 +50,7 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
    *
    * @param req batch request reference.
    */
-  protected AbstractBatchStreamManager(
+  protected AbstractBatchManager(
           final CommonODataBatchRequest req, final Wrapper<Future<HttpResponse>> futureWrap) {
     super(futureWrap);
     this.req = req;
@@ -75,11 +76,11 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
   }
 
   /**
-   * Gets a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
+   * Adds a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
    *
-   * @return ODataRetrieve instance.
+   * @param request retrieve request to batch.
    */
-  public ODataRetrieve addRetrieve() {
+  public void addRetrieve(final ODataBatchableRequest request) {
     closeCurrentItem();
 
     // stream dash boundary
@@ -90,7 +91,7 @@ public abstract class AbstractBatchStreamManager extends AbstractODataStreamMana
 
     ((AbstractODataBatchRequest) req).addExpectedResItem(expectedResItem);
 
-    return (ODataRetrieve) currentItem;
+    ((ODataRetrieve) currentItem).setRequest(request);
   }
 
   /**

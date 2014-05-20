@@ -26,13 +26,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
-import org.apache.olingo.client.api.communication.request.batch.v4.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.v4.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.v4.ODataClient;
-import org.apache.olingo.client.core.communication.request.batch.AbstractBatchStreamManager;
+import org.apache.olingo.client.core.communication.request.batch.AbstractBatchManager;
 import org.apache.olingo.client.core.communication.request.batch.AbstractODataBatchRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.communication.response.batch.ODataBatchResponseManager;
@@ -41,7 +42,7 @@ import org.apache.olingo.client.core.communication.response.batch.ODataBatchResp
  * This class implements a batch request.
  */
 public class ODataBatchRequestImpl
-        extends AbstractODataBatchRequest<ODataBatchResponse, BatchStreamManager>
+        extends AbstractODataBatchRequest<ODataBatchResponse, BatchManager>
         implements ODataBatchRequest {
 
   private boolean continueOnError = false;
@@ -52,11 +53,11 @@ public class ODataBatchRequestImpl
   }
 
   @Override
-  protected BatchStreamManager getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new BatchStreamManagerImpl(this);
+  protected BatchManager getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new BatchManagerImpl(this);
     }
-    return (BatchStreamManager) streamManager;
+    return (BatchManager) payloadManager;
   }
 
   /**
@@ -64,7 +65,7 @@ public class ODataBatchRequestImpl
    */
   @Override
   public ODataBatchRequest rawAppend(final byte[] toBeStreamed) throws IOException {
-    getStreamManager().getBodyStreamWriter().write(toBeStreamed);
+    getPayloadManager().getBodyStreamWriter().write(toBeStreamed);
     return this;
   }
 
@@ -73,7 +74,7 @@ public class ODataBatchRequestImpl
    */
   @Override
   public ODataBatchRequest rawAppend(final byte[] toBeStreamed, int off, int len) throws IOException {
-    getStreamManager().getBodyStreamWriter().write(toBeStreamed, off, len);
+    getPayloadManager().getBodyStreamWriter().write(toBeStreamed, off, len);
     return this;
   }
 
@@ -87,9 +88,9 @@ public class ODataBatchRequestImpl
   /**
    * Batch request payload management.
    */
-  public class BatchStreamManagerImpl extends AbstractBatchStreamManager implements BatchStreamManager {
+  public class BatchManagerImpl extends AbstractBatchManager implements BatchManager {
 
-    public BatchStreamManagerImpl(final ODataBatchRequest req) {
+    public BatchManagerImpl(final ODataBatchRequest req) {
       super(req, ODataBatchRequestImpl.this.futureWrapper);
     }
 
@@ -99,7 +100,7 @@ public class ODataBatchRequestImpl
     }
 
     @Override
-    public ODataOutsideUpdate addOutsideUpdate() {
+    public void addOutsideUpdate(final ODataBatchableRequest request) {
       closeCurrentItem();
 
       // stream dash boundary
@@ -110,7 +111,7 @@ public class ODataBatchRequestImpl
 
       ((ODataBatchRequestImpl) req).expectedResItems.add(expectedResItem);
 
-      return (ODataOutsideUpdate) currentItem;
+      ((ODataOutsideUpdate) currentItem).setRequest(request);
     }
   }
 
