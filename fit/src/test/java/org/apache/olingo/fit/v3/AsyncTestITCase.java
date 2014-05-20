@@ -99,7 +99,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
 
     final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
     final Future<ODataMediaEntityCreateResponse<ODataEntity>> futureCreateRes = streamManager.getAsyncResponse();

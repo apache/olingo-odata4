@@ -201,7 +201,7 @@ class ContainerImpl implements Container {
     LOG.debug("Update media entity '{}'", uri);
 
     final ODataMediaEntityUpdateRequest<?> req =
-            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(uri, input);
+            client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
     req.setContentType(StringUtils.isBlank(handler.getEntity().getMediaContentType())
             ? ODataMediaFormat.WILDCARD.toString()
@@ -222,7 +222,7 @@ class ContainerImpl implements Container {
 
     LOG.debug("Update media entity '{}'", uri);
 
-    final ODataStreamUpdateRequest req = client.getStreamedRequestFactory().getStreamUpdateRequest(uri, input);
+    final ODataStreamUpdateRequest req = client.getCUDRequestFactory().getStreamUpdateRequest(uri, input);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -242,10 +242,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -268,10 +268,10 @@ class ContainerImpl implements Container {
             client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
             ? ((org.apache.olingo.client.api.v3.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
+            org.apache.olingo.client.api.communication.request.cud.v3.UpdateType.PATCH, changes)
             : ((org.apache.olingo.client.api.v4.EdmEnabledODataClient) client).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
-                    org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
+            org.apache.olingo.client.api.communication.request.cud.v4.UpdateType.PATCH, changes);
 
     req.setPrefer(new ODataPreferences(client.getServiceVersion()).returnContent());
 
@@ -402,7 +402,7 @@ class ContainerImpl implements Container {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos + "/$value")
                   : URIUtils.getURI(
-                          factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                  factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
           batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -415,8 +415,8 @@ class ContainerImpl implements Container {
       for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
-                        factory.getServiceRoot(),
-                        CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+                factory.getServiceRoot(),
+                CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
         batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
 

@@ -29,7 +29,7 @@ public abstract class AbstractODataClient<UT extends CommonUpdateType> implement
   private static final long serialVersionUID = 7269096702397630265L;
 
   private final ODataWriter writer = new ODataWriterImpl(this);
-
+  
   @Override
   public ODataPreferences newPreferences() {
     return new ODataPreferences(getServiceVersion());

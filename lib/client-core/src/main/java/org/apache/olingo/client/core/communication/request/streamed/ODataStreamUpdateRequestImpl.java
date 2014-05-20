@@ -48,7 +48,7 @@ public class ODataStreamUpdateRequestImpl
    * @param targetURI target URI.
    * @param stream stream to be updated.
    */
-  ODataStreamUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  public ODataStreamUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final InputStream stream) {
 
     super(odataClient, method, targetURI);

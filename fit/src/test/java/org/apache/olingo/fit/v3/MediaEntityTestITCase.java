@@ -90,7 +90,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final InputStream input = IOUtils.toInputStream(TO_BE_UPDATED);
 
     final ODataMediaEntityUpdateRequest<ODataEntity> updateReq =
-            client.getStreamedRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityUpdateRequest(builder.build(), input);
     updateReq.setFormat(format);
 
     final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.payloadManager();
@@ -118,7 +118,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car");
 
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(builder.build(), input);
     createReq.setFormat(format);
 
     final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
@@ -170,7 +170,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final InputStream input = new ByteArrayInputStream(TO_BE_UPDATED.getBytes());
 
     final ODataStreamUpdateRequest updateReq =
-            client.getStreamedRequestFactory().getStreamUpdateRequest(builder.build(), input);
+            client.getCUDRequestFactory().getStreamUpdateRequest(builder.build(), input);
 
     final StreamUpdateStreamManager streamManager = updateReq.payloadManager();
     final ODataStreamUpdateResponse updateRes = streamManager.getResponse();

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
+import java.io.InputStream;
 import java.net.URI;
 import org.apache.olingo.client.api.CommonODataClient;
 import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFactory;
@@ -27,7 +28,13 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequestImpl;
+import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
+import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
@@ -170,6 +177,43 @@ public abstract class AbstractCUDRequestFactory<UT extends CommonUpdateType> imp
       req.setXHTTPMethod(HttpMethod.DELETE.name());
     } else {
       req = new ODataDeleteRequestImpl(client, HttpMethod.DELETE, targetURI);
+    }
+
+    return req;
+  }
+
+  @Override
+  public <E extends CommonODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+          final URI targetURI, final InputStream media) {
+
+    return new ODataMediaEntityCreateRequestImpl<E>(client, targetURI, media);
+  }
+
+  @Override
+  public ODataStreamUpdateRequest getStreamUpdateRequest(final URI targetURI, final InputStream stream) {
+    final ODataStreamUpdateRequest req;
+
+    if (client.getConfiguration().isUseXHTTPMethod()) {
+      req = new ODataStreamUpdateRequestImpl(client, HttpMethod.POST, targetURI, stream);
+      req.setXHTTPMethod(HttpMethod.PUT.name());
+    } else {
+      req = new ODataStreamUpdateRequestImpl(client, HttpMethod.PUT, targetURI, stream);
+    }
+
+    return req;
+  }
+
+  @Override
+  public <E extends CommonODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+          final URI editURI, final InputStream media) {
+
+    final ODataMediaEntityUpdateRequest<E> req;
+
+    if (client.getConfiguration().isUseXHTTPMethod()) {
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.POST, editURI, media);
+      req.setXHTTPMethod(HttpMethod.PUT.name());
+    } else {
+      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.PUT, editURI, media);
     }
 
     return req;

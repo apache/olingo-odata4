@@ -100,7 +100,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     final URI uri = client.getURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
-            client.getStreamedRequestFactory().getMediaEntityCreateRequest(uri, input);
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, input);
     final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
 
     final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
@@ -151,7 +151,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String random = RandomStringUtils.random(124);
 
     // 1. update providing media content
-    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq = client.getStreamedRequestFactory().
+    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().
             getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
     updateReq.setFormat(format);
 
