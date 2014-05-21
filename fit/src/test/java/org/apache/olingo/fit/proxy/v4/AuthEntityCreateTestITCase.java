@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.v3;
+package org.apache.olingo.fit.proxy.v4;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -24,25 +24,27 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
-        DefaultContainer;
+import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.containerFactory;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 
-public class AuthEntityRetrieveTestITCase extends EntityRetrieveTestITCase {
+public class AuthEntityCreateTestITCase extends EntityCreateTestITCase {
 
   @BeforeClass
   public static void setupContaner() {
-    containerFactory = EntityContainerFactory.getV3(testAuthServiceRootURL);
+    containerFactory = EntityContainerFactory.getV4(testAuthServiceRootURL);
+    containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     containerFactory.getClient().getConfiguration().
             setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
-    container = containerFactory.getEntityContainer(DefaultContainer.class);
+    container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
   }
 
   @AfterClass
   public static void disableBasicAuth() {
-    containerFactory = EntityContainerFactory.getV3(testStaticServiceRootURL);
-    container = containerFactory.getEntityContainer(DefaultContainer.class);
+    containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
+    container = containerFactory.getEntityContainer(InMemoryEntities.class);
     assertNotNull(container);
   }
 }

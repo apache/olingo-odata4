@@ -1306,10 +1306,9 @@ public abstract class AbstractServices {
           @PathParam("entityId") String entityId) {
 
     try {
-      final String basePath =
-              entitySetName + File.separatorChar + Commons.getEntityKey(entityId) + File.separatorChar;
+      final String basePath = entitySetName + File.separatorChar + Commons.getEntityKey(entityId);
 
-      FSManager.instance(version).deleteFile(basePath + Constants.get(version, ConstantKey.ENTITY));
+      FSManager.instance(version).deleteEntity(basePath);
 
       return xml.createResponse(null, null, null, null, Response.Status.NO_CONTENT);
     } catch (Exception e) {

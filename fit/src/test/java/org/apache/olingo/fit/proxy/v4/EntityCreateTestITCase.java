@@ -29,6 +29,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
 import org.apache.commons.lang3.RandomUtils;
+import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.container;
+
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
@@ -94,7 +96,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     container.getPeople().delete(actual.getPersonID());
     container.flush();
 
-    actual = container.getPeople().get(id, Employee.class);;
+    actual = container.getPeople().get(id, Employee.class);
     assertNull(actual);
 
     entityContext.detachAll();
@@ -130,7 +132,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
     assertEquals(1, actual.getOrders().size());
     assertEquals(8, actual.getOrders().iterator().next().getOrderID(), 0);
-
+    
     container.getCustomers().delete(actual.getPersonID());
     container.flush();
 

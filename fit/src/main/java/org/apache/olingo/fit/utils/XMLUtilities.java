@@ -598,7 +598,7 @@ public class XMLUtilities extends AbstractUtilities {
 
     try {
       final FileObject skipToken = fsManager.resolve(skipTokenDirPath);
-      final FileObject[] files = fsManager.findByExtension(skipToken, Accept.XML.getExtension().substring(1));
+      final FileObject[] files = fsManager.find(skipToken, Accept.XML.getExtension().substring(1));
 
       for (FileObject file : files) {
         count += countFeedElements(fsManager.readFile(
