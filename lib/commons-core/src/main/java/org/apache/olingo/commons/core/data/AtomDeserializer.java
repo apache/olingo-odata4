@@ -637,6 +637,7 @@ public class AtomDeserializer extends AbstractAtomDealer {
               }
             } else if (link.getRel().startsWith(
                     version.getNamespaceMap().get(ODataServiceVersion.NAVIGATION_LINK_REL))) {
+              
               entity.getNavigationLinks().add(link);
               inline(reader, event.asStartElement(), link);
             } else if (link.getRel().startsWith(

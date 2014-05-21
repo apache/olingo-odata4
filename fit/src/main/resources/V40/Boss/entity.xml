@@ -25,7 +25,9 @@
   <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Parent" title="Parent" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent/$ref" type="application/xml"/>
   <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Orders" title="Orders" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders/$ref" type="application/xml"/>
   <link rel="http://docs.oasis-open.org/odata/ns/relatedlinks/Company" title="Company" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company/$ref" type="application/xml"/>
-  <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" title="Parent" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent" type="application/atom+xml;type=entry"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" title="Parent" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Parent" type="application/atom+xml;type=entry">
+    <m:annotation term="Microsoft.Test.OData.Services.ODataWCFService.IsBoss" m:type="Boolean">false</m:annotation>
+  </link>
   <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" title="Orders" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Orders" type="application/atom+xml;type=entry"/>
   <link rel="http://docs.oasis-open.org/odata/ns/related/Company" title="Company" href="http://localhost:9080/stub/StaticService/V40/Static.svc/Boss/Microsoft.Test.OData.Services.ODataWCFService.Customer/Company" type="application/atom+xml;type=entry"/>
   <content type="application/xml">
@@ -33,6 +35,7 @@
       <d:PersonID m:type="Int32">2</d:PersonID>
       <d:FirstName>Jill</d:FirstName>
       <d:LastName>Jones</d:LastName>
+      <m:annotation term="Microsoft.Test.OData.Services.ODataWCFService.IsBoss" target="LastName" m:type="Boolean">false</m:annotation>
       <d:MiddleName m:null="true"/>
       <d:HomeAddress m:null="true"/>
       <d:Home m:type="GeographyPoint">

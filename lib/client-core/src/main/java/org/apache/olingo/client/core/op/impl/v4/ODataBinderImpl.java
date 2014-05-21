@@ -50,7 +50,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotatatable;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
@@ -138,7 +138,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     }
   }
 
-  private void annotations(final ODataAnnotatatable odataAnnotatable, final Annotatable annotatable,
+  private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable,
           final Class<? extends Entity> reference) {
 
     for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
@@ -220,7 +220,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     return valueResource;
   }
 
-  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatatable odataAnnotatable) {
+  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatable odataAnnotatable) {
     for (Annotation annotation : annotatable.getAnnotations()) {
       FullQualifiedName fqn = null;
       if (client instanceof EdmEnabledODataClient) {
@@ -265,7 +265,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     super.odataNavigationLinks(edmType, linked, odataLinked, metadataETag, base);
     for (org.apache.olingo.commons.api.domain.ODataLink link : odataLinked.getNavigationLinks()) {
       if (!(link instanceof ODataInlineEntity) && !(link instanceof ODataInlineEntitySet)) {
-        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatatable) link);
+        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatable) link);
       }
     }
   }

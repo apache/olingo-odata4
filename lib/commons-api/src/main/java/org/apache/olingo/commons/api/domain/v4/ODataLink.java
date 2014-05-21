@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 
-public class ODataLink extends org.apache.olingo.commons.api.domain.ODataLink implements ODataAnnotatatable {
+public class ODataLink extends org.apache.olingo.commons.api.domain.ODataLink implements ODataAnnotatable {
 
   private static final long serialVersionUID = 8953805653775734101L;
 

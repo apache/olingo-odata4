@@ -40,7 +40,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
+final class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 

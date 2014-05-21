@@ -16,28 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.ext.proxy.api.annotations;
 
-import java.net.URI;
-import java.util.List;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AnnotationsForNavigationProperty {
 
-  @Override
-  List<ODataEntity> getEntities();
+  String name();
 
-  /**
-   * Gets delta link if exists.
-   *
-   * @return delta link if exists; null otherwise.
-   */
-  URI getDeltaLink();
+  String type();
 
-  /**
-   * Sets delta link.
-   *
-   * @param deltaLink delta link.
-   */
-  void setDeltaLink(URI deltaLink);
 }

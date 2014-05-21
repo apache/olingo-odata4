@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -53,7 +54,7 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class EntityInvocationHandler extends AbstractStructuredInvocationHandler {
+public class EntityInvocationHandler extends AbstractStructuredInvocationHandler implements Annotatable {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
@@ -332,7 +333,6 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public Object getStreamedProperty(final String name) {
-
     InputStream res = streamedPropertyChanges.get(name);
 
     try {
@@ -402,6 +402,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     updateLinksTag(checkpoint);
   }
 
+  @Override
   public void addAnnotation(final Class<? extends AbstractTerm> term, final Object value) {
     this.annotations.put(term, value);
 
@@ -427,10 +428,13 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     attach(AttachedEntityStatus.CHANGED);
   }
 
+  @Override
   public void removeAnnotation(final Class<? extends AbstractTerm> term) {
     this.annotations.remove(term);
+    attach(AttachedEntityStatus.CHANGED);
   }
 
+  @Override
   public Object getAnnotation(final Class<? extends AbstractTerm> term) {
     Object res = null;
 
@@ -460,6 +464,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return res;
   }
 
+  @Override
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
     return getEntity() instanceof ODataEntity
             ? CoreUtils.getAnnotationTerms(((ODataEntity) getEntity()).getAnnotations())

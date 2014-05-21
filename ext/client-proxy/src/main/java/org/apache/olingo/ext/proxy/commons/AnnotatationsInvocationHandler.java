@@ -21,32 +21,23 @@ package org.apache.olingo.ext.proxy.commons;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
-import org.apache.olingo.ext.proxy.api.OperationExecutor;
-import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
+public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
-  private static final long serialVersionUID = 2629912294765040027L;
+  private static final long serialVersionUID = -1993362719908718985L;
 
   private final EntityInvocationHandler entityHandler;
 
-  private final AbstractStructuredInvocationHandler invokerHandler;
+  private final AbstractStructuredInvocationHandler targetHandler;
 
-  static ComplexFactoryInvocationHandler getInstance(
-          final CommonEdmEnabledODataClient<?> client,
-          final EntityContainerInvocationHandler containerHandler,
+  static AnnotatationsInvocationHandler getInstance(
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    return new ComplexFactoryInvocationHandler(client, containerHandler, entityHandler, targetHandler);
-  }
-
-  static ComplexFactoryInvocationHandler getInstance(
-          final EntityInvocationHandler entityHandler,
-          final AbstractStructuredInvocationHandler targetHandler) {
-    
-    return new ComplexFactoryInvocationHandler(
+    return new AnnotatationsInvocationHandler(
             entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null
             ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
@@ -54,14 +45,14 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
             targetHandler);
   }
 
-  private ComplexFactoryInvocationHandler(
+  private AnnotatationsInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
     super(client, containerHandler);
-    this.invokerHandler = targetHandler;
+    this.targetHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
 
@@ -69,17 +60,30 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isSelfMethod(method, args)) {
       return invokeSelfMethod(method, args);
-    } else if (method.getName().startsWith("new")) {
+    } else if (method.getName().startsWith("get") && method.getName().endsWith("Annotations")) {
       final Method getter = proxy.getClass().getInterfaces()[0].getMethod(method.getName());
-      final Property property = ClassUtils.getAnnotation(Property.class, getter);
-      if (property == null) {
-        throw new UnsupportedOperationException("Unsupported method " + method.getName());
+
+      String propName = null;
+      String navPropName = null;
+
+      final AnnotationsForProperty annForProp = ClassUtils.getAnnotation(AnnotationsForProperty.class, getter);
+      if (annForProp == null) {
+        final AnnotationsForNavigationProperty annForNavProp =
+                ClassUtils.getAnnotation(AnnotationsForNavigationProperty.class, getter);
+        if (annForNavProp == null) {
+          throw new UnsupportedOperationException("Unsupported method " + method.getName());
+        }
+
+        navPropName = annForNavProp.name();
+      } else {
+        propName = annForProp.name();
       }
 
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              ComplexInvocationHandler.getInstance(client, property.name(), method.getReturnType(), entityHandler));
+              new AnnotatableInvocationHandler(
+                      client, containerHandler, propName, navPropName, entityHandler, targetHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

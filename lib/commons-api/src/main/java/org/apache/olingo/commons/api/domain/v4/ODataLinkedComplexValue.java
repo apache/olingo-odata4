@@ -22,6 +22,6 @@ import org.apache.olingo.commons.api.domain.ODataComplexValue;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 
 public interface ODataLinkedComplexValue
-        extends ODataValue, ODataLinked, ODataComplexValue<ODataProperty>, ODataAnnotatatable {
+        extends ODataValue, ODataLinked, ODataComplexValue<ODataProperty>, ODataAnnotatable {
 
 }

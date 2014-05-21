@@ -26,6 +26,8 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -66,6 +68,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected Object internal;
 
+  private final Map<String, AnnotatableInvocationHandler> propAnnotatableHandlers =
+          new HashMap<String, AnnotatableInvocationHandler>();
+
+  private final Map<String, AnnotatableInvocationHandler> navPropAnnotatableHandlers =
+          new HashMap<String, AnnotatableInvocationHandler>();
+
   protected AbstractStructuredInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final Class<?> typeRef,
@@ -89,6 +97,10 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     this.typeRef = typeRef;
     // prevent memory leak
     this.entityHandler = entityHandler == this ? null : entityHandler;
+  }
+
+  public Object getInternal() {
+    return internal;
   }
 
   public EntityInvocationHandler getEntityHandler() {
@@ -126,6 +138,13 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
               ComplexFactoryInvocationHandler.getInstance(getEntityHandler(), this));
+    } else if ("annotations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final Class<?> returnType = method.getReturnType();
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {returnType},
+              AnnotatationsInvocationHandler.getInstance(getEntityHandler(), this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
@@ -302,6 +321,22 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
     // 3) add links
     addLinkChanges(property, value);
+  }
+
+  public Map<String, AnnotatableInvocationHandler> getPropAnnotatableHandlers() {
+    return propAnnotatableHandlers;
+  }
+
+  public void putPropAnnotatableHandler(final String propName, final AnnotatableInvocationHandler handler) {
+    propAnnotatableHandlers.put(propName, handler);
+  }
+
+  public Map<String, AnnotatableInvocationHandler> getNavPropAnnotatableHandlers() {
+    return navPropAnnotatableHandlers;
+  }
+
+  public void putNavPropAnnotatableHandler(final String navPropName, final AnnotatableInvocationHandler handler) {
+    navPropAnnotatableHandlers.put(navPropName, handler);
   }
 
   protected abstract void setPropertyValue(final Property property, final Object value);
