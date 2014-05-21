@@ -26,7 +26,7 @@ import org.apache.olingo.client.api.uri.v4.URIBuilder;
 public interface EdmEnabledODataClient extends CommonEdmEnabledODataClient<UpdateType>, ODataClient {
 
   @Override
-  URIBuilder getURIBuilder();
+  URIBuilder newURIBuilder();
 
   @Override
   EdmEnabledInvokeRequestFactory getInvokeRequestFactory();

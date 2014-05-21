@@ -50,7 +50,7 @@ public interface CommonEdmEnabledODataClient<UT extends CommonUpdateType> extend
    */
   Edm getCachedEdm();
 
-  CommonURIBuilder<?> getURIBuilder();
+  CommonURIBuilder<?> newURIBuilder();
 
   @Override
   EdmEnabledInvokeRequestFactory getInvokeRequestFactory();

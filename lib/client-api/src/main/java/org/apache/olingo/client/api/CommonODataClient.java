@@ -44,13 +44,13 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataServiceVersion getServiceVersion();
 
-  ODataHeaders getVersionHeaders();
+  ODataHeaders newVersionHeaders();
 
   CommonConfiguration getConfiguration();
 
   ODataPreferences newPreferences();
 
-  CommonURIBuilder<?> getURIBuilder(String serviceRoot);
+  CommonURIBuilder<?> newURIBuilder(String serviceRoot);
 
   CommonFilterFactory getFilterFactory();
 

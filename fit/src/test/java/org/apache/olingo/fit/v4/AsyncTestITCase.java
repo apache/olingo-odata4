@@ -46,7 +46,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void clientAsync() throws InterruptedException, ExecutionException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers");
     final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
             client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
@@ -63,7 +63,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
   }
 
   private void withInlineEntry(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -130,7 +130,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
   }
 
   private void asyncOrders(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ODataEntitySet> req =

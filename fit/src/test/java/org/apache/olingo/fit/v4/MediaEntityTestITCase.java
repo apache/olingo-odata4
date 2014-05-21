@@ -57,7 +57,7 @@ import org.junit.Test;
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
   private void read(final ODataClient client, final ODataPubFormat format) throws IOException {
-    final URIBuilder builder = client.getURIBuilder(testDemoServiceRootURL).
+    final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
     final ODataEntityRequest<ODataEntity> entityReq =
@@ -99,7 +99,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String random = RandomStringUtils.random(110);
     final InputStream input = IOUtils.toInputStream(random);
 
-    final URI uri = client.getURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
+    final URI uri = client.newURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
     final ODataMediaEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, input);
     final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
@@ -125,7 +125,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
-            getMediaEntityRequest(client.getURIBuilder(createdLocation.toASCIIString()).build());
+            getMediaEntityRequest(client.newURIBuilder(createdLocation.toASCIIString()).build());
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
@@ -145,7 +145,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   private void update(final ODataPubFormat format) throws IOException, EdmPrimitiveTypeException {
-    final URI uri = client.getURIBuilder(testDemoServiceRootURL).
+    final URI uri = client.newURIBuilder(testDemoServiceRootURL).
             appendEntitySetSegment("Advertisements").
             appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
 

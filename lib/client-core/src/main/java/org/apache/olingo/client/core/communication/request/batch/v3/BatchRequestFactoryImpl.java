@@ -35,6 +35,6 @@ public class BatchRequestFactoryImpl extends AbstractBatchRequestFactory
   @Override
   public ODataBatchRequest getBatchRequest(final String serviceRoot) {
     return new ODataBatchRequestImpl(
-            (ODataClient) client, client.getURIBuilder(serviceRoot).appendBatchSegment().build());
+            (ODataClient) client, client.newURIBuilder(serviceRoot).appendBatchSegment().build());
   }
 }

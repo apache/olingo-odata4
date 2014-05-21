@@ -50,7 +50,6 @@ import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.ProxyWrapperHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -146,25 +145,6 @@ public final class URIUtils {
     }
 
     return uri.normalize();
-  }
-
-  /**
-   * Gets operation import URI segment.
-   *
-   * @param entityContainer entity container.
-   * @param operationImportName action / function import name.
-   * @return URI segment.
-   */
-  public static String operationImportURISegment(
-          final EdmEntityContainer entityContainer, final String operationImportName) {
-
-    final StringBuilder result = new StringBuilder();
-    if (!entityContainer.isDefault()) {
-      result.append(entityContainer.getName()).append('.');
-    }
-    result.append(operationImportName);
-
-    return result.toString();
   }
 
   private static String prefix(final ODataServiceVersion version, final EdmPrimitiveTypeKind typeKind) {

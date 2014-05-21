@@ -222,7 +222,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
-              client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+              client.newURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
               type,
               false);
     } else if (link instanceof ODataInlineEntitySet) {
@@ -259,7 +259,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                 uri,
                 res.getBody(),
                 property.targetContainer(),
-                client.getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+                client.newURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
                 type,
                 res.getETag(),
                 true);

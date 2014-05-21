@@ -41,7 +41,6 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.http.HttpMethod;
-import org.apache.olingo.client.core.communication.header.ODataHeadersImpl;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.apache.olingo.commons.api.format.ODataValueFormat;
@@ -74,7 +73,7 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
   /**
    * OData request header.
    */
-  protected final ODataHeadersImpl odataHeaders;
+  protected final ODataHeaders odataHeaders;
 
   /**
    * Target URI.
@@ -108,7 +107,7 @@ public abstract class AbstractODataRequest<T extends Format> extends AbstractReq
     this.method = method;
 
     // initialize default headers
-    this.odataHeaders = (ODataHeadersImpl) odataClient.getVersionHeaders();
+    this.odataHeaders = odataClient.newVersionHeaders();
 
     // target uri
     this.uri = uri;

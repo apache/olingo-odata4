@@ -42,14 +42,14 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void metadata() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendMetadataSegment().build();
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendMetadataSegment().build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/$metadata").build(), uri);
   }
 
   @Test
   public void entity() throws URISyntaxException {
-    final URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
             appendKeySegment(11).build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet(11)").build(), uri);
@@ -57,21 +57,21 @@ public class URIBuilderTest extends AbstractTest {
     final Map<String, Object> multiKey = new HashMap<String, Object>();
     multiKey.put("OrderId", -10);
     multiKey.put("ProductId", -10);
-    URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("OrderLine").appendKeySegment(multiKey).
             appendPropertySegment("Quantity").appendValueSegment();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
             SERVICE_ROOT + "/OrderLine(OrderId=-10,ProductId=-10)/Quantity/$value").build(), uriBuilder.build());
 
-    uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customer").appendKeySegment(-10).
             select("CustomerId", "Name", "Orders").expand("Orders");
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)").
             addParameter("$select", "CustomerId,Name,Orders").addParameter("$expand", "Orders").build(),
             uriBuilder.build());
 
-    uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Orders");
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)/$links/Orders").build(),
             uriBuilder.build());
@@ -79,11 +79,11 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void count() throws URISyntaxException {
-    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
 
-    uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").
+    uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").
             inlineCount(URIBuilder.InlineCount.allpages).build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
@@ -92,7 +92,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void filter() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
             filter(getClient().getFilterFactory().lt("VIN", 16));
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet").
@@ -103,7 +103,7 @@ public class URIBuilderTest extends AbstractTest {
   @Test
   public void filterWithParameter() throws URISyntaxException {
     // http://host/service.svc/Employees?$filter=Region eq @p1&@p1='WA'
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Employees").
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Employees").
             filter(getClient().getFilterFactory().eq("Region", new ParameterAlias("p1"))).
             addParameterAlias("p1", "'WA'");
 
@@ -114,7 +114,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void boundAction() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Products").appendOperationCallSegment("MostExpensive");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
@@ -123,7 +123,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void derived() throws URISyntaxException {
-    final URIBuilder uriBuilder = getClient().getURIBuilder(SERVICE_ROOT).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
             appendEntitySetSegment("Customers").appendNavigationSegment("Model").
             appendDerivedEntityTypeSegment("Namespace.VipCustomer").appendKeySegment(1);
 
@@ -133,7 +133,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void expandMoreThenOnce() throws URISyntaxException {
-    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
             expand("Orders", "Customers").expand("Info").build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
@@ -142,7 +142,7 @@ public class URIBuilderTest extends AbstractTest {
 
   @Test
   public void selectMoreThenOnce() throws URISyntaxException {
-    URI uri = getClient().getURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Customers").appendKeySegment(5).
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Customers").appendKeySegment(5).
             select("Name", "Surname").expand("Info").select("Gender").build();
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customers(5)").

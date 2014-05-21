@@ -50,7 +50,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   }
 
   private void onContained(final ODataPubFormat format) {
-    final URI uri = getClient().getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
+    final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
             appendKeySegment(101).appendNavigationSegment("MyPaymentInstruments").build();
 
     // 1. read contained collection before any operation
@@ -87,7 +87,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     // 5. remove the contained entity created above
     final ODataDeleteResponse deleteRes = getClient().getCUDRequestFactory().
-            getDeleteRequest(getClient().getURIBuilder(uri.toASCIIString()).appendKeySegment(id).build()).execute();
+            getDeleteRequest(getClient().newURIBuilder(uri.toASCIIString()).appendKeySegment(id).build()).execute();
     assertEquals(204, deleteRes.getStatusCode());
 
     // 6. verify that the contained collection effectively reduced
@@ -157,7 +157,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.addLink(inlineDetails);
 
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
-            getClient().getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Products").build(), product);
+            getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Products").build(), product);
     req.setFormat(format);
     final ODataEntityCreateResponse<ODataEntity> res = req.execute();
     assertEquals(201, res.getStatusCode());

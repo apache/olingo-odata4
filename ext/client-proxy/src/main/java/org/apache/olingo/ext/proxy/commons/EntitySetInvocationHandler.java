@@ -90,8 +90,7 @@ class EntitySetInvocationHandler<
   static EntitySetInvocationHandler getInstance(
           final Class<?> ref, final EntityContainerInvocationHandler containerHandler, final String entitySetName) {
 
-    final CommonURIBuilder<?> uriBuilder = containerHandler.getClient().
-            getURIBuilder(containerHandler.getFactory().getServiceRoot());
+    final CommonURIBuilder<?> uriBuilder = containerHandler.getClient().newURIBuilder();
 
     final StringBuilder entitySetSegment = new StringBuilder();
     if (!containerHandler.isDefaultEntityContainer()) {
@@ -184,7 +183,7 @@ class EntitySetInvocationHandler<
   @Override
   public Long count() {
     final ODataValueRequest req = client.getRetrieveRequestFactory().
-            getValueRequest(client.getURIBuilder(this.uri.toASCIIString()).count().build());
+            getValueRequest(client.newURIBuilder(this.uri.toASCIIString()).count().build());
     req.setFormat(ODataValueFormat.TEXT);
     return Long.valueOf(req.execute().getBody().asPrimitive().toString());
   }
@@ -247,7 +246,7 @@ class EntitySetInvocationHandler<
       // not yet attached: search against the service
       try {
         LOG.debug("Search for '{}({})' into the service", typeRef.getSimpleName(), key);
-        final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
+        final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(this.uri.toASCIIString());
 
         if (key.getClass().getAnnotation(CompoundKey.class) == null) {
           LOG.debug("Append key segment '{}'", key);
@@ -376,7 +375,7 @@ class EntitySetInvocationHandler<
     final Class<S> ref = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collTypeRef);
 
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
+    final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(this.uri.toASCIIString());
 
     final URI entitySetURI;
     if (oref.equals(ref)) {
@@ -463,6 +462,6 @@ class EntitySetInvocationHandler<
 
   @Override
   public EntitySetIterator<T, KEY, EC> iterator() {
-    return new EntitySetIterator<T, KEY, EC>(client.getURIBuilder(this.uri.toASCIIString()).build(), this);
+    return new EntitySetIterator<T, KEY, EC>(client.newURIBuilder(this.uri.toASCIIString()).build(), this);
   }
 }

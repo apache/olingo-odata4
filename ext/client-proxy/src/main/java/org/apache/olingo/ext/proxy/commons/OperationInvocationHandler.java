@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -154,8 +153,8 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
       edmOperation = container.getActionImport(operation.name()).getUnboundAction();
     }
 
-    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(this.serviceRoot).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, edmOperation.getName()));
+    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.serviceRoot).
+            appendOperationCallSegment(edmOperation.getName());
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(uriBuilder.build(), edmOperation);
   }

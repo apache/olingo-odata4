@@ -81,7 +81,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataHeaders getVersionHeaders() {
+  public ODataHeaders newVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
     odataHeaders.setHeader(HeaderName.minDataServiceVersion, ODataServiceVersion.V30.toString());
     odataHeaders.setHeader(HeaderName.maxDataServiceVersion, ODataServiceVersion.V30.toString());
@@ -95,7 +95,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public URIBuilder getURIBuilder(final String serviceRoot) {
+  public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getServiceVersion(), configuration, serviceRoot);
   }
 
