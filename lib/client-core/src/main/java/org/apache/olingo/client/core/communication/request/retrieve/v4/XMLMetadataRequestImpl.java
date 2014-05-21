@@ -61,7 +61,7 @@ public class XMLMetadataRequestImpl extends AbstractMetadataRequestImpl<Map<Stri
     // process external references
     for (Reference reference : rootMetadata.getReferences()) {
       final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
-              (ODataClient) odataClient, odataClient.getURIBuilder(reference.getUri().toASCIIString()).build());
+              (ODataClient) odataClient, odataClient.newURIBuilder(reference.getUri().toASCIIString()).build());
       final XMLMetadata includeMetadata = includeReq.execute().getBody();
 
       // edmx:Include

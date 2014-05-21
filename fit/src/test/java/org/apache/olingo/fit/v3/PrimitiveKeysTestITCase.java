@@ -34,7 +34,7 @@ public class PrimitiveKeysTestITCase extends AbstractTestITCase {
 
   private void readEntity(final String entityType, final Object key, final ODataPubFormat format) {
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment(entityType).
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment(entityType).
             appendKeySegment(key).
             build());
     req.setFormat(format);

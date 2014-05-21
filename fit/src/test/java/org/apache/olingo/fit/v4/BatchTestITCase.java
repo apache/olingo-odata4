@@ -122,7 +122,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     URIBuilder targetURI;
     ODataEntityCreateRequest<ODataEntity> createReq;
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     for (int i = 1; i <= 2; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(100 + i));
@@ -130,12 +130,12 @@ public class BatchTestITCase extends AbstractTestITCase {
       changeset.addRequest(createReq);
     }
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(105));
     createReq.setFormat(ODataPubFormat.JSON);
     changeset.addRequest(createReq);
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     for (int i = 3; i <= 4; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), newOrder(100 + i));
@@ -184,7 +184,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("UnexistinfEntitySet").appendKeySegment(1);
 
     // create new request
@@ -198,7 +198,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -243,7 +243,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity order = newOrder(20);
 
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
@@ -258,7 +258,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity customerChanges = client.getObjectFactory().newEntity(order.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
             "OrderDetails",
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
             appendKeySegment(new HashMap<String, Object>() {
       private static final long serialVersionUID = 3109256773218160485L;
 
@@ -328,7 +328,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1).
             expand("Orders").select("PersonID,Orders/OrderID");
 
@@ -343,7 +343,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add new order with outside item
     // -------------------------------------------
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     final ODataEntity original = newOrder(2000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
@@ -396,7 +396,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
@@ -412,7 +412,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
 
     // Update Customer into the changeset
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
     final URI editLink = targetURI.build();
 
     final ODataEntity patch = client.getObjectFactory().newEntity(
@@ -430,7 +430,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     changeset.addRequest(changeReq);
 
     // Create Order into the changeset
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders");
     final ODataEntity original = newOrder(1000);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
@@ -442,7 +442,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -520,7 +520,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("People").appendKeySegment(5);
 
     // create new request
@@ -534,7 +534,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").appendKeySegment(1);
 
     // create new request
     queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());

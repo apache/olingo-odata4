@@ -49,7 +49,7 @@ public class LinkTestITCase extends AbstractTestITCase {
   }
 
   private ODataLinkCollection doRetrieveLinkURIs(final ODataFormat format, final String linkname) throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataLinkCollectionRequest req =
@@ -95,7 +95,7 @@ public class LinkTestITCase extends AbstractTestITCase {
     final ODataLink newLink = client.getObjectFactory().
             newAssociationLink(URI.create(getServiceRoot() + "/Login('3')"));
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Logins");
 
     final ODataLinkCreateRequest req =
@@ -113,7 +113,7 @@ public class LinkTestITCase extends AbstractTestITCase {
     assertEquals(Collections.singletonList(newLink.getLink()), after);
 
     assertEquals(204, client.getCUDRequestFactory().getDeleteRequest(
-            client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").
+            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").
             appendKeySegment(-10).appendLinksSegment("Logins('3')").build()).execute().getStatusCode());
   }
 
@@ -135,7 +135,7 @@ public class LinkTestITCase extends AbstractTestITCase {
     ODataLink newLink = client.getObjectFactory().
             newAssociationLink(URI.create(getServiceRoot() + "/CustomerInfo(12)"));
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).appendLinksSegment("Info");
 
     ODataLinkUpdateRequest req =

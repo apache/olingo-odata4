@@ -60,7 +60,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void filterOrderby() throws EdmPrimitiveTypeException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Car").filter("(VIN lt 16)");
 
     // 1. check that filtered entity set looks as expected
@@ -100,7 +100,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void format() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).format("json");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -135,7 +135,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void skiptoken() throws EdmPrimitiveTypeException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer").skipToken("-10");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -154,7 +154,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void inlinecount() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Car").
             inlineCount(InlineCount.allpages);
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -170,7 +170,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
    */
   @Test
   public void select() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10).select("CustomerId,Orders").expand("Orders");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -182,7 +182,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   @Test
   public void issue131() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-7).select("Name");
 
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());

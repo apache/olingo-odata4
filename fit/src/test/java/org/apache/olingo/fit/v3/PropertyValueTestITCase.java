@@ -34,7 +34,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveIntPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
@@ -45,7 +45,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveBooleanPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment("ProductId");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
@@ -56,7 +56,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveStringPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Description");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
@@ -67,7 +67,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveDatePropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
                     "NestedComplexConcurrency/ModifiedDate");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
@@ -79,7 +79,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveDecimalPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-6).appendPropertySegment("Dimensions/Height");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
     req.setFormat(ODataValueFormat.TEXT);
@@ -90,7 +90,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveBinaryPropertyValueTest() throws IOException {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("ProductPhoto(PhotoId=-3,ProductId=-3)").appendPropertySegment("Photo");
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setAccept("application/json");
@@ -105,7 +105,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void retrieveBinaryPropertyValueTestWithAtom() throws IOException {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("ProductPhoto(PhotoId=-3,ProductId=-3)").appendPropertySegment("Photo");
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setAccept("application/atom+xml");
@@ -120,7 +120,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test(expected = IllegalArgumentException.class)
   public void retrieveBinaryPropertyValueTestWithXML() throws IOException {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("ProductPhoto(PhotoId=-3,ProductId=-3)").appendPropertySegment("Photo");
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setAccept("application/xml");
@@ -135,7 +135,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveCollectionPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-7).appendPropertySegment(
                     "ComplexConcurrency/QueriedDateTime");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
@@ -149,7 +149,7 @@ public class PropertyValueTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveNullPropertyValueTest() {
-    CommonURIBuilder<?> uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    CommonURIBuilder<?> uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10).appendPropertySegment(
                     "ComplexConcurrency/Token");
     final ODataValueRequest req = client.getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());

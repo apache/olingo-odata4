@@ -1,0 +1,16 @@
+{
+  "@odata.context": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/$metadata#Accounts(102)/MyPaymentInstruments/$entity",
+  "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument",
+  "@odata.id": "Accounts(102)/MyPaymentInstruments(102902)",
+  "@odata.editLink": "Accounts(102)/MyPaymentInstruments(102902)",
+  "PaymentInstrumentID": 102902,
+  "FriendlyName": "102 first PI",
+  "CreatedDate@odata.type": "#DateTimeOffset",
+  "CreatedDate": "2014-04-09T00:00:00Z",
+  "TheStoredPI@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/TheStoredPI/$ref",
+  "TheStoredPI@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/TheStoredPI",
+  "BillingStatements@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/BillingStatements/$ref",
+  "BillingStatements@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/BillingStatements",
+  "BackupStoredPI@odata.associationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/BackupStoredPI/$ref",
+  "BackupStoredPI@odata.navigationLink": "http://localhost:${cargo.servlet.port}/stub/StaticService/V40/Static.svc/Accounts(102)/MyPaymentInstruments(102902)/BackupStoredPI"
+}

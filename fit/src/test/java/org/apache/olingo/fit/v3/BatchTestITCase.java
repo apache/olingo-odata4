@@ -110,7 +110,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     URIBuilder targetURI;
     ODataEntityCreateRequest<ODataEntity> createReq;
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
     for (int i = 1; i <= 2; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
@@ -120,14 +120,14 @@ public class BatchTestITCase extends AbstractTestITCase {
       changeset.addRequest(createReq);
     }
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("WrongEntitySet");
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(
             targetURI.build(),
             getSampleCustomerProfile(105, "Sample customer", false));
     createReq.setFormat(ODataPubFormat.JSON);
     changeset.addRequest(createReq);
 
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
     for (int i = 3; i <= 4; i++) {
       // Create Customer into the changeset
       createReq = client.getCUDRequestFactory().getEntityCreateRequest(
@@ -162,7 +162,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
     ODataEntity customer = getSampleCustomerProfile(20, "sample customer", false);
 
-    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+    URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
@@ -177,7 +177,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataEntity customerChanges = client.getObjectFactory().newEntity(customer.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntityNavigationLink(
             "Info",
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo").
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo").
             appendKeySegment(17).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
@@ -244,7 +244,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     info.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Information",
             client.getObjectFactory().newPrimitiveValueBuilder().buildString("Sample information about customer 30")));
 
-    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo");
+    URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("CustomerInfo");
 
     ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), info);
@@ -258,7 +258,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     customer.getNavigationLinks().add(
             client.getObjectFactory().newEntityNavigationLink("Info", URI.create("$" + createRequestRef)));
 
-    uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+    uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
 
     // add create request
     createReq = client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), customer);
@@ -289,7 +289,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(201, res.getStatusCode());
     assertTrue(res instanceof ODataEntityCreateResponse);
 
-    uriBuilder = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(30);
+    uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(30);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(
             URIUtils.getURI(testStaticServiceRootURL, uriBuilder.build() + "/Info"));
@@ -312,7 +312,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // Add retrieve item
     // -------------------------------------------
     // prepare URI
-    URIBuilder targetURI = client.getURIBuilder(testStaticServiceRootURL);
+    URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customer").appendKeySegment(-10).
             expand("Logins").select("CustomerId,Logins/Username");
 
@@ -329,7 +329,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     final ODataChangeset changeset = streamManager.addChangeset();
 
     // Update Product into the changeset
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10);
     final URI editLink = targetURI.build();
 
@@ -348,7 +348,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     changeset.addRequest(changeReq);
 
     // Create Customer into the changeset
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer");
     final ODataEntity original = getSampleCustomerProfile(1000, "Sample customer", false);
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(targetURI.build(), original);
@@ -357,7 +357,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     // Delete customer created above
     targetURI =
-            client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
+            client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customer").appendKeySegment(1000);
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(targetURI.build());
     changeset.addRequest(deleteReq);
     // -------------------------------------------
@@ -367,7 +367,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // -------------------------------------------
 
     // prepare URI
-    targetURI = client.getURIBuilder(testStaticServiceRootURL).
+    targetURI = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Product").appendKeySegment(-10);
 
     // create new request

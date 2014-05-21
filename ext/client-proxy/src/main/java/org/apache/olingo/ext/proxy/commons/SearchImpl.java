@@ -75,7 +75,7 @@ public class SearchImpl<T extends Serializable, EC extends AbstractEntityCollect
 
   @Override
   public EC getResult() {
-    final URIBuilder uriBuilder = client.getURIBuilder(this.baseURI.toASCIIString()).
+    final URIBuilder uriBuilder = client.newURIBuilder(this.baseURI.toASCIIString()).
             appendDerivedEntityTypeSegment(new FullQualifiedName(
                     ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
 

@@ -150,7 +150,7 @@ public class FilterImpl<T extends Serializable, EC extends AbstractEntityCollect
 
   @Override
   public EC getResult() {
-    final CommonURIBuilder<?> uriBuilder = client.getURIBuilder(this.baseURI.toASCIIString()).
+    final CommonURIBuilder<?> uriBuilder = client.newURIBuilder(this.baseURI.toASCIIString()).
             appendDerivedEntityTypeSegment(new FullQualifiedName(
                             ClassUtils.getNamespace(typeRef), ClassUtils.getEntityTypeName(typeRef)).toString());
 

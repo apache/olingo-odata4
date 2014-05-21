@@ -18,21 +18,16 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke.v4;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.Map;
-import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.client.core.communication.request.invoke.AbstractEdmEnabledInvokeRequestFactory;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.EdmActionImport;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
-import org.apache.olingo.commons.api.edm.EdmSchema;
 
-public class EdmEnabledInvokeRequestFactoryImpl
-        extends InvokeRequestFactoryImpl implements EdmEnabledInvokeRequestFactory {
+public class EdmEnabledInvokeRequestFactoryImpl extends AbstractEdmEnabledInvokeRequestFactory {
 
   private static final long serialVersionUID = 5854571629835831697L;
 
@@ -44,66 +39,15 @@ public class EdmEnabledInvokeRequestFactoryImpl
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
-          final String functionImportName) {
+  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
+          final HttpMethod method, final URI uri, final Class<RES> resultRef,
+          final Map<String, ODataValue> parameters) {
 
-    return getFunctionImportInvokeRequest(functionImportName, null);
+    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<RES>(edmClient, resultRef, method, uri);
+    if (parameters != null) {
+      request.setParameters(parameters);
+    }
+
+    return request;
   }
-
-  @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
-          final String functionImportName, final Map<String, ODataValue> parameters) {
-
-    EdmFunctionImport efi = null;
-    for (EdmSchema schema : edmClient.getCachedEdm().getSchemas()) {
-      final EdmEntityContainer container = schema.getEntityContainer();
-      if (container != null) {
-        efi = container.getFunctionImport(functionImportName);
-      }
-    }
-    if (efi == null) {
-      throw new IllegalArgumentException("Could not find FunctionImport for name " + functionImportName);
-    }
-
-    final EdmFunction function = edmClient.getCachedEdm().
-            getUnboundFunction(efi.getFunctionFqn(),
-                    parameters == null ? null : new ArrayList<String>(parameters.keySet()));
-    if (function == null) {
-      throw new IllegalArgumentException("Could not find Function " + efi.getFunctionFqn());
-    }
-
-    return getInvokeRequest(
-            edmClient.getURIBuilder().appendOperationCallSegment(functionImportName).build(),
-            function,
-            parameters);
-  }
-
-  @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
-          final String actionImportName) {
-
-    return getActionImportInvokeRequest(actionImportName, null);
-  }
-
-  @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
-          final String actionImportName, final Map<String, ODataValue> parameters) {
-
-    EdmActionImport eai = null;
-    for (EdmSchema schema : edmClient.getCachedEdm().getSchemas()) {
-      final EdmEntityContainer container = schema.getEntityContainer();
-      if (container != null) {
-        eai = container.getActionImport(actionImportName);
-      }
-    }
-    if (eai == null) {
-      throw new IllegalArgumentException("Could not find ActionImport for name " + actionImportName);
-    }
-
-    return getInvokeRequest(
-            edmClient.getURIBuilder().appendOperationCallSegment(actionImportName).build(),
-            eai.getUnboundAction(),
-            parameters);
-  }
-
 }

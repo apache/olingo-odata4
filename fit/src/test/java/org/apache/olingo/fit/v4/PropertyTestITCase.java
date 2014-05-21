@@ -43,7 +43,7 @@ import org.junit.Test;
 public class PropertyTestITCase extends AbstractTestITCase {
 
   private void _enum(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -72,7 +72,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void geospatial(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -100,7 +100,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void complex(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(2).appendPropertySegment("HomeAddress");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -129,7 +129,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
 
     ODataPropertyRequest<ODataProperty> retrieveReq =
@@ -176,10 +176,10 @@ public class PropertyTestITCase extends AbstractTestITCase {
   public void createAndDelete() {
     // 1. create
     final ODataEntity category = client.getObjectFactory().newEntity(null);
-    category.setReference(client.getURIBuilder(testStaticServiceRootURL).
+    category.setReference(client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Categories").appendKeySegment(1).build().toASCIIString());
 
-    final URIBuilder createBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder createBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
             appendRefSegment();    
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
@@ -189,7 +189,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     assertEquals(204, createRes.getStatusCode());
 
     // 2. delete
-    final URIBuilder deleteBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder deleteBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
             appendKeySegment(1).appendRefSegment();
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().

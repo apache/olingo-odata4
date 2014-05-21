@@ -124,7 +124,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void readCountValue() throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").count();
 
     final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(uriBuilder.build());
@@ -143,7 +143,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void nullNullableProperty() {
-    final ODataDeleteResponse res = client.getCUDRequestFactory().getDeleteRequest(client.getURIBuilder(
+    final ODataDeleteResponse res = client.getCUDRequestFactory().getDeleteRequest(client.newURIBuilder(
             getServiceRoot()).
             appendEntitySetSegment("Order").appendKeySegment(-8).
             appendPropertySegment("CustomerId").appendValueSegment().build()).
@@ -153,7 +153,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void nullNonNullableProperty() {
-    client.getCUDRequestFactory().getDeleteRequest(client.getURIBuilder(getServiceRoot()).
+    client.getCUDRequestFactory().getDeleteRequest(client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Driver").appendKeySegment("1").
             appendPropertySegment("BirthDate").appendValueSegment().build()).
             execute();
@@ -162,7 +162,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void updatePropertyValue(final ODataValueFormat format, final UpdateType type)
           throws IOException, EdmPrimitiveTypeException {
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").
@@ -204,7 +204,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-9).appendPropertySegment("PrimaryContactInfo");
 
     ODataPropertyRequest<ODataProperty> retrieveReq = client.getRetrieveRequestFactory().
@@ -251,7 +251,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateCollectionProperty(final ODataFormat format) throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-10).
             appendPropertySegment("PrimaryContactInfo").appendPropertySegment("AlternativeNames");
 
@@ -299,7 +299,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updatePrimitiveProperty(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(-9).
             appendPropertySegment("PrimaryContactInfo").
             appendPropertySegment("HomePhone").appendPropertySegment("PhoneNumber");
@@ -344,7 +344,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void rawRequest(final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendPropertySegment("BackupContactInfo");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());

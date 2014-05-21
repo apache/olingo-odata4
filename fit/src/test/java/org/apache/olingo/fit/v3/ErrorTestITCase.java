@@ -38,12 +38,8 @@ import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.v3.ODataEntity;
 import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataPubFormat;
 import org.junit.Test;
@@ -88,7 +84,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
   }
 
   private void stacktraceError(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer");
 
     final ErrorGeneratingRequest errorReq = new ErrorGeneratingRequest(HttpMethod.POST, uriBuilder.build());
@@ -115,7 +111,7 @@ public class ErrorTestITCase extends AbstractTestITCase {
   }
 
   private void notfoundError(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL);
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("Customer(154)");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -143,16 +139,10 @@ public class ErrorTestITCase extends AbstractTestITCase {
   }
 
   private void instreamError(final ODataPubFormat format) {
-    final Edm metadata =
-            client.getRetrieveRequestFactory().getMetadataRequest(testStaticServiceRootURL).execute().getBody();
-    assertNotNull(metadata);
-
-    final EdmEntityContainer container = metadata.getSchemas().get(0).getEntityContainer();
-    final EdmFunctionImport funcImp = container.getFunctionImport("InStreamErrorGetCustomer");
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, funcImp.getName()));
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).
+            appendOperationCallSegment("InStreamErrorGetCustomer");
     final ODataInvokeRequest<ODataEntitySet> req =
-            client.getInvokeRequestFactory().getInvokeRequest(builder.build(), funcImp.getUnboundFunction(null));
+            client.getInvokeRequestFactory().getFunctionInvokeRequest(builder.build(), ODataEntitySet.class);
     req.setFormat(format);
 
     final ODataInvokeResponse<ODataEntitySet> res = req.execute();

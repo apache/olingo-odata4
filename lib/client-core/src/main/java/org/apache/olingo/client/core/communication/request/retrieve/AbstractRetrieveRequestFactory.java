@@ -67,14 +67,14 @@ public abstract class AbstractRetrieveRequestFactory implements CommonRetrieveRe
   @Override
   public EdmMetadataRequest getMetadataRequest(final String serviceRoot) {
     return new EdmMetadataRequestImpl(client, serviceRoot,
-            client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
+            client.newURIBuilder(serviceRoot).appendMetadataSegment().build());
   }
 
   @Override
   public ODataServiceDocumentRequest getServiceDocumentRequest(final String serviceRoot) {
     return new ODataServiceDocumentRequestImpl(client,
             StringUtils.isNotBlank(serviceRoot) && serviceRoot.endsWith("/")
-            ? client.getURIBuilder(serviceRoot).build()
-            : client.getURIBuilder(serviceRoot + "/").build());
+            ? client.newURIBuilder(serviceRoot).build()
+            : client.newURIBuilder(serviceRoot + "/").build());
   }
 }

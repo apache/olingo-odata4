@@ -329,7 +329,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
           final ODataEntity original,
           final String entitySetName) {
 
-    final URIBuilder uriBuilder = getClient().getURIBuilder(serviceRootURL).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(serviceRootURL).
             appendEntitySetSegment(entitySetName);
 
     debugODataEntity(original, "About to create");
@@ -356,7 +356,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
           final int actualObjectId,
           final Collection<String> expands) {
 
-    final URIBuilder uriBuilder = getClient().getURIBuilder(serviceRootURL).
+    final URIBuilder uriBuilder = getClient().newURIBuilder(serviceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(actualObjectId);
 
     // search expanded

@@ -39,7 +39,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   private void read(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testKeyAsSegmentServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Customer").appendKeySegment(-10);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -90,7 +90,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void replaceODataEntityAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final ODataEntity changes = read(format, client.getURIBuilder(testKeyAsSegmentServiceRootURL).
+    final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -98,7 +98,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   @Test
   public void replaceODataEntityAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final ODataEntity changes = read(format, client.getURIBuilder(testKeyAsSegmentServiceRootURL).
+    final ODataEntity changes = read(format, client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
