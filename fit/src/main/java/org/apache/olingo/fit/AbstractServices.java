@@ -188,7 +188,7 @@ public abstract class AbstractServices {
 
   protected Response getMetadata(final String filename) {
     try {
-      return xml.createResponse(null, FSManager.instance(version).readFile(filename, Accept.XML), null, Accept.XML);
+      return xml.createResponse(null, FSManager.instance(version).readRes(filename, Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }

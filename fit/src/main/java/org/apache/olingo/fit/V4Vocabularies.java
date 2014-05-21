@@ -42,7 +42,7 @@ public class V4Vocabularies {
   private final XMLUtilities xml;
 
   public V4Vocabularies() throws Exception {
-    this.metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readFile(
+    this.metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readRes(
             "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
             ODataServiceVersion.V40);
     this.xml = new XMLUtilities(ODataServiceVersion.V40, metadata);
@@ -55,7 +55,7 @@ public class V4Vocabularies {
     try {
       return xml.createResponse(
               null,
-              FSManager.instance(ODataServiceVersion.V40).readFile(
+              FSManager.instance(ODataServiceVersion.V40).readRes(
                       "vocabularies-" + Constants.get(ODataServiceVersion.V40, ConstantKey.METADATA), Accept.XML),
               null,
               Accept.XML);

@@ -78,7 +78,9 @@ public class FSManager {
     final String absoluteBaseFolder = basePath.getURL().getPath();
 
     for (FileObject fo : find(basePath, null)) {
-      if (fo.getType() == FileType.FILE) {
+      if (fo.getType() == FileType.FILE
+              && !fo.getName().getBaseName().contains("Metadata")
+              && !fo.getName().getBaseName().contains("metadata")) {
         final String path = fo.getURL().getPath().replace(absoluteBaseFolder, "//" + version.name());
         putInMemory(fo.getContent().getInputStream(), path);
       }
@@ -137,16 +139,24 @@ public class FSManager {
     }
   }
 
-  public InputStream readFile(final String relativePath) {
-    return readFile(relativePath, null);
+  public InputStream readRes(final String relativePath, final Accept accept) {
+    return readFile(relativePath, accept, RES_PREFIX);
   }
 
   public InputStream readFile(final String relativePath, final Accept accept) {
+    return readFile(relativePath, accept, MEM_PREFIX);
+  }
+
+  public InputStream readFile(final String relativePath) {
+    return readFile(relativePath, null, MEM_PREFIX);
+  }
+
+  private InputStream readFile(final String relativePath, final Accept accept, final String fs) {
     final String path = getAbsolutePath(relativePath, accept);
-    LOG.info("Read {}", path);
+    LOG.info("Read {}{}", fs, path);
 
     try {
-      final FileObject fileObject = fsManager.resolveFile(MEM_PREFIX + path);
+      final FileObject fileObject = fsManager.resolveFile(fs + path);
 
       if (!fileObject.exists()) {
         LOG.warn("In-memory path '{}' not found", path);
