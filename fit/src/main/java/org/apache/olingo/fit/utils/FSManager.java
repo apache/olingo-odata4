@@ -129,9 +129,9 @@ public class FSManager {
       final ObjectMapper mapper = Commons.getJSONMapper(version);
       mapper.writeValue(
               writer, new JSONEntryContainer(
-              container.getContextURL(),
-              container.getMetadataETag(),
-              dataBinder.toJSONEntity(container.getPayload())));
+                      container.getContextURL(),
+                      container.getMetadataETag(),
+                      dataBinder.toJSONEntity(container.getPayload())));
 
       putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
     } catch (Exception e) {

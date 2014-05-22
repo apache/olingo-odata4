@@ -81,3 +81,29 @@ public interface $utility.capitalize($complexType.Name)
     #end
     }
 #end
+
+    #if( $complexType.baseType )
+    @Override
+    #end
+    Annotations annotations();
+
+    interface Annotations #if( $complexType.baseType )
+           extends ${utility.getJavaType($complexType.getBaseType())}.Annotations#end{
+
+    #foreach($propertyName in $complexType.PropertyNames)
+    #set($property = $complexType.getProperty($propertyName))
+        @AnnotationsForProperty(name = "$property.Name",
+                   type = "$property.Type.FullQualifiedName.toString()")
+        Annotatable get$utility.capitalize($property.Name)Annotations();
+
+    #end
+
+    #foreach($propertyName in $complexType.NavigationPropertyNames)
+    #set($property = $complexType.getNavigationProperty($propertyName))
+    #set($type = $utility.getNavigationType($property))
+
+        @AnnotationsForNavigationProperty(name = "$property.Name", 
+                  type = "$type")
+        Annotatable get$utility.capitalize($property.Name)Annotations();
+    #end
+    }

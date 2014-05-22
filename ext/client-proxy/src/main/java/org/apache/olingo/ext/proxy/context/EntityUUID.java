@@ -92,7 +92,9 @@ public class EntityUUID implements Serializable {
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this, "tempKey");
+    return key == null
+            ? HashCodeBuilder.reflectionHashCode(this)
+            : HashCodeBuilder.reflectionHashCode(this, "tempKey");
   }
 
   @Override

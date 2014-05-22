@@ -25,7 +25,7 @@ import org.apache.olingo.ext.proxy.api.annotations.EntityContainer;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
-import org.apache.olingo.ext.proxy.api.Container;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.*;
 import org.apache.olingo.fit.proxy.v4.demo.odatademo.types.*;
@@ -50,7 +50,7 @@ import javax.xml.datatype.Duration;
 @EntityContainer(name = "DemoService",
   namespace = "ODataDemo",
   isDefaultEntityContainer = true)
-public interface DemoService extends Container {
+public interface DemoService extends PersistenceManager {
 
     Products getProducts();
     Advertisements getAdvertisements();

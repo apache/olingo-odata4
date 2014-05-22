@@ -29,7 +29,6 @@ import java.util.Collections;
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
-import org.apache.olingo.ext.proxy.context.EntityContext;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.
         DefaultContainer;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.
@@ -63,8 +62,6 @@ public abstract class AbstractTestITCase {
 
   protected static String testLargeModelServiceRootURL;
 
-  protected final EntityContext entityContext = EntityContainerFactory.getContext().entityContext();
-
   protected static EntityContainerFactory<EdmEnabledODataClient> containerFactory;
 
   protected static DefaultContainer container;
@@ -82,7 +79,7 @@ public abstract class AbstractTestITCase {
     containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     container = containerFactory.getEntityContainer(DefaultContainer.class);
     assertNotNull(container);
-    EntityContainerFactory.getContext().detachAll();
+    containerFactory.getContext().detachAll();
   }
 
   protected Customer getSampleCustomerProfile(

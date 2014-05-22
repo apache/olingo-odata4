@@ -16,28 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.ext.proxy.api;
 
-import java.net.URI;
-import java.util.List;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import java.io.Serializable;
+import java.util.Collection;
 
-public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
+public interface Annotatable extends Serializable {
 
-  @Override
-  List<ODataEntity> getEntities();
+  void addAnnotation(Class<? extends AbstractTerm> term, Object value);
 
-  /**
-   * Gets delta link if exists.
-   *
-   * @return delta link if exists; null otherwise.
-   */
-  URI getDeltaLink();
+  void removeAnnotation(Class<? extends AbstractTerm> term);
 
-  /**
-   * Sets delta link.
-   *
-   * @param deltaLink delta link.
-   */
-  void setDeltaLink(URI deltaLink);
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
+
 }

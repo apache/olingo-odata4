@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
@@ -53,7 +54,7 @@ import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.EntityUUID;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
-public class EntityInvocationHandler extends AbstractStructuredInvocationHandler {
+public class EntityInvocationHandler extends AbstractStructuredInvocationHandler implements Annotatable {
 
   private static final long serialVersionUID = 2629912294765040037L;
 
@@ -107,7 +108,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           final Class<?> typeRef,
           final EntityContainerInvocationHandler containerHandler) {
 
-    super(containerHandler.getClient(), typeRef, (ODataLinked) entity, containerHandler);
+    super(typeRef, (ODataLinked) entity, containerHandler);
 
     this.entityURI = entityURI;
     this.internal = entity;
@@ -117,7 +118,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             containerHandler.getEntityContainerName(),
             entitySetURI,
             typeRef,
-            CoreUtils.getKey(client, typeRef, entity));
+            CoreUtils.getKey(getClient(), this, typeRef, entity));
   }
 
   public void setEntity(final CommonODataEntity entity) {
@@ -128,7 +129,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
             getUUID().getContainerName(),
             getUUID().getEntitySetURI(),
             getUUID().getType(),
-            CoreUtils.getKey(client, typeRef, entity));
+            CoreUtils.getKey(getClient(), this, typeRef, entity));
 
     this.streamedPropertyChanges.clear();
     this.propertyChanges.clear();
@@ -220,7 +221,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         } else {
           res = property == null || property.hasNullValue()
                   ? null
-                  : CoreUtils.getObjectFromODataValue(client, property.getValue(), type, this);
+                  : CoreUtils.getObjectFromODataValue(getClient(), property.getValue(), type, this);
 
           if (res != null) {
             cacheProperty(name, res);
@@ -322,7 +323,8 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       final String contentType =
               StringUtils.isBlank(getEntity().getMediaContentType()) ? "*/*" : getEntity().getMediaContentType();
 
-      final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().getMediaEntityRequest(contentSource);
+      final ODataMediaRequest retrieveReq = getClient().getRetrieveRequestFactory().
+              getMediaEntityRequest(contentSource);
       retrieveReq.setFormat(ODataMediaFormat.fromFormat(contentType));
 
       this.stream = retrieveReq.execute().getBody();
@@ -332,25 +334,22 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public Object getStreamedProperty(final String name) {
-
     InputStream res = streamedPropertyChanges.get(name);
 
     try {
       if (res == null) {
         final URI link = URIUtils.getURI(
-                containerHandler.getFactory().getServiceRoot(),
+                getClient().getServiceRoot(),
                 CoreUtils.getMediaEditLink(name, getEntity()).toASCIIString());
 
-        final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
+        final ODataMediaRequest req = getClient().getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
-
       }
     } catch (Exception e) {
       res = null;
     }
 
     return res;
-
   }
 
   private void setStreamedProperty(final Property property, final InputStream input) {
@@ -369,7 +368,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
     } else {
-      navPropValue = retrieveNavigationProperty(property, getter, containerHandler.getFactory().getServiceRoot());
+      navPropValue = retrieveNavigationProperty(property, getter);
     }
 
     if (navPropValue != null) {
@@ -402,6 +401,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     updateLinksTag(checkpoint);
   }
 
+  @Override
   public void addAnnotation(final Class<? extends AbstractTerm> term, final Object value) {
     this.annotations.put(term, value);
 
@@ -427,10 +427,13 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     attach(AttachedEntityStatus.CHANGED);
   }
 
+  @Override
   public void removeAnnotation(final Class<? extends AbstractTerm> term) {
     this.annotations.remove(term);
+    attach(AttachedEntityStatus.CHANGED);
   }
 
+  @Override
   public Object getAnnotation(final Class<? extends AbstractTerm> term) {
     Object res = null;
 
@@ -448,7 +451,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
         }
         res = annotation == null || annotation.hasNullValue()
                 ? null
-                : CoreUtils.getObjectFromODataValue(client, annotation.getValue(), null, this);
+                : CoreUtils.getObjectFromODataValue(getClient(), annotation.getValue(), null, this);
         if (res != null) {
           annotations.put(term, res);
         }
@@ -460,6 +463,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return res;
   }
 
+  @Override
   public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
     return getEntity() instanceof ODataEntity
             ? CoreUtils.getAnnotationTerms(((ODataEntity) getEntity()).getAnnotations())

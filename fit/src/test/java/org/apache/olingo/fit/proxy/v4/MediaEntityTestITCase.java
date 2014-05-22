@@ -92,11 +92,11 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     dcontainer.flush();
 
     final UUID uuid = adv.getID();
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
     
     assertEquals(random, IOUtils.toString(dcontainer.getAdvertisements().get(uuid).getStream()));
 
-    entityContext.detachAll();
+    containerFactory.getContext().detachAll();
 
     dcontainer.getAdvertisements().delete(uuid);
     dcontainer.flush();

@@ -29,8 +29,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
 import org.apache.commons.lang3.RandomUtils;
-import static org.apache.olingo.fit.proxy.v4.AbstractTestITCase.container;
-
+import org.apache.olingo.client.api.v4.EdmEnabledODataClient;
+import org.apache.olingo.ext.proxy.EntityContainerFactory;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
@@ -55,16 +56,24 @@ import org.junit.Test;
  */
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
+  public EntityContainerFactory<EdmEnabledODataClient> getContainerFactory() {
+    return containerFactory;
+  }
+
+  protected InMemoryEntities getContainer() {
+    return container;
+  }
+
   @Test
   public void createAndDelete() {
-    createAndDeleteOrder(container);
+    createAndDeleteOrder(getContainer());
   }
 
   @Test
   public void createEmployee() {
     final Integer id = 101;
 
-    final Employee employee = container.getPeople().newEmployee();
+    final Employee employee = getContainer().getPeople().newEmployee();
     employee.setPersonID(id);
     employee.setFirstName("Fabio");
     employee.setLastName("Martelli");
@@ -80,27 +89,27 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     employee.setHomeAddress(homeAddress);
     employee.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
-    container.flush();
+    getContainer().flush();
 
-    Employee actual = container.getPeople().get(id, Employee.class);
+    Employee actual = getContainer().getPeople().get(id, Employee.class);
     assertNotNull(actual);
     assertEquals(id, actual.getPersonID());
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
 
-    entityContext.detachAll();
-    actual = container.getPeople().get(id, Employee.class);
+    getContainerFactory().getContext().detachAll();
+    actual = getContainer().getPeople().get(id, Employee.class);
     assertNotNull(actual);
     assertEquals(id, actual.getPersonID());
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
 
-    container.getPeople().delete(actual.getPersonID());
-    container.flush();
+    getContainer().getPeople().delete(actual.getPersonID());
+    getContainer().flush();
 
-    actual = container.getPeople().get(id, Employee.class);
+    actual = getContainer().getPeople().get(id, Employee.class);
     assertNull(actual);
 
-    entityContext.detachAll();
-    actual = container.getPeople().get(id, Employee.class);
+    getContainerFactory().getContext().detachAll();
+    actual = getContainer().getPeople().get(id, Employee.class);
     assertNull(actual);
   }
 
@@ -108,7 +117,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
   public void createWithNavigation() {
     final Integer id = 101;
 
-    final Customer customer = container.getCustomers().newCustomer();
+    final Customer customer = getContainer().getCustomers().newCustomer();
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
@@ -122,21 +131,21 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setHomeAddress(homeAddress);
     customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
-    final OrderCollection orders = container.getOrders().newOrderCollection();
-    orders.add(container.getOrders().get(8));
+    final OrderCollection orders = getContainer().getOrders().newOrderCollection();
+    orders.add(getContainer().getOrders().get(8));
     customer.setOrders(orders);
 
-    container.flush();
+    getContainer().flush();
 
     Customer actual = readCustomer(container, id);
     assertEquals(homeAddress.getCity(), actual.getHomeAddress().getCity());
     assertEquals(1, actual.getOrders().size());
     assertEquals(8, actual.getOrders().iterator().next().getOrderID(), 0);
-    
-    container.getCustomers().delete(actual.getPersonID());
-    container.flush();
 
-    actual = container.getCustomers().get(id);
+    getContainer().getCustomers().delete(actual.getPersonID());
+    getContainer().flush();
+
+    actual = getContainer().getCustomers().get(id);
     assertNull(actual);
   }
 
@@ -147,7 +156,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new order
     // -------------------------------
-    Order order = container.getOrders().newOrder();
+    Order order = getContainer().getOrders().newOrder();
     order.setOrderID(id);
 
     final Calendar orderDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -162,7 +171,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // -------------------------------
     // Create a new customer
     // -------------------------------
-    final Customer customer = container.getCustomers().newCustomer();
+    final Customer customer = getContainer().getCustomers().newCustomer();
     customer.setPersonID(id);
     customer.setPersonID(id);
     customer.setFirstName("Fabio");
@@ -176,7 +185,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     customer.setHomeAddress(homeAddress);
     customer.setNumbers(Arrays.asList(new String[] {"3204725072", "08569930"}));
 
-    final OrderCollection orders = container.getOrders().newOrderCollection();
+    final OrderCollection orders = getContainer().getOrders().newOrderCollection();
     orders.add(order);
     customer.setOrders(orders);
     // -------------------------------
@@ -187,7 +196,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     order.setCustomerForOrder(customer);
     // -------------------------------
 
-    container.flush();
+    getContainer().flush();
 
     assertEquals(id, order.getOrderID());
     assertEquals(id, customer.getPersonID());
@@ -197,56 +206,56 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     assertEquals(1, actual.getOrders().size());
     assertEquals(id, actual.getOrders().iterator().next().getOrderID());
 
-    order = container.getOrders().get(id);
+    order = getContainer().getOrders().get(id);
     assertNotNull(order);
     assertEquals(id, order.getCustomerForOrder().getPersonID());
 
-    container.getOrders().delete(actual.getOrders());
-    container.flush();
+    getContainer().getOrders().delete(actual.getOrders());
+    getContainer().flush();
 
-    order = container.getOrders().get(id);
+    order = getContainer().getOrders().get(id);
     assertNull(order);
 
     actual = readCustomer(container, id);
     assertTrue(actual.getOrders().isEmpty());
 
-    container.getCustomers().delete(actual.getPersonID());
-    container.flush();
+    getContainer().getCustomers().delete(actual.getPersonID());
+    getContainer().flush();
 
-    actual = container.getCustomers().get(id);
+    actual = getContainer().getCustomers().get(id);
     assertNull(actual);
   }
 
   @Test
   public void multiKey() {
-    OrderDetail details = container.getOrderDetails().newOrderDetail();
+    OrderDetail details = getContainer().getOrderDetails().newOrderDetail();
     details.setOrderID(8);
     details.setProductID(1);
     details.setQuantity(100);
     details.setUnitPrice(5f);
 
-    container.flush();
+    getContainer().flush();
 
     OrderDetailKey key = new OrderDetailKey();
     key.setOrderID(8);
     key.setProductID(1);
 
-    details = container.getOrderDetails().get(key);
+    details = getContainer().getOrderDetails().get(key);
     assertNotNull(details);
     assertEquals(Integer.valueOf(100), details.getQuantity());
     assertEquals(8, details.getOrderID(), 0);
     assertEquals(1, details.getProductID(), 0);
     assertEquals(5f, details.getUnitPrice(), 0);
 
-    container.getOrderDetails().delete(key);
-    container.flush();
+    getContainer().getOrderDetails().delete(key);
+    getContainer().flush();
 
-    assertNull(container.getOrderDetails().get(key));
+    assertNull(getContainer().getOrderDetails().get(key));
   }
 
   @Test
   public void deepInsert() {
-    Product product = container.getProducts().newProduct();
+    Product product = getContainer().getProducts().newProduct();
     product.setProductID(12);
     product.setName("Latte");
     product.setQuantityPerUnit("100g Bag");
@@ -257,30 +266,30 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     product.setSkinColor(Color.Blue);
     product.setCoverColors(Arrays.asList(new Color[] {Color.Red, Color.Green}));
 
-    final ProductDetail detail = container.getProductDetails().newProductDetail();
+    final ProductDetail detail = getContainer().getProductDetails().newProductDetail();
     detail.setProductID(product.getProductID());
     detail.setProductDetailID(12);
     detail.setProductName("LatteHQ");
     detail.setDescription("High-Quality Milk");
 
-    final ProductDetailCollection detailCollection = container.getProductDetails().newProductDetailCollection();
+    final ProductDetailCollection detailCollection = getContainer().getProductDetails().newProductDetailCollection();
     detailCollection.add(detail);
 
     product.setDetails(detailCollection);
 
-    container.flush();
+    getContainer().flush();
 
-    product = container.getProducts().get(12);
+    product = getContainer().getProducts().get(12);
     assertEquals("Latte", product.getName());
     assertEquals(12, product.getDetails().iterator().next().getProductDetailID(), 0);
   }
 
   @Test
   public void contained() {
-    PaymentInstrumentCollection instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
+    PaymentInstrumentCollection instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
     final int sizeBefore = instruments.size();
 
-    final PaymentInstrument instrument = container.getAccounts().get(101).
+    final PaymentInstrument instrument = getContainer().getAccounts().get(101).
             getMyPaymentInstruments().newPaymentInstrument();
 
     final int id = RandomUtils.nextInt(101999, 105000);
@@ -288,17 +297,17 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     instrument.setFriendlyName("New one");
     instrument.setCreatedDate(Calendar.getInstance());
 
-    container.flush();
+    getContainer().flush();
 
-    instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
+    instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
     final int sizeAfter = instruments.size();
     assertEquals(sizeBefore + 1, sizeAfter);
 
-    container.getAccounts().get(101).getMyPaymentInstruments().delete(id);
+    getContainer().getAccounts().get(101).getMyPaymentInstruments().delete(id);
 
-    container.flush();
+    getContainer().flush();
 
-    instruments = container.getAccounts().get(101).getMyPaymentInstruments().getAll();
+    instruments = getContainer().getAccounts().get(101).getMyPaymentInstruments().getAll();
     final int sizeEnd = instruments.size();
     assertEquals(sizeBefore, sizeEnd);
   }

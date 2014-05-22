@@ -16,28 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain.v4;
+package org.apache.olingo.ext.proxy.api;
 
-import java.net.URI;
-import java.util.List;
-import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
+import java.io.Serializable;
 
-public interface ODataEntitySet extends CommonODataEntitySet, ODataAnnotatable {
-
-  @Override
-  List<ODataEntity> getEntities();
+/**
+ * Interface for container operations.
+ */
+public interface PersistenceManager extends Serializable {
 
   /**
-   * Gets delta link if exists.
-   *
-   * @return delta link if exists; null otherwise.
+   * Flushes all pending changes to the OData service.
    */
-  URI getDeltaLink();
-
-  /**
-   * Sets delta link.
-   *
-   * @param deltaLink delta link.
-   */
-  void setDeltaLink(URI deltaLink);
+  void flush();
 }

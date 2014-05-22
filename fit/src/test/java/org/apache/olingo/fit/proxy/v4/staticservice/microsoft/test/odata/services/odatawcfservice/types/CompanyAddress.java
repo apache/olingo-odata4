@@ -18,10 +18,14 @@
  */
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
@@ -48,7 +52,7 @@ import javax.xml.datatype.Duration;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.Address")
 public interface CompanyAddress 
-    extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address {
+    extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address,Serializable {
 
 
     @Property(name = "Street", 
@@ -120,4 +124,28 @@ public interface CompanyAddress
     
 
 
+
+        @Override
+        Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.Annotations{
+
+            @AnnotationsForProperty(name = "Street",
+                   type = "Edm.String")
+        Annotatable getStreetAnnotations();
+
+            @AnnotationsForProperty(name = "City",
+                   type = "Edm.String")
+        Annotatable getCityAnnotations();
+
+            @AnnotationsForProperty(name = "PostalCode",
+                   type = "Edm.String")
+        Annotatable getPostalCodeAnnotations();
+
+            @AnnotationsForProperty(name = "CompanyName",
+                   type = "Edm.String")
+        Annotatable getCompanyNameAnnotations();
+
+    
+        }
 }
