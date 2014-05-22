@@ -367,7 +367,8 @@ public abstract class AbstractUtilities {
 
     final Map<String, NavigationProperty> navigationProperties = metadata.getNavigationProperties(entitySetName);
 
-    if (navigationProperties.get(linkName).isEntitySet()) {
+    // check for nullability in order to support navigation property on open types
+    if (navigationProperties.get(linkName) != null && navigationProperties.get(linkName).isEntitySet()) {
       try {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
@@ -701,7 +702,7 @@ public abstract class AbstractUtilities {
                   + ",ProductID=" + entity.getProperty("ProductID").getValue().asPrimitive().get();
         }
         Commons.SEQUENCE.put(entitySetName, productID);
-      }else if ("Message".equals(entitySetName)) {
+      } else if ("Message".equals(entitySetName)) {
         int messageId;
         if (entity.getProperty("MessageId") == null || entity.getProperty("FromUsername") == null) {
           if (Commons.SEQUENCE.containsKey(entitySetName)) {

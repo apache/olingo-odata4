@@ -114,6 +114,16 @@ public class V4Services extends AbstractServices {
   }
 
   @GET
+  @Path("/redirect/{name}({id})")
+  public Response conformanceRedirect(
+          @Context UriInfo uriInfo,
+          @PathParam("name") String name,
+          @PathParam("id") String id) {
+    return Response.temporaryRedirect(
+            URI.create(uriInfo.getRequestUri().toASCIIString().replace("/redirect", ""))).build();
+  }
+
+  @GET
   @Path("/$crossjoin({elements:.*})")
   public Response crossjoin(
           @PathParam("elements") String elements,
@@ -364,7 +374,7 @@ public class V4Services extends AbstractServices {
     return StringUtils.isBlank(filter) && StringUtils.isBlank(search)
             ? NumberUtils.isNumber(type)
             ? super.getEntityInternal(
-                    uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
+            uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null, true)
             : super.getEntitySet(accept, "People", type)
             : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
   }
@@ -668,7 +678,7 @@ public class V4Services extends AbstractServices {
           @PathParam("entityId") String entityId,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
 
-    return getContainedEntity(accept, entityId, "MyPaymentInstruments", entityId+ "901", format);
+    return getContainedEntity(accept, entityId, "MyPaymentInstruments", entityId + "901", format);
   }
 
   @GET
@@ -738,7 +748,7 @@ public class V4Services extends AbstractServices {
 
       return utils.getValue().createResponse(
               FSManager.instance(version).readFile(Constants.get(version, ConstantKey.REF)
-                      + File.separatorChar + filename, utils.getKey()),
+              + File.separatorChar + filename, utils.getKey()),
               null,
               utils.getKey());
     } catch (Exception e) {
@@ -760,7 +770,7 @@ public class V4Services extends AbstractServices {
 
     final Response response =
             getEntityInternal(uriInfo.getRequestUri().toASCIIString(),
-                    accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
+            accept, entitySetName, entityId, accept, StringUtils.EMPTY, StringUtils.EMPTY, false);
     return response.getStatus() >= 400
             ? postNewEntity(uriInfo, accept, contentType, prefer, entitySetName, changes)
             : super.patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
@@ -858,8 +868,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONEntityImpl> jcontainer =
                 mapper.readValue(IOUtils.toInputStream(entity, Constants.ENCODING),
-                        new TypeReference<JSONEntityImpl>() {
-                        });
+                new TypeReference<JSONEntityImpl>() {
+        });
 
         entry = dataBinder.toAtomEntity(jcontainer.getPayload());
 
@@ -957,7 +967,7 @@ public class V4Services extends AbstractServices {
 
         final ResWrap<JSONEntityImpl> jsonContainer = mapper.readValue(
                 IOUtils.toInputStream(changes, Constants.ENCODING), new TypeReference<JSONEntityImpl>() {
-                });
+        });
         jsonContainer.getPayload().setType(typeInfo.getFullQualifiedName().toString());
         entryChanges = dataBinder.toAtomEntity(jsonContainer.getPayload());
       }
@@ -991,7 +1001,7 @@ public class V4Services extends AbstractServices {
       // 1. Fetch the contained entity to be removed
       final InputStream entry = FSManager.instance(version).
               readFile(containedPath(entityId, containedEntitySetName).
-                      append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
+              append('(').append(containedEntityId).append(')').toString(), Accept.ATOM);
       final ResWrap<AtomEntityImpl> container = atomDeserializer.read(entry, AtomEntityImpl.class);
 
       // 2. Remove the contained entity
@@ -1237,8 +1247,8 @@ public class V4Services extends AbstractServices {
       } else {
         final ResWrap<JSONPropertyImpl> paramContainer =
                 mapper.readValue(IOUtils.toInputStream(param, Constants.ENCODING),
-                        new TypeReference<JSONPropertyImpl>() {
-                        });
+                new TypeReference<JSONPropertyImpl>() {
+        });
         property = paramContainer.getPayload();
       }
 
@@ -1278,7 +1288,7 @@ public class V4Services extends AbstractServices {
 
       final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
               URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
-                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+              + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
               null,
               (AtomPropertyImpl) entity.getProperty("address"));
 

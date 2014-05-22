@@ -75,7 +75,7 @@ public abstract class AbstractTestITCase {
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V40/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OpenType.svc";
     testLargeModelServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc/large";
-    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc";
+    testAuthServiceRootURL = "http://localhost:9080/stub/DefaultService.svc/V40/Static.svc";
 
     containerFactory = EntityContainerFactory.getV4(testStaticServiceRootURL);
     containerFactory.getClient().getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
