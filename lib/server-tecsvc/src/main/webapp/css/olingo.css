@@ -32,8 +32,8 @@ a:VISITED {
 	color: #D358F7;
 }
 
-td { 
-	padding:5px;
+td {
+	padding: 5px;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -83,7 +83,8 @@ hr {
 	border-bottom: 1px solid #8904B1;
 }
 
+
 .version {
 	font-family: "Courier New", monospace;
-	font-size: 9px;
+	font-size: 10px;
 }
