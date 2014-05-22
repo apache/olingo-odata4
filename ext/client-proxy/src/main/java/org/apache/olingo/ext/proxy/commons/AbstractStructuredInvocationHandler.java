@@ -219,9 +219,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected abstract Object getNavigationPropertyValue(final NavigationProperty property, final Method getter);
 
-  protected Object retrieveNavigationProperty(
-          final NavigationProperty property, final Method getter, final String serviceRoot) {
-
+  protected Object retrieveNavigationProperty(final NavigationProperty property, final Method getter) {
     final Class<?> type = getter.getReturnType();
     final Class<?> collItemType;
     if (AbstractEntityCollection.class.isAssignableFrom(type)) {
@@ -241,7 +239,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
-              client.newURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+              client.newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
               type,
               false);
     } else if (link instanceof ODataInlineEntitySet) {
@@ -255,7 +253,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               false);
     } else {
       // navigate
-      final URI uri = URIUtils.getURI(containerHandler.getFactory().getServiceRoot(), link.getLink().toASCIIString());
+      final URI uri = URIUtils.getURI(client.getServiceRoot(), link.getLink().toASCIIString());
       if (AbstractEntityCollection.class.isAssignableFrom(type)) {
         navPropValue = getEntityCollectionProxy(
                 collItemType,
@@ -278,7 +276,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                 uri,
                 res.getBody(),
                 property.targetContainer(),
-                client.newURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+                client.newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
                 type,
                 res.getETag(),
                 true);

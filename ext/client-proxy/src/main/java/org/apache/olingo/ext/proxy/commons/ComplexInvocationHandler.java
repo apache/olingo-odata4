@@ -174,7 +174,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
       throw new UnsupportedOperationException("Internal object is not navigable");
     }
 
-    return retrieveNavigationProperty(property, getter, containerHandler.getFactory().getServiceRoot());
+    return retrieveNavigationProperty(property, getter);
   }
 
   @Override
@@ -186,7 +186,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   public void removeAdditionalProperty(final String name) {
     final CommonODataProperty property = getComplex().get(name);
-    if(property !=null && !property.hasNullValue()){
+    if (property != null && !property.hasNullValue()) {
       setPropertyValue(name, null, null);
       attach(AttachedEntityStatus.CHANGED);
     }

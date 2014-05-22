@@ -48,8 +48,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
   private final FullQualifiedName targetFQN;
 
-  private final String serviceRoot;
-
   static OperationInvocationHandler getInstance(final EntityContainerInvocationHandler containerHandler) {
     return new OperationInvocationHandler(containerHandler);
   }
@@ -69,8 +67,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     this.targetFQN =
             new FullQualifiedName(containerHandler.getSchemaName(), containerHandler.getEntityContainerName());
-
-    this.serviceRoot = containerHandler.getFactory().getServiceRoot();
   }
 
   private OperationInvocationHandler(final EntityInvocationHandler entityHandler) {
@@ -78,7 +74,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     this.target = entityHandler;
     this.targetFQN = entityHandler.getEntity().getTypeName();
-    this.serviceRoot = containerHandler.getFactory().getServiceRoot();
   }
 
   private OperationInvocationHandler(final EntityCollectionInvocationHandler<?> collectionHandler) {
@@ -90,7 +85,6 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
     final String typeNamespace = ClassUtils.getNamespace(collectionHandler.getEntityReference());
 
     this.targetFQN = new FullQualifiedName(typeNamespace, typeName);
-    this.serviceRoot = containerHandler.getFactory().getServiceRoot();
   }
 
   @Override
@@ -144,6 +138,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
   private Map.Entry<URI, EdmOperation> getUnboundOperation(
           final Operation operation, final List<String> parameterNames) {
+
     final EdmEntityContainer container = client.getCachedEdm().getEntityContainer(targetFQN);
     final EdmOperation edmOperation;
 
@@ -153,7 +148,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
       edmOperation = container.getActionImport(operation.name()).getUnboundAction();
     }
 
-    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder(this.serviceRoot).
+    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder().
             appendOperationCallSegment(edmOperation.getName());
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(uriBuilder.build(), edmOperation);

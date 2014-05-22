@@ -338,8 +338,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     try {
       if (res == null) {
         final URI link = URIUtils.getURI(
-                containerHandler.getFactory().getServiceRoot(),
-                CoreUtils.getMediaEditLink(name, getEntity()).toASCIIString());
+                client.getServiceRoot(), CoreUtils.getMediaEditLink(name, getEntity()).toASCIIString());
 
         final ODataMediaRequest req = client.getRetrieveRequestFactory().getMediaRequest(link);
         res = req.execute().getBody();
@@ -369,7 +368,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (linkChanges.containsKey(property)) {
       navPropValue = linkChanges.get(property);
     } else {
-      navPropValue = retrieveNavigationProperty(property, getter, containerHandler.getFactory().getServiceRoot());
+      navPropValue = retrieveNavigationProperty(property, getter);
     }
 
     if (navPropValue != null) {

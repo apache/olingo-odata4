@@ -336,7 +336,6 @@ class ContainerImpl implements Container {
               : ODataLinkType.ENTITY_NAVIGATION;
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
-      final String serviceRoot = factory.getServiceRoot();
 
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
@@ -352,7 +351,7 @@ class ContainerImpl implements Container {
         if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
           entity.addLink(buildNavigationLink(
                   property.getKey().name(),
-                  URIUtils.getURI(serviceRoot, editLink.toASCIIString()), type));
+                  URIUtils.getURI(client.getServiceRoot(), editLink.toASCIIString()), type));
         } else {
           if (!items.contains(target)) {
             pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
@@ -367,7 +366,7 @@ class ContainerImpl implements Container {
           } else if (status == AttachedEntityStatus.CHANGED) {
             entity.addLink(buildNavigationLink(
                     property.getKey().name(),
-                    URIUtils.getURI(serviceRoot, editLink.toASCIIString()), type));
+                    URIUtils.getURI(client.getServiceRoot(), editLink.toASCIIString()), type));
           } else {
             // create the link for the current object
             LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
@@ -406,7 +405,7 @@ class ContainerImpl implements Container {
         if (!handler.getPropertyChanges().isEmpty()) {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos)
-                  : URIUtils.getURI(factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+                  : URIUtils.getURI(client.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
           batchUpdate(handler, targetURI, entity, changeset);
           pos++;
           items.put(handler, pos);
@@ -417,7 +416,7 @@ class ContainerImpl implements Container {
           final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                   ? URI.create("$" + startingPos + "/$value")
                   : URIUtils.getURI(
-                          factory.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
+                          client.getServiceRoot(), handler.getEntity().getEditLink().toASCIIString() + "/$value");
 
           batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
 
@@ -430,7 +429,7 @@ class ContainerImpl implements Container {
       for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
         final URI targetURI = currentStatus == AttachedEntityStatus.NEW
                 ? URI.create("$" + startingPos) : URIUtils.getURI(
-                        factory.getServiceRoot(),
+                        client.getServiceRoot(),
                         CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
 
         batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
@@ -482,7 +481,7 @@ class ContainerImpl implements Container {
       final URI sourceURI;
       if (status == AttachedEntityStatus.CHANGED) {
         sourceURI = URIUtils.getURI(
-                factory.getServiceRoot(),
+                client.getServiceRoot(),
                 delayedUpdate.getSource().getEntity().getEditLink().toASCIIString());
       } else {
         int sourcePos = items.get(delayedUpdate.getSource());
@@ -494,8 +493,7 @@ class ContainerImpl implements Container {
 
         final URI targetURI;
         if (status == AttachedEntityStatus.CHANGED) {
-          targetURI = URIUtils.getURI(
-                  factory.getServiceRoot(), target.getEntity().getEditLink().toASCIIString());
+          targetURI = URIUtils.getURI(client.getServiceRoot(), target.getEntity().getEditLink().toASCIIString());
         } else {
           int targetPos = items.get(target);
           targetURI = URI.create("$" + targetPos);
