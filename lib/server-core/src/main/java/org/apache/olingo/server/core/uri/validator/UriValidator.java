@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -172,7 +173,7 @@ public class UriValidator {
     super();
   }
 
-  public void validate(final UriInfo uriInfo, final String httpMethod) throws UriValidationException {
+  public void validate(final UriInfo uriInfo, final HttpMethod httpMethod) throws UriValidationException {
     validateForHttpMethod(uriInfo, httpMethod);
     validateQueryOptions(uriInfo);
     validateKeyPredicateTypes(uriInfo);
@@ -554,7 +555,7 @@ public class UriValidator {
 
   }
 
-  private void validateForHttpMethod(final UriInfo uriInfo, final String httpMethod) throws UriValidationException {
+  private void validateForHttpMethod(final UriInfo uriInfo, final HttpMethod httpMethod) throws UriValidationException {
     RowIndexForHttpMethod row = rowIndexForHttpMethod(httpMethod);
 
     for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
@@ -567,22 +568,29 @@ public class UriValidator {
 
   }
 
-  private RowIndexForHttpMethod rowIndexForHttpMethod(final String httpMethod) throws UriValidationException {
+  private RowIndexForHttpMethod rowIndexForHttpMethod(final HttpMethod httpMethod) throws UriValidationException {
     RowIndexForHttpMethod idx;
 
-    if ("GET".equalsIgnoreCase(httpMethod)) {
+    switch (httpMethod) {
+    case GET:
       idx = RowIndexForHttpMethod.GET;
-    } else if ("POST".equalsIgnoreCase(httpMethod)) {
+      break;
+    case POST:
       idx = RowIndexForHttpMethod.POST;
-    } else if ("PUT".equalsIgnoreCase(httpMethod)) {
+      break;
+    case PUT:
       idx = RowIndexForHttpMethod.PUT;
-    } else if ("DELETE".equalsIgnoreCase(httpMethod)) {
+      break;
+    case DELETE:
       idx = RowIndexForHttpMethod.DELETE;
-    } else if ("PATCH".equalsIgnoreCase(httpMethod)) {
+      break;
+    case PATCH:
       idx = RowIndexForHttpMethod.PATCH;
-    } else if ("MERGE".equalsIgnoreCase(httpMethod)) {
+      break;
+    case MERGE:
       idx = RowIndexForHttpMethod.MERGE;
-    } else {
+      break;
+    default:
       throw new UriValidationException("HTTP method not supported: " + httpMethod);
     }
 

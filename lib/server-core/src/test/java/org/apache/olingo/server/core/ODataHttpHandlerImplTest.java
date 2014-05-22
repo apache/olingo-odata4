@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.ODataRequest;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

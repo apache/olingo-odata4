@@ -16,17 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.api.processor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.olingo.server.api.processor.Processor;
-
-public interface ODataHttpHandler {
-
-  void process(HttpServletRequest request, HttpServletResponse response);
-
-  void register(Processor processor);
+public interface DeleteMeProcessor extends Processor {
 
 }

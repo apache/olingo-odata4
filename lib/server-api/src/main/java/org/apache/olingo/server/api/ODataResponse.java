@@ -18,15 +18,39 @@
  */
 package org.apache.olingo.server.api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.olingo.server.api.processor.Processor;
+public class ODataResponse {
 
-public interface ODataHttpHandler {
+  private int statusCode;
+  private Map<String, String> headers = new HashMap<String, String>();
+  private InputStream content;
 
-  void process(HttpServletRequest request, HttpServletResponse response);
+  public void setStatusCode(final int statusCode) {
+    this.statusCode = statusCode;
+  }
 
-  void register(Processor processor);
+  public void setHeader(final String name, final String value) {
+    headers.put(name, value);
+  }
+
+  public void setContent(final InputStream content) {
+    this.content = content;
+  }
+
+  public int getStatusCode() {
+    return statusCode;
+  }
+
+  public Map<String, String> getHeaders() {
+    return Collections.unmodifiableMap(headers);
+  }
+
+  public InputStream getContent() {
+    return content;
+  }
 
 }

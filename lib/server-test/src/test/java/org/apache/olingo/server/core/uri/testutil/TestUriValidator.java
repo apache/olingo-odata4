@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -61,7 +62,7 @@ public class TestUriValidator implements TestValidator {
     uriInfo = null;
     try {
       uriInfo = (UriInfoImpl) parser.parseUri(uri, edm);
-      validator.validate(uriInfo, "GET");
+      validator.validate(uriInfo, HttpMethod.GET);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

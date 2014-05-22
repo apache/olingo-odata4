@@ -16,41 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.api.processor;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.OData;
 
-public class ODataResponse {
+public interface Processor {
 
-  private int statusCode;
-  private Map<String, String> headers = new HashMap<String, String>();
-  private InputStream content;
-
-  public void setStatusCode(final int statusCode) {
-    this.statusCode = statusCode;
-  }
-
-  public void setHeader(final String name, final String value) {
-    headers.put(name, value);
-  }
-
-  public void setContent(final InputStream content) {
-    this.content = content;
-  }
-
-  public int getStatusCode() {
-    return statusCode;
-  }
-
-  public Map<String, String> getHeaders() {
-    return Collections.unmodifiableMap(headers);
-  }
-
-  public InputStream getContent() {
-    return content;
-  }
+  void init(OData odata, Edm edm);
 
 }

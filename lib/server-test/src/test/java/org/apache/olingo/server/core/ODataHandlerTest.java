@@ -21,11 +21,17 @@ package org.apache.olingo.server.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.DeleteMeProcessor;
+import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +55,12 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawBaseUri("http://localhost/odata/");
     request.setRawODataPath("");
+
+    Processor processor = mock(Processor.class, withSettings().extraInterfaces(DeleteMeProcessor.class));
+    handler.register(processor);
     
     ODataResponse response = handler.process(request);
-
+    
     assertNotNull(response);
     assertEquals(200, response.getStatusCode());
     assertEquals("application/json", response.getHeaders().get("Content-Type"));
@@ -70,6 +79,9 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
 
+    Processor processor = mock(Processor.class, withSettings().extraInterfaces(DeleteMeProcessor.class));
+    handler.register(processor);
+
     ODataResponse response = handler.process(request);
 
     assertNotNull(response);
@@ -80,7 +92,6 @@ public class ODataHandlerTest {
     String doc = IOUtils.toString(response.getContent());
 
     assertTrue(doc.contains("<edmx:Edmx Version=\"4.0\""));
-
   }
 
 }
