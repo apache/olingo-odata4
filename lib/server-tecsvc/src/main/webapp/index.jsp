@@ -41,11 +41,15 @@
   <hr>
  </div>
  <h2>Technical Service</h2>
- <lu>
- <li><a href="odata.svc/">Service Document</a></li>
- <li><a href="odata.svc/$metadata">Metadata</a></li>
- </lu>
+ <div>
 
+
+
+  <ul>
+   <li><a href="odata.svc/">Service Document</a></li>
+   <li><a href="odata.svc/$metadata">Metadata</a></li>
+  </ul>
+ </div>
  <p>
  <hr>
  <p>

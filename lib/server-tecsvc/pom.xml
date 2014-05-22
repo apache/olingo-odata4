@@ -83,6 +83,21 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.keyboardsamurais.maven</groupId>
+        <artifactId>maven-timestamp-plugin</artifactId>
+        <configuration>
+          <propertyName>timestamp</propertyName>
+          <timestampPattern>dd.MM.yyyy HH:mm</timestampPattern>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
