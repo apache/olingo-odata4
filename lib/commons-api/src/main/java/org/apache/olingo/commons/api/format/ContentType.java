@@ -55,7 +55,6 @@ public abstract class ContentType {
           new EnumMap<ODataServiceVersion, Map<String, String>>(ODataServiceVersion.class);
 
   static {
-
     final Map<String, String> v3 = new HashMap<String, String>();
     v3.put(ODataPubFormat.JSON_NO_METADATA.name(), ContentType.APPLICATION_JSON + ";odata=nometadata");
     v3.put(ODataPubFormat.JSON.name(), ContentType.APPLICATION_JSON + ";odata=minimalmetadata");
