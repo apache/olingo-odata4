@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -30,8 +29,9 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.DeleteMeProcessor;
+import org.apache.olingo.server.api.processor.MetadataProcessor;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +49,23 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void testServiceDocumentNonDefault() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawBaseUri("http://localhost/odata/");
+    request.setRawODataPath("");
+
+    ServiceDocumentProcessor processor = mock(ServiceDocumentProcessor.class);
+    handler.register(processor);
+    
+    ODataResponse response = handler.process(request);
+    
+    assertNotNull(response);
+    assertEquals(0, response.getStatusCode());
+  }
+  
+  @Test
   public void testServiceDocumentDefault() throws Exception {
     ODataRequest request = new ODataRequest();
 
@@ -56,7 +73,7 @@ public class ODataHandlerTest {
     request.setRawBaseUri("http://localhost/odata/");
     request.setRawODataPath("");
 
-    Processor processor = mock(Processor.class, withSettings().extraInterfaces(DeleteMeProcessor.class));
+    Processor processor = mock(Processor.class);
     handler.register(processor);
     
     ODataResponse response = handler.process(request);
@@ -73,13 +90,29 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void testMetadataNonDefault() throws Exception {
+    ODataRequest request = new ODataRequest();
+
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("$metadata");
+
+    MetadataProcessor processor = mock(MetadataProcessor.class);
+    handler.register(processor);
+    
+    ODataResponse response = handler.process(request);
+    
+    assertNotNull(response);
+    assertEquals(0, response.getStatusCode());
+  }
+
+  @Test
   public void testMetadataDefault() throws Exception {
     ODataRequest request = new ODataRequest();
 
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("$metadata");
 
-    Processor processor = mock(Processor.class, withSettings().extraInterfaces(DeleteMeProcessor.class));
+    Processor processor = mock(Processor.class);
     handler.register(processor);
 
     ODataResponse response = handler.process(request);
