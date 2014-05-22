@@ -270,7 +270,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntity actual = read(ODataPubFormat.JSON, uri);
 
-    assertEquals(newname, actual.getProperty("FirstName").getValue().toString());
+    assertEquals(newname, actual.getProperty("FirstName").getPrimitiveValue().toString());
   }
 
   /**
