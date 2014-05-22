@@ -46,12 +46,13 @@ import org.junit.Test;
  */
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
+  private static EntityContainerFactory<EdmEnabledODataClient> otcontainerFactory;
+
   private static DefaultContainer otcontainer;
 
   @BeforeClass
   public static void initContainer() {
-    final EntityContainerFactory<EdmEnabledODataClient> otcontainerFactory =
-            EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
+    otcontainerFactory = EntityContainerFactory.getV4(testOpenTypeServiceRootURL);
     otcontainerFactory.getClient().getConfiguration().
             setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     otcontainer = otcontainerFactory.getEntityContainer(DefaultContainer.class);
@@ -66,7 +67,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             getAnnotation(EntityType.class).openType());
     assertTrue(otcontainer.getRow().newIndexedRow().getClass().getInterfaces()[0].
             getAnnotation(EntityType.class).openType());
-    entityContext.detachAll();
+    otcontainerFactory.getContext().detachAll();
   }
 
   @Test
@@ -139,7 +140,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertEquals("fabio.martelli@tirasa.net", AccountInfo.class.cast(rowIndex.getAdditionalProperty("info")).
             getAdditionalProperty("email"));
 
-    entityContext.detachAll();
+    otcontainerFactory.getContext().detachAll();
 
     otcontainer.getRowIndex().delete(id);
     otcontainer.flush();

@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * Interface for container operations.
  */
-public interface Container extends Serializable {
+public interface PersistenceManager extends Serializable {
 
   /**
    * Flushes all pending changes to the OData service.

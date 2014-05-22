@@ -27,7 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.fit.proxy.v3.staticservice.microsoft.test.odata.services.astoriadefaultservice.types.Car;
 import org.junit.Test;
 
@@ -92,7 +91,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     int key = car.getVIN();
     assertTrue(key > 0);
 
-    EntityContainerFactory.getContext().detachAll();
+    containerFactory.getContext().detachAll();
 
     car = container.getCar().get(key);
     assertEquals(DESC, car.getDescription());

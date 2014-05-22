@@ -61,23 +61,21 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
   }
 
   private OperationInvocationHandler(final EntityContainerInvocationHandler containerHandler) {
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
 
     this.target = containerHandler;
-
-    this.targetFQN =
-            new FullQualifiedName(containerHandler.getSchemaName(), containerHandler.getEntityContainerName());
+    this.targetFQN = new FullQualifiedName(containerHandler.getSchemaName(), containerHandler.getEntityContainerName());
   }
 
   private OperationInvocationHandler(final EntityInvocationHandler entityHandler) {
-    super(entityHandler.getClient(), entityHandler.containerHandler);
+    super(entityHandler.containerHandler);
 
     this.target = entityHandler;
     this.targetFQN = entityHandler.getEntity().getTypeName();
   }
 
   private OperationInvocationHandler(final EntityCollectionInvocationHandler<?> collectionHandler) {
-    super(collectionHandler.getClient(), collectionHandler.containerHandler);
+    super(collectionHandler.containerHandler);
 
     this.target = collectionHandler;
 
@@ -139,7 +137,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
   private Map.Entry<URI, EdmOperation> getUnboundOperation(
           final Operation operation, final List<String> parameterNames) {
 
-    final EdmEntityContainer container = client.getCachedEdm().getEntityContainer(targetFQN);
+    final EdmEntityContainer container = getClient().getCachedEdm().getEntityContainer(targetFQN);
     final EdmOperation edmOperation;
 
     if (operation.type() == OperationType.FUNCTION) {
@@ -170,13 +168,13 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
             ? new FullQualifiedName(targetFQN.getNamespace(), boundOp.getTitle())
             : new FullQualifiedName(boundOp.getTitle());
 
-    EdmEntityType entityType = client.getCachedEdm().getEntityType(entity.getTypeName());
+    EdmEntityType entityType = getClient().getCachedEdm().getEntityType(entity.getTypeName());
     EdmOperation edmOperation = null;
     while (edmOperation == null && entityType != null) {
       edmOperation = operation.type() == OperationType.FUNCTION
-              ? client.getCachedEdm().getBoundFunction(
+              ? getClient().getCachedEdm().getBoundFunction(
                       operationFQN, entityType.getFullQualifiedName(), false, parameterNames)
-              : client.getCachedEdm().getBoundAction(
+              : getClient().getCachedEdm().getBoundAction(
                       operationFQN, entityType.getFullQualifiedName(), false);
       if (entityType.getBaseType() != null) {
         entityType = entityType.getBaseType();
@@ -196,10 +194,10 @@ final class OperationInvocationHandler extends AbstractInvocationHandler impleme
 
     EdmOperation edmOperation;
     if (operation.type() == OperationType.FUNCTION) {
-      edmOperation = client.getCachedEdm().getBoundFunction(
+      edmOperation = getClient().getCachedEdm().getBoundFunction(
               new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, true, parameterNames);
     } else {
-      edmOperation = client.getCachedEdm().getBoundAction(
+      edmOperation = getClient().getCachedEdm().getBoundAction(
               new FullQualifiedName(targetFQN.getNamespace(), operation.name()), targetFQN, true);
     }
 

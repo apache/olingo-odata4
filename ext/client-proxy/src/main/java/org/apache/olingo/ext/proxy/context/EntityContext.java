@@ -101,9 +101,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity entity to be detached.
    */
   public void detach(final EntityInvocationHandler entity) {
-    if (searchableEntities.containsKey(entity.getUUID())) {
-      searchableEntities.remove(entity.getUUID());
-    }
+    searchableEntities.remove(entity.getUUID());
     allAttachedEntities.remove(entity);
   }
 

@@ -61,7 +61,7 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
   public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
           final Collection<T> items, final Class<?> itemRef, final URI uri) {
 
-    super(containerHandler.getClient(), containerHandler);
+    super(containerHandler);
 
     this.items = items;
     this.itemRef = itemRef;
@@ -180,7 +180,7 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
         }
         res = annotation == null || annotation.hasNullValue()
                 ? null
-                : CoreUtils.getObjectFromODataValue(client, annotation.getValue(), null, null);
+                : CoreUtils.getObjectFromODataValue(getClient(), annotation.getValue(), null, null);
         if (res != null) {
           annotationsByTerm.put(term, res);
         }

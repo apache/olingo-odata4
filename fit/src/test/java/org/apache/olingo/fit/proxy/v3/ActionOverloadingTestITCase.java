@@ -58,12 +58,12 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     int res = aocontainer.operations().retrieveProduct();
     assertEquals(-10, res);
 
-    EntityContainerFactory.getContext().detachAll();
+    containerFactory.getContext().detachAll();
 
     res = aocontainer.getProduct().get(-10).operations().retrieveProduct();
     assertEquals(-10, res);
 
-    EntityContainerFactory.getContext().detachAll();
+    containerFactory.getContext().detachAll();
 
     final OrderLineKey key = new OrderLineKey();
     key.setOrderId(-10);
@@ -89,7 +89,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     ecoll.operations().increaseSalaries(5);
 
     // the invoke above changed the local entities, re-read
-    EntityContainerFactory.getContext().detachAll();        
+    containerFactory.getContext().detachAll();        
     ecoll = aocontainer.getPerson().getAll(EmployeeCollection.class);
     empl = ecoll.iterator().next();
     
@@ -107,7 +107,7 @@ public class ActionOverloadingTestITCase extends AbstractTestITCase {
     secoll.operations().increaseSalaries(5);
 
     // the invoke above changed the local entities, re-read
-    EntityContainerFactory.getContext().detachAll();        
+    containerFactory.getContext().detachAll();        
     secoll = aocontainer.getPerson().getAll(SpecialEmployeeCollection.class);
     sempl = secoll.toArray(new SpecialEmployee[secoll.size()])[1];
     

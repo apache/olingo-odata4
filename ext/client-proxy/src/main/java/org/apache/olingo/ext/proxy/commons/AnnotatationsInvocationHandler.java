@@ -20,7 +20,6 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
@@ -38,7 +37,6 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
           final AbstractStructuredInvocationHandler targetHandler) {
 
     return new AnnotatationsInvocationHandler(
-            entityHandler == null ? null : entityHandler.containerHandler.client,
             targetHandler == null
             ? entityHandler == null ? null : entityHandler.containerHandler : targetHandler.containerHandler,
             entityHandler,
@@ -46,12 +44,11 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
   }
 
   private AnnotatationsInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    super(client, containerHandler);
+    super(containerHandler);
     this.targetHandler = targetHandler;
     this.entityHandler = entityHandler;
   }
@@ -82,8 +79,7 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              new AnnotatableInvocationHandler(
-                      client, containerHandler, propName, navPropName, entityHandler, targetHandler));
+              new AnnotatableInvocationHandler(containerHandler, propName, navPropName, entityHandler, targetHandler));
     } else {
       throw new NoSuchMethodException(method.getName());
     }

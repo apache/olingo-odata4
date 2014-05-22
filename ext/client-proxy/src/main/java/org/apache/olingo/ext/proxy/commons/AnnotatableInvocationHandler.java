@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataLinkedComplexValue;
@@ -53,14 +52,13 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public AnnotatableInvocationHandler(
-          final CommonEdmEnabledODataClient<?> client,
           final EntityContainerInvocationHandler containerHandler,
           final String propName,
           final String navPropName,
           final EntityInvocationHandler entityHandler,
           final AbstractStructuredInvocationHandler targetHandler) {
 
-    super(client, containerHandler);
+    super(containerHandler);
 
     this.propName = propName;
     this.navPropName = navPropName;
@@ -159,7 +157,7 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
         res = annotation == null || annotation.hasNullValue()
                 ? null
                 : CoreUtils.getObjectFromODataValue(
-                        client, annotation.getValue(), null, targetHandler.getEntityHandler());
+                        getClient(), annotation.getValue(), null, targetHandler.getEntityHandler());
         if (res != null) {
           annotations.put(term, res);
         }

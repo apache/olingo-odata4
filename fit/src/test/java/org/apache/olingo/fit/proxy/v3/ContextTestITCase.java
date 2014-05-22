@@ -67,16 +67,16 @@ public class ContextTestITCase extends AbstractTestITCase {
     final EntityInvocationHandler source2 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer2);
 
-    assertTrue(entityContext.isAttached(source1));
-    assertTrue(entityContext.isAttached(source2));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source1));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source2));
 
-    entityContext.detach(source1);
-    assertFalse(entityContext.isAttached(source1));
-    assertTrue(entityContext.isAttached(source2));
+    containerFactory.getContext().entityContext().detach(source1);
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source1));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source2));
 
-    entityContext.detach(source2);
-    assertFalse(entityContext.isAttached(source1));
-    assertFalse(entityContext.isAttached(source2));
+    containerFactory.getContext().entityContext().detach(source2);
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source1));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source2));
   }
 
   @Test
@@ -92,36 +92,36 @@ public class ContextTestITCase extends AbstractTestITCase {
     final EntityInvocationHandler source3 =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customer3);
 
-    assertFalse(entityContext.isAttached(source1));
-    assertFalse(entityContext.isAttached(source2));
-    assertFalse(entityContext.isAttached(source3));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source1));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source2));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source3));
 
-    entityContext.attach(source1);
-    assertTrue(entityContext.isAttached(source1));
-    assertFalse(entityContext.isAttached(source2));
-    assertTrue(entityContext.isAttached(source3));
+    containerFactory.getContext().entityContext().attach(source1);
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source1));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source2));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source3));
 
-    entityContext.attach(source2);
-    assertTrue(entityContext.isAttached(source1));
-    assertTrue(entityContext.isAttached(source2));
-    assertTrue(entityContext.isAttached(source3));
+    containerFactory.getContext().entityContext().attach(source2);
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source1));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source2));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source3));
 
     try {
-      entityContext.attach(source3);
+      containerFactory.getContext().entityContext().attach(source3);
       fail();
     } catch (IllegalStateException ignore) {
       // ignore
     }
 
-    entityContext.detach(source1);
-    assertFalse(entityContext.isAttached(source1));
-    assertTrue(entityContext.isAttached(source2));
-    assertFalse(entityContext.isAttached(source3));
+    containerFactory.getContext().entityContext().detach(source1);
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source1));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source2));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source3));
 
-    entityContext.detach(source2);
-    assertFalse(entityContext.isAttached(source1));
-    assertFalse(entityContext.isAttached(source2));
-    assertFalse(entityContext.isAttached(source3));
+    containerFactory.getContext().entityContext().detach(source2);
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source1));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source2));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source3));
   }
 
   @Test
@@ -138,17 +138,17 @@ public class ContextTestITCase extends AbstractTestITCase {
     final EntityInvocationHandler target =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
-    assertTrue(entityContext.isAttached(source));
-    assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(source));
-    assertTrue(entityContext.isAttached(target));
-    assertEquals(AttachedEntityStatus.LINKED, entityContext.getStatus(target));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source));
+    assertEquals(AttachedEntityStatus.NEW, containerFactory.getContext().entityContext().getStatus(source));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(target));
+    assertEquals(AttachedEntityStatus.LINKED, containerFactory.getContext().entityContext().getStatus(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
-    assertFalse(entityContext.isAttached(source));
-    assertFalse(entityContext.isAttached(target));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(target));
   }
 
   @Test
@@ -165,17 +165,17 @@ public class ContextTestITCase extends AbstractTestITCase {
     final EntityInvocationHandler target =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
-    assertTrue(entityContext.isAttached(source));
-    assertEquals(AttachedEntityStatus.CHANGED, entityContext.getStatus(source));
-    assertTrue(entityContext.isAttached(target));
-    assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(target));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source));
+    assertEquals(AttachedEntityStatus.CHANGED, containerFactory.getContext().entityContext().getStatus(source));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(target));
+    assertEquals(AttachedEntityStatus.NEW, containerFactory.getContext().entityContext().getStatus(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
-    assertFalse(entityContext.isAttached(source));
-    assertFalse(entityContext.isAttached(target));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(target));
   }
 
   @Test
@@ -192,17 +192,17 @@ public class ContextTestITCase extends AbstractTestITCase {
     final EntityInvocationHandler target =
             (EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo);
 
-    assertTrue(entityContext.isAttached(source));
-    assertEquals(AttachedEntityStatus.CHANGED, entityContext.getStatus(source));
-    assertTrue(entityContext.isAttached(target));
-    assertEquals(AttachedEntityStatus.LINKED, entityContext.getStatus(target));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source));
+    assertEquals(AttachedEntityStatus.CHANGED, containerFactory.getContext().entityContext().getStatus(source));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(target));
+    assertEquals(AttachedEntityStatus.LINKED, containerFactory.getContext().entityContext().getStatus(target));
 
     checkUnidirectional("Info", source, "Customer", target, false);
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
-    assertFalse(entityContext.isAttached(source));
-    assertFalse(entityContext.isAttached(target));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(target));
   }
 
   @Test
@@ -220,24 +220,25 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
 
-    assertTrue(entityContext.isAttached(source));
-    assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(source));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source));
+    assertEquals(AttachedEntityStatus.NEW, containerFactory.getContext().entityContext().getStatus(source));
     assertEquals(3, ((Collection) (source.getLinkChanges().entrySet().iterator().next().getValue())).size());
 
     for (Order order : toBeLinked) {
       final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(order);
 
-      assertTrue(entityContext.isAttached(target));
-      assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(target));
+      assertTrue(containerFactory.getContext().entityContext().isAttached(target));
+      assertEquals(AttachedEntityStatus.NEW, containerFactory.getContext().entityContext().getStatus(target));
       checkUnidirectional("Orders", source, "Customer", target, true);
     }
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
-    assertFalse(entityContext.isAttached(source));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source));
 
     for (Order order : toBeLinked) {
-      assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(order)));
+      assertFalse(containerFactory.getContext().entityContext().
+              isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(order)));
     }
   }
 
@@ -265,12 +266,12 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     final EntityInvocationHandler source = (EntityInvocationHandler) Proxy.getInvocationHandler(customer);
 
-    assertTrue(entityContext.isAttached(source));
-    assertEquals(AttachedEntityStatus.NEW, entityContext.getStatus(source));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(source));
+    assertEquals(AttachedEntityStatus.NEW, containerFactory.getContext().entityContext().getStatus(source));
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
-    assertFalse(entityContext.isAttached(source));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(source));
   }
 
   @Test
@@ -283,7 +284,7 @@ public class ContextTestITCase extends AbstractTestITCase {
     customerInfo = container.getCustomerInfo().get(16);
     assertEquals("some other info ...", customerInfo.getInformation());
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
     customerInfo = container.getCustomerInfo().get(16);
     assertNotEquals("some other info ...", customerInfo.getInformation());
   }
@@ -304,7 +305,7 @@ public class ContextTestITCase extends AbstractTestITCase {
     }
     assertTrue(found);
 
-    entityContext.detachAll();
+    containerFactory.getContext().entityContext().detachAll();
 
     found = false;
     for (CustomerInfo info : container.getCustomerInfo().getAll()) {
@@ -322,7 +323,7 @@ public class ContextTestITCase extends AbstractTestITCase {
 
     final EntityInvocationHandler handler = (EntityInvocationHandler) Proxy.getInvocationHandler(login);
 
-    assertTrue(entityContext.isAttached(handler));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(handler));
 
     try {
       container.flush();
@@ -331,20 +332,20 @@ public class ContextTestITCase extends AbstractTestITCase {
       // ignore
     }
 
-    assertTrue(entityContext.isAttached(handler));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(handler));
 
     login.setCustomerId(-10);
     login.setUsername("customer");
 
     container.flush();
-    assertFalse(entityContext.isAttached(handler));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(handler));
     assertNotNull(container.getLogin().get("customer"));
 
     container.getLogin().delete(login.getUsername());
-    assertTrue(entityContext.isAttached(handler));
+    assertTrue(containerFactory.getContext().entityContext().isAttached(handler));
 
     container.flush();
-    assertFalse(entityContext.isAttached(handler));
+    assertFalse(containerFactory.getContext().entityContext().isAttached(handler));
     assertNull(container.getLogin().get("customer"));
   }
 
@@ -387,18 +388,24 @@ public class ContextTestITCase extends AbstractTestITCase {
     customer.setPrimaryContactInfo(cd);
     customer.setBackupContactInfo(Collections.<ContactDetails>singletonList(bcd));
 
-    assertTrue(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo)));
-    assertTrue(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
+    assertTrue(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo)));
+    assertTrue(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
     for (Order linked : toBeLinked) {
-      assertTrue(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
+      assertTrue(containerFactory.getContext().entityContext().
+              isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
     }
 
     container.flush();
 
-    assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo)));
-    assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
+    assertFalse(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customerInfo)));
+    assertFalse(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
     for (Order linked : toBeLinked) {
-      assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
+      assertFalse(containerFactory.getContext().entityContext().
+              isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
     }
 
     assertEquals("some new info ...", container.getCustomerInfo().get(16).getInformation());
@@ -406,16 +413,20 @@ public class ContextTestITCase extends AbstractTestITCase {
     container.getOrder().delete(toBeLinked);
     container.getCustomer().delete(customer.getCustomerId());
 
-    assertTrue(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
+    assertTrue(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
     for (Order linked : toBeLinked) {
-      assertTrue(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
+      assertTrue(containerFactory.getContext().entityContext().
+              isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
     }
 
     container.flush();
 
-    assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
+    assertFalse(containerFactory.getContext().entityContext().
+            isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(customer)));
     for (Order linked : toBeLinked) {
-      assertFalse(entityContext.isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
+      assertFalse(containerFactory.getContext().entityContext().
+              isAttached((EntityInvocationHandler) Proxy.getInvocationHandler(linked)));
     }
   }
 

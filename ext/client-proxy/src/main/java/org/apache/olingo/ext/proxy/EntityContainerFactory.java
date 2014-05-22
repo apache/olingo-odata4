@@ -34,30 +34,13 @@ import org.apache.olingo.ext.proxy.context.Context;
  */
 public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<?>> {
 
-  private static final Object MONITOR = new Object();
-
-  private static Context context = null;
-
   private static final Map<String, EntityContainerFactory<?>> FACTORY_PER_SERVICEROOT =
           new ConcurrentHashMap<String, EntityContainerFactory<?>>();
 
   private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
-  private final CommonEdmEnabledODataClient<?> client;
-
-  public static Context getContext() {
-    synchronized (MONITOR) {
-      if (context == null) {
-        context = new Context();
-      }
-    }
-
-    return context;
-  }
-
   @SuppressWarnings("unchecked")
   private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(final C client) {
-
     if (!FACTORY_PER_SERVICEROOT.containsKey(client.getServiceRoot())) {
       client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
       final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client);
@@ -79,13 +62,22 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
     return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot));
   }
 
+  private final CommonEdmEnabledODataClient<?> client;
+
+  private final Context context;
+
   private EntityContainerFactory(final CommonEdmEnabledODataClient<?> client) {
     this.client = client;
+    this.context = new Context();
   }
 
   @SuppressWarnings("unchecked")
   public C getClient() {
     return (C) client;
+  }
+
+  public Context getContext() {
+    return context;
   }
 
   /**
@@ -101,7 +93,7 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
       final Object entityContainer = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {reference},
-              EntityContainerInvocationHandler.getInstance(client, reference, this));
+              EntityContainerInvocationHandler.getInstance(reference, this));
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
     return reference.cast(ENTITY_CONTAINERS.get(reference));
