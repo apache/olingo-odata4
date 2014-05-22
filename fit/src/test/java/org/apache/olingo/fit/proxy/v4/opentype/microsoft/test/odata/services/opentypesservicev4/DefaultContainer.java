@@ -53,9 +53,7 @@ import javax.xml.datatype.Duration;
 public interface DefaultContainer extends PersistenceManager {
 
     Row getRow();
-
     RowIndex getRowIndex();
-
 
 
 
@@ -71,6 +69,10 @@ public interface DefaultContainer extends PersistenceManager {
           @Property(name = "ContactDetails",
                 type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails")
       org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails newContactDetails();
+
+          @Property(name = "AccountInfo",
+                type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo")
+      org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo newAccountInfo();
 
         }
   }

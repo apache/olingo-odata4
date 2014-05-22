@@ -39,7 +39,7 @@ public class FilterFactoryTestITCase extends AbstractTestITCase {
   }
 
   private void match(final String entitySet, final URIFilter filter, final int expected) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySet).filter(filter);
 
     final CommonODataEntitySet feed = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).

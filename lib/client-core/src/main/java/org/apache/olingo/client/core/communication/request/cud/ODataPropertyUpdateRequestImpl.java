@@ -55,7 +55,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    * @param targetURI entity set or entity or entity property URI.
    * @param property value to be created.
    */
-  ODataPropertyUpdateRequestImpl(final CommonODataClient odataClient,
+  ODataPropertyUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI targetURI, final CommonODataProperty property) {
 
     super(odataClient, ODataFormat.class, method, targetURI);
@@ -63,9 +63,6 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     this.property = property;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataPropertyUpdateResponse execute() {
     final InputStream input = getPayload();
@@ -78,9 +75,6 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   protected InputStream getPayload() {
     return odataClient.getWriter().writeProperty(property, ODataFormat.fromString(getContentType()));

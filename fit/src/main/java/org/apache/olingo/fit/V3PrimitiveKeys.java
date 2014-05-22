@@ -47,7 +47,7 @@ public class V3PrimitiveKeys extends V3Services {
   public Response getMetadata() {
     try {
       return xml.createResponse(
-              null, FSManager.instance(version).readFile("primitiveKeysMetadata", Accept.XML), null, Accept.XML);
+              null, FSManager.instance(version).readRes("primitiveKeysMetadata", Accept.XML), null, Accept.XML);
     } catch (Exception e) {
       return xml.createFaultResponse(Accept.XML.toString(version), e);
     }

@@ -22,10 +22,19 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+import org.apache.olingo.ext.proxy.api.annotations.Namespace;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
+import org.apache.olingo.ext.proxy.utils.CoreUtils;
 
 public class EntityCollectionInvocationHandler<T extends Serializable>
         extends AbstractInvocationHandler implements AbstractEntityCollection<T> {
@@ -37,6 +46,11 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
   private final Class<?> itemRef;
 
   private final URI uri;
+
+  private final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+
+  private final Map<Class<? extends AbstractTerm>, Object> annotationsByTerm =
+          new HashMap<Class<? extends AbstractTerm>, Object>();
 
   public EntityCollectionInvocationHandler(final EntityContainerInvocationHandler containerHandler,
           final Collection<T> items, final Class<?> itemRef) {
@@ -52,6 +66,12 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
     this.items = items;
     this.itemRef = itemRef;
     this.uri = uri;
+  }
+
+  public void setAnnotations(final List<ODataAnnotation> annotations) {
+    this.annotations.clear();
+    this.annotationsByTerm.clear();
+    this.annotations.addAll(annotations);
   }
 
   public Class<?> getEntityReference() {
@@ -141,5 +161,38 @@ public class EntityCollectionInvocationHandler<T extends Serializable>
   @Override
   public void clear() {
     items.clear();
+  }
+
+  public Object getAnnotation(final Class<? extends AbstractTerm> term) {
+    Object res = null;
+
+    if (annotationsByTerm.containsKey(term)) {
+      res = annotationsByTerm.get(term);
+    } else {
+      try {
+        final Term termAnn = term.getAnnotation(Term.class);
+        final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
+        ODataAnnotation annotation = null;
+        for (ODataAnnotation _annotation : annotations) {
+          if ((namespaceAnn.value() + "." + termAnn.name()).equals(_annotation.getTerm())) {
+            annotation = _annotation;
+          }
+        }
+        res = annotation == null || annotation.hasNullValue()
+                ? null
+                : CoreUtils.getObjectFromODataValue(getClient(), annotation.getValue(), null, null);
+        if (res != null) {
+          annotationsByTerm.put(term, res);
+        }
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error getting annotation for term '" + term.getName() + "'", e);
+      }
+    }
+
+    return res;
+  }
+
+  public Collection<Class<? extends AbstractTerm>> getAnnotationTerms() {
+    return CoreUtils.getAnnotationTerms(annotations);
   }
 }

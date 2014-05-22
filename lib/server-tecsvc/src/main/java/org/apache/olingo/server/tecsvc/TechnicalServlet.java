@@ -25,8 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.olingo.server.api.ODataHandler;
-import org.apache.olingo.server.api.ODataServer;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +37,28 @@ public class TechnicalServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   private static final Logger LOG = LoggerFactory.getLogger(TechnicalServlet.class);
-  
+
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     LOG.debug("ReferenceServlet:service() called");
-    
-    
-    ODataHandler handler = ODataServer.newInstance().getHandler(new EdmTechProvider());
-    
+
+    OData odata = OData.newInstance();
+    Edm edm = odata.createEdm(new EdmTechProvider());
+
+    ODataHttpHandler handler = odata.createHandler(edm);
     handler.process(req, resp);
-    
+  }
+
+  public void bla(HttpServletRequest hr, HttpServletResponse hres) {
+//    ODataServer s = ODataServer.newInstance();
+//
+//    ODataRequest r = s.createRequest(hr);
+//
+//    Edm edm = server.createEdm(new EdmTechProvider());
+//    
+//    ODataResponse res = r.dispatch();
+//    
+//    s.sendResponse(res, hres);
   }
 
 }

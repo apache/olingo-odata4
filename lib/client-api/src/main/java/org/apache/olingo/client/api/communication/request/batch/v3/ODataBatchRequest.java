@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.communication.request.batch.v3;
 
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 
@@ -26,5 +27,5 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
  * This class implements a batch request.
  */
 public interface ODataBatchRequest
-        extends CommonODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchStreamManager> {
+        extends CommonODataBatchRequest, ODataStreamedRequest<ODataBatchResponse, BatchManager> {
 }

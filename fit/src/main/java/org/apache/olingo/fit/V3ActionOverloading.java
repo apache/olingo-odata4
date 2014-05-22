@@ -51,7 +51,7 @@ import org.springframework.stereotype.Service;
 public class V3ActionOverloading extends V3Services {
 
   public V3ActionOverloading() throws Exception {
-    super(new Metadata(FSManager.instance(ODataServiceVersion.V30).readFile(
+    super(new Metadata(FSManager.instance(ODataServiceVersion.V30).readRes(
             "actionOverloading" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
             Accept.XML), ODataServiceVersion.V30));
   }

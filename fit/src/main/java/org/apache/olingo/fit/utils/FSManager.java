@@ -35,6 +35,7 @@ import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -72,6 +73,18 @@ public class FSManager {
   private FSManager(final ODataServiceVersion version) throws Exception {
     this.version = version;
     fsManager = VFS.getManager();
+
+    final FileObject basePath = fsManager.resolveFile(RES_PREFIX + File.separatorChar + version.name());
+    final String absoluteBaseFolder = basePath.getURL().getPath();
+
+    for (FileObject fo : find(basePath, null)) {
+      if (fo.getType() == FileType.FILE
+              && !fo.getName().getBaseName().contains("Metadata")
+              && !fo.getName().getBaseName().contains("metadata")) {
+        final String path = fo.getURL().getPath().replace(absoluteBaseFolder, "//" + version.name());
+        putInMemory(fo.getContent().getInputStream(), path);
+      }
+    }
   }
 
   public String getAbsolutePath(final String relativePath, final Accept accept) {
@@ -79,7 +92,7 @@ public class FSManager {
             + (accept == null ? "" : accept.getExtension());
   }
 
-  public FileObject putInMemory(final InputStream is, final String path) throws IOException {
+  public final FileObject putInMemory(final InputStream is, final String path) throws IOException {
     LOG.info("Write in memory {}", path);
     final FileObject memObject = fsManager.resolveFile(MEM_PREFIX + path);
 
@@ -126,29 +139,27 @@ public class FSManager {
     }
   }
 
-  public InputStream readFile(final String relativePath) {
-    return readFile(relativePath, null);
+  public InputStream readRes(final String relativePath, final Accept accept) {
+    return readFile(relativePath, accept, RES_PREFIX);
   }
 
   public InputStream readFile(final String relativePath, final Accept accept) {
+    return readFile(relativePath, accept, MEM_PREFIX);
+  }
+
+  public InputStream readFile(final String relativePath) {
+    return readFile(relativePath, null, MEM_PREFIX);
+  }
+
+  private InputStream readFile(final String relativePath, final Accept accept, final String fs) {
     final String path = getAbsolutePath(relativePath, accept);
-    LOG.info("Read {}", path);
+    LOG.info("Read {}{}", fs, path);
 
     try {
-      FileObject fileObject = fsManager.resolveFile(MEM_PREFIX + path);
+      final FileObject fileObject = fsManager.resolveFile(fs + path);
 
       if (!fileObject.exists()) {
         LOG.warn("In-memory path '{}' not found", path);
-
-        try {
-          fileObject = fsManager.resolveFile(RES_PREFIX + path);
-          fileObject = putInMemory(fileObject.getContent().getInputStream(), path);
-        } catch (FileSystemException fse) {
-          LOG.warn("Resource path '{}' not found", path, fse);
-        }
-      }
-
-      if (!fileObject.exists()) {
         throw new NotFoundException();
       }
 
@@ -176,12 +187,33 @@ public class FSManager {
     }
   }
 
-  public FileObject resolve(final String path) throws FileSystemException {
-    FileObject res = fsManager.resolveFile(MEM_PREFIX + path);
+  public void deleteEntity(final String relativePath) {
+    final String path = getAbsolutePath(relativePath, null);
+    LOG.info("Delete {}", path);
 
-    if (!res.exists()) {
-      res = fsManager.resolveFile(RES_PREFIX + path);
+    try {
+      final FileObject fileObject = fsManager.resolveFile(MEM_PREFIX + path);
+
+      if (fileObject.exists()) {
+        fileObject.delete(new FileSelector() {
+          @Override
+          public boolean includeFile(final FileSelectInfo fileInfo) throws Exception {
+            return true;
+          }
+
+          @Override
+          public boolean traverseDescendents(final FileSelectInfo fileInfo) throws Exception {
+            return true;
+          }
+        });
+      }
+    } catch (IOException ignore) {
+      // ignore exception
     }
+  }
+
+  public FileObject resolve(final String path) throws FileSystemException {
+    final FileObject res = fsManager.resolveFile(MEM_PREFIX + path);
 
     if (!res.exists()) {
       throw new FileSystemException("Unresolved path " + path);
@@ -190,11 +222,11 @@ public class FSManager {
     return res;
   }
 
-  public FileObject[] findByExtension(final FileObject fo, final String ext) throws FileSystemException {
+  public final FileObject[] find(final FileObject fo, final String ext) throws FileSystemException {
     return fo.findFiles(new FileSelector() {
       @Override
       public boolean includeFile(final FileSelectInfo fileInfo) throws Exception {
-        return fileInfo.getFile().getName().getExtension().equals(ext);
+        return ext == null ? true : fileInfo.getFile().getName().getExtension().equals(ext);
       }
 
       @Override

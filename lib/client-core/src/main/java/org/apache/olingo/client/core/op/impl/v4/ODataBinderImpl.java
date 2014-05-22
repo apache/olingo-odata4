@@ -50,7 +50,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLinked;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.domain.v4.ODataAnnotatatable;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
 import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataDeletedEntity.Reason;
 import org.apache.olingo.commons.api.domain.v4.ODataDelta;
@@ -63,8 +63,8 @@ import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.data.AnnotationImpl;
 import org.apache.olingo.commons.core.data.EnumValueImpl;
@@ -138,7 +138,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     }
   }
 
-  private void annotations(final ODataAnnotatatable odataAnnotatable, final Annotatable annotatable,
+  private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable,
           final Class<? extends Entity> reference) {
 
     for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
@@ -220,7 +220,7 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
     return valueResource;
   }
 
-  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatatable odataAnnotatable) {
+  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatable odataAnnotatable) {
     for (Annotation annotation : annotatable.getAnnotations()) {
       FullQualifiedName fqn = null;
       if (client instanceof EdmEnabledODataClient) {
@@ -259,13 +259,13 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   }
 
   @Override
-  protected void odataNavigationLinks(final EdmStructuredType edmType,
+  protected void odataNavigationLinks(final EdmType edmType,
           final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
 
     super.odataNavigationLinks(edmType, linked, odataLinked, metadataETag, base);
     for (org.apache.olingo.commons.api.domain.ODataLink link : odataLinked.getNavigationLinks()) {
       if (!(link instanceof ODataInlineEntity) && !(link instanceof ODataInlineEntitySet)) {
-        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatatable) link);
+        odataAnnotations(linked.getNavigationLink(link.getName()), (ODataAnnotatable) link);
       }
     }
   }
@@ -283,12 +283,28 @@ public class ODataBinderImpl extends AbstractODataBinder implements ODataBinder 
   @Override
   public ODataProperty getODataProperty(final ResWrap<Property> resource) {
     final EdmTypeInfo typeInfo = buildTypeInfo(resource.getContextURL(), resource.getMetadataETag(),
-              resource.getPayload().getName(), resource.getPayload().getType());
+            resource.getPayload().getName(), resource.getPayload().getType());
 
     final ODataProperty property = new ODataPropertyImpl(resource.getPayload().getName(),
-            getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
+            getODataValue(typeInfo == null
+                    ? null
+                    : typeInfo.getFullQualifiedName(),
                     resource.getPayload(), resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(resource.getPayload(), property);
+
+    return property;
+  }
+
+  @Override
+  protected ODataProperty getODataProperty(final EdmType type, final Property resource) {
+    final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
+
+    final ODataProperty property = new ODataPropertyImpl(resource.getName(),
+            getODataValue(typeInfo == null
+                    ? null
+                    : typeInfo.getFullQualifiedName(),
+                    resource, null, null));
+    odataAnnotations(resource, property);
 
     return property;
   }

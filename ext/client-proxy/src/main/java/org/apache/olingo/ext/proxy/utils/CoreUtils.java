@@ -43,23 +43,28 @@ import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotatable;
+import org.apache.olingo.commons.api.domain.v4.ODataAnnotation;
 import org.apache.olingo.commons.api.domain.v4.ODataEnumValue;
 import org.apache.olingo.commons.api.domain.v4.ODataObjectFactory;
-import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.core.domain.v4.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.CompoundKeyElement;
 import org.apache.olingo.ext.proxy.api.annotations.EnumType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
+import org.apache.olingo.ext.proxy.api.annotations.Term;
 import org.apache.olingo.ext.proxy.commons.AbstractStructuredInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
@@ -106,12 +111,7 @@ public final class CoreUtils {
         }
       }
     } else if (type.isComplexType()) {
-      Object objHandler;
-      if (obj instanceof Proxy) {
-        objHandler = Proxy.getInvocationHandler(obj);
-      } else {
-        objHandler = obj;
-      }
+      final Object objHandler = Proxy.getInvocationHandler(obj);
       if (objHandler instanceof ComplexInvocationHandler) {
         value = ((ComplexInvocationHandler) objHandler).getComplex();
 
@@ -121,7 +121,7 @@ public final class CoreUtils {
           if (propAnn != null) {
             try {
               value.asComplex().add(getODataComplexProperty(
-                      client, type.getFullQualifiedName(), propAnn.name(), method.invoke(objHandler)));
+                      client, type.getFullQualifiedName(), propAnn.name(), method.invoke(obj)));
             } catch (Exception ignore) {
               // ignore value
               LOG.warn("Error attaching complex {} for field '{}.{}'",
@@ -189,48 +189,59 @@ public final class CoreUtils {
     return getODataProperty(client, property, type, obj);
   }
 
+  public static ODataAnnotation getODataAnnotation(
+          final CommonEdmEnabledODataClient<?> client, final String term, final EdmType type, final Object obj) {
+
+    ODataAnnotation annotation;
+
+    if (obj == null) {
+      annotation = new ODataAnnotationImpl(term, null);
+    } else {
+      final EdmTypeInfo valueType = type == null
+              ? guessTypeFromObject(client, obj)
+              : new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).
+              setTypeExpression(type.getFullQualifiedName().toString()).build();
+
+      annotation = new ODataAnnotationImpl(term,
+              (org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, valueType, obj));
+    }
+
+    return annotation;
+  }
+
   public static CommonODataProperty getODataProperty(
           final CommonEdmEnabledODataClient<?> client, final String name, final EdmTypeInfo type, final Object obj) {
 
-    CommonODataProperty oprop;
+    CommonODataProperty property;
 
     try {
       if (obj == null) {
-        oprop = client.getObjectFactory().newPrimitiveProperty(name, null);
+        property = client.getObjectFactory().newPrimitiveProperty(name, null);
       } else {
-        final EdmTypeInfo valueType;
-        if (type == null) {
-          valueType = guessTypeFromObject(client, obj);
-        } else {
-          valueType = type;
-        }
+        final EdmTypeInfo valueType = type == null
+                ? guessTypeFromObject(client, obj)
+                : type;
+        final ODataValue value = getODataValue(client, valueType, obj);
 
         if (valueType.isCollection()) {
-          // create collection property
-          oprop = client.getObjectFactory().newCollectionProperty(name, getODataValue(client, valueType, obj).
-                  asCollection());
+          property = client.getObjectFactory().newCollectionProperty(name, value.asCollection());
         } else if (valueType.isPrimitiveType()) {
-          // create a primitive property
-          oprop = client.getObjectFactory().newPrimitiveProperty(name, getODataValue(client, valueType, obj).
-                  asPrimitive());
+          property = client.getObjectFactory().newPrimitiveProperty(name, value.asPrimitive());
         } else if (valueType.isComplexType()) {
-          // create a complex property
-          oprop = client.getObjectFactory().newComplexProperty(name, getODataValue(client, valueType, obj).
-                  asComplex());
+          property = client.getObjectFactory().newComplexProperty(name, value.asComplex());
         } else if (valueType.isEnumType()) {
           if (client.getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0) {
             throw new UnsupportedInV3Exception();
           } else {
-            oprop = ((ODataObjectFactory) client.getObjectFactory()).newEnumProperty(name,
-                    ((org.apache.olingo.commons.api.domain.v4.ODataValue) getODataValue(client, valueType, obj)).
-                    asEnum());
+            property = ((ODataObjectFactory) client.getObjectFactory()).newEnumProperty(name,
+                    ((org.apache.olingo.commons.api.domain.v4.ODataValue) value).asEnum());
           }
         } else {
           throw new UnsupportedOperationException("Usupported object type " + valueType.getFullQualifiedName());
         }
       }
 
-      return oprop;
+      return property;
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
@@ -287,15 +298,28 @@ public final class CoreUtils {
           final Map<String, Object> changes,
           final CommonODataEntity entity) {
 
-    for (Map.Entry<String, Object> property : changes.entrySet()) {
-      // if the getter exists and it is annotated as expected then get value/value and add a new property
-      final CommonODataProperty odataProperty = entity.getProperty(property.getKey());
-      if (odataProperty != null) {
-        entity.getProperties().remove(odataProperty);
-      }
-
+    for (Map.Entry<String, Object> entry : changes.entrySet()) {
       ((List<CommonODataProperty>) entity.getProperties()).add(
-              getODataEntityProperty(client, entity.getTypeName(), property.getKey(), property.getValue()));
+              getODataEntityProperty(client, entity.getTypeName(), entry.getKey(), entry.getValue()));
+    }
+  }
+
+  public static void addAnnotations(
+          final CommonEdmEnabledODataClient<?> client,
+          final Map<Class<? extends AbstractTerm>, Object> annotations,
+          final ODataAnnotatable annotatable) {
+
+    for (Map.Entry<Class<? extends AbstractTerm>, Object> entry : annotations.entrySet()) {
+      final Namespace nsAnn = entry.getKey().getAnnotation(Namespace.class);
+      final Term termAnn = entry.getKey().getAnnotation(Term.class);
+      final FullQualifiedName termName = new FullQualifiedName(nsAnn.value(), termAnn.name());
+      final EdmTerm term = client.getCachedEdm().getTerm(termName);
+      if (term == null) {
+        LOG.error("Could not find term for class {}", entry.getKey().getName());
+      } else {
+        annotatable.getAnnotations().add(getODataAnnotation(
+                client, term.getFullQualifiedName().toString(), term.getType(), entry.getValue()));
+      }
     }
   }
 
@@ -472,9 +496,9 @@ public final class CoreUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static Object getValueFromProperty(
+  public static Object getObjectFromODataValue(
           final CommonEdmEnabledODataClient<?> client,
-          final CommonODataProperty property,
+          final ODataValue value,
           final Type typeRef,
           final EntityInvocationHandler entityHandler)
           throws InstantiationException, IllegalAccessException {
@@ -492,59 +516,93 @@ public final class CoreUtils {
 
     final Object res;
 
-    if (property == null || property.hasNullValue()) {
+    if (value == null) {
       res = null;
-    } else if (property.hasComplexValue()) {
+    } else if (value.isComplex()) {
       // complex types supports inheritance in V4, best to re-read actual type
-      internalRef = getComplexTypeRef(property);
+      internalRef = getComplexTypeRef(value);
       res = Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {internalRef},
               ComplexInvocationHandler.getInstance(
-                      client, property.getValue().asComplex(), internalRef, entityHandler));
-    } else if (property.hasCollectionValue()) {
+                      client, value.asComplex(), internalRef, entityHandler));
+    } else if (value.isCollection()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
-      final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+      final Iterator<ODataValue> collPropItor = value.asCollection().iterator();
       while (collPropItor.hasNext()) {
-        final ODataValue value = collPropItor.next();
-        if (value.isPrimitive()) {
-          collection.add(CoreUtils.primitiveValueToObject(value.asPrimitive(), internalRef));
-        } else if (value.isComplex()) {
-          internalRef = getComplexTypeRef(property);
+        final ODataValue itemValue = collPropItor.next();
+        if (itemValue.isPrimitive()) {
+          collection.add(CoreUtils.primitiveValueToObject(itemValue.asPrimitive(), internalRef));
+        } else if (itemValue.isComplex()) {
+          internalRef = getComplexTypeRef(value);
           final Object collItem = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] {internalRef},
                   ComplexInvocationHandler.getInstance(
-                          client, value.asComplex(), internalRef, entityHandler));
+                          client, itemValue.asComplex(), internalRef, entityHandler));
 
           collection.add(collItem);
         }
       }
 
       res = collection;
-    } else if (property instanceof ODataProperty && ((ODataProperty) property).hasEnumValue()) {
+    } else if (value instanceof ODataEnumValue) {
       if (internalRef == null) {
-        internalRef = getEnumTypeRef(property);
+        internalRef = getEnumTypeRef(value);
       }
-      res = enumValueToObject(((ODataProperty) property).getEnumValue(), internalRef);
+      res = enumValueToObject((ODataEnumValue) value, internalRef);
     } else {
-      res = primitiveValueToObject(property.getPrimitiveValue(), internalRef);
+      res = primitiveValueToObject(value.asPrimitive(), internalRef);
     }
 
     return res;
   }
 
-  private static Class<?> getEnumTypeRef(final CommonODataProperty property) {
-    return getTypeRef(property, "META-INF/" + Constants.PROXY_ENUM_CLASS_LIST, EnumType.class);
+  @SuppressWarnings("unchecked")
+  public static Collection<Class<? extends AbstractTerm>> getAnnotationTerms(final List<ODataAnnotation> annotations) {
+    final List<Class<? extends AbstractTerm>> res = new ArrayList<Class<? extends AbstractTerm>>();
+
+    for (ODataAnnotation annotation : annotations) {
+      res.add((Class<? extends AbstractTerm>) getTermTypeRef(annotation));
+    }
+
+    return res;
   }
 
-  private static Class<?> getComplexTypeRef(final CommonODataProperty property) {
-    return getTypeRef(property, "META-INF/" + Constants.PROXY_COMPLEX_CLASS_LIST, ComplexType.class);
+  private static Class<?> getTermTypeRef(final ODataAnnotation annotation) {
+    try {
+      final List<String> pkgs = IOUtils.readLines(Thread.currentThread().getContextClassLoader().
+              getResourceAsStream("META-INF/" + Constants.PROXY_TERM_CLASS_LIST),
+              Constants.UTF8);
+      for (String pkg : pkgs) {
+        final Class<?> clazz = Class.forName(pkg);
+        final Term term = clazz.getAnnotation(Term.class);
+        final Namespace ns = clazz.getAnnotation(Namespace.class);
+
+        if (ns != null && term != null
+                && annotation.getTerm().equals(new FullQualifiedName(ns.value(), term.name()).toString())) {
+
+          return clazz;
+        }
+      }
+    } catch (Exception e) {
+      LOG.warn("Error retrieving class list for {}", Term.class.getName(), e);
+    }
+
+    throw new IllegalArgumentException("Could not find Term class for " + annotation.getTerm());
+  }
+
+  private static Class<?> getEnumTypeRef(final ODataValue value) {
+    return getTypeRef(value, "META-INF/" + Constants.PROXY_ENUM_CLASS_LIST, EnumType.class);
+  }
+
+  private static Class<?> getComplexTypeRef(final ODataValue value) {
+    return getTypeRef(value, "META-INF/" + Constants.PROXY_COMPLEX_CLASS_LIST, ComplexType.class);
   }
 
   private static Class<?> getTypeRef(
-          final CommonODataProperty property,
+          final ODataValue value,
           final String proxyClassListFile,
           final Class<? extends Annotation> annType) {
 
@@ -554,7 +612,7 @@ public final class CoreUtils {
 
     try {
       final List<String> pkgs = IOUtils.readLines(
-              CoreUtils.class.getClassLoader().getResourceAsStream(proxyClassListFile),
+              Thread.currentThread().getContextClassLoader().getResourceAsStream(proxyClassListFile),
               Constants.UTF8);
 
       for (String pkg : pkgs) {
@@ -562,20 +620,19 @@ public final class CoreUtils {
         final Annotation ann = clazz.getAnnotation(annType);
         final Namespace ns = clazz.getAnnotation(Namespace.class);
 
-        if (ns != null && ann != null) {
-          if (property.getValue().getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").equals(
-                  new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
-                          ? EnumType.class.cast(ann).name()
-                          : ComplexType.class.cast(ann).name()).toString())) {
-            return clazz;
-          }
+        if (ns != null && ann != null
+                && value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", "").
+                equals(new FullQualifiedName(ns.value(), annType.isAssignableFrom(EnumType.class)
+                                ? EnumType.class.cast(ann).name()
+                                : ComplexType.class.cast(ann).name()).toString())) {
+          return clazz;
         }
       }
     } catch (Exception e) {
-      LOG.warn("Error retrieving proxy complex class list", e);
+      LOG.warn("Error retrieving class list for {}", annType.getName(), e);
     }
 
-    throw new IllegalArgumentException("Provided property '" + property + "' is not complex");
+    throw new IllegalArgumentException("Provided value '" + value + "' is not annotated as " + annType.getName());
   }
 
   private static String firstValidEntityKey(final Class<?> entityTypeRef) {

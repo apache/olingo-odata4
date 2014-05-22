@@ -21,9 +21,9 @@ package org.apache.olingo.client.api.communication.request.invoke;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
-import org.apache.olingo.commons.api.edm.EdmOperation;
 
 /**
  * OData request factory class.
@@ -31,24 +31,62 @@ import org.apache.olingo.commons.api.edm.EdmOperation;
 public interface InvokeRequestFactory extends Serializable {
 
   /**
-   * Gets an invoke request instance.
+   * Gets an invoke request instance for the operation bound to given URI.
+   * <br/>
+   * This method is mainly meant for internal usage, but defined for generic calls from proxy; normally, one of other
+   * methods should be used instead.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
-   * @param uri URI that identifies the function import
-   * @param operation operation to be invoked
-   * @return new ODataInvokeRequest instance.
-   */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(URI uri, EdmOperation operation);
-
-  /**
-   * Gets an invoke request instance.
-   *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
-   * @param uri URI that identifies the function import
-   * @param operation operation to be invoked
-   * @param parameters parameters to pass to function import invocation
-   * @return new ODataInvokeRequest instance.
+   * @param <RES> OData domain object result
+   * @param method HTTP invocation method
+   * @param uri invocation URI
+   * @param resultRef reference Class for result
+   * @param parameters parameters to pass to function invocation
+   * @return new {@link ODataInvokeRequest} instance.
    */
   <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          URI uri, EdmOperation operation, Map<String, ODataValue> parameters);
+          HttpMethod method, URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
+
+  /**
+   * Gets an invoke request instance for the function bound to given URI (no parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param uri invocation URI
+   * @param resultRef reference Class for result
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(URI uri, Class<RES> resultRef);
+
+  /**
+   * Gets an invoke request instance for the function bound to given URI (with parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param uri invocation URI
+   * @param resultRef reference Class for result
+   * @param parameters parameters to pass to function invocation
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
+          URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
+
+  /**
+   * Gets an invoke request instance for the action bound to given URI (no parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param uri invocation URI
+   * @param resultRef reference Class for result
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(URI uri, Class<RES> resultRef);
+
+  /**
+   * Gets an invoke request instance for the action bound to given URI (with parameters).
+   *
+   * @param <RES> OData domain object result
+   * @param uri invocation URI
+   * @param resultRef reference Class for result
+   * @param parameters parameters to pass to action invocation
+   * @return new {@link ODataInvokeRequest} instance.
+   */
+  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
+          URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
 }

@@ -22,14 +22,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.v4.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
+import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.api.uri.v4.URIBuilder;
 import org.apache.olingo.client.api.v4.ODataClient;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.domain.v4.ODataProperty;
 import org.apache.olingo.commons.api.domain.v4.ODataValuable;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -38,7 +43,7 @@ import org.junit.Test;
 public class PropertyTestITCase extends AbstractTestITCase {
 
   private void _enum(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -67,7 +72,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void geospatial(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -95,7 +100,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void complex(final ODataClient client, final ODataFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(2).appendPropertySegment("HomeAddress");
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -104,7 +109,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final ODataProperty prop = req.execute().getBody();
     assertNotNull(prop);
     // cast to workaround JDK 6 bug, fixed in JDK 7
-    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address", 
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address",
             ((ODataValuable) prop).getValue().getTypeName());
   }
 
@@ -124,7 +129,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
 
     ODataPropertyRequest<ODataProperty> retrieveReq =
@@ -165,6 +170,33 @@ public class PropertyTestITCase extends AbstractTestITCase {
   @Test
   public void patchComplexPropertyAsJSON() throws IOException {
     updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
+  }
+
+  @Test
+  public void createAndDelete() {
+    // 1. create
+    final ODataEntity category = client.getObjectFactory().newEntity(null);
+    category.setReference(client.newURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Categories").appendKeySegment(1).build().toASCIIString());
+
+    final URIBuilder createBuilder = client.newURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
+            appendRefSegment();    
+    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
+            getEntityCreateRequest(createBuilder.build(), category);
+
+    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
+    assertEquals(204, createRes.getStatusCode());
+
+    // 2. delete
+    final URIBuilder deleteBuilder = client.newURIBuilder(testStaticServiceRootURL).
+            appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
+            appendKeySegment(1).appendRefSegment();
+    final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().
+            getDeleteRequest(deleteBuilder.build());
+
+    final ODataDeleteResponse deleteRes = deleteReq.execute();
+    assertEquals(204, deleteRes.getStatusCode());
   }
 
 }

@@ -18,14 +18,20 @@
  */
 package org.apache.olingo.client.core.v3;
 
+import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.uri.v3.URIBuilder;
 import org.apache.olingo.client.api.v3.EdmEnabledODataClient;
+import org.apache.olingo.client.core.communication.request.invoke.v3.EdmEnabledInvokeRequestFactoryImpl;
+import org.apache.olingo.client.core.uri.v3.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 
 public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEnabledODataClient {
 
   private final String serviceRoot;
+
+  private EdmEnabledInvokeRequestFactory edmEnabledInvokeRequestFactory;
 
   private Edm edm;
 
@@ -57,4 +63,18 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
     }
     return this.edm;
   }
+
+  @Override
+  public URIBuilder newURIBuilder() {
+    return new URIBuilderImpl(getServiceVersion(), configuration, serviceRoot);
+  }
+
+  @Override
+  public EdmEnabledInvokeRequestFactory getInvokeRequestFactory() {
+    if (edmEnabledInvokeRequestFactory == null) {
+      edmEnabledInvokeRequestFactory = new EdmEnabledInvokeRequestFactoryImpl(this);
+    }
+    return edmEnabledInvokeRequestFactory;
+  }
+
 }

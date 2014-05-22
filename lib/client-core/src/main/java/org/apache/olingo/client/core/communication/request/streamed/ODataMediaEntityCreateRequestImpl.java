@@ -52,7 +52,7 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
    * @param targetURI target entity set.
    * @param media media entity blob to be created.
    */
-  ODataMediaEntityCreateRequestImpl(final CommonODataClient<?> odataClient, final URI targetURI,
+  public ODataMediaEntityCreateRequestImpl(final CommonODataClient<?> odataClient, final URI targetURI,
           final InputStream media) {
 
     super(odataClient, HttpMethod.POST, targetURI);
@@ -60,11 +60,11 @@ public class ODataMediaEntityCreateRequestImpl<E extends CommonODataEntity>
   }
 
   @Override
-  protected MediaEntityCreateStreamManager<E> getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new MediaEntityCreateStreamManagerImpl(media);
+  protected MediaEntityCreateStreamManager<E> getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new MediaEntityCreateStreamManagerImpl(media);
     }
-    return (MediaEntityCreateStreamManager<E>) streamManager;
+    return (MediaEntityCreateStreamManager<E>) payloadManager;
   }
 
   /**

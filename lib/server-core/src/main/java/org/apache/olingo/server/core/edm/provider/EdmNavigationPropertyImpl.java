@@ -39,7 +39,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
   private List<EdmReferentialConstraint> referentialConstraints;
 
   public EdmNavigationPropertyImpl(
-          final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
+      final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
 
     super(edm, navigationProperty.getName());
 
@@ -93,7 +93,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
           referentialConstraints.add(
-                  new EdmReferentialConstraintImpl(constraint.getProperty(), constraint.getReferencedProperty()));
+              new EdmReferentialConstraintImpl(constraint.getProperty(), constraint.getReferencedProperty()));
         }
       }
     }
@@ -110,7 +110,7 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNavigationProperty {
     // TODO: implement
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
+
   @Override
   public List<EdmAnnotation> getAnnotations() {
     // TODO: implement

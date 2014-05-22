@@ -18,9 +18,8 @@
  */
 package org.apache.olingo.client.api.communication.request.v4;
 
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
-import org.apache.olingo.client.api.communication.request.batch.ODataRetrieve;
-import org.apache.olingo.client.api.communication.request.batch.v4.ODataOutsideUpdate;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 
 public interface AsyncBatchRequestWrapper extends AsyncRequestWrapper<ODataBatchResponse> {
@@ -33,16 +32,16 @@ public interface AsyncBatchRequestWrapper extends AsyncRequestWrapper<ODataBatch
   ODataChangeset addChangeset();
 
   /**
-   * Gets a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
+   * Adds a retrieve batch item instance. A retrieve item can be submitted embedded into a batch request only.
    *
-   * @return ODataRetrieve instance.
+   * @param request retrieve request to batch.
    */
-  ODataRetrieve addRetrieve();
+  void addRetrieve(final ODataBatchableRequest request);
 
   /**
-   * Gets an outside change batch item instance. An outside item can be submitted embedded into a batch request only.
+   * Adds an outside change batch item instance. An outside item can be submitted embedded into a batch request only.
    *
-   * @return ODataOutsideUpdate instance.
+   * @param request update request to batch outside a changeset.
    */
-  ODataOutsideUpdate addOutsideUpdate();
+  void addOutsideUpdate(final ODataBatchableRequest request);
 }

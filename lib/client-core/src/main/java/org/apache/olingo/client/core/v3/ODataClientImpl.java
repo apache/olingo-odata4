@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.cud.v3.CUDRequestFacto
 import org.apache.olingo.client.api.communication.request.cud.v3.UpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.v3.RetrieveRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.commons.api.op.ODataSerializer;
 import org.apache.olingo.client.api.op.v3.ODataDeserializer;
 import org.apache.olingo.client.api.op.v3.ODataBinder;
@@ -40,7 +39,6 @@ import org.apache.olingo.client.core.communication.request.batch.v3.BatchRequest
 import org.apache.olingo.client.core.communication.request.cud.v3.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.v3.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.v3.RetrieveRequestFactoryImpl;
-import org.apache.olingo.client.core.communication.request.streamed.StreamedRequestFactoryImpl;
 import org.apache.olingo.client.core.op.impl.v3.ODataBinderImpl;
 import org.apache.olingo.client.core.op.impl.v3.ODataDeserializerImpl;
 import org.apache.olingo.client.core.op.impl.v3.ODataReaderImpl;
@@ -55,7 +53,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   private static final long serialVersionUID = -1655712193243609209L;
 
-  private final Configuration configuration = new ConfigurationImpl();
+  protected final Configuration configuration = new ConfigurationImpl();
 
   private final FilterFactory filterFactory = new FilterFactoryImpl(getServiceVersion());
 
@@ -73,8 +71,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
 
   private final CUDRequestFactory cudReqFact = new CUDRequestFactoryImpl(this);
 
-  private final StreamedRequestFactory streamedReqFact = new StreamedRequestFactoryImpl(this);
-
   private final InvokeRequestFactory invokeReqFact = new InvokeRequestFactoryImpl(this);
 
   private final BatchRequestFactory batchReqFact = new BatchRequestFactoryImpl(this);
@@ -85,7 +81,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public ODataHeaders getVersionHeaders() {
+  public ODataHeaders newVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
     odataHeaders.setHeader(HeaderName.minDataServiceVersion, ODataServiceVersion.V30.toString());
     odataHeaders.setHeader(HeaderName.maxDataServiceVersion, ODataServiceVersion.V30.toString());
@@ -99,7 +95,7 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   }
 
   @Override
-  public URIBuilder getURIBuilder(final String serviceRoot) {
+  public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getServiceVersion(), configuration, serviceRoot);
   }
 
@@ -142,11 +138,6 @@ public class ODataClientImpl extends AbstractODataClient<UpdateType> implements 
   @Override
   public CUDRequestFactory getCUDRequestFactory() {
     return cudReqFact;
-  }
-
-  @Override
-  public StreamedRequestFactory getStreamedRequestFactory() {
-    return streamedReqFact;
   }
 
   @Override

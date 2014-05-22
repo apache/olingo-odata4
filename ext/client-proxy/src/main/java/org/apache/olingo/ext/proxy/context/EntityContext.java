@@ -101,9 +101,7 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @param entity entity to be detached.
    */
   public void detach(final EntityInvocationHandler entity) {
-    if (searchableEntities.containsKey(entity.getUUID())) {
-      searchableEntities.remove(entity.getUUID());
-    }
+    searchableEntities.remove(entity.getUUID());
     allAttachedEntities.remove(entity);
   }
 
@@ -178,7 +176,8 @@ public class EntityContext implements Iterable<AttachedEntity> {
    * @return <tt>true</tt> if is attached; <tt>false</tt> otherwise.
    */
   public boolean isAttached(final EntityInvocationHandler entity) {
-    return allAttachedEntities.containsKey(entity)
+    return entity == null // avoid attach for null entities (coming from complexes created from container ...)
+            || allAttachedEntities.containsKey(entity)
             || (entity.getUUID().getKey() != null && searchableEntities.containsKey(entity.getUUID()));
   }
 

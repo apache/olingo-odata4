@@ -49,7 +49,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void mergeAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
     final ODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -60,7 +60,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void mergeAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
     final ODataEntity merge = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -71,7 +71,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void patchAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
     final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -82,7 +82,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void patchAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     final String etag = getETag(uri);
     final ODataEntity patch = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);
@@ -93,7 +93,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void replaceAsAtom() {
     final ODataPubFormat format = ODataPubFormat.ATOM;
-    final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity changes = read(format, client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -101,7 +101,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   @Test
   public void replaceAsJSON() {
     final ODataPubFormat format = ODataPubFormat.JSON_FULL_METADATA;
-    final ODataEntity changes = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity changes = read(format, client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Car").appendKeySegment(14).build());
     updateEntityDescription(format, changes, UpdateType.REPLACE);
   }
@@ -117,7 +117,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   }
 
   public void patchLink(final ODataPubFormat format) throws EdmPrimitiveTypeException {
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).build();
 
     final ODataEntity patch = client.getObjectFactory().
@@ -127,14 +127,14 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     // Update to CustomerInfo(12)
     // ---------------------------------------
-    URI customerInfoURI = client.getURIBuilder(getServiceRoot()).
+    URI customerInfoURI = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("CustomerInfo").appendKeySegment(12).build();
 
     patch.addLink(client.getObjectFactory().newEntityNavigationLink("Info", customerInfoURI));
 
     update(UpdateType.PATCH, patch, format, null);
 
-    customerInfoURI = client.getURIBuilder(getServiceRoot()).
+    customerInfoURI = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendNavigationSegment("Info").build();
 
     ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(customerInfoURI);
@@ -151,7 +151,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     // ---------------------------------------
     patch.getNavigationLinks().clear();
 
-    customerInfoURI = client.getURIBuilder(getServiceRoot()).
+    customerInfoURI = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("CustomerInfo").appendKeySegment(11).build();
     read(format, customerInfoURI);
 
@@ -159,7 +159,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
     update(UpdateType.PATCH, patch, format, null);
 
-    customerInfoURI = client.getURIBuilder(getServiceRoot()).
+    customerInfoURI = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Customer").appendKeySegment(-10).appendNavigationSegment("Info").build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(customerInfoURI);
@@ -178,7 +178,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("FromUsername", "1");
     multiKey.put("MessageId", -10);
-    final ODataEntity message = read(format, client.getURIBuilder(getServiceRoot()).
+    final ODataEntity message = read(format, client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Message").appendKeySegment(multiKey).build());
     message.getAssociationLinks().clear();
     message.getNavigationLinks().clear();
@@ -222,7 +222,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void concurrentModification() {
-    final URI uri = client.getURIBuilder(getServiceRoot()).
+    final URI uri = client.newURIBuilder(getServiceRoot()).
             appendEntitySetSegment("Product").appendKeySegment(-10).build();
     String etag = getETag(uri);
     final ODataEntity product = client.getObjectFactory().newEntity(TEST_PRODUCT_TYPE);

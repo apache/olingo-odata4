@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -27,6 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -58,7 +61,7 @@ import javax.xml.datatype.Duration;
         isAbstract = false,
         baseType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
 public interface CreditCardPI 
-  extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument {
+  extends Annotatable,org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument {
 
     
     @Key
@@ -289,4 +292,60 @@ public interface CreditCardPI
     
 
 
+
+        @Override
+        Annotations annotations();
+
+    interface Annotations            extends org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.Annotations{
+
+            @AnnotationsForProperty(name = "PaymentInstrumentID",
+                   type = "Edm.Int32")
+        Annotatable getPaymentInstrumentIDAnnotations();
+
+            @AnnotationsForProperty(name = "FriendlyName",
+                   type = "Edm.String")
+        Annotatable getFriendlyNameAnnotations();
+
+            @AnnotationsForProperty(name = "CreatedDate",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getCreatedDateAnnotations();
+
+            @AnnotationsForProperty(name = "CardNumber",
+                   type = "Edm.String")
+        Annotatable getCardNumberAnnotations();
+
+            @AnnotationsForProperty(name = "CVV",
+                   type = "Edm.String")
+        Annotatable getCVVAnnotations();
+
+            @AnnotationsForProperty(name = "HolderName",
+                   type = "Edm.String")
+        Annotatable getHolderNameAnnotations();
+
+            @AnnotationsForProperty(name = "Balance",
+                   type = "Edm.Double")
+        Annotatable getBalanceAnnotations();
+
+            @AnnotationsForProperty(name = "ExperationDate",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getExperationDateAnnotations();
+
+    
+    
+        @AnnotationsForNavigationProperty(name = "TheStoredPI", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
+        Annotatable getTheStoredPIAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "BillingStatements", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Statement")
+        Annotatable getBillingStatementsAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "BackupStoredPI", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.StoredPI")
+        Annotatable getBackupStoredPIAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "CreditRecords", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord")
+        Annotatable getCreditRecordsAnnotations();
+        }
 }

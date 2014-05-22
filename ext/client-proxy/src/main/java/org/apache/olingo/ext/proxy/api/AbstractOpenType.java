@@ -25,6 +25,8 @@ public interface AbstractOpenType extends Serializable {
 
   void addAdditionalProperty(String name, Object value);
 
+  void removeAdditionalProperty(String name);
+
   Object getAdditionalProperty(String name);
 
   Collection<String> getAdditionalPropertyNames();

@@ -33,7 +33,6 @@ public abstract class AbstractODataClient<UT extends CommonUpdateType> implement
   @Override
   public ODataPreferences newPreferences() {
     return new ODataPreferences(getServiceVersion());
-
   }
 
   @Override

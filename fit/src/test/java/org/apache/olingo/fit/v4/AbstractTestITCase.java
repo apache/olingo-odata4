@@ -131,7 +131,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     order.getProperties().add(orderShelfLifes);
 
     final ODataEntityCreateRequest<ODataEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
-            getClient().getURIBuilder(testStaticServiceRootURL).
+            getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").build(), order);
     req.setFormat(format);
     final ODataEntity created = req.execute().getBody();
@@ -139,7 +139,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
 
     final URI deleteURI = created.getEditLink() == null
-            ? getClient().getURIBuilder(testStaticServiceRootURL).
+            ? getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(id).build()
             : created.getEditLink();
     final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);

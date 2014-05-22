@@ -49,7 +49,7 @@ public class RetrieveRequestFactoryImpl extends AbstractRetrieveRequestFactory
   @Override
   public XMLMetadataRequest getXMLMetadataRequest(final String serviceRoot) {
     return new XMLMetadataRequestImpl(((ODataClient) client),
-            client.getURIBuilder(serviceRoot).appendMetadataSegment().build());
+            client.newURIBuilder(serviceRoot).appendMetadataSegment().build());
   }
 
   @Override

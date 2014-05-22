@@ -54,7 +54,7 @@ public class EdmTechProvider extends EdmProvider {
   private final TypeDefinitionProvider typeDefinitionProvider;
 
   public EdmTechProvider() {
-    containerProvider = new ContainerProvider();
+    containerProvider = new ContainerProvider(this);
     entityTypeProvider = new EntityTypeProvider();
     complexTypeProvider = new ComplexTypeProvider();
     enumTypeProvider = new EnumTypeProvider();

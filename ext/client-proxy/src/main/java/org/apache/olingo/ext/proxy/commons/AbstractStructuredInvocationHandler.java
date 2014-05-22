@@ -24,8 +24,12 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
@@ -33,6 +37,7 @@ import org.apache.olingo.commons.api.domain.ODataInlineEntity;
 import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinked;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
@@ -58,6 +63,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected Object internal;
 
+  private final Map<String, AnnotatableInvocationHandler> propAnnotatableHandlers =
+          new HashMap<String, AnnotatableInvocationHandler>();
+
+  private final Map<String, AnnotatableInvocationHandler> navPropAnnotatableHandlers =
+          new HashMap<String, AnnotatableInvocationHandler>();
+
   protected AbstractStructuredInvocationHandler(
           final Class<?> typeRef,
           final Object internal,
@@ -66,7 +77,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     super(containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = EntityInvocationHandler.class.cast(this);
+    this.entityHandler = null;
   }
 
   protected AbstractStructuredInvocationHandler(
@@ -77,15 +88,25 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     super(entityHandler == null ? null : entityHandler.containerHandler);
     this.internal = internal;
     this.typeRef = typeRef;
-    this.entityHandler = entityHandler;
+    // prevent memory leak
+    this.entityHandler = entityHandler == this ? null : entityHandler;
+  }
+
+  public Object getInternal() {
+    return internal;
   }
 
   public EntityInvocationHandler getEntityHandler() {
-    return entityHandler;
+    return entityHandler == null
+            ? this instanceof EntityInvocationHandler
+            ? EntityInvocationHandler.class.cast(this)
+            : null
+            : entityHandler;
   }
 
   public void setEntityHandler(final EntityInvocationHandler entityHandler) {
-    this.entityHandler = entityHandler;
+    // prevents memory leak
+    this.entityHandler = entityHandler == this ? null : entityHandler;
   }
 
   public Class<?> getTypeRef() {
@@ -102,14 +123,21 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              OperationInvocationHandler.getInstance(entityHandler));
+              OperationInvocationHandler.getInstance(getEntityHandler()));
     } else if ("factory".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();
 
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {returnType},
-              ComplexFactoryInvocationHandler.getInstance(entityHandler, this));
+              ComplexFactoryInvocationHandler.getInstance(getEntityHandler(), this));
+    } else if ("annotations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
+      final Class<?> returnType = method.getReturnType();
+
+      return Proxy.newProxyInstance(
+              Thread.currentThread().getContextClassLoader(),
+              new Class<?>[] {returnType},
+              AnnotatationsInvocationHandler.getInstance(getEntityHandler(), this));
     } else if (method.getName().startsWith("get")) {
       // Assumption: for each getter will always exist a setter and viceversa.
       // get method annotation and check if it exists as expected
@@ -127,7 +155,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         }
       } else {
         // if the getter refers to a property .... get property from wrapped entity
-        res = getPropertyValue(property, getter.getGenericReturnType());
+        res = getPropertyValue(property.name(), getter.getGenericReturnType());
       }
 
       // attach the current handler
@@ -163,8 +191,8 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach() {
-    if (entityHandler != null && !getContext().entityContext().isAttached(entityHandler)) {
-      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.ATTACHED);
+    if (entityHandler != null && !getContext().entityContext().isAttached(getEntityHandler())) {
+      getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.ATTACHED);
     }
   }
 
@@ -173,12 +201,12 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void attach(final AttachedEntityStatus status, final boolean override) {
-    if (getContext().entityContext().isAttached(entityHandler)) {
+    if (getContext().entityContext().isAttached(getEntityHandler())) {
       if (override) {
-        getContext().entityContext().setStatus(entityHandler, status);
+        getContext().entityContext().setStatus(getEntityHandler(), status);
       }
     } else {
-      getContext().entityContext().attach(entityHandler, status);
+      getContext().entityContext().attach(getEntityHandler(), status);
     }
   }
 
@@ -206,8 +234,9 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               null,
               ((ODataInlineEntity) link).getEntity(),
               property.targetContainer(),
-              getClient().getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+              getClient().newURIBuilder().appendEntitySetSegment(property.targetEntitySet()).build(),
               type,
+              null,
               false);
     } else if (link instanceof ODataInlineEntitySet) {
       // return entity set
@@ -233,14 +262,18 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       } else if (AbstractEntitySet.class.isAssignableFrom(type)) {
         navPropValue = getEntitySetProxy(type, uri);
       } else {
-        final ODataRetrieveResponse<CommonODataEntity> res =
-                getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute();
+        final ODataEntityRequest<CommonODataEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
+        if (getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0) {
+          req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+        }
+
+        final ODataRetrieveResponse<CommonODataEntity> res = req.execute();
 
         navPropValue = getEntityProxy(
                 uri,
                 res.getBody(),
                 property.targetContainer(),
-                getClient().getURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
+                getClient().newURIBuilder(serviceRoot).appendEntitySetSegment(property.targetEntitySet()).build(),
                 type,
                 res.getETag(),
                 true);
@@ -250,25 +283,16 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     return navPropValue;
   }
 
-  protected abstract Object getPropertyValue(final String name, final Type type);
-
-  private Object getPropertyValue(final Property property, final Type type) {
-    return getPropertyValue(property.name(), type);
-  }
-
-  public void addAdditionalProperty(final String name, final Object value) {
-    addPropertyChanges(name, value);
-    attach(AttachedEntityStatus.CHANGED);
-  }
-
   public Object getAdditionalProperty(final String name) {
     return getPropertyValue(name, null);
   }
 
+  public abstract Collection<String> getAdditionalPropertyNames();
+
   private void setNavigationPropertyValue(final NavigationProperty property, final Object value) {
     // 1) attach source entity
-    if (!getContext().entityContext().isAttached(entityHandler)) {
-      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (!getContext().entityContext().isAttached(getEntityHandler())) {
+      getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
     }
 
     // 2) attach the target entity handlers
@@ -294,11 +318,31 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     addLinkChanges(property, value);
   }
 
+  public Map<String, AnnotatableInvocationHandler> getPropAnnotatableHandlers() {
+    return propAnnotatableHandlers;
+  }
+
+  public void putPropAnnotatableHandler(final String propName, final AnnotatableInvocationHandler handler) {
+    propAnnotatableHandlers.put(propName, handler);
+  }
+
+  public Map<String, AnnotatableInvocationHandler> getNavPropAnnotatableHandlers() {
+    return navPropAnnotatableHandlers;
+  }
+
+  public void putNavPropAnnotatableHandler(final String navPropName, final AnnotatableInvocationHandler handler) {
+    navPropAnnotatableHandlers.put(navPropName, handler);
+  }
+
   protected abstract void setPropertyValue(final Property property, final Object value);
 
-  protected abstract void addPropertyChanges(final String name, final Object value);
-
   protected abstract void addLinkChanges(final NavigationProperty navProp, final Object value);
+
+  protected abstract Object getPropertyValue(final String name, final Type type);
+
+  public abstract void addAdditionalProperty(final String name, final Object value);
+
+  public abstract void removeAdditionalProperty(final String name);
 
   public abstract boolean isChanged();
 }

@@ -43,7 +43,7 @@ import org.junit.Test;
 public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
   private void retrievePropertyTest(final ODataFormat format, String entitySegment, String structuralSegment) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment(entitySegment).appendPropertySegment(structuralSegment);
     final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
             getPropertyRequest(uriBuilder.build());
@@ -209,7 +209,7 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigationMediaLink() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());
@@ -233,7 +233,7 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigationMediaLinkInvalidQuery() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photo");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());
@@ -257,7 +257,7 @@ public class PropertyRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void navigationMediaLinkInvalidFormat() {
-    final URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendNavigationSegment("Product").appendKeySegment(-7).appendLinksSegment("Photos");
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
             getEntitySetRequest(uriBuilder.build());

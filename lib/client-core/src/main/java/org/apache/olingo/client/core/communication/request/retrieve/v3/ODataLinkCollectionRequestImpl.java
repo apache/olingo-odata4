@@ -45,7 +45,7 @@ public class ODataLinkCollectionRequestImpl extends AbstractODataRetrieveRequest
    */
   ODataLinkCollectionRequestImpl(final ODataClient odataClient, final URI targetURI, final String linkName) {
     super(odataClient, ODataFormat.class,
-            odataClient.getURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
+            odataClient.newURIBuilder(targetURI.toASCIIString()).appendLinksSegment(linkName).build());
   }
 
   /**

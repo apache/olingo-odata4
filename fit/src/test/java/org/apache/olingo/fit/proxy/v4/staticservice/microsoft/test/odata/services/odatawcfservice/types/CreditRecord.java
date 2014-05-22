@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -27,6 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -57,7 +60,7 @@ import javax.xml.datatype.Duration;
         hasStream = false,
         isAbstract = false)
 public interface CreditRecord 
-  extends Serializable {
+  extends Annotatable,Serializable {
 
     
     @Key
@@ -156,4 +159,27 @@ public interface CreditRecord
 
 
 
+
+        Annotations annotations();
+
+    interface Annotations {
+
+            @AnnotationsForProperty(name = "CreditRecordID",
+                   type = "Edm.Int32")
+        Annotatable getCreditRecordIDAnnotations();
+
+            @AnnotationsForProperty(name = "IsGood",
+                   type = "Edm.Boolean")
+        Annotatable getIsGoodAnnotations();
+
+            @AnnotationsForProperty(name = "Reason",
+                   type = "Edm.String")
+        Annotatable getReasonAnnotations();
+
+            @AnnotationsForProperty(name = "CreatedDate",
+                   type = "Edm.DateTimeOffset")
+        Annotatable getCreatedDateAnnotations();
+
+    
+        }
 }

@@ -53,7 +53,7 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   }
 
   private ODataEntity readRow(final ODataPubFormat format, final String uuid) {
-    final URIBuilder builder = getClient().getURIBuilder(testOpenTypeServiceRootURL).
+    final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
             appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(format, builder.build());
   }
@@ -146,13 +146,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newComplexProperty("aContact", contactDetails));
 
     final ODataEntityCreateRequest<ODataEntity> createReq = getClient().getCUDRequestFactory().
-            getEntityCreateRequest(getClient().getURIBuilder(testOpenTypeServiceRootURL).
+            getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
                     appendEntitySetSegment("RowIndex").build(), rowIndex);
     createReq.setFormat(format);
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
-    final URIBuilder builder = getClient().getURIBuilder(testOpenTypeServiceRootURL).
+    final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
             appendEntitySetSegment("RowIndex").appendKeySegment(id);
     rowIndex = read(format, builder.build());
     assertNotNull(rowIndex);

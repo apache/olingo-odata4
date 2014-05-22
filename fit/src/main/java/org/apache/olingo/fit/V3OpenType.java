@@ -55,7 +55,7 @@ public class V3OpenType extends V3Services {
 
   public V3OpenType() throws Exception {
     super(new Metadata(FSManager.instance(ODataServiceVersion.V30).
-            readFile("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
+            readRes("openType" + StringUtils.capitalize(Constants.get(ODataServiceVersion.V30, ConstantKey.METADATA)),
             Accept.XML), ODataServiceVersion.V30));
   }
 

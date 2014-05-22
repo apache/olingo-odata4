@@ -18,8 +18,12 @@
  */
 package org.apache.olingo.client.api.communication.request.cud;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
@@ -119,4 +123,41 @@ public interface CommonCUDRequestFactory<UT extends CommonUpdateType> extends Se
    * @return new ODataDeleteRequest instance.
    */
   ODataDeleteRequest getDeleteRequest(URI targetURI);
+
+  /**
+   * Gets a media entity create request object instance.
+   * <br/>
+   * Use this kind of request to create a new media entity.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param targetURI entity set URI.
+   * @param media entity blob to be created.
+   * @return new ODataMediaEntityCreateRequest instance.
+   */
+  <E extends CommonODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+          URI targetURI, InputStream media);
+
+  /**
+   * Gets a stream update request object instance.
+   * <br/>
+   * Use this kind of request to update a named stream property.
+   *
+   * @param targetURI target URI.
+   * @param stream stream to be updated.
+   * @return new ODataStreamUpdateRequest instance.
+   */
+  ODataStreamUpdateRequest getStreamUpdateRequest(URI targetURI, InputStream stream);
+
+  /**
+   * Gets a media entity update request object instance.
+   * <br/>
+   * Use this kind of request to update a media entity.
+   *
+   * @param <E> concrete ODataEntity implementation
+   * @param editURI media entity edit link URI.
+   * @param media entity blob to be updated.
+   * @return new ODataMediaEntityUpdateRequest instance.
+   */
+  <E extends CommonODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+          URI editURI, InputStream media);
 }

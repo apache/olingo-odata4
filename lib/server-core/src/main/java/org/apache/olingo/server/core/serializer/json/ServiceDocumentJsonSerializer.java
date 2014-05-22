@@ -52,7 +52,18 @@ public class ServiceDocumentJsonSerializer {
   public void writeServiceDocument(final JsonGenerator gen) throws JsonGenerationException, IOException {
     gen.writeStartObject();
 
-    Object metadataUri = serviceRoot + "/" + METADATA;
+    Object metadataUri;
+
+    if (serviceRoot == null) {
+      metadataUri = METADATA;
+    } else {
+      if (serviceRoot.endsWith("/")) {
+        metadataUri = serviceRoot + METADATA;
+      } else {
+        metadataUri = serviceRoot + "/" + METADATA;
+      }
+    }
+    
     gen.writeObjectField(ODATA_CONTEXT, metadataUri);
     gen.writeArrayFieldStart(VALUE);
 

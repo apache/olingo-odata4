@@ -19,6 +19,8 @@
 package org.apache.olingo.client.api;
 
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
+import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
+import org.apache.olingo.client.api.uri.CommonURIBuilder;
 import org.apache.olingo.commons.api.edm.Edm;
 
 /**
@@ -47,4 +49,9 @@ public interface CommonEdmEnabledODataClient<UT extends CommonUpdateType> extend
    * @return Edm
    */
   Edm getCachedEdm();
+
+  CommonURIBuilder<?> newURIBuilder();
+
+  @Override
+  EdmEnabledInvokeRequestFactory getInvokeRequestFactory();
 }

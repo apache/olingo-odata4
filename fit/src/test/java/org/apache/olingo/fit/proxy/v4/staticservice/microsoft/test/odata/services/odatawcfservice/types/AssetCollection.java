@@ -20,6 +20,7 @@ package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.servic
 
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.ext.proxy.api.AbstractEntityCollection;
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
@@ -43,4 +44,8 @@ import java.util.Calendar;
 import javax.xml.datatype.Duration;
 
 public interface AssetCollection extends AbstractEntityCollection<Asset> {
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

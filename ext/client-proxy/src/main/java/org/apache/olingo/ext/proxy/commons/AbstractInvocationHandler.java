@@ -35,17 +35,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
+import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
+import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.CommonODataEntitySet;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
+import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.context.AttachedEntityStatus;
 import org.apache.olingo.ext.proxy.context.Context;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 import org.apache.olingo.ext.proxy.utils.CoreUtils;
@@ -67,11 +73,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
   }
 
   protected CommonEdmEnabledODataClient<?> getClient() {
-    return factory == null ? containerHandler.getClient() : factory.getClient();
+    return factory == null ? containerHandler.getFactory().getClient() : factory.getClient();
   }
 
   protected Context getContext() {
-    return factory == null ? containerHandler.getContext() : factory.getContext();
+    return factory == null ? containerHandler.getFactory().getContext() : factory.getContext();
   }
 
   protected boolean isSelfMethod(final Method method, final Object[] args) {
@@ -105,7 +111,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     for (CommonODataEntity entityFromSet : entitySet.getEntities()) {
       items.add(getEntityProxy(
-              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, checkInTheContext));
+              entityFromSet.getEditLink(), entityFromSet, entityContainerName, null, typeRef, null, checkInTheContext));
     }
 
     return Proxy.newProxyInstance(
@@ -130,17 +136,6 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
           final String entityContainerName,
           final URI entitySetURI,
           final Class<?> type,
-          final boolean checkInTheContext) {
-
-    return getEntityProxy(entityURI, entity, entityContainerName, entitySetURI, type, null, checkInTheContext);
-  }
-
-  protected Object getEntityProxy(
-          final URI entityURI,
-          final CommonODataEntity entity,
-          final String entityContainerName,
-          final URI entitySetURI,
-          final Class<?> type,
           final String eTag,
           final boolean checkInTheContext) {
 
@@ -154,12 +149,33 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     if (checkInTheContext && getContext().entityContext().isAttached(handler)) {
       handler = getContext().entityContext().getEntity(handler.getUUID());
+    } else {
+      handler.attach(AttachedEntityStatus.ATTACHED, false);
     }
 
     return Proxy.newProxyInstance(
             Thread.currentThread().getContextClassLoader(),
             new Class<?>[] {type},
             handler);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <RES extends ODataInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
+    Class<RES> result;
+
+    if (returnType == null) {
+      result = (Class<RES>) ODataNoContent.class;
+    } else {
+      if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
+        result = (Class<RES>) CommonODataEntitySet.class;
+      } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
+        result = (Class<RES>) CommonODataEntity.class;
+      } else {
+        result = (Class<RES>) CommonODataProperty.class;
+      }
+    }
+
+    return result;
   }
 
   protected Object invokeOperation(
@@ -199,7 +215,11 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     // 3. invoke
     final ODataInvokeResult result = getClient().getInvokeRequestFactory().getInvokeRequest(
-            target, edmOperation, parameterValues).execute().getBody();
+            edmOperation instanceof EdmFunction ? HttpMethod.GET : HttpMethod.POST,
+            target,
+            getResultReference(edmOperation.getReturnType()),
+            parameterValues).
+            execute().getBody();
 
     // 4. process invoke result
     if (StringUtils.isBlank(annotation.returnType())) {
@@ -227,11 +247,15 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
                 null,
                 null,
                 method.getReturnType(),
+                null,
                 false);
       }
     } else {
-      return CoreUtils.getValueFromProperty(
-              getClient(), (CommonODataProperty) result, method.getGenericReturnType(), null);
+      final CommonODataProperty property = (CommonODataProperty) result;
+      return property == null || property.hasNullValue()
+              ? null
+              : CoreUtils.getObjectFromODataValue(
+                      getClient(), property.getValue(), method.getGenericReturnType(), null);
     }
   }
 

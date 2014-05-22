@@ -50,7 +50,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   private void read(final ODataPubFormat format) {
-    final URIBuilder uriBuilder = client.getURIBuilder(testKeyAsSegmentServiceRootURL).
+    final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101);
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -94,7 +94,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("middle"));
     changes.getProperties().add(middleName);
 
-    final URI uri = getClient().getURIBuilder(testKeyAsSegmentServiceRootURL).
+    final URI uri = getClient().newURIBuilder(testKeyAsSegmentServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(5).build();
     final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
             getEntityUpdateRequest(uri, UpdateType.PATCH, changes);

@@ -61,7 +61,7 @@ public abstract class EdmOperationImpl extends AbstractEdmOperation {
   }
 
   protected EdmOperationImpl(final Edm edm, final FullQualifiedName name, final Operation operation,
-          final EdmTypeKind kind) {
+      final EdmTypeKind kind) {
 
     super(edm, name, kind);
     this.operation = operation;

@@ -40,28 +40,26 @@ public final class EntityContainerFactory<C extends CommonEdmEnabledODataClient<
   private static final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
 
   @SuppressWarnings("unchecked")
-  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(
-          final C client, final String serviceRoot) {
-
-    if (!FACTORY_PER_SERVICEROOT.containsKey(serviceRoot)) {
+  private static <C extends CommonEdmEnabledODataClient<?>> EntityContainerFactory<C> getInstance(final C client) {
+    if (!FACTORY_PER_SERVICEROOT.containsKey(client.getServiceRoot())) {
+      client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
       final EntityContainerFactory<C> instance = new EntityContainerFactory<C>(client);
-      FACTORY_PER_SERVICEROOT.put(serviceRoot, instance);
+      FACTORY_PER_SERVICEROOT.put(client.getServiceRoot(), instance);
     }
-    client.getConfiguration().setDefaultPubFormat(ODataPubFormat.JSON_FULL_METADATA);
 
-    return (EntityContainerFactory<C>) FACTORY_PER_SERVICEROOT.get(serviceRoot);
+    return (EntityContainerFactory<C>) FACTORY_PER_SERVICEROOT.get(client.getServiceRoot());
   }
 
   public static EntityContainerFactory<org.apache.olingo.client.api.v3.EdmEnabledODataClient> getV3(
           final String serviceRoot) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot), serviceRoot);
+    return getInstance(ODataClientFactory.getEdmEnabledV3(serviceRoot));
   }
 
   public static EntityContainerFactory<org.apache.olingo.client.api.v4.EdmEnabledODataClient> getV4(
           final String serviceRoot) {
 
-    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot), serviceRoot);
+    return getInstance(ODataClientFactory.getEdmEnabledV4(serviceRoot));
   }
 
   private final CommonEdmEnabledODataClient<?> client;

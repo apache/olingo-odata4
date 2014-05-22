@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -27,6 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -57,7 +60,7 @@ import javax.xml.datatype.Duration;
         hasStream = false,
         isAbstract = false)
 public interface Account 
-  extends Serializable {
+  extends Annotatable,Serializable {
 
     
     @Key
@@ -206,5 +209,40 @@ public interface Account
                    type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo newAccountInfo();
 
+        }
+
+        Annotations annotations();
+
+    interface Annotations {
+
+            @AnnotationsForProperty(name = "AccountID",
+                   type = "Edm.Int32")
+        Annotatable getAccountIDAnnotations();
+
+            @AnnotationsForProperty(name = "Country",
+                   type = "Edm.String")
+        Annotatable getCountryAnnotations();
+
+            @AnnotationsForProperty(name = "AccountInfo",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo")
+        Annotatable getAccountInfoAnnotations();
+
+    
+    
+        @AnnotationsForNavigationProperty(name = "MyGiftCard", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.GiftCard")
+        Annotatable getMyGiftCardAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "MyPaymentInstruments", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
+        Annotatable getMyPaymentInstrumentsAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "ActiveSubscriptions", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription")
+        Annotatable getActiveSubscriptionsAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "AvailableSubscriptionTemplatess", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Subscription")
+        Annotatable getAvailableSubscriptionTemplatessAnnotations();
         }
 }

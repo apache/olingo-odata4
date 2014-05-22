@@ -40,7 +40,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   private void read(final ODataPubFormat format) {
     // 1. entity set
-    URIBuilder uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").
             appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.ODataWCFService.Customer");
     ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -52,7 +52,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     }
 
     // 2. contained entity set
-    uriBuilder = client.getURIBuilder(testStaticServiceRootURL).
+    uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Accounts").appendKeySegment(101).
             appendNavigationSegment("MyPaymentInstruments").
             appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI");
@@ -112,7 +112,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
             getEntityCreateRequest(
-                    client.getURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People").build(),
+                    client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People").build(),
                     customer);
     createReq.setFormat(format);
 
@@ -120,7 +120,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     assertEquals(201, createRes.getStatusCode());
 
     final ODataEntityRequest<ODataEntity> fetchReq = client.getRetrieveRequestFactory().
-            getEntityRequest(client.getURIBuilder(testStaticServiceRootURL).
+            getEntityRequest(client.newURIBuilder(testStaticServiceRootURL).
                     appendEntitySetSegment("People").appendKeySegment(976).build());
     fetchReq.setFormat(format);
 

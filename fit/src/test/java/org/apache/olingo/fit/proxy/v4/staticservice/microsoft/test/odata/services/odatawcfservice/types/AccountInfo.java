@@ -18,10 +18,14 @@
  */
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.*;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.*;
 
@@ -47,7 +51,7 @@ import javax.xml.datatype.Duration;
         isOpenType = true,
         isAbstract = false)
 public interface AccountInfo 
-    extends Serializable {
+    extends AbstractOpenType,Serializable {
 
 
     @Property(name = "FirstName", 
@@ -85,4 +89,19 @@ public interface AccountInfo
     
 
 
+
+        Annotations annotations();
+
+    interface Annotations {
+
+            @AnnotationsForProperty(name = "FirstName",
+                   type = "Edm.String")
+        Annotatable getFirstNameAnnotations();
+
+            @AnnotationsForProperty(name = "LastName",
+                   type = "Edm.String")
+        Annotatable getLastNameAnnotations();
+
+    
+        }
 }

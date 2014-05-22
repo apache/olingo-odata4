@@ -175,7 +175,7 @@ public class EdmServiceMetadataImpl implements EdmServiceMetadata {
             if (functionImports != null) {
               for (FunctionImport functionImport : functionImports) {
                 functionImportInfos.add(
-                        new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
+                    new EdmFunctionImportInfoImpl(entityContainer.getName(), functionImport.getName()));
               }
             }
           }

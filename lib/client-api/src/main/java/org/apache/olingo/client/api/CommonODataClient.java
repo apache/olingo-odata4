@@ -25,7 +25,6 @@ import org.apache.olingo.client.api.communication.request.cud.CommonCUDRequestFa
 import org.apache.olingo.client.api.communication.request.cud.CommonUpdateType;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.CommonRetrieveRequestFactory;
-import org.apache.olingo.client.api.communication.request.streamed.StreamedRequestFactory;
 import org.apache.olingo.client.api.op.ClientODataDeserializer;
 import org.apache.olingo.commons.api.domain.CommonODataObjectFactory;
 import org.apache.olingo.client.api.op.CommonODataBinder;
@@ -45,13 +44,13 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
 
   ODataServiceVersion getServiceVersion();
 
-  ODataHeaders getVersionHeaders();
+  ODataHeaders newVersionHeaders();
 
   CommonConfiguration getConfiguration();
 
   ODataPreferences newPreferences();
 
-  CommonURIBuilder<?> getURIBuilder(String serviceRoot);
+  CommonURIBuilder<?> newURIBuilder(String serviceRoot);
 
   CommonFilterFactory getFilterFactory();
 
@@ -70,8 +69,6 @@ public interface CommonODataClient<UT extends CommonUpdateType> {
   CommonRetrieveRequestFactory getRetrieveRequestFactory();
 
   CommonCUDRequestFactory<UT> getCUDRequestFactory();
-
-  StreamedRequestFactory getStreamedRequestFactory();
 
   InvokeRequestFactory getInvokeRequestFactory();
 

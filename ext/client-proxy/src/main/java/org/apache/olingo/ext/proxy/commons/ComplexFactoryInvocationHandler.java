@@ -78,7 +78,10 @@ class ComplexFactoryInvocationHandler extends AbstractInvocationHandler implemen
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {method.getReturnType()},
-              ComplexInvocationHandler.getInstance(
+              entityHandler == null
+              ? ComplexInvocationHandler.getInstance(
+                      getClient(), property.name(), method.getReturnType(), containerHandler)
+              : ComplexInvocationHandler.getInstance(
                       getClient(), property.name(), method.getReturnType(), entityHandler));
     } else {
       throw new NoSuchMethodException(method.getName());

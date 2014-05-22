@@ -48,6 +48,8 @@ public abstract class AbstractTestITCase {
 
   protected static String testStaticServiceRootURL;
 
+  protected static String testDemoServiceRootURL;
+
   protected static String testKeyAsSegmentServiceRootURL;
 
   protected static String testActionOverloadingServiceRootURL;
@@ -65,6 +67,7 @@ public abstract class AbstractTestITCase {
   @BeforeClass
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
+    testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";
     testKeyAsSegmentServiceRootURL = "http://localhost:9080/stub/StaticService/V40/KeyAsSegment.svc";
     testActionOverloadingServiceRootURL = "http://localhost:9080/stub/StaticService/V40/ActionOverloading.svc";
     testOpenTypeServiceRootURL = "http://localhost:9080/stub/StaticService/V40/OpenType.svc";
@@ -105,7 +108,7 @@ public abstract class AbstractTestITCase {
     assertEquals(orderDate.getTimeInMillis(), actual.getOrderDate().getTimeInMillis());
     assertEquals(BigDecimal.TEN, actual.getShelfLife());
     assertEquals(2, actual.getOrderShelfLifes().size());
-
+    
     container.getOrders().delete(105);
     actual = container.getOrders().get(105);
     assertNull(actual);

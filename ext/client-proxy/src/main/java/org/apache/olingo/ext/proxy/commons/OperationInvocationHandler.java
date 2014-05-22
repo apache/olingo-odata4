@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.olingo.client.api.uri.CommonURIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataOperation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -41,7 +40,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
 import org.apache.olingo.ext.proxy.utils.ClassUtils;
 
-class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
+final class OperationInvocationHandler extends AbstractInvocationHandler implements OperationExecutor {
 
   private static final long serialVersionUID = 2629912294765040027L;
 
@@ -146,8 +145,8 @@ class OperationInvocationHandler extends AbstractInvocationHandler implements Op
       edmOperation = container.getActionImport(operation.name()).getUnboundAction();
     }
 
-    final CommonURIBuilder<?> uriBuilder = getClient().getURIBuilder(getClient().getServiceRoot()).
-            appendOperationCallSegment(URIUtils.operationImportURISegment(container, edmOperation.getName()));
+    final CommonURIBuilder<?> uriBuilder = getClient().newURIBuilder().
+            appendOperationCallSegment(edmOperation.getName());
 
     return new AbstractMap.SimpleEntry<URI, EdmOperation>(uriBuilder.build(), edmOperation);
   }

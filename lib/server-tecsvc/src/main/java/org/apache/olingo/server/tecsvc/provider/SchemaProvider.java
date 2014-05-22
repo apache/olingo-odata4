@@ -23,16 +23,11 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.server.api.edm.provider.Action;
-import org.apache.olingo.server.api.edm.provider.ActionImport;
 import org.apache.olingo.server.api.edm.provider.ComplexType;
-import org.apache.olingo.server.api.edm.provider.EntityContainer;
-import org.apache.olingo.server.api.edm.provider.EntitySet;
 import org.apache.olingo.server.api.edm.provider.EntityType;
 import org.apache.olingo.server.api.edm.provider.EnumType;
 import org.apache.olingo.server.api.edm.provider.Function;
-import org.apache.olingo.server.api.edm.provider.FunctionImport;
 import org.apache.olingo.server.api.edm.provider.Schema;
-import org.apache.olingo.server.api.edm.provider.Singleton;
 
 public class SchemaProvider {
 
@@ -173,76 +168,7 @@ public class SchemaProvider {
     // functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
 
     // EntityContainer
-    EntityContainer container = new EntityContainer();
-    schema.setEntityContainer(container);
-    container.setName(ContainerProvider.nameContainer.getName());
-
-    // EntitySets
-    List<EntitySet> entitySets = new ArrayList<EntitySet>();
-    container.setEntitySets(entitySets);
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCollAllPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixPrimCollComp"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBase"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBase"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBaseTwoKeyTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllKey"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompAllPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompCollAllPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompComp"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompCollComp"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMedia"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyTwoKeyComp"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESInvisible"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESServerSidePaging"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllNullable"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNav"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNav"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBaseTwoKeyNav"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompMixPrimCollComp"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESFourKeyAlias"));
-
-    // Singletons
-    List<Singleton> singletons = new ArrayList<Singleton>();
-    container.setSingletons(singletons);
-    singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SI"));
-    singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SINav"));
-    singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SIMedia"));
-
-    // ActionImports
-    List<ActionImport> actionImports = new ArrayList<ActionImport>();
-    container.setActionImports(actionImports);
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTPrimCollParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTCompParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTCompCollParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTETParam"));
-    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, "AIRTETCollAllPrimParam"));
-
-    // FunctionImports
-    List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
-    container.setFunctionImports(functionImports);
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTInt16"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINInvisibleRTInt16"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINInvisible2RTInt16"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETKeyNav"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETTwoKeyNavParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTStringTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollStringTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTAllPrimTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMixPrimCollCompTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTESMixPrimCollCompTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrim"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTETMedia"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrimParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrim"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollString"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTString"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESTwoKeyNavParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimParam"));
+    schema.setEntityContainer(prov.getEntityContainer());
 
     return schemas;
   }

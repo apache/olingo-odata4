@@ -227,7 +227,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer", false);
 
     final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-            client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").build(), original);
+            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").build(), original);
     createReq.setPrefer(client.newPreferences().returnNoContent());
 
     final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
@@ -243,7 +243,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     }
 
     final ODataDeleteResponse deleteRes = client.getCUDRequestFactory().getDeleteRequest(
-            client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).build()).
+            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).build()).
             execute();
     assertEquals(204, deleteRes.getStatusCode());
   }
@@ -253,7 +253,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     final int id = 2;
     final ODataEntity original = getSampleCustomerProfile(id, "Sample customer for issue 135", false);
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer");
     final ODataEntityCreateRequest<ODataEntity> createReq =
             client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), original);
     createReq.setFormat(ODataPubFormat.JSON_FULL_METADATA);
@@ -267,7 +267,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
       fail(e.getMessage());
     } finally {
       final ODataDeleteResponse deleteRes = client.getCUDRequestFactory().getDeleteRequest(
-              client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).
+              client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Customer").appendKeySegment(id).
               build()).
               execute();
       assertEquals(204, deleteRes.getStatusCode());
@@ -294,7 +294,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
               client.getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
 
       final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().getEntityCreateRequest(
-              client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Order").build(), order);
+              client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Order").build(), order);
       createReq.setFormat(format);
 
       original.addLink(client.getObjectFactory().newEntitySetNavigationLink(
@@ -306,7 +306,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
@@ -348,7 +348,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // now, compare the created one with the actual one and go deeply into the associated customer info.....
     final ODataEntity actual = compareEntities(getServiceRoot(), format, created, id, null);
 
-    final URIBuilder uriBuilder = client.getURIBuilder(getServiceRoot());
+    final URIBuilder uriBuilder = client.newURIBuilder(getServiceRoot());
     uriBuilder.appendEntitySetSegment("Customer").appendKeySegment(id).appendEntitySetSegment("Info");
 
     final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
@@ -464,7 +464,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
                     client.getObjectFactory().newPrimitiveValueBuilder().buildBoolean(false)));
 
     final URIBuilder builder =
-            client.getURIBuilder(getServiceRoot()).appendEntitySetSegment("Message");
+            client.newURIBuilder(getServiceRoot()).appendEntitySetSegment("Message");
     final ODataEntityCreateRequest<ODataEntity> req = client.getCUDRequestFactory().
             getEntityCreateRequest(builder.build(), message);
     req.setFormat(format);

@@ -22,55 +22,27 @@ import java.net.URI;
 import java.util.Map;
 import org.apache.olingo.client.api.v3.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
 import org.apache.olingo.commons.api.domain.ODataInvokeResult;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.client.api.http.HttpMethod;
 import org.apache.olingo.client.core.communication.request.invoke.AbstractInvokeRequestFactory;
-import org.apache.olingo.commons.api.domain.v3.ODataEntity;
-import org.apache.olingo.commons.api.domain.v3.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.v3.ODataProperty;
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmOperation;
-import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
 public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
 
   private static final long serialVersionUID = -659256862901915496L;
 
   private final ODataClient client;
-  
+
   public InvokeRequestFactoryImpl(final ODataClient client) {
     this.client = client;
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          final URI uri, final EdmOperation operation, final Map<String, ODataValue> parameters) {
+          final HttpMethod method, final URI uri, final Class<RES> resultRef,
+          final Map<String, ODataValue> parameters) {
 
-    final HttpMethod method = operation instanceof EdmAction
-            ? HttpMethod.POST
-            : HttpMethod.GET;
-    final EdmReturnType returnType = operation.getReturnType();
-
-    ODataInvokeRequest<RES> request;
-    if (returnType == null) {
-      request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataNoContent>(
-              client, ODataNoContent.class, method, uri);
-    } else {
-      if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataEntitySet>(
-                client, ODataEntitySet.class, method, uri);
-      } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataEntity>(
-                client, ODataEntity.class, method, uri);
-      } else {
-        request = (ODataInvokeRequest<RES>) new ODataInvokeRequestImpl<ODataProperty>(
-                client, ODataProperty.class, method, uri);
-      }
-    }
+    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<RES>(client, resultRef, method, uri);
     if (parameters != null) {
       request.setParameters(parameters);
     }

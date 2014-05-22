@@ -293,7 +293,7 @@ public class V4Services extends AbstractServices {
               addChangesetItemIntro(chbos, lastContebtID, cboundary);
 
               res = bodyPartRequest(new MimeBodyPart(part.getInputStream()), references);
-              if (res.getStatus() >= 400) {
+              if (res == null || res.getStatus() >= 400) {
                 throw new Exception("Failure processing changeset");
               }
 
@@ -351,7 +351,7 @@ public class V4Services extends AbstractServices {
   public Response getPeople(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
-          @PathParam("type") final String type, 
+          @PathParam("type") final String type,
           @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) String top,
           @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) String skip,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
@@ -457,7 +457,7 @@ public class V4Services extends AbstractServices {
   }
 
   @GET
-  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount")
+  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.GetEmployeesCount{paren:[\\(\\)]*}")
   public Response functionGetEmployeesCount(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
@@ -488,7 +488,7 @@ public class V4Services extends AbstractServices {
   }
 
   @POST
-  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue")
+  @Path("/Company/Microsoft.Test.OData.Services.ODataWCFService.IncreaseRevenue{paren:[\\(\\)]*}")
   public Response actionIncreaseRevenue(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
@@ -562,7 +562,7 @@ public class V4Services extends AbstractServices {
   }
 
   @POST
-  @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight")
+  @Path("/Products({entityId})/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight{paren:[\\(\\)]*}")
   public Response actionAddAccessRight(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
@@ -583,11 +583,16 @@ public class V4Services extends AbstractServices {
       assert 1 == entry.getProperties().size();
       assert entry.getProperty("accessRight") != null;
 
-      entry.getProperty("accessRight").setType("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel");
+      final Property property = entry.getProperty("accessRight");
+      property.setType("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel");
+
+      final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX) + property.getType()),
+              null, (AtomPropertyImpl) property);
 
       return xml.createResponse(
               null,
-              xml.writeProperty(acceptType, entry.getProperty("accessRight")),
+              xml.writeProperty(acceptType, result),
               null,
               acceptType);
     } catch (Exception e) {
@@ -596,7 +601,7 @@ public class V4Services extends AbstractServices {
   }
 
   @POST
-  @Path("/Customers(PersonID={personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress")
+  @Path("/Customers(PersonID={personId})/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress{paren:[\\(\\)]*}")
   public Response actionResetAddress(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -622,7 +627,7 @@ public class V4Services extends AbstractServices {
 
   @GET
   @Path("/ProductDetails(ProductID={productId},ProductDetailID={productDetailId})"
-          + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct")
+          + "/Microsoft.Test.OData.Services.ODataWCFService.GetRelatedProduct{paren:[\\(\\)]*}")
   public Response functionGetRelatedProduct(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
@@ -634,11 +639,12 @@ public class V4Services extends AbstractServices {
   }
 
   @POST
-  @Path("/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI")
+  @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.RefreshDefaultPI{paren:[\\(\\)]*}")
   public Response actionRefreshDefaultPI(
           @Context UriInfo uriInfo,
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @PathParam("entityId") String entityId,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
           final String param) {
 
@@ -649,23 +655,24 @@ public class V4Services extends AbstractServices {
       assert 1 == entry.getProperties().size();
       assert entry.getProperty("newDate") != null;
 
-      return functionGetDefaultPI(accept, format);
+      return functionGetDefaultPI(accept, entityId, format);
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
   }
 
   @GET
-  @Path("/Accounts(101)/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI")
+  @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetDefaultPI{paren:[\\(\\)]*}")
   public Response functionGetDefaultPI(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @PathParam("entityId") String entityId,
           @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format) {
 
-    return getContainedEntity(accept, "101", "MyPaymentInstruments", "101901", format);
+    return getContainedEntity(accept, entityId, "MyPaymentInstruments", entityId+ "901", format);
   }
 
   @GET
-  @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo")
+  @Path("/Accounts({entityId})/Microsoft.Test.OData.Services.ODataWCFService.GetAccountInfo{paren:[\\(\\)]*}")
   public Response functionGetAccountInfo(
           @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
           @PathParam("entityId") String entityId,
@@ -1269,9 +1276,15 @@ public class V4Services extends AbstractServices {
       assert "Microsoft.Test.OData.Services.ODataWCFService.Address".equals(entity.getType());
       assert entity.getProperty("address").getValue().isComplex();
 
+      final ResWrap<AtomPropertyImpl> result = new ResWrap<AtomPropertyImpl>(
+              URI.create(Constants.get(version, ConstantKey.ODATA_METADATA_PREFIX)
+                      + "Microsoft.Test.OData.Services.ODataWCFService.Address"),
+              null,
+              (AtomPropertyImpl) entity.getProperty("address"));
+
       return xml.createResponse(
               null,
-              xml.writeProperty(acceptType, entity.getProperty("address")),
+              xml.writeProperty(acceptType, result),
               null,
               acceptType);
     } catch (Exception e) {
@@ -1310,5 +1323,27 @@ public class V4Services extends AbstractServices {
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
+  }
+
+  @POST
+  @Path("/Products({productId})/Categories/$ref")
+  public Response createLinked(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String entity) {
+
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
+  }
+
+  @DELETE
+  @Path("/Products({productId})/Categories({categoryId})/$ref")
+  public Response deleteLinked(
+          @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) String accept,
+          @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) String contentType,
+          @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) String format,
+          final String entity) {
+
+    return xml.createResponse(null, null, null, Status.NO_CONTENT);
   }
 }

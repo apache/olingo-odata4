@@ -41,7 +41,7 @@ import org.junit.Test;
 public class SingletonTestITCase extends AbstractTestITCase {
 
   private void read(final ODataClient client, final ODataPubFormat format) throws EdmPrimitiveTypeException {
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<Singleton> singleton =
             client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singleton.setFormat(format);
@@ -73,7 +73,7 @@ public class SingletonTestITCase extends AbstractTestITCase {
   private void readWithAnnotations(final ODataClient client, final ODataPubFormat format) 
           throws EdmPrimitiveTypeException {
     
-    final URIBuilder builder = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");    
+    final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");    
     final ODataEntityRequest<Singleton> singleton =
             client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
     singleton.setFormat(format);
@@ -107,7 +107,7 @@ public class SingletonTestITCase extends AbstractTestITCase {
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Revenue",
             getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt64(132520L)));
 
-    final URI uri = client.getURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company").build();
+    final URI uri = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company").build();
     final ODataEntityUpdateRequest<Singleton> req = getClient().getCUDRequestFactory().
             getSingletonUpdateRequest(uri, UpdateType.PATCH, changes);
     req.setFormat(format);

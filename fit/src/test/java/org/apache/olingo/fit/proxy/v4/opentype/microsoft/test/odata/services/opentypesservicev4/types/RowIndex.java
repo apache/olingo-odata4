@@ -28,6 +28,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -58,7 +59,7 @@ import javax.xml.datatype.Duration;
         hasStream = false,
         isAbstract = false)
 public interface RowIndex 
-  extends AbstractOpenType {
+  extends Annotatable,AbstractOpenType {
 
     
     @Key
@@ -82,7 +83,7 @@ public interface RowIndex
                 fcKeepInContent = false)
     Integer getId();
 
-    void setId(final Integer _id);    
+    void setId(Integer _id);    
     
     
 
@@ -90,12 +91,12 @@ public interface RowIndex
                 type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row", 
                 targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV4", 
                 targetContainer = "DefaultContainer", 
-                targetEntitySet = "Row")
+                targetEntitySet = "Row",
+                containsTarget = false)
     org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row getRows();
 
-    void setRows(final org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row _rows);
-
-
+    void setRows(org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row _rows);
+    
 
 
 }

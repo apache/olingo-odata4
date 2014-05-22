@@ -53,7 +53,7 @@ public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
    * @param editURI edit URI of the entity to be updated.
    * @param media media entity blob to be created.
    */
-  ODataMediaEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
+  public ODataMediaEntityUpdateRequestImpl(final CommonODataClient<?> odataClient,
           final HttpMethod method, final URI editURI, final InputStream media) {
 
     super(odataClient, method, editURI);
@@ -61,11 +61,11 @@ public class ODataMediaEntityUpdateRequestImpl<E extends CommonODataEntity>
   }
 
   @Override
-  protected MediaEntityUpdateStreamManager<E> getStreamManager() {
-    if (streamManager == null) {
-      streamManager = new MediaEntityUpdateStreamManagerImpl(media);
+  protected MediaEntityUpdateStreamManager<E> getPayloadManager() {
+    if (payloadManager == null) {
+      payloadManager = new MediaEntityUpdateStreamManagerImpl(media);
     }
-    return (MediaEntityUpdateStreamManager<E>) streamManager;
+    return (MediaEntityUpdateStreamManager<E>) payloadManager;
   }
 
   /**

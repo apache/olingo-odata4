@@ -19,6 +19,8 @@
 package org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
 import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty;
+import org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Namespace;
 import org.apache.olingo.ext.proxy.api.annotations.EntityType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -27,6 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.NavigationProperty;
 import org.apache.olingo.ext.proxy.api.annotations.Property;
 import org.apache.olingo.ext.proxy.api.annotations.Operation;
 import org.apache.olingo.ext.proxy.api.annotations.Parameter;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.OperationType;
 import org.apache.olingo.commons.api.edm.constants.EdmContentKind;
@@ -57,7 +60,7 @@ import javax.xml.datatype.Duration;
         hasStream = false,
         isAbstract = false)
 public interface Company 
-  extends AbstractOpenType {
+  extends Annotatable,AbstractOpenType {
 
     
     @Key
@@ -245,5 +248,48 @@ public interface Company
                    type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
          org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address newAddress();
 
+        }
+
+        Annotations annotations();
+
+    interface Annotations {
+
+            @AnnotationsForProperty(name = "CompanyID",
+                   type = "Edm.Int32")
+        Annotatable getCompanyIDAnnotations();
+
+            @AnnotationsForProperty(name = "CompanyCategory",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory")
+        Annotatable getCompanyCategoryAnnotations();
+
+            @AnnotationsForProperty(name = "Revenue",
+                   type = "Edm.Int64")
+        Annotatable getRevenueAnnotations();
+
+            @AnnotationsForProperty(name = "Name",
+                   type = "Edm.String")
+        Annotatable getNameAnnotations();
+
+            @AnnotationsForProperty(name = "Address",
+                   type = "Microsoft.Test.OData.Services.ODataWCFService.Address")
+        Annotatable getAddressAnnotations();
+
+    
+    
+        @AnnotationsForNavigationProperty(name = "Employees", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Employee")
+        Annotatable getEmployeesAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "VipCustomer", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Customer")
+        Annotatable getVipCustomerAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "Departments", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Department")
+        Annotatable getDepartmentsAnnotations();
+    
+        @AnnotationsForNavigationProperty(name = "CoreDepartment", 
+                  type = "Microsoft.Test.OData.Services.ODataWCFService.Department")
+        Annotatable getCoreDepartmentAnnotations();
         }
 }

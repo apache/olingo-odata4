@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
-import org.apache.olingo.client.api.communication.request.batch.BatchStreamManager;
+import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.CommonODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -50,6 +50,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.CommonODataEntity;
 import org.apache.olingo.commons.api.domain.ODataLink;
 import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.v4.ODataEntity;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataMediaFormat;
 import org.apache.olingo.ext.proxy.EntityContainerFactory;
@@ -86,7 +87,7 @@ class PersistenceManagerImpl implements PersistenceManager {
             factory.getClient().getBatchRequestFactory().getBatchRequest(factory.getClient().getServiceRoot());
     ((ODataRequest) request).setAccept(factory.getClient().getConfiguration().getDefaultBatchAcceptFormat());
 
-    final BatchStreamManager streamManager = (BatchStreamManager) ((ODataStreamedRequest) request).execute();
+    final BatchManager streamManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
 
@@ -109,11 +110,9 @@ class PersistenceManagerImpl implements PersistenceManager {
 
     final ODataBatchResponse response = streamManager.getResponse();
 
-    if ((factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) <= 0
-            && response.getStatusCode() != 202)
-            || (factory.getClient().getServiceVersion().compareTo(ODataServiceVersion.V30) > 0
-            && response.getStatusCode() != 200)) {
-
+    // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
+    // many service implementations are not fully compliant with this respect.
+    if (response.getStatusCode() != 202 && response.getStatusCode() != 200) {
       throw new IllegalStateException("Operation failed");
     }
 
@@ -154,7 +153,7 @@ class PersistenceManagerImpl implements PersistenceManager {
     factory.getContext().detachAll();
   }
 
-  private void batch(
+  private AttachedEntityStatus batch(
           final EntityInvocationHandler handler,
           final CommonODataEntity entity,
           final ODataChangeset changeset) {
@@ -162,20 +161,21 @@ class PersistenceManagerImpl implements PersistenceManager {
     switch (factory.getContext().entityContext().getStatus(handler)) {
       case NEW:
         batchCreate(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.NEW;
 
       case CHANGED:
         batchUpdate(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.CHANGED;
 
       case DELETED:
         batchDelete(handler, entity, changeset);
-        break;
+        return AttachedEntityStatus.DELETED;
 
       default:
         if (handler.isChanged()) {
           batchUpdate(handler, entity, changeset);
         }
+        return AttachedEntityStatus.CHANGED;
     }
   }
 
@@ -186,8 +186,8 @@ class PersistenceManagerImpl implements PersistenceManager {
 
     LOG.debug("Create '{}'", handler);
 
-    changeset.addRequest(
-            factory.getClient().getCUDRequestFactory().getEntityCreateRequest(handler.getEntitySetURI(), entity));
+    changeset.addRequest(factory.getClient().getCUDRequestFactory().
+            getEntityCreateRequest(handler.getEntitySetURI(), entity));
   }
 
   private void batchUpdateMediaEntity(
@@ -199,7 +199,7 @@ class PersistenceManagerImpl implements PersistenceManager {
     LOG.debug("Update media entity '{}'", uri);
 
     final ODataMediaEntityUpdateRequest<?> req =
-            factory.getClient().getStreamedRequestFactory().getMediaEntityUpdateRequest(uri, input);
+            factory.getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri, input);
 
     req.setContentType(StringUtils.isBlank(handler.getEntity().getMediaContentType())
             ? ODataMediaFormat.WILDCARD.toString()
@@ -220,8 +220,7 @@ class PersistenceManagerImpl implements PersistenceManager {
 
     LOG.debug("Update media entity '{}'", uri);
 
-    final ODataStreamUpdateRequest req = factory.getClient().
-            getStreamedRequestFactory().getStreamUpdateRequest(uri, input);
+    final ODataStreamUpdateRequest req = factory.getClient().getCUDRequestFactory().getStreamUpdateRequest(uri, input);
 
     if (StringUtils.isNotBlank(handler.getETag())) {
       req.setIfMatch(handler.getETag());
@@ -317,6 +316,16 @@ class PersistenceManagerImpl implements PersistenceManager {
     if (AttachedEntityStatus.DELETED != currentStatus) {
       entity.getProperties().clear();
       CoreUtils.addProperties(factory.getClient(), handler.getPropertyChanges(), entity);
+
+      if (entity instanceof ODataEntity) {
+        ((ODataEntity) entity).getAnnotations().clear();
+        CoreUtils.addAnnotations(factory.getClient(), handler.getAnnotations(), (ODataEntity) entity);
+
+        for (Map.Entry<String, AnnotatableInvocationHandler> entry : handler.getPropAnnotatableHandlers().entrySet()) {
+          CoreUtils.addAnnotations(factory.getClient(),
+                  entry.getValue().getAnnotations(), ((ODataEntity) entity).getProperty(entry.getKey()));
+        }
+      }
     }
 
     for (Map.Entry<NavigationProperty, Object> property : handler.getLinkChanges().entrySet()) {
@@ -325,8 +334,6 @@ class PersistenceManagerImpl implements PersistenceManager {
               : ODataLinkType.ENTITY_NAVIGATION;
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
-      final String serviceRoot = factory.getClient().getServiceRoot();
-
       for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
               ? (Collection) property.getValue() : Collections.singleton(property.getValue())) {
 
@@ -339,7 +346,7 @@ class PersistenceManagerImpl implements PersistenceManager {
         if ((status == AttachedEntityStatus.ATTACHED || status == AttachedEntityStatus.LINKED) && !target.isChanged()) {
           entity.addLink(buildNavigationLink(
                   property.getKey().name(),
-                  URIUtils.getURI(serviceRoot, editLink.toASCIIString()), type));
+                  URIUtils.getURI(factory.getClient().getServiceRoot(), editLink.toASCIIString()), type));
         } else {
           if (!items.contains(target)) {
             pos = processEntityContext(target, pos, items, delayedUpdates, changeset);
@@ -354,7 +361,7 @@ class PersistenceManagerImpl implements PersistenceManager {
           } else if (status == AttachedEntityStatus.CHANGED) {
             entity.addLink(buildNavigationLink(
                     property.getKey().name(),
-                    URIUtils.getURI(serviceRoot, editLink.toASCIIString()), type));
+                    URIUtils.getURI(factory.getClient().getServiceRoot(), editLink.toASCIIString()), type));
           } else {
             // create the link for the current object
             LOG.debug("'{}' from '{}' to (${}) '{}'", type.name(), handler, targetPos, target);
@@ -369,55 +376,65 @@ class PersistenceManagerImpl implements PersistenceManager {
       }
     }
 
-    // insert into the batch
-    LOG.debug("{}: Insert '{}' into the batch", pos, handler);
-    batch(handler, entity, changeset);
+    if (entity instanceof ODataEntity) {
+      for (Map.Entry<String, AnnotatableInvocationHandler> entry
+              : handler.getNavPropAnnotatableHandlers().entrySet()) {
 
-    items.put(handler, pos);
-
-    int startingPos = pos;
-
-    if (handler.getEntity().isMediaEntity()) {
-
-      // update media properties
-      if (!handler.getPropertyChanges().isEmpty()) {
-        final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                ? URI.create("$" + startingPos)
-                : URIUtils.getURI(
-                        factory.getClient().getServiceRoot(),
-                        handler.getEntity().getEditLink().toASCIIString());
-        batchUpdate(handler, targetURI, entity, changeset);
-        pos++;
-        items.put(handler, pos);
-      }
-
-      // update media content
-      if (handler.getStreamChanges() != null) {
-        final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-                ? URI.create("$" + startingPos + "/$value")
-                : URIUtils.getURI(
-                        factory.getClient().getServiceRoot(),
-                        handler.getEntity().getEditLink().toASCIIString() + "/$value");
-
-        batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
-
-        // update media info (use null key)
-        pos++;
-        items.put(null, pos);
+        CoreUtils.addAnnotations(factory.getClient(),
+                entry.getValue().getAnnotations(),
+                (org.apache.olingo.commons.api.domain.v4.ODataLink) entity.getNavigationLink(entry.getKey()));
       }
     }
 
-    for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
-      final URI targetURI = currentStatus == AttachedEntityStatus.NEW
-              ? URI.create("$" + startingPos) : URIUtils.getURI(
-                      factory.getClient().getServiceRoot(),
-                      CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+    // insert into the batch
+    LOG.debug("{}: Insert '{}' into the batch", pos, handler);
+    final AttachedEntityStatus processedStatus = batch(handler, entity, changeset);
 
-      batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
+    items.put(handler, pos);
 
-      // update media info (use null key)
-      pos++;
-      items.put(handler, pos);
+    if (processedStatus != AttachedEntityStatus.DELETED) {
+      int startingPos = pos;
+
+      if (handler.getEntity().isMediaEntity() && handler.isChanged()) {
+        // update media properties
+        if (!handler.getPropertyChanges().isEmpty()) {
+          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                  ? URI.create("$" + startingPos)
+                  : URIUtils.getURI(
+                          factory.getClient().getServiceRoot(), handler.getEntity().getEditLink().toASCIIString());
+          batchUpdate(handler, targetURI, entity, changeset);
+          pos++;
+          items.put(handler, pos);
+        }
+
+        // update media content
+        if (handler.getStreamChanges() != null) {
+          final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                  ? URI.create("$" + startingPos + "/$value")
+                  : URIUtils.getURI(
+                          factory.getClient().getServiceRoot(),
+                          handler.getEntity().getEditLink().toASCIIString() + "/$value");
+
+          batchUpdateMediaEntity(handler, targetURI, handler.getStreamChanges(), changeset);
+
+          // update media info (use null key)
+          pos++;
+          items.put(null, pos);
+        }
+      }
+
+      for (Map.Entry<String, InputStream> streamedChanges : handler.getStreamedPropertyChanges().entrySet()) {
+        final URI targetURI = currentStatus == AttachedEntityStatus.NEW
+                ? URI.create("$" + startingPos) : URIUtils.getURI(
+                        factory.getClient().getServiceRoot(),
+                        CoreUtils.getMediaEditLink(streamedChanges.getKey(), entity).toASCIIString());
+
+        batchUpdateMediaResource(handler, targetURI, streamedChanges.getValue(), changeset);
+
+        // update media info (use null key)
+        pos++;
+        items.put(handler, pos);
+      }
     }
 
     return pos;

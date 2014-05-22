@@ -18,11 +18,16 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.CommonEdmEnabledODataClient;
 import org.apache.olingo.commons.api.domain.CommonODataProperty;
 import org.apache.olingo.commons.api.domain.ODataComplexValue;
@@ -41,11 +46,9 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   private static final long serialVersionUID = 2629912294765040037L;
 
-  public static ComplexInvocationHandler getInstance(
+  private static Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init(
           final CommonEdmEnabledODataClient<?> client,
-          final String propertyName,
-          final Class<?> reference,
-          final EntityInvocationHandler handler) {
+          final Class<?> reference) {
 
     final Class<?> complexTypeRef;
     if (Collection.class.isAssignableFrom(reference)) {
@@ -65,7 +68,27 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     final ODataComplexValue<? extends CommonODataProperty> complex =
             client.getObjectFactory().newComplexValue(typeName.toString());
 
-    return new ComplexInvocationHandler(client, complex, complexTypeRef, handler);
+    return new ImmutablePair<ODataComplexValue<? extends CommonODataProperty>, Class<?>>(complex, complexTypeRef);
+  }
+
+  public static ComplexInvocationHandler getInstance(
+          final CommonEdmEnabledODataClient<?> client,
+          final String propertyName,
+          final Class<?> reference,
+          final EntityInvocationHandler handler) {
+
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(client, reference);
+    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), handler);
+  }
+
+  public static ComplexInvocationHandler getInstance(
+          final CommonEdmEnabledODataClient<?> client,
+          final String propertyName,
+          final Class<?> reference,
+          final EntityContainerInvocationHandler containerHandler) {
+
+    final Pair<ODataComplexValue<? extends CommonODataProperty>, Class<?>> init = init(client, reference);
+    return new ComplexInvocationHandler(client, init.getLeft(), init.getRight(), containerHandler);
   }
 
   public static ComplexInvocationHandler getInstance(
@@ -76,16 +99,26 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
     return new ComplexInvocationHandler(client, complex, typeRef, handler);
   }
-  
+
   private final CommonEdmEnabledODataClient<?> client;
 
-  public ComplexInvocationHandler(
+  private ComplexInvocationHandler(
           final CommonEdmEnabledODataClient<?> client,
           final ODataComplexValue<?> complex,
           final Class<?> typeRef,
           final EntityInvocationHandler handler) {
 
     super(typeRef, complex, handler);
+    this.client = client;
+  }
+
+  private ComplexInvocationHandler(
+          final CommonEdmEnabledODataClient<?> client,
+          final ODataComplexValue<?> complex,
+          final Class<?> typeRef,
+          final EntityContainerInvocationHandler containerHandler) {
+
+    super(typeRef, complex, containerHandler);
     this.client = client;
   }
 
@@ -97,20 +130,51 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   @Override
   protected Object getPropertyValue(final String name, final Type type) {
     try {
-      return CoreUtils.getValueFromProperty(client, getComplex().get(name), type, entityHandler);
+      final CommonODataProperty property = getComplex().get(name);
+      return property == null || property.hasNullValue()
+              ? null
+              : CoreUtils.getObjectFromODataValue(client, property.getValue(), type, getEntityHandler());
     } catch (Exception e) {
       throw new IllegalArgumentException("Error getting value for property '" + name + "'", e);
     }
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  public Collection<String> getAdditionalPropertyNames() {
+    final Set<String> res = new HashSet<String>();
+    final Set<String> propertyNames = new HashSet<String>();
+    for (Method method : typeRef.getMethods()) {
+      final Annotation ann = method.getAnnotation(Property.class);
+      if (ann != null) {
+        final String property = ((Property) ann).name();
+        propertyNames.add(property);
+      }
+    }
+
+    for (final Iterator<? extends CommonODataProperty> itor = getComplex().iterator(); itor.hasNext();) {
+      final CommonODataProperty property = itor.next();
+      if (!propertyNames.contains(property.getName())) {
+        res.add(property.getName());
+      }
+    }
+
+    return res;
+  }
+
+  @Override
   protected void setPropertyValue(final Property property, final Object value) {
     final FullQualifiedName fqn =
             new FullQualifiedName(ClassUtils.getNamespace(typeRef), typeRef.getAnnotation(ComplexType.class).name());
 
     final EdmElement edmProperty = client.getCachedEdm().getComplexType(fqn).getProperty(property.name());
 
+    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
+            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+
+    setPropertyValue(property.name(), type, value);
+  }
+
+  private void setPropertyValue(final String name, final EdmTypeInfo type, final Object value) {
     final Object toBeAdded;
 
     if (value == null) {
@@ -118,21 +182,16 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     } else if (Collection.class.isAssignableFrom(value.getClass())) {
       toBeAdded = new ArrayList<Object>();
       for (Object obj : (Collection) value) {
-        ((Collection) toBeAdded).add(obj instanceof Proxy ? Proxy.getInvocationHandler(obj) : obj);
+        Collection.class.cast(toBeAdded).add(obj);
       }
-    } else if (value instanceof Proxy) {
-      toBeAdded = Proxy.getInvocationHandler(value);
     } else {
       toBeAdded = value;
     }
 
-    final EdmTypeInfo type = new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).setTypeExpression(
-            edmProperty.isCollection() ? "Collection(" + property.type() + ")" : property.type()).build();
+    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, name, type, toBeAdded));
 
-    client.getBinder().add(getComplex(), CoreUtils.getODataProperty(client, property.name(), type, toBeAdded));
-
-    if (entityHandler != null && !getContext().entityContext().isAttached(entityHandler)) {
-      getContext().entityContext().attach(entityHandler, AttachedEntityStatus.CHANGED);
+    if (getEntityHandler() != null && !getContext().entityContext().isAttached(getEntityHandler())) {
+      getContext().entityContext().attach(getEntityHandler(), AttachedEntityStatus.CHANGED);
     }
   }
 
@@ -146,8 +205,18 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
   }
 
   @Override
-  protected void addPropertyChanges(final String name, final Object value) {
-    // do nothing ....
+  public void addAdditionalProperty(final String name, final Object value) {
+    setPropertyValue(name, null, value);
+    attach(AttachedEntityStatus.CHANGED);
+  }
+
+  @Override
+  public void removeAdditionalProperty(final String name) {
+    final CommonODataProperty property = getComplex().get(name);
+    if (property != null && !property.hasNullValue()) {
+      setPropertyValue(name, null, null);
+      attach(AttachedEntityStatus.CHANGED);
+    }
   }
 
   @Override
@@ -157,6 +226,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
 
   @Override
   public boolean isChanged() {
-    return entityHandler == null ? false : entityHandler.isChanged();
+    return getEntityHandler() == null ? false : getEntityHandler().isChanged();
   }
 }
